@@ -1,0 +1,45 @@
+{
+  "name": "eslint-plugin-testing-library",
+  "version": "0.1.0",
+  "description": "ESLint rules for Testing Library",
+  "keywords": [
+    "eslint",
+    "eslintplugin",
+    "eslint-plugin"
+  ],
+  "author": {
+    "name": "Mario Beltrán Alarcón",
+    "email": "belco90@gmail.com",
+    "url": "https://mario.dev/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Belco90/eslint-plugin-testing-library"
+  },
+  "files": [
+    "docs/",
+    "src/"
+  ],
+  "main": "lib/",
+  "scripts": {
+    "build": "babel --extensions .js src --out-dir lib --copy-files",
+    "postbuild": "rimraf lib/**/__tests__/**",
+    "test": "jest"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.5.5",
+    "@babel/core": "^7.5.5",
+    "@babel/preset-env": "^7.5.5",
+    "eslint": "^6.3.0",
+    "jest": "^24.9.0",
+    "rimraf": "^3.0.0"
+  },
+  "peerDependencies": {
+    "eslint": ">=5"
+  },
+  "engines": {
+    "node": ">=6"
+  },
+  "license": "MIT",
+  "dependencies": {}
+}
