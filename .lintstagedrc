@@ -1,0 +1,6 @@
+{
+  "*.js": [
+    "npm run lint:fix",
+    "git add"
+  ]
+}

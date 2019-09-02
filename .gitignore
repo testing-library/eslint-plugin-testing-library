@@ -54,9 +54,6 @@ typings/
 # dotenv environment variables file
 .env
 
-# lib files
-lib/
-
 # Mac files
 .DS_Store
 

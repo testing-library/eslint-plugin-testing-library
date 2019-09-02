@@ -1,6 +1,6 @@
 {
   "name": "eslint-plugin-testing-library",
-  "version": "0.1.0",
+  "version": "0.0.0",
   "description": "ESLint rules for Testing Library",
   "keywords": [
     "eslint",
@@ -14,40 +14,40 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Belco90/eslint-plugin-testing-library"
+    "url": "https://github.com/Belco90/eslint-plugin-testing-library.git"
   },
+  "main": "lib/index.js",
   "files": [
     "docs/",
-    "src/"
+    "lib/"
   ],
-  "main": "lib/",
   "scripts": {
-    "build": "babel --extensions .js src --out-dir lib --copy-files",
-    "postbuild": "rimraf lib/**/__tests__/**",
+    "lint": "eslint ./",
+    "lint:fix": "npm run lint -- --fix",
     "test": "jest"
   },
-  "dependencies": {},
+  "dependencies": {
+    "requireindex": "^1.2.0"
+  },
   "devDependencies": {
-    "@babel/cli": "^7.5.5",
-    "@babel/core": "^7.5.5",
-    "@babel/preset-env": "^7.5.5",
     "eslint": "^6.3.0",
+    "eslint-config-prettier": "^6.1.0",
+    "eslint-config-standard": "^14.1.0",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-node": "^9.2.0",
+    "eslint-plugin-prettier": "^3.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.1",
     "husky": "^3.0.5",
     "jest": "^24.9.0",
-    "prettier": "1.18.2",
-    "pretty-quick": "^1.11.1",
-    "rimraf": "^3.0.0"
+    "lint-staged": "^9.2.5",
+    "prettier": "1.18.2"
   },
   "peerDependencies": {
     "eslint": ">=5"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "pretty-quick --staged"
-    }
-  },
   "engines": {
-    "node": ">=6",
+    "node": ">=8",
     "npm": ">=5"
   },
   "license": "MIT"
