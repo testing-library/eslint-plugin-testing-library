@@ -36,14 +36,41 @@ TODO: Then configure the rules you want to use under the rules section.
 ```json
 {
     "rules": {
-        "testing-library/rule-name": 2
+        "testing-library/await-async-query": "warn",
+        "testing-library/no-await-sync-query": "error"
     }
 }
 ```
 
+## Shareable configurations
+
+### Recommended
+
+This plugin exports a recommended configuration that enforces good Testing Library practices.
+
+To enable this configuration use the `extends` property in your `.eslintrc` config file:
+
+```json
+{
+  "extends": ["plugin:testing-library/recommended"]
+}
+```
+
+### All
+
+If you want to enable all rules instead of only some you can do so by adding the `all` configuration to your `.eslintrc` config file:
+
+```json
+{
+  "extends": ["plugin:testing-library/all"]
+}
+```
+
+While the `recommended` configuration only change in major versions, the `all` configuration may change in any release and is thus unsuited for installations requiring long-term consistency.
+
 ## Supported Rules
 
-* Fill in provided rules here
+* TODO
 
 
 
