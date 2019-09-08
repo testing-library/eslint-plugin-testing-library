@@ -4,7 +4,7 @@
 // Requirements
 // ------------------------------------------------------------------------------
 
-const rule = require('../../../lib/rules/await-async-queries');
+const rule = require('lib/rules/await-async-query');
 const RuleTester = require('eslint').RuleTester;
 
 // ------------------------------------------------------------------------------
@@ -12,7 +12,7 @@ const RuleTester = require('eslint').RuleTester;
 // ------------------------------------------------------------------------------
 
 const ruleTester = new RuleTester({ parserOptions: { ecmaVersion: 2018 } });
-ruleTester.run('await-async-queries', rule, {
+ruleTester.run('await-async-query', rule, {
   valid: [
     {
       code: `async () => {
