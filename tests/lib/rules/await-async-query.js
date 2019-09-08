@@ -4,7 +4,7 @@
 // Requirements
 // ------------------------------------------------------------------------------
 
-const rule = require('lib/rules/await-async-query');
+const rule = require('../../../lib/rules/await-async-query');
 const RuleTester = require('eslint').RuleTester;
 
 // ------------------------------------------------------------------------------
