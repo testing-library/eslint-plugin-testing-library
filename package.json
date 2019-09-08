@@ -26,9 +26,7 @@
     "lint:fix": "npm run lint -- --fix",
     "test": "jest"
   },
-  "dependencies": {
-    "requireindex": "^1.2.0"
-  },
+  "dependencies": {},
   "devDependencies": {
     "eslint": "^6.3.0",
     "eslint-config-prettier": "^6.1.0",
