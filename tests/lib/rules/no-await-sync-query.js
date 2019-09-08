@@ -1,7 +1,3 @@
-/**
- * @fileoverview Disallow unnecessary `await` for sync queries
- * @author Mario
- */
 'use strict';
 
 // ------------------------------------------------------------------------------
@@ -15,19 +11,26 @@ const RuleTester = require('eslint').RuleTester;
 // Tests
 // ------------------------------------------------------------------------------
 
-const ruleTester = new RuleTester();
+const ruleTester = new RuleTester({ parserOptions: { ecmaVersion: 2018 } });
 ruleTester.run('no-await-sync-query', rule, {
   valid: [
-    // give me some code that won't trigger a warning
+    {
+      code: `async () => {
+        getByText('foo')
+      }
+      `,
+    },
   ],
 
   invalid: [
     {
-      code: "await getByText('foo')",
+      code: `async () => {
+        await getByText('foo')
+      }
+      `,
       errors: [
         {
-          message: 'Fill me in.',
-          type: 'Me too',
+          message: '`getByText` does not need `await` operator',
         },
       ],
     },
