@@ -46,6 +46,13 @@ ruleTester.run('await-async-query', rule, {
         return promise
       }`,
     },
+    {
+      code: `async () => {
+        doSomething()
+        const foo = findByNonExistingTestingLibraryQuery('foo')
+      }
+      `,
+    },
   ],
 
   invalid: [
