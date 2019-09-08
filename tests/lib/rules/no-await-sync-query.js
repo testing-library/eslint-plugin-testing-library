@@ -30,7 +30,7 @@ ruleTester.run('no-await-sync-query', rule, {
       `,
       errors: [
         {
-          message: '`getByText` does not need `await` operator',
+          messageId: 'noAwaitSyncQuery',
         },
       ],
     },

@@ -68,7 +68,7 @@ ruleTester.run('await-async-query', rule, {
       `,
       errors: [
         {
-          message: '`findByText` must have `await` operator',
+          messageId: 'awaitAsyncQuery',
         },
       ],
     },
@@ -80,7 +80,7 @@ ruleTester.run('await-async-query', rule, {
       `,
       errors: [
         {
-          message: '`findByText` must have `await` operator',
+          messageId: 'awaitAsyncQuery',
         },
       ],
     },
@@ -92,7 +92,7 @@ ruleTester.run('await-async-query', rule, {
       `,
       errors: [
         {
-          message: '`findAllByText` must have `await` operator',
+          messageId: 'awaitAsyncQuery',
         },
       ],
     },
