@@ -31,7 +31,7 @@ Add `testing-library` to the plugins section of your `.eslintrc` configuration f
 ```
 
 
-Then configure the rules you want to use under the rules section.
+TODO: Then configure the rules you want to use under the rules section.
 
 ```json
 {
