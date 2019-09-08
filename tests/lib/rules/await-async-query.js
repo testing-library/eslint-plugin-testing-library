@@ -15,6 +15,11 @@ const ruleTester = new RuleTester({ parserOptions: { ecmaVersion: 2018 } });
 ruleTester.run('await-async-query', rule, {
   valid: [
     {
+      code: `
+        const { findByText } = setUp()
+      `,
+    },
+    {
       code: `async () => {
         const foo = await findByText('foo')
       }
