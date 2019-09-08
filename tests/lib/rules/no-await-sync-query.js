@@ -8,14 +8,14 @@
 // Requirements
 // ------------------------------------------------------------------------------
 
-var rule = require('../../../lib/rules/no-await-sync-query');
-var RuleTester = require('eslint').RuleTester;
+const rule = require('../../../lib/rules/no-await-sync-query');
+const RuleTester = require('eslint').RuleTester;
 
 // ------------------------------------------------------------------------------
 // Tests
 // ------------------------------------------------------------------------------
 
-var ruleTester = new RuleTester();
+const ruleTester = new RuleTester();
 ruleTester.run('no-await-sync-query', rule, {
   valid: [
     // give me some code that won't trigger a warning
