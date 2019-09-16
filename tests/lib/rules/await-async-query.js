@@ -26,6 +26,21 @@ ruleTester.run('await-async-query', rule, {
       `,
     },
     {
+      code: `() => {
+        findByText('foo').then(node => {
+          done()
+        })
+      }
+      `,
+    },
+    {
+      code: `() => {
+        const promise = findByText('foo')
+        promise.then(node => done())
+      }
+      `,
+    },
+    {
       code: `async () => {
         doSomething()
         const foo = await findByText('foo')
