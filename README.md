@@ -28,7 +28,7 @@ Add `testing-library` to the plugins section of your `.eslintrc` configuration f
 }
 ```
 
-TODO: Then configure the rules you want to use under the rules section.
+Then configure the rules you want to use under the rules section.
 
 ```json
 {
@@ -67,4 +67,9 @@ While the `recommended` configuration only change in major versions, the `all` c
 
 ## Supported Rules
 
-- TODO
+| Rule                                                     | Description                                   | Recommended      |
+| -------------------------------------------------------- | --------------------------------------------- | ---------------- |
+| [await-async-query](docs/rules/await-async-query.md)     | Enforce async queries to have proper `await`  | ![recommended][] |
+| [no-await-sync-query](docs/rules/no-await-sync-query.md) | Disallow unnecessary `await` for sync queries | ![recommended][] |
+
+[recommended]: https://img.shields.io/badge/recommended-lightgrey?style=flat-square

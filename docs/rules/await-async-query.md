@@ -1,4 +1,4 @@
-# Enforce async queries (`findBy*`, `findAllBy*`) to have proper `await` (await-async-query)
+# Enforce async queries to have proper `await` (await-async-query)
 
 TODO: Please describe the origin of the rule here.
 
