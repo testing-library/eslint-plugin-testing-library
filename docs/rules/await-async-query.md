@@ -2,7 +2,6 @@
 
 TODO: Please describe the origin of the rule here.
 
-
 ## Rule Details
 
 This rule aims to...
@@ -10,17 +9,13 @@ This rule aims to...
 Examples of **incorrect** code for this rule:
 
 ```js
-
 // TODO: fill me in
-
 ```
 
 Examples of **correct** code for this rule:
 
 ```js
-
 // TODO: fill me in
-
 ```
 
 ### Options

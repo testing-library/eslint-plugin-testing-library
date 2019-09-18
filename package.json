@@ -24,6 +24,7 @@
   "scripts": {
     "lint": "eslint ./",
     "lint:fix": "npm run lint -- --fix",
+    "format": "prettier --write README.md {lib,docs,tests}/**/*.{js,md}",
     "test": "jest"
   },
   "dependencies": {},

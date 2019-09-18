@@ -24,21 +24,18 @@ Add `testing-library` to the plugins section of your `.eslintrc` configuration f
 
 ```json
 {
-    "plugins": [
-        "testing-library"
-    ]
+  "plugins": ["testing-library"]
 }
 ```
-
 
 TODO: Then configure the rules you want to use under the rules section.
 
 ```json
 {
-    "rules": {
-        "testing-library/await-async-query": "warn",
-        "testing-library/no-await-sync-query": "error"
-    }
+  "rules": {
+    "testing-library/await-async-query": "warn",
+    "testing-library/no-await-sync-query": "error"
+  }
 }
 ```
 
@@ -70,9 +67,4 @@ While the `recommended` configuration only change in major versions, the `all` c
 
 ## Supported Rules
 
-* TODO
-
-
-
-
-
+- TODO
