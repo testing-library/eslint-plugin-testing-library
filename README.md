@@ -53,18 +53,6 @@ To enable this configuration use the `extends` property in your `.eslintrc` conf
 }
 ```
 
-### All
-
-If you want to enable all rules instead of only some you can do so by adding the `all` configuration to your `.eslintrc` config file:
-
-```json
-{
-  "extends": ["plugin:testing-library/all"]
-}
-```
-
-While the `recommended` configuration only change in major versions, the `all` configuration may change in any release and is thus unsuited for installations requiring long-term consistency.
-
 ## Supported Rules
 
 | Rule                                                     | Description                                   | Recommended      |
