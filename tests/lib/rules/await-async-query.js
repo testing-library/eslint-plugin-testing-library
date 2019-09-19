@@ -5,6 +5,10 @@
 // ------------------------------------------------------------------------------
 
 const rule = require('../../../lib/rules/await-async-query');
+const {
+  SYNC_QUERIES_COMBINATIONS,
+  ASYNC_QUERIES_COMBINATIONS,
+} = require('../../../lib/utils');
 const RuleTester = require('eslint').RuleTester;
 
 // ------------------------------------------------------------------------------
@@ -14,58 +18,79 @@ const RuleTester = require('eslint').RuleTester;
 const ruleTester = new RuleTester({ parserOptions: { ecmaVersion: 2018 } });
 ruleTester.run('await-async-query', rule, {
   valid: [
-    {
+    // async queries declaration are valid
+    ...ASYNC_QUERIES_COMBINATIONS.map(query => ({
       code: `
-        const { findByText } = setUp()
+        const { ${query} } = setUp()
       `,
-    },
-    {
+    })),
+
+    // async queries with await operator are valid
+    ...ASYNC_QUERIES_COMBINATIONS.map(query => ({
       code: `async () => {
-        const foo = await findByText('foo')
+        doSomething()
+        await ${query}('foo')
       }
       `,
-    },
-    {
+    })),
+
+    // async queries with promise in variable and await operator are valid
+    ...ASYNC_QUERIES_COMBINATIONS.map(query => ({
+      code: `async () => {
+        const promise = ${query}('foo')
+        await promise
+      }
+      `,
+    })),
+
+    // async queries with then method are valid
+    ...ASYNC_QUERIES_COMBINATIONS.map(query => ({
       code: `() => {
-        findByText('foo').then(node => {
+        ${query}('foo').then(() => {
           done()
         })
       }
       `,
-    },
-    {
+    })),
+
+    // async queries with promise in variable and then method are valid
+    ...ASYNC_QUERIES_COMBINATIONS.map(query => ({
       code: `() => {
-        const promise = findByText('foo')
-        promise.then(node => done())
+        const promise = ${query}('foo')
+        promise.then(() => done())
       }
       `,
-    },
-    {
-      code: `async () => {
-        doSomething()
-        const foo = await findByText('foo')
-      }
-      `,
-    },
-    {
-      code: `async () => {
-        doSomething()
-        const foo = await findAllByText('foo')
-      }
-      `,
-    },
-    {
-      code: `anArrowFunction = () => findByText('foo')`,
-    },
-    {
-      code: `function foo() {return findByText('foo')}`,
-    },
-    {
+    })),
+
+    // async queries with promise returned in arrow function definition are valid
+    ...ASYNC_QUERIES_COMBINATIONS.map(query => ({
+      code: `anArrowFunction = () => ${query}('foo')`,
+    })),
+
+    // async queries with promise returned in regular function definition are valid
+    ...ASYNC_QUERIES_COMBINATIONS.map(query => ({
+      code: `function foo() { return ${query}('foo') }`,
+    })),
+
+    // async queries with promise in variable and returned in regular function definition are valid
+    ...ASYNC_QUERIES_COMBINATIONS.map(query => ({
       code: `function foo() {
-        const promise = findByText('foo')
+        const promise = ${query}('foo')
         return promise
-      }`,
-    },
+      }
+      `,
+    })),
+
+    // sync queries are valid
+    ...SYNC_QUERIES_COMBINATIONS.map(query => ({
+      code: `() => {
+        doSomething()
+        ${query}('foo')
+      }
+      `,
+    })),
+
+    // non-existing queries are valid
     {
       code: `async () => {
         doSomething()
@@ -75,22 +100,12 @@ ruleTester.run('await-async-query', rule, {
     },
   ],
 
-  invalid: [
-    {
-      code: `async () => {
-        const foo = findByText('foo')
-      }
-      `,
-      errors: [
-        {
-          messageId: 'awaitAsyncQuery',
-        },
-      ],
-    },
-    {
+  invalid:
+    // async queries without await operator or then method are not valid
+    ASYNC_QUERIES_COMBINATIONS.map(query => ({
       code: `async () => {
         doSomething()
-        const foo = findByText('foo')
+        const foo = ${query}('foo')
       }
       `,
       errors: [
@@ -98,18 +113,5 @@ ruleTester.run('await-async-query', rule, {
           messageId: 'awaitAsyncQuery',
         },
       ],
-    },
-    {
-      code: `async () => {
-        doSomething()
-        const foo = findAllByText('foo')
-      }
-      `,
-      errors: [
-        {
-          messageId: 'awaitAsyncQuery',
-        },
-      ],
-    },
-  ],
+    })),
 });
