@@ -5,6 +5,10 @@
 // ------------------------------------------------------------------------------
 
 const rule = require('../../../lib/rules/no-await-sync-query');
+const {
+  SYNC_QUERIES_COMBINATIONS,
+  ASYNC_QUERIES_COMBINATIONS,
+} = require('../../../lib/utils');
 const RuleTester = require('eslint').RuleTester;
 
 // ------------------------------------------------------------------------------
@@ -14,18 +18,36 @@ const RuleTester = require('eslint').RuleTester;
 const ruleTester = new RuleTester({ parserOptions: { ecmaVersion: 2018 } });
 ruleTester.run('no-await-sync-query', rule, {
   valid: [
-    {
-      code: `async () => {
-        getByText('foo')
+    // sync queries without await are valid
+    ...SYNC_QUERIES_COMBINATIONS.map(query => ({
+      code: `() => {
+        ${query}('foo')
       }
       `,
-    },
+    })),
+
+    // async queries with await operator are valid
+    ...ASYNC_QUERIES_COMBINATIONS.map(query => ({
+      code: `async () => {
+        await ${query}('foo')
+      }
+      `,
+    })),
+
+    // async queries with then method are valid
+    ...ASYNC_QUERIES_COMBINATIONS.map(query => ({
+      code: `() => {
+        ${query}('foo').then(() => {});
+      }
+      `,
+    })),
   ],
 
-  invalid: [
-    {
+  invalid:
+    // sync queries with await operator are not valid
+    SYNC_QUERIES_COMBINATIONS.map(query => ({
       code: `async () => {
-        await getByText('foo')
+        await ${query}('foo')
       }
       `,
       errors: [
@@ -33,6 +55,5 @@ ruleTester.run('no-await-sync-query', rule, {
           messageId: 'noAwaitSyncQuery',
         },
       ],
-    },
-  ],
+    })),
 });
