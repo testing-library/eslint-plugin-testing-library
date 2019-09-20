@@ -1,31 +1,20 @@
-# Disallow unnecessary `await` for sync queries (no-await-sync-query)
+# Disallow the use of `debug` (no-debug)
 
-TODO: Please describe the origin of the rule here.
+Just like `console.log` statements pollutes the browser's output, debug statements also pollutes the tests if one of your team mates forgot to remove it. `debug` statements should be used when you actually want to debug your tests but should not be pushed to the codebase.
 
 ## Rule Details
 
-This rule aims to...
+This rule aims to disallow the use of `debug` in your tests.
 
 Examples of **incorrect** code for this rule:
 
 ```js
-
-// TODO: fill me in
-
+test('invalid debug', () => {
+  const { debug } = render(<Hello />);
+  debug();
+});
 ```
 
-Examples of **correct** code for this rule:
+## Further Reading
 
-```js
-
-// TODO: fill me in
-
-```
-
-### Options
-
-TODO: If there are any options, describe them here. Otherwise, delete this section.
-
-## When Not To Use It
-
-TODO: Give a short description of when it would be appropriate to turn off this rule.
+- [debug API in React Testing Library](https://testing-library.com/docs/react-testing-library/api#debug)
