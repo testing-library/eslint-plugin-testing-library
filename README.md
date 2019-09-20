@@ -51,13 +51,65 @@ Then configure the rules you want to use under the rules section.
 
 ### Recommended
 
-This plugin exports a recommended configuration that enforces good Testing Library practices.
+This plugin exports a recommended configuration that enforces good
+Testing Library practices _(you can find more info about enabled rules
+in [Supported Rules section](#supported-rules) within Recommended
+column)_.
 
-To enable this configuration use the `extends` property in your `.eslintrc` config file:
+To enable this configuration use the `extends` property in your
+`.eslintrc` config file:
 
 ```json
 {
   "extends": ["plugin:testing-library/recommended"]
+}
+```
+
+### Frameworks
+
+Starting from the premise that
+[DOM Testing Library](https://testing-library.com/docs/dom-testing-library/intro)
+is the base for the rest of Testing Library frameworks wrappers, this
+plugin also exports different configuration for those frameworks that
+enforces good practices for specific rules that only apply to them _(you
+can find more info about enabled rules in
+[Supported Rules section](#supported-rules) within Frameworks column)_.
+
+**Note that frameworks configurations enable their specific rules +
+recommended rules.**
+
+Available frameworks configurations are:
+
+##### Angular
+
+To enable this configuration use the `extends` property in your
+`.eslintrc` config file:
+
+```json
+{
+  "extends": ["plugin:testing-library/angular"]
+}
+```
+
+##### React
+
+To enable this configuration use the `extends` property in your
+`.eslintrc` config file:
+
+```json
+{
+  "extends": ["plugin:testing-library/react"]
+}
+```
+
+##### Vue
+
+To enable this configuration use the `extends` property in your
+`.eslintrc` config file:
+
+```json
+{
+  "extends": ["plugin:testing-library/vue"]
 }
 ```
 
