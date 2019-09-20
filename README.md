@@ -40,8 +40,9 @@ Then configure the rules you want to use under the rules section.
 ```json
 {
   "rules": {
-    "testing-library/await-async-query": "warn",
-    "testing-library/no-await-sync-query": "error"
+    "testing-library/await-async-query": "error",
+    "testing-library/no-await-sync-query": "error",
+    "testing-library/no-debug": "warn"
   }
 }
 ```
@@ -62,10 +63,13 @@ To enable this configuration use the `extends` property in your `.eslintrc` conf
 
 ## Supported Rules
 
-| Rule                                                     | Description                                   | Recommended      |
-| -------------------------------------------------------- | --------------------------------------------- | ---------------- |
-| [await-async-query](docs/rules/await-async-query.md)     | Enforce async queries to have proper `await`  | ![recommended][] |
-| [no-await-sync-query](docs/rules/no-await-sync-query.md) | Disallow unnecessary `await` for sync queries | ![recommended][] |
-| [no-debug](docs/rules/no-debug.md)                       | Disallow the use of `debug`                   |                  |
+| Rule                                                     | Description                                   | Recommended      | Frameworks                       |
+| -------------------------------------------------------- | --------------------------------------------- | ---------------- | -------------------------------- |
+| [await-async-query](docs/rules/await-async-query.md)     | Enforce async queries to have proper `await`  | ![recommended][] |                                  |
+| [no-await-sync-query](docs/rules/no-await-sync-query.md) | Disallow unnecessary `await` for sync queries | ![recommended][] |                                  |
+| [no-debug](docs/rules/no-debug.md)                       | Disallow the use of `debug`                   |                  | ![angular]() ![react]() ![vue]() |
 
 [recommended]: https://img.shields.io/badge/recommended-lightgrey?style=flat-square
+[angular]: https://img.shields.io/badge/-Angular-black?style=flat-square&logo=angular&logoColor=white&labelColor=DD0031&color=black
+[react]: https://img.shields.io/badge/-React-black?style=flat-square&logo=react&logoColor=white&labelColor=61DAFB&color=black
+[vue]: https://img.shields.io/badge/-Vue-black?style=flat-square&logo=vue.js&logoColor=white&labelColor=4FC08D&color=black
