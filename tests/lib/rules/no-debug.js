@@ -11,17 +11,45 @@ const RuleTester = require('eslint').RuleTester;
 // Tests
 // ------------------------------------------------------------------------------
 
-const ruleTester = new RuleTester({ parserOptions: { ecmaVersion: 2018 } });
+const ruleTester = new RuleTester({
+  parserOptions: {
+    ecmaVersion: 2018,
+    ecmaFeatures: {
+      jsx: true,
+    },
+  },
+});
 ruleTester.run('no-debug', rule, {
   valid: [
     {
-      code: `foo`,
+      code: `debug()`,
+    },
+    {
+      code: `() => {
+        const { debug } = foo()
+        debug()
+      }`,
+    },
+    {
+      code: `
+        const debug = require('debug')
+        debug()
+      `,
+    },
+    {
+      code: `
+        const { test } = render(<Component/>)
+        test()
+      `,
     },
   ],
 
   invalid: [
     {
-      code: `debug()`,
+      code: `
+        const { debug } = render(<Component/>)
+        debug()
+      `,
       errors: [
         {
           messageId: 'noDebug',
