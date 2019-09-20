@@ -80,7 +80,7 @@ recommended rules.**
 
 Available frameworks configurations are:
 
-##### Angular
+#### Angular
 
 To enable this configuration use the `extends` property in your
 `.eslintrc` config file:
@@ -91,7 +91,7 @@ To enable this configuration use the `extends` property in your
 }
 ```
 
-##### React
+#### React
 
 To enable this configuration use the `extends` property in your
 `.eslintrc` config file:
@@ -102,7 +102,7 @@ To enable this configuration use the `extends` property in your
 }
 ```
 
-##### Vue
+#### Vue
 
 To enable this configuration use the `extends` property in your
 `.eslintrc` config file:
