@@ -42,6 +42,18 @@ ruleTester.run('no-debug', rule, {
         test()
       `,
     },
+    {
+      code: `
+        const utils = render(<Component/>)
+        utils.debug
+      `,
+    },
+    {
+      code: `
+        const utils = render(<Component/>)
+        utils.foo()
+      `,
+    },
   ],
 
   invalid: [
@@ -51,6 +63,33 @@ ruleTester.run('no-debug', rule, {
         debug()
       `,
       errors: [
+        {
+          messageId: 'noDebug',
+        },
+      ],
+    },
+    {
+      code: `
+        const utils = render(<Component/>)
+        utils.debug()
+      `,
+      errors: [
+        {
+          messageId: 'noDebug',
+        },
+      ],
+    },
+    {
+      code: `
+        const utils = render(<Component/>)
+        utils.debug()
+        utils.foo()
+        utils.debug()
+      `,
+      errors: [
+        {
+          messageId: 'noDebug',
+        },
         {
           messageId: 'noDebug',
         },

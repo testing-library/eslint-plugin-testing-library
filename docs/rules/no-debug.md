@@ -9,10 +9,11 @@ This rule aims to disallow the use of `debug` in your tests.
 Examples of **incorrect** code for this rule:
 
 ```js
-test('invalid debug', () => {
-  const { debug } = render(<Hello />);
-  debug();
-});
+const { debug } = render(<Hello />);
+debug();
+// OR
+const utils = render(<Hello />);
+utils.debug();
 ```
 
 ## Further Reading
