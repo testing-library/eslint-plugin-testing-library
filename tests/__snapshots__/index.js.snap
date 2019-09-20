@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`shareable configs should export proper "recommended" config 1`] = `
+Object {
+  "plugins": Array [
+    "testing-library",
+  ],
+  "rules": Object {
+    "testing-library/await-async-query": "error",
+    "testing-library/no-await-sync-query": "error",
+  },
+}
+`;
