@@ -66,5 +66,6 @@ To enable this configuration use the `extends` property in your `.eslintrc` conf
 | -------------------------------------------------------- | --------------------------------------------- | ---------------- |
 | [await-async-query](docs/rules/await-async-query.md)     | Enforce async queries to have proper `await`  | ![recommended][] |
 | [no-await-sync-query](docs/rules/no-await-sync-query.md) | Disallow unnecessary `await` for sync queries | ![recommended][] |
+| [no-debug](docs/rules/no-debug.md)                       | Disallow the use of `debug`                   |                  |
 
 [recommended]: https://img.shields.io/badge/recommended-lightgrey?style=flat-square
