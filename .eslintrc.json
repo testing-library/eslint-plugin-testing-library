@@ -2,14 +2,19 @@
   "env": {
     "commonjs": true,
     "es6": true,
-    "node": true
+    "node": true,
+    "jest/globals": true
   },
   "extends": [
     "standard",
-    "prettier"
+    "prettier",
+    "plugin:jest/recommended",
+    "plugin:jest-formatting/recommended"
   ],
   "plugins": [
-    "prettier"
+    "prettier",
+    "jest",
+    "jest-formatting"
   ],
   "globals": {
     "Atomics": "readonly",
