@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`shareable configs should export proper "angular" config 1`] = `
+exports[`should export proper "angular" config 1`] = `
 Object {
   "plugins": Array [
     "testing-library",
@@ -13,7 +13,7 @@ Object {
 }
 `;
 
-exports[`shareable configs should export proper "react" config 1`] = `
+exports[`should export proper "react" config 1`] = `
 Object {
   "plugins": Array [
     "testing-library",
@@ -26,7 +26,7 @@ Object {
 }
 `;
 
-exports[`shareable configs should export proper "recommended" config 1`] = `
+exports[`should export proper "recommended" config 1`] = `
 Object {
   "plugins": Array [
     "testing-library",
@@ -38,7 +38,7 @@ Object {
 }
 `;
 
-exports[`shareable configs should export proper "vue" config 1`] = `
+exports[`should export proper "vue" config 1`] = `
 Object {
   "plugins": Array [
     "testing-library",
@@ -49,4 +49,12 @@ Object {
     "testing-library/no-debug": "warn",
   },
 }
+`;
+
+exports[`should export proper rules 1`] = `
+Array [
+  "await-async-query",
+  "no-await-sync-query",
+  "no-debug",
+]
 `;
