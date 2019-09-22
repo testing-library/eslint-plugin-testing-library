@@ -33,6 +33,7 @@ ruleTester.run('no-debug', rule, {
     },
     {
       code: `
+        let foo
         const debug = require('debug')
         debug()
       `,
