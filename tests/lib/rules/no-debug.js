@@ -26,6 +26,7 @@ ruleTester.run('no-debug', rule, {
     },
     {
       code: `() => {
+        const somethingElse = {}
         const { debug } = foo()
         debug()
       }`,
