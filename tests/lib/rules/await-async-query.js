@@ -122,16 +122,30 @@ ruleTester.run('await-async-query', rule, {
 
   invalid:
     // async queries without await operator or then method are not valid
-    ASYNC_QUERIES_COMBINATIONS.map(query => ({
-      code: `async () => {
+    [
+      ...ASYNC_QUERIES_COMBINATIONS.map(query => ({
+        code: `async () => {
         doSomething()
         const foo = ${query}('foo')
       }
       `,
-      errors: [
-        {
-          messageId: 'awaitAsyncQuery',
-        },
-      ],
-    })),
+        errors: [
+          {
+            messageId: 'awaitAsyncQuery',
+          },
+        ],
+      })),
+      ...ASYNC_QUERIES_COMBINATIONS.map(query => ({
+        code: `async () => {
+        const foo = ${query}('foo')
+        expect(foo).toBeInTheDocument()
+      }
+      `,
+        errors: [
+          {
+            message: `\`${query}\` must have \`await\` operator`,
+          },
+        ],
+      })),
+    ],
 });
