@@ -44,6 +44,16 @@ ruleTester.run('await-async-query', rule, {
       `,
     })),
 
+    // async queries saving element in var with promise immediately resolved are valid
+    ...ASYNC_QUERIES_COMBINATIONS.map(query => ({
+      code: `async () => {
+        doSomething()
+        const foo = ${query}('foo').then(node => node)
+        expect(foo).toBeInTheDocument();
+      }
+      `,
+    })),
+
     // async queries with promise in variable and await operator are valid
     ...ASYNC_QUERIES_COMBINATIONS.map(query => ({
       code: `async () => {
