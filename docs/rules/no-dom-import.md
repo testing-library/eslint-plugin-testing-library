@@ -18,7 +18,8 @@ module to:
   eslint-plugin-import)
 
 This rule aims to prevent users from import anything directly from
-`@testing-library/dom` (or `dom-testing-library`).
+`@testing-library/dom` (or `dom-testing-library`) and it's useful for
+new starters or when IDEs autoimport from wrong module.
 
 Examples of **incorrect** code for this rule:
 
