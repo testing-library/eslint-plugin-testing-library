@@ -120,6 +120,7 @@ To enable this configuration use the `extends` property in your
 | [await-async-query](docs/rules/await-async-query.md)     | Enforce async queries to have proper `await`  | ![recommended][] |                                  |
 | [no-await-sync-query](docs/rules/no-await-sync-query.md) | Disallow unnecessary `await` for sync queries | ![recommended][] |                                  |
 | [no-debug](docs/rules/no-debug.md)                       | Disallow the use of `debug`                   |                  | ![angular][] ![react][] ![vue][] |
+| [no-dom-import](docs/rules/no-dom-import.md)             | Disallow importing from DOM Testing Library   |                  | ![angular][] ![react][] ![vue][] |
 
 [recommended]: https://img.shields.io/badge/recommended-lightgrey?style=flat-square
 [angular]: https://img.shields.io/badge/-Angular-black?style=flat-square&logo=angular&logoColor=white&labelColor=DD0031&color=black
