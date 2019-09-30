@@ -36,6 +36,16 @@ ruleTester.run('no-dom-import', rule, {
       ],
     },
     {
+      code: 'import { fireEvent } from "dom-testing-library"',
+      options: ['react'],
+      errors: [
+        {
+          message:
+            'import from DOM Testing Library is restricted, import from @testing-library/react instead',
+        },
+      ],
+    },
+    {
       code: 'import * as testing from "dom-testing-library"',
       errors: [
         {
@@ -88,6 +98,16 @@ ruleTester.run('no-dom-import', rule, {
       errors: [
         {
           messageId: 'noDomImport',
+        },
+      ],
+    },
+    {
+      code: 'const { fireEvent } = require("@testing-library/dom")',
+      options: ['vue'],
+      errors: [
+        {
+          message:
+            'import from DOM Testing Library is restricted, import from @testing-library/vue instead',
         },
       ],
     },
