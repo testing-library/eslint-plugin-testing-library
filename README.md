@@ -115,12 +115,13 @@ To enable this configuration use the `extends` property in your
 
 ## Supported Rules
 
-| Rule                                                     | Description                                   | Recommended      | Frameworks                       | Fixable      |
-| -------------------------------------------------------- | --------------------------------------------- | ---------------- | -------------------------------- | ------------ |
-| [await-async-query](docs/rules/await-async-query.md)     | Enforce async queries to have proper `await`  | ![recommended][] |                                  |              |
-| [no-await-sync-query](docs/rules/no-await-sync-query.md) | Disallow unnecessary `await` for sync queries | ![recommended][] |                                  |              |
-| [no-debug](docs/rules/no-debug.md)                       | Disallow the use of `debug`                   |                  | ![angular][] ![react][] ![vue][] |              |
-| [no-dom-import](docs/rules/no-dom-import.md)             | Disallow importing from DOM Testing Library   |                  | ![angular][] ![react][] ![vue][] | ![fixable][] |
+| Rule                                                     | Description                                    | Recommended      | Frameworks                       | Fixable      |
+| -------------------------------------------------------- | ---------------------------------------------- | ---------------- | -------------------------------- | ------------ |
+| [await-async-query](docs/rules/await-async-query.md)     | Enforce async queries to have proper `await`   | ![recommended][] |                                  |              |
+| [await-fire-event](docs/rules/await-fire-event.md)       | Enforce async fire event methods to be awaited |                  | ![vue][]                         |              |
+| [no-await-sync-query](docs/rules/no-await-sync-query.md) | Disallow unnecessary `await` for sync queries  | ![recommended][] |                                  |              |
+| [no-debug](docs/rules/no-debug.md)                       | Disallow the use of `debug`                    |                  | ![angular][] ![react][] ![vue][] |              |
+| [no-dom-import](docs/rules/no-dom-import.md)             | Disallow importing from DOM Testing Library    |                  | ![angular][] ![react][] ![vue][] | ![fixable][] |
 
 [recommended]: https://img.shields.io/badge/recommended-lightgrey?style=flat-square
 [fixable]: https://img.shields.io/badge/fixable-success?style=flat-square
