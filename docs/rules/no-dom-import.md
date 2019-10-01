@@ -57,6 +57,20 @@ const { fireEvent } = require('react-testing-library');
 const { fireEvent } = require('@testing-library/react');
 ```
 
+## Options
+
+This rule has an option in case you want to tell the user which framework to use.
+
+### Example
+
+```json
+{
+  "testing-library/no-dom-import": ["error", "react"]
+}
+```
+
+With the configuration above, if the user imports from `@testing-library/dom` or `dom-testing-library` instead of the used framework, ESLint will tell the user to import from `@testing-library/react` or `react-testing-library`.
+
 ## Further Reading
 
 - [Angular Testing Library API](https://testing-library.com/docs/angular-testing-library/api)
