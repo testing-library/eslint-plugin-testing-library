@@ -6,7 +6,7 @@ const path = require('path');
 
 const rulesModules = fs.readdirSync(path.join(__dirname, '/lib/rules'));
 
-it('should export proper rules', () => {
+it('should export all available rules', () => {
   const availableRules = rulesModules.map(module => module.replace('.js', ''));
   expect(Object.keys(rules)).toEqual(availableRules);
 });
