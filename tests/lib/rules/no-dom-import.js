@@ -34,6 +34,7 @@ ruleTester.run('no-dom-import', rule, {
           messageId: 'noDomImport',
         },
       ],
+      output: 'import { fireEvent } from "dom-testing-library"',
     },
     {
       code: 'import { fireEvent } from "dom-testing-library"',
@@ -44,6 +45,19 @@ ruleTester.run('no-dom-import', rule, {
             'import from DOM Testing Library is restricted, import from react-testing-library instead',
         },
       ],
+      output: `import { fireEvent } from "react-testing-library"`,
+    },
+    // Single quote or double quotes should not be replaced
+    {
+      code: `import { fireEvent } from 'dom-testing-library'`,
+      options: ['react'],
+      errors: [
+        {
+          message:
+            'import from DOM Testing Library is restricted, import from react-testing-library instead',
+        },
+      ],
+      output: `import { fireEvent } from 'react-testing-library'`,
     },
     {
       code: 'import * as testing from "dom-testing-library"',
@@ -110,6 +124,7 @@ ruleTester.run('no-dom-import', rule, {
             'import from DOM Testing Library is restricted, import from @testing-library/vue instead',
         },
       ],
+      output: 'const { fireEvent } = require("@testing-library/vue")',
     },
     {
       code: 'require("dom-testing-library")',
