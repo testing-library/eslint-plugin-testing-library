@@ -50,11 +50,3 @@ Object {
   },
 }
 `;
-
-exports[`should export proper rules 1`] = `
-Array [
-  "await-async-query",
-  "no-await-sync-query",
-  "no-debug",
-]
-`;
