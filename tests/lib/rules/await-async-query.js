@@ -139,10 +139,12 @@ ruleTester.run('await-async-query', rule, {
         code: `async () => {
         const foo = ${query}('foo')
         expect(foo).toBeInTheDocument()
+        expect(foo).toHaveAttribute('src', 'bar');
       }
       `,
         errors: [
           {
+            line: 2,
             message: `\`${query}\` must have \`await\` operator`,
           },
         ],
