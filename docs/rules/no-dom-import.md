@@ -1,7 +1,7 @@
 # Disallow importing from DOM Testing Library
 
 Ensure that there are no direct imports from `@testing-library/dom` or
-`@testing-library/dom` when using some testing library framework
+`dom-testing-library` when using some testing library framework
 wrapper.
 
 ## Rule Details

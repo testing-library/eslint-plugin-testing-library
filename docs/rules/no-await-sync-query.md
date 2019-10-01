@@ -1,6 +1,6 @@
 # Disallow unnecessary `await` for sync queries (no-await-sync-query)
 
-Ensure sync queries
+Ensure that sync queries are not awaited unnecessarily.
 
 ## Rule Details
 
