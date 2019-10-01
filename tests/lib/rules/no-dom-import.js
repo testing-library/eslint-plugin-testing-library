@@ -41,7 +41,7 @@ ruleTester.run('no-dom-import', rule, {
       errors: [
         {
           message:
-            'import from DOM Testing Library is restricted, import from @testing-library/react instead',
+            'import from DOM Testing Library is restricted, import from react-testing-library instead',
         },
       ],
     },
