@@ -1,6 +1,6 @@
 {
   "name": "eslint-plugin-testing-library",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "ESLint rules for Testing Library",
   "keywords": [
     "eslint",
@@ -16,6 +16,7 @@
     "type": "git",
     "url": "https://github.com/Belco90/eslint-plugin-testing-library.git"
   },
+  "homepage": "https://github.com/Belco90/eslint-plugin-testing-library",
   "main": "lib/index.js",
   "files": [
     "lib/"
