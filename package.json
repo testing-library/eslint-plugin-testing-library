@@ -17,6 +17,9 @@
     "url": "https://github.com/Belco90/eslint-plugin-testing-library.git"
   },
   "homepage": "https://github.com/Belco90/eslint-plugin-testing-library",
+  "bugs": {
+    "url": "https://github.com/Belco90/eslint-plugin-testing-library/issues"
+  },
   "main": "lib/index.js",
   "files": [
     "lib/"
