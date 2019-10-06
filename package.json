@@ -1,6 +1,6 @@
 {
   "name": "eslint-plugin-testing-library",
-  "version": "1.0.0",
+  "version": "0.0.0-development",
   "description": "ESLint rules for Testing Library",
   "keywords": [
     "eslint",
@@ -28,7 +28,8 @@
     "lint": "eslint ./",
     "lint:fix": "npm run lint -- --fix",
     "format": "prettier --write README.md {lib,docs,tests}/**/*.{js,md}",
-    "test": "jest"
+    "test": "jest",
+    "semantic-release": "semantic-release"
   },
   "dependencies": {},
   "devDependencies": {
@@ -47,7 +48,8 @@
     "husky": "^3.0.5",
     "jest": "^24.9.0",
     "lint-staged": "^9.2.5",
-    "prettier": "1.18.2"
+    "prettier": "1.18.2",
+    "semantic-release": "^15.13.24"
   },
   "peerDependencies": {
     "eslint": ">=5"
