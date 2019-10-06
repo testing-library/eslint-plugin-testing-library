@@ -15,5 +15,10 @@ it.each(['recommended', 'angular', 'react', 'vue'])(
   'should export proper "%s" config',
   configName => {
     expect(configs[configName]).toMatchSnapshot();
+
+    // make sure all enabled rules start by "testing-library/" prefix
+    Object.keys(configs[configName].rules).forEach(ruleEnabled => {
+      expect(ruleEnabled).toMatch(/^testing-library\/.+$/);
+    });
   }
 );
