@@ -72,6 +72,22 @@ ruleTester.run('no-debug', rule, {
     },
     {
       code: `
+        const { debug } = renderWithRedux(<Component/>)
+        debug()
+      `,
+      options: [
+        {
+          renderFunctions: ['renderWithRedux'],
+        },
+      ],
+      errors: [
+        {
+          messageId: 'noDebug',
+        },
+      ],
+    },
+    {
+      code: `
         const utils = render(<Component/>)
         utils.debug()
       `,
