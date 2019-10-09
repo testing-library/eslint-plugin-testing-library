@@ -16,6 +16,12 @@ const utils = render(<Hello />);
 utils.debug();
 ```
 
+If you use [custom render functions](https://testing-library.com/docs/example-react-redux) then you can set a config option in your `.eslintrc` to look for these.
+
+```
+   "testing-library/no-debug": ["error", {"renderFunctions":["renderWithRedux", "renderWithRouter"]}],
+```
+
 ## Further Reading
 
 - [debug API in React Testing Library](https://testing-library.com/docs/react-testing-library/api#debug)
