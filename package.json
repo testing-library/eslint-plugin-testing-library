@@ -1,6 +1,6 @@
 {
   "name": "eslint-plugin-testing-library",
-  "version": "0.0.0-development",
+  "version": "1.1.1",
   "description": "ESLint rules for Testing Library",
   "keywords": [
     "eslint",
