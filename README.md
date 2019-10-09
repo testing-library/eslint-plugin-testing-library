@@ -11,7 +11,7 @@
 
 <hr>
 
-[![Build status][build-badge]][https://travis-ci.org/belco90/eslint-plugin-testing-library]
+[![Build status][build-badge]][build-url]
 [![Package version][version-badge]][https://www.npmjs.com/package/eslint-plugin-testing-library]
 [![MIT License][license-badge]][https://github.com/belco90/eslint-plugin-testing-library/blob/master/license]
 <br>
@@ -137,12 +137,19 @@ To enable this configuration use the `extends` property in your
 | [no-dom-import](docs/rules/no-dom-import.md)             | Disallow importing from DOM Testing Library    | ![angular-badge][] ![react-badge][] ![vue-badge][]                        | ![fixable-badge][] |
 
 [build-badge]: https://img.shields.io/travis/Belco90/eslint-plugin-testing-library?style=flat-square
+[build-url]: https://travis-ci.org/belco90/eslint-plugin-testing-library
 [version-badge]: https://img.shields.io/npm/v/eslint-plugin-testing-library?style=flat-square
+[version-url]: https://www.npmjs.com/package/eslint-plugin-testing-library
 [license-badge]: https://img.shields.io/npm/l/eslint-plugin-testing-library?style=flat-square
+[license-url]: https://github.com/belco90/eslint-plugin-testing-library/blob/master/license
 [pr-badge]: https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square
+[pr-url]: http://makeapullrequest.com
 [gh-watchers-badge]: https://img.shields.io/github/watchers/Belco90/eslint-plugin-testing-library?style=social
+[gh-watchers-url]: https://github.com/belco90/eslint-plugin-testing-library/watchers
 [gh-stars-badge]: https://img.shields.io/github/stars/Belco90/eslint-plugin-testing-library?style=social
+[gh-stars-url]: https://github.com/belco90/eslint-plugin-testing-library/stargazers
 [tweet-badge]: https://img.shields.io/twitter/url?style=social&url=https%3A%2F%2Fgithub.com%2FBelco90%2Feslint-plugin-testing-library
+[tweet-url]: https://twitter.com/intent/tweet?url=https%3a%2f%2fgithub.com%2fbelco90%2feslint-plugin-testing-library&text=check%20out%20eslint-plugin-testing-library%20by%20@belcodev
 [recommended-badge]: https://img.shields.io/badge/recommended-lightgrey?style=flat-square
 [fixable-badge]: https://img.shields.io/badge/fixable-success?style=flat-square
 [angular-badge]: https://img.shields.io/badge/-Angular-black?style=flat-square&logo=angular&logoColor=white&labelColor=DD0031&color=black
