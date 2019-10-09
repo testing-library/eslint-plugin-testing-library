@@ -9,6 +9,19 @@
   <p>ESLint plugin to follow best practices and anticipate common mistakes when writing tests with Testing Library</p>
 </div>
 
+<hr>
+
+[![Build status][build-badge]][https://travis-ci.org/belco90/eslint-plugin-testing-library]
+[![Package version][version-badge]][https://www.npmjs.com/package/eslint-plugin-testing-library]
+[![MIT License][license-badge]][https://github.com/belco90/eslint-plugin-testing-library/blob/master/license]
+<br>
+[![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
+[![PRs Welcome][pr-badge]][http://makeapullrequest.com]
+<br>
+[![Watch on Github][gh-watchers-badge]][https://github.com/belco90/eslint-plugin-testing-library/watchers]
+[![Star on Github][gh-watchers-badge]][https://github.com/belco90/eslint-plugin-testing-library/stargazers]
+[![Tweet][tweet-badge]][https://twitter.com/intent/tweet?url=https%3a%2f%2fgithub.com%2fbelco90%2feslint-plugin-testing-library&text=check%20out%20eslint-plugin-testing-library%20by%20@belcodev]
+
 ## Installation
 
 You'll first need to install [ESLint](http://eslint.org):
@@ -115,16 +128,23 @@ To enable this configuration use the `extends` property in your
 
 ## Supported Rules
 
-| Rule                                                     | Description                                    | Configurations                                    | Fixable      |
-| -------------------------------------------------------- | ---------------------------------------------- | ------------------------------------------------- | ------------ |
-| [await-async-query](docs/rules/await-async-query.md)     | Enforce async queries to have proper `await`   | ![recommended][] ![angular][] ![react][] ![vue][] |              |
-| [await-fire-event](docs/rules/await-fire-event.md)       | Enforce async fire event methods to be awaited | ![vue][]                                          |              |
-| [no-await-sync-query](docs/rules/no-await-sync-query.md) | Disallow unnecessary `await` for sync queries  | ![recommended][] ![angular][] ![react][] ![vue][] |              |
-| [no-debug](docs/rules/no-debug.md)                       | Disallow the use of `debug`                    | ![angular][] ![react][] ![vue][]                  |              |
-| [no-dom-import](docs/rules/no-dom-import.md)             | Disallow importing from DOM Testing Library    | ![angular][] ![react][] ![vue][]                  | ![fixable][] |
+| Rule                                                     | Description                                    | Configurations                                                            | Fixable            |
+| -------------------------------------------------------- | ---------------------------------------------- | ------------------------------------------------------------------------- | ------------------ |
+| [await-async-query](docs/rules/await-async-query.md)     | Enforce async queries to have proper `await`   | ![recommended-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] |                    |
+| [await-fire-event](docs/rules/await-fire-event.md)       | Enforce async fire event methods to be awaited | ![vue-badge][]                                                            |                    |
+| [no-await-sync-query](docs/rules/no-await-sync-query.md) | Disallow unnecessary `await` for sync queries  | ![recommended-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] |                    |
+| [no-debug](docs/rules/no-debug.md)                       | Disallow the use of `debug`                    | ![angular-badge][] ![react-badge][] ![vue-badge][]                        |                    |
+| [no-dom-import](docs/rules/no-dom-import.md)             | Disallow importing from DOM Testing Library    | ![angular-badge][] ![react-badge][] ![vue-badge][]                        | ![fixable-badge][] |
 
-[recommended]: https://img.shields.io/badge/recommended-lightgrey?style=flat-square
-[fixable]: https://img.shields.io/badge/fixable-success?style=flat-square
-[angular]: https://img.shields.io/badge/-Angular-black?style=flat-square&logo=angular&logoColor=white&labelColor=DD0031&color=black
-[react]: https://img.shields.io/badge/-React-black?style=flat-square&logo=react&logoColor=white&labelColor=61DAFB&color=black
-[vue]: https://img.shields.io/badge/-Vue-black?style=flat-square&logo=vue.js&logoColor=white&labelColor=4FC08D&color=black
+[build-badge]: https://img.shields.io/travis/Belco90/eslint-plugin-testing-library?style=flat-square
+[version-badge]: https://img.shields.io/npm/v/eslint-plugin-testing-library?style=flat-square
+[license-badge]: https://img.shields.io/npm/l/eslint-plugin-testing-library?style=flat-square
+[pr-badge]: https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square
+[gh-watchers-badge]: https://img.shields.io/github/watchers/Belco90/eslint-plugin-testing-library?style=social
+[gh-stars-badge]: https://img.shields.io/github/stars/Belco90/eslint-plugin-testing-library?style=social
+[tweet-badge]: https://img.shields.io/twitter/url?style=social&url=https%3A%2F%2Fgithub.com%2FBelco90%2Feslint-plugin-testing-library
+[recommended-badge]: https://img.shields.io/badge/recommended-lightgrey?style=flat-square
+[fixable-badge]: https://img.shields.io/badge/fixable-success?style=flat-square
+[angular-badge]: https://img.shields.io/badge/-Angular-black?style=flat-square&logo=angular&logoColor=white&labelColor=DD0031&color=black
+[react-badge]: https://img.shields.io/badge/-React-black?style=flat-square&logo=react&logoColor=white&labelColor=61DAFB&color=black
+[vue-badge]: https://img.shields.io/badge/-Vue-black?style=flat-square&logo=vue.js&logoColor=white&labelColor=4FC08D&color=black
