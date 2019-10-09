@@ -12,15 +12,15 @@
 <hr>
 
 [![Build status][build-badge]][build-url]
-[![Package version][version-badge]][https://www.npmjs.com/package/eslint-plugin-testing-library]
-[![MIT License][license-badge]][https://github.com/belco90/eslint-plugin-testing-library/blob/master/license]
+[![Package version][version-badge]][version-url]
+[![MIT License][license-badge]][license-url]
 <br>
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
-[![PRs Welcome][pr-badge]][http://makeapullrequest.com]
+[![PRs Welcome][pr-badge]][pr-url]
 <br>
-[![Watch on Github][gh-watchers-badge]][https://github.com/belco90/eslint-plugin-testing-library/watchers]
-[![Star on Github][gh-watchers-badge]][https://github.com/belco90/eslint-plugin-testing-library/stargazers]
-[![Tweet][tweet-badge]][https://twitter.com/intent/tweet?url=https%3a%2f%2fgithub.com%2fbelco90%2feslint-plugin-testing-library&text=check%20out%20eslint-plugin-testing-library%20by%20@belcodev]
+[![Watch on Github][gh-watchers-badge]][gh-watchers-url]
+[![Star on Github][gh-watchers-badge]][gh-watchers-url]
+[![Tweet][tweet-badge]][tweet-url]
 
 ## Installation
 
