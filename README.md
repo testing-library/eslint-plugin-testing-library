@@ -19,7 +19,7 @@
 [![PRs Welcome][pr-badge]][pr-url]
 <br>
 [![Watch on Github][gh-watchers-badge]][gh-watchers-url]
-[![Star on Github][gh-watchers-badge]][gh-watchers-url]
+[![Star on Github][gh-stars-badge]][gh-stars-url]
 [![Tweet][tweet-badge]][tweet-url]
 
 ## Installation
