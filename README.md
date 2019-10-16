@@ -135,7 +135,7 @@ To enable this configuration use the `extends` property in your
 | [no-await-sync-query](docs/rules/no-await-sync-query.md)       | Disallow unnecessary `await` for sync queries  | ![recommended-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] |                    |
 | [no-debug](docs/rules/no-debug.md)                             | Disallow the use of `debug`                    | ![angular-badge][] ![react-badge][] ![vue-badge][]                        |                    |
 | [no-dom-import](docs/rules/no-dom-import.md)                   | Disallow importing from DOM Testing Library    | ![angular-badge][] ![react-badge][] ![vue-badge][]                        | ![fixable-badge][] |
-| [prefer-expect-query-by](docs/rules/prefer-expect-query-by.md) | Disallow the use of `expect(getBy*)`           | ![angular-badge][] ![react-badge][] ![vue-badge][]                        | ![fixable-badge][] |
+| [prefer-expect-query-by](docs/rules/prefer-expect-query-by.md) | Disallow the use of `expect(getBy*)`           | ![recommended-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] | ![fixable-badge][] |
 
 [build-badge]: https://img.shields.io/travis/Belco90/eslint-plugin-testing-library?style=flat-square
 [build-url]: https://travis-ci.org/belco90/eslint-plugin-testing-library
