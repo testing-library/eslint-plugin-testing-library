@@ -2,67 +2,61 @@
 
 const RuleTester = require('eslint').RuleTester;
 const rule = require('../../../lib/rules/prefer-expect-query-by');
+const { ALL_QUERIES_METHODS } = require('../../../lib/utils');
 
 const ruleTester = new RuleTester({
   parserOptions: { ecmaVersion: 2015, sourceType: 'module' },
 });
 
+const queryByVariants = ALL_QUERIES_METHODS.reduce(
+  (variants, method) => [
+    ...variants,
+    ...[`query${method}`, `queryAll${method}`],
+  ],
+  []
+);
+const getByVariants = ALL_QUERIES_METHODS.reduce(
+  (variants, method) => [...variants, ...[`get${method}`, `getAll${method}`]],
+  []
+);
+
 ruleTester.run('prefer-expect-query-by', rule, {
-  valid: [
-    { code: "expect(queryByText('Hello')).not.toBeInTheDocument()" },
-    { code: "expect(rendered.queryByText('Hello')).not.toBeInTheDocument()" },
-    { code: "expect(queryAllByText('Hello')).not.toBeInTheDocument()" },
-    {
-      code: "expect(rendered.queryAllByText('Hello')).not.toBeInTheDocument()",
-    },
-    { code: "expect(queryByText('Hello')).toBeInTheDocument()" },
-    { code: "expect(rendered.queryByText('Hello')).toBeInTheDocument()" },
-    { code: "expect(queryAllByText('Hello')).toBeInTheDocument()" },
-    {
-      code: "expect(rendered.queryAllByText('Hello')).toBeInTheDocument()",
-    },
-  ],
-  invalid: [
-    {
-      code: "expect(getByText('Hello')).not.toBeInTheDocument()",
-      errors: [{ messageId: 'expectQueryBy' }],
-      output: "expect(queryByText('Hello')).not.toBeInTheDocument()",
-    },
-    {
-      code: "expect(rendered.getByText('Hello')).not.toBeInTheDocument()",
-      errors: [{ messageId: 'expectQueryBy' }],
-      output: "expect(rendered.queryByText('Hello')).not.toBeInTheDocument()",
-    },
-    {
-      code: "expect(getAllByText('Hello')).not.toBeInTheDocument()",
-      errors: [{ messageId: 'expectQueryBy' }],
-      output: "expect(queryAllByText('Hello')).not.toBeInTheDocument()",
-    },
-    {
-      code: "expect(rendered.getAllByText('Hello')).not.toBeInTheDocument()",
-      errors: [{ messageId: 'expectQueryBy' }],
-      output:
-        "expect(rendered.queryAllByText('Hello')).not.toBeInTheDocument()",
-    },
-    {
-      code: "expect(getByText('Hello')).toBeInTheDocument()",
-      errors: [{ messageId: 'expectQueryBy' }],
-      output: "expect(queryByText('Hello')).toBeInTheDocument()",
-    },
-    {
-      code: "expect(rendered.getByText('Hello')).toBeInTheDocument()",
-      errors: [{ messageId: 'expectQueryBy' }],
-      output: "expect(rendered.queryByText('Hello')).toBeInTheDocument()",
-    },
-    {
-      code: "expect(getAllByText('Hello')).toBeInTheDocument()",
-      errors: [{ messageId: 'expectQueryBy' }],
-      output: "expect(queryAllByText('Hello')).toBeInTheDocument()",
-    },
-    {
-      code: "expect(rendered.getAllByText('Hello')).toBeInTheDocument()",
-      errors: [{ messageId: 'expectQueryBy' }],
-      output: "expect(rendered.queryAllByText('Hello')).toBeInTheDocument()",
-    },
-  ],
+  valid: queryByVariants.reduce(
+    (validRules, queryName) => [
+      ...validRules,
+      { code: `expect(${queryName}('Hello')).toBeInTheDocument()` },
+      { code: `expect(rendered.${queryName}('Hello')).toBeInTheDocument()` },
+      { code: `expect(${queryName}('Hello')).not.toBeInTheDocument()` },
+      {
+        code: `expect(rendered.${queryName}('Hello')).not.toBeInTheDocument()`,
+      },
+    ],
+    []
+  ),
+  invalid: getByVariants.reduce((invalidRules, queryName) => {
+    const fixedQueryName = queryName.replace('get', 'query');
+    return [
+      ...invalidRules,
+      {
+        code: `expect(${queryName}('Hello')).toBeInTheDocument()`,
+        errors: [{ messageId: 'expectQueryBy' }],
+        output: `expect(${fixedQueryName}('Hello')).toBeInTheDocument()`,
+      },
+      {
+        code: `expect(rendered.${queryName}('Hello')).toBeInTheDocument()`,
+        errors: [{ messageId: 'expectQueryBy' }],
+        output: `expect(rendered.${fixedQueryName}('Hello')).toBeInTheDocument()`,
+      },
+      {
+        code: `expect(${queryName}('Hello')).not.toBeInTheDocument()`,
+        errors: [{ messageId: 'expectQueryBy' }],
+        output: `expect(${fixedQueryName}('Hello')).not.toBeInTheDocument()`,
+      },
+      {
+        code: `expect(rendered.${queryName}('Hello')).not.toBeInTheDocument()`,
+        errors: [{ messageId: 'expectQueryBy' }],
+        output: `expect(rendered.${fixedQueryName}('Hello')).not.toBeInTheDocument()`,
+      },
+    ];
+  }, []),
 });
