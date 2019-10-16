@@ -64,25 +64,5 @@ ruleTester.run('prefer-expect-query-by', rule, {
       errors: [{ messageId: 'expectQueryBy' }],
       output: "expect(rendered.queryAllByText('Hello')).toBeInTheDocument()",
     },
-    {
-      code: "expect(findByText('Hello')).toBeInTheDocument()",
-      errors: [{ messageId: 'expectQueryBy' }],
-      output: "expect(queryByText('Hello')).toBeInTheDocument()",
-    },
-    {
-      code: "expect(rendered.findByText('Hello')).toBeInTheDocument()",
-      errors: [{ messageId: 'expectQueryBy' }],
-      output: "expect(rendered.queryByText('Hello')).toBeInTheDocument()",
-    },
-    {
-      code: "expect(findAllByText('Hello')).toBeInTheDocument()",
-      errors: [{ messageId: 'expectQueryBy' }],
-      output: "expect(queryAllByText('Hello')).toBeInTheDocument()",
-    },
-    {
-      code: "expect(rendered.findAllByText('Hello')).toBeInTheDocument()",
-      errors: [{ messageId: 'expectQueryBy' }],
-      output: "expect(rendered.queryAllByText('Hello')).toBeInTheDocument()",
-    },
   ],
 });
