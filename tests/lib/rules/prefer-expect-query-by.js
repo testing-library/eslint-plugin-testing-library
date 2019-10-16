@@ -33,30 +33,26 @@ ruleTester.run('prefer-expect-query-by', rule, {
     ],
     []
   ),
-  invalid: getByVariants.reduce((invalidRules, queryName) => {
-    const fixedQueryName = queryName.replace('get', 'query');
-    return [
+  invalid: getByVariants.reduce(
+    (invalidRules, queryName) => [
       ...invalidRules,
       {
         code: `expect(${queryName}('Hello')).toBeInTheDocument()`,
         errors: [{ messageId: 'expectQueryBy' }],
-        output: `expect(${fixedQueryName}('Hello')).toBeInTheDocument()`,
       },
       {
         code: `expect(rendered.${queryName}('Hello')).toBeInTheDocument()`,
         errors: [{ messageId: 'expectQueryBy' }],
-        output: `expect(rendered.${fixedQueryName}('Hello')).toBeInTheDocument()`,
       },
       {
         code: `expect(${queryName}('Hello')).not.toBeInTheDocument()`,
         errors: [{ messageId: 'expectQueryBy' }],
-        output: `expect(${fixedQueryName}('Hello')).not.toBeInTheDocument()`,
       },
       {
         code: `expect(rendered.${queryName}('Hello')).not.toBeInTheDocument()`,
         errors: [{ messageId: 'expectQueryBy' }],
-        output: `expect(rendered.${fixedQueryName}('Hello')).not.toBeInTheDocument()`,
       },
-    ];
-  }, []),
+    ],
+    []
+  ),
 });
