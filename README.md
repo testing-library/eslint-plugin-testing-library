@@ -17,6 +17,7 @@
 <br>
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg?style=flat-square)](https://github.com/semantic-release/semantic-release)
 [![PRs Welcome][pr-badge]][pr-url]
+[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-)
 <br>
 [![Watch on Github][gh-watchers-badge]][gh-watchers-url]
 [![Star on Github][gh-stars-badge]][gh-stars-url]
@@ -156,3 +157,23 @@ To enable this configuration use the `extends` property in your
 [angular-badge]: https://img.shields.io/badge/-Angular-black?style=flat-square&logo=angular&logoColor=white&labelColor=DD0031&color=black
 [react-badge]: https://img.shields.io/badge/-React-black?style=flat-square&logo=react&logoColor=white&labelColor=61DAFB&color=black
 [vue-badge]: https://img.shields.io/badge/-Vue-black?style=flat-square&logo=vue.js&logoColor=white&labelColor=4FC08D&color=black
+
+## Contributors ✨
+
+Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+<table>
+  <tr>
+    <td align="center"><a href="https://mario.dev"><img src="https://avatars1.githubusercontent.com/u/2677072?v=4" width="100px;" alt="Mario Beltrán Alarcón"/><br /><sub><b>Mario Beltrán Alarcón</b></sub></a><br /><a href="https://github.com/Belco90/eslint-plugin-testing-library/commits?author=Belco90" title="Code">💻</a> <a href="https://github.com/Belco90/eslint-plugin-testing-library/commits?author=Belco90" title="Documentation">📖</a> <a href="#review-Belco90" title="Reviewed Pull Requests">👀</a></td>
+  </tr>
+</table>
+
+<!-- markdownlint-enable -->
+<!-- prettier-ignore-end -->
+
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+
+This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
