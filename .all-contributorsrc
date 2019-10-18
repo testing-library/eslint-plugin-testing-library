@@ -46,6 +46,17 @@
         "doc",
         "test"
       ]
+    },
+    {
+      "login": "emmenko",
+      "name": "Nicola Molinari",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/1110551?v=4",
+      "profile": "https://emmenko.org/",
+      "contributions": [
+        "code",
+        "test",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7
