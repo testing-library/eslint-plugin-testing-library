@@ -17,7 +17,7 @@
 <br>
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg?style=flat-square)](https://github.com/semantic-release/semantic-release)
 [![PRs Welcome][pr-badge]][pr-url]
-[![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-4-orange.svg?style=flat-square)](#contributors)
 <br>
 [![Watch on Github][gh-watchers-badge]][gh-watchers-url]
 [![Star on Github][gh-stars-badge]][gh-stars-url]
