@@ -163,17 +163,14 @@ To enable this configuration use the `extends` property in your
 Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
-<!-- prettier-ignore-start -->
-<!-- markdownlint-disable -->
+<!-- prettier-ignore -->
 <table>
   <tr>
     <td align="center"><a href="https://mario.dev"><img src="https://avatars1.githubusercontent.com/u/2677072?v=4" width="100px;" alt="Mario Beltrán Alarcón"/><br /><sub><b>Mario Beltrán Alarcón</b></sub></a><br /><a href="https://github.com/Belco90/eslint-plugin-testing-library/commits?author=Belco90" title="Code">💻</a> <a href="https://github.com/Belco90/eslint-plugin-testing-library/commits?author=Belco90" title="Documentation">📖</a> <a href="#review-Belco90" title="Reviewed Pull Requests">👀</a> <a href="https://github.com/Belco90/eslint-plugin-testing-library/commits?author=Belco90" title="Tests">⚠️</a> <a href="#infra-Belco90" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a></td>
     <td align="center"><a href="http://thomlom.dev"><img src="https://avatars3.githubusercontent.com/u/16003285?v=4" width="100px;" alt="Thomas Lombart"/><br /><sub><b>Thomas Lombart</b></sub></a><br /><a href="https://github.com/Belco90/eslint-plugin-testing-library/commits?author=thomlom" title="Code">💻</a> <a href="https://github.com/Belco90/eslint-plugin-testing-library/commits?author=thomlom" title="Documentation">📖</a> <a href="#review-thomlom" title="Reviewed Pull Requests">👀</a> <a href="https://github.com/Belco90/eslint-plugin-testing-library/commits?author=thomlom" title="Tests">⚠️</a> <a href="#infra-thomlom" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a></td>
+    <td align="center"><a href="https://github.com/benmonro"><img src="https://avatars3.githubusercontent.com/u/399236?v=4" width="100px;" alt="Ben Monro"/><br /><sub><b>Ben Monro</b></sub></a><br /><a href="https://github.com/Belco90/eslint-plugin-testing-library/commits?author=benmonro" title="Code">💻</a> <a href="https://github.com/Belco90/eslint-plugin-testing-library/commits?author=benmonro" title="Documentation">📖</a> <a href="https://github.com/Belco90/eslint-plugin-testing-library/commits?author=benmonro" title="Tests">⚠️</a></td>
   </tr>
 </table>
-
-<!-- markdownlint-enable -->
-<!-- prettier-ignore-end -->
 
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
