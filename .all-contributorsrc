@@ -31,7 +31,9 @@
       "contributions": [
         "code",
         "doc",
-        "review"
+        "review",
+        "test",
+        "infra"
       ]
     }
   ],
