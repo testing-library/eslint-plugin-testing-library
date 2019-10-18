@@ -20,6 +20,17 @@
         "doc",
         "review"
       ]
+    },
+    {
+      "login": "thomlom",
+      "name": "Thomas Lombart",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/16003285?v=4",
+      "profile": "http://thomlom.dev",
+      "contributions": [
+        "code",
+        "doc",
+        "review"
+      ]
     }
   ],
   "contributorsPerLine": 7

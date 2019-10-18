@@ -17,7 +17,7 @@
 <br>
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg?style=flat-square)](https://github.com/semantic-release/semantic-release)
 [![PRs Welcome][pr-badge]][pr-url]
-[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg?style=flat-square)](#contributors-)
 <br>
 [![Watch on Github][gh-watchers-badge]][gh-watchers-url]
 [![Star on Github][gh-stars-badge]][gh-stars-url]
@@ -168,6 +168,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <table>
   <tr>
     <td align="center"><a href="https://mario.dev"><img src="https://avatars1.githubusercontent.com/u/2677072?v=4" width="100px;" alt="Mario Beltrán Alarcón"/><br /><sub><b>Mario Beltrán Alarcón</b></sub></a><br /><a href="https://github.com/Belco90/eslint-plugin-testing-library/commits?author=Belco90" title="Code">💻</a> <a href="https://github.com/Belco90/eslint-plugin-testing-library/commits?author=Belco90" title="Documentation">📖</a> <a href="#review-Belco90" title="Reviewed Pull Requests">👀</a></td>
+    <td align="center"><a href="http://thomlom.dev"><img src="https://avatars3.githubusercontent.com/u/16003285?v=4" width="100px;" alt="Thomas Lombart"/><br /><sub><b>Thomas Lombart</b></sub></a><br /><a href="https://github.com/Belco90/eslint-plugin-testing-library/commits?author=thomlom" title="Code">💻</a> <a href="https://github.com/Belco90/eslint-plugin-testing-library/commits?author=thomlom" title="Documentation">📖</a> <a href="#review-thomlom" title="Reviewed Pull Requests">👀</a></td>
   </tr>
 </table>
 
