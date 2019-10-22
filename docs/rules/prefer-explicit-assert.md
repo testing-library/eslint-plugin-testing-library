@@ -13,11 +13,18 @@ elements in their tests rather than just use `getBy*` queries and expect
 it doesn't throw an error so it's easier to understand what's the
 expected behavior within the test.
 
+> ⚠️ Please note that this rule is recommended to be used together with
+> [prefer-expect-query-by](docs/rules/prefer-expect-query-by.md), so the
+> combination of these two rules will force users to do 2 actual
+> changes: wrap `getBy*` with `expect` assertion and then use `queryBy*`
+> instead of `getBy*` for asserting.
+
 Examples of **incorrect** code for this rule:
 
 ```js
 // just calling `getBy*` query expecting not to throw an error as an
-// assert-like method, without actually using the returned element
+// assert-like method, without actually either using the returned element
+// or explicitly asserting
 getByText('foo');
 ```
 
@@ -28,9 +35,12 @@ Examples of **correct** code for this rule:
 // making the assertion more explicit
 expect(getByText('foo')).toBeDefined();
 
+// ⚠️ `getBy*` should be replaced by `queryBy*` when combined with `prefer-expect-query-by` rule
+expect(queryByText('foo')).toBeDefined();
+
 // even more explicit if you use `@testing-library/jest-dom` matcher
 // for checking the element is present in the document
-expect(getByText('foo')).toBeInTheDocument();
+expect(queryByText('foo')).toBeInTheDocument();
 
 // Doing something with the element returned without asserting is absolutely fine
 await waitForElement(() => getByText('foo'));
@@ -45,6 +55,10 @@ getByNonTestingLibraryVariant('foo');
 
 If you prefer to use `getBy*` queries implicitly as an assert-like
 method itself, then this rule is not recommended.
+
+## Related Rules
+
+- [prefer-expect-query-by](docs/rules/prefer-expect-query-by.md)
 
 ## Further Reading
 
