@@ -1,6 +1,6 @@
 'use strict';
 
-const rule = require('../../../lib/rules/no-get-by-assert');
+const rule = require('../../../lib/rules/prefer-explicit-assert');
 const { ALL_QUERIES_METHODS } = require('../../../lib/utils');
 const RuleTester = require('eslint').RuleTester;
 
@@ -9,7 +9,7 @@ const RuleTester = require('eslint').RuleTester;
 // ------------------------------------------------------------------------------
 
 const ruleTester = new RuleTester({ parserOptions: { ecmaVersion: 2018 } });
-ruleTester.run('no-get-by-assert', rule, {
+ruleTester.run('prefer-explicit-assert', rule, {
   valid: [
     {
       code: `getByText`,
