@@ -36,7 +36,7 @@ ruleTester.run('prefer-explicit-assert', rule, {
       code: `function bar() { return getByText('foo') }`,
     },
     {
-      code: `getByNonTestingLibraryVariant('foo')`,
+      code: `getByIcon('foo')`, // custom `getBy` query not extended through options
     },
   ],
 
@@ -69,5 +69,18 @@ ruleTester.run('prefer-explicit-assert', rule, {
         },
       ],
     })),
+    {
+      code: `getByIcon('foo')`, // custom `getBy` query extended through options
+      options: [
+        {
+          customQueries: ['getByIcon'],
+        },
+      ],
+      errors: [
+        {
+          messageId: 'noGetByAssert',
+        },
+      ],
+    },
   ],
 });
