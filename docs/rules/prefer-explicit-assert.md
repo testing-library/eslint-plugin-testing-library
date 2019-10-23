@@ -26,6 +26,9 @@ Examples of **incorrect** code for this rule:
 // assert-like method, without actually either using the returned element
 // or explicitly asserting
 getByText('foo');
+
+const utils = render(<Component />);
+utils.getByText('foo');
 ```
 
 Examples of **correct** code for this rule:
@@ -34,6 +37,9 @@ Examples of **correct** code for this rule:
 // wrapping the get query within a `expect` and use some matcher for
 // making the assertion more explicit
 expect(getByText('foo')).toBeDefined();
+
+const utils = render(<Component />);
+expect(utils.getByText('foo')).toBeDefined();
 
 // ⚠️ `getBy*` should be replaced by `queryBy*` when combined with `prefer-expect-query-by` rule
 expect(queryByText('foo')).toBeDefined();
