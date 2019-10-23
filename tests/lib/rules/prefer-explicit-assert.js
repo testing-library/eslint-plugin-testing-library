@@ -15,7 +15,19 @@ ruleTester.run('prefer-explicit-assert', rule, {
       code: `getByText`,
     },
     {
+      code: `const utils = render()
+      
+      utils.getByText
+      `,
+    },
+    {
       code: `expect(getByText('foo')).toBeDefined()`,
+    },
+    {
+      code: `const utils = render()
+      
+      expect(utils.getByText('foo')).toBeDefined()
+      `,
     },
     {
       code: `expect(getByText('foo')).toBeInTheDocument();`,
@@ -46,6 +58,18 @@ ruleTester.run('prefer-explicit-assert', rule, {
       errors: [
         {
           messageId: 'preferExplicitAssert',
+        },
+      ],
+    })),
+    ...ALL_QUERIES_METHODS.map(queryMethod => ({
+      code: `const utils = render()
+
+      utils.get${queryMethod}('foo')`,
+      errors: [
+        {
+          messageId: 'preferExplicitAssert',
+          line: 3,
+          column: 13,
         },
       ],
     })),
