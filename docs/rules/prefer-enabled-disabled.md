@@ -1,31 +1,30 @@
-# prefer toBeDisabled or toBeEnabled over attribute checks (prefer-enabled-disabled)
-
-Please describe the origin of the rule here.
+# prefer toBeDisabled() or toBeEnabled() over toHaveProperty('disabled', true|false) (prefer-enabled-disabled)
 
 ## Rule Details
 
-This rule aims to...
+This rule aims to improve readability of tests.
 
 Examples of **incorrect** code for this rule:
 
 ```js
-// fill me in
+expect(element).toHaveProperty('disabled', true);
+expect(element).toHaveProperty('disabled', false);
 ```
 
 Examples of **correct** code for this rule:
 
 ```js
-// fill me in
+expect(element).toBeEnabled();
+
+expect(element).toBeDisabled();
+
+expect(element).toHaveProperty('checked', true);
 ```
 
 ### Options
 
-If there are any options, describe them here. Otherwise, delete this section.
+N/A
 
 ## When Not To Use It
 
-Give a short description of when it would be appropriate to turn off this rule.
-
-## Further Reading
-
-If there are other links that describe the issue this rule addresses, please include them here in a bulleted list.
+Don't use this rule if you want to allow `.toHaveProperty('disabled', true|false);
