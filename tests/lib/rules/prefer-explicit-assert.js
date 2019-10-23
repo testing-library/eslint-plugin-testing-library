@@ -45,7 +45,7 @@ ruleTester.run('prefer-explicit-assert', rule, {
       code: `get${queryMethod}('foo')`,
       errors: [
         {
-          messageId: 'noGetByAssert',
+          messageId: 'preferExplicitAssert',
         },
       ],
     })),
@@ -60,11 +60,11 @@ ruleTester.run('prefer-explicit-assert', rule, {
       `,
       errors: [
         {
-          messageId: 'noGetByAssert',
+          messageId: 'preferExplicitAssert',
           line: 2,
         },
         {
-          messageId: 'noGetByAssert',
+          messageId: 'preferExplicitAssert',
           line: 5,
         },
       ],
@@ -78,7 +78,7 @@ ruleTester.run('prefer-explicit-assert', rule, {
       ],
       errors: [
         {
-          messageId: 'noGetByAssert',
+          messageId: 'preferExplicitAssert',
         },
       ],
     },
