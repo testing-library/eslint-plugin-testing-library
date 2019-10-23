@@ -55,12 +55,12 @@ getByNonTestingLibraryVariant('foo');
 
 This rule accepts a single options argument:
 
-- `customQueries`: this array option allows to extend default Testing
+- `customQueryNames`: this array option allows to extend default Testing
   Library queries with custom ones for including them into rule
   inspection.
 
   ```js
-  "testing-library/prefer-expect-query-by": ["error", {"customQueries": ["getByIcon", "getBySomethingElse"]}],
+  "testing-library/prefer-expect-query-by": ["error", {"customQueryNames": ["getByIcon", "getBySomethingElse"]}],
   ```
 
 ## When Not To Use It

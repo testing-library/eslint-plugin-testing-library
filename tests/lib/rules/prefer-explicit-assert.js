@@ -73,7 +73,7 @@ ruleTester.run('prefer-explicit-assert', rule, {
       code: `getByIcon('foo')`, // custom `getBy` query extended through options
       options: [
         {
-          customQueries: ['getByIcon'],
+          customQueryNames: ['getByIcon'],
         },
       ],
       errors: [
