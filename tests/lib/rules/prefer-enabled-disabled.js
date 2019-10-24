@@ -95,5 +95,14 @@ ruleTester.run('prefer-enabled-disabled', rule, {
       ],
       output: 'expect(element).toBeEnabled()',
     },
+    {
+      code: 'expect(element).not.toBeEnabled()',
+      errors: [
+        {
+          message: 'Use toBeDisabled() instead of not.toBeEnabled()',
+        },
+      ],
+      output: 'expect(element).toBeDisabled()',
+    },
   ],
 });
