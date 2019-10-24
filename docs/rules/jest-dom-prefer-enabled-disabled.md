@@ -2,7 +2,9 @@
 
 ## Rule Details
 
-This rule aims to prevent false positives and improve readability and should only be used with the @testing-library/jest-dom package. See below for examples of those potential issues and why this rule is useful. The rule is autofixable and will replace any instances of `.toHaveProperty()` or `.toHaveAttribute()` with `.toBeEnabled()` or `toBeDisabled()` as appropriate.
+This rule aims to prevent false positives and improve readability and should only be used with the @testing-library/jest-dom package. See below for examples of those potential issues and why this rule is recommended. The rule is autofixable and will replace any instances of `.toHaveProperty()` or `.toHaveAttribute()` with `.toBeEnabled()` or `toBeDisabled()` as appropriate.
+
+In addition, to avoid double negatives and confusing syntax, `expect(element).not.toBeDisabled()` is also reported and auto-fixed to `expect(element).toBeEnabled()` and visa versa.
 
 ### False positives
 
@@ -25,8 +27,18 @@ consider these 2 snippets:
 consider the following snippets.
 
 ```js
-expect(element).not.toHaveAttribute('disabled', false); // confused yet?
+const { getByRole } = render(<input type="checkbox" />);
+const element = getByRole('checkbox');
+
+expect(element).toHaveAttribute('disabled', false); // fails
+expect(element).toHaveAttribute('disabled', ''); // fails
+expect(element).not.toHaveAttribute('disabled', ''); // passes
+
+expect(element).not.toHaveAttribute('disabled', true); // passes.
+expect(element).not.toHaveAttribute('disabled', false); // also passes.
 ```
+
+As you can see there are a number of cases that be confusing, unintuitive and even lead to false positive tests.
 
 Examples of **incorrect** code for this rule:
 
