@@ -75,5 +75,25 @@ ruleTester.run('prefer-enabled-disabled', rule, {
       ],
       output: 'expect(element).toBeDisabled()',
     },
+    {
+      code: "expect(element).not.toHaveAttribute('disabled')",
+      errors: [
+        {
+          message:
+            "Use toBeEnabled() instead of not.toHaveAttribute('disabled')",
+        },
+      ],
+      output: 'expect(element).toBeEnabled()',
+    },
+    {
+      code: "expect(element).not.toHaveProperty('disabled')",
+      errors: [
+        {
+          message:
+            "Use toBeEnabled() instead of not.toHaveProperty('disabled')",
+        },
+      ],
+      output: 'expect(element).toBeEnabled()',
+    },
   ],
 });

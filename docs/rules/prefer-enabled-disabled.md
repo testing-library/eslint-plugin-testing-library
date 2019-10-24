@@ -33,3 +33,7 @@ Don't use this rule if you:
 
 - don't use jest-dom
 - want to allow `.toHaveProperty('disabled', true|false);
+
+## Further reading
+
+- https://github.com/testing-library/jest-dom#tobedisabled
