@@ -9,6 +9,8 @@ Examples of **incorrect** code for this rule:
 ```js
 expect(element).toHaveProperty('disabled', true);
 expect(element).toHaveProperty('disabled', false);
+
+expect(element).toHaveAttribute('disabled');
 ```
 
 Examples of **correct** code for this rule:
@@ -27,4 +29,7 @@ N/A
 
 ## When Not To Use It
 
-Don't use this rule if you want to allow `.toHaveProperty('disabled', true|false);
+Don't use this rule if you:
+
+- don't use jest-dom
+- want to allow `.toHaveProperty('disabled', true|false);
