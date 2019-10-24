@@ -3,18 +3,9 @@
  * @author Ben Monro
  */
 'use strict';
-
-// ------------------------------------------------------------------------------
-// Requirements
-// ------------------------------------------------------------------------------
-
 const rule = require('../../../lib/rules/jest-dom-prefer-enabled-disabled');
 
 const RuleTester = require('eslint').RuleTester;
-
-// ------------------------------------------------------------------------------
-// Tests
-// ------------------------------------------------------------------------------
 
 const ruleTester = new RuleTester({
   parserOptions: { ecmaVersion: 2015, sourceType: 'module' },
@@ -23,7 +14,6 @@ ruleTester.run('jest-dom-prefer-enabled-disabled', rule, {
   valid: [
     `expect(element).toBeDisabled()`,
     `expect(element).toHaveProperty('checked', true)`,
-    // give me some code that won't trigger a warning
   ],
 
   invalid: [
