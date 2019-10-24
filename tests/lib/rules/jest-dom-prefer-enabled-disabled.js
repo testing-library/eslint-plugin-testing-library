@@ -8,7 +8,7 @@
 // Requirements
 // ------------------------------------------------------------------------------
 
-const rule = require('../../../lib/rules/prefer-enabled-disabled');
+const rule = require('../../../lib/rules/jest-dom-prefer-enabled-disabled');
 
 const RuleTester = require('eslint').RuleTester;
 
@@ -19,7 +19,7 @@ const RuleTester = require('eslint').RuleTester;
 const ruleTester = new RuleTester({
   parserOptions: { ecmaVersion: 2015, sourceType: 'module' },
 });
-ruleTester.run('prefer-enabled-disabled', rule, {
+ruleTester.run('jest-dom-prefer-enabled-disabled', rule, {
   valid: [
     `expect(element).toBeDisabled()`,
     `expect(element).toHaveProperty('checked', true)`,
