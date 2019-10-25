@@ -74,4 +74,5 @@ Don't use this rule if you:
 
 ## Further reading
 
-- https://github.com/testing-library/jest-dom#tobedisabled
+- [toBeDisabled](https://github.com/testing-library/jest-dom#tobedisabled)
+- [toBeEnabled](https://github.com/testing-library/jest-dom#tobeenabled)
