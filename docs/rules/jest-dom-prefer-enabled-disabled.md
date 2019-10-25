@@ -38,7 +38,7 @@ expect(element).not.toHaveAttribute('disabled', true); // passes.
 expect(element).not.toHaveAttribute('disabled', false); // also passes.
 ```
 
-As you can see there are a number of cases that be confusing, unintuitive and even lead to false positive tests.
+As you can see, using `toHaveAttribute` in this case is confusing, unintuitive and can even lead to false positive tests.
 
 Examples of **incorrect** code for this rule:
 
