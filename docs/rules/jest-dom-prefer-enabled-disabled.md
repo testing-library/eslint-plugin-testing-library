@@ -69,7 +69,7 @@ expect(element).toHaveAttribute('checked');
 
 Don't use this rule if you:
 
-- don't use jest-dom
+- don't use `jest-dom`
 - want to allow `.toHaveProperty('disabled', true|false);
 
 ## Further reading
