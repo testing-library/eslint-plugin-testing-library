@@ -13,6 +13,7 @@ const ruleTester = new RuleTester({
 ruleTester.run('jest-dom-prefer-enabled-disabled', rule, {
   valid: [
     `expect(element).toBeDisabled()`,
+    `expect(element).toBeEnabled()`,
     `expect(element).toHaveProperty('checked', true)`,
   ],
 
