@@ -4,7 +4,7 @@
 
 This rule aims to prevent false positives and improve readability and should only be used with the `@testing-library/jest-dom` package. See below for examples of those potential issues and why this rule is recommended. The rule is autofixable and will replace any instances of `.toHaveProperty()` or `.toHaveAttribute()` with `.toBeEnabled()` or `toBeDisabled()` as appropriate.
 
-In addition, to avoid double negatives and confusing syntax, `expect(element).not.toBeDisabled()` is also reported and auto-fixed to `expect(element).toBeEnabled()` and visa versa.
+In addition, to avoid double negatives and confusing syntax, `expect(element).not.toBeDisabled()` is also reported and auto-fixed to `expect(element).toBeEnabled()` and vice versa.
 
 ### False positives
 
