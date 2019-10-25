@@ -8,7 +8,7 @@ In addition, to avoid double negatives and confusing syntax, `expect(element).no
 
 ### False positives
 
-consider these 2 snippets:
+Consider these 2 snippets:
 
 ```js
 
