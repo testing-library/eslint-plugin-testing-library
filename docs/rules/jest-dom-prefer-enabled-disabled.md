@@ -11,15 +11,13 @@ In addition, to avoid double negatives and confusing syntax, `expect(element).no
 Consider these 2 snippets:
 
 ```js
+const { getByRole } = render(<input type="checkbox" disabled />);
+const element = getByRole('checkbox');
+expect(element).toHaveProperty('disabled'); // passes
 
-    const { getByRole } = render(<input type="checkbox" disabled>);
-    const element = getByRole("checkbox");
-    expect(element).toHaveProperty('disabled'); // passes
-
-
-    const { getByRole } = render(<input type="checkbox" >);
-    const element = getByRole("checkbox");
-    expect(element).toHaveProperty('disabled'); // also passes 😱
+const { getByRole } = render(<input type="checkbox" />);
+const element = getByRole('checkbox');
+expect(element).toHaveProperty('disabled'); // also passes 😱
 ```
 
 ### Readability
@@ -70,7 +68,7 @@ expect(element).toHaveAttribute('checked');
 Don't use this rule if you:
 
 - don't use `jest-dom`
-- want to allow `.toHaveProperty('disabled', true|false);
+- want to allow `.toHaveProperty('disabled', true|false);`
 
 ## Further reading
 

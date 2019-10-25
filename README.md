@@ -129,17 +129,16 @@ To enable this configuration use the `extends` property in your
 
 ## Supported Rules
 
-| Rule                                                           | Description                                                         | Configurations                                                            | Fixable            |
-| -------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------------- | ------------------ |
-| [await-async-query](docs/rules/await-async-query.md)           | Enforce async queries to have proper `await`                        | ![recommended-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] |                    |
-| [await-fire-event](docs/rules/await-fire-event.md)             | Enforce async fire event methods to be awaited                      | ![vue-badge][]                                                            |                    |
-| [no-await-sync-query](docs/rules/no-await-sync-query.md)       | Disallow unnecessary `await` for sync queries                       | ![recommended-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] |                    |
-| [no-debug](docs/rules/no-debug.md)                             | Disallow the use of `debug`                                         | ![angular-badge][] ![react-badge][] ![vue-badge][]                        |                    |
-| [no-dom-import](docs/rules/no-dom-import.md)                   | Disallow importing from DOM Testing Library                         | ![angular-badge][] ![react-badge][] ![vue-badge][]                        | ![fixable-badge][] |
-| [prefer-expect-query-by](docs/rules/prefer-expect-query-by.md) | Disallow the use of `expect(getBy*)`                                | ![recommended-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] |                    |
-| [prefer-explicit-assert](docs/rules/prefer-explicit-assert.md) | Suggest using explicit assertions rather than just `getBy*` queries |                                                                           |                    |
-| [jest-dom-prefer-enabled-disabled](docs/rules/jest-dom-prefer-enabled-disabled.md) | Disallow the use of `toHaveProperty('disabled')` and `toHaveAttribute('disabled')` | ![recommended-badge][]<nobr>🦉jest-dom</nobr>                             | ![fixable-badge][] |
-
+| Rule                                                                               | Description                                                                        | Configurations                                                            | Fixable            |
+| ---------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- | ------------------------------------------------------------------------- | ------------------ |
+| [await-async-query](docs/rules/await-async-query.md)                               | Enforce async queries to have proper `await`                                       | ![recommended-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] |                    |
+| [await-fire-event](docs/rules/await-fire-event.md)                                 | Enforce async fire event methods to be awaited                                     | ![vue-badge][]                                                            |                    |
+| [jest-dom-prefer-enabled-disabled](docs/rules/jest-dom-prefer-enabled-disabled.md) | Disallow the use of `toHaveProperty('disabled')` and `toHaveAttribute('disabled')` |                                                                           | ![fixable-badge][] |
+| [no-await-sync-query](docs/rules/no-await-sync-query.md)                           | Disallow unnecessary `await` for sync queries                                      | ![recommended-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] |                    |
+| [no-debug](docs/rules/no-debug.md)                                                 | Disallow the use of `debug`                                                        | ![angular-badge][] ![react-badge][] ![vue-badge][]                        |                    |
+| [no-dom-import](docs/rules/no-dom-import.md)                                       | Disallow importing from DOM Testing Library                                        | ![angular-badge][] ![react-badge][] ![vue-badge][]                        | ![fixable-badge][] |
+| [prefer-expect-query-by](docs/rules/prefer-expect-query-by.md)                     | Disallow the use of `expect(getBy*)`                                               | ![recommended-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] |                    |
+| [prefer-explicit-assert](docs/rules/prefer-explicit-assert.md)                     | Suggest using explicit assertions rather than just `getBy*` queries                |                                                                           |                    |
 
 [build-badge]: https://img.shields.io/travis/Belco90/eslint-plugin-testing-library?style=flat-square
 [build-url]: https://travis-ci.org/belco90/eslint-plugin-testing-library
