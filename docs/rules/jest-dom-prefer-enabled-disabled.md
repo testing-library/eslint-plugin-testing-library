@@ -24,7 +24,7 @@ Consider these 2 snippets:
 
 ### Readability
 
-consider the following snippets.
+Consider the following snippets:
 
 ```js
 const { getByRole } = render(<input type="checkbox" />);
