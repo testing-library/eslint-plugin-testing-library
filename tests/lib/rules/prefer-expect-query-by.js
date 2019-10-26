@@ -25,6 +25,7 @@ ruleTester.run('prefer-expect-query-by', rule, {
     (validRules, queryName) => [
       ...validRules,
       { code: `expect(${queryName}('Hello')).toBeInTheDocument()` },
+      { code: `expect(${queryName}).toBeInTheDocument()` },
       { code: `expect(rendered.${queryName}('Hello')).toBeInTheDocument()` },
       { code: `expect(${queryName}('Hello')).not.toBeInTheDocument()` },
       {
