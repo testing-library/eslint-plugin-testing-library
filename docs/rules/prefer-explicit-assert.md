@@ -66,7 +66,7 @@ This rule accepts a single options argument:
   inspection.
 
   ```js
-  "testing-library/prefer-expect-query-by": ["error", {"customQueryNames": ["getByIcon", "getBySomethingElse"]}],
+  "testing-library/prefer-explicit-assert": ["error", {"customQueryNames": ["getByIcon", "getBySomethingElse"]}],
   ```
 
 ## When Not To Use It
