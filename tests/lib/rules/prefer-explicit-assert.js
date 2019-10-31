@@ -50,6 +50,12 @@ ruleTester.run('prefer-explicit-assert', rule, {
     {
       code: `getByIcon('foo')`, // custom `getBy` query not extended through options
     },
+    {
+      code: `const { getByText } = render()`,
+    },
+    {
+      code: `() => { getByText() }`,
+    },
   ],
 
   invalid: [
