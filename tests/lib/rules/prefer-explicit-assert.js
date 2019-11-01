@@ -16,7 +16,7 @@ ruleTester.run('prefer-explicit-assert', rule, {
     },
     {
       code: `const utils = render()
-      
+
       utils.getByText
       `,
     },
@@ -25,7 +25,7 @@ ruleTester.run('prefer-explicit-assert', rule, {
     },
     {
       code: `const utils = render()
-      
+
       expect(utils.getByText('foo')).toBeDefined()
       `,
     },
@@ -54,7 +54,10 @@ ruleTester.run('prefer-explicit-assert', rule, {
       code: `const { getByText } = render()`,
     },
     {
-      code: `() => { getByText() }`,
+      code: `it('test', () => { const { getByText } = render() })`,
+    },
+    {
+      code: `it('test', () => { const [ getByText ] = render() })`,
     },
   ],
 
