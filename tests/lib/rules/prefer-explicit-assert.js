@@ -62,6 +62,9 @@ ruleTester.run('prefer-explicit-assert', rule, {
     {
       code: `const a = [ getByText('foo') ]`,
     },
+    {
+      code: `const a = { foo: getByText('bar') }`,
+    },
   ],
 
   invalid: [
