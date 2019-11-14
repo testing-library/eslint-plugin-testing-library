@@ -76,7 +76,7 @@ method itself, then this rule is not recommended.
 
 ## Related Rules
 
-- [prefer-expect-query-by](docs/rules/prefer-expect-query-by.md)
+- [prefer-expect-query-by](prefer-expect-query-by.md)
 
 ## Further Reading
 
