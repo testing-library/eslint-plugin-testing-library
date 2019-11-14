@@ -175,6 +175,9 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <td align="center"><a href="https://www.matej.snuderl.si/"><img src="https://avatars3.githubusercontent.com/u/8524109?v=4" width="100px;" alt="Matej Šnuderl"/><br /><sub><b>Matej Šnuderl</b></sub></a><br /><a href="#ideas-Meemaw" title="Ideas, Planning, & Feedback">🤔</a> <a href="https://github.com/Belco90/eslint-plugin-testing-library/commits?author=Meemaw" title="Documentation">📖</a></td>
     <td align="center"><a href="https://afontcu.dev"><img src="https://avatars0.githubusercontent.com/u/9197791?v=4" width="100px;" alt="Adrià Fontcuberta"/><br /><sub><b>Adrià Fontcuberta</b></sub></a><br /><a href="https://github.com/Belco90/eslint-plugin-testing-library/commits?author=afontcu" title="Code">💻</a> <a href="https://github.com/Belco90/eslint-plugin-testing-library/commits?author=afontcu" title="Tests">⚠️</a></td>
   </tr>
+  <tr>
+    <td align="center"><a href="https://github.com/jonaldinger"><img src="https://avatars1.githubusercontent.com/u/663362?v=4" width="100px;" alt="Jon Aldinger"/><br /><sub><b>Jon Aldinger</b></sub></a><br /><a href="https://github.com/Belco90/eslint-plugin-testing-library/commits?author=jonaldinger" title="Documentation">📖</a></td>
+  </tr>
 </table>
 
 <!-- ALL-CONTRIBUTORS-LIST:END -->
