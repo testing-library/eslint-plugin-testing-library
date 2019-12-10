@@ -68,6 +68,9 @@ ruleTester.run('prefer-explicit-assert', rule, {
     {
       code: `const a = { foo: getByText('bar') }`,
     },
+    {
+      code: `queryByText("foo")`,
+    },
   ],
 
   invalid: [
@@ -111,6 +114,16 @@ ruleTester.run('prefer-explicit-assert', rule, {
         },
       ],
     })),
+    // for coverage
+    {
+      code: `getByText("foo")`,
+      options: [{ foo: 'bar' }],
+      errors: [
+        {
+          messageId: 'preferExplicitAssert',
+        },
+      ],
+    },
     {
       code: `getByIcon('foo')`, // custom `getBy` query extended through options
       options: [
