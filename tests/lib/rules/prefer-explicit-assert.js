@@ -33,6 +33,9 @@ ruleTester.run('prefer-explicit-assert', rule, {
       code: `expect(getByText('foo')).toBeInTheDocument();`,
     },
     {
+      code: `expect(getByText('foo').bar).toBeInTheDocument()`,
+    },
+    {
       code: `async () => { await waitForElement(() => getByText('foo')) }`,
     },
     {
