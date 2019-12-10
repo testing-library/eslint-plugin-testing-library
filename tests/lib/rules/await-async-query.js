@@ -149,5 +149,17 @@ ruleTester.run('await-async-query', rule, {
           },
         ],
       })),
+      ...ASYNC_QUERIES_COMBINATIONS.map(query => ({
+        code: `async () => {
+        expect(${query}('foo')).toBeInTheDocument()
+      }
+      `,
+        errors: [
+          {
+            line: 2,
+            message: `\`${query}\` must have \`await\` operator`,
+          },
+        ],
+      })),
     ],
 });
