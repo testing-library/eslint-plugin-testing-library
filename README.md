@@ -138,6 +138,7 @@ To enable this configuration use the `extends` property in your
 | [no-dom-import](docs/rules/no-dom-import.md)                   | Disallow importing from DOM Testing Library                         | ![angular-badge][] ![react-badge][] ![vue-badge][]                        | ![fixable-badge][] |
 | [prefer-expect-query-by](docs/rules/prefer-expect-query-by.md) | Disallow the use of `expect(getBy*)`                                | ![recommended-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] |                    |
 | [prefer-explicit-assert](docs/rules/prefer-explicit-assert.md) | Suggest using explicit assertions rather than just `getBy*` queries |                                                                           |                    |
+| [data-testid](docs/rules/data-testid.md)                       | Ensure `data-testid` values match a provided regex.                 |                                                                           |                    |
 
 [build-badge]: https://img.shields.io/travis/Belco90/eslint-plugin-testing-library?style=flat-square
 [build-url]: https://travis-ci.org/belco90/eslint-plugin-testing-library
