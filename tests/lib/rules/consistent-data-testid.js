@@ -4,7 +4,7 @@
 // Requirements
 // ------------------------------------------------------------------------------
 
-const rule = require('../../../lib/rules/data-testid');
+const rule = require('../../../lib/rules/consistent-data-testid');
 const RuleTester = require('eslint').RuleTester;
 
 // ------------------------------------------------------------------------------
@@ -20,7 +20,7 @@ const parserOptions = {
 };
 
 const ruleTester = new RuleTester({ parserOptions });
-ruleTester.run('data-testid', rule, {
+ruleTester.run('consistent-data-testid', rule, {
   valid: [
     {
       code: `
@@ -78,7 +78,7 @@ ruleTester.run('data-testid', rule, {
           `,
       options: [
         {
-          testIdPattern: '^{componentName}(__([A-Z]+[a-z]*?)+)*$',
+          testIdPattern: '^{fileName}(__([A-Z]+[a-z]*?)+)*$',
         },
       ],
       filename: '/my/cool/file/path/Awesome.js',
@@ -97,7 +97,7 @@ ruleTester.run('data-testid', rule, {
           `,
       options: [
         {
-          testIdPattern: '^{componentName}(__([A-Z]+[a-z]*?)+)*$',
+          testIdPattern: '^{fileName}(__([A-Z]+[a-z]*?)+)*$',
         },
       ],
       filename: '/my/cool/file/path/Awesome.js',
@@ -116,7 +116,7 @@ ruleTester.run('data-testid', rule, {
           `,
       options: [
         {
-          testIdPattern: '^{componentName}(__([A-Z]+[a-z]*?)+)*$',
+          testIdPattern: '^{fileName}(__([A-Z]+[a-z]*?)+)*$',
         },
       ],
       filename: '/my/cool/file/Parent/index.js',
@@ -135,8 +135,26 @@ ruleTester.run('data-testid', rule, {
           `,
       options: [
         {
-          testIdPattern: '^{componentName}(__([A-Z]+[a-z]*?)+)*$',
-          excludePaths: ['__tests__'],
+          testIdPattern: '^{fileName}(__([A-Z]+[a-z]*?)+)*$',
+        },
+      ],
+      filename: '/my/cool/__tests__/Parent/index.js',
+    },
+    {
+      code: `
+            import React from 'react';
+            
+            const TestComponent = props => {
+              return (
+                <div data-testid="Parent">
+                  Hello
+                </div>
+              )
+            };
+          `,
+      options: [
+        {
+          testIdPattern: '{fileName}',
         },
       ],
       filename: '/my/cool/__tests__/Parent/index.js',
@@ -177,7 +195,6 @@ ruleTester.run('data-testid', rule, {
       options: [
         {
           testIdPattern: 'matchMe',
-          excludePaths: ['__mocks__'],
         },
       ],
       filename: '/my/cool/__tests__/Parent/index.js',
@@ -201,8 +218,7 @@ ruleTester.run('data-testid', rule, {
           `,
       options: [
         {
-          testIdPattern: '^{componentName}(__([A-Z]+[a-z]*?)+)*$',
-          excludePaths: ['__mocks__'],
+          testIdPattern: '^{fileName}(__([A-Z]+[a-z]*?)+)*$',
         },
       ],
       filename: '/my/cool/__tests__/Parent/index.js',
