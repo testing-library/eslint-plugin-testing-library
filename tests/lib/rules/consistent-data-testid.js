@@ -34,20 +34,6 @@ ruleTester.run('consistent-data-testid', rule, {
             )
           };
         `,
-      options: [],
-    },
-    {
-      code: `
-          import React from 'react';
-          
-          const TestComponent = props => {
-            return (
-              <div data-testid="cool">
-                Hello
-              </div>
-            )
-          };
-        `,
       options: [{ testIdPattern: 'cool' }],
     },
     {
@@ -135,7 +121,7 @@ ruleTester.run('consistent-data-testid', rule, {
           `,
       options: [
         {
-          testIdPattern: '^{fileName}(__([A-Z]+[a-z]*?)+)*$',
+          testIdPattern: '{fileName}',
         },
       ],
       filename: '/my/cool/__tests__/Parent/index.js',
@@ -146,7 +132,26 @@ ruleTester.run('consistent-data-testid', rule, {
             
             const TestComponent = props => {
               return (
-                <div data-testid="Parent">
+                <div data-testid="wrong" custom-attr="right-1">
+                  Hello
+                </div>
+              )
+            };
+          `,
+      options: [
+        {
+          testIdPattern: '^right(.*)$',
+          testIdAttribute: 'custom-attr',
+        },
+      ],
+    },
+    {
+      code: `
+            import React from 'react';
+            
+            const TestComponent = props => {
+              return (
+                <div data-test-id="Parent">
                   Hello
                 </div>
               )
@@ -155,6 +160,7 @@ ruleTester.run('consistent-data-testid', rule, {
       options: [
         {
           testIdPattern: '{fileName}',
+          testIdAttribute: 'data-test-id',
         },
       ],
       filename: '/my/cool/__tests__/Parent/index.js',
@@ -201,6 +207,32 @@ ruleTester.run('consistent-data-testid', rule, {
       errors: [
         {
           message: '`data-testid` "Nope" should match `/matchMe/`',
+        },
+      ],
+    },
+    {
+      code: `
+            import React from 'react';
+            
+            const TestComponent = props => {
+              return (
+                <div data-testid="Parent__cool" my-custom-attr="WrongComponent__cool">
+                  Hello
+                </div>
+              )
+            };
+          `,
+      options: [
+        {
+          testIdPattern: '^{fileName}(__([A-Z]+[a-z]*?)+)*$',
+          testIdAttribute: 'my-custom-attr',
+        },
+      ],
+      filename: '/my/cool/__tests__/Parent/index.js',
+      errors: [
+        {
+          message:
+            '`my-custom-attr` "WrongComponent__cool" should match `/^Parent(__([A-Z]+[a-z]*?)+)*$/`',
         },
       ],
     },
