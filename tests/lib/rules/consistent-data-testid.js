@@ -165,6 +165,21 @@ ruleTester.run('consistent-data-testid', rule, {
       ],
       filename: '/my/cool/__tests__/Parent/index.js',
     },
+    {
+      code: `
+          import React from 'react';
+          
+          const TestComponent = props => {
+            const dynamicTestId = 'somethingDynamic';
+            return (
+              <div data-testid={\`cool-\${dynamicTestId}\`}>
+                Hello
+              </div>
+            )
+          };
+        `,
+      options: [{ testIdPattern: 'somethingElse' }],
+    },
   ],
   invalid: [
     {
