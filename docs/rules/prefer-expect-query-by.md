@@ -29,6 +29,12 @@ test('some test', () => {
 test('some test', async () => {
   const utils = render(<App />);
   await wait(() => {
+    expect(utils.getByText('Foo')).toBeInTheDocument();
+  });
+  await wait(() => {
+    expect(utils.getAllByText('Foo')).toBeInTheDocument();
+  });
+  await wait(() => {
     expect(utils.getByText('Foo')).not.toBeInTheDocument();
   });
   await wait(() => {
@@ -52,6 +58,12 @@ test('some test', () => {
 ```js
 test('some test', async () => {
   const utils = render(<App />);
+  await wait(() => {
+    expect(utils.queryByText('Foo')).toBeInTheDocument();
+  });
+  await wait(() => {
+    expect(utils.queryAllByText('Foo')).toBeInTheDocument();
+  });
   await wait(() => {
     expect(utils.queryByText('Foo')).not.toBeInTheDocument();
   });
