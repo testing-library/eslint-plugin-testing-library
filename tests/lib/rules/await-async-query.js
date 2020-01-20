@@ -118,6 +118,22 @@ ruleTester.run('await-async-query', rule, {
       }
       `,
     },
+
+    // resolves/rejects matchers are valid
+    ...ASYNC_QUERIES_COMBINATIONS.map(query => ({
+      code: `test(() => {
+        expect(${query}("foo")).resolves.toBe("bar")
+        expect(wrappedQuery(${query}("foo"))).resolves.toBe("bar")
+      })
+      `,
+    })),
+    ...ASYNC_QUERIES_COMBINATIONS.map(query => ({
+      code: `test(() => {
+        expect(${query}("foo")).rejects.toBe("bar")
+        expect(wrappedQuery(${query}("foo"))).rejects.toBe("bar")
+      })
+      `,
+    })),
   ],
 
   invalid:
