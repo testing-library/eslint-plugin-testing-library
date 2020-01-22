@@ -52,6 +52,10 @@ const bar = () => {
 
 // return the promise within a function is correct too!
 const findMyButton = () => findByText('my button');
+
+// using a resolves/rejects matcher is also correct
+expect(findByTestId('alert')).resolves.toBe('Success');
+expect(findByTestId('alert')).rejects.toBe('Error');
 ```
 
 ## Further Reading
