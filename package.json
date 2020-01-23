@@ -14,11 +14,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Belco90/eslint-plugin-testing-library.git"
+    "url": "https://github.com/testing-library/eslint-plugin-testing-library.git"
   },
-  "homepage": "https://github.com/Belco90/eslint-plugin-testing-library",
+  "homepage": "https://github.com/testing-library/eslint-plugin-testing-library",
   "bugs": {
-    "url": "https://github.com/Belco90/eslint-plugin-testing-library/issues"
+    "url": "https://github.com/testing-library/eslint-plugin-testing-library/issues"
   },
   "main": "lib/index.js",
   "files": [

@@ -140,8 +140,8 @@ To enable this configuration use the `extends` property in your
 | [prefer-explicit-assert](docs/rules/prefer-explicit-assert.md) | Suggest using explicit assertions rather than just `getBy*` queries |                                                                           |                    |
 | [consistent-data-testid](docs/rules/consistent-data-testid.md) | Ensure `data-testid` values match a provided regex.                 |                                                                           |                    |
 
-[build-badge]: https://img.shields.io/travis/Belco90/eslint-plugin-testing-library?style=flat-square
-[build-url]: https://travis-ci.org/belco90/eslint-plugin-testing-library
+[build-badge]: https://img.shields.io/travis/testing-library/eslint-plugin-testing-library?style=flat-square
+[build-url]: https://travis-ci.org/testing-library/eslint-plugin-testing-library
 [version-badge]: https://img.shields.io/npm/v/eslint-plugin-testing-library?style=flat-square
 [version-url]: https://www.npmjs.com/package/eslint-plugin-testing-library
 [license-badge]: https://img.shields.io/npm/l/eslint-plugin-testing-library?style=flat-square
@@ -185,6 +185,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 
 <!-- markdownlint-enable -->
 <!-- prettier-ignore-end -->
+
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
