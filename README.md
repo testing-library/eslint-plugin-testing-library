@@ -17,16 +17,16 @@
 <br>
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg?style=flat-square)](https://github.com/semantic-release/semantic-release)
 [![PRs Welcome][pr-badge]][pr-url]
+<br>
+[![Watch on Github][gh-watchers-badge]][gh-watchers-url]
+[![Star on Github][gh-stars-badge]][gh-stars-url]
+[![Tweet][tweet-badge]][tweet-url]
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 
 [![All Contributors](https://img.shields.io/badge/all_contributors-4-orange.svg?style=flat-square)](#contributors)
 
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
-<br>
-[![Watch on Github][gh-watchers-badge]][gh-watchers-url]
-[![Star on Github][gh-stars-badge]][gh-stars-url]
-[![Tweet][tweet-badge]][tweet-url]
 
 ## Installation
 
