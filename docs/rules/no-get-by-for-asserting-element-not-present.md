@@ -1,4 +1,4 @@
-# Disallow the use of `expect(getBy*)` when elements may be asbent (no-get-by-for-absent-elements)
+# Disallow the use of `expect(getBy*)` when elements are not present (no-get-by-for-asserting-element-not-present)
 
 The (DOM) Testing Library allows to query DOM elements using different types of queries such as `getBy*` and `queryBy*`. Using `getBy*` throws an error in case the element is not found. This is useful when:
 
@@ -51,12 +51,8 @@ test('some test', () => {
 ```js
 test('some test', async () => {
   const utils = render(<App />);
-  await waitForElementToBeRemoved(() => {
-    expect(utils.queryByText('Foo')).toBeInTheDocument();
-  });
-  await waitForElementToBeRemoved(() => {
-    expect(utils.queryAllByText('Foo')).toBeInTheDocument();
-  });
+  await waitForElementToBeRemoved(() => utils.queryByText('Foo'));
+  await waitForElementToBeRemoved(() => utils.queryAllByText('Foo'));
 });
 ```
 

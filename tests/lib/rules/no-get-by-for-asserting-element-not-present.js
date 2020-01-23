@@ -1,7 +1,7 @@
 'use strict';
 
 const RuleTester = require('eslint').RuleTester;
-const rule = require('../../../lib/rules/no-get-by-for-absent-elements');
+const rule = require('../../../lib/rules/no-get-by-for-asserting-element-not-present');
 const { ALL_QUERIES_METHODS } = require('../../../lib/utils');
 
 const ruleTester = new RuleTester({
