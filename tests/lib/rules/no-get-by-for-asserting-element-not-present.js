@@ -8,10 +8,8 @@ const ruleTester = new RuleTester({
   parserOptions: { ecmaVersion: 2017, sourceType: 'module' },
 });
 
-const getByVariants = ALL_QUERIES_METHODS.reduce(
-  (variants, method) => [...variants, ...[`get${method}`, `getAll${method}`]],
-  []
-);
+const getByQueries = ALL_QUERIES_METHODS.map(method => `get${method}`);
+const queryByQueries = ALL_QUERIES_METHODS.map(method => `query${method}`);
 
 const allQueryUseInAssertion = queryName => [
   queryName,
@@ -30,30 +28,59 @@ const getInvalidAssertion = (query, matcher) =>
   }));
 
 ruleTester.run('prefer-expect-query-by', rule, {
-  valid: getByVariants.reduce(
-    (validRules, queryName) => [
-      ...validRules,
-      ...getValidAssertion(queryName, '.toBeInTheDocument()'),
-      ...getValidAssertion(queryName, '.toBe("foo")'),
-      ...getValidAssertion(queryName, '.toBeTruthy()'),
-      ...getValidAssertion(queryName, '.toEqual("World")'),
-      ...getValidAssertion(queryName, '.not.toBeFalsy()'),
-    ],
-    []
-  ),
-  invalid: getByVariants.reduce(
+  valid: [
+    ...getByQueries.reduce(
+      (validRules, queryName) => [
+        ...validRules,
+        ...getValidAssertion(queryName, '.toBeInTheDocument()'),
+        ...getValidAssertion(queryName, '.toBe("foo")'),
+        ...getValidAssertion(queryName, '.toBeTruthy()'),
+        ...getValidAssertion(queryName, '.toEqual("World")'),
+        ...getValidAssertion(queryName, '.not.toBeFalsy()'),
+      ],
+      []
+    ),
+    ...queryByQueries.reduce(
+      (validRules, queryName) => [
+        ...validRules,
+        ...getValidAssertion(queryName, '.not.toBeInTheDocument()'),
+        ...getValidAssertion(queryName, '.toBeNull()'),
+        ...getValidAssertion(queryName, '.not.toBeTruthy()'),
+        ...getValidAssertion(queryName, '.toBeFalsy()'),
+        {
+          code: `(async () => {
+            await waitForElementToBeRemoved(() => {
+              return ${queryName}("hello")
+            })
+          })()`,
+        },
+        {
+          code: `(async () => {
+            await waitForElementToBeRemoved(() =>  ${queryName}("hello"))
+          })()`,
+        },
+      ],
+      []
+    ),
+  ],
+  invalid: getByQueries.reduce(
     (invalidRules, queryName) => [
       ...invalidRules,
       ...getInvalidAssertion(queryName, '.not.toBeInTheDocument()'),
       ...getInvalidAssertion(queryName, '.toBeNull()'),
       ...getInvalidAssertion(queryName, '.not.toBeTruthy()'),
-      ...getInvalidAssertion(queryName, '.toBeUndefined()'),
       ...getInvalidAssertion(queryName, '.toBeFalsy()'),
       {
         code: `(async () => {
           await waitForElementToBeRemoved(() => {
             return ${queryName}("hello")
           })
+        })()`,
+        errors: [{ messageId: 'expectQueryBy' }],
+      },
+      {
+        code: `(async () => {
+          await waitForElementToBeRemoved(() =>  ${queryName}("hello"))
         })()`,
         errors: [{ messageId: 'expectQueryBy' }],
       },
