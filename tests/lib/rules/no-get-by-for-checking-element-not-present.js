@@ -1,7 +1,7 @@
 'use strict';
 
 const RuleTester = require('eslint').RuleTester;
-const rule = require('../../../lib/rules/no-get-by-for-asserting-element-not-present');
+const rule = require('../../../lib/rules/no-get-by-for-checking-element-not-present');
 const { ALL_QUERIES_METHODS } = require('../../../lib/utils');
 
 const ruleTester = new RuleTester({
@@ -37,6 +37,7 @@ ruleTester.run('prefer-expect-query-by', rule, {
         ...getValidAssertion(queryName, '.toBeTruthy()'),
         ...getValidAssertion(queryName, '.toEqual("World")'),
         ...getValidAssertion(queryName, '.not.toBeFalsy()'),
+        ...getValidAssertion(queryName, '.not.toBeNull()'),
       ],
       []
     ),
@@ -57,6 +58,13 @@ ruleTester.run('prefer-expect-query-by', rule, {
         {
           code: `(async () => {
             await waitForElementToBeRemoved(() =>  ${queryName}("hello"))
+          })()`,
+        },
+        {
+          code: `(async () => {
+            await waitForElementToBeRemoved(function() {
+              return ${queryName}("hello")
+            })
           })()`,
         },
       ],
@@ -81,6 +89,14 @@ ruleTester.run('prefer-expect-query-by', rule, {
       {
         code: `(async () => {
           await waitForElementToBeRemoved(() =>  ${queryName}("hello"))
+        })()`,
+        errors: [{ messageId: 'expectQueryBy' }],
+      },
+      {
+        code: `(async () => {
+          await waitForElementToBeRemoved(function() {
+            return ${queryName}("hello")
+          })
         })()`,
         errors: [{ messageId: 'expectQueryBy' }],
       },
