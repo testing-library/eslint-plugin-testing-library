@@ -96,6 +96,14 @@ ruleTester.run('await-async-utils', rule, {
         });
       `,
     })),
+    {
+      code: `
+        test('util not related to testing library is valid', async () => {
+          doSomethingElse();
+          waitNotRelatedToTestingLibrary();
+        });
+      `,
+    },
   ],
   invalid: [
     ...ASYNC_UTILS.map(asyncUtil => ({
