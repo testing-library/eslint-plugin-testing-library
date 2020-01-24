@@ -127,14 +127,14 @@ ruleTester.run('await-async-utils', rule, {
     ...ASYNC_UTILS.map(asyncUtil => ({
       code: `
         test('several ${asyncUtil} utils not waited', () => {
-          ${asyncUtil}(() => getByLabelText('username'));
-          doSomethingElse();
+          const aPromise = ${asyncUtil}(() => getByLabelText('username'));
+          doSomethingElse(aPromise);
           ${asyncUtil}(() => getByLabelText('email'));
         });
       `,
       errors: [
-        { line: 3, messageId: 'awaitAsyncUtil' },
-        { line: 5, messageId: 'awaitAsyncUtil' },
+        { line: 3, column: 28, messageId: 'awaitAsyncUtil' },
+        { line: 5, column: 11, messageId: 'awaitAsyncUtil' },
       ],
     })),
   ],
