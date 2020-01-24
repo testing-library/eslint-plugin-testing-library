@@ -24,7 +24,7 @@
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 
-[![All Contributors](https://img.shields.io/badge/all_contributors-4-orange.svg?style=flat-square)](#contributors)
+[![All Contributors](https://img.shields.io/badge/all_contributors-4-orange.svg?style=flat-square)](#contributors-)
 
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
@@ -137,6 +137,7 @@ To enable this configuration use the `extends` property in your
 | Rule                                                           | Description                                                         | Configurations                                                            | Fixable            |
 | -------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------------- | ------------------ |
 | [await-async-query](docs/rules/await-async-query.md)           | Enforce async queries to have proper `await`                        | ![recommended-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] |                    |
+| [await-async-utils](docs/rules/await-async-utils.md)           | Enforce async utils to be awaited properly                          | ![recommended-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] |                    |
 | [await-fire-event](docs/rules/await-fire-event.md)             | Enforce async fire event methods to be awaited                      | ![vue-badge][]                                                            |                    |
 | [no-await-sync-query](docs/rules/no-await-sync-query.md)       | Disallow unnecessary `await` for sync queries                       | ![recommended-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] |                    |
 | [no-debug](docs/rules/no-debug.md)                             | Disallow the use of `debug`                                         | ![angular-badge][] ![react-badge][] ![vue-badge][]                        |                    |

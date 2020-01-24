@@ -19,7 +19,7 @@ Examples of **incorrect** code for this rule:
 test('something incorrectly', async () => {
   // ...
   wait(() => getByLabelText('email'));
-  
+
   const [usernameElement, passwordElement] = waitForElement(
     () => [
       getByLabelText(container, 'username'),
@@ -27,9 +27,11 @@ test('something incorrectly', async () => {
     ],
     { container }
   );
-  
-  waitForDomChange(() => { return { container } });
-  
+
+  waitForDomChange(() => {
+    return { container };
+  });
+
   waitForElementToBeRemoved(() => document.querySelector('div.getOuttaHere'));
   // ...
 });
@@ -40,8 +42,9 @@ Examples of **correct** code for this rule:
 ```js
 test('something correctly', async () => {
   // ...
+  // `await` operator is correct
   await wait(() => getByLabelText('email'));
-  
+
   const [usernameElement, passwordElement] = await waitForElement(
     () => [
       getByLabelText(container, 'username'),
@@ -49,14 +52,17 @@ test('something correctly', async () => {
     ],
     { container }
   );
-  
-  waitForDomChange(() => { return { container } })
+
+  // `then` chained method is correct
+  waitForDomChange(() => {
+    return { container };
+  })
     .then(() => console.log('DOM changed!'))
     .catch(err => console.log(`Error you need to deal with: ${err}`));
-  
-  waitForElementToBeRemoved(
-    () => document.querySelector('div.getOuttaHere')
-  ).then(() => console.log('Element no longer in DOM'));
+
+  // return the promise within a function is correct too!
+  const makeCustomWait = () =>
+    waitForElementToBeRemoved(() => document.querySelector('div.getOuttaHere'));
   // ...
 });
 ```
