@@ -17,16 +17,16 @@
 <br>
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg?style=flat-square)](https://github.com/semantic-release/semantic-release)
 [![PRs Welcome][pr-badge]][pr-url]
-
-<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-
-[![All Contributors](https://img.shields.io/badge/all_contributors-4-orange.svg?style=flat-square)](#contributors)
-
-<!-- ALL-CONTRIBUTORS-BADGE:END -->
 <br>
 [![Watch on Github][gh-watchers-badge]][gh-watchers-url]
 [![Star on Github][gh-stars-badge]][gh-stars-url]
 [![Tweet][tweet-badge]][tweet-url]
+
+<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+
+[![All Contributors](https://img.shields.io/badge/all_contributors-4-orange.svg?style=flat-square)](#contributors-)
+
+<!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 ## Installation
 
@@ -137,6 +137,7 @@ To enable this configuration use the `extends` property in your
 | Rule                                                                                                | Description                                                                 | Configurations                                                            | Fixable            |
 | --------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- | ------------------------------------------------------------------------- | ------------------ |
 | [await-async-query](docs/rules/await-async-query.md)                                                | Enforce async queries to have proper `await`                                | ![recommended-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] |                    |
+| [await-async-utils](docs/rules/await-async-utils.md)                                                | Enforce async utils to be awaited properly                                  | ![recommended-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] |                    |
 | [await-fire-event](docs/rules/await-fire-event.md)                                                  | Enforce async fire event methods to be awaited                              | ![vue-badge][]                                                            |                    |
 | [no-await-sync-query](docs/rules/no-await-sync-query.md)                                            | Disallow unnecessary `await` for sync queries                               | ![recommended-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] |                    |
 | [no-debug](docs/rules/no-debug.md)                                                                  | Disallow the use of `debug`                                                 | ![angular-badge][] ![react-badge][] ![vue-badge][]                        |                    |
