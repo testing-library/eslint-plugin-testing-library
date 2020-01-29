@@ -23,7 +23,9 @@
 [![Tweet][tweet-badge]][tweet-url]
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+
 [![All Contributors](https://img.shields.io/badge/all_contributors-10-orange.svg?style=flat-square)](#contributors-)
+
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 ## Installation
@@ -142,6 +144,7 @@ To enable this configuration use the `extends` property in your
 | [no-debug](docs/rules/no-debug.md)                                                                  | Disallow the use of `debug`                                                 | ![angular-badge][] ![react-badge][] ![vue-badge][]                        |                    |
 | [no-dom-import](docs/rules/no-dom-import.md)                                                        | Disallow importing from DOM Testing Library                                 | ![angular-badge][] ![react-badge][] ![vue-badge][]                        | ![fixable-badge][] |
 | [no-get-by-for-checking-element-not-present](docs/rules/no-get-by-for-checking-element-not-present) | Disallow the use of `getBy*` queries when checking elements are not present |                                                                           |                    |
+| [no-manual-cleanup](docs/rules/no-manual-cleanup.md)                                                | Disallow the use of `cleanup`                                               | ![react-badge][] ![vue-badge][]                                           |                    |
 | [prefer-explicit-assert](docs/rules/prefer-explicit-assert.md)                                      | Suggest using explicit assertions rather than just `getBy*` queries         |                                                                           |                    |
 
 [build-badge]: https://img.shields.io/travis/testing-library/eslint-plugin-testing-library?style=flat-square
@@ -190,6 +193,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 
 <!-- markdownlint-enable -->
 <!-- prettier-ignore-end -->
+
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!

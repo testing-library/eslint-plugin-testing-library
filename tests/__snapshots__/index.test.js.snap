@@ -32,6 +32,7 @@ Object {
       "error",
       "react",
     ],
+    "testing-library/no-manual-cleanup": "warn",
   },
 }
 `;
@@ -64,6 +65,7 @@ Object {
       "error",
       "vue",
     ],
+    "testing-library/no-manual-cleanup": "warn",
   },
 }
 `;
