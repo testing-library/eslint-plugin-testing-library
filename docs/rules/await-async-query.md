@@ -9,7 +9,7 @@ asynchronous as they return a promise which resolves when elements are
 found. Those queries variants are:
 
 - `findBy*`
-- `findByAll*`
+- `findAllBy*`
 
 This rule aims to prevent users from forgetting to await the returned
 promise from those async queries to be fulfilled, which could lead to
