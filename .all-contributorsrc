@@ -1,6 +1,6 @@
 {
   "projectName": "eslint-plugin-testing-library",
-  "projectOwner": "Belco90",
+  "projectOwner": "testing-library",
   "repoType": "github",
   "repoHost": "https://github.com",
   "files": [
@@ -106,6 +106,15 @@
         "code",
         "doc",
         "test"
+      ]
+    },
+    {
+      "login": "wolverineks",
+      "name": "Kevin Sullivan",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/8462274?v=4",
+      "profile": "http://exercism.io/profiles/wolverineks/619ce225090a43cb891d2edcbbf50401",
+      "contributions": [
+        "doc"
       ]
     }
   ],
