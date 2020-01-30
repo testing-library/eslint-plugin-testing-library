@@ -38,3 +38,4 @@ utils.cleanup();
 ## Further Reading
 
 - [cleanup API in React Testing Library](https://testing-library.com/docs/react-testing-library/api#cleanup)
+- [Skipping Auto Cleanup](https://testing-library.com/docs/react-testing-library/setup#skipping-auto-cleanup)
