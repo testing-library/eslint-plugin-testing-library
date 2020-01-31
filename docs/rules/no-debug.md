@@ -2,12 +2,9 @@
 
 Just like `console.log` statements pollutes the browser's output, debug statements also pollutes the tests if one of your team mates forgot to remove it. `debug` statements should be used when you actually want to debug your tests but should not be pushed to the codebase.
 
-In addition, it also checks for `debug` on [`screen` object](https://testing-library.com/docs/dom-testing-library/api-queries#screen) from `@testing-library/dom`
-and libraries that re-export it, such as `@testing-library/react`.
-
 ## Rule Details
 
-This rule aims to disallow the use of `debug` and `screen.debug` in your tests.
+This rule aims to disallow the use of `debug` in your tests.
 
 Examples of **incorrect** code for this rule:
 
