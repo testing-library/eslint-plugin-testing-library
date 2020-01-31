@@ -73,6 +73,12 @@ ruleTester.run('no-debug', rule, {
       `,
     },
     {
+      code: `const { queries } = require('@testing-library/dom')`,
+    },
+    {
+      code: `import { queries } from '@testing-library/dom'`,
+    },
+    {
       code: `
         const { screen } = require('something-else')
         screen.debug()
