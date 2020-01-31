@@ -17,6 +17,7 @@ const ruleTester = new RuleTester({
     ecmaFeatures: {
       jsx: true,
     },
+    sourceType: 'module',
   },
 });
 ruleTester.run('no-debug', rule, {
@@ -54,6 +55,33 @@ ruleTester.run('no-debug', rule, {
       code: `
         const utils = render(<Component/>)
         utils.foo()
+      `,
+    },
+    {
+      code: `screen.debug()`,
+    },
+    {
+      code: `
+        const { screen } = require('@testing-library/dom')
+        screen.debug
+      `,
+    },
+    {
+      code: `
+        import { screen } from '@testing-library/dom'
+        screen.debug
+      `,
+    },
+    {
+      code: `
+        const { screen } = require('something-else')
+        screen.debug()
+      `,
+    },
+    {
+      code: `
+        import { screen } from 'something-else'
+        screen.debug()
       `,
     },
   ],
@@ -108,6 +136,28 @@ ruleTester.run('no-debug', rule, {
         {
           messageId: 'noDebug',
         },
+        {
+          messageId: 'noDebug',
+        },
+      ],
+    },
+    {
+      code: `
+        const { screen } = require('@testing-library/dom')
+        screen.debug()
+      `,
+      errors: [
+        {
+          messageId: 'noDebug',
+        },
+      ],
+    },
+    {
+      code: `
+        import { screen } from '@testing-library/dom'
+        screen.debug()
+      `,
+      errors: [
         {
           messageId: 'noDebug',
         },
