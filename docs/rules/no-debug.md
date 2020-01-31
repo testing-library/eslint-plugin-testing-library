@@ -40,3 +40,4 @@ If you use [custom render functions](https://testing-library.com/docs/example-re
 ## Further Reading
 
 - [debug API in React Testing Library](https://testing-library.com/docs/react-testing-library/api#debug)
+- [`screen.debug` in Dom Testing Library](https://testing-library.com/docs/dom-testing-library/api-queries#screendebug)
