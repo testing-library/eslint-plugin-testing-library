@@ -11,9 +11,21 @@ Examples of **incorrect** code for this rule:
 ```js
 const { debug } = render(<Hello />);
 debug();
-// OR
+```
+
+```js
 const utils = render(<Hello />);
 utils.debug();
+```
+
+```js
+import { screen } from '@testing-library/dom';
+screen.debug();
+```
+
+```js
+const { screen } = require('@testing-library/react');
+screen.debug();
 ```
 
 If you use [custom render functions](https://testing-library.com/docs/example-react-redux) then you can set a config option in your `.eslintrc` to look for these.
@@ -25,3 +37,4 @@ If you use [custom render functions](https://testing-library.com/docs/example-re
 ## Further Reading
 
 - [debug API in React Testing Library](https://testing-library.com/docs/react-testing-library/api#debug)
+- [`screen.debug` in Dom Testing Library](https://testing-library.com/docs/dom-testing-library/api-queries#screendebug)
