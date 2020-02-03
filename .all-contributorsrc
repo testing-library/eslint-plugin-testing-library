@@ -127,6 +127,15 @@
         "doc",
         "test"
       ]
+    },
+    {
+      "login": "arvigeus",
+      "name": "Nikolay Stoynov",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/4872470?v=4",
+      "profile": "http://arvigeus.github.com",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,
