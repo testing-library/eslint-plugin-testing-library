@@ -149,6 +149,34 @@ ruleTester.run('no-debug', rule, {
     },
     {
       code: `
+      describe(() => {
+        test(async () => {
+          const { debug } = await render("foo")
+          debug()
+        })
+      })`,
+      errors: [
+        {
+          messageId: 'noDebug',
+        },
+      ],
+    },
+    {
+      code: `
+      describe(() => {
+        test(async () => {
+          const utils = await render("foo")
+          utils.debug()
+        })
+      })`,
+      errors: [
+        {
+          messageId: 'noDebug',
+        },
+      ],
+    },
+    {
+      code: `
         const { screen } = require('@testing-library/dom')
         screen.debug()
       `,
