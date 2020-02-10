@@ -90,6 +90,13 @@ ruleTester.run('no-debug', rule, {
         screen.debug()
       `,
     },
+    {
+      code: `
+        async function foo() {
+          const foo = await bar;
+        }
+      `,
+    },
   ],
 
   invalid: [
