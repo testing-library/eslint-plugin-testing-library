@@ -27,7 +27,7 @@ const getInvalidAssertion = (query, matcher) =>
     errors: [{ messageId: 'expectQueryBy' }],
   }));
 
-ruleTester.run('prefer-expect-query-by', rule, {
+ruleTester.run('no-get-by-for-checking-element-not-present', rule, {
   valid: [
     ...getByQueries.reduce(
       (validRules, queryName) => [
@@ -38,6 +38,8 @@ ruleTester.run('prefer-expect-query-by', rule, {
         ...getValidAssertion(queryName, '.toEqual("World")'),
         ...getValidAssertion(queryName, '.not.toBeFalsy()'),
         ...getValidAssertion(queryName, '.not.toBeNull()'),
+        ...getValidAssertion(queryName, '.not.toBeDisabled()'),
+        ...getValidAssertion(queryName, '.not.toHaveClass("btn")'),
       ],
       []
     ),
@@ -47,6 +49,7 @@ ruleTester.run('prefer-expect-query-by', rule, {
         ...getValidAssertion(queryName, '.not.toBeInTheDocument()'),
         ...getValidAssertion(queryName, '.toBeNull()'),
         ...getValidAssertion(queryName, '.not.toBeTruthy()'),
+        ...getValidAssertion(queryName, '.not.toBeDefined()'),
         ...getValidAssertion(queryName, '.toBeFalsy()'),
         {
           code: `(async () => {
@@ -77,6 +80,7 @@ ruleTester.run('prefer-expect-query-by', rule, {
       ...getInvalidAssertion(queryName, '.not.toBeInTheDocument()'),
       ...getInvalidAssertion(queryName, '.toBeNull()'),
       ...getInvalidAssertion(queryName, '.not.toBeTruthy()'),
+      ...getInvalidAssertion(queryName, '.not.toBeDefined()'),
       ...getInvalidAssertion(queryName, '.toBeFalsy()'),
       {
         code: `(async () => {

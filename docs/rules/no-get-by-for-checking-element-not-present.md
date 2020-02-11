@@ -23,6 +23,7 @@ Examples of **incorrect** code for this rule:
 test('some test', () => {
   const { getByText } = render(<App />);
   expect(getByText('Foo')).not.toBeInTheDocument();
+  expect(getByText('Foo')).not.toBeTruthy();
   expect(getByText('Foo')).toBeFalsy();
   expect(getByText('Foo')).toBeNull();
 });
@@ -41,6 +42,7 @@ Examples of **correct** code for this rule:
 test('some test', () => {
   const { getByText } = render(<App />);
   expect(getByText('Foo')).toBeInTheDocument();
+  expect(getByText('Foo')).not.toBeDisabled();
   expect(queryByText('Foo')).not.toBeInTheDocument();
   expect(queryByText('Foo')).toBeFalsy();
 });
