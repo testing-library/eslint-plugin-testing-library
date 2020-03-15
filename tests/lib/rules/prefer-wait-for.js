@@ -67,6 +67,25 @@ ruleTester.run('prefer-wait-for', rule, {
     },
     {
       code: `async () => {
+        await wait(function cb() {
+          doSomething();
+        });
+      }`,
+      errors: [
+        {
+          messageId: 'preferWaitFor',
+          line: 2,
+          column: 15,
+        },
+      ],
+      output: `async () => {
+        await waitFor(function cb() {
+          doSomething();
+        });
+      }`,
+    },
+    {
+      code: `async () => {
         await waitForElement(() => {});
       }`,
       errors: [
@@ -78,6 +97,25 @@ ruleTester.run('prefer-wait-for', rule, {
       ],
       output: `async () => {
         await waitFor(() => {});
+      }`,
+    },
+    {
+      code: `async () => {
+        await waitForElement(function cb() {
+          doSomething();
+        });
+      }`,
+      errors: [
+        {
+          messageId: 'preferWaitFor',
+          line: 2,
+          column: 15,
+        },
+      ],
+      output: `async () => {
+        await waitFor(function cb() {
+          doSomething();
+        });
       }`,
     },
     {
