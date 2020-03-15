@@ -6,10 +6,11 @@ Ensure that promises returned by async utils are handled properly.
 
 Testing library provides several utilities for dealing with asynchronous code. These are useful to wait for an element until certain criteria or situation happens. The available async utils are:
 
-- `wait`
-- `waitForElement`
-- `waitForDomChange`
+- `waitFor` _(introduced in dom-testing-library v7)_
 - `waitForElementToBeRemoved`
+- `wait` _(**deprecated** in dom-testing-library v7)_
+- `waitForElement` _(**deprecated** in dom-testing-library v7)_
+- `waitForDomChange` _(**deprecated** in dom-testing-library v7)_
 
 This rule aims to prevent users from forgetting to handle the returned promise from those async utils, which could lead to unexpected errors in the tests execution. The promises can be handled by using either `await` operator or `then` method.
 
@@ -18,9 +19,9 @@ Examples of **incorrect** code for this rule:
 ```js
 test('something incorrectly', async () => {
   // ...
-  wait(() => getByLabelText('email'));
+  waitFor(() => {});
 
-  const [usernameElement, passwordElement] = waitForElement(
+  const [usernameElement, passwordElement] = waitFor(
     () => [
       getByLabelText(container, 'username'),
       getByLabelText(container, 'password'),
@@ -28,12 +29,9 @@ test('something incorrectly', async () => {
     { container }
   );
 
-  waitForDomChange(() => {
-    return { container };
-  });
+  waitFor(() => {}, { timeout: 100 });
 
   waitForElementToBeRemoved(() => document.querySelector('div.getOuttaHere'));
-  // ...
 });
 ```
 
@@ -43,9 +41,9 @@ Examples of **correct** code for this rule:
 test('something correctly', async () => {
   // ...
   // `await` operator is correct
-  await wait(() => getByLabelText('email'));
+  await waitFor(() => getByLabelText('email'));
 
-  const [usernameElement, passwordElement] = await waitForElement(
+  const [usernameElement, passwordElement] = await waitFor(
     () => [
       getByLabelText(container, 'username'),
       getByLabelText(container, 'password'),
@@ -54,16 +52,13 @@ test('something correctly', async () => {
   );
 
   // `then` chained method is correct
-  waitForDomChange(() => {
-    return { container };
-  })
+  waitFor(() => {}, { timeout: 100 })
     .then(() => console.log('DOM changed!'))
     .catch(err => console.log(`Error you need to deal with: ${err}`));
 
   // return the promise within a function is correct too!
   const makeCustomWait = () =>
     waitForElementToBeRemoved(() => document.querySelector('div.getOuttaHere'));
-  // ...
 });
 ```
 
