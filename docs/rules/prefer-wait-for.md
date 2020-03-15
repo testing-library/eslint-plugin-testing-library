@@ -1,6 +1,6 @@
 # Use `waitFor` instead of deprecated wait methods (prefer-wait-for)
 
-Since dom-testing-library v7 new `waitFor` async util has been added. This new method satisfies the use cases of `wait`, `waitForElement`, and `waitForDomChange`, so those have been deprecated.
+`dom-testing-library` v7 released a new async util called `waitFor` which satisfies the use cases of `wait`, `waitForElement`, and `waitForDomChange` making them deprecated.
 
 ## Rule Details
 
@@ -18,11 +18,12 @@ Examples of **incorrect** code for this rule:
 
 ```js
 const foo = async () => {
-  // new waitFor method
-  await waitFor(() => {});
-
-  // previous waitForElementToBeRemoved is not deprecated
-  await waitForElementToBeRemoved(() => {});
+  await wait();
+  await wait(() => {});
+  await waitForElement(() => {});
+  await waitForDomChange();
+  await waitForDomChange(mutationObserverOptions);
+  await waitForDomChange({ options: true });
 };
 ```
 
@@ -30,12 +31,11 @@ Examples of **correct** code for this rule:
 
 ```js
 const foo = async () => {
-  await wait();
-  await wait(() => {});
-  await waitForElement(() => {});
-  await waitForDomChange();
-  await waitForDomChange(mutationObserverOptions);
-  await waitForDomChange({ options: true });
+  // new waitFor method
+  await waitFor(() => {});
+
+  // previous waitForElementToBeRemoved is not deprecated
+  await waitForElementToBeRemoved(() => {});
 };
 ```
 
