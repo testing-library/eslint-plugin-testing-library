@@ -6,13 +6,13 @@
 
 This rule aims to use `waitFor` async util rather than previous deprecated ones.
 
-Deprecated wait async utils are:
+Deprecated `wait` async utils are:
 
 - `wait`
 - `waitForElement`
 - `waitForDomChange`
 
-> This rule will auto fix deprecated async utils for you, including necessary empty callback for `waitFor`. This means `wait();` will be replaced with `waitFor(() => {});`
+> This rule will auto fix deprecated async utils for you, including the necessary empty callback for `waitFor`. This means `wait();` will be replaced with `waitFor(() => {});`
 
 Examples of **incorrect** code for this rule:
 
@@ -23,7 +23,7 @@ const foo = async () => {
   await waitForElement(() => {});
   await waitForDomChange();
   await waitForDomChange(mutationObserverOptions);
-  await waitForDomChange({ options: true });
+  await waitForDomChange({ timeout: 100});
 };
 ```
 
