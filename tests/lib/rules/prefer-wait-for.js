@@ -9,64 +9,72 @@ const ruleTester = new RuleTester({
 ruleTester.run('prefer-wait-for', rule, {
   valid: [
     {
-      code: `async () => {
+      code: `import { waitFor, render } from '@testing-library/foo';
+      
+      async () => {
         await waitFor(() => {});
       }`,
     },
     {
-      code: `async () => {
+      code: `import { waitForElementToBeRemoved, render } from '@testing-library/foo';
+      
+      async () => {
         await waitForElementToBeRemoved(() => {});
       }`,
     },
     {
-      code: `async () => {
+      code: `import { wait, render } from '@testing-library/foo';
+      import { waitForSomethingElse } from 'other-module';
+      
+      async () => {
         await waitForSomethingElse(() => {});
       }`,
-    },
-    {
-      code: `import { wait } from 'some-testing-library'`,
-    },
-    {
-      code: `import { waitForElement } from 'some-testing-library'`,
-    },
-    {
-      code: `import { waitForDomChange } from 'some-testing-library'`,
     },
   ],
 
   invalid: [
     {
-      code: `async () => {
+      code: `import { wait, render } from '@testing-library/foo';
+      
+      async () => {
         await wait();
       }`,
       errors: [
         {
           messageId: 'preferWaitFor',
-          line: 2,
+          line: 4,
           column: 15,
         },
       ],
-      output: `async () => {
+      output: `import { waitFor, render } from '@testing-library/foo';
+      
+      async () => {
         await waitFor(() => {});
       }`,
     },
     {
-      code: `async () => {
+      code: `import { render, wait } from '@testing-library/foo';
+      
+      async () => {
         await wait(() => {});
       }`,
       errors: [
         {
           messageId: 'preferWaitFor',
-          line: 2,
+          line: 4,
           column: 15,
         },
       ],
-      output: `async () => {
+      output: `import { render, waitFor } from '@testing-library/foo'
+      
+      async () => {
         await waitFor(() => {});
       }`,
     },
     {
-      code: `async () => {
+      code: `import { render, wait, screen } from '@testing-library/foo'
+      
+      async () => {
         await wait(function cb() {
           doSomething();
         });
@@ -74,33 +82,41 @@ ruleTester.run('prefer-wait-for', rule, {
       errors: [
         {
           messageId: 'preferWaitFor',
-          line: 2,
+          line: 4,
           column: 15,
         },
       ],
-      output: `async () => {
+      output: `import { render, waitFor, screen } from '@testing-library/foo'
+      
+      async () => {
         await waitFor(function cb() {
           doSomething();
         });
       }`,
     },
     {
-      code: `async () => {
+      code: `import { render, waitForElement, screen } from '@testing-library/foo'
+      
+      async () => {
         await waitForElement(() => {});
       }`,
       errors: [
         {
           messageId: 'preferWaitFor',
-          line: 2,
+          line: 4,
           column: 15,
         },
       ],
-      output: `async () => {
+      output: `import { render, waitFor, screen } from '@testing-library/foo'
+      
+      async () => {
         await waitFor(() => {});
       }`,
     },
     {
-      code: `async () => {
+      code: `import { waitForElement } from '@testing-library/foo';
+      
+      async () => {
         await waitForElement(function cb() {
           doSomething();
         });
@@ -108,58 +124,72 @@ ruleTester.run('prefer-wait-for', rule, {
       errors: [
         {
           messageId: 'preferWaitFor',
-          line: 2,
+          line: 4,
           column: 15,
         },
       ],
-      output: `async () => {
+      output: `import { waitFor } from '@testing-library/foo';
+      
+      async () => {
         await waitFor(function cb() {
           doSomething();
         });
       }`,
     },
     {
-      code: `async () => {
+      code: `import { waitForDomChange } from '@testing-library/foo';
+      
+      async () => {
         await waitForDomChange();
       }`,
       errors: [
         {
           messageId: 'preferWaitFor',
-          line: 2,
+          line: 4,
           column: 15,
         },
       ],
-      output: `async () => {
+      output: `import { waitFor } from '@testing-library/foo';
+      
+      async () => {
         await waitFor(() => {});
       }`,
     },
     {
-      code: `async () => {
+      code: `import { waitForDomChange } from '@testing-library/foo';
+      
+      async () => {
         await waitForDomChange(mutationObserverOptions);
       }`,
       errors: [
         {
           messageId: 'preferWaitFor',
-          line: 2,
+          line: 4,
           column: 15,
         },
       ],
-      output: `async () => {
+      output: `import { waitFor } from '@testing-library/foo';
+      
+      async () => {
         await waitFor(() => {}, mutationObserverOptions);
       }`,
     },
     {
-      code: `async () => {
+      code: `import { waitForDomChange } from '@testing-library/foo';
+      
+      async () => {
         await waitForDomChange({ options: true });
       }`,
       errors: [
         {
           messageId: 'preferWaitFor',
-          line: 2,
+          line: 4,
           column: 15,
         },
       ],
-      output: `async () => {
+      output: `import { waitFor } from '@testing-library/foo';
+      
+      async () => {
         await waitFor(() => {}, { options: true });
       }`,
     },
