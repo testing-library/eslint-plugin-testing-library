@@ -235,6 +235,7 @@ ruleTester.run('prefer-wait-for', rule, {
     },
     {
       code: `import { waitForDomChange, wait, waitForElement } from '@testing-library/foo';
+      import userEvent from '@testing-library/user-event';
 
       async () => {
         await waitForDomChange({ timeout: 5000 });
@@ -247,11 +248,6 @@ ruleTester.run('prefer-wait-for', rule, {
           messageId: 'preferWaitForImport',
           line: 1,
           column: 1,
-        },
-        {
-          messageId: 'preferWaitForMethod',
-          line: 4,
-          column: 15,
         },
         {
           messageId: 'preferWaitForMethod',
@@ -268,8 +264,14 @@ ruleTester.run('prefer-wait-for', rule, {
           line: 7,
           column: 15,
         },
+        {
+          messageId: 'preferWaitForMethod',
+          line: 8,
+          column: 15,
+        },
       ],
       output: `import { waitFor,   } from '@testing-library/foo';
+      import userEvent from '@testing-library/user-event';
 
       async () => {
         await waitFor(() => {}, { timeout: 5000 });
