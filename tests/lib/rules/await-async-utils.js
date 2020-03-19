@@ -97,6 +97,14 @@ ruleTester.run('await-async-utils', rule, {
       `,
     })),
     {
+      code: `test('waitForElementToBeRemoved receiving element rather than callback is valid', async () => {
+          doSomethingElse();
+          const emailInput = getByLabelText('email');
+          await waitForElementToBeRemoved(emailInput);
+        });
+      `,
+    },
+    {
       code: `
         test('util not related to testing library is valid', async () => {
           doSomethingElse();
