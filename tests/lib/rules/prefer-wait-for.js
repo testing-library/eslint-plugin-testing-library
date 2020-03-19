@@ -233,5 +233,140 @@ ruleTester.run('prefer-wait-for', rule, {
         await waitFor(() => {}, { timeout: 5000 });
       }`,
     },
+    {
+      code: `import { waitForDomChange, wait, waitForElement } from '@testing-library/foo';
+
+      async () => {
+        await waitForDomChange({ timeout: 5000 });
+        await waitForElement();
+        await wait();
+        await wait(() => { doSomething() });
+      }`,
+      errors: [
+        {
+          messageId: 'preferWaitForImport',
+          line: 1,
+          column: 1,
+        },
+        {
+          messageId: 'preferWaitForMethod',
+          line: 4,
+          column: 15,
+        },
+        {
+          messageId: 'preferWaitForMethod',
+          line: 5,
+          column: 15,
+        },
+        {
+          messageId: 'preferWaitForMethod',
+          line: 6,
+          column: 15,
+        },
+        {
+          messageId: 'preferWaitForMethod',
+          line: 7,
+          column: 15,
+        },
+      ],
+      output: `import { waitFor,   } from '@testing-library/foo';
+
+      async () => {
+        await waitFor(() => {}, { timeout: 5000 });
+        await waitFor(() => {});
+        await waitFor(() => {});
+        await waitFor(() => { doSomething() });
+      }`,
+    },
+    {
+      code: `import { render, waitForDomChange, wait, waitForElement } from '@testing-library/foo';
+
+      async () => {
+        await waitForDomChange({ timeout: 5000 });
+        await waitForElement();
+        await wait();
+        await wait(() => { doSomething() });
+      }`,
+      errors: [
+        {
+          messageId: 'preferWaitForImport',
+          line: 1,
+          column: 1,
+        },
+        {
+          messageId: 'preferWaitForMethod',
+          line: 4,
+          column: 15,
+        },
+        {
+          messageId: 'preferWaitForMethod',
+          line: 5,
+          column: 15,
+        },
+        {
+          messageId: 'preferWaitForMethod',
+          line: 6,
+          column: 15,
+        },
+        {
+          messageId: 'preferWaitForMethod',
+          line: 7,
+          column: 15,
+        },
+      ],
+      output: `import { render, waitFor,   } from '@testing-library/foo';
+
+      async () => {
+        await waitFor(() => {}, { timeout: 5000 });
+        await waitFor(() => {});
+        await waitFor(() => {});
+        await waitFor(() => { doSomething() });
+      }`,
+    },
+    {
+      code: `import { waitForDomChange, wait, render, waitForElement } from '@testing-library/foo';
+
+      async () => {
+        await waitForDomChange({ timeout: 5000 });
+        await waitForElement();
+        await wait();
+        await wait(() => { doSomething() });
+      }`,
+      errors: [
+        {
+          messageId: 'preferWaitForImport',
+          line: 1,
+          column: 1,
+        },
+        {
+          messageId: 'preferWaitForMethod',
+          line: 4,
+          column: 15,
+        },
+        {
+          messageId: 'preferWaitForMethod',
+          line: 5,
+          column: 15,
+        },
+        {
+          messageId: 'preferWaitForMethod',
+          line: 6,
+          column: 15,
+        },
+        {
+          messageId: 'preferWaitForMethod',
+          line: 7,
+          column: 15,
+        },
+      ],
+      output: `import { waitFor,  render,  } from '@testing-library/foo';
+
+      async () => {
+        await waitFor(() => {}, { timeout: 5000 });
+        await waitFor(() => {});
+        await waitFor(() => {});
+        await waitFor(() => { doSomething() });
+      }`,
+    },
   ],
 });
