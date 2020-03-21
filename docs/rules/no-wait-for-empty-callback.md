@@ -1,0 +1,39 @@
+# Empty callbacks inside `waitFor` and `waitForElementToBeRemoved` are not preferred (no-wait-for-empty-callback)
+
+## Rule Details
+
+This rule aims to ensure the correct usage of `waitFor` and `waitForElementToBeRemoved`, in the way that they're intended to be used.
+If an empty callback is used, these methods will just wait a tick, instead of making sure that a node was added or removed to the DOM.
+
+Examples of **incorrect** code for this rule:
+
+```js
+const foo = async () => {
+  await waitFor(() => {});
+  await waitFor(function() {});
+  await waitFor(noop);
+
+  await waitForElementToBeRemoved(() => {});
+  await waitForElementToBeRemoved(function() {});
+  await waitForElementToBeRemoved(noop);
+};
+```
+
+Examples of **correct** code for this rule:
+
+```js
+const foo = async () => {
+  await waitFor(() => {
+    screen.getByText(/submit/i);
+  });
+
+  const submit = screen.getByText(/submit/i);
+  await waitForElementToBeRemoved(() => submit);
+  // or
+  await waitForElementToBeRemoved(submit);
+};
+```
+
+## Further Reading
+
+- [dom-testing-library v7 release](https://github.com/testing-library/dom-testing-library/releases/tag/v7.0.0)
