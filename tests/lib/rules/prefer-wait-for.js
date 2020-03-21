@@ -51,13 +51,14 @@ ruleTester.run('prefer-wait-for', rule, {
           column: 15,
         },
       ],
-      output: `import { waitFor, render } from '@testing-library/foo';
+      output: `import { render,waitFor } from '@testing-library/foo';
 
       async () => {
         await waitFor(() => {});
       }`,
     },
     {
+      // this import doesn't have trailing semicolon but fixer adds it
       code: `import { render, wait } from '@testing-library/foo'
 
       async () => {
@@ -75,14 +76,14 @@ ruleTester.run('prefer-wait-for', rule, {
           column: 15,
         },
       ],
-      output: `import { render, waitFor } from '@testing-library/foo'
+      output: `import { render,waitFor } from '@testing-library/foo';
 
       async () => {
         await waitFor(() => {});
       }`,
     },
     {
-      code: `import { render, wait, screen } from '@testing-library/foo'
+      code: `import { render, wait, screen } from "@testing-library/foo";
 
       async () => {
         await wait(function cb() {
@@ -101,7 +102,7 @@ ruleTester.run('prefer-wait-for', rule, {
           column: 15,
         },
       ],
-      output: `import { render, waitFor, screen } from '@testing-library/foo'
+      output: `import { render,screen,waitFor } from '@testing-library/foo';
 
       async () => {
         await waitFor(function cb() {
@@ -127,7 +128,7 @@ ruleTester.run('prefer-wait-for', rule, {
           column: 15,
         },
       ],
-      output: `import { render, waitFor, screen } from '@testing-library/foo'
+      output: `import { render,screen,waitFor } from '@testing-library/foo';
 
       async () => {
         await waitFor(() => {});
@@ -270,7 +271,7 @@ ruleTester.run('prefer-wait-for', rule, {
           column: 15,
         },
       ],
-      output: `import { waitFor,   } from '@testing-library/foo';
+      output: `import { waitFor } from '@testing-library/foo';
       import userEvent from '@testing-library/user-event';
 
       async () => {
@@ -316,7 +317,7 @@ ruleTester.run('prefer-wait-for', rule, {
           column: 15,
         },
       ],
-      output: `import { render, waitFor,   } from '@testing-library/foo';
+      output: `import { render,waitFor } from '@testing-library/foo';
 
       async () => {
         await waitFor(() => {}, { timeout: 5000 });
@@ -361,13 +362,90 @@ ruleTester.run('prefer-wait-for', rule, {
           column: 15,
         },
       ],
-      output: `import { waitFor,  render,  } from '@testing-library/foo';
+      output: `import { render,waitFor } from '@testing-library/foo';
 
       async () => {
         await waitFor(() => {}, { timeout: 5000 });
         await waitFor(() => {});
         await waitFor(() => {});
         await waitFor(() => { doSomething() });
+      }`,
+    },
+    {
+      code: `import {
+        waitForDomChange,
+        wait,
+        render,
+        waitForElement,
+      } from '@testing-library/foo';
+
+      async () => {
+        await waitForDomChange({ timeout: 5000 });
+        await waitForElement();
+        await wait();
+        await wait(() => { doSomething() });
+      }`,
+      errors: [
+        {
+          messageId: 'preferWaitForImport',
+          line: 1,
+          column: 1,
+        },
+        {
+          messageId: 'preferWaitForMethod',
+          line: 9,
+          column: 15,
+        },
+        {
+          messageId: 'preferWaitForMethod',
+          line: 10,
+          column: 15,
+        },
+        {
+          messageId: 'preferWaitForMethod',
+          line: 11,
+          column: 15,
+        },
+        {
+          messageId: 'preferWaitForMethod',
+          line: 12,
+          column: 15,
+        },
+      ],
+      output: `import { render,waitFor } from '@testing-library/foo';
+
+      async () => {
+        await waitFor(() => {}, { timeout: 5000 });
+        await waitFor(() => {});
+        await waitFor(() => {});
+        await waitFor(() => { doSomething() });
+      }`,
+    },
+    {
+      // if already importing waitFor then it's not imported twice
+      code: `import { wait, waitFor, render } from '@testing-library/foo';
+
+      async () => {
+        await wait();
+        await waitFor(someCallback);
+      }`,
+      errors: [
+        {
+          messageId: 'preferWaitForImport',
+          line: 1,
+          column: 1,
+        },
+        {
+          messageId: 'preferWaitForMethod',
+          line: 4,
+          column: 15,
+        },
+      ],
+      output: `import { render,waitFor } from '@testing-library/foo';
+
+      async () => {
+        await waitFor(() => {});
+        await waitFor(someCallback);
       }`,
     },
   ],
