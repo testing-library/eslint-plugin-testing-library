@@ -17,24 +17,23 @@ ruleTester.run('no-wait-for-empty-callback', rule, {
       code: `${m}(() => {
           screen.getByText(/submit/i)
         })`,
-      errors: [
-        {
-          messageId: 'noWaitForEmptyCallback',
-        },
-      ],
     })),
     ...ALL_WAIT_METHODS.map(m => ({
       code: `${m}(function() {
           screen.getByText(/submit/i)
         })`,
-      errors: [
-        {
-          messageId: 'noWaitForEmptyCallback',
-        },
-      ],
     })),
     {
+      code: `waitForElementToBeRemoved(someNode)`,
+    },
+    {
+      code: `waitForElementToBeRemoved(() => someNode)`,
+    },
+    {
       code: `waitSomethingElse(() => {})`,
+    },
+    {
+      code: `wait(() => {})`,
     },
   ],
 
@@ -48,6 +47,23 @@ ruleTester.run('no-wait-for-empty-callback', rule, {
       ],
     })),
     ...ALL_WAIT_METHODS.map(m => ({
+      code: `${m}((a, b) => {})`,
+      errors: [
+        {
+          messageId: 'noWaitForEmptyCallback',
+        },
+      ],
+    })),
+    ...ALL_WAIT_METHODS.map(m => ({
+      code: `${m}(() => { /* I'm empty anyway */ })`,
+      errors: [
+        {
+          messageId: 'noWaitForEmptyCallback',
+        },
+      ],
+    })),
+
+    ...ALL_WAIT_METHODS.map(m => ({
       code: `${m}(function() {
 
       })`,
@@ -57,6 +73,27 @@ ruleTester.run('no-wait-for-empty-callback', rule, {
         },
       ],
     })),
+    ...ALL_WAIT_METHODS.map(m => ({
+      code: `${m}(function(a) {
+
+      })`,
+      errors: [
+        {
+          messageId: 'noWaitForEmptyCallback',
+        },
+      ],
+    })),
+    ...ALL_WAIT_METHODS.map(m => ({
+      code: `${m}(function() {
+        // another empty callback
+      })`,
+      errors: [
+        {
+          messageId: 'noWaitForEmptyCallback',
+        },
+      ],
+    })),
+
     ...ALL_WAIT_METHODS.map(m => ({
       code: `${m}(noop)`,
       errors: [
