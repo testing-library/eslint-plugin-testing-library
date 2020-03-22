@@ -1,38 +1,36 @@
-# Disallow the use of `getBy*` queries when checking elements are not present (prefer-presence-queries)
+# Enforce specific queries when checking appearance or disappearance of elements (prefer-presence-queries)
 
-The (DOM) Testing Library allows to query DOM elements using different types of queries such as `getBy*` and `queryBy*`. Using `getBy*` throws an error in case the element is not found. This is useful when:
+The (DOM) Testing Library allows to query DOM elements using different types of queries such as `getBy*` and `queryBy*`. Using `getBy*` throws an error in case the element is not found, while `queryBy` returns null instead of throwing. These differences are useful in some situations:
 
-- using method like `waitForElement`, which are `async` functions that will wait for the element to be found until a certain timeout, after that the test will fail.
-- using `getBy` queries as an assert itself, so if the element is not found the error thrown will work as the check itself within the test.
-
-However, when asserting if an element is not present or waiting for disappearance, using `getBy*` will make the test fail immediately. Instead it is recommended to use `queryBy*`, which does not throw and therefore we can:
-
-- assert element does not exist: `expect(queryByText("Foo")).not.toBeInTheDocument()`
-- wait for disappearance: `await waitForElementToBeRemoved(() => queryByText('the mummy'))`
+- using `getBy*` queries when asserting if element is present, so if the element is not found the error thrown will offer better info than asserting with other queries which not throw.
+- using `queryBy*` queries when asserting if element is not present, so the test doesn't fail immediately when the element it's not found and the assertion can be executed properly.
 
 ## Rule details
 
 This rule fires whenever:
 
-- `expect` is used to assert element does not exist with `.not.toBeInTheDocument()` or `.toBeNull()` matchers
-- `waitForElementToBeRemoved` async util is used to wait for element to be removed from DOM
+- `queryBy*` is used to assert element **is** present with `.toBeInTheDocument()`, `toBeTruthy()` or `.toBeNull()` matchers or negated matchers from following case.
+- `getBy*` is used to assert element **is not** present with `.toBeNull()` or `.toBeFalsy()` matchers or negated matchers from previous case.
 
 Examples of **incorrect** code for this rule:
 
 ```js
 test('some test', () => {
-  const { getByText } = render(<App />);
-  expect(getByText('Foo')).not.toBeInTheDocument();
-  expect(getByText('Foo')).not.toBeTruthy();
-  expect(getByText('Foo')).toBeFalsy();
-  expect(getByText('Foo')).toBeNull();
-});
-```
+  render(<App />);
 
-```js
-test('some test', async () => {
-  const utils = render(<App />);
-  await waitForElementToBeRemoved(() => utils.getByText('Foo'));
+  // check element is present with `queryBy*`
+  expect(screen.queryByText('button')).toBeInTheDocument();
+  expect(screen.queryByText('button')).toBeTruthy();
+  expect(screen.queryByText('button')).toBeNull();
+  expect(screen.queryByText('button')).not.toBeNull();
+  expect(screen.queryByText('button')).not.toBeFalsy();
+
+  // check element is NOT present with `getBy*`
+  expect(screen.getByText('loading')).not.toBeInTheDocument();
+  expect(screen.getByText('loading')).not.toBeTruthy();
+  expect(screen.getByText('loading')).not.toBeNull();
+  expect(screen.getByText('loading')).toBeNull();
+  expect(screen.getByText('loading')).toBeFalsy();
 });
 ```
 
@@ -40,24 +38,26 @@ Examples of **correct** code for this rule:
 
 ```js
 test('some test', () => {
-  const { getByText } = render(<App />);
-  expect(getByText('Foo')).toBeInTheDocument();
-  expect(getByText('Foo')).not.toBeDisabled();
-  expect(queryByText('Foo')).not.toBeInTheDocument();
-  expect(queryByText('Foo')).toBeFalsy();
-});
-```
+  render(<App />);
+  // check element is present with `getBy*`
+  expect(screen.getByText('button')).toBeInTheDocument();
+  expect(screen.getByText('button')).toBeTruthy();
+  expect(screen.getByText('button')).toBeNull();
+  expect(screen.getByText('button')).not.toBeNull();
+  expect(screen.getByText('button')).not.toBeFalsy();
 
-```js
-test('some test', async () => {
-  const utils = render(<App />);
-  await waitForElementToBeRemoved(() => utils.queryByText('Foo'));
+  // check element is NOT present with `queryBy*`
+  expect(screen.queryByText('loading')).not.toBeInTheDocument();
+  expect(screen.queryByText('loading')).not.toBeTruthy();
+  expect(screen.queryByText('loading')).not.toBeNull();
+  expect(screen.queryByText('loading')).toBeNull();
+  expect(screen.queryByText('loading')).toBeFalsy();
 });
 ```
 
 ## Further Reading
 
-- [Asserting elements are not present](https://testing-library.com/docs/guide-disappearance#asserting-elements-are-not-present)
-- [Waiting for disappearance](https://testing-library.com/docs/guide-disappearance#waiting-for-disappearance)
-- [jest-dom note about using `getBy` within assertions](https://testing-library.com/docs/ecosystem-jest-dom)
 - [Testing Library queries cheatsheet](https://testing-library.com/docs/dom-testing-library/cheatsheet#queries)
+- [Waiting for appearance](https://testing-library.com/docs/guide-disappearance#waiting-for-appearance)
+- [Asserting elements are not present](https://testing-library.com/docs/guide-disappearance#asserting-elements-are-not-present)
+- [jest-dom note about using `getBy` within assertions](https://testing-library.com/docs/ecosystem-jest-dom)
