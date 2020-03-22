@@ -1,4 +1,4 @@
-# Disallow the use of `getBy*` queries when checking elements are not present (no-get-by-for-checking-element-not-present)
+# Disallow the use of `getBy*` queries when checking elements are not present (prefer-presence-queries)
 
 The (DOM) Testing Library allows to query DOM elements using different types of queries such as `getBy*` and `queryBy*`. Using `getBy*` throws an error in case the element is not found. This is useful when:
 

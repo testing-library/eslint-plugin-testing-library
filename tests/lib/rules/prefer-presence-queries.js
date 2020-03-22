@@ -1,7 +1,7 @@
 'use strict';
 
 const RuleTester = require('eslint').RuleTester;
-const rule = require('../../../lib/rules/no-get-by-for-checking-element-not-present');
+const rule = require('../../../lib/rules/prefer-presence-queries');
 const { ALL_QUERIES_METHODS } = require('../../../lib/utils');
 
 const ruleTester = new RuleTester({
@@ -27,7 +27,7 @@ const getInvalidAssertion = (query, matcher) =>
     errors: [{ messageId: 'expectQueryBy' }],
   }));
 
-ruleTester.run('no-get-by-for-checking-element-not-present', rule, {
+ruleTester.run('prefer-presence-queries', rule, {
   valid: [
     ...getByQueries.reduce(
       (validRules, queryName) => [
