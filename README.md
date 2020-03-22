@@ -147,6 +147,7 @@ To enable this configuration use the `extends` property in your
 | [no-manual-cleanup](docs/rules/no-manual-cleanup.md)                                                   | Disallow the use of `cleanup`                                               |                                                                           |                    |
 | [no-wait-for-empty-callback](docs/rules/no-wait-for-empty-callback.md)                                 | Disallow empty callbacks for `waitFor` and `waitForElementToBeRemoved`      |                                                                           |                    |
 | [prefer-explicit-assert](docs/rules/prefer-explicit-assert.md)                                         | Suggest using explicit assertions rather than just `getBy*` queries         |                                                                           |                    |
+| [prefer-wait-for](docs/rules/prefer-wait-for.md)                                                       | Use `waitFor` instead of deprecated wait methods                            |                                                                           | ![fixable-badge][] |
 
 [build-badge]: https://img.shields.io/travis/testing-library/eslint-plugin-testing-library?style=flat-square
 [build-url]: https://travis-ci.org/testing-library/eslint-plugin-testing-library
