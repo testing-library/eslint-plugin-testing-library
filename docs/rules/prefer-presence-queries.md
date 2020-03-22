@@ -9,7 +9,7 @@ The (DOM) Testing Library allows to query DOM elements using different types of 
 
 This rule fires whenever:
 
-- `queryBy*` is used to assert element **is** present with `.toBeInTheDocument()`, `toBeTruthy()` or `.toBeNull()` matchers or negated matchers from following case.
+- `queryBy*` is used to assert element **is** present with `.toBeInTheDocument()`, `toBeTruthy()` or `.toBeDefined()` matchers or negated matchers from following case.
 - `getBy*` is used to assert element **is not** present with `.toBeNull()` or `.toBeFalsy()` matchers or negated matchers from previous case.
 
 Examples of **incorrect** code for this rule:
