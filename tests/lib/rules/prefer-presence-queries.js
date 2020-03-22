@@ -60,6 +60,18 @@ ruleTester.run('prefer-presence-queries', rule, {
     {
       code: 'const el = queryByText("button")',
     },
+    {
+      code: 'expect(getAllByText("button")).not.toBeInTheDocument()',
+    },
+    {
+      code: 'expect(queryAllByText("button")).toBeInTheDocument()',
+    },
+    {
+      code: `async () => {
+        const el = await findByText('button')
+        expect(el).toBeInTheDocument()
+      }`,
+    },
     // some weird examples after here to check guard against parent nodes
     {
       code: 'expect(getByText("button")).not()',
