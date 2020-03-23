@@ -3,7 +3,8 @@
 ## Rule Details
 
 This rule aims to ensure the correct usage of `waitFor` and `waitForElementToBeRemoved`, in the way that they're intended to be used.
-If an empty callback is used, these methods will just wait a tick, instead of making sure that a node was added or removed to the DOM.
+If an empty callback is passed, these methods will just wait next tick of the event loop before proceeding, and that's not consistent with the philosophy of the library.
+**Instead, insert an assertion in that callback function.**
 
 Examples of **incorrect** code for this rule:
 
