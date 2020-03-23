@@ -54,7 +54,7 @@ test('some test', async () => {
   expect(screen.queryByText('loading')).toBeFalsy();
 
   // `findBy*` queries are out of the scope for this rule
-  const button = await screen.getByText('submit');
+  const button = await screen.findByText('submit');
   expect(button).toBeInTheDocument();
 });
 ```
