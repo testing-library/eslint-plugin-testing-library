@@ -37,7 +37,7 @@ test('some test', () => {
 Examples of **correct** code for this rule:
 
 ```js
-test('some test', () => {
+test('some test', async () => {
   render(<App />);
   // check element is present with `getBy*`
   expect(screen.getByText('button')).toBeInTheDocument();
@@ -52,6 +52,10 @@ test('some test', () => {
   expect(screen.queryByText('loading')).not.toBeNull();
   expect(screen.queryByText('loading')).toBeNull();
   expect(screen.queryByText('loading')).toBeFalsy();
+
+  // `findBy*` queries are out of the scope for this rule
+  const button = await screen.getByText('submit');
+  expect(button).toBeInTheDocument();
 });
 ```
 
