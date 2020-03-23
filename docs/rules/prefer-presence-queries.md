@@ -2,8 +2,8 @@
 
 The (DOM) Testing Library allows to query DOM elements using different types of queries such as `getBy*` and `queryBy*`. Using `getBy*` throws an error in case the element is not found, while `queryBy` returns null instead of throwing. These differences are useful in some situations:
 
-- using `getBy*` queries when asserting if element is present, so if the element is not found the error thrown will offer better info than asserting with other queries which not throw.
-- using `queryBy*` queries when asserting if element is not present, so the test doesn't fail immediately when the element it's not found and the assertion can be executed properly.
+- using `getBy*` queries when asserting if element is present, so if the element is not found the error thrown will offer better info than asserting with other queries which will not throw an error.
+- using `queryBy*` queries when asserting if element is not present, so the test doesn't fail immediately when the element is not found and the assertion can be executed properly.
 
 ## Rule details
 
