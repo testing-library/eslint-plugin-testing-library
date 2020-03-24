@@ -10,11 +10,21 @@ node_js:
 
 jobs:
   include:
+    - stage: test
+      script:
+        - npm ci
+        - npm run test:ci
+
     - stage: release
-      if: branch = master AND type != pull_request
-      node_js: lts/*
       deploy:
         provider: script
+        node_js: lts/*
         skip_cleanup: true
         script:
           - npx semantic-release
+
+stages:
+  - name: test
+    if: type = pull_request
+  - name: release
+    if: branch = master AND type != pull_request
