@@ -3,19 +3,19 @@ language: node_js
 env:
   - FORCE_COLOR=true
 
-node_js:
-  - 10.12
-  - 12
-  - node
-
 jobs:
   include:
     - stage: test
+      if: type = pull_request
+      node_js:
+        - 10.12
+        - 12
+        - node
       script:
-        - npm ci
         - npm run test:ci
 
     - stage: release
+      if: branch = master AND type != pull_request
       deploy:
         provider: script
         node_js: lts/*
@@ -23,8 +23,3 @@ jobs:
         script:
           - npx semantic-release
 
-stages:
-  - name: test
-    if: type = pull_request
-  - name: release
-    if: branch = master AND type != pull_request
