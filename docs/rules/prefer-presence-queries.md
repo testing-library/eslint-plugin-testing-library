@@ -1,4 +1,4 @@
-# Enforce specific queries when checking appearance or disappearance of elements (prefer-presence-queries)
+# Enforce specific queries when checking element is present or not (prefer-presence-queries)
 
 The (DOM) Testing Library allows to query DOM elements using different types of queries such as `get*` and `query*`. Using `get*` throws an error in case the element is not found, while `query*` returns null instead of throwing (or empty array for `queryAllBy*` ones). These differences are useful in some situations:
 
@@ -62,6 +62,6 @@ test('some test', async () => {
 ## Further Reading
 
 - [Testing Library queries cheatsheet](https://testing-library.com/docs/dom-testing-library/cheatsheet#queries)
-- [Waiting for appearance](https://testing-library.com/docs/guide-disappearance#waiting-for-appearance)
 - [Asserting elements are not present](https://testing-library.com/docs/guide-disappearance#asserting-elements-are-not-present)
 - [jest-dom note about using `getBy` within assertions](https://testing-library.com/docs/ecosystem-jest-dom)
+- [Waiting for appearance](https://testing-library.com/docs/guide-disappearance#waiting-for-appearance)
