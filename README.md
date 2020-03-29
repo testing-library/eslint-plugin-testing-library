@@ -23,9 +23,7 @@
 [![Tweet][tweet-badge]][tweet-url]
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-
-[![All Contributors](https://img.shields.io/badge/all_contributors-13-orange.svg?style=flat-square)](#contributors-)
-
+[![All Contributors](https://img.shields.io/badge/all_contributors-14-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 ## Installation
@@ -194,12 +192,12 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <td align="center"><a href="https://kubajastrz.com"><img src="https://avatars0.githubusercontent.com/u/6443113?v=4" width="100px;" alt=""/><br /><sub><b>Jakub Jastrzębski</b></sub></a><br /><a href="https://github.com/testing-library/eslint-plugin-testing-library/commits?author=KubaJastrz" title="Code">💻</a> <a href="https://github.com/testing-library/eslint-plugin-testing-library/commits?author=KubaJastrz" title="Documentation">📖</a> <a href="https://github.com/testing-library/eslint-plugin-testing-library/commits?author=KubaJastrz" title="Tests">⚠️</a></td>
     <td align="center"><a href="http://arvigeus.github.com"><img src="https://avatars2.githubusercontent.com/u/4872470?v=4" width="100px;" alt=""/><br /><sub><b>Nikolay Stoynov</b></sub></a><br /><a href="https://github.com/testing-library/eslint-plugin-testing-library/commits?author=arvigeus" title="Documentation">📖</a></td>
     <td align="center"><a href="https://marudor.de"><img src="https://avatars0.githubusercontent.com/u/1881725?v=4" width="100px;" alt=""/><br /><sub><b>marudor</b></sub></a><br /><a href="https://github.com/testing-library/eslint-plugin-testing-library/commits?author=marudor" title="Code">💻</a> <a href="https://github.com/testing-library/eslint-plugin-testing-library/commits?author=marudor" title="Tests">⚠️</a></td>
+    <td align="center"><a href="http://timdeschryver.dev"><img src="https://avatars1.githubusercontent.com/u/28659384?v=4" width="100px;" alt=""/><br /><sub><b>Tim Deschryver</b></sub></a><br /><a href="https://github.com/testing-library/eslint-plugin-testing-library/commits?author=timdeschryver" title="Code">💻</a> <a href="https://github.com/testing-library/eslint-plugin-testing-library/commits?author=timdeschryver" title="Documentation">📖</a> <a href="#ideas-timdeschryver" title="Ideas, Planning, & Feedback">🤔</a> <a href="https://github.com/testing-library/eslint-plugin-testing-library/pulls?q=is%3Apr+reviewed-by%3Atimdeschryver" title="Reviewed Pull Requests">👀</a> <a href="https://github.com/testing-library/eslint-plugin-testing-library/commits?author=timdeschryver" title="Tests">⚠️</a></td>
   </tr>
 </table>
 
 <!-- markdownlint-enable -->
 <!-- prettier-ignore-end -->
-
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
