@@ -1,15 +1,17 @@
 language: node_js
 
-node_js:
-  - 8
-  - 10
+env:
+  - FORCE_COLOR=true
 
-branches:
-  only: master
+node_js:
+  - 10.12
+  - 12
+  - node
 
 jobs:
   include:
     - stage: release
+      if: branch = master AND type != pull_request
       node_js: lts/*
       deploy:
         provider: script
