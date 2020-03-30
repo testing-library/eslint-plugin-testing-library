@@ -23,6 +23,13 @@ ruleTester.run('prefer-wait-for', rule, {
       }`,
     },
     {
+      code: `import * as testingLibrary from '@testing-library/foo';
+      
+      async () => {
+        await testingLibrary.waitForElementToBeRemoved(() => {});
+      }`,
+    },
+    {
       code: `import { render } from '@testing-library/foo';
       import { waitForSomethingElse } from 'other-module';
       
@@ -55,6 +62,46 @@ ruleTester.run('prefer-wait-for', rule, {
 
       async () => {
         await waitFor(() => {});
+      }`,
+    },
+    // namespaced wait should be fixed but not its import
+    {
+      code: `import * as testingLibrary from '@testing-library/foo';
+
+      async () => {
+        await testingLibrary.wait();
+      }`,
+      errors: [
+        {
+          messageId: 'preferWaitForMethod',
+          line: 4,
+          column: 30,
+        },
+      ],
+      output: `import * as testingLibrary from '@testing-library/foo';
+
+      async () => {
+        await testingLibrary.waitFor(() => {});
+      }`,
+    },
+    // namespaced waitForDomChange should be fixed but not its import
+    {
+      code: `import * as testingLibrary from '@testing-library/foo';
+
+      async () => {
+        await testingLibrary.waitForDomChange({ timeout: 500 });
+      }`,
+      errors: [
+        {
+          messageId: 'preferWaitForMethod',
+          line: 4,
+          column: 30,
+        },
+      ],
+      output: `import * as testingLibrary from '@testing-library/foo';
+
+      async () => {
+        await testingLibrary.waitFor(() => {}, { timeout: 500 });
       }`,
     },
     {
