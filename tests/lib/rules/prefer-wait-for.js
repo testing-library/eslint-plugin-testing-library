@@ -37,6 +37,13 @@ ruleTester.run('prefer-wait-for', rule, {
         await waitForSomethingElse(() => {});
       }`,
     },
+    {
+      code: `import * as testingLibrary from '@testing-library/foo';
+
+      async () => {
+        await testingLibrary.waitFor(() => {}, { timeout: 500 });
+      }`,
+    },
   ],
 
   invalid: [
