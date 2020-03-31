@@ -76,6 +76,17 @@ ruleTester.run('no-debug', rule, {
       code: `const { queries } = require('@testing-library/dom')`,
     },
     {
+      code: `import * as dtl from '@testing-library/dom';
+        const foo = dtl.debug;
+      `,
+    },
+    {
+      code: `
+        import * as foo from '@somewhere/else';
+        foo.debug();
+      `,
+    },
+    {
       code: `import { queries } from '@testing-library/dom'`,
     },
     {
@@ -201,6 +212,19 @@ ruleTester.run('no-debug', rule, {
       errors: [
         {
           messageId: 'noDebug',
+        },
+      ],
+    },
+    {
+      code: `
+        import * as dtl from '@testing-library/dom';
+        dtl.debug();
+      `,
+      errors: [
+        {
+          messageId: 'noDebug',
+          line: 3,
+          column: 13,
         },
       ],
     },
