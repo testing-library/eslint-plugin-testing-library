@@ -159,6 +159,15 @@
         "review",
         "test"
       ]
+    },
+    {
+      "login": "tdeekens",
+      "name": "Tobias Deekens",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/1877073?v=4",
+      "profile": "http://tdeekens.name",
+      "contributions": [
+        "bug"
+      ]
     }
   ],
   "contributorsPerLine": 7,
