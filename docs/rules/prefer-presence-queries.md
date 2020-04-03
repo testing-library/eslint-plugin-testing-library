@@ -21,14 +21,14 @@ test('some test', () => {
   // check element is present with `queryBy*`
   expect(screen.queryByText('button')).toBeInTheDocument();
   expect(screen.queryAllByText('button')[0]).toBeTruthy();
-  expect(screen.queryByText('button')).toBeNull();
+  expect(screen.queryByText('button')).not.toBeNull();
   expect(screen.queryAllByText('button')[2]).not.toBeNull();
   expect(screen.queryByText('button')).not.toBeFalsy();
 
   // check element is NOT present with `getBy*`
   expect(screen.getByText('loading')).not.toBeInTheDocument();
   expect(screen.getAllByText('loading')[1]).not.toBeTruthy();
-  expect(screen.getByText('loading')).not.toBeNull();
+  expect(screen.getByText('loading')).toBeNull();
   expect(screen.getAllByText('loading')[3]).toBeNull();
   expect(screen.getByText('loading')).toBeFalsy();
 });
@@ -42,14 +42,14 @@ test('some test', async () => {
   // check element is present with `getBy*`
   expect(screen.getByText('button')).toBeInTheDocument();
   expect(screen.getAllByText('button')[9]).toBeTruthy();
-  expect(screen.getByText('button')).toBeNull();
+  expect(screen.getByText('button')).not.toBeNull();
   expect(screen.getAllByText('button')[7]).not.toBeNull();
   expect(screen.getByText('button')).not.toBeFalsy();
 
   // check element is NOT present with `queryBy*`
   expect(screen.queryByText('loading')).not.toBeInTheDocument();
   expect(screen.queryAllByText('loading')[8]).not.toBeTruthy();
-  expect(screen.queryByText('loading')).not.toBeNull();
+  expect(screen.queryByText('loading')).toBeNull();
   expect(screen.queryAllByText('loading')[6]).toBeNull();
   expect(screen.queryByText('loading')).toBeFalsy();
 
