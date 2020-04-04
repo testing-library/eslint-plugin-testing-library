@@ -6,25 +6,23 @@
     "jest/globals": true
   },
   "extends": [
-    "standard",
-    "prettier",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended",
+    "prettier/@typescript-eslint",
     "plugin:jest/recommended",
     "plugin:jest-formatting/recommended"
   ],
-  "plugins": [
-    "prettier",
-    "jest",
-    "jest-formatting"
-  ],
+  "plugins": ["@typescript-eslint", "jest", "jest-formatting"],
   "globals": {
     "Atomics": "readonly",
     "SharedArrayBuffer": "readonly"
   },
+  "parser": "@typescript-eslint/parser",
   "parserOptions": {
-    "ecmaVersion": 2018
+    "project": "./tsconfig.eslint.json"
   },
   "rules": {
-    "prettier/prettier": "error",
-    "no-var": "error"
+    "no-var": "error",
+    "@typescript-eslint/explicit-function-return-type": "off"
   }
 }

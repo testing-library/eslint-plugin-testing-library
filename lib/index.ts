@@ -1,5 +1,3 @@
-'use strict';
-
 const rules = {
   'await-async-query': require('./rules/await-async-query'),
   'await-async-utils': require('./rules/await-async-utils'),
@@ -22,7 +20,7 @@ const recommendedRules = {
   'testing-library/no-await-sync-query': 'error',
 };
 
-module.exports = {
+export = {
   rules,
   configs: {
     recommended: {

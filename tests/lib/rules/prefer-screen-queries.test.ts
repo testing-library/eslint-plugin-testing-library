@@ -1,15 +1,10 @@
-'use strict';
+import { createRuleTester } from '../test-utils';
+import rule, { RULE_NAME } from '../../../lib/rules/prefer-screen-queries';
+import { ALL_QUERIES_COMBINATIONS } from '../../../lib/utils';
 
-const rule = require('../../../lib/rules/prefer-screen-queries');
-const { ALL_QUERIES_COMBINATIONS } = require('../../../lib/utils');
-const RuleTester = require('eslint').RuleTester;
+const ruleTester = createRuleTester();
 
-// ------------------------------------------------------------------------------
-// Tests
-// ------------------------------------------------------------------------------
-
-const ruleTester = new RuleTester({ parserOptions: { ecmaVersion: 2018 } });
-ruleTester.run('prefer-screen-queries', rule, {
+ruleTester.run(RULE_NAME, rule, {
   valid: [
     ...ALL_QUERIES_COMBINATIONS.map(queryMethod => ({
       code: `screen.${queryMethod}()`,

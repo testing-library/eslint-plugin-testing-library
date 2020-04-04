@@ -1,13 +1,11 @@
-'use strict';
-
 const { configs, rules } = require('../lib');
-const fs = require('fs');
-const path = require('path');
+import * as fs from 'fs';
+import * as path from 'path';
 
 const rulesModules = fs.readdirSync(path.join(__dirname, '../lib/rules'));
 
 it('should export all available rules', () => {
-  const availableRules = rulesModules.map(module => module.replace('.js', ''));
+  const availableRules = rulesModules.map(module => module.replace('.ts', ''));
   expect(Object.keys(rules)).toEqual(availableRules);
 });
 

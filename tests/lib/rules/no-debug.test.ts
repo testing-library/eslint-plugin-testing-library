@@ -1,26 +1,13 @@
-'use strict';
+import { createRuleTester } from '../test-utils';
+import rule, { RULE_NAME } from '../../../lib/rules/no-debug';
 
-// ------------------------------------------------------------------------------
-// Requirements
-// ------------------------------------------------------------------------------
-
-const rule = require('../../../lib/rules/no-debug');
-const RuleTester = require('eslint').RuleTester;
-
-// ------------------------------------------------------------------------------
-// Tests
-// ------------------------------------------------------------------------------
-
-const ruleTester = new RuleTester({
-  parserOptions: {
-    ecmaVersion: 2018,
-    ecmaFeatures: {
-      jsx: true,
-    },
-    sourceType: 'module',
+const ruleTester = createRuleTester({
+  ecmaFeatures: {
+    jsx: true,
   },
 });
-ruleTester.run('no-debug', rule, {
+
+ruleTester.run(RULE_NAME, rule, {
   valid: [
     {
       code: `debug()`,

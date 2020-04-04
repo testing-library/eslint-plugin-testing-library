@@ -1,20 +1,29 @@
-'use strict';
+import { ESLintUtils, TSESTree } from '@typescript-eslint/experimental-utils';
+import { getDocsUrl } from '../utils';
+import {
+  isLiteral,
+  isCallExpression,
+  isIdentifier,
+  isImportDeclaration,
+} from '../node-utils';
 
-const { getDocsUrl } = require('../utils');
+export const RULE_NAME = 'no-dom-import';
+export type MessageIds = 'noDomImport' | 'noDomImportFramework';
+type Options = [string];
 
 const DOM_TESTING_LIBRARY_MODULES = [
   'dom-testing-library',
   '@testing-library/dom',
 ];
 
-module.exports = {
+export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
+  name: RULE_NAME,
   meta: {
     type: 'problem',
     docs: {
       description: 'Disallow importing from DOM Testing Library',
       category: 'Best Practices',
       recommended: false,
-      url: getDocsUrl('no-dom-import'),
     },
     messages: {
       noDomImport:
@@ -29,37 +38,51 @@ module.exports = {
       },
     ],
   },
+  defaultOptions: [''],
 
-  create: function(context) {
-    const framework = context.options[0];
-
+  create(context, [framework]) {
     return {
       ImportDeclaration(node) {
+        if (!isLiteral(node.source) || typeof node.source.value !== 'string') {
+          return;
+        }
+        const value = node.source.value;
         const domModuleName = DOM_TESTING_LIBRARY_MODULES.find(
-          module => module === node.source.value
+          module => module === value
         );
 
         if (domModuleName) {
-          report(context, node, domModuleName);
+          report(node, domModuleName);
         }
       },
 
-      [`CallExpression > Identifier[name="require"]`](node) {
+      [`CallExpression > Identifier[name="require"]`](
+        node: TSESTree.Identifier
+      ) {
+        if (!isCallExpression(node.parent)) {
+          return;
+        }
         const { arguments: args } = node.parent;
 
-        const literalNodeDomModuleName = args.find(args =>
-          DOM_TESTING_LIBRARY_MODULES.includes(args.value)
-        );
+        const literalNodeDomModuleName = args.find(
+          args =>
+            isLiteral(args) &&
+            typeof args.value === 'string' &&
+            DOM_TESTING_LIBRARY_MODULES.includes(args.value)
+        ) as TSESTree.Literal;
 
         if (literalNodeDomModuleName) {
-          report(context, node, literalNodeDomModuleName.value);
+          report(node, literalNodeDomModuleName.value as string);
         }
       },
     };
 
-    function report(context, node, moduleName) {
+    function report(
+      node: TSESTree.ImportDeclaration | TSESTree.Identifier,
+      moduleName: string
+    ) {
       if (framework) {
-        const isRequire = node.name === 'require';
+        const isRequire = isIdentifier(node) && node.name === 'require';
         const correctModuleName = moduleName.replace('dom', framework);
         context.report({
           node,
@@ -69,13 +92,21 @@ module.exports = {
           },
           fix(fixer) {
             if (isRequire) {
-              const name = node.parent.arguments[0];
+              if (!isCallExpression(node.parent)) {
+                return;
+              }
+
+              const [name] = node.parent.arguments;
+              if (!isLiteral(name)) {
+                return;
+              }
+
               // Replace the module name with the raw module name as we can't predict which punctuation the user is going to use
               return fixer.replaceText(
                 name,
                 name.raw.replace(moduleName, correctModuleName)
               );
-            } else {
+            } else if (isImportDeclaration(node) && isLiteral(node.source)) {
               const name = node.source;
               return fixer.replaceText(
                 name,
@@ -92,4 +123,4 @@ module.exports = {
       }
     }
   },
-};
+});

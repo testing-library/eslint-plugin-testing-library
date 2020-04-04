@@ -1,11 +1,20 @@
-'use strict';
+import { ESLintUtils, TSESTree } from '@typescript-eslint/experimental-utils';
+import { getDocsUrl } from '../utils';
+import {
+  isBlockStatement,
+  isCallExpression,
+  isIdentifier,
+} from '../node-utils';
 
-const { getDocsUrl } = require('../utils');
+export const RULE_NAME = 'no-wait-for-empty-callback';
+export type MessageIds = 'noWaitForEmptyCallback';
+type Options = [];
 
 const WAIT_EXPRESSION_QUERY =
   'CallExpression[callee.name=/^(waitFor|waitForElementToBeRemoved)$/]';
 
-module.exports = {
+export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
+  name: RULE_NAME,
   meta: {
     type: 'suggestion',
     docs: {
@@ -13,7 +22,6 @@ module.exports = {
         "It's preferred to avoid empty callbacks in `waitFor` and `waitForElementToBeRemoved`",
       category: 'Best Practices',
       recommended: false,
-      url: getDocsUrl('no-wait-for-empty-callback'),
     },
     messages: {
       noWaitForEmptyCallback:
@@ -22,12 +30,20 @@ module.exports = {
     fixable: null,
     schema: [],
   },
+  defaultOptions: [],
 
   // trimmed down implementation of https://github.com/eslint/eslint/blob/master/lib/rules/no-empty-function.js
   // TODO: var referencing any of previously mentioned?
   create: function(context) {
-    function reportIfEmpty(node) {
-      if (node.body.type === 'BlockStatement' && node.body.body.length === 0) {
+    function reportIfEmpty(
+      node: TSESTree.ArrowFunctionExpression | TSESTree.FunctionExpression
+    ) {
+      if (
+        isBlockStatement(node.body) &&
+        node.body.body.length === 0 &&
+        isCallExpression(node.parent) &&
+        isIdentifier(node.parent.callee)
+      ) {
         context.report({
           node,
           loc: node.body.loc.start,
@@ -39,7 +55,7 @@ module.exports = {
       }
     }
 
-    function reportNoop(node) {
+    function reportNoop(node: TSESTree.Identifier) {
       context.report({
         node,
         loc: node.loc.start,
@@ -53,4 +69,4 @@ module.exports = {
       [`${WAIT_EXPRESSION_QUERY} > Identifier[name="noop"]`]: reportNoop,
     };
   },
-};
+});

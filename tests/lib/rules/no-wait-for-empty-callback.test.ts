@@ -1,17 +1,11 @@
-'use strict';
+import { createRuleTester } from '../test-utils';
+import rule, { RULE_NAME } from '../../../lib/rules/no-wait-for-empty-callback';
 
-const rule = require('../../../lib/rules/no-wait-for-empty-callback');
-const RuleTester = require('eslint').RuleTester;
-
-// ------------------------------------------------------------------------------
-// Tests
-// ------------------------------------------------------------------------------
-
-const ruleTester = new RuleTester({ parserOptions: { ecmaVersion: 2018 } });
+const ruleTester = createRuleTester();
 
 const ALL_WAIT_METHODS = ['waitFor', 'waitForElementToBeRemoved'];
 
-ruleTester.run('no-wait-for-empty-callback', rule, {
+ruleTester.run(RULE_NAME, rule, {
   valid: [
     ...ALL_WAIT_METHODS.map(m => ({
       code: `${m}(() => {

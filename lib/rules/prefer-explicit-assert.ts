@@ -1,18 +1,28 @@
-'use strict';
+import { ESLintUtils, TSESTree } from '@typescript-eslint/experimental-utils';
+import { getDocsUrl, ALL_QUERIES_METHODS } from '../utils';
+import { isMemberExpression } from '../node-utils';
 
-const { getDocsUrl, ALL_QUERIES_METHODS } = require('../utils');
+export const RULE_NAME = 'prefer-explicit-assert';
+export type MessageIds = 'preferExplicitAssert';
+type Options = [
+  {
+    customQueryNames: string[];
+  }
+];
 
 const ALL_GET_BY_QUERIES = ALL_QUERIES_METHODS.map(
   queryMethod => `get${queryMethod}`
 );
 
-const isValidQuery = (node, customQueryNames) =>
+const isValidQuery = (node: TSESTree.Identifier, customQueryNames: string[]) =>
   ALL_GET_BY_QUERIES.includes(node.name) ||
   customQueryNames.includes(node.name);
 
-const isAtTopLevel = node => node.parent.parent.type === 'ExpressionStatement';
+const isAtTopLevel = (node: TSESTree.Node) =>
+  node.parent.parent.type === 'ExpressionStatement';
 
-module.exports = {
+export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
+  name: RULE_NAME,
   meta: {
     type: 'suggestion',
     docs: {
@@ -20,7 +30,6 @@ module.exports = {
         'Suggest using explicit assertions rather than just `getBy*` queries',
       category: 'Best Practices',
       recommended: false,
-      url: getDocsUrl('prefer-explicit-assert'),
     },
     messages: {
       preferExplicitAssert:
@@ -38,26 +47,27 @@ module.exports = {
       },
     ],
   },
+  defaultOptions: [
+    {
+      customQueryNames: [],
+    },
+  ],
 
-  create: function(context) {
-    const getQueryCalls = [];
-    const customQueryNames =
-      (context.options && context.options.length > 0
-        ? context.options[0].customQueryNames
-        : []) || [];
+  create: function(context, [options]) {
+    const { customQueryNames } = options;
+    const getQueryCalls: TSESTree.Identifier[] = [];
 
     return {
-      'CallExpression Identifier'(node) {
+      'CallExpression Identifier'(node: TSESTree.Identifier) {
         if (isValidQuery(node, customQueryNames)) {
           getQueryCalls.push(node);
         }
       },
       'Program:exit'() {
         getQueryCalls.forEach(queryCall => {
-          const node =
-            queryCall.parent.type === 'MemberExpression'
-              ? queryCall.parent
-              : queryCall;
+          const node = isMemberExpression(queryCall.parent)
+            ? queryCall.parent
+            : queryCall;
 
           if (isAtTopLevel(node)) {
             context.report({
@@ -69,4 +79,4 @@ module.exports = {
       },
     };
   },
-};
+});

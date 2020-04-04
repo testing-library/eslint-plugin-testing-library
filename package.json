@@ -39,6 +39,9 @@
   "devDependencies": {
     "@commitlint/cli": "^8.2.0",
     "@commitlint/config-conventional": "^8.2.0",
+    "@types/jest": "^25.1.4",
+    "@typescript-eslint/eslint-plugin": "^2.26.0",
+    "@typescript-eslint/parser": "^2.26.0",
     "eslint": "^6.3.0",
     "eslint-config-prettier": "^6.1.0",
     "eslint-config-standard": "^14.1.0",
@@ -51,10 +54,12 @@
     "eslint-plugin-standard": "^4.0.1",
     "husky": "^3.0.5",
     "is-ci-cli": "^2.0.0",
-    "jest": "^24.9.0",
+    "jest": "^25.2.6",
     "lint-staged": "^9.2.5",
     "prettier": "1.18.2",
-    "semantic-release": "^15.13.24"
+    "semantic-release": "^15.13.24",
+    "ts-jest": "^25.3.0",
+    "typescript": "^3.8.3"
   },
   "peerDependencies": {
     "eslint": ">=5"

@@ -1,5 +1,8 @@
 module.exports = {
-  testMatch: ['**/tests/**/*.js'],
+  testMatch: ['**/tests/**/*.test.ts'],
+  transform: {
+    '^.+\\.tsx?$': 'ts-jest',
+  },
   coverageThreshold: {
     global: {
       branches: 100,

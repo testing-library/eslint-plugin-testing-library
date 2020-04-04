@@ -1,12 +1,10 @@
-'use strict';
+import { createRuleTester } from '../test-utils';
+import rule, { RULE_NAME } from '../../../lib/rules/await-async-utils';
+import { ASYNC_UTILS } from '../../../lib/utils';
 
-const rule = require('../../../lib/rules/await-async-utils');
-const { ASYNC_UTILS } = require('../../../lib/utils');
-const RuleTester = require('eslint').RuleTester;
+const ruleTester = createRuleTester();
 
-const ruleTester = new RuleTester({ parserOptions: { ecmaVersion: 2018 } });
-
-ruleTester.run('await-async-utils', rule, {
+ruleTester.run(RULE_NAME, rule, {
   valid: [
     ...ASYNC_UTILS.map(asyncUtil => ({
       code: `
