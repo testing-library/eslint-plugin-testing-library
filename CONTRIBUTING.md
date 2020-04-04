@@ -75,12 +75,12 @@ Additionally, you need to do couple of extra things:
 Just couple of things you need to remember when editing already existing rules:
 
 - If renaming a rule, make sure to update all points mentioned in
-  [Adding new rules](#Adding new rules) section.
+  "Adding new rules" section.
 - Try to add tests to cover the changes introduced, no matter if that's
   a bug fix or a new feature.
 
 ## Help needed
 
-Please checkout the [the open issues][https://github.com/testing-library/eslint-plugin-testing-library/issues]
+Please checkout the [the open issues](https://github.com/testing-library/eslint-plugin-testing-library/issues)
 
 Also, please watch the repo and respond to questions/bug reports/feature requests! Thanks!
