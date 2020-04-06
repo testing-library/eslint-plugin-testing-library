@@ -64,9 +64,10 @@ each rule has three files named with its identifier (e.g. `no-debug`):
 Additionally, you need to do couple of extra things:
 
 - Import the new rule in `lib/index.js` and include it
-  in `rules` constant. There is a snapshot test which will make sure you did
-  this, and you can update it just running `npm run test:update`.
-  Remember to include your rule under corresponding `config` if necessary.
+  in `rules` constant (there is a test which will make sure you did
+  this). Remember to include your rule under corresponding `config` if necessary
+  (a snapshot test will check this too, but you can update it just running
+  `npm run test:update`).
 - Include your rule in "Supported Rules" table within `README.md`.
   Don't forget to include proper badges if needed.
 
