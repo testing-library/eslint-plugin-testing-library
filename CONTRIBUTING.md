@@ -29,8 +29,8 @@ Working on your first Pull Request? You can learn how from this free series
 
 ## Committing and Pushing changes
 
-There are git hooks config with this project that are automatically installed
-Git hooks are configured on this project when you install dependencies. The following will be run on every commit:
+Git hooks are configured on this project when you install dependencies.
+The following will be run on every commit:
 
 - Lint and format files automatically
 - Check all tests are passing
@@ -44,12 +44,11 @@ Based on [ESLint's Rule Naming Conventions](https://eslint.org/docs/developer-gu
 
 - If your rule is disallowing something, prefix it with `no-` such as `no-debug`
   for disallowing `debug()`.
-- If your rule is suggesting to use a specific way for something that can be
-  done in several ways, you could **optionally** prefix it with `prefer-` such as
-  `prefer-screen-queries` for suggesting to use `screen.getByText()` from
-  imported `screen` rather than`getByText()` from `render`'s result,
-- If your rule is suggesting to prefer a way of doing something, among other ways, you can **optionally** prefix it with `prefer-`. For example, `prefer-screen-queries` suggests to use `screen.getByText()` from imported `screen` rather than`getByText()` from `render`'s result though both are technically fine.
-- If your rule is enforcing the inclusion of something, use a short name without a special prefix such as `await-async-utils` for enforcing to await proper async utils.
+- If your rule is suggesting to prefer a way of doing something, among other ways, you can **optionally** prefix it with
+  `prefer-`. For example, `prefer-screen-queries` suggests to use `screen.getByText()` from imported `screen` rather
+  than `getByText()` from `render`'s result though both are technically fine.
+- If your rule is enforcing the inclusion of something, use a short name without a special prefix. As an example,
+  `await-async-utils` enforce to wait for proper async utils.
 - Use dashes between words.
 - Try to keep the name simple and clear.
 
@@ -70,7 +69,7 @@ Additionally, you need to do couple of extra things:
   (a snapshot test will check this too, but you can update it just running
   `npm run test:update`).
 - Include your rule in "Supported Rules" table within `README.md`.
-Don't forget to include the proper badges if needed and to sort alphabetically the rules for readability.
+  Don't forget to include the proper badges if needed and to sort alphabetically the rules for readability.
 
 ## Modifying rules
 
