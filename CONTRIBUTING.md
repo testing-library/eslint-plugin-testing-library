@@ -30,16 +30,17 @@ Working on your first Pull Request? You can learn how from this free series
 ## Committing and Pushing changes
 
 There are git hooks config with this project that are automatically installed
-and set up when you install dependencies. This will be run on every commit:
+Git hooks are configured on this project when you install dependencies. The following will be run on every commit:
 
-- check all tests are passing, code validation is fine and format files automatically
-- check commit message is following [Conventional Commit specification](https://www.conventionalcommits.org/en/v1.0.0/)
+- Lint and format files automatically
+- Check all tests are passing
+- Check commit message is following [Conventional Commit specification](https://www.conventionalcommits.org/en/v1.0.0/)
 
-You can run `npm run test:update` which will update any snapshots that need updating.
+If you ever need to update a snapshot, you can run `npm run test:update`
 
 ## Rule naming conventions
 
-Based on [ESLint's Rule Naming Conventions](https://eslint.org/docs/developer-guide/working-with-rules#rule-naming-conventions), this is the simple convention you must follow:
+Based on [ESLint's Rule Naming Conventions](https://eslint.org/docs/developer-guide/working-with-rules#rule-naming-conventions), you must follow these rules:
 
 - If your rule is disallowing something, prefix it with `no-` such as `no-debug`
   for disallowing `debug()`.
@@ -47,10 +48,10 @@ Based on [ESLint's Rule Naming Conventions](https://eslint.org/docs/developer-gu
   done in several ways, you could **optionally** prefix it with `prefer-` such as
   `prefer-screen-queries` for suggesting to use `screen.getByText()` from
   imported `screen` rather than`getByText()` from `render`'s result,
-  even though both are technically fine.
+- If your rule is suggesting to prefer a way of doing something, among other ways, you can **optionally** prefix it with `prefer-`. For example, `prefer-screen-queries` suggests to use `screen.getByText()` from imported `screen` rather than`getByText()` from `render`'s result though both are technically fine.
 - If your rule is enforcing the inclusion of something, use a short name without a special prefix such as `await-async-utils` for enforcing to await proper async utils.
 - Use dashes between words.
-- Try to keep the name simple.
+- Try to keep the name simple and clear.
 
 ## Adding new rules
 
@@ -69,7 +70,7 @@ Additionally, you need to do couple of extra things:
   (a snapshot test will check this too, but you can update it just running
   `npm run test:update`).
 - Include your rule in "Supported Rules" table within `README.md`.
-  Don't forget to include proper badges if needed.
+Don't forget to include the proper badges if needed and to sort alphabetically the rules for readability.
 
 ## Modifying rules
 
