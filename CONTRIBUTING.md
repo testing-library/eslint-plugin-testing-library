@@ -61,19 +61,19 @@ each rule has three files named with its identifier (e.g. `no-debug`):
 - in the `tests/lib/rules` directory: a test file (e.g. `no-debug.js`)
 - in the `docs/rules` directory: a Markdown documentation file (e.g. `no-debug.md`)
 
-Additionally, you need to do couple of extra things:
+Additionally, you need to do a couple of extra things:
 
 - Import the new rule in `lib/index.js` and include it
   in `rules` constant (there is a test which will make sure you did
-  this). Remember to include your rule under corresponding `config` if necessary
+ this). Remember to include your rule under corresponding `config` if necessary
   (a snapshot test will check this too, but you can update it just running
   `npm run test:update`).
-- Include your rule in "Supported Rules" table within `README.md`.
+- Include your rule in the "Supported Rules" table within the [README.md](./README.md).
   Don't forget to include the proper badges if needed and to sort alphabetically the rules for readability.
 
 ## Modifying rules
 
-Just couple of things you need to remember when editing already existing rules:
+A couple of things you need to remember when editing already existing rules:
 
 - If renaming a rule, make sure to update all points mentioned in
   "Adding new rules" section.
@@ -82,6 +82,6 @@ Just couple of things you need to remember when editing already existing rules:
 
 ## Help needed
 
-Please checkout the [the open issues](https://github.com/testing-library/eslint-plugin-testing-library/issues)
+Please check the [the open issues](https://github.com/testing-library/eslint-plugin-testing-library/issues)
 
 Also, please watch the repo and respond to questions/bug reports/feature requests! Thanks!
