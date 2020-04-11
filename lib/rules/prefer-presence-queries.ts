@@ -6,15 +6,19 @@ import {
   isIdentifier,
 } from '../node-utils';
 
+export const RULE_NAME = 'prefer-presence-queries';
+export type MessageIds = 'presenceQuery' | 'absenceQuery' | 'expectQueryBy';
+type Options = [];
+
 const QUERIES_REGEXP = new RegExp(
   `^(get|query)(All)?(${ALL_QUERIES_METHODS.join('|')})$`
 );
 const PRESENCE_MATCHERS = ['toBeInTheDocument', 'toBeTruthy', 'toBeDefined'];
 const ABSENCE_MATCHERS = ['toBeNull', 'toBeFalsy'];
 
-export const RULE_NAME = 'prefer-presence-queries';
-export type MessageIds = 'presenceQuery' | 'absenceQuery' | 'expectQueryBy';
-type Options = [];
+function isThrowingQuery(node: TSESTree.Identifier) {
+  return node.name.startsWith('get');
+}
 
 export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
   name: RULE_NAME,
@@ -92,7 +96,3 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
     };
   },
 });
-
-function isThrowingQuery(node: TSESTree.Identifier) {
-  return node.name.startsWith('get');
-}

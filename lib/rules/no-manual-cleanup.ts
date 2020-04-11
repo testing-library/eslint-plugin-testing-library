@@ -45,6 +45,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
       | TSESTree.ArrayPattern;
 
     // can't find the right type?
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     function reportImportReferences(references: any[]) {
       if (references && references.length > 0) {
         references.forEach(reference => {

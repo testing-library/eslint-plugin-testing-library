@@ -15,6 +15,22 @@ const VALID_PARENTS = [
 
 const ASYNC_UTILS_REGEXP = new RegExp(`^(${ASYNC_UTILS.join('|')})$`);
 
+function isAwaited(node: TSESTree.Node) {
+  return VALID_PARENTS.includes(node.type);
+}
+
+function isPromiseResolved(node: TSESTree.Node) {
+  const parent = node.parent;
+
+  // wait(...).then(...)
+  if (isCallExpression(parent)) {
+    return hasThenProperty(parent.parent);
+  }
+
+  // promise.then(...)
+  return hasThenProperty(parent);
+}
+
 export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
   name: RULE_NAME,
   meta: {
@@ -90,19 +106,3 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
     };
   },
 });
-
-function isAwaited(node: TSESTree.Node) {
-  return VALID_PARENTS.includes(node.type);
-}
-
-function isPromiseResolved(node: TSESTree.Node) {
-  const parent = node.parent;
-
-  // wait(...).then(...)
-  if (isCallExpression(parent)) {
-    return hasThenProperty(parent.parent);
-  }
-
-  // promise.then(...)
-  return hasThenProperty(parent);
-}

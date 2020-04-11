@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const { configs, rules } = require('../lib');
 import * as fs from 'fs';
 import * as path from 'path';

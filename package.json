@@ -25,7 +25,7 @@
     "lib/"
   ],
   "scripts": {
-    "lint": "eslint ./",
+    "lint": "eslint . --ext .js,.ts",
     "lint:fix": "npm run lint -- --fix",
     "format": "prettier --write README.md {lib,docs,tests}/**/*.{js,md}",
     "test:local": "jest",

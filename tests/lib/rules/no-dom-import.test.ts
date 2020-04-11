@@ -1,5 +1,5 @@
 import { createRuleTester } from '../test-utils';
-import rule, { RULE_NAME, MessageIds } from '../../../lib/rules/no-dom-import';
+import rule, { RULE_NAME } from '../../../lib/rules/no-dom-import';
 
 const ruleTester = createRuleTester();
 

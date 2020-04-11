@@ -23,6 +23,49 @@ const LIBRARY_MODULES_WITH_SCREEN = [
   '@testing-library/svelte',
 ];
 
+function isRenderFunction(
+  callNode: TSESTree.CallExpression,
+  renderFunctions: string[]
+) {
+  return ['render', ...renderFunctions].some(
+    name => isIdentifier(callNode.callee) && name === callNode.callee.name
+  );
+}
+
+function isRenderVariableDeclarator(
+  node: TSESTree.VariableDeclarator,
+  renderFunctions: string[]
+) {
+  if (node.init) {
+    if (isAwaitExpression(node.init)) {
+      return (
+        node.init.argument &&
+        isRenderFunction(
+          node.init.argument as TSESTree.CallExpression,
+          renderFunctions
+        )
+      );
+    } else {
+      return (
+        isCallExpression(node.init) &&
+        isRenderFunction(node.init, renderFunctions)
+      );
+    }
+  }
+
+  return false;
+}
+
+function hasTestingLibraryImportModule(
+  importDeclarationNode: TSESTree.ImportDeclaration
+) {
+  if (!isLiteral(importDeclarationNode.source)) {
+    return;
+  }
+  const literal = importDeclarationNode.source;
+  return LIBRARY_MODULES_WITH_SCREEN.some(module => module === literal.value);
+}
+
 export default ESLintUtils.RuleCreator(getDocsUrl)({
   name: RULE_NAME,
   meta: {
@@ -57,7 +100,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)({
     let hasDestructuredDebugStatement = false;
     const renderVariableDeclarators: TSESTree.VariableDeclarator[] = [];
 
-    let { renderFunctions } = options;
+    const { renderFunctions } = options;
 
     let hasImportedScreen = false;
     let wildcardImportName: string = null;
@@ -210,46 +253,3 @@ export default ESLintUtils.RuleCreator(getDocsUrl)({
     };
   },
 });
-
-function isRenderFunction(
-  callNode: TSESTree.CallExpression,
-  renderFunctions: string[]
-) {
-  return ['render', ...renderFunctions].some(
-    name => isIdentifier(callNode.callee) && name === callNode.callee.name
-  );
-}
-
-function isRenderVariableDeclarator(
-  node: TSESTree.VariableDeclarator,
-  renderFunctions: string[]
-) {
-  if (node.init) {
-    if (isAwaitExpression(node.init)) {
-      return (
-        node.init.argument &&
-        isRenderFunction(
-          node.init.argument as TSESTree.CallExpression,
-          renderFunctions
-        )
-      );
-    } else {
-      return (
-        isCallExpression(node.init) &&
-        isRenderFunction(node.init, renderFunctions)
-      );
-    }
-  }
-
-  return false;
-}
-
-function hasTestingLibraryImportModule(
-  importDeclarationNode: TSESTree.ImportDeclaration
-) {
-  if (!isLiteral(importDeclarationNode.source)) {
-    return;
-  }
-  const literal = importDeclarationNode.source;
-  return LIBRARY_MODULES_WITH_SCREEN.some(module => module === literal.value);
-}

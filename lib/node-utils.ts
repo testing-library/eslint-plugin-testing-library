@@ -1,42 +1,5 @@
 import { TSESTree } from '@typescript-eslint/experimental-utils';
 
-export function findClosestCallExpressionNode(
-  node: TSESTree.Node
-): TSESTree.CallExpression {
-  if (isCallExpression(node)) {
-    return node;
-  }
-
-  return findClosestCallExpressionNode(node.parent);
-}
-
-export function findClosestCallNode(
-  node: TSESTree.Node,
-  name: string
-): TSESTree.CallExpression {
-  if (!node.parent) {
-    return null;
-  }
-
-  if (
-    isCallExpression(node) &&
-    isIdentifier(node.callee) &&
-    node.callee.name === name
-  ) {
-    return node;
-  } else {
-    return findClosestCallNode(node.parent, name);
-  }
-}
-
-export function hasThenProperty(node: TSESTree.Node) {
-  return (
-    isMemberExpression(node) &&
-    isIdentifier(node.property) &&
-    node.property.name === 'then'
-  );
-}
-
 export function isCallExpression(
   node: TSESTree.Node
 ): node is TSESTree.CallExpression {
@@ -107,4 +70,41 @@ export function isJSXAttribute(
   node: TSESTree.Node
 ): node is TSESTree.JSXAttribute {
   return node && node.type === 'JSXAttribute';
+}
+
+export function findClosestCallExpressionNode(
+  node: TSESTree.Node
+): TSESTree.CallExpression {
+  if (isCallExpression(node)) {
+    return node;
+  }
+
+  return findClosestCallExpressionNode(node.parent);
+}
+
+export function findClosestCallNode(
+  node: TSESTree.Node,
+  name: string
+): TSESTree.CallExpression {
+  if (!node.parent) {
+    return null;
+  }
+
+  if (
+    isCallExpression(node) &&
+    isIdentifier(node.callee) &&
+    node.callee.name === name
+  ) {
+    return node;
+  } else {
+    return findClosestCallNode(node.parent, name);
+  }
+}
+
+export function hasThenProperty(node: TSESTree.Node) {
+  return (
+    isMemberExpression(node) &&
+    isIdentifier(node.property) &&
+    node.property.name === 'then'
+  );
 }

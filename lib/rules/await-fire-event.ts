@@ -17,6 +17,17 @@ const VALID_PARENTS = [
   'ReturnStatement',
 ];
 
+function isAwaited(node: TSESTree.Node) {
+  return VALID_PARENTS.includes(node.type);
+}
+
+function isPromiseResolved(node: TSESTree.Node) {
+  const parent = node.parent.parent;
+
+  // fireEvent.click().then(...)
+  return isCallExpression(parent) && hasThenProperty(parent.parent);
+}
+
 export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
   name: RULE_NAME,
   meta: {
@@ -61,14 +72,3 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
     };
   },
 });
-
-function isAwaited(node: TSESTree.Node) {
-  return VALID_PARENTS.includes(node.type);
-}
-
-function isPromiseResolved(node: TSESTree.Node) {
-  const parent = node.parent.parent;
-
-  // fireEvent.click().then(...)
-  return isCallExpression(parent) && hasThenProperty(parent.parent);
-}

@@ -41,42 +41,6 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
   defaultOptions: [''],
 
   create(context, [framework]) {
-    return {
-      ImportDeclaration(node) {
-        if (!isLiteral(node.source) || typeof node.source.value !== 'string') {
-          return;
-        }
-        const value = node.source.value;
-        const domModuleName = DOM_TESTING_LIBRARY_MODULES.find(
-          module => module === value
-        );
-
-        if (domModuleName) {
-          report(node, domModuleName);
-        }
-      },
-
-      [`CallExpression > Identifier[name="require"]`](
-        node: TSESTree.Identifier
-      ) {
-        if (!isCallExpression(node.parent)) {
-          return;
-        }
-        const { arguments: args } = node.parent;
-
-        const literalNodeDomModuleName = args.find(
-          args =>
-            isLiteral(args) &&
-            typeof args.value === 'string' &&
-            DOM_TESTING_LIBRARY_MODULES.includes(args.value)
-        ) as TSESTree.Literal;
-
-        if (literalNodeDomModuleName) {
-          report(node, literalNodeDomModuleName.value as string);
-        }
-      },
-    };
-
     function report(
       node: TSESTree.ImportDeclaration | TSESTree.Identifier,
       moduleName: string
@@ -122,5 +86,40 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
         });
       }
     }
+    return {
+      ImportDeclaration(node) {
+        if (!isLiteral(node.source) || typeof node.source.value !== 'string') {
+          return;
+        }
+        const value = node.source.value;
+        const domModuleName = DOM_TESTING_LIBRARY_MODULES.find(
+          module => module === value
+        );
+
+        if (domModuleName) {
+          report(node, domModuleName);
+        }
+      },
+
+      [`CallExpression > Identifier[name="require"]`](
+        node: TSESTree.Identifier
+      ) {
+        if (!isCallExpression(node.parent)) {
+          return;
+        }
+        const { arguments: args } = node.parent;
+
+        const literalNodeDomModuleName = args.find(
+          args =>
+            isLiteral(args) &&
+            typeof args.value === 'string' &&
+            DOM_TESTING_LIBRARY_MODULES.includes(args.value)
+        ) as TSESTree.Literal;
+
+        if (literalNodeDomModuleName) {
+          report(node, literalNodeDomModuleName.value as string);
+        }
+      },
+    };
   },
 });
