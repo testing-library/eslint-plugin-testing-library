@@ -20,11 +20,13 @@
   "bugs": {
     "url": "https://github.com/testing-library/eslint-plugin-testing-library/issues"
   },
-  "main": "lib/index.js",
-  "files": [
-    "lib/"
-  ],
+  "release": {
+    "pkgRoot": "dist"
+  },
+  "main": "index.js",
   "scripts": {
+    "build": "tsc",
+    "postbuild": "cpy README.md ./dist && cpy package.json ./dist && cpy LICENSE ./dist",
     "lint": "eslint . --ext .js,.ts",
     "lint:fix": "npm run lint -- --fix",
     "format": "prettier --write README.md {lib,docs,tests}/**/*.{js,md}",
@@ -42,6 +44,7 @@
     "@types/jest": "^25.1.4",
     "@typescript-eslint/eslint-plugin": "^2.26.0",
     "@typescript-eslint/parser": "^2.26.0",
+    "cpy-cli": "^3.1.0",
     "eslint": "^6.3.0",
     "eslint-config-prettier": "^6.1.0",
     "eslint-config-standard": "^14.1.0",
