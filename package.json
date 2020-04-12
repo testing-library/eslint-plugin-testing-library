@@ -30,6 +30,7 @@
     "format": "prettier --write README.md {lib,docs,tests}/**/*.{js,md}",
     "test:local": "jest",
     "test:ci": "jest --coverage",
+    "test:update": "npm run test:local -- --u",
     "test:watch": "npm run test:local -- --watch",
     "test": "is-ci test:ci test:local",
     "semantic-release": "semantic-release"
