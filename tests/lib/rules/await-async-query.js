@@ -25,6 +25,14 @@ ruleTester.run('await-async-query', rule, {
       `,
     })),
 
+    // async queries declaration are valid
+    ...ASYNC_QUERIES_COMBINATIONS.map(query => ({
+      code: `async () => {
+        await screen.${query}('foo')
+      }
+      `,
+    })),
+
     // async queries with await operator are valid
     ...ASYNC_QUERIES_COMBINATIONS.map(query => ({
       code: `async () => {
@@ -145,6 +153,25 @@ ruleTester.run('await-async-query', rule, {
         const foo = ${query}('foo')
       }
       `,
+        errors: [
+          {
+            messageId: 'awaitAsyncQuery',
+          },
+        ],
+      })),
+      ...ASYNC_QUERIES_COMBINATIONS.map(query => ({
+        code: `async () => {
+        screen.${query}('foo')
+      }
+      `,
+        errors: [
+          {
+            messageId: 'awaitAsyncQuery',
+          },
+        ],
+      })),
+      ...ASYNC_QUERIES_COMBINATIONS.map(query => ({
+        code: `const foo = screen.${query}('foo')`,
         errors: [
           {
             messageId: 'awaitAsyncQuery',
