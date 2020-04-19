@@ -43,9 +43,9 @@ ruleTester.run('no-await-sync-query', rule, {
     })),
   ],
 
-  invalid:
+  invalid: [
     // sync queries with await operator are not valid
-    SYNC_QUERIES_COMBINATIONS.map(query => ({
+    ...SYNC_QUERIES_COMBINATIONS.map(query => ({
       code: `async () => {
         await ${query}('foo')
       }
@@ -56,4 +56,18 @@ ruleTester.run('no-await-sync-query', rule, {
         },
       ],
     })),
+
+    // sync queries in screen with await operator are not valid
+    ...SYNC_QUERIES_COMBINATIONS.map(query => ({
+      code: `async () => {
+        await screen.${query}('foo')
+      }
+      `,
+      errors: [
+        {
+          messageId: 'noAwaitSyncQuery',
+        },
+      ],
+    })),
+  ],
 });

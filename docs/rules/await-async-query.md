@@ -30,6 +30,12 @@ const bar = () => {
   findByText('submit');
   // ...
 };
+
+const baz = () => {
+  // ...
+  screen.findAllByPlaceholderText('name');
+  // ...
+};
 ```
 
 Examples of **correct** code for this rule:
@@ -48,6 +54,12 @@ const bar = () => {
   findByText('submit').then(() => {
     // ...
   });
+};
+
+const baz = () => {
+  // ...
+  await screen.findAllByPlaceholderText('name');
+  // ...
 };
 
 // return the promise within a function is correct too!

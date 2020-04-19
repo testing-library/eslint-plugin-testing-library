@@ -29,6 +29,11 @@ const bar = () => {
     // ...
   });
 };
+
+const baz = () => {
+  // ...
+  const button = await screen.getByText('submit');
+};
 ```
 
 Examples of **correct** code for this rule:
@@ -44,6 +49,11 @@ const bar = () => {
   // ...
   const button = getByText('submit');
   // ...
+};
+
+const baz = () => {
+  // ...
+  const button = screen.getByText('submit');
 };
 ```
 
