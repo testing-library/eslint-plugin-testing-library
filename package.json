@@ -37,7 +37,9 @@
     "test": "is-ci test:ci test:local",
     "semantic-release": "semantic-release"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@typescript-eslint/experimental-utils": "^2.29.0"
+  },
   "devDependencies": {
     "@commitlint/cli": "^8.2.0",
     "@commitlint/config-conventional": "^8.2.0",
