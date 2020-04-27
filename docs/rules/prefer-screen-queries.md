@@ -12,8 +12,16 @@ Examples of **incorrect** code for this rule:
 const { getByText } = render(<Component />);
 getByText('foo');
 
+// calling a query from a variable returned from a `render` method
 const utils = render(<Component />);
 utils.getByText('foo');
+
+// using after render
+render(<Component />).getByText('foo');
+
+// calling a query from a custom `render` method that returns an array
+const [getByText] = myCustomRender(<Component />);
+getByText('foo');
 ```
 
 Examples of **correct** code for this rule:
@@ -21,8 +29,20 @@ Examples of **correct** code for this rule:
 ```js
 import { screen } from '@testing-library/any-framework';
 
+// calling a query from the `screen` object
 render(<Component />);
 screen.getByText('foo');
+
+// using after within clause
+within(screen.getByTestId('section')).getByText('foo');
+
+// calling a query method returned from a within call
+const { getByText } = within(screen.getByText('foo'));
+getByText('foo');
+
+// calling a method directly from a variable created by within
+const myWithinVariable = within(screen.getByText('foo'));
+myWithinVariable.getByText('foo');
 ```
 
 ## Further Reading

@@ -15,6 +15,24 @@ ruleTester.run(RULE_NAME, rule, {
     {
       code: `component.otherFunctionShouldNotThrow()`,
     },
+    ...ALL_QUERIES_COMBINATIONS.map(queryMethod => ({
+      code: `within(component).${queryMethod}()`,
+    })),
+    ...ALL_QUERIES_COMBINATIONS.map(queryMethod => ({
+      code: `within(screen.${queryMethod}()).${queryMethod}()`,
+    })),
+    ...ALL_QUERIES_COMBINATIONS.map(queryMethod => ({
+      code: `
+        const { ${queryMethod} } = within(screen.getByText('foo'))
+        ${queryMethod}(baz)
+      `,
+    })),
+    ...ALL_QUERIES_COMBINATIONS.map(queryMethod => ({
+      code: `
+        const myWithinVariable = within(foo)
+        myWithinVariable.${queryMethod}('baz')
+      `,
+    })),
   ],
 
   invalid: [
@@ -31,7 +49,75 @@ ruleTester.run(RULE_NAME, rule, {
     })),
 
     ...ALL_QUERIES_COMBINATIONS.map(queryMethod => ({
+      code: `render().${queryMethod}()`,
+      errors: [
+        {
+          messageId: 'preferScreenQueries',
+          data: {
+            name: queryMethod,
+          },
+        },
+      ],
+    })),
+
+    ...ALL_QUERIES_COMBINATIONS.map(queryMethod => ({
       code: `component.${queryMethod}()`,
+      errors: [
+        {
+          messageId: 'preferScreenQueries',
+          data: {
+            name: queryMethod,
+          },
+        },
+      ],
+    })),
+    ...ALL_QUERIES_COMBINATIONS.map(queryMethod => ({
+      code: `
+        const { ${queryMethod} } = render()
+        ${queryMethod}(baz)
+      `,
+      errors: [
+        {
+          messageId: 'preferScreenQueries',
+          data: {
+            name: queryMethod,
+          },
+        },
+      ],
+    })),
+    ...ALL_QUERIES_COMBINATIONS.map(queryMethod => ({
+      code: `
+        const myRenderVariable = render()
+        myRenderVariable.${queryMethod}(baz)
+      `,
+      errors: [
+        {
+          messageId: 'preferScreenQueries',
+          data: {
+            name: queryMethod,
+          },
+        },
+      ],
+    })),
+    ...ALL_QUERIES_COMBINATIONS.map(queryMethod => ({
+      code: `
+        const [myVariable] = render()
+        myVariable.${queryMethod}(baz)
+      `,
+      errors: [
+        {
+          messageId: 'preferScreenQueries',
+          data: {
+            name: queryMethod,
+          },
+        },
+      ],
+    })),
+    ...ALL_QUERIES_COMBINATIONS.map(queryMethod => ({
+      code: `
+        const [myVariable] = within()
+        myVariable.${queryMethod}(baz)
+      `,
       errors: [
         {
           messageId: 'preferScreenQueries',
