@@ -1,7 +1,6 @@
 import { ESLintUtils, TSESTree } from '@typescript-eslint/experimental-utils';
 import { getDocsUrl } from '../utils';
 import {
-  isLiteral,
   isImportDefaultSpecifier,
   isCallExpression,
   isIdentifier,
@@ -63,13 +62,8 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
 
     return {
       ImportDeclaration(node) {
-        if (!isLiteral(node.source) || typeof node.source.value !== 'string') {
-          return;
-        }
-
-        const testingLibraryWithCleanup = node.source.value.match(
-          CLEANUP_LIBRARY_REGEX
-        );
+        const value = node.source.value as string;
+        const testingLibraryWithCleanup = value.match(CLEANUP_LIBRARY_REGEX);
 
         // Early return if the library doesn't support `cleanup`
         if (!testingLibraryWithCleanup) {
@@ -100,14 +94,10 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
           isIdentifier(node.init.callee) &&
           node.init.callee.name === 'require'
         ) {
-          const [requiredModule] = node.init.arguments;
-          if (
-            !isLiteral(requiredModule) ||
-            typeof requiredModule.value !== 'string'
-          ) {
-            return;
-          }
-          const testingLibraryWithCleanup = requiredModule.value.match(
+          const requiredModule = node.init.arguments[0] as TSESTree.Literal;
+          const requiredModuleValue = requiredModule.value as string;
+
+          const testingLibraryWithCleanup = requiredModuleValue.match(
             CLEANUP_LIBRARY_REGEX
           );
 

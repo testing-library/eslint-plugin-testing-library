@@ -1,11 +1,6 @@
 import { ESLintUtils, TSESTree } from '@typescript-eslint/experimental-utils';
 import { getDocsUrl } from '../utils';
-import {
-  isMemberExpression,
-  isIdentifier,
-  isCallExpression,
-  hasThenProperty,
-} from '../node-utils';
+import { isIdentifier, isCallExpression, hasThenProperty } from '../node-utils';
 
 export const RULE_NAME = 'await-fire-event';
 export type MessageIds = 'awaitFireEvent';
@@ -50,10 +45,8 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
       'CallExpression > MemberExpression > Identifier[name=fireEvent]'(
         node: TSESTree.Identifier
       ) {
-        if (!isMemberExpression(node.parent)) {
-          return;
-        }
-        const fireEventMethodNode = node.parent.property;
+        const memberExpression = node.parent as TSESTree.MemberExpression;
+        const fireEventMethodNode = memberExpression.property;
 
         if (
           isIdentifier(fireEventMethodNode) &&

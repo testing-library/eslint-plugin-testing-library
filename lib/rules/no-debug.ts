@@ -6,8 +6,6 @@ import {
   isIdentifier,
   isCallExpression,
   isLiteral,
-  isVariableDeclarator,
-  isImportDeclaration,
   isAwaitExpression,
   isMemberExpression,
 } from '../node-utils';
@@ -59,9 +57,6 @@ function isRenderVariableDeclarator(
 function hasTestingLibraryImportModule(
   importDeclarationNode: TSESTree.ImportDeclaration
 ) {
-  if (!isLiteral(importDeclarationNode.source)) {
-    return;
-  }
   const literal = importDeclarationNode.source;
   return LIBRARY_MODULES_WITH_SCREEN.some(module => module === literal.value);
 }
@@ -128,10 +123,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)({
       [`VariableDeclarator > CallExpression > Identifier[name="require"]`](
         node: TSESTree.Identifier
       ) {
-        if (!isCallExpression(node.parent)) {
-          return;
-        }
-        const { arguments: args } = node.parent;
+        const { arguments: args } = node.parent as TSESTree.CallExpression;
 
         const literalNodeScreenModuleName = args.find(
           args =>
@@ -144,10 +136,8 @@ export default ESLintUtils.RuleCreator(getDocsUrl)({
           return;
         }
 
-        if (!isVariableDeclarator(node.parent.parent)) {
-          return;
-        }
-        const declaratorNode = node.parent.parent;
+        const declaratorNode = node.parent
+          .parent as TSESTree.VariableDeclarator;
 
         hasImportedScreen =
           isObjectPattern(declaratorNode.id) &&
@@ -161,10 +151,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)({
       // checks if import has shape:
       // import { screen } from '@testing-library/dom';
       'ImportDeclaration ImportSpecifier'(node: TSESTree.ImportSpecifier) {
-        if (!isImportDeclaration(node.parent)) {
-          return;
-        }
-        const importDeclarationNode = node.parent;
+        const importDeclarationNode = node.parent as TSESTree.ImportDeclaration;
 
         if (!hasTestingLibraryImportModule(importDeclarationNode)) return;
 
@@ -175,10 +162,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)({
       'ImportDeclaration ImportNamespaceSpecifier'(
         node: TSESTree.ImportNamespaceSpecifier
       ) {
-        if (!isImportDeclaration(node.parent)) {
-          return;
-        }
-        const importDeclarationNode = node.parent;
+        const importDeclarationNode = node.parent as TSESTree.ImportDeclaration;
         if (!hasTestingLibraryImportModule(importDeclarationNode)) return;
 
         wildcardImportName = node.local && node.local.name;
@@ -194,14 +178,9 @@ export default ESLintUtils.RuleCreator(getDocsUrl)({
       [`CallExpression > MemberExpression > Identifier[name="debug"]`](
         node: TSESTree.Identifier
       ) {
-        if (
-          !isMemberExpression(node.parent) ||
-          !isIdentifier(node.parent.object)
-        ) {
-          return;
-        }
-
-        const memberExpressionName = node.parent.object.name;
+        const memberExpression = node.parent as TSESTree.MemberExpression;
+        const identifier = memberExpression.object as TSESTree.Identifier;
+        const memberExpressionName = identifier.name;
         /*
          check if `debug` used following the pattern:
 

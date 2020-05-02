@@ -32,12 +32,6 @@ export function isImportSpecifier(
   return node && node.type === 'ImportSpecifier';
 }
 
-export function isImportDeclaration(
-  node: TSESTree.Node
-): node is TSESTree.ImportDeclaration {
-  return node && node.type === 'ImportDeclaration';
-}
-
 export function isImportDefaultSpecifier(
   node: TSESTree.Node
 ): node is TSESTree.ImportDefaultSpecifier {

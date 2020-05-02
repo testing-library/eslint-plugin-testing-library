@@ -2,7 +2,6 @@ import { ESLintUtils, TSESTree } from '@typescript-eslint/experimental-utils';
 import { getDocsUrl } from '../utils';
 import {
   isImportSpecifier,
-  isLiteral,
   isMemberExpression,
   isIdentifier,
   findClosestCallExpressionNode,
@@ -43,10 +42,6 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
         node: node,
         messageId: 'preferWaitForImport',
         fix(fixer) {
-          if (!isLiteral(node.source)) {
-            return;
-          }
-
           const excludedImports = [...DEPRECATED_METHODS, 'waitFor'];
 
           // TODO: refactor `importNodes` to TSESTree.ImportSpecifier[] ? (to not have to traverse the list twice)

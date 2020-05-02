@@ -52,8 +52,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
 
         if (expectCallNode && isMemberExpression(expectCallNode.parent)) {
           const expectStatement = expectCallNode.parent;
-          if (!isIdentifier(expectStatement.property)) return;
-          const property = expectStatement.property;
+          const property = expectStatement.property as TSESTree.Identifier;
           let matcher = property.name;
           let isNegatedMatcher = false;
 
@@ -64,10 +63,6 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
           ) {
             isNegatedMatcher = true;
             matcher = expectStatement.parent.property.name;
-          }
-
-          if (!matcher) {
-            return;
           }
 
           const validMatchers = isThrowingQuery(node)

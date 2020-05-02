@@ -1,11 +1,6 @@
 import { ESLintUtils, TSESTree } from '@typescript-eslint/experimental-utils';
 import { getDocsUrl } from '../utils';
-import {
-  isLiteral,
-  isCallExpression,
-  isIdentifier,
-  isImportDeclaration,
-} from '../node-utils';
+import { isLiteral, isIdentifier } from '../node-utils';
 
 export const RULE_NAME = 'no-dom-import';
 export type MessageIds = 'noDomImport' | 'noDomImportFramework';
@@ -56,22 +51,17 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
           },
           fix(fixer) {
             if (isRequire) {
-              if (!isCallExpression(node.parent)) {
-                return;
-              }
-
-              const [name] = node.parent.arguments;
-              if (!isLiteral(name)) {
-                return;
-              }
+              const callExpression = node.parent as TSESTree.CallExpression;
+              const name = callExpression.arguments[0] as TSESTree.Literal;
 
               // Replace the module name with the raw module name as we can't predict which punctuation the user is going to use
               return fixer.replaceText(
                 name,
                 name.raw.replace(moduleName, correctModuleName)
               );
-            } else if (isImportDeclaration(node) && isLiteral(node.source)) {
-              const name = node.source;
+            } else {
+              const importDeclaration = node as TSESTree.ImportDeclaration;
+              const name = importDeclaration.source;
               return fixer.replaceText(
                 name,
                 name.raw.replace(moduleName, correctModuleName)
@@ -88,9 +78,6 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
     }
     return {
       ImportDeclaration(node) {
-        if (!isLiteral(node.source) || typeof node.source.value !== 'string') {
-          return;
-        }
         const value = node.source.value;
         const domModuleName = DOM_TESTING_LIBRARY_MODULES.find(
           module => module === value
@@ -104,10 +91,8 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
       [`CallExpression > Identifier[name="require"]`](
         node: TSESTree.Identifier
       ) {
-        if (!isCallExpression(node.parent)) {
-          return;
-        }
-        const { arguments: args } = node.parent;
+        const callExpression = node.parent as TSESTree.CallExpression;
+        const { arguments: args } = callExpression;
 
         const literalNodeDomModuleName = args.find(
           args =>
