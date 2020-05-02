@@ -11,8 +11,6 @@ type Options = [
   }
 ];
 
-const { getDocsUrl } = require('../utils');
-
 const FILENAME_PLACEHOLDER = '{fileName}';
 
 export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
@@ -23,7 +21,6 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
       description: 'Ensures consistent usage of `data-testid`',
       category: 'Best Practices',
       recommended: false,
-      url: getDocsUrl('consistent-data-testid'),
     },
     messages: {
       invalidTestId: '`{{attr}}` "{{value}}" should match `{{regex}}`',

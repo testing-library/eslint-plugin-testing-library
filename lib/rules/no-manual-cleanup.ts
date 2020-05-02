@@ -15,8 +15,6 @@ export const RULE_NAME = 'no-manual-cleanup';
 export type MessageIds = 'noManualCleanup';
 type Options = [];
 
-const { getDocsUrl } = require('../utils');
-
 const CLEANUP_LIBRARY_REGEX = /(@testing-library\/(preact|react|svelte|vue))|@marko\/testing-library/;
 
 export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
@@ -27,7 +25,6 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
       description: ' Disallow the use of `cleanup`',
       category: 'Best Practices',
       recommended: false,
-      url: getDocsUrl('no-manual-cleanup'),
     },
     messages: {
       noManualCleanup:
