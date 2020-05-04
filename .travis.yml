@@ -10,17 +10,12 @@ node_js:
 
 jobs:
   include:
-    - stage: build
-      node_js: lts/*
-      script: npm run build
-    - stage: test
-      node_js: lts/*
-      script: npm run test
     - stage: release
       if: branch = master AND type != pull_request
-      node_js: lts/*
+      node_js: 12
       deploy:
         provider: script
         skip_cleanup: true
         script:
-          - npx semantic-release
+          - npm run build
+          - npm run semantic-release
