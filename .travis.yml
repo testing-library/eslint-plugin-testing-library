@@ -13,9 +13,9 @@ jobs:
     - stage: release
       if: branch = master AND type != pull_request
       node_js: 12
+      script: npm run build
       deploy:
         provider: script
         skip_cleanup: true
         script:
-          - npm run build
-          - npm run semantic-release
+          - npx semantic-release
