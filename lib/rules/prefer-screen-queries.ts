@@ -1,17 +1,20 @@
-'use strict';
+import { ESLintUtils, TSESTree } from '@typescript-eslint/experimental-utils';
+import { getDocsUrl, ALL_QUERIES_COMBINATIONS } from '../utils';
 
-const { getDocsUrl, ALL_QUERIES_COMBINATIONS } = require('../utils');
+export const RULE_NAME = 'prefer-screen-queries';
+export type MessageIds = 'preferScreenQueries';
+type Options = [];
 
 const ALL_QUERIES_COMBINATIONS_REGEXP = ALL_QUERIES_COMBINATIONS.join('|');
 
-module.exports = {
+export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
+  name: RULE_NAME,
   meta: {
     type: 'suggestion',
     docs: {
       description: 'Suggest using screen while using queries',
       category: 'Best Practices',
       recommended: false,
-      url: getDocsUrl('prefer-screen-queries'),
     },
     messages: {
       preferScreenQueries:
@@ -20,9 +23,10 @@ module.exports = {
     fixable: null,
     schema: [],
   },
+  defaultOptions: [],
 
-  create: function(context) {
-    function reportInvalidUsage(node) {
+  create(context) {
+    function reportInvalidUsage(node: TSESTree.Identifier) {
       context.report({
         node,
         messageId: 'preferScreenQueries',
@@ -37,4 +41,4 @@ module.exports = {
       [`MemberExpression[object.name!="screen"] > Identifier[name=/^${ALL_QUERIES_COMBINATIONS_REGEXP}$/]`]: reportInvalidUsage,
     };
   },
-};
+});

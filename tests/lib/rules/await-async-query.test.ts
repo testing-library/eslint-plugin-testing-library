@@ -1,22 +1,13 @@
-'use strict';
-
-// ------------------------------------------------------------------------------
-// Requirements
-// ------------------------------------------------------------------------------
-
-const rule = require('../../../lib/rules/await-async-query');
-const {
-  SYNC_QUERIES_COMBINATIONS,
+import { createRuleTester } from '../test-utils';
+import rule, { RULE_NAME } from '../../../lib/rules/await-async-query';
+import {
   ASYNC_QUERIES_COMBINATIONS,
-} = require('../../../lib/utils');
-const RuleTester = require('eslint').RuleTester;
+  SYNC_QUERIES_COMBINATIONS,
+} from '../../../lib/utils';
 
-// ------------------------------------------------------------------------------
-// Tests
-// ------------------------------------------------------------------------------
+const ruleTester = createRuleTester();
 
-const ruleTester = new RuleTester({ parserOptions: { ecmaVersion: 2018 } });
-ruleTester.run('await-async-query', rule, {
+ruleTester.run(RULE_NAME, rule, {
   valid: [
     // async queries declaration are valid
     ...ASYNC_QUERIES_COMBINATIONS.map(query => ({
@@ -188,7 +179,10 @@ ruleTester.run('await-async-query', rule, {
         errors: [
           {
             line: 2,
-            message: `\`${query}\` must have \`await\` operator`,
+            messageId: 'awaitAsyncQuery',
+            data: {
+              name: query,
+            },
           },
         ],
       })),
@@ -200,7 +194,10 @@ ruleTester.run('await-async-query', rule, {
         errors: [
           {
             line: 2,
-            message: `\`${query}\` must have \`await\` operator`,
+            messageId: 'awaitAsyncQuery',
+            data: {
+              name: query,
+            },
           },
         ],
       })),

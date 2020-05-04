@@ -1,7 +1,5 @@
-'use strict';
-
-const combineQueries = (variants, methods) => {
-  const combinedQueries = [];
+const combineQueries = (variants: string[], methods: string[]) => {
+  const combinedQueries: string[] = [];
   variants.forEach(variant => {
     const variantPrefix = variant.replace('By', '');
     methods.forEach(method => {
@@ -12,7 +10,7 @@ const combineQueries = (variants, methods) => {
   return combinedQueries;
 };
 
-const getDocsUrl = ruleName =>
+const getDocsUrl = (ruleName: string) =>
   `https://github.com/testing-library/eslint-plugin-testing-library/tree/master/docs/rules/${ruleName}.md`;
 
 const SYNC_QUERIES_VARIANTS = ['getBy', 'getAllBy', 'queryBy', 'queryAllBy'];
@@ -56,7 +54,7 @@ const ASYNC_UTILS = [
   'waitForDomChange',
 ];
 
-module.exports = {
+export {
   getDocsUrl,
   SYNC_QUERIES_VARIANTS,
   ASYNC_QUERIES_VARIANTS,

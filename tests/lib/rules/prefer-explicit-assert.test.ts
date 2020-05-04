@@ -1,15 +1,10 @@
-'use strict';
+import { createRuleTester } from '../test-utils';
+import rule, { RULE_NAME } from '../../../lib/rules/prefer-explicit-assert';
+import { ALL_QUERIES_METHODS } from '../../../lib/utils';
 
-const rule = require('../../../lib/rules/prefer-explicit-assert');
-const { ALL_QUERIES_METHODS } = require('../../../lib/utils');
-const RuleTester = require('eslint').RuleTester;
+const ruleTester = createRuleTester();
 
-// ------------------------------------------------------------------------------
-// Tests
-// ------------------------------------------------------------------------------
-
-const ruleTester = new RuleTester({ parserOptions: { ecmaVersion: 2018 } });
-ruleTester.run('prefer-explicit-assert', rule, {
+ruleTester.run(RULE_NAME, rule, {
   valid: [
     {
       code: `getByText`,
@@ -117,7 +112,7 @@ ruleTester.run('prefer-explicit-assert', rule, {
     // for coverage
     {
       code: `getByText("foo")`,
-      options: [{ foo: 'bar' }],
+      options: [{ customQueryNames: ['bar'] }],
       errors: [
         {
           messageId: 'preferExplicitAssert',

@@ -1,6 +1,11 @@
-'use strict';
+import { ESLintUtils, TSESTree } from '@typescript-eslint/experimental-utils';
 
-const { getDocsUrl, ASYNC_UTILS } = require('../utils');
+import { getDocsUrl, ASYNC_UTILS } from '../utils';
+import { isCallExpression, hasThenProperty } from '../node-utils';
+
+export const RULE_NAME = 'await-async-utils';
+export type MessageIds = 'awaitAsyncUtil';
+type Options = [];
 
 const VALID_PARENTS = [
   'AwaitExpression',
@@ -10,14 +15,30 @@ const VALID_PARENTS = [
 
 const ASYNC_UTILS_REGEXP = new RegExp(`^(${ASYNC_UTILS.join('|')})$`);
 
-module.exports = {
+function isAwaited(node: TSESTree.Node) {
+  return VALID_PARENTS.includes(node.type);
+}
+
+function isPromiseResolved(node: TSESTree.Node) {
+  const parent = node.parent;
+
+  // wait(...).then(...)
+  if (isCallExpression(parent)) {
+    return hasThenProperty(parent.parent);
+  }
+
+  // promise.then(...)
+  return hasThenProperty(parent);
+}
+
+export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
+  name: RULE_NAME,
   meta: {
     type: 'problem',
     docs: {
       description: 'Enforce async utils to be awaited properly',
       category: 'Best Practices',
-      recommended: true,
-      url: getDocsUrl('await-async-utils'),
+      recommended: 'warn',
     },
     messages: {
       awaitAsyncUtil: 'Promise returned from `{{ name }}` must be handled',
@@ -25,11 +46,14 @@ module.exports = {
     fixable: null,
     schema: [],
   },
+  defaultOptions: [],
 
-  create: function(context) {
-    const testingLibraryUtilUsage = [];
+  create(context) {
+    const testingLibraryUtilUsage: TSESTree.Identifier[] = [];
     return {
-      [`CallExpression > Identifier[name=${ASYNC_UTILS_REGEXP}]`](node) {
+      [`CallExpression > Identifier[name=${ASYNC_UTILS_REGEXP}]`](
+        node: TSESTree.Identifier
+      ) {
         if (!isAwaited(node.parent.parent) && !isPromiseResolved(node)) {
           testingLibraryUtilUsage.push(node);
         }
@@ -81,23 +105,4 @@ module.exports = {
       },
     };
   },
-};
-
-function isAwaited(node) {
-  return VALID_PARENTS.includes(node.type);
-}
-
-const hasAThenProperty = node =>
-  node.type === 'MemberExpression' && node.property.name === 'then';
-
-function isPromiseResolved(node) {
-  const parent = node.parent;
-
-  // wait(...).then(...)
-  if (parent.type === 'CallExpression') {
-    return hasAThenProperty(parent.parent);
-  }
-
-  // promise.then(...)
-  return hasAThenProperty(parent);
-}
+});

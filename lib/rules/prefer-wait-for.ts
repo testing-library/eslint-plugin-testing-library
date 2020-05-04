@@ -1,44 +1,60 @@
-'use strict';
+import { ESLintUtils, TSESTree } from '@typescript-eslint/experimental-utils';
+import { getDocsUrl } from '../utils';
+import {
+  isImportSpecifier,
+  isMemberExpression,
+  isIdentifier,
+  findClosestCallExpressionNode,
+} from '../node-utils';
 
-const { getDocsUrl } = require('../utils');
+export const RULE_NAME = 'prefer-wait-for';
+export type MessageIds = 'preferWaitForMethod' | 'preferWaitForImport';
+type Options = [];
 
 const DEPRECATED_METHODS = ['wait', 'waitForElement', 'waitForDomChange'];
 
-module.exports = {
+export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
+  name: RULE_NAME,
   meta: {
     type: 'suggestion',
     docs: {
       description: 'Use `waitFor` instead of deprecated wait methods',
       category: 'Best Practices',
       recommended: false,
-      url: getDocsUrl('prefer-wait-for'),
     },
     messages: {
       preferWaitForMethod:
         '`{{ methodName }}` is deprecated in favour of `waitFor`',
       preferWaitForImport: 'import `waitFor` instead of deprecated async utils',
     },
+
     fixable: 'code',
     schema: [],
   },
+  defaultOptions: [],
 
-  create: function(context) {
-    const importNodes = [];
-    const waitNodes = [];
+  create(context) {
+    const importNodes: TSESTree.ImportDeclaration[] = [];
+    const waitNodes: TSESTree.Identifier[] = [];
 
-    const reportImport = node => {
+    const reportImport = (node: TSESTree.ImportDeclaration) => {
       context.report({
         node: node,
         messageId: 'preferWaitForImport',
         fix(fixer) {
           const excludedImports = [...DEPRECATED_METHODS, 'waitFor'];
 
+          // TODO: refactor `importNodes` to TSESTree.ImportSpecifier[] ? (to not have to traverse the list twice)
           // get all import names excluding all testing library `wait*` utils...
           const newImports = node.specifiers
             .filter(
-              specifier => !excludedImports.includes(specifier.imported.name)
+              specifier =>
+                isImportSpecifier(specifier) &&
+                !excludedImports.includes(specifier.imported.name)
             )
-            .map(specifier => specifier.imported.name);
+            .map(
+              (specifier: TSESTree.ImportSpecifier) => specifier.imported.name
+            );
 
           // ... and append `waitFor`
           newImports.push('waitFor');
@@ -53,7 +69,7 @@ module.exports = {
       });
     };
 
-    const reportWait = node => {
+    const reportWait = (node: TSESTree.Identifier) => {
       context.report({
         node: node,
         messageId: 'preferWaitForMethod',
@@ -62,8 +78,6 @@ module.exports = {
         },
         fix(fixer) {
           const callExpressionNode = findClosestCallExpressionNode(node);
-          const memberExpressionNode =
-            node.parent.type === 'MemberExpression' && node.parent;
           const [arg] = callExpressionNode.arguments;
           const fixers = [];
 
@@ -76,7 +90,7 @@ module.exports = {
               // if method been fixed is `waitForDomChange`
               // then the arg received was options object so we need to insert
               // empty callback before.
-              fixers.push(fixer.insertTextBefore(arg, `() => {}, `));
+              fixers.push(fixer.insertTextBefore(arg, '() => {}, '));
             }
           } else {
             // if wait method been fixed didn't have any callback
@@ -85,8 +99,11 @@ module.exports = {
 
             // if wait method used like `foo.wait()` then we need to keep the
             // member expression to get `foo.waitFor(() => {})`
-            if (memberExpressionNode) {
-              methodReplacement = `${memberExpressionNode.object.name}.${methodReplacement}`;
+            if (
+              isMemberExpression(node.parent) &&
+              isIdentifier(node.parent.object)
+            ) {
+              methodReplacement = `${node.parent.object.name}.${methodReplacement}`;
             }
             const newText = methodReplacement;
 
@@ -99,13 +116,16 @@ module.exports = {
     };
 
     return {
-      'ImportDeclaration[source.value=/testing-library/]'(node) {
+      'ImportDeclaration[source.value=/testing-library/]'(
+        node: TSESTree.ImportDeclaration
+      ) {
         const importedNames = node.specifiers
           .filter(
-            specifier =>
-              specifier.type === 'ImportSpecifier' && specifier.imported
+            specifier => isImportSpecifier(specifier) && specifier.imported
           )
-          .map(specifier => specifier.imported.name);
+          .map(
+            (specifier: TSESTree.ImportSpecifier) => specifier.imported.name
+          );
 
         if (
           importedNames.some(importedName =>
@@ -116,7 +136,7 @@ module.exports = {
         }
       },
       'CallExpression Identifier[name=/^(wait|waitForElement|waitForDomChange)$/]'(
-        node
+        node: TSESTree.Identifier
       ) {
         waitNodes.push(node);
       },
@@ -131,12 +151,4 @@ module.exports = {
       },
     };
   },
-};
-
-function findClosestCallExpressionNode(node) {
-  if (node.type === 'CallExpression') {
-    return node;
-  }
-
-  return findClosestCallExpressionNode(node.parent);
-}
+});

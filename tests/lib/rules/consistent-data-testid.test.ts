@@ -1,26 +1,13 @@
-'use strict';
+import { createRuleTester } from '../test-utils';
+import rule, { RULE_NAME } from '../../../lib/rules/consistent-data-testid';
 
-// ------------------------------------------------------------------------------
-// Requirements
-// ------------------------------------------------------------------------------
-
-const rule = require('../../../lib/rules/consistent-data-testid');
-const RuleTester = require('eslint').RuleTester;
-
-// ------------------------------------------------------------------------------
-// Tests
-// ------------------------------------------------------------------------------
-
-const parserOptions = {
-  ecmaVersion: 2018,
-  sourceType: 'module',
+const ruleTester = createRuleTester({
   ecmaFeatures: {
     jsx: true,
   },
-};
+});
 
-const ruleTester = new RuleTester({ parserOptions });
-ruleTester.run('consistent-data-testid', rule, {
+ruleTester.run(RULE_NAME, rule, {
   valid: [
     {
       code: `
@@ -197,7 +184,12 @@ ruleTester.run('consistent-data-testid', rule, {
       options: [{ testIdPattern: 'error' }],
       errors: [
         {
-          message: '`data-testid` "Awesome__CoolStuff" should match `/error/`',
+          messageId: 'invalidTestId',
+          data: {
+            attr: 'data-testid',
+            value: 'Awesome__CoolStuff',
+            regex: '/error/',
+          },
         },
       ],
     },
@@ -221,7 +213,12 @@ ruleTester.run('consistent-data-testid', rule, {
       filename: '/my/cool/__tests__/Parent/index.js',
       errors: [
         {
-          message: '`data-testid` "Nope" should match `/matchMe/`',
+          messageId: 'invalidTestId',
+          data: {
+            attr: 'data-testid',
+            value: 'Nope',
+            regex: '/matchMe/',
+          },
         },
       ],
     },
@@ -246,8 +243,12 @@ ruleTester.run('consistent-data-testid', rule, {
       filename: '/my/cool/__tests__/Parent/index.js',
       errors: [
         {
-          message:
-            '`my-custom-attr` "WrongComponent__cool" should match `/^Parent(__([A-Z]+[a-z]*?)+)*$/`',
+          messageId: 'invalidTestId',
+          data: {
+            attr: 'my-custom-attr',
+            value: 'WrongComponent__cool',
+            regex: '/^Parent(__([A-Z]+[a-z]*?)+)*$/',
+          },
         },
       ],
     },
@@ -271,8 +272,12 @@ ruleTester.run('consistent-data-testid', rule, {
       filename: '/my/cool/__tests__/Parent/index.js',
       errors: [
         {
-          message:
-            '`data-testid` "WrongComponent__cool" should match `/^Parent(__([A-Z]+[a-z]*?)+)*$/`',
+          messageId: 'invalidTestId',
+          data: {
+            attr: 'data-testid',
+            value: 'WrongComponent__cool',
+            regex: '/^Parent(__([A-Z]+[a-z]*?)+)*$/',
+          },
         },
       ],
     },

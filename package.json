@@ -20,12 +20,14 @@
   "bugs": {
     "url": "https://github.com/testing-library/eslint-plugin-testing-library/issues"
   },
-  "main": "lib/index.js",
-  "files": [
-    "lib/"
-  ],
+  "release": {
+    "pkgRoot": "dist"
+  },
+  "main": "index.js",
   "scripts": {
-    "lint": "eslint ./",
+    "build": "tsc",
+    "postbuild": "cpy README.md ./dist && cpy package.json ./dist && cpy LICENSE ./dist",
+    "lint": "eslint . --ext .js,.ts",
     "lint:fix": "npm run lint -- --fix",
     "format": "prettier --write README.md {lib,docs,tests}/**/*.{js,md}",
     "test:local": "jest",
@@ -35,10 +37,16 @@
     "test": "is-ci test:ci test:local",
     "semantic-release": "semantic-release"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@typescript-eslint/experimental-utils": "^2.29.0"
+  },
   "devDependencies": {
     "@commitlint/cli": "^8.2.0",
     "@commitlint/config-conventional": "^8.2.0",
+    "@types/jest": "^25.1.4",
+    "@typescript-eslint/eslint-plugin": "^2.26.0",
+    "@typescript-eslint/parser": "^2.26.0",
+    "cpy-cli": "^3.1.0",
     "eslint": "^6.3.0",
     "eslint-config-prettier": "^6.1.0",
     "eslint-config-standard": "^14.1.0",
@@ -51,10 +59,12 @@
     "eslint-plugin-standard": "^4.0.1",
     "husky": "^3.0.5",
     "is-ci-cli": "^2.0.0",
-    "jest": "^24.9.0",
+    "jest": "^25.2.6",
     "lint-staged": "^9.2.5",
     "prettier": "1.18.2",
-    "semantic-release": "^15.13.24"
+    "semantic-release": "^15.13.24",
+    "ts-jest": "^25.3.0",
+    "typescript": "^3.8.3"
   },
   "peerDependencies": {
     "eslint": ">=5"

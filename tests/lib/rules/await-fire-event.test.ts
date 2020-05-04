@@ -1,10 +1,9 @@
-'use strict';
+import { createRuleTester } from '../test-utils';
+import rule, { RULE_NAME } from '../../../lib/rules/await-fire-event';
 
-const rule = require('../../../lib/rules/await-fire-event');
-const RuleTester = require('eslint').RuleTester;
+const ruleTester = createRuleTester();
 
-const ruleTester = new RuleTester({ parserOptions: { ecmaVersion: 2018 } });
-ruleTester.run('await-fire-event', rule, {
+ruleTester.run(RULE_NAME, rule, {
   valid: [
     {
       code: `fireEvent.click`,

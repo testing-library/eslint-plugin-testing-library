@@ -1,16 +1,26 @@
-'use strict';
+import { getDocsUrl } from '../utils';
+import { ESLintUtils, TSESTree } from '@typescript-eslint/experimental-utils';
+import { isJSXAttribute, isLiteral } from '../node-utils';
 
-const { getDocsUrl } = require('../utils');
+export const RULE_NAME = 'consistent-data-testid';
+export type MessageIds = 'invalidTestId';
+type Options = [
+  {
+    testIdPattern: string;
+    testIdAttribute: string;
+  }
+];
 
 const FILENAME_PLACEHOLDER = '{fileName}';
 
-module.exports = {
+export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
+  name: RULE_NAME,
   meta: {
+    type: 'suggestion',
     docs: {
       description: 'Ensures consistent usage of `data-testid`',
       category: 'Best Practices',
       recommended: false,
-      url: getDocsUrl('consistent-data-testid'),
     },
     messages: {
       invalidTestId: '`{{attr}}` "{{value}}" should match `{{regex}}`',
@@ -34,10 +44,16 @@ module.exports = {
       },
     ],
   },
+  defaultOptions: [
+    {
+      testIdPattern: '',
+      testIdAttribute: 'data-testid',
+    },
+  ],
 
-  create: function(context) {
-    const { options, getFilename } = context;
-    const { testIdPattern, testIdAttribute: attr } = options[0];
+  create(context, [options]) {
+    const { getFilename } = context;
+    const { testIdPattern, testIdAttribute: attr } = options;
 
     function getFileNameData() {
       const splitPath = getFilename().split('/');
@@ -50,18 +66,21 @@ module.exports = {
       };
     }
 
-    function getTestIdValidator({ fileName }) {
+    function getTestIdValidator(fileName: string) {
       return new RegExp(testIdPattern.replace(FILENAME_PLACEHOLDER, fileName));
     }
 
     return {
-      [`JSXIdentifier[name=${attr}]`]: node => {
-        const value =
-          node && node.parent && node.parent.value && node.parent.value.value;
-        const { fileName } = getFileNameData();
-        const regex = getTestIdValidator({ fileName });
+      [`JSXIdentifier[name=${attr}]`]: (node: TSESTree.JSXIdentifier) => {
+        if (!isJSXAttribute(node.parent) || !isLiteral(node.parent.value)) {
+          return;
+        }
 
-        if (value && !regex.test(value)) {
+        const value = node.parent.value.value;
+        const { fileName } = getFileNameData();
+        const regex = getTestIdValidator(fileName);
+
+        if (value && typeof value === 'string' && !regex.test(value)) {
           context.report({
             node,
             messageId: 'invalidTestId',
@@ -75,4 +94,4 @@ module.exports = {
       },
     };
   },
-};
+});

@@ -1,22 +1,13 @@
-'use strict';
-
-// ------------------------------------------------------------------------------
-// Requirements
-// ------------------------------------------------------------------------------
-
-const rule = require('../../../lib/rules/no-await-sync-query');
-const {
+import { createRuleTester } from '../test-utils';
+import rule, { RULE_NAME } from '../../../lib/rules/no-await-sync-query';
+import {
   SYNC_QUERIES_COMBINATIONS,
   ASYNC_QUERIES_COMBINATIONS,
-} = require('../../../lib/utils');
-const RuleTester = require('eslint').RuleTester;
+} from '../../../lib/utils';
 
-// ------------------------------------------------------------------------------
-// Tests
-// ------------------------------------------------------------------------------
+const ruleTester = createRuleTester();
 
-const ruleTester = new RuleTester({ parserOptions: { ecmaVersion: 2018 } });
-ruleTester.run('no-await-sync-query', rule, {
+ruleTester.run(RULE_NAME, rule, {
   valid: [
     // sync queries without await are valid
     ...SYNC_QUERIES_COMBINATIONS.map(query => ({

@@ -1,12 +1,11 @@
-'use strict';
+import { createRuleTester } from '../test-utils';
+import rule, {
+  RULE_NAME,
+  MessageIds,
+} from '../../../lib/rules/prefer-presence-queries';
+import { ALL_QUERIES_METHODS } from '../../../lib/utils';
 
-const RuleTester = require('eslint').RuleTester;
-const rule = require('../../../lib/rules/prefer-presence-queries');
-const { ALL_QUERIES_METHODS } = require('../../../lib/utils');
-
-const ruleTester = new RuleTester({
-  parserOptions: { ecmaVersion: 2017, sourceType: 'module' },
-});
+const ruleTester = createRuleTester();
 
 const getByQueries = ALL_QUERIES_METHODS.map(method => `get${method}`);
 const getAllByQueries = ALL_QUERIES_METHODS.map(method => `getAll${method}`);
@@ -15,20 +14,27 @@ const queryAllByQueries = ALL_QUERIES_METHODS.map(
   method => `queryAll${method}`
 );
 
-const allQueryUseInAssertion = queryName => [queryName, `screen.${queryName}`];
+const allQueryUseInAssertion = (queryName: string) => [
+  queryName,
+  `screen.${queryName}`,
+];
 
-const getValidAssertion = (query, matcher) =>
+const getValidAssertion = (query: string, matcher: string) =>
   allQueryUseInAssertion(query).map(query => ({
     code: `expect(${query}('Hello'))${matcher}`,
   }));
 
-const getInvalidAssertion = (query, matcher, messageId) =>
+const getInvalidAssertion = (
+  query: string,
+  matcher: string,
+  messageId: MessageIds
+) =>
   allQueryUseInAssertion(query).map(query => ({
     code: `expect(${query}('Hello'))${matcher}`,
     errors: [{ messageId }],
   }));
 
-ruleTester.run('prefer-presence-queries', rule, {
+ruleTester.run(RULE_NAME, rule, {
   valid: [
     ...getByQueries.reduce(
       (validRules, queryName) => [

@@ -1,25 +1,7 @@
-'use strict';
+import { createRuleTester } from '../test-utils';
+import rule, { RULE_NAME } from '../../../lib/rules/no-manual-cleanup';
 
-// ------------------------------------------------------------------------------
-// Requirements
-// ------------------------------------------------------------------------------
-
-const rule = require('../../../lib/rules/no-manual-cleanup');
-const RuleTester = require('eslint').RuleTester;
-
-// ------------------------------------------------------------------------------
-// Tests
-// ------------------------------------------------------------------------------
-
-const ruleTester = new RuleTester({
-  parserOptions: {
-    ecmaVersion: 2018,
-    sourceType: 'module',
-    ecmaFeatures: {
-      jsx: true,
-    },
-  },
-});
+const ruleTester = createRuleTester();
 
 const ALL_TESTING_LIBRARIES_WITH_CLEANUP = [
   '@testing-library/preact',
@@ -29,7 +11,7 @@ const ALL_TESTING_LIBRARIES_WITH_CLEANUP = [
   '@marko/testing-library',
 ];
 
-ruleTester.run('no-manual-cleanup', rule, {
+ruleTester.run(RULE_NAME, rule, {
   valid: [
     ...ALL_TESTING_LIBRARIES_WITH_CLEANUP.map(lib => ({
       code: `import { render } from "${lib}"`,
@@ -70,8 +52,7 @@ ruleTester.run('no-manual-cleanup', rule, {
         {
           line: 1,
           column: 18, // error points to `cleanup`
-          message:
-            "`cleanup` is performed automatically by your test runner, you don't need manual cleanups.",
+          messageId: 'noManualCleanup',
         },
       ],
     })),
@@ -81,8 +62,7 @@ ruleTester.run('no-manual-cleanup', rule, {
         {
           line: 1,
           column: 10, // error points to `cleanup`
-          message:
-            "`cleanup` is performed automatically by your test runner, you don't need manual cleanups.",
+          messageId: 'noManualCleanup',
         },
       ],
     })),
@@ -92,8 +72,7 @@ ruleTester.run('no-manual-cleanup', rule, {
         {
           line: 1,
           column: 17, // error points to `cleanup`
-          message:
-            "`cleanup` is performed automatically by your test runner, you don't need manual cleanups.",
+          messageId: 'noManualCleanup',
         },
       ],
     })),
@@ -106,8 +85,7 @@ ruleTester.run('no-manual-cleanup', rule, {
         {
           line: 3,
           column: 31,
-          message:
-            "`cleanup` is performed automatically by your test runner, you don't need manual cleanups.",
+          messageId: 'noManualCleanup',
         },
       ],
     })),
@@ -120,8 +98,7 @@ ruleTester.run('no-manual-cleanup', rule, {
         {
           line: 3,
           column: 25,
-          message:
-            "`cleanup` is performed automatically by your test runner, you don't need manual cleanups.",
+          messageId: 'noManualCleanup',
         },
       ],
     })),
@@ -131,8 +108,7 @@ ruleTester.run('no-manual-cleanup', rule, {
         {
           line: 1,
           column: 9, // error points to `cleanup`
-          message:
-            "`cleanup` is performed automatically by your test runner, you don't need manual cleanups.",
+          messageId: 'noManualCleanup',
         },
       ],
     })),
@@ -145,8 +121,7 @@ ruleTester.run('no-manual-cleanup', rule, {
         {
           line: 3,
           column: 31,
-          message:
-            "`cleanup` is performed automatically by your test runner, you don't need manual cleanups.",
+          messageId: 'noManualCleanup',
         },
       ],
     })),
@@ -159,8 +134,7 @@ ruleTester.run('no-manual-cleanup', rule, {
         {
           line: 3,
           column: 25,
-          message:
-            "`cleanup` is performed automatically by your test runner, you don't need manual cleanups.",
+          messageId: 'noManualCleanup',
         },
       ],
     })),

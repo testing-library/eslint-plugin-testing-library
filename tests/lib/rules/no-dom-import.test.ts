@@ -1,13 +1,9 @@
-'use strict';
+import { createRuleTester } from '../test-utils';
+import rule, { RULE_NAME } from '../../../lib/rules/no-dom-import';
 
-const rule = require('../../../lib/rules/no-dom-import');
-const RuleTester = require('eslint').RuleTester;
+const ruleTester = createRuleTester();
 
-const ruleTester = new RuleTester({
-  parserOptions: { ecmaVersion: 2015, sourceType: 'module' },
-});
-
-ruleTester.run('no-dom-import', rule, {
+ruleTester.run(RULE_NAME, rule, {
   valid: [
     { code: 'import { foo } from "foo"' },
     { code: 'import "foo"' },
@@ -41,8 +37,10 @@ ruleTester.run('no-dom-import', rule, {
       options: ['react'],
       errors: [
         {
-          message:
-            'import from DOM Testing Library is restricted, import from react-testing-library instead',
+          messageId: 'noDomImportFramework',
+          data: {
+            module: 'react-testing-library',
+          },
         },
       ],
       output: `import { fireEvent } from "react-testing-library"`,
@@ -53,8 +51,10 @@ ruleTester.run('no-dom-import', rule, {
       options: ['react'],
       errors: [
         {
-          message:
-            'import from DOM Testing Library is restricted, import from react-testing-library instead',
+          messageId: 'noDomImportFramework',
+          data: {
+            module: 'react-testing-library',
+          },
         },
       ],
       output: `import { fireEvent } from 'react-testing-library'`,
@@ -120,8 +120,10 @@ ruleTester.run('no-dom-import', rule, {
       options: ['vue'],
       errors: [
         {
-          message:
-            'import from DOM Testing Library is restricted, import from @testing-library/vue instead',
+          messageId: 'noDomImportFramework',
+          data: {
+            module: '@testing-library/vue',
+          },
         },
       ],
       output: 'const { fireEvent } = require("@testing-library/vue")',

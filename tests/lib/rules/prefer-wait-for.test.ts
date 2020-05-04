@@ -1,12 +1,9 @@
-'use strict';
+import { createRuleTester } from '../test-utils';
+import rule, { RULE_NAME } from '../../../lib/rules/prefer-wait-for';
 
-const rule = require('../../../lib/rules/prefer-wait-for');
-const RuleTester = require('eslint').RuleTester;
+const ruleTester = createRuleTester();
 
-const ruleTester = new RuleTester({
-  parserOptions: { ecmaVersion: 2018, sourceType: 'module' },
-});
-ruleTester.run('prefer-wait-for', rule, {
+ruleTester.run(RULE_NAME, rule, {
   valid: [
     {
       code: `import { waitFor, render } from '@testing-library/foo';
