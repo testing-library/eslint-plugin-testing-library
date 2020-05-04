@@ -158,7 +158,9 @@
         "ideas",
         "review",
         "test",
-        "bug"
+        "bug",
+        "infra",
+        "platform"
       ]
     },
     {
