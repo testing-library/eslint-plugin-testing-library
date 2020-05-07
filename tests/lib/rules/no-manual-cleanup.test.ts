@@ -44,6 +44,9 @@ ruleTester.run(RULE_NAME, rule, {
       // For test coverage
       code: `const utils = render("something")`,
     },
+    {
+      code: `const utils = require(moduleName)`,
+    },
   ],
   invalid: [
     ...ALL_TESTING_LIBRARIES_WITH_CLEANUP.map(lib => ({
