@@ -2,7 +2,7 @@ import { ESLintUtils, TSESTree } from '@typescript-eslint/experimental-utils';
 import { getDocsUrl } from '../utils';
 import {
   isImportDefaultSpecifier,
-  isCallExpression,
+  isLiteral,
   isIdentifier,
   isObjectPattern,
   isProperty,
@@ -88,40 +88,42 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
           });
         }
       },
-      VariableDeclarator(node) {
-        if (
-          isCallExpression(node.init) &&
-          isIdentifier(node.init.callee) &&
-          node.init.callee.name === 'require'
-        ) {
-          const requiredModule = node.init.arguments[0] as TSESTree.Literal;
-          const requiredModuleValue = requiredModule.value as string;
+      [`VariableDeclarator > CallExpression > Identifier[name="require"]`](
+        node: TSESTree.Identifier
+      ) {
+        const { arguments: args } = node.parent as TSESTree.CallExpression;
 
-          const testingLibraryWithCleanup = requiredModuleValue.match(
-            CLEANUP_LIBRARY_REGEX
+        const literalNodeCleanupModuleName = args.find(
+          args =>
+            isLiteral(args) &&
+            typeof args.value === 'string' &&
+            args.value.match(CLEANUP_LIBRARY_REGEX)
+        );
+
+        if (!literalNodeCleanupModuleName) {
+          return;
+        }
+
+        const declaratorNode = node.parent
+          .parent as TSESTree.VariableDeclarator;
+
+        if (isObjectPattern(declaratorNode.id)) {
+          const cleanupProperty = declaratorNode.id.properties.find(
+            property =>
+              isProperty(property) &&
+              isIdentifier(property.key) &&
+              property.key.name === 'cleanup'
           );
 
-          // Early return if the library doesn't support `cleanup`
-          if (!testingLibraryWithCleanup) {
-            return;
+          if (cleanupProperty) {
+            context.report({
+              node: cleanupProperty,
+              messageId: 'noManualCleanup',
+            });
           }
 
-          if (isObjectPattern(node.id)) {
-            const cleanupProperty = node.id.properties.find(
-              property =>
-                isProperty(property) &&
-                isIdentifier(property.key) &&
-                property.key.name === 'cleanup'
-            );
-            if (cleanupProperty) {
-              context.report({
-                node: cleanupProperty,
-                messageId: 'noManualCleanup',
-              });
-            }
-          } else {
-            defaultRequireFromTestingLibrary = node.id;
-          }
+        } else {
+          defaultRequireFromTestingLibrary = declaratorNode.id;
         }
       },
       'Program:exit'() {
