@@ -13,6 +13,15 @@ const combineQueries = (variants: string[], methods: string[]) => {
 const getDocsUrl = (ruleName: string) =>
   `https://github.com/testing-library/eslint-plugin-testing-library/tree/master/docs/rules/${ruleName}.md`;
 
+const LIBRARY_MODULES = [
+  '@testing-library/dom',
+  '@testing-library/angular',
+  '@testing-library/react',
+  '@testing-library/preact',
+  '@testing-library/vue',
+  '@testing-library/svelte',
+];
+
 const SYNC_QUERIES_VARIANTS = ['getBy', 'getAllBy', 'queryBy', 'queryAllBy'];
 const ASYNC_QUERIES_VARIANTS = ['findBy', 'findAllBy'];
 const ALL_QUERIES_VARIANTS = [
@@ -64,4 +73,5 @@ export {
   ASYNC_QUERIES_COMBINATIONS,
   ALL_QUERIES_COMBINATIONS,
   ASYNC_UTILS,
+  LIBRARY_MODULES,
 };

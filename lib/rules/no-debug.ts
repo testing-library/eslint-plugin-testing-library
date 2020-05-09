@@ -1,5 +1,5 @@
 import { ESLintUtils, TSESTree } from '@typescript-eslint/experimental-utils';
-import { getDocsUrl } from '../utils';
+import { getDocsUrl, LIBRARY_MODULES } from '../utils';
 import {
   isObjectPattern,
   isProperty,
@@ -11,15 +11,6 @@ import {
 } from '../node-utils';
 
 export const RULE_NAME = 'no-debug';
-
-const LIBRARY_MODULES_WITH_SCREEN = [
-  '@testing-library/dom',
-  '@testing-library/angular',
-  '@testing-library/react',
-  '@testing-library/preact',
-  '@testing-library/vue',
-  '@testing-library/svelte',
-];
 
 function isRenderFunction(
   callNode: TSESTree.CallExpression,
@@ -58,7 +49,7 @@ function hasTestingLibraryImportModule(
   importDeclarationNode: TSESTree.ImportDeclaration
 ) {
   const literal = importDeclarationNode.source;
-  return LIBRARY_MODULES_WITH_SCREEN.some(module => module === literal.value);
+  return LIBRARY_MODULES.some(module => module === literal.value);
 }
 
 export default ESLintUtils.RuleCreator(getDocsUrl)({
@@ -129,7 +120,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)({
           args =>
             isLiteral(args) &&
             typeof args.value === 'string' &&
-            LIBRARY_MODULES_WITH_SCREEN.includes(args.value)
+            LIBRARY_MODULES.includes(args.value)
         );
 
         if (!literalNodeScreenModuleName) {
