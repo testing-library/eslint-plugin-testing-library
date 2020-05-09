@@ -201,6 +201,17 @@
       "contributions": [
         "bug"
       ]
+    },
+    {
+      "login": "gndelia",
+      "name": "Gonzalo D'Elia",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/352474?v=4",
+      "profile": "https://github.com/gndelia",
+      "contributions": [
+        "code",
+        "test",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,
