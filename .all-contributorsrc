@@ -20,7 +20,8 @@
         "doc",
         "review",
         "test",
-        "infra"
+        "infra",
+        "bug"
       ]
     },
     {
