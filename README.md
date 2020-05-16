@@ -90,7 +90,7 @@ is the base for the rest of Testing Library frameworks wrappers, this
 plugin also exports different configuration for those frameworks that
 enforces good practices for specific rules that only apply to them _(you
 can find more info about enabled rules in
-[Supported Rules section](#supported-rules) within Frameworks column)_.
+the [Supported Rules section](#supported-rules) within the `Configurations` column)_.
 
 **Note that frameworks configurations enable their specific rules +
 recommended rules.**
