@@ -23,7 +23,9 @@
 [![Tweet][tweet-badge]][tweet-url]
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+
 [![All Contributors](https://img.shields.io/badge/all_contributors-19-orange.svg?style=flat-square)](#contributors-)
+
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 ## Installation
@@ -69,9 +71,8 @@ Then configure the rules you want to use under the rules section.
 ### Recommended
 
 This plugin exports a recommended configuration that enforces good
-Testing Library practices _(you can find more info about enabled rules
-in [Supported Rules section](#supported-rules) within Recommended
-column)_.
+Testing Library practices _(you can find more info about enabled rules in
+the [Supported Rules section](#supported-rules) within the `Configurations` column)_.
 
 To enable this configuration use the `extends` property in your
 `.eslintrc` config file:
@@ -205,6 +206,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 
 <!-- markdownlint-enable -->
 <!-- prettier-ignore-end -->
+
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
