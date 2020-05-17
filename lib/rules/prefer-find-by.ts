@@ -15,9 +15,8 @@ import {
 import { getDocsUrl, SYNC_QUERIES_COMBINATIONS } from '../utils';
 
 export const RULE_NAME = 'prefer-find-by';
-
-type Options = [];
 export type MessageIds = 'preferFindBy';
+type Options = [];
 
 export const WAIT_METHODS = ['waitFor', 'waitForElement', 'wait'];
 

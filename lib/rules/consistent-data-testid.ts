@@ -6,8 +6,8 @@ export const RULE_NAME = 'consistent-data-testid';
 export type MessageIds = 'invalidTestId';
 type Options = [
   {
-    testIdPattern: string;
     testIdAttribute?: string | string[];
+    testIdPattern: string;
   }
 ];
 

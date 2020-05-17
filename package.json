@@ -14,7 +14,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/testing-library/eslint-plugin-testing-library.git"
+    "url": "https://github.com/testing-library/eslint-plugin-testing-library"
   },
   "homepage": "https://github.com/testing-library/eslint-plugin-testing-library",
   "bugs": {
@@ -38,23 +38,23 @@
     "semantic-release": "semantic-release"
   },
   "dependencies": {
-    "@typescript-eslint/experimental-utils": "^2.29.0"
+    "@typescript-eslint/experimental-utils": "^3.10.1"
   },
   "devDependencies": {
     "@commitlint/cli": "^8.2.0",
     "@commitlint/config-conventional": "^8.2.0",
     "@types/jest": "^25.1.4",
-    "@typescript-eslint/eslint-plugin": "^2.26.0",
-    "@typescript-eslint/parser": "^2.26.0",
+    "@typescript-eslint/eslint-plugin": "^3.10.1",
+    "@typescript-eslint/parser": "^3.10.1",
     "cpy-cli": "^3.1.0",
-    "eslint": "^5 || ^6",
-    "eslint-config-prettier": "^6.1.0",
-    "eslint-config-standard": "^14.1.0",
-    "eslint-plugin-import": "^2.18.2",
-    "eslint-plugin-jest": "^22.17.0",
-    "eslint-plugin-jest-formatting": "^1.1.0",
-    "eslint-plugin-node": "^9.2.0",
-    "eslint-plugin-prettier": "^3.1.0",
+    "eslint": "^7.9.0",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-config-standard": "^14.1.1",
+    "eslint-plugin-import": "^2.22.0",
+    "eslint-plugin-jest": "^24.0.1",
+    "eslint-plugin-jest-formatting": "^2.0.0",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^3.1.4",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1",
     "husky": "^3.0.5",
@@ -64,10 +64,10 @@
     "prettier": "1.18.2",
     "semantic-release": "^15.13.24",
     "ts-jest": "^25.3.0",
-    "typescript": "^3.8.3"
+    "typescript": "^4.0.3"
   },
   "peerDependencies": {
-    "eslint": "^5 || ^6"
+    "eslint": "^5 || ^6 || ^7"
   },
   "engines": {
     "node": "^10.12.0 || >=12.0.0",
