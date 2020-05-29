@@ -213,6 +213,15 @@
         "test",
         "doc"
       ]
+    },
+    {
+      "login": "jmcriffey",
+      "name": "Jeff Rifwald",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/2831294?v=4",
+      "profile": "https://github.com/jmcriffey",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,
