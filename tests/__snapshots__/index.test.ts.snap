@@ -14,6 +14,7 @@ Object {
       "error",
       "angular",
     ],
+    "testing-library/prefer-find-by": "error",
   },
 }
 `;
@@ -32,6 +33,7 @@ Object {
       "error",
       "react",
     ],
+    "testing-library/prefer-find-by": "error",
   },
 }
 `;
@@ -45,6 +47,7 @@ Object {
     "testing-library/await-async-query": "error",
     "testing-library/await-async-utils": "error",
     "testing-library/no-await-sync-query": "error",
+    "testing-library/prefer-find-by": "error",
   },
 }
 `;
@@ -64,6 +67,7 @@ Object {
       "error",
       "vue",
     ],
+    "testing-library/prefer-find-by": "error",
   },
 }
 `;
