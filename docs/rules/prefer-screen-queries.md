@@ -40,7 +40,7 @@ screen.container.querySelector('foo');
 
 // using after within clause
 within(screen.getByTestId('section')).getByText('foo');
-within(screen.container.querySelector('section')).getByText('foo');
+within(screen.getByTestId('section')).container.querySelector('foo');
 
 // calling a query method returned from a within call
 const { getByText, container } = within(screen.getByText('foo'));
