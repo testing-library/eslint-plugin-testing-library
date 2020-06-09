@@ -41,6 +41,25 @@ ruleTester.run(RULE_NAME, rule, {
         await testingLibrary.waitFor(() => {}, { timeout: 500 });
       }`,
     },
+    {
+      code: `import { wait } from 'imNoTestingLibrary';
+
+      async () => {
+        await wait();
+      }`,
+    },
+    {
+      code: `import * as foo from 'imNoTestingLibrary';
+
+      async () => {
+        await foo.wait();
+      }`,
+    },
+    {
+      code: `
+      cy.wait();
+      `,
+    },
   ],
 
   invalid: [
