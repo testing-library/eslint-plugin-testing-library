@@ -64,23 +64,20 @@ ruleTester.run(RULE_NAME, rule, {
     ...WAIT_METHODS.reduce((acc: InvalidTestCase<'preferFindBy', []>[], waitMethod) => acc
       .concat(
         SYNC_QUERIES_COMBINATIONS.map((queryMethod: string) => ({
-          code: `
-            const submitButton = await ${waitMethod}(() => ${queryMethod}('foo', { name: 'baz' }))
-          `,
+          code: `const submitButton = await ${waitMethod}(() => ${queryMethod}('foo', { name: 'baz' }))`,
           errors: [{
             messageId: 'preferFindBy',
             data: {
               queryVariant: queryMethod.includes('All') ? 'findAllBy': 'findBy',
               queryMethod: queryMethod.split('By')[1],
               fullQuery: `${waitMethod}(() => ${queryMethod}('foo', { name: 'baz' }))`,
-            }
-          }]
+            },
+          }],
+          output: `const submitButton = await ${queryMethod.includes('All') ? 'findAllBy': 'findBy'}${queryMethod.split('By')[1]}('foo', { name: 'baz' })`
         }))
       ).concat(
         SYNC_QUERIES_COMBINATIONS.map((queryMethod: string) => ({
-          code: `
-            const submitButton = await ${waitMethod}(() => screen.${queryMethod}('foo', { name: 'baz' }))
-          `,
+          code: `const submitButton = await ${waitMethod}(() => screen.${queryMethod}('foo', { name: 'baz' }))`,
           errors: [{
             messageId: 'preferFindBy',
             data: {
@@ -88,7 +85,8 @@ ruleTester.run(RULE_NAME, rule, {
               queryMethod: queryMethod.split('By')[1],
               fullQuery: `${waitMethod}(() => screen.${queryMethod}('foo', { name: 'baz' }))`,
             }
-          }]
+          }],
+          output: `const submitButton = await screen.${queryMethod.includes('All') ? 'findAllBy': 'findBy'}${queryMethod.split('By')[1]}('foo', { name: 'baz' })`
         }))
       ),
     [])

@@ -26,22 +26,34 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
     messages: {
       preferFindBy: 'Prefer {{queryVariant}}{{queryMethod}} method over using await {{fullQuery}}'
     },
-    fixable: null,
+    fixable: 'code',
     schema: []
   },
   defaultOptions: [],
 
   create(context) {
+    const sourceCode = context.getSourceCode();
 
-    function reportInvalidUsage(node: TSESTree.CallExpression, { queryVariant, queryMethod, fullQuery }: { queryVariant: string, queryMethod: string, fullQuery: string}) {
+    /**
+     * Reports the invalid usage of wait* plus getBy/QueryBy methods and automatically fixes the scenario
+     * @param {TSESTree.CallExpression} node - The CallExpresion node that contains the wait* method
+     * @param {'findBy' | 'findAllBy'} replacementParams.queryVariant - The variant method used to query: findBy/findByAll.
+     * @param {string} replacementParams.queryMethod - Suffix string to build the query method (the query-part that comes after the "By"): LabelText, Placeholder, Text, Role, Title, etc.
+     * @param {Array<TSESTree.Expression>} replacementParams.callArguments - Array of argument nodes which contain the parameters of the query inside the wait* method.
+     * @param {string=} replacementParams.caller - the variable name that targets screen or the value returned from `render` function.
+     */
+    function reportInvalidUsage(node: TSESTree.CallExpression, { queryVariant, queryMethod, callArguments, caller }: { queryVariant: 'findBy' | 'findAllBy', queryMethod: string, callArguments: TSESTree.Expression[], caller?: string }) {
+      
       context.report({
         node,
         messageId: "preferFindBy",
-        data: { queryVariant, queryMethod, fullQuery },
+        data: { queryVariant, queryMethod, fullQuery: sourceCode.getText(node) },
+        fix(fixer) {
+          const newCode = `${caller ? `${caller}.` : ''}${queryVariant}${queryMethod}(${callArguments.map((node) => sourceCode.getText(node)).join(', ')})`
+          return fixer.replaceText(node, newCode)
+        }
       });
     }
-
-    const sourceCode = context.getSourceCode();
 
     return {
       'AwaitExpression > CallExpression'(node: TSESTree.CallExpression) {
@@ -61,10 +73,13 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
         if (isMemberExpression(argument.body.callee) && isIdentifier(argument.body.callee.property) && isIdentifier(argument.body.callee.object) && SYNC_QUERIES_COMBINATIONS.includes(argument.body.callee.property.name)) {
           // shape of () => screen.getByText
           const queryMethod = argument.body.callee.property.name
+          const caller = argument.body.callee.object.name
+          
           reportInvalidUsage(node, {
             queryMethod: queryMethod.split('By')[1],
             queryVariant: getFindByQueryVariant(queryMethod),
-            fullQuery: sourceCode.getText(node)
+            callArguments: argument.body.arguments,
+            caller,
           })
           return
         }
@@ -74,7 +89,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
           reportInvalidUsage(node, {
             queryMethod: queryMethod.split('By')[1],
             queryVariant: getFindByQueryVariant(queryMethod),
-            fullQuery: sourceCode.getText(node)
+            callArguments: argument.body.arguments,
           })
           return
         }
