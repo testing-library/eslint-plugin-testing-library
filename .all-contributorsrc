@@ -234,6 +234,15 @@
         "code",
         "test"
       ]
+    },
+    {
+      "login": "miguelerja",
+      "name": "Miguel Erja González",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/42043025?v=4",
+      "profile": "https://xxxl.digital/",
+      "contributions": [
+        "bug"
+      ]
     }
   ],
   "contributorsPerLine": 7,
