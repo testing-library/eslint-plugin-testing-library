@@ -2,8 +2,8 @@
 
 ## Rule Details
 
-DOM Testing Library (and other Testing Library frameworks built on top of it) exports a `screen` object which has every query (and a `debug` method). This works better with autocomplete and makes each test a little simpler to write and maintain.
-This rule aims to force writing tests using queries directly from `screen` object rather than destructuring them from `render` result.
+DOM Testing Library (and other Testing Library frameworks built on top of it) exports a `screen` object which has every query (and a `debug` method). This works better with autocomplete and makes each test a little simpler to write and maintain.  
+This rule aims to force writing tests using queries directly from `screen` object rather than destructuring them from `render` result. Given the screen component does not expose utility methods such as `rerender()` or the `container` property, it is correct to use the `render` response in those scenarios.
 
 Examples of **incorrect** code for this rule:
 
@@ -43,6 +43,17 @@ getByText('foo');
 // calling a method directly from a variable created by within
 const myWithinVariable = within(screen.getByText('foo'));
 myWithinVariable.getByText('foo');
+
+// accessing the container and the base element
+const utils = render(baz);
+utils.container.querySelector('foo');
+utils.baseElement.querySelector('foo');
+
+// calling the utilities function
+const utils = render(<Foo />);
+utils.rerender(<Foo />);
+utils.unmount();
+utils.asFragment();
 ```
 
 ## Further Reading
