@@ -243,6 +243,15 @@
       "contributions": [
         "bug"
       ]
+    },
+    {
+      "login": "pustovalov",
+      "name": "Pavel Pustovalov",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/1568885?v=4",
+      "profile": "http://pustovalov.dev",
+      "contributions": [
+        "bug"
+      ]
     }
   ],
   "contributorsPerLine": 7,
