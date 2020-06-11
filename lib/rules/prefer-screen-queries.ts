@@ -12,7 +12,7 @@ export const RULE_NAME = 'prefer-screen-queries';
 export type MessageIds = 'preferScreenQueries';
 type Options = [];
 
-const ALL_QUERIES_COMBINATIONS_REGEXP = [...ALL_QUERIES_COMBINATIONS, 'container'].join('|');
+const ALL_QUERIES_COMBINATIONS_REGEXP = ALL_QUERIES_COMBINATIONS.join('|');
 
 export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
   name: RULE_NAME,
@@ -93,7 +93,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
           isIdentifier(node) &&
           isMemberExpression(node.parent) &&
           isCallExpression(node.parent.object) &&
-          isIdentifier(node.parent.object.callee) &&
+          isIdentifier(node.parent.object.callee) && 
           node.parent.object.callee.name !== 'within'
         ) {
           reportInvalidUsage(node);
