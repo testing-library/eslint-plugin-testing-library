@@ -252,6 +252,17 @@
       "contributions": [
         "bug"
       ]
+    },
+    {
+      "login": "jrparish",
+      "name": "Jacob Parish",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/5173987?v=4",
+      "profile": "https://github.com/jrparish",
+      "contributions": [
+        "bug",
+        "code",
+        "test"
+      ]
     }
   ],
   "contributorsPerLine": 7,
