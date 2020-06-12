@@ -51,7 +51,13 @@ ruleTester.run(RULE_NAME, rule, {
       code: `
         await waitFor(() => expect(${queryMethod}('baz')).toBeInTheDocument());
       `
-    }))
+    })),
+    {
+      code: `
+        await waitFor();
+        await wait();
+      `
+    }
   ],
   invalid: [
     // using reduce + concat 'cause flatMap is not available in node10.x
