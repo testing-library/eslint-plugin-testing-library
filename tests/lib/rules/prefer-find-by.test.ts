@@ -53,7 +53,10 @@ ruleTester.run(RULE_NAME, rule, {
       `
     })),
     {
-      code: `await waitFor()`
+      code: `
+        await waitFor();
+        await wait();
+      `
     }
   ],
   invalid: [
