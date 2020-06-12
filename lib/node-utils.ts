@@ -104,5 +104,5 @@ export function hasThenProperty(node: TSESTree.Node) {
 }
 
 export function isArrowFunctionExpression(node: TSESTree.Node): node is TSESTree.ArrowFunctionExpression {
-  return node.type === 'ArrowFunctionExpression'
+  return node && node.type === 'ArrowFunctionExpression'
 }
