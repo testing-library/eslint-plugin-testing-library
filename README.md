@@ -23,7 +23,9 @@
 [![Tweet][tweet-badge]][tweet-url]
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+
 [![All Contributors](https://img.shields.io/badge/all_contributors-24-orange.svg?style=flat-square)](#contributors-)
+
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 ## Installation
@@ -145,7 +147,7 @@ To enable this configuration use the `extends` property in your
 | [prefer-explicit-assert](docs/rules/prefer-explicit-assert.md)         | Suggest using explicit assertions rather than just `getBy*` queries        |                                                                           |                    |
 | [prefer-find-by](docs/rules/prefer-find-by.md)                         | Suggest using `findBy*` methods instead of the `waitFor` + `getBy` queries | ![recommended-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] | ![fixable-badge][] |
 | [prefer-presence-queries](docs/rules/prefer-presence-queries.md)       | Enforce specific queries when checking element is present or not           |                                                                           |                    |
-| [prefer-screen-queries](docs/rules/prefer-screen-queries.md)           | Suggest using screen while using queries                                   |                                                                           |                    |
+| [prefer-screen-queries](docs/rules/prefer-screen-queries.md)           | Suggest using screen while using queries                                   | ![recommended-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] |                    |
 | [prefer-wait-for](docs/rules/prefer-wait-for.md)                       | Use `waitFor` instead of deprecated wait methods                           |                                                                           | ![fixable-badge][] |
 
 [build-badge]: https://img.shields.io/travis/testing-library/eslint-plugin-testing-library?style=flat-square
@@ -212,6 +214,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 
 <!-- markdownlint-enable -->
 <!-- prettier-ignore-end -->
+
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
