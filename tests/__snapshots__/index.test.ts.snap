@@ -15,6 +15,7 @@ Object {
       "angular",
     ],
     "testing-library/prefer-find-by": "error",
+    "testing-library/prefer-screen-queries": "error",
   },
 }
 `;
@@ -34,6 +35,7 @@ Object {
       "react",
     ],
     "testing-library/prefer-find-by": "error",
+    "testing-library/prefer-screen-queries": "error",
   },
 }
 `;
@@ -48,6 +50,7 @@ Object {
     "testing-library/await-async-utils": "error",
     "testing-library/no-await-sync-query": "error",
     "testing-library/prefer-find-by": "error",
+    "testing-library/prefer-screen-queries": "error",
   },
 }
 `;
@@ -68,6 +71,7 @@ Object {
       "vue",
     ],
     "testing-library/prefer-find-by": "error",
+    "testing-library/prefer-screen-queries": "error",
   },
 }
 `;
