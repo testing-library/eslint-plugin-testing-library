@@ -34,6 +34,7 @@ const recommendedRules = {
   'testing-library/await-async-query': 'error',
   'testing-library/await-async-utils': 'error',
   'testing-library/no-await-sync-query': 'error',
+  'testing-library/no-wait-for-empty-callback': 'error',
   'testing-library/prefer-find-by': 'error',
 };
 
