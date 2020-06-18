@@ -203,6 +203,18 @@ ruleTester.run(RULE_NAME, rule, {
       ],
     },
     {
+      // https://github.com/testing-library/eslint-plugin-testing-library/issues/174
+      code: `
+        import { screen, render } from '@testing-library/dom'
+        screen.debug()
+      `,
+      errors: [
+        {
+          messageId: 'noDebug',
+        },
+      ],
+    },
+    {
       code: `
         import * as dtl from '@testing-library/dom';
         dtl.debug();
