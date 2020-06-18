@@ -273,6 +273,15 @@
         "ideas",
         "code"
       ]
+    },
+    {
+      "login": "stefcameron",
+      "name": "Stefan Cameron",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/2855350?v=4",
+      "profile": "https://stefancameron.com/",
+      "contributions": [
+        "bug"
+      ]
     }
   ],
   "contributorsPerLine": 7,
