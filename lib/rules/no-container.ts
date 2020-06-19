@@ -16,7 +16,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)({
   meta: {
     type: 'problem',
     docs: {
-      description: 'Disallow the usage of container methods',
+      description: 'Disallow the use of container methods',
       category: 'Best Practices',
       recommended: 'error',
     },
