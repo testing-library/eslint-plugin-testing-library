@@ -62,5 +62,21 @@ ruleTester.run(RULE_NAME, rule, {
         },
       ],
     },
+    {
+      code: `
+        const { container } = renderWithRedux(<Example />)
+        container.querySelector()
+      `,
+      options: [
+        {
+          renderFunctions: ['renderWithRedux'],
+        },
+      ],
+      errors: [
+        {
+          messageId: 'noContainer',
+        },
+      ],
+    },
   ],
 });
