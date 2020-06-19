@@ -106,3 +106,36 @@ export function hasThenProperty(node: TSESTree.Node) {
 export function isArrowFunctionExpression(node: TSESTree.Node): node is TSESTree.ArrowFunctionExpression {
   return node && node.type === 'ArrowFunctionExpression'
 }
+
+function isRenderFunction(
+  callNode: TSESTree.CallExpression,
+  renderFunctions: string[]
+) {
+  return ['render', ...renderFunctions].some(
+    name => isIdentifier(callNode.callee) && name === callNode.callee.name
+  );
+}
+
+export function isRenderVariableDeclarator(
+  node: TSESTree.VariableDeclarator,
+  renderFunctions: string[] = []
+) {
+  if (node.init) {
+    if (isAwaitExpression(node.init)) {
+      return (
+        node.init.argument &&
+        isRenderFunction(
+          node.init.argument as TSESTree.CallExpression,
+          renderFunctions
+        )
+      );
+    } else {
+      return (
+        isCallExpression(node.init) &&
+        isRenderFunction(node.init, renderFunctions)
+      );
+    }
+  }
+
+  return false;
+}

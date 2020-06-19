@@ -6,21 +6,10 @@ import {
   isMemberExpression,
   isObjectPattern,
   isProperty,
+  isRenderVariableDeclarator,
 } from '../node-utils';
 
 export const RULE_NAME = 'no-container';
-
-function isRender(callNode: TSESTree.CallExpression) {
-  return isIdentifier(callNode.callee) && callNode.callee.name === 'render';
-}
-
-function isRenderVariableDeclarator(node: TSESTree.VariableDeclarator) {
-  if (node.init) {
-    if (isCallExpression(node.init)) {
-      return isRender(node.init);
-    }
-  }
-}
 
 export default ESLintUtils.RuleCreator(getDocsUrl)({
   name: RULE_NAME,
@@ -32,7 +21,8 @@ export default ESLintUtils.RuleCreator(getDocsUrl)({
       recommended: 'error',
     },
     messages: {
-      noContainer: 'Unexpected use of container methods. Prefer the use of "screen.someMethod()".',
+      noContainer:
+        'Unexpected use of container methods. Prefer the use of "screen.someMethod()".',
     },
     fixable: null,
     schema: [],
