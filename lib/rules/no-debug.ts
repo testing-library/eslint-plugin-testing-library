@@ -8,6 +8,7 @@ import {
   isLiteral,
   isAwaitExpression,
   isMemberExpression,
+  isImportSpecifier,
 } from '../node-utils';
 
 export const RULE_NAME = 'no-debug';
@@ -141,12 +142,11 @@ export default ESLintUtils.RuleCreator(getDocsUrl)({
       },
       // checks if import has shape:
       // import { screen } from '@testing-library/dom';
-      'ImportDeclaration ImportSpecifier'(node: TSESTree.ImportSpecifier) {
-        const importDeclarationNode = node.parent as TSESTree.ImportDeclaration;
-
-        if (!hasTestingLibraryImportModule(importDeclarationNode)) return;
-
-        hasImportedScreen = node.imported.name === 'screen';
+      ImportDeclaration(node: TSESTree.ImportDeclaration) {
+        if (!hasTestingLibraryImportModule(node)) return;
+        hasImportedScreen = node.specifiers.some(
+          s => isImportSpecifier(s) && s.imported.name === 'screen'
+        );
       },
       // checks if import has shape:
       // import * as dtl from '@testing-library/dom';
