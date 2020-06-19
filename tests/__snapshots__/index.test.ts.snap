@@ -15,7 +15,9 @@ Object {
       "error",
       "angular",
     ],
+    "testing-library/no-wait-for-empty-callback": "error",
     "testing-library/prefer-find-by": "error",
+    "testing-library/prefer-screen-queries": "error",
   },
 }
 `;
@@ -35,7 +37,9 @@ Object {
       "error",
       "react",
     ],
+    "testing-library/no-wait-for-empty-callback": "error",
     "testing-library/prefer-find-by": "error",
+    "testing-library/prefer-screen-queries": "error",
   },
 }
 `;
@@ -50,7 +54,9 @@ Object {
     "testing-library/await-async-utils": "error",
     "testing-library/no-await-sync-query": "error",
     "testing-library/no-container": "error",
+    "testing-library/no-wait-for-empty-callback": "error",
     "testing-library/prefer-find-by": "error",
+    "testing-library/prefer-screen-queries": "error",
   },
 }
 `;
@@ -71,7 +77,9 @@ Object {
       "error",
       "vue",
     ],
+    "testing-library/no-wait-for-empty-callback": "error",
     "testing-library/prefer-find-by": "error",
+    "testing-library/prefer-screen-queries": "error",
   },
 }
 `;

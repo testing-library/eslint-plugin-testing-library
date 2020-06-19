@@ -21,7 +21,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
     docs: {
       description: 'Suggest using screen while using queries',
       category: 'Best Practices',
-      recommended: false,
+      recommended: 'error',
     },
     messages: {
       preferScreenQueries:
@@ -46,28 +46,39 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
     const queriesRegex = new RegExp(ALL_QUERIES_COMBINATIONS_REGEXP);
     const queriesDestructuredInWithinDeclaration: string[] = [];
     // use an array as within might be used more than once in a test
-    const withinDeclaredVariables : string[] = []
+    const withinDeclaredVariables: string[] = [];
 
     return {
       VariableDeclarator(node) {
-        const isWithinFunction = isCallExpression(node.init) && isIdentifier(node.init.callee) && node.init.callee.name === 'within';
+        const isWithinFunction =
+          isCallExpression(node.init) &&
+          isIdentifier(node.init.callee) &&
+          node.init.callee.name === 'within';
 
         if (!isWithinFunction) {
-          return
+          return;
         }
 
         if (isObjectPattern(node.id)) {
           // save the destructured query methods
           const identifiers = node.id.properties
-            .filter(property => isProperty(property) && isIdentifier(property.key) && queriesRegex.test(property.key.name))
-            .map((property: TSESTree.Property) => (property.key as TSESTree.Identifier).name);
+            .filter(
+              property =>
+                isProperty(property) &&
+                isIdentifier(property.key) &&
+                queriesRegex.test(property.key.name)
+            )
+            .map(
+              (property: TSESTree.Property) =>
+                (property.key as TSESTree.Identifier).name
+            );
 
           queriesDestructuredInWithinDeclaration.push(...identifiers);
-          return
+          return;
         }
 
         if (isIdentifier(node.id)) {
-          withinDeclaredVariables.push(node.id.name)
+          withinDeclaredVariables.push(node.id.name);
         }
       },
       [`CallExpression > Identifier[name=/^${ALL_QUERIES_COMBINATIONS_REGEXP}$/]`](
@@ -84,16 +95,15 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
       [`MemberExpression > Identifier[name=/^${ALL_QUERIES_COMBINATIONS_REGEXP}$/]`](
         node: TSESTree.Identifier
       ) {
-
         function isIdentifierAllowed(name: string) {
-          return ['screen', ...withinDeclaredVariables].includes(name)
+          return ['screen', ...withinDeclaredVariables].includes(name);
         }
 
         if (
           isIdentifier(node) &&
           isMemberExpression(node.parent) &&
           isCallExpression(node.parent.object) &&
-          isIdentifier(node.parent.object.callee) && 
+          isIdentifier(node.parent.object.callee) &&
           node.parent.object.callee.name !== 'within'
         ) {
           reportInvalidUsage(node);

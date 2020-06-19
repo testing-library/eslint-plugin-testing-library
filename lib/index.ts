@@ -37,7 +37,9 @@ const recommendedRules = {
   'testing-library/await-async-utils': 'error',
   'testing-library/no-await-sync-query': 'error',
   'testing-library/no-container': 'error',
+  'testing-library/no-wait-for-empty-callback': 'error',
   'testing-library/prefer-find-by': 'error',
+  'testing-library/prefer-screen-queries': 'error',
 };
 
 export = {

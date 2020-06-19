@@ -24,7 +24,7 @@
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 
-[![All Contributors](https://img.shields.io/badge/all_contributors-26-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-24-orange.svg?style=flat-square)](#contributors-)
 
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
@@ -144,11 +144,11 @@ To enable this configuration use the `extends` property in your
 | [no-debug](docs/rules/no-debug.md)                                     | Disallow the use of `debug`                                                | ![angular-badge][] ![react-badge][] ![vue-badge][]                        |                    |
 | [no-dom-import](docs/rules/no-dom-import.md)                           | Disallow importing from DOM Testing Library                                | ![angular-badge][] ![react-badge][] ![vue-badge][]                        | ![fixable-badge][] |
 | [no-manual-cleanup](docs/rules/no-manual-cleanup.md)                   | Disallow the use of `cleanup`                                              |                                                                           |                    |
-| [no-wait-for-empty-callback](docs/rules/no-wait-for-empty-callback.md) | Disallow empty callbacks for `waitFor` and `waitForElementToBeRemoved`     |                                                                           |                    |
+| [no-wait-for-empty-callback](docs/rules/no-wait-for-empty-callback.md) | Disallow empty callbacks for `waitFor` and `waitForElementToBeRemoved`     | ![recommended-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] |                    |
 | [prefer-explicit-assert](docs/rules/prefer-explicit-assert.md)         | Suggest using explicit assertions rather than just `getBy*` queries        |                                                                           |                    |
 | [prefer-find-by](docs/rules/prefer-find-by.md)                         | Suggest using `findBy*` methods instead of the `waitFor` + `getBy` queries | ![recommended-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] | ![fixable-badge][] |
 | [prefer-presence-queries](docs/rules/prefer-presence-queries.md)       | Enforce specific queries when checking element is present or not           |                                                                           |                    |
-| [prefer-screen-queries](docs/rules/prefer-screen-queries.md)           | Suggest using screen while using queries                                   |                                                                           |                    |
+| [prefer-screen-queries](docs/rules/prefer-screen-queries.md)           | Suggest using screen while using queries                                   | ![recommended-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] |                    |
 | [prefer-wait-for](docs/rules/prefer-wait-for.md)                       | Use `waitFor` instead of deprecated wait methods                           |                                                                           | ![fixable-badge][] |
 
 [build-badge]: https://img.shields.io/travis/testing-library/eslint-plugin-testing-library?style=flat-square

@@ -21,7 +21,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
       description:
         "It's preferred to avoid empty callbacks in `waitFor` and `waitForElementToBeRemoved`",
       category: 'Best Practices',
-      recommended: false,
+      recommended: 'error',
     },
     messages: {
       noWaitForEmptyCallback:
