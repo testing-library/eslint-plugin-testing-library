@@ -36,7 +36,6 @@ const recommendedRules = {
   'testing-library/await-async-query': 'error',
   'testing-library/await-async-utils': 'error',
   'testing-library/no-await-sync-query': 'error',
-  'testing-library/no-container': 'error',
   'testing-library/no-wait-for-empty-callback': 'error',
   'testing-library/prefer-find-by': 'error',
   'testing-library/prefer-screen-queries': 'error',
@@ -53,6 +52,7 @@ export = {
       plugins: ['testing-library'],
       rules: {
         ...recommendedRules,
+        'testing-library/no-container': 'error',
         'testing-library/no-debug': 'warn',
         'testing-library/no-dom-import': ['error', 'angular'],
       },
@@ -61,6 +61,7 @@ export = {
       plugins: ['testing-library'],
       rules: {
         ...recommendedRules,
+        'testing-library/no-container': 'error',
         'testing-library/no-debug': 'warn',
         'testing-library/no-dom-import': ['error', 'react'],
       },
@@ -70,6 +71,7 @@ export = {
       rules: {
         ...recommendedRules,
         'testing-library/await-fire-event': 'error',
+        'testing-library/no-container': 'error',
         'testing-library/no-debug': 'warn',
         'testing-library/no-dom-import': ['error', 'vue'],
       },

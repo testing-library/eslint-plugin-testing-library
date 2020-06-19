@@ -2,6 +2,8 @@
 
 By using `container` methods like `.querySelector` you may lose a lot of the confidence that the user can really interact with your UI. Also, the test becomes harder to read, and it will break more frequently.
 
+This applies to Testing Library frameworks built on top of **DOM Testing Library**
+
 ## Rule Details
 
 This rule aims to disallow the use of `container` methods in your tests.
@@ -33,4 +35,5 @@ If you use [custom render functions](https://testing-library.com/docs/example-re
 
 ## Further Reading
 
+- [about the `container` element](https://testing-library.com/docs/react-testing-library/api#container-1)
 - [querying with `screen`](https://testing-library.com/docs/dom-testing-library/api-queries#screen)
