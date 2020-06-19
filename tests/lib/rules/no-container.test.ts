@@ -11,28 +11,47 @@ ruleTester.run(RULE_NAME, rule, {
   valid: [
     {
       code: `
-        render(<Example />)
-        screen.getByRole('button', {name: /click me/i})
+        render(<Example />);
+        screen.getByRole('button', {name: /click me/i});
       `,
     },
     {
       code: `
-        const { container } = render(<Example />)
-        expect(container.firstChild).toBeDefined()
+        const { container } = render(<Example />);
+        expect(container.firstChild).toBeDefined();
       `,
     },
     {
       code: `
-        const { container: alias } = render(<Example />)
-        expect(alias.firstChild).toBeDefined()
+        const { container: alias } = render(<Example />);
+        expect(alias.firstChild).toBeDefined();
+      `,
+    },
+    {
+      code: `
+        function getExampleDOM() {
+          const container = document.createElement('div');
+          container.innerHTML = \`
+            <label for="username">Username</label>
+            <input id="username" />
+            <button>Print Username</button>
+          \`;
+          const button = container.querySelector('button');
+      
+          button.addEventListener('click', () => console.log('clicked'));
+          return container;
+      }
+
+      const exampleDOM = getExampleDOM();
+      screen.getByText(exampleDOM, 'Print Username').click();
       `,
     },
   ],
   invalid: [
     {
       code: `
-        const { container } = render(<Example />)
-        const button = container.querySelector('.btn-primary')
+        const { container } = render(<Example />);
+        const button = container.querySelector('.btn-primary');
       `,
       errors: [
         {
@@ -42,8 +61,8 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        const { container } = render(<Example />)
-        container.querySelector()
+        const { container } = render(<Example />);
+        container.querySelector();
       `,
       errors: [
         {
@@ -53,8 +72,8 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        const { container: alias } = render(<Example />)
-        alias.querySelector()
+        const { container: alias } = render(<Example />);
+        alias.querySelector();
       `,
       errors: [
         {
@@ -64,8 +83,29 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        const { container } = renderWithRedux(<Example />)
-        container.querySelector()
+        const button = screen.container.querySelector('.btn-primary')
+      `,
+      errors: [
+        {
+          messageId: 'noContainer',
+        },
+      ],
+    },
+    {
+      code: `
+        const view = render(<Example />)
+        const button = view.container.querySelector('.btn-primary')
+      `,
+      errors: [
+        {
+          messageId: 'noContainer',
+        },
+      ],
+    },
+    {
+      code: `
+        const { container } = renderWithRedux(<Example />);
+        container.querySelector();
       `,
       options: [
         {
