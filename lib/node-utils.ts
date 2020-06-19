@@ -118,7 +118,7 @@ function isRenderFunction(
 
 export function isRenderVariableDeclarator(
   node: TSESTree.VariableDeclarator,
-  renderFunctions: string[] = []
+  renderFunctions: string[]
 ) {
   if (node.init) {
     if (isAwaitExpression(node.init)) {

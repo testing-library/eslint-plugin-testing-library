@@ -25,16 +25,30 @@ export default ESLintUtils.RuleCreator(getDocsUrl)({
         'Unexpected use of container methods. Prefer the use of "screen.someMethod()".',
     },
     fixable: null,
-    schema: [],
+    schema: [
+      {
+        type: 'object',
+        properties: {
+          renderFunctions: {
+            type: 'array',
+          },
+        },
+      },
+    ],
   },
-  defaultOptions: [],
+  defaultOptions: [
+    {
+      renderFunctions: [],
+    },
+  ],
 
-  create(context) {
+  create(context, [options]) {
+    const { renderFunctions } = options;
     let destructuredContainerName = '';
 
     return {
       VariableDeclarator(node) {
-        if (isRenderVariableDeclarator(node)) {
+        if (isRenderVariableDeclarator(node, renderFunctions)) {
           if (isObjectPattern(node.id)) {
             const containerIndex = node.id.properties.findIndex(
               property =>
@@ -45,8 +59,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)({
             if (containerIndex !== -1) {
               const nodeValue = node.id.properties[containerIndex].value;
               destructuredContainerName =
-                isIdentifier(nodeValue) &&
-                nodeValue.name;
+                isIdentifier(nodeValue) && nodeValue.name;
             }
           }
         }
