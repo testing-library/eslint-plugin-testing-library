@@ -1,7 +1,6 @@
 import { ESLintUtils, TSESTree } from '@typescript-eslint/experimental-utils';
 import { getDocsUrl } from '../utils';
 import {
-  isCallExpression,
   isIdentifier,
   isMemberExpression,
   isObjectPattern,
@@ -22,7 +21,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)({
     },
     messages: {
       noContainer:
-        'Unexpected use of container methods. Prefer the use of "screen.someMethod()".',
+        'Avoid using container to query for elements. Prefer using query methods from Testing Library, such as "getByRole()"',
     },
     fixable: null,
     schema: [
@@ -44,7 +43,9 @@ export default ESLintUtils.RuleCreator(getDocsUrl)({
 
   create(context, [options]) {
     const { renderFunctions } = options;
-    let destructuredContainerName = '';
+    let containerName = '';
+    let renderWrapperName = '';
+    let hasPropertyContainer = false;
 
     return {
       VariableDeclarator(node) {
@@ -56,25 +57,45 @@ export default ESLintUtils.RuleCreator(getDocsUrl)({
                 isIdentifier(property.key) &&
                 property.key.name === 'container'
             );
-            if (containerIndex !== -1) {
-              const nodeValue = node.id.properties[containerIndex].value;
-              destructuredContainerName =
-                isIdentifier(nodeValue) && nodeValue.name;
-            }
+            const nodeValue =
+              containerIndex !== -1 && node.id.properties[containerIndex].value;
+            containerName = isIdentifier(nodeValue) && nodeValue.name;
+          } else {
+            renderWrapperName = isIdentifier(node.id) && node.id.name;
           }
         }
       },
 
       CallExpression(node: TSESTree.CallExpression) {
-        if (
-          isMemberExpression(node.callee) &&
-          isIdentifier(node.callee.object) &&
-          node.callee.object.name === destructuredContainerName
+        function showErrorForChainedContainerMethod(
+          innerNode: TSESTree.MemberExpression
         ) {
-          context.report({
-            node,
-            messageId: 'noContainer',
-          });
+          if (isMemberExpression(innerNode)) {
+            if (isIdentifier(innerNode.object)) {
+              const isScreen = innerNode.object.name === 'screen';
+              const isContainerName = innerNode.object.name === containerName;
+              const isRenderWrapper =
+                innerNode.object.name === renderWrapperName;
+
+              hasPropertyContainer =
+                isIdentifier(innerNode.property) &&
+                innerNode.property.name === 'container' &&
+                (isScreen || isRenderWrapper);
+
+              if (isContainerName || hasPropertyContainer) {
+                context.report({
+                  node,
+                  messageId: 'noContainer',
+                });
+              }
+            }
+            showErrorForChainedContainerMethod(
+              innerNode.object as TSESTree.MemberExpression
+            );
+          }
+        }
+        if (isMemberExpression(node.callee)) {
+          showErrorForChainedContainerMethod(node.callee);
         }
       },
     };
