@@ -31,7 +31,7 @@ ruleTester.run(RULE_NAME, rule, {
   invalid: [
     {
       code: `
-        const {container} = render(<Example />)
+        const { container } = render(<Example />)
         const button = container.querySelector('.btn-primary')
       `,
       errors: [

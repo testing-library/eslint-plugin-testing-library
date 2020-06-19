@@ -42,16 +42,17 @@ export default ESLintUtils.RuleCreator(getDocsUrl)({
                 isIdentifier(property.key) &&
                 property.key.name === 'container'
             );
-            const nodeValue = node.id.properties[containerIndex].value;
-            destructuredContainerName =
-              containerIndex !== -1 &&
-              isIdentifier(nodeValue) &&
-              nodeValue.name;
+            if (containerIndex !== -1) {
+              const nodeValue = node.id.properties[containerIndex].value;
+              destructuredContainerName =
+                isIdentifier(nodeValue) &&
+                nodeValue.name;
+            }
           }
         }
       },
 
-      [`CallExpression`](node: TSESTree.CallExpression) {
+      CallExpression(node: TSESTree.CallExpression) {
         if (
           isMemberExpression(node.callee) &&
           isIdentifier(node.callee.object) &&
