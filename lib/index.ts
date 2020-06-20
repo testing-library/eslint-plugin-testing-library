@@ -7,6 +7,7 @@ import noDebug from './rules/no-debug';
 import noDomImport from './rules/no-dom-import';
 import noManualCleanup from './rules/no-manual-cleanup';
 import noWaitForEmptyCallback from './rules/no-wait-for-empty-callback';
+import noPromiseInFireEvent from './rules/no-promise-in-fire-event';
 import preferExplicitAssert from './rules/prefer-explicit-assert';
 import preferPresenceQueries from './rules/prefer-presence-queries';
 import preferScreenQueries from './rules/prefer-screen-queries';
@@ -22,6 +23,7 @@ const rules = {
   'no-debug': noDebug,
   'no-dom-import': noDomImport,
   'no-manual-cleanup': noManualCleanup,
+  'no-promise-in-fire-event': noPromiseInFireEvent,
   'no-wait-for-empty-callback': noWaitForEmptyCallback,
   'prefer-explicit-assert': preferExplicitAssert,
   'prefer-find-by': preferFindBy,
