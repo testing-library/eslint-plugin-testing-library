@@ -49,31 +49,23 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
 
         for (const reference of references) {
           const referenceNode = reference.identifier;
-          if (
-            isMemberExpression(referenceNode.parent) &&
-            isCallExpression(referenceNode.parent.parent)
-          ) {
-            const [element] = referenceNode.parent.parent
-              .arguments as TSESTree.Node[];
-            if (element) {
-              if (isCallExpression(element) || isNewExpression(element)) {
-                const methodName = isIdentifier(element.callee)
-                  ? element.callee.name
-                  : isMemberExpression(element.callee) &&
-                    isIdentifier(element.callee.property)
-                  ? element.callee.property.name
-                  : '';
+          const callExpression = referenceNode.parent
+            .parent as TSESTree.CallExpression;
+          const [element] = callExpression.arguments as TSESTree.Node[];
+          if (isCallExpression(element) || isNewExpression(element)) {
+            const methodName = isIdentifier(element.callee)
+              ? element.callee.name
+              : ((element.callee as TSESTree.MemberExpression)
+                  .property as TSESTree.Identifier).name;
 
-                if (
-                  ASYNC_QUERIES_VARIANTS.some(q => methodName.startsWith(q)) ||
-                  methodName === 'Promise'
-                ) {
-                  context.report({
-                    node: element,
-                    messageId: 'noPromiseInFireEvent',
-                  });
-                }
-              }
+            if (
+              ASYNC_QUERIES_VARIANTS.some(q => methodName.startsWith(q)) ||
+              methodName === 'Promise'
+            ) {
+              context.report({
+                node: element,
+                messageId: 'noPromiseInFireEvent',
+              });
             }
           }
         }
