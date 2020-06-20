@@ -37,13 +37,19 @@ ruleTester.run(RULE_NAME, rule, {
             <button>Print Username</button>
           \`;
           const button = container.querySelector('button');
-      
+
           button.addEventListener('click', () => console.log('clicked'));
           return container;
       }
 
       const exampleDOM = getExampleDOM();
       screen.getByText(exampleDOM, 'Print Username').click();
+      `,
+    },
+    {
+      code: `
+        const { container: { firstChild } } = render(<Example />);
+        expect(firstChild).toBeDefined();
       `,
     },
   ],
@@ -83,8 +89,19 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        const view = render(<Example />)
-        const button = view.container.querySelector('.btn-primary')
+        const view = render(<Example />);
+        const button = view.container.querySelector('.btn-primary');
+      `,
+      errors: [
+        {
+          messageId: 'noContainer',
+        },
+      ],
+    },
+    {
+      code: `
+        const { container: { querySelector } } = render(<Example />);
+        querySelector('foo');
       `,
       errors: [
         {

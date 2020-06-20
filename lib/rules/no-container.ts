@@ -43,9 +43,10 @@ export default ESLintUtils.RuleCreator(getDocsUrl)({
 
   create(context, [options]) {
     const { renderFunctions } = options;
-    let containerName = '';
-    let renderWrapperName = '';
     let hasPropertyContainer = false;
+    let containerName: string = null;
+    let renderWrapperName: string = null;
+    const destructuredContainerPropNames: string[] = [];
 
     return {
       VariableDeclarator(node) {
@@ -59,7 +60,17 @@ export default ESLintUtils.RuleCreator(getDocsUrl)({
             );
             const nodeValue =
               containerIndex !== -1 && node.id.properties[containerIndex].value;
-            containerName = isIdentifier(nodeValue) && nodeValue.name;
+            if (isIdentifier(nodeValue)) {
+              containerName = nodeValue.name;
+            } else {
+              isObjectPattern(nodeValue) &&
+                nodeValue.properties.forEach(
+                  property =>
+                    isProperty(property) &&
+                    isIdentifier(property.key) &&
+                    destructuredContainerPropNames.push(property.key.name)
+                );
+            }
           } else {
             renderWrapperName = isIdentifier(node.id) && node.id.name;
           }
@@ -83,7 +94,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)({
 
               if (isContainerName || hasPropertyContainer) {
                 context.report({
-                  node,
+                  node: innerNode,
                   messageId: 'noContainer',
                 });
               }
@@ -95,6 +106,12 @@ export default ESLintUtils.RuleCreator(getDocsUrl)({
         }
         if (isMemberExpression(node.callee)) {
           showErrorForChainedContainerMethod(node.callee);
+        } else if (isIdentifier(node.callee)) {
+          destructuredContainerPropNames.includes(node.callee.name) &&
+            context.report({
+              node,
+              messageId: 'noContainer',
+            });
         }
       },
     };
