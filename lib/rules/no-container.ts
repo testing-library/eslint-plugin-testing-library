@@ -43,10 +43,36 @@ export default ESLintUtils.RuleCreator(getDocsUrl)({
 
   create(context, [options]) {
     const { renderFunctions } = options;
-    let hasPropertyContainer = false;
-    let containerName: string = null;
-    let renderWrapperName: string = null;
     const destructuredContainerPropNames: string[] = [];
+    let renderWrapperName: string = null;
+    let containerName: string = null;
+    let containerCallsMethod = false;
+
+    function showErrorIfChainedContainerMethod(
+      innerNode: TSESTree.MemberExpression
+    ) {
+      if (isMemberExpression(innerNode)) {
+        if (isIdentifier(innerNode.object)) {
+          const isContainerName = innerNode.object.name === containerName;
+          const isRenderWrapper = innerNode.object.name === renderWrapperName;
+
+          containerCallsMethod =
+            isIdentifier(innerNode.property) &&
+            innerNode.property.name === 'container' &&
+            isRenderWrapper;
+
+          if (isContainerName || containerCallsMethod) {
+            context.report({
+              node: innerNode,
+              messageId: 'noContainer',
+            });
+          }
+        }
+        showErrorIfChainedContainerMethod(
+          innerNode.object as TSESTree.MemberExpression
+        );
+      }
+    }
 
     return {
       VariableDeclarator(node) {
@@ -78,34 +104,8 @@ export default ESLintUtils.RuleCreator(getDocsUrl)({
       },
 
       CallExpression(node: TSESTree.CallExpression) {
-        function showErrorForChainedContainerMethod(
-          innerNode: TSESTree.MemberExpression
-        ) {
-          if (isMemberExpression(innerNode)) {
-            if (isIdentifier(innerNode.object)) {
-              const isContainerName = innerNode.object.name === containerName;
-              const isRenderWrapper =
-                innerNode.object.name === renderWrapperName;
-
-              hasPropertyContainer =
-                isIdentifier(innerNode.property) &&
-                innerNode.property.name === 'container' &&
-                isRenderWrapper;
-
-              if (isContainerName || hasPropertyContainer) {
-                context.report({
-                  node: innerNode,
-                  messageId: 'noContainer',
-                });
-              }
-            }
-            showErrorForChainedContainerMethod(
-              innerNode.object as TSESTree.MemberExpression
-            );
-          }
-        }
         if (isMemberExpression(node.callee)) {
-          showErrorForChainedContainerMethod(node.callee);
+          showErrorIfChainedContainerMethod(node.callee);
         } else if (isIdentifier(node.callee)) {
           destructuredContainerPropNames.includes(node.callee.name) &&
             context.report({
