@@ -3,7 +3,6 @@ import { getDocsUrl, ASYNC_QUERIES_VARIANTS } from '../utils';
 import {
   isNewExpression,
   isIdentifier,
-  isMemberExpression,
   isImportSpecifier,
   isCallExpression,
 } from '../node-utils';
