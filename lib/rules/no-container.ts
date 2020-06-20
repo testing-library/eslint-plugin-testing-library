@@ -72,7 +72,6 @@ export default ESLintUtils.RuleCreator(getDocsUrl)({
         ) {
           if (isMemberExpression(innerNode)) {
             if (isIdentifier(innerNode.object)) {
-              const isScreen = innerNode.object.name === 'screen';
               const isContainerName = innerNode.object.name === containerName;
               const isRenderWrapper =
                 innerNode.object.name === renderWrapperName;
@@ -80,7 +79,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)({
               hasPropertyContainer =
                 isIdentifier(innerNode.property) &&
                 innerNode.property.name === 'container' &&
-                (isScreen || isRenderWrapper);
+                isRenderWrapper;
 
               if (isContainerName || hasPropertyContainer) {
                 context.report({

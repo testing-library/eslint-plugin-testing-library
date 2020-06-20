@@ -83,16 +83,6 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        const button = screen.container.querySelector('.btn-primary')
-      `,
-      errors: [
-        {
-          messageId: 'noContainer',
-        },
-      ],
-    },
-    {
-      code: `
         const view = render(<Example />)
         const button = view.container.querySelector('.btn-primary')
       `,

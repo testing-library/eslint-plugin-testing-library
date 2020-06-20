@@ -21,10 +21,6 @@ const button = alias.querySelector('.btn-primary');
 ```
 
 ```js
-const button = screen.container.querySelector('.btn-primary');
-```
-
-```js
 const view = render(<Example />);
 const button = view.container.querySelector('.btn-primary');
 ```
