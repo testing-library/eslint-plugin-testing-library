@@ -21,7 +21,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)({
     },
     messages: {
       noContainer:
-        'Avoid using container to query for elements. Prefer using query methods from Testing Library, such as "getByRole()"',
+        'Avoid using container methods. Prefer using the methods from Testing Library, such as "getByRole()"',
     },
     fixable: null,
     schema: [

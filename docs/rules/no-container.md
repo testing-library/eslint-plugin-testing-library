@@ -22,7 +22,7 @@ const button = alias.querySelector('.btn-primary');
 
 ```js
 const view = render(<Example />);
-const button = view.container.querySelector('.btn-primary');
+const button = view.container.getElementsByClassName('.btn-primary');
 ```
 
 Examples of **correct** code for this rule:
