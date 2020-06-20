@@ -106,8 +106,9 @@ export default ESLintUtils.RuleCreator(getDocsUrl)({
       CallExpression(node: TSESTree.CallExpression) {
         if (isMemberExpression(node.callee)) {
           showErrorIfChainedContainerMethod(node.callee);
-        } else if (isIdentifier(node.callee)) {
-          destructuredContainerPropNames.includes(node.callee.name) &&
+        } else {
+          isIdentifier(node.callee) &&
+            destructuredContainerPropNames.includes(node.callee.name) &&
             context.report({
               node,
               messageId: 'noContainer',
