@@ -31,6 +31,7 @@ ruleTester.run(RULE_NAME, rule, {
       code: `
         import {fireEvent} from '@testing-library/foo';
 
+        const promise = new Promise();
         fireEvent.click(promise)`,
     },
     {

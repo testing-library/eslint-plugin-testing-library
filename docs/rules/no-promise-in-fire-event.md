@@ -24,6 +24,10 @@ fireEvent.click(screen.getByRole('button'));
 
 // use awaited findBy queries
 fireEvent.click(await screen.findByRole('button'));
+
+// this won't give a linting error, but it will throw a runtime error
+const promise = new Promise();
+fireEvent.click(promise)`,
 ```
 
 ## Further Reading
