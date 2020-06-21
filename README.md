@@ -68,7 +68,7 @@ Then configure the rules you want to use under the rules section.
 
 ## Shareable configurations
 
-This plugin exports several recommended configurations that enforces good practices for specific Testing Library packages.
+This plugin exports several recommended configurations that enforce good practices for specific Testing Library packages.
 You can find more info about enabled rules in the [Supported Rules section](#supported-rules) within the `Configurations` column.
 
 ### DOM Testing Library
