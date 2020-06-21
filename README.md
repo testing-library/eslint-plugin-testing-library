@@ -110,7 +110,7 @@ To enable this configuration use the `extends` property in your
 }
 ```
 
-#### Vue
+### Vue
 
 Enforces recommended rules for Vue Testing Library.
 
