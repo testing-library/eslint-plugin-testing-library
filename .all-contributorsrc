@@ -283,6 +283,17 @@
       "contributions": [
         "bug"
       ]
+    },
+    {
+      "login": "thebinaryfelix",
+      "name": "Mateus Felix",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/4968788?v=4",
+      "profile": "https://www.linkedin.com/in/mateusfelix/",
+      "contributions": [
+        "code",
+        "test",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,
