@@ -9,6 +9,7 @@ Object {
     "testing-library/await-async-query": "error",
     "testing-library/await-async-utils": "error",
     "testing-library/no-await-sync-query": "error",
+    "testing-library/no-container": "error",
     "testing-library/no-debug": "warn",
     "testing-library/no-dom-import": Array [
       "error",
@@ -31,6 +32,7 @@ Object {
     "testing-library/await-async-query": "error",
     "testing-library/await-async-utils": "error",
     "testing-library/no-await-sync-query": "error",
+    "testing-library/no-container": "error",
     "testing-library/no-debug": "warn",
     "testing-library/no-dom-import": Array [
       "error",
@@ -71,6 +73,7 @@ Object {
     "testing-library/await-async-utils": "error",
     "testing-library/await-fire-event": "error",
     "testing-library/no-await-sync-query": "error",
+    "testing-library/no-container": "error",
     "testing-library/no-debug": "warn",
     "testing-library/no-dom-import": Array [
       "error",

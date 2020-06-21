@@ -3,6 +3,7 @@ import awaitAsyncUtils from './rules/await-async-utils';
 import awaitFireEvent from './rules/await-fire-event';
 import consistentDataTestid from './rules/consistent-data-testid';
 import noAwaitSyncQuery from './rules/no-await-sync-query';
+import noContainer from './rules/no-container';
 import noDebug from './rules/no-debug';
 import noDomImport from './rules/no-dom-import';
 import noManualCleanup from './rules/no-manual-cleanup';
@@ -20,6 +21,7 @@ const rules = {
   'await-fire-event': awaitFireEvent,
   'consistent-data-testid': consistentDataTestid,
   'no-await-sync-query': noAwaitSyncQuery,
+  'no-container': noContainer,
   'no-debug': noDebug,
   'no-dom-import': noDomImport,
   'no-manual-cleanup': noManualCleanup,
@@ -53,6 +55,7 @@ export = {
       plugins: ['testing-library'],
       rules: {
         ...recommendedRules,
+        'testing-library/no-container': 'error',
         'testing-library/no-debug': 'warn',
         'testing-library/no-dom-import': ['error', 'angular'],
       },
@@ -61,6 +64,7 @@ export = {
       plugins: ['testing-library'],
       rules: {
         ...recommendedRules,
+        'testing-library/no-container': 'error',
         'testing-library/no-debug': 'warn',
         'testing-library/no-dom-import': ['error', 'react'],
       },
@@ -70,6 +74,7 @@ export = {
       rules: {
         ...recommendedRules,
         'testing-library/await-fire-event': 'error',
+        'testing-library/no-container': 'error',
         'testing-library/no-debug': 'warn',
         'testing-library/no-dom-import': ['error', 'vue'],
       },
