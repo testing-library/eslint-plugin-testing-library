@@ -12,6 +12,12 @@ export function isAwaitExpression(
   return node && node.type === 'AwaitExpression';
 }
 
+export function isNewExpression(
+  node: TSESTree.Node
+): node is TSESTree.NewExpression {
+  return node && node.type === 'NewExpression';
+}
+
 export function isIdentifier(node: TSESTree.Node): node is TSESTree.Identifier {
   return node && node.type === 'Identifier';
 }
@@ -103,6 +109,8 @@ export function hasThenProperty(node: TSESTree.Node) {
   );
 }
 
-export function isArrowFunctionExpression(node: TSESTree.Node): node is TSESTree.ArrowFunctionExpression {
-  return node && node.type === 'ArrowFunctionExpression'
+export function isArrowFunctionExpression(
+  node: TSESTree.Node
+): node is TSESTree.ArrowFunctionExpression {
+  return node && node.type === 'ArrowFunctionExpression';
 }
