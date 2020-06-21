@@ -60,6 +60,18 @@ ruleTester.run(RULE_NAME, rule, {
       cy.wait();
       `,
     },
+    {
+      // https://github.com/testing-library/eslint-plugin-testing-library/issues/145
+      code: `
+        async function wait(): Promise<any> {
+          // doesn't matter
+        }
+        
+        function callsWait(): void {
+          await wait();
+        }
+      `,
+    },
   ],
 
   invalid: [

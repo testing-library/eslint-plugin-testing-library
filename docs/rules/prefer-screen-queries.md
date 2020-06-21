@@ -54,6 +54,12 @@ const utils = render(<Foo />);
 utils.rerender(<Foo />);
 utils.unmount();
 utils.asFragment();
+
+// the same functions, but called from destructuring
+const { rerender, unmount, asFragment } = render(<Foo />);
+rerender(<Foo />);
+asFragment();
+unmount();
 ```
 
 ## Further Reading
