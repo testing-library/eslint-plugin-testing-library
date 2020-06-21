@@ -68,37 +68,25 @@ Then configure the rules you want to use under the rules section.
 
 ## Shareable configurations
 
-### Recommended
+This plugin exports several recommended configurations that enforces good practices for specific Testing Library packages.
+You can find more info about enabled rules in the [Supported Rules section](#supported-rules) within the `Configurations` column.
 
-This plugin exports a recommended configuration that enforces good
-Testing Library practices _(you can find more info about enabled rules in
-the [Supported Rules section](#supported-rules) within the `Configurations` column)_.
+### DOM Testing Library
+
+Enforces recommended rules for DOM Testing Library.
 
 To enable this configuration use the `extends` property in your
 `.eslintrc` config file:
 
 ```json
 {
-  "extends": ["plugin:testing-library/recommended"]
+  "extends": ["plugin:testing-library/dom"]
 }
 ```
 
-### Frameworks
+### Angular
 
-Starting from the premise that
-[DOM Testing Library](https://testing-library.com/docs/dom-testing-library/intro)
-is the base for the rest of Testing Library frameworks wrappers, this
-plugin also exports different configuration for those frameworks that
-enforces good practices for specific rules that only apply to them _(you
-can find more info about enabled rules in
-the [Supported Rules section](#supported-rules) within the `Configurations` column)_.
-
-**Note that frameworks configurations enable their specific rules +
-recommended rules.**
-
-Available frameworks configurations are:
-
-#### Angular
+Enforces recommended rules for Angular Testing Library.
 
 To enable this configuration use the `extends` property in your
 `.eslintrc` config file:
@@ -109,7 +97,9 @@ To enable this configuration use the `extends` property in your
 }
 ```
 
-#### React
+### React
+
+Enforces recommended rules for React Testing Library.
 
 To enable this configuration use the `extends` property in your
 `.eslintrc` config file:
@@ -122,6 +112,8 @@ To enable this configuration use the `extends` property in your
 
 #### Vue
 
+Enforces recommended rules for Vue Testing Library.
+
 To enable this configuration use the `extends` property in your
 `.eslintrc` config file:
 
@@ -133,22 +125,22 @@ To enable this configuration use the `extends` property in your
 
 ## Supported Rules
 
-| Rule                                                                   | Description                                                                | Configurations                                                            | Fixable            |
-| ---------------------------------------------------------------------- | -------------------------------------------------------------------------- | ------------------------------------------------------------------------- | ------------------ |
-| [await-async-query](docs/rules/await-async-query.md)                   | Enforce async queries to have proper `await`                               | ![recommended-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] |                    |
-| [await-async-utils](docs/rules/await-async-utils.md)                   | Enforce async utils to be awaited properly                                 | ![recommended-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] |                    |
-| [await-fire-event](docs/rules/await-fire-event.md)                     | Enforce async fire event methods to be awaited                             | ![vue-badge][]                                                            |                    |
-| [consistent-data-testid](docs/rules/consistent-data-testid.md)         | Ensure `data-testid` values match a provided regex.                        |                                                                           |                    |
-| [no-await-sync-query](docs/rules/no-await-sync-query.md)               | Disallow unnecessary `await` for sync queries                              | ![recommended-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] |                    |
-| [no-debug](docs/rules/no-debug.md)                                     | Disallow the use of `debug`                                                | ![angular-badge][] ![react-badge][] ![vue-badge][]                        |                    |
-| [no-dom-import](docs/rules/no-dom-import.md)                           | Disallow importing from DOM Testing Library                                | ![angular-badge][] ![react-badge][] ![vue-badge][]                        | ![fixable-badge][] |
-| [no-manual-cleanup](docs/rules/no-manual-cleanup.md)                   | Disallow the use of `cleanup`                                              |                                                                           |                    |
-| [no-wait-for-empty-callback](docs/rules/no-wait-for-empty-callback.md) | Disallow empty callbacks for `waitFor` and `waitForElementToBeRemoved`     | ![recommended-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] |                    |
-| [prefer-explicit-assert](docs/rules/prefer-explicit-assert.md)         | Suggest using explicit assertions rather than just `getBy*` queries        |                                                                           |                    |
-| [prefer-find-by](docs/rules/prefer-find-by.md)                         | Suggest using `findBy*` methods instead of the `waitFor` + `getBy` queries | ![recommended-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] | ![fixable-badge][] |
-| [prefer-presence-queries](docs/rules/prefer-presence-queries.md)       | Enforce specific queries when checking element is present or not           |                                                                           |                    |
-| [prefer-screen-queries](docs/rules/prefer-screen-queries.md)           | Suggest using screen while using queries                                   | ![recommended-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] |                    |
-| [prefer-wait-for](docs/rules/prefer-wait-for.md)                       | Use `waitFor` instead of deprecated wait methods                           |                                                                           | ![fixable-badge][] |
+| Rule                                                                   | Description                                                                | Configurations                                                    | Fixable            |
+| ---------------------------------------------------------------------- | -------------------------------------------------------------------------- | ----------------------------------------------------------------- | ------------------ |
+| [await-async-query](docs/rules/await-async-query.md)                   | Enforce async queries to have proper `await`                               | ![dom-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] |                    |
+| [await-async-utils](docs/rules/await-async-utils.md)                   | Enforce async utils to be awaited properly                                 | ![dom-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] |                    |
+| [await-fire-event](docs/rules/await-fire-event.md)                     | Enforce async fire event methods to be awaited                             | ![vue-badge][]                                                    |                    |
+| [consistent-data-testid](docs/rules/consistent-data-testid.md)         | Ensure `data-testid` values match a provided regex.                        |                                                                   |                    |
+| [no-await-sync-query](docs/rules/no-await-sync-query.md)               | Disallow unnecessary `await` for sync queries                              | ![dom-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] |                    |
+| [no-debug](docs/rules/no-debug.md)                                     | Disallow the use of `debug`                                                | ![angular-badge][] ![react-badge][] ![vue-badge][]                |                    |
+| [no-dom-import](docs/rules/no-dom-import.md)                           | Disallow importing from DOM Testing Library                                | ![angular-badge][] ![react-badge][] ![vue-badge][]                | ![fixable-badge][] |
+| [no-manual-cleanup](docs/rules/no-manual-cleanup.md)                   | Disallow the use of `cleanup`                                              |                                                                   |                    |
+| [no-wait-for-empty-callback](docs/rules/no-wait-for-empty-callback.md) | Disallow empty callbacks for `waitFor` and `waitForElementToBeRemoved`     | ![dom-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] |                    |
+| [prefer-explicit-assert](docs/rules/prefer-explicit-assert.md)         | Suggest using explicit assertions rather than just `getBy*` queries        |                                                                   |                    |
+| [prefer-find-by](docs/rules/prefer-find-by.md)                         | Suggest using `findBy*` methods instead of the `waitFor` + `getBy` queries | ![dom-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] | ![fixable-badge][] |
+| [prefer-presence-queries](docs/rules/prefer-presence-queries.md)       | Enforce specific queries when checking element is present or not           |                                                                   |                    |
+| [prefer-screen-queries](docs/rules/prefer-screen-queries.md)           | Suggest using screen while using queries                                   | ![dom-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] |                    |
+| [prefer-wait-for](docs/rules/prefer-wait-for.md)                       | Use `waitFor` instead of deprecated wait methods                           |                                                                   | ![fixable-badge][] |
 
 [build-badge]: https://img.shields.io/travis/testing-library/eslint-plugin-testing-library?style=flat-square
 [build-url]: https://travis-ci.org/testing-library/eslint-plugin-testing-library
@@ -164,7 +156,7 @@ To enable this configuration use the `extends` property in your
 [gh-stars-url]: https://github.com/belco90/eslint-plugin-testing-library/stargazers
 [tweet-badge]: https://img.shields.io/twitter/url?style=social&url=https%3A%2F%2Fgithub.com%2FBelco90%2Feslint-plugin-testing-library
 [tweet-url]: https://twitter.com/intent/tweet?url=https%3a%2f%2fgithub.com%2fbelco90%2feslint-plugin-testing-library&text=check%20out%20eslint-plugin-testing-library%20by%20@belcodev
-[recommended-badge]: https://img.shields.io/badge/recommended-lightgrey?style=flat-square
+[dom-badge]: https://img.shields.io/badge/dom-lightgrey?style=flat-square
 [fixable-badge]: https://img.shields.io/badge/fixable-success?style=flat-square
 [angular-badge]: https://img.shields.io/badge/-Angular-black?style=flat-square&logo=angular&logoColor=white&labelColor=DD0031&color=black
 [react-badge]: https://img.shields.io/badge/-React-black?style=flat-square&logo=react&logoColor=white&labelColor=61DAFB&color=black
