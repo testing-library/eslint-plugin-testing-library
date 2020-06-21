@@ -47,20 +47,38 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        const utils = render(baz);
-        screen.rerender();
+        const { rerender } = render(baz);
+        rerender();
       `
     },
     {
       code: `
         const utils = render(baz);
-        utils.unmount();
+        utils.rerender();
       `
     },
     {
       code: `
         const utils = render(baz);
         utils.asFragment();
+      `
+    },
+    {
+      code: `
+        const { asFragment } = render(baz);
+        asFragment();
+      `
+    },
+    {
+      code: `
+        const { unmount } = render(baz);
+        unmount();
+      `
+    },
+    {
+      code: `
+        const utils = render(baz);
+        utils.unmount();
       `
     }
   ],
