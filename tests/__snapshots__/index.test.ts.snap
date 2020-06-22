@@ -23,6 +23,23 @@ Object {
 }
 `;
 
+exports[`should export proper "dom" config 1`] = `
+Object {
+  "plugins": Array [
+    "testing-library",
+  ],
+  "rules": Object {
+    "testing-library/await-async-query": "error",
+    "testing-library/await-async-utils": "error",
+    "testing-library/no-await-sync-query": "error",
+    "testing-library/no-promise-in-fire-event": "error",
+    "testing-library/no-wait-for-empty-callback": "error",
+    "testing-library/prefer-find-by": "error",
+    "testing-library/prefer-screen-queries": "error",
+  },
+}
+`;
+
 exports[`should export proper "react" config 1`] = `
 Object {
   "plugins": Array [
@@ -38,23 +55,6 @@ Object {
       "error",
       "react",
     ],
-    "testing-library/no-promise-in-fire-event": "error",
-    "testing-library/no-wait-for-empty-callback": "error",
-    "testing-library/prefer-find-by": "error",
-    "testing-library/prefer-screen-queries": "error",
-  },
-}
-`;
-
-exports[`should export proper "recommended" config 1`] = `
-Object {
-  "plugins": Array [
-    "testing-library",
-  ],
-  "rules": Object {
-    "testing-library/await-async-query": "error",
-    "testing-library/await-async-utils": "error",
-    "testing-library/no-await-sync-query": "error",
     "testing-library/no-promise-in-fire-event": "error",
     "testing-library/no-wait-for-empty-callback": "error",
     "testing-library/prefer-find-by": "error",

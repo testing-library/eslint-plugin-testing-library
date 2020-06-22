@@ -34,7 +34,7 @@ const rules = {
   'prefer-wait-for': preferWaitFor,
 };
 
-const recommendedRules = {
+const domRules = {
   'testing-library/await-async-query': 'error',
   'testing-library/await-async-utils': 'error',
   'testing-library/no-await-sync-query': 'error',
@@ -44,40 +44,46 @@ const recommendedRules = {
   'testing-library/prefer-screen-queries': 'error',
 };
 
+const angularRules = {
+  ...domRules,
+  'testing-library/no-container': 'error',
+  'testing-library/no-debug': 'warn',
+  'testing-library/no-dom-import': ['error', 'angular'],
+};
+
+const reactRules = {
+  ...domRules,
+  'testing-library/no-container': 'error',
+  'testing-library/no-debug': 'warn',
+  'testing-library/no-dom-import': ['error', 'react'],
+};
+
+const vueRules = {
+  ...domRules,
+  'testing-library/await-fire-event': 'error',
+  'testing-library/no-container': 'error',
+  'testing-library/no-debug': 'warn',
+  'testing-library/no-dom-import': ['error', 'vue'],
+};
+
 export = {
   rules,
   configs: {
-    recommended: {
+    dom: {
       plugins: ['testing-library'],
-      rules: recommendedRules,
+      rules: domRules,
     },
     angular: {
       plugins: ['testing-library'],
-      rules: {
-        ...recommendedRules,
-        'testing-library/no-container': 'error',
-        'testing-library/no-debug': 'warn',
-        'testing-library/no-dom-import': ['error', 'angular'],
-      },
+      rules: angularRules,
     },
     react: {
       plugins: ['testing-library'],
-      rules: {
-        ...recommendedRules,
-        'testing-library/no-container': 'error',
-        'testing-library/no-debug': 'warn',
-        'testing-library/no-dom-import': ['error', 'react'],
-      },
+      rules: reactRules,
     },
     vue: {
       plugins: ['testing-library'],
-      rules: {
-        ...recommendedRules,
-        'testing-library/await-fire-event': 'error',
-        'testing-library/no-container': 'error',
-        'testing-library/no-debug': 'warn',
-        'testing-library/no-dom-import': ['error', 'vue'],
-      },
+      rules: vueRules,
     },
   },
 };
