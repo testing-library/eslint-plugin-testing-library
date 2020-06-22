@@ -157,7 +157,7 @@ To enable this configuration use the `extends` property in your
 [gh-stars-url]: https://github.com/belco90/eslint-plugin-testing-library/stargazers
 [tweet-badge]: https://img.shields.io/twitter/url?style=social&url=https%3A%2F%2Fgithub.com%2FBelco90%2Feslint-plugin-testing-library
 [tweet-url]: https://twitter.com/intent/tweet?url=https%3a%2f%2fgithub.com%2fbelco90%2feslint-plugin-testing-library&text=check%20out%20eslint-plugin-testing-library%20by%20@belcodev
-[dom-badge]: https://img.shields.io/badge/dom-lightgrey?style=flat-square
+[dom-badge]: https://img.shields.io/badge/%F0%9F%90%99-DOM-black?style=flat-square
 [fixable-badge]: https://img.shields.io/badge/fixable-success?style=flat-square
 [angular-badge]: https://img.shields.io/badge/-Angular-black?style=flat-square&logo=angular&logoColor=white&labelColor=DD0031&color=black
 [react-badge]: https://img.shields.io/badge/-React-black?style=flat-square&logo=react&logoColor=white&labelColor=61DAFB&color=black
