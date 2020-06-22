@@ -8,6 +8,7 @@ const ruleTester = createRuleTester({
 });
 
 ruleTester.run(RULE_NAME, rule, {
+  valid: [],
   invalid: [
     {
       code: `
@@ -15,7 +16,8 @@ ruleTester.run(RULE_NAME, rule, {
           expect(a).toEqual('a')
           expect(b).toEqual('b')
         })
-      `
+      `,
+      errors: []
     }
   ]
 })
