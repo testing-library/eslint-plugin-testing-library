@@ -95,6 +95,23 @@ export function findClosestCallNode(
   }
 }
 
+export function findClosestCalleName(
+  node: TSESTree.Node
+): string {
+  if (!node.parent) {
+    return '';
+  }
+
+  if (
+    isCallExpression(node) &&
+    isIdentifier(node.callee)
+  ) {
+    return node.callee.name;
+  } else {
+    return findClosestCalleName(node.parent);
+  }
+}
+
 export function hasThenProperty(node: TSESTree.Node) {
   return (
     isMemberExpression(node) &&
