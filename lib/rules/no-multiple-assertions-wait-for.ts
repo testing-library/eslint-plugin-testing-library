@@ -1,6 +1,6 @@
 import { ESLintUtils, TSESTree } from '@typescript-eslint/experimental-utils'
 import { getDocsUrl } from '../utils'
-import { isBlockStatement } from '../node-utils'
+import { isBlockStatement, findClosestCalleName, isMemberExpression, isCallExpression, isIdentifier } from '../node-utils'
 
 export const RULE_NAME = 'no-multiple-expect-wait-for';
 
@@ -31,11 +31,23 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
     function reporttMultipleAssertion(
       node: TSESTree.BlockStatement
     ) {
-      if (isBlockStatement(node) && node.body.length > 1) {
-        const waitForCall: TSESTree.CallExpression = node.parent.parent as TSESTree.CallExpression
-        const waitForIdentifier: TSESTree.Identifier = waitForCall.callee as TSESTree.Identifier
-        const methodName = waitForIdentifier.name
+      const hasMultipleExpects = (body: Array<TSESTree.Node>): boolean =>
+        body.every((node: TSESTree.ExpressionStatement) => {
+          if (
+            isCallExpression(node?.expression) &&
+            isMemberExpression(node?.expression?.callee) &&
+            isCallExpression(node?.expression?.callee?.object)
+          ) {
+            const object: TSESTree.CallExpression = node?.expression?.callee?.object
+            const expressionName: string = (object?.callee as TSESTree.Identifier)?.name
+            return expressionName === 'expect'
+          } else {
+            return false
+          }
+        })
 
+      if (isBlockStatement(node) && node.body.length > 1 && hasMultipleExpects(node.body)) {
+        const methodName: string = findClosestCalleName(node)
         context.report({
           node,
           loc: node.loc.start,

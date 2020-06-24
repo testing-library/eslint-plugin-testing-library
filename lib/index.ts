@@ -11,7 +11,7 @@ import preferExplicitAssert from './rules/prefer-explicit-assert';
 import preferPresenceQueries from './rules/prefer-presence-queries';
 import preferScreenQueries from './rules/prefer-screen-queries';
 import preferWaitFor from './rules/prefer-wait-for';
-import noMultipleExpectWaitFor from './rules/no-multiple-expect-wait-for'
+import noMultipleAssertionsWaitFor from './rules/no-multiple-assertions-wait-for'
 
 const rules = {
   'await-async-query': awaitAsyncQuery,
@@ -22,7 +22,7 @@ const rules = {
   'no-debug': noDebug,
   'no-dom-import': noDomImport,
   'no-manual-cleanup': noManualCleanup,
-  'no-multiple-expect-wait-for': noMultipleExpectWaitFor,
+  'no-multiple-assertions-wait-for': noMultipleAssertionsWaitFor,
   'no-wait-for-empty-callback': noWaitForEmptyCallback,
   'prefer-explicit-assert': preferExplicitAssert,
   'prefer-presence-queries': preferPresenceQueries,
