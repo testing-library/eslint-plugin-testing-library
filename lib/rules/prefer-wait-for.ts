@@ -34,9 +34,6 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
   defaultOptions: [],
 
   create(context) {
-    const importNodes: TSESTree.ImportDeclaration[] = [];
-    const waitNodes: TSESTree.Identifier[] = [];
-
     const reportImport = (node: TSESTree.ImportDeclaration) => {
       context.report({
         node: node,
@@ -44,7 +41,6 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
         fix(fixer) {
           const excludedImports = [...DEPRECATED_METHODS, 'waitFor'];
 
-          // TODO: refactor `importNodes` to TSESTree.ImportSpecifier[] ? (to not have to traverse the list twice)
           // get all import names excluding all testing library `wait*` utils...
           const newImports = node.specifiers
             .filter(
@@ -119,35 +115,43 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
       'ImportDeclaration[source.value=/testing-library/]'(
         node: TSESTree.ImportDeclaration
       ) {
-        const importedNames = node.specifiers
-          .filter(
-            specifier => isImportSpecifier(specifier) && specifier.imported
-          )
-          .map(
-            (specifier: TSESTree.ImportSpecifier) => specifier.imported.name
-          );
+        const deprecatedImportSpecifiers = node.specifiers.filter(
+          specifier =>
+            isImportSpecifier(specifier) &&
+            specifier.imported &&
+            DEPRECATED_METHODS.includes(specifier.imported.name)
+        );
 
-        if (
-          importedNames.some(importedName =>
-            DEPRECATED_METHODS.includes(importedName)
-          )
-        ) {
-          importNodes.push(node);
-        }
+        deprecatedImportSpecifiers.forEach((importSpecifier, i) => {
+          if (i === 0) {
+            reportImport(node);
+          }
+
+          context
+            .getDeclaredVariables(importSpecifier)
+            .forEach(variable =>
+              variable.references.forEach(reference =>
+                reportWait(reference.identifier)
+              )
+            );
+        });
       },
-      'CallExpression Identifier[name=/^(wait|waitForElement|waitForDomChange)$/]'(
-        node: TSESTree.Identifier
+      'ImportDeclaration[source.value=/testing-library/] > ImportNamespaceSpecifier'(
+        node: TSESTree.ImportNamespaceSpecifier
       ) {
-        waitNodes.push(node);
-      },
-      'Program:exit'() {
-        waitNodes.forEach(waitNode => {
-          reportWait(waitNode);
-        });
-
-        importNodes.forEach(importNode => {
-          reportImport(importNode);
-        });
+        context.getDeclaredVariables(node).forEach(variable =>
+          variable.references.forEach(reference => {
+            if (
+              isMemberExpression(reference.identifier.parent) &&
+              isIdentifier(reference.identifier.parent.property) &&
+              DEPRECATED_METHODS.includes(
+                reference.identifier.parent.property.name
+              )
+            ) {
+              reportWait(reference.identifier.parent.property);
+            }
+          })
+        );
       },
     };
   },

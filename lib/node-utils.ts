@@ -12,6 +12,12 @@ export function isAwaitExpression(
   return node && node.type === 'AwaitExpression';
 }
 
+export function isNewExpression(
+  node: TSESTree.Node
+): node is TSESTree.NewExpression {
+  return node && node.type === 'NewExpression';
+}
+
 export function isIdentifier(node: TSESTree.Node): node is TSESTree.Identifier {
   return node && node.type === 'Identifier';
 }
@@ -118,4 +124,43 @@ export function hasThenProperty(node: TSESTree.Node) {
     isIdentifier(node.property) &&
     node.property.name === 'then'
   );
+}
+
+export function isArrowFunctionExpression(
+  node: TSESTree.Node
+): node is TSESTree.ArrowFunctionExpression {
+  return node && node.type === 'ArrowFunctionExpression';
+}
+
+function isRenderFunction(
+  callNode: TSESTree.CallExpression,
+  renderFunctions: string[]
+) {
+  return ['render', ...renderFunctions].some(
+    name => isIdentifier(callNode.callee) && name === callNode.callee.name
+  );
+}
+
+export function isRenderVariableDeclarator(
+  node: TSESTree.VariableDeclarator,
+  renderFunctions: string[]
+) {
+  if (node.init) {
+    if (isAwaitExpression(node.init)) {
+      return (
+        node.init.argument &&
+        isRenderFunction(
+          node.init.argument as TSESTree.CallExpression,
+          renderFunctions
+        )
+      );
+    } else {
+      return (
+        isCallExpression(node.init) &&
+        isRenderFunction(node.init, renderFunctions)
+      );
+    }
+  }
+
+  return false;
 }

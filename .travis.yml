@@ -1,18 +1,26 @@
 language: node_js
 
 env:
-  - FORCE_COLOR=true
+  global:
+    - FORCE_COLOR=true
+  matrix:
+    - ESLINT=5
+    - ESLINT=6
 
 node_js:
   - 10.12
   - 12
-  - node
+  - 14
+
+before_script:
+  - 'if [ -n "${ESLINT-}" ]; then npm install --no-save "eslint@${ESLINT}" ; fi'
 
 jobs:
   include:
     - stage: release
       if: branch = master AND type != pull_request
-      node_js: 12
+      node_js: 14
+      env: ESLINT=6
       script: npm run build
       deploy:
         provider: script

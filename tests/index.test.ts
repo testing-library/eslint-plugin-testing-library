@@ -10,7 +10,7 @@ it('should export all available rules', () => {
   expect(Object.keys(rules)).toEqual(availableRules);
 });
 
-it.each(['recommended', 'angular', 'react', 'vue'])(
+it.each(['dom', 'angular', 'react', 'vue'])(
   'should export proper "%s" config',
   configName => {
     expect(configs[configName]).toMatchSnapshot();

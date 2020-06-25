@@ -41,6 +41,37 @@ ruleTester.run(RULE_NAME, rule, {
         await testingLibrary.waitFor(() => {}, { timeout: 500 });
       }`,
     },
+    {
+      code: `import { wait } from 'imNoTestingLibrary';
+
+      async () => {
+        await wait();
+      }`,
+    },
+    {
+      code: `import * as foo from 'imNoTestingLibrary';
+
+      async () => {
+        await foo.wait();
+      }`,
+    },
+    {
+      code: `
+      cy.wait();
+      `,
+    },
+    {
+      // https://github.com/testing-library/eslint-plugin-testing-library/issues/145
+      code: `
+        async function wait(): Promise<any> {
+          // doesn't matter
+        }
+        
+        function callsWait(): void {
+          await wait();
+        }
+      `,
+    },
   ],
 
   invalid: [

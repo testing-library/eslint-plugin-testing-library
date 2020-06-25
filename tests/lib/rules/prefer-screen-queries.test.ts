@@ -33,6 +33,54 @@ ruleTester.run(RULE_NAME, rule, {
         myWithinVariable.${queryMethod}('baz')
       `,
     })),
+    {
+      code: `
+        const screen = render(baz);
+        screen.container.querySelector('foo');
+      `
+    },
+    {
+      code: `
+        const screen = render(baz);
+        screen.baseElement.querySelector('foo');
+      `
+    },
+    {
+      code: `
+        const { rerender } = render(baz);
+        rerender();
+      `
+    },
+    {
+      code: `
+        const utils = render(baz);
+        utils.rerender();
+      `
+    },
+    {
+      code: `
+        const utils = render(baz);
+        utils.asFragment();
+      `
+    },
+    {
+      code: `
+        const { asFragment } = render(baz);
+        asFragment();
+      `
+    },
+    {
+      code: `
+        const { unmount } = render(baz);
+        unmount();
+      `
+    },
+    {
+      code: `
+        const utils = render(baz);
+        utils.unmount();
+      `
+    }
   ],
 
   invalid: [

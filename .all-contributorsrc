@@ -211,7 +211,77 @@
       "contributions": [
         "code",
         "test",
+        "doc",
+        "review"
+      ]
+    },
+    {
+      "login": "jmcriffey",
+      "name": "Jeff Rifwald",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/2831294?v=4",
+      "profile": "https://github.com/jmcriffey",
+      "contributions": [
         "doc"
+      ]
+    },
+    {
+      "login": "lourenci",
+      "name": "Leandro Lourenci",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/2339362?v=4",
+      "profile": "https://blog.lourenci.com/",
+      "contributions": [
+        "bug",
+        "code",
+        "test"
+      ]
+    },
+    {
+      "login": "miguelerja",
+      "name": "Miguel Erja González",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/42043025?v=4",
+      "profile": "https://xxxl.digital/",
+      "contributions": [
+        "bug"
+      ]
+    },
+    {
+      "login": "pustovalov",
+      "name": "Pavel Pustovalov",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/1568885?v=4",
+      "profile": "http://pustovalov.dev",
+      "contributions": [
+        "bug"
+      ]
+    },
+    {
+      "login": "jrparish",
+      "name": "Jacob Parish",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/5173987?v=4",
+      "profile": "https://github.com/jrparish",
+      "contributions": [
+        "bug",
+        "code",
+        "test"
+      ]
+    },
+    {
+      "login": "nickmccurdy",
+      "name": "Nick McCurdy",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/927220?v=4",
+      "profile": "https://nickmccurdy.com/",
+      "contributions": [
+        "ideas",
+        "code",
+        "review"
+      ]
+    },
+    {
+      "login": "stefcameron",
+      "name": "Stefan Cameron",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/2855350?v=4",
+      "profile": "https://stefancameron.com/",
+      "contributions": [
+        "bug"
       ]
     }
   ],

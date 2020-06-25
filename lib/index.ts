@@ -3,15 +3,18 @@ import awaitAsyncUtils from './rules/await-async-utils';
 import awaitFireEvent from './rules/await-fire-event';
 import consistentDataTestid from './rules/consistent-data-testid';
 import noAwaitSyncQuery from './rules/no-await-sync-query';
+import noContainer from './rules/no-container';
 import noDebug from './rules/no-debug';
 import noDomImport from './rules/no-dom-import';
 import noManualCleanup from './rules/no-manual-cleanup';
 import noWaitForEmptyCallback from './rules/no-wait-for-empty-callback';
+import noPromiseInFireEvent from './rules/no-promise-in-fire-event';
 import preferExplicitAssert from './rules/prefer-explicit-assert';
 import preferPresenceQueries from './rules/prefer-presence-queries';
 import preferScreenQueries from './rules/prefer-screen-queries';
 import preferWaitFor from './rules/prefer-wait-for';
 import noMultipleAssertionsWaitFor from './rules/no-multiple-assertions-wait-for'
+import preferFindBy from './rules/prefer-find-by';
 
 const rules = {
   'await-async-query': awaitAsyncQuery,
@@ -19,54 +22,70 @@ const rules = {
   'await-fire-event': awaitFireEvent,
   'consistent-data-testid': consistentDataTestid,
   'no-await-sync-query': noAwaitSyncQuery,
+  'no-container': noContainer,
   'no-debug': noDebug,
   'no-dom-import': noDomImport,
   'no-manual-cleanup': noManualCleanup,
   'no-multiple-assertions-wait-for': noMultipleAssertionsWaitFor,
+  'no-promise-in-fire-event': noPromiseInFireEvent,
   'no-wait-for-empty-callback': noWaitForEmptyCallback,
   'prefer-explicit-assert': preferExplicitAssert,
+  'prefer-find-by': preferFindBy,
   'prefer-presence-queries': preferPresenceQueries,
   'prefer-screen-queries': preferScreenQueries,
   'prefer-wait-for': preferWaitFor,
 };
 
-const recommendedRules = {
+const domRules = {
   'testing-library/await-async-query': 'error',
   'testing-library/await-async-utils': 'error',
   'testing-library/no-await-sync-query': 'error',
+  'testing-library/no-promise-in-fire-event': 'error',
+  'testing-library/no-wait-for-empty-callback': 'error',
+  'testing-library/prefer-find-by': 'error',
+  'testing-library/prefer-screen-queries': 'error',
+};
+
+const angularRules = {
+  ...domRules,
+  'testing-library/no-container': 'error',
+  'testing-library/no-debug': 'warn',
+  'testing-library/no-dom-import': ['error', 'angular'],
+};
+
+const reactRules = {
+  ...domRules,
+  'testing-library/no-container': 'error',
+  'testing-library/no-debug': 'warn',
+  'testing-library/no-dom-import': ['error', 'react'],
+};
+
+const vueRules = {
+  ...domRules,
+  'testing-library/await-fire-event': 'error',
+  'testing-library/no-container': 'error',
+  'testing-library/no-debug': 'warn',
+  'testing-library/no-dom-import': ['error', 'vue'],
 };
 
 export = {
   rules,
   configs: {
-    recommended: {
+    dom: {
       plugins: ['testing-library'],
-      rules: recommendedRules,
+      rules: domRules,
     },
     angular: {
       plugins: ['testing-library'],
-      rules: {
-        ...recommendedRules,
-        'testing-library/no-debug': 'warn',
-        'testing-library/no-dom-import': ['error', 'angular'],
-      },
+      rules: angularRules,
     },
     react: {
       plugins: ['testing-library'],
-      rules: {
-        ...recommendedRules,
-        'testing-library/no-debug': 'warn',
-        'testing-library/no-dom-import': ['error', 'react'],
-      },
+      rules: reactRules,
     },
     vue: {
       plugins: ['testing-library'],
-      rules: {
-        ...recommendedRules,
-        'testing-library/await-fire-event': 'error',
-        'testing-library/no-debug': 'warn',
-        'testing-library/no-dom-import': ['error', 'vue'],
-      },
+      rules: vueRules,
     },
   },
 };

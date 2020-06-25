@@ -1,64 +1,23 @@
 import { ESLintUtils, TSESTree } from '@typescript-eslint/experimental-utils';
-import { getDocsUrl } from '../utils';
+import { getDocsUrl, LIBRARY_MODULES } from '../utils';
 import {
   isObjectPattern,
   isProperty,
   isIdentifier,
   isCallExpression,
   isLiteral,
-  isAwaitExpression,
   isMemberExpression,
+  isImportSpecifier,
+  isRenderVariableDeclarator,
 } from '../node-utils';
 
 export const RULE_NAME = 'no-debug';
-
-const LIBRARY_MODULES_WITH_SCREEN = [
-  '@testing-library/dom',
-  '@testing-library/angular',
-  '@testing-library/react',
-  '@testing-library/preact',
-  '@testing-library/vue',
-  '@testing-library/svelte',
-];
-
-function isRenderFunction(
-  callNode: TSESTree.CallExpression,
-  renderFunctions: string[]
-) {
-  return ['render', ...renderFunctions].some(
-    name => isIdentifier(callNode.callee) && name === callNode.callee.name
-  );
-}
-
-function isRenderVariableDeclarator(
-  node: TSESTree.VariableDeclarator,
-  renderFunctions: string[]
-) {
-  if (node.init) {
-    if (isAwaitExpression(node.init)) {
-      return (
-        node.init.argument &&
-        isRenderFunction(
-          node.init.argument as TSESTree.CallExpression,
-          renderFunctions
-        )
-      );
-    } else {
-      return (
-        isCallExpression(node.init) &&
-        isRenderFunction(node.init, renderFunctions)
-      );
-    }
-  }
-
-  return false;
-}
 
 function hasTestingLibraryImportModule(
   importDeclarationNode: TSESTree.ImportDeclaration
 ) {
   const literal = importDeclarationNode.source;
-  return LIBRARY_MODULES_WITH_SCREEN.some(module => module === literal.value);
+  return LIBRARY_MODULES.some(module => module === literal.value);
 }
 
 export default ESLintUtils.RuleCreator(getDocsUrl)({
@@ -129,7 +88,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)({
           args =>
             isLiteral(args) &&
             typeof args.value === 'string' &&
-            LIBRARY_MODULES_WITH_SCREEN.includes(args.value)
+            LIBRARY_MODULES.includes(args.value)
         );
 
         if (!literalNodeScreenModuleName) {
@@ -150,12 +109,11 @@ export default ESLintUtils.RuleCreator(getDocsUrl)({
       },
       // checks if import has shape:
       // import { screen } from '@testing-library/dom';
-      'ImportDeclaration ImportSpecifier'(node: TSESTree.ImportSpecifier) {
-        const importDeclarationNode = node.parent as TSESTree.ImportDeclaration;
-
-        if (!hasTestingLibraryImportModule(importDeclarationNode)) return;
-
-        hasImportedScreen = node.imported.name === 'screen';
+      ImportDeclaration(node: TSESTree.ImportDeclaration) {
+        if (!hasTestingLibraryImportModule(node)) return;
+        hasImportedScreen = node.specifiers.some(
+          s => isImportSpecifier(s) && s.imported.name === 'screen'
+        );
       },
       // checks if import has shape:
       // import * as dtl from '@testing-library/dom';

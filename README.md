@@ -23,7 +23,9 @@
 [![Tweet][tweet-badge]][tweet-url]
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-19-orange.svg?style=flat-square)](#contributors-)
+
+[![All Contributors](https://img.shields.io/badge/all_contributors-26-orange.svg?style=flat-square)](#contributors-)
+
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 ## Installation
@@ -66,38 +68,25 @@ Then configure the rules you want to use under the rules section.
 
 ## Shareable configurations
 
-### Recommended
+This plugin exports several recommended configurations that enforce good practices for specific Testing Library packages.
+You can find more info about enabled rules in the [Supported Rules section](#supported-rules) within the `Configurations` column.
 
-This plugin exports a recommended configuration that enforces good
-Testing Library practices _(you can find more info about enabled rules
-in [Supported Rules section](#supported-rules) within Recommended
-column)_.
+### DOM Testing Library
+
+Enforces recommended rules for DOM Testing Library.
 
 To enable this configuration use the `extends` property in your
 `.eslintrc` config file:
 
 ```json
 {
-  "extends": ["plugin:testing-library/recommended"]
+  "extends": ["plugin:testing-library/dom"]
 }
 ```
 
-### Frameworks
+### Angular
 
-Starting from the premise that
-[DOM Testing Library](https://testing-library.com/docs/dom-testing-library/intro)
-is the base for the rest of Testing Library frameworks wrappers, this
-plugin also exports different configuration for those frameworks that
-enforces good practices for specific rules that only apply to them _(you
-can find more info about enabled rules in
-[Supported Rules section](#supported-rules) within Frameworks column)_.
-
-**Note that frameworks configurations enable their specific rules +
-recommended rules.**
-
-Available frameworks configurations are:
-
-#### Angular
+Enforces recommended rules for Angular Testing Library.
 
 To enable this configuration use the `extends` property in your
 `.eslintrc` config file:
@@ -108,7 +97,9 @@ To enable this configuration use the `extends` property in your
 }
 ```
 
-#### React
+### React
+
+Enforces recommended rules for React Testing Library.
 
 To enable this configuration use the `extends` property in your
 `.eslintrc` config file:
@@ -119,7 +110,9 @@ To enable this configuration use the `extends` property in your
 }
 ```
 
-#### Vue
+### Vue
+
+Enforces recommended rules for Vue Testing Library.
 
 To enable this configuration use the `extends` property in your
 `.eslintrc` config file:
@@ -132,21 +125,24 @@ To enable this configuration use the `extends` property in your
 
 ## Supported Rules
 
-| Rule                                                                   | Description                                                            | Configurations                                                            | Fixable            |
-| ---------------------------------------------------------------------- | ---------------------------------------------------------------------- | ------------------------------------------------------------------------- | ------------------ |
-| [await-async-query](docs/rules/await-async-query.md)                   | Enforce async queries to have proper `await`                           | ![recommended-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] |                    |
-| [await-async-utils](docs/rules/await-async-utils.md)                   | Enforce async utils to be awaited properly                             | ![recommended-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] |                    |
-| [await-fire-event](docs/rules/await-fire-event.md)                     | Enforce async fire event methods to be awaited                         | ![vue-badge][]                                                            |                    |
-| [consistent-data-testid](docs/rules/consistent-data-testid.md)         | Ensure `data-testid` values match a provided regex.                    |                                                                           |                    |
-| [no-await-sync-query](docs/rules/no-await-sync-query.md)               | Disallow unnecessary `await` for sync queries                          | ![recommended-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] |                    |
-| [no-debug](docs/rules/no-debug.md)                                     | Disallow the use of `debug`                                            | ![angular-badge][] ![react-badge][] ![vue-badge][]                        |                    |
-| [no-dom-import](docs/rules/no-dom-import.md)                           | Disallow importing from DOM Testing Library                            | ![angular-badge][] ![react-badge][] ![vue-badge][]                        | ![fixable-badge][] |
-| [no-manual-cleanup](docs/rules/no-manual-cleanup.md)                   | Disallow the use of `cleanup`                                          |                                                                           |                    |
-| [no-wait-for-empty-callback](docs/rules/no-wait-for-empty-callback.md) | Disallow empty callbacks for `waitFor` and `waitForElementToBeRemoved` |                                                                           |                    |
-| [prefer-explicit-assert](docs/rules/prefer-explicit-assert.md)         | Suggest using explicit assertions rather than just `getBy*` queries    |                                                                           |                    |
-| [prefer-presence-queries](docs/rules/prefer-presence-queries.md)       | Enforce specific queries when checking element is present or not       |                                                                           |                    |
-| [prefer-screen-queries](docs/rules/prefer-screen-queries.md)           | Suggest using screen while using queries                               |                                                                           |                    |
-| [prefer-wait-for](docs/rules/prefer-wait-for.md)                       | Use `waitFor` instead of deprecated wait methods                       |                                                                           | ![fixable-badge][] |
+| Rule                                                                   | Description                                                                | Configurations                                                    | Fixable            |
+| ---------------------------------------------------------------------- | -------------------------------------------------------------------------- | ----------------------------------------------------------------- | ------------------ |
+| [await-async-query](docs/rules/await-async-query.md)                   | Enforce async queries to have proper `await`                               | ![dom-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] |                    |
+| [await-async-utils](docs/rules/await-async-utils.md)                   | Enforce async utils to be awaited properly                                 | ![dom-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] |                    |
+| [await-fire-event](docs/rules/await-fire-event.md)                     | Enforce async fire event methods to be awaited                             | ![vue-badge][]                                                    |                    |
+| [consistent-data-testid](docs/rules/consistent-data-testid.md)         | Ensure `data-testid` values match a provided regex.                        |                                                                   |                    |
+| [no-await-sync-query](docs/rules/no-await-sync-query.md)               | Disallow unnecessary `await` for sync queries                              | ![dom-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] |                    |
+| [no-container](docs/rules/no-container.md)                             | Disallow the use of `container` methods                                    | ![angular-badge][] ![react-badge][] ![vue-badge][]                |                    |
+| [no-debug](docs/rules/no-debug.md)                                     | Disallow the use of `debug`                                                | ![angular-badge][] ![react-badge][] ![vue-badge][]                |                    |
+| [no-dom-import](docs/rules/no-dom-import.md)                           | Disallow importing from DOM Testing Library                                | ![angular-badge][] ![react-badge][] ![vue-badge][]                | ![fixable-badge][] |
+| [no-manual-cleanup](docs/rules/no-manual-cleanup.md)                   | Disallow the use of `cleanup`                                              |                                                                   |                    |
+| [no-promise-in-fire-event](docs/rules/no-promise-in-fire-event.md)     | Disallow the use of promises passed to a `fireEvent` method                |                                                                   |                    |
+| [no-wait-for-empty-callback](docs/rules/no-wait-for-empty-callback.md) | Disallow empty callbacks for `waitFor` and `waitForElementToBeRemoved`     | ![dom-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] |                    |
+| [prefer-explicit-assert](docs/rules/prefer-explicit-assert.md)         | Suggest using explicit assertions rather than just `getBy*` queries        |                                                                   |                    |
+| [prefer-find-by](docs/rules/prefer-find-by.md)                         | Suggest using `findBy*` methods instead of the `waitFor` + `getBy` queries | ![dom-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] | ![fixable-badge][] |
+| [prefer-presence-queries](docs/rules/prefer-presence-queries.md)       | Enforce specific queries when checking element is present or not           |                                                                   |                    |
+| [prefer-screen-queries](docs/rules/prefer-screen-queries.md)           | Suggest using screen while using queries                                   | ![dom-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] |                    |
+| [prefer-wait-for](docs/rules/prefer-wait-for.md)                       | Use `waitFor` instead of deprecated wait methods                           |                                                                   | ![fixable-badge][] |
 
 [build-badge]: https://img.shields.io/travis/testing-library/eslint-plugin-testing-library?style=flat-square
 [build-url]: https://travis-ci.org/testing-library/eslint-plugin-testing-library
@@ -162,7 +158,7 @@ To enable this configuration use the `extends` property in your
 [gh-stars-url]: https://github.com/belco90/eslint-plugin-testing-library/stargazers
 [tweet-badge]: https://img.shields.io/twitter/url?style=social&url=https%3A%2F%2Fgithub.com%2FBelco90%2Feslint-plugin-testing-library
 [tweet-url]: https://twitter.com/intent/tweet?url=https%3a%2f%2fgithub.com%2fbelco90%2feslint-plugin-testing-library&text=check%20out%20eslint-plugin-testing-library%20by%20@belcodev
-[recommended-badge]: https://img.shields.io/badge/recommended-lightgrey?style=flat-square
+[dom-badge]: https://img.shields.io/badge/%F0%9F%90%99-DOM-black?style=flat-square
 [fixable-badge]: https://img.shields.io/badge/fixable-success?style=flat-square
 [angular-badge]: https://img.shields.io/badge/-Angular-black?style=flat-square&logo=angular&logoColor=white&labelColor=DD0031&color=black
 [react-badge]: https://img.shields.io/badge/-React-black?style=flat-square&logo=react&logoColor=white&labelColor=61DAFB&color=black
@@ -199,12 +195,22 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <td align="center"><a href="https://github.com/victorandcode"><img src="https://avatars0.githubusercontent.com/u/18427801?v=4" width="100px;" alt=""/><br /><sub><b>Victor Cordova</b></sub></a><br /><a href="https://github.com/testing-library/eslint-plugin-testing-library/commits?author=victorandcode" title="Code">💻</a> <a href="https://github.com/testing-library/eslint-plugin-testing-library/commits?author=victorandcode" title="Tests">⚠️</a> <a href="https://github.com/testing-library/eslint-plugin-testing-library/issues?q=author%3Avictorandcode" title="Bug reports">🐛</a></td>
     <td align="center"><a href="https://github.com/dmitry-lobanov"><img src="https://avatars0.githubusercontent.com/u/7376755?v=4" width="100px;" alt=""/><br /><sub><b>Dmitry Lobanov</b></sub></a><br /><a href="https://github.com/testing-library/eslint-plugin-testing-library/commits?author=dmitry-lobanov" title="Code">💻</a> <a href="https://github.com/testing-library/eslint-plugin-testing-library/commits?author=dmitry-lobanov" title="Tests">⚠️</a></td>
     <td align="center"><a href="https://kentcdodds.com"><img src="https://avatars0.githubusercontent.com/u/1500684?v=4" width="100px;" alt=""/><br /><sub><b>Kent C. Dodds</b></sub></a><br /><a href="https://github.com/testing-library/eslint-plugin-testing-library/issues?q=author%3Akentcdodds" title="Bug reports">🐛</a></td>
-    <td align="center"><a href="https://github.com/gndelia"><img src="https://avatars1.githubusercontent.com/u/352474?v=4" width="100px;" alt=""/><br /><sub><b>Gonzalo D'Elia</b></sub></a><br /><a href="https://github.com/testing-library/eslint-plugin-testing-library/commits?author=gndelia" title="Code">💻</a> <a href="https://github.com/testing-library/eslint-plugin-testing-library/commits?author=gndelia" title="Tests">⚠️</a> <a href="https://github.com/testing-library/eslint-plugin-testing-library/commits?author=gndelia" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://github.com/gndelia"><img src="https://avatars1.githubusercontent.com/u/352474?v=4" width="100px;" alt=""/><br /><sub><b>Gonzalo D'Elia</b></sub></a><br /><a href="https://github.com/testing-library/eslint-plugin-testing-library/commits?author=gndelia" title="Code">💻</a> <a href="https://github.com/testing-library/eslint-plugin-testing-library/commits?author=gndelia" title="Tests">⚠️</a> <a href="https://github.com/testing-library/eslint-plugin-testing-library/commits?author=gndelia" title="Documentation">📖</a> <a href="https://github.com/testing-library/eslint-plugin-testing-library/pulls?q=is%3Apr+reviewed-by%3Agndelia" title="Reviewed Pull Requests">👀</a></td>
+    <td align="center"><a href="https://github.com/jmcriffey"><img src="https://avatars0.githubusercontent.com/u/2831294?v=4" width="100px;" alt=""/><br /><sub><b>Jeff Rifwald</b></sub></a><br /><a href="https://github.com/testing-library/eslint-plugin-testing-library/commits?author=jmcriffey" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://blog.lourenci.com/"><img src="https://avatars3.githubusercontent.com/u/2339362?v=4" width="100px;" alt=""/><br /><sub><b>Leandro Lourenci</b></sub></a><br /><a href="https://github.com/testing-library/eslint-plugin-testing-library/issues?q=author%3Alourenci" title="Bug reports">🐛</a> <a href="https://github.com/testing-library/eslint-plugin-testing-library/commits?author=lourenci" title="Code">💻</a> <a href="https://github.com/testing-library/eslint-plugin-testing-library/commits?author=lourenci" title="Tests">⚠️</a></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="https://xxxl.digital/"><img src="https://avatars2.githubusercontent.com/u/42043025?v=4" width="100px;" alt=""/><br /><sub><b>Miguel Erja González</b></sub></a><br /><a href="https://github.com/testing-library/eslint-plugin-testing-library/issues?q=author%3Amiguelerja" title="Bug reports">🐛</a></td>
+    <td align="center"><a href="http://pustovalov.dev"><img src="https://avatars2.githubusercontent.com/u/1568885?v=4" width="100px;" alt=""/><br /><sub><b>Pavel Pustovalov</b></sub></a><br /><a href="https://github.com/testing-library/eslint-plugin-testing-library/issues?q=author%3Apustovalov" title="Bug reports">🐛</a></td>
+    <td align="center"><a href="https://github.com/jrparish"><img src="https://avatars3.githubusercontent.com/u/5173987?v=4" width="100px;" alt=""/><br /><sub><b>Jacob Parish</b></sub></a><br /><a href="https://github.com/testing-library/eslint-plugin-testing-library/issues?q=author%3Ajrparish" title="Bug reports">🐛</a> <a href="https://github.com/testing-library/eslint-plugin-testing-library/commits?author=jrparish" title="Code">💻</a> <a href="https://github.com/testing-library/eslint-plugin-testing-library/commits?author=jrparish" title="Tests">⚠️</a></td>
+    <td align="center"><a href="https://nickmccurdy.com/"><img src="https://avatars0.githubusercontent.com/u/927220?v=4" width="100px;" alt=""/><br /><sub><b>Nick McCurdy</b></sub></a><br /><a href="#ideas-nickmccurdy" title="Ideas, Planning, & Feedback">🤔</a> <a href="https://github.com/testing-library/eslint-plugin-testing-library/commits?author=nickmccurdy" title="Code">💻</a> <a href="https://github.com/testing-library/eslint-plugin-testing-library/pulls?q=is%3Apr+reviewed-by%3Anickmccurdy" title="Reviewed Pull Requests">👀</a></td>
+    <td align="center"><a href="https://stefancameron.com/"><img src="https://avatars3.githubusercontent.com/u/2855350?v=4" width="100px;" alt=""/><br /><sub><b>Stefan Cameron</b></sub></a><br /><a href="https://github.com/testing-library/eslint-plugin-testing-library/issues?q=author%3Astefcameron" title="Bug reports">🐛</a></td>
   </tr>
 </table>
 
 <!-- markdownlint-enable -->
 <!-- prettier-ignore-end -->
+
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
