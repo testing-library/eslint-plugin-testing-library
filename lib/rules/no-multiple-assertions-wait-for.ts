@@ -1,6 +1,6 @@
 import { ESLintUtils, TSESTree } from '@typescript-eslint/experimental-utils'
 import { getDocsUrl } from '../utils'
-import { isBlockStatement, findClosestCalleName, isMemberExpression, isCallExpression, isIdentifier } from '../node-utils'
+import { isBlockStatement, findClosestCallNode, isMemberExpression, isCallExpression, isIdentifier } from '../node-utils'
 
 export const RULE_NAME = 'no-multiple-expect-wait-for';
 
@@ -21,7 +21,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
       recommended: false,
     },
     messages: {
-      noMultipleAssertionWaitFor: 'Avoid use multiple assertions to `{{ methodName }}`',
+      noMultipleAssertionWaitFor: 'Avoid use multiple assertions to `waitFor`',
     },
     fixable: null,
     schema: [],
@@ -31,30 +31,26 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
     function reporttMultipleAssertion(
       node: TSESTree.BlockStatement
     ) {
-      const hasMultipleExpects = (body: Array<TSESTree.Node>): boolean =>
-        body.every((node: TSESTree.ExpressionStatement) => {
+      const totalExpect = (body: Array<TSESTree.Node>): Array<TSESTree.Node> =>
+        body.filter((node: TSESTree.ExpressionStatement) => {
           if (
-            isCallExpression(node?.expression) &&
-            isMemberExpression(node?.expression?.callee) &&
-            isCallExpression(node?.expression?.callee?.object)
+            isCallExpression(node.expression) &&
+            isMemberExpression(node.expression.callee) &&
+            isCallExpression(node.expression.callee.object)
           ) {
-            const object: TSESTree.CallExpression = node?.expression?.callee?.object
-            const expressionName: string = (object?.callee as TSESTree.Identifier)?.name
+            const object: TSESTree.CallExpression = node.expression.callee.object
+            const expressionName: string = isIdentifier(object.callee) && object.callee.name
             return expressionName === 'expect'
           } else {
             return false
           }
         })
 
-      if (isBlockStatement(node) && node.body.length > 1 && hasMultipleExpects(node.body)) {
-        const methodName: string = findClosestCalleName(node)
+      if (isBlockStatement(node) && totalExpect(node.body).length > 1) {
         context.report({
           node,
           loc: node.loc.start,
           messageId: 'noMultipleAssertionWaitFor',
-          data: {
-            methodName,
-          },
         });
       }
     }
