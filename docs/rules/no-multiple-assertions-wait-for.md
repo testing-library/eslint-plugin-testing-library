@@ -15,6 +15,12 @@ const foo = async () => {
     expect(a).toEqual('a');
     expect(b).toEqual('b');
   });
+
+  // or
+  await waitFor(function() {
+    expect(a).toEqual('a')
+    expect(b).toEqual('b');
+  })
 };
 ```
 
@@ -35,6 +41,11 @@ const foo = async () => {
     console.log('testing-library');
     expect(b).toEqual('b');
   });
+
+  // or
+  await waitFor(function() {
+    expect(a).toEqual('a')
+  })
 };
 ```
 
