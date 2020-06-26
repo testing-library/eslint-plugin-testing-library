@@ -2,7 +2,7 @@ import { ESLintUtils, TSESTree } from '@typescript-eslint/experimental-utils'
 import { getDocsUrl } from '../utils'
 import { isBlockStatement, findClosestCallNode, isMemberExpression, isCallExpression, isIdentifier } from '../node-utils'
 
-export const RULE_NAME = 'no-multiple-expect-wait-for';
+export const RULE_NAME = 'no-multiple-assertions-wait-for';
 
 const WAIT_EXPRESSION_QUERY =
   'CallExpression[callee.name=/^(waitFor)$/]';
