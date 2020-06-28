@@ -6,45 +6,12 @@ import {
   isIdentifier,
   isCallExpression,
   isLiteral,
-  isAwaitExpression,
   isMemberExpression,
   isImportSpecifier,
+  isRenderVariableDeclarator,
 } from '../node-utils';
 
 export const RULE_NAME = 'no-debug';
-
-function isRenderFunction(
-  callNode: TSESTree.CallExpression,
-  renderFunctions: string[]
-) {
-  return ['render', ...renderFunctions].some(
-    name => isIdentifier(callNode.callee) && name === callNode.callee.name
-  );
-}
-
-function isRenderVariableDeclarator(
-  node: TSESTree.VariableDeclarator,
-  renderFunctions: string[]
-) {
-  if (node.init) {
-    if (isAwaitExpression(node.init)) {
-      return (
-        node.init.argument &&
-        isRenderFunction(
-          node.init.argument as TSESTree.CallExpression,
-          renderFunctions
-        )
-      );
-    } else {
-      return (
-        isCallExpression(node.init) &&
-        isRenderFunction(node.init, renderFunctions)
-      );
-    }
-  }
-
-  return false;
-}
 
 function hasTestingLibraryImportModule(
   importDeclarationNode: TSESTree.ImportDeclaration
