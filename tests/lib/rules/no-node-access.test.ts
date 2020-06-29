@@ -56,6 +56,8 @@ ruleTester.run(RULE_NAME, rule, {
       code: `screen.getByText('submit').closest('button');`,
       errors: [
         {
+          line: 1,
+          column: 28,
           messageId: 'noNodeAccess',
         },
       ],
@@ -77,9 +79,9 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [
         {
-          // error points to `buttons[1]`
+          // error points to `[1]`
           line: 3,
-          column: 25,
+          column: 33,
           messageId: 'noNodeAccess',
         },
       ],
@@ -91,9 +93,9 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [
         {
-          // error points to `buttons[0]`
+          // error points to `[0]`
           line: 3,
-          column: 9,
+          column: 17,
           messageId: 'noNodeAccess',
         },
       ],
@@ -106,9 +108,9 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [
         {
-          // error points to `buttons[1]`
+          // error points to `[1]`
           line: 3,
-          column: 25,
+          column: 33,
           messageId: 'noNodeAccess',
         },
       ],
@@ -120,9 +122,9 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [
         {
-          // error points to `buttons[0]`
+          // error points to `[0]`
           line: 3,
-          column: 16,
+          column: 24,
           messageId: 'noNodeAccess',
         },
       ],
@@ -134,9 +136,9 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [
         {
-          // error points to `buttonText.closest`
+          // error points to `closest`
           line: 3,
-          column: 24,
+          column: 35,
           messageId: 'noNodeAccess',
         },
       ],
@@ -162,9 +164,9 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [
         {
-          // error points to `buttons[1]`
+          // error points to `[1]`
           line: 17,
-          column: 28,
+          column: 36,
           messageId: 'noNodeAccess',
         },
       ],
@@ -191,7 +193,7 @@ ruleTester.run(RULE_NAME, rule, {
       errors: [
         {
           line: 17,
-          column: 33,
+          column: 46,
           messageId: 'noNodeAccess',
         },
       ],

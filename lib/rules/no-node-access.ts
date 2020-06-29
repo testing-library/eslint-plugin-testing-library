@@ -40,7 +40,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)({
       (isLiteralNumber || hasForbiddenMethod) &&
         context.report({
           node: node,
-          loc: node.loc.start,
+          loc: node.property.loc.start,
           messageId: 'noNodeAccess',
         });
     }
