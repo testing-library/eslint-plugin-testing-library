@@ -25,10 +25,16 @@ ruleTester.run(RULE_NAME, rule, {
   ],
   invalid: [
     {
+      code: `screen.getByText('submit').closest('button')`,
+      errors: [
+        {
+          messageId: 'noNodeAccess',
+        },
+      ],
+    },
+    {
       code: `
-        const buttons = screen.getAllByRole('button');
-        const buttonA = buttons[1];
-        expect(buttonA.lastChild).toBeInTheDocument();
+        expect(screen.getByText('submit').closest('button').textContent).toBe('Submit')
       `,
       errors: [
         {
@@ -39,15 +45,56 @@ ruleTester.run(RULE_NAME, rule, {
     {
       code: `
         const buttons = screen.getAllByRole('button');
+        const buttonA = buttons[1];
+      `,
+      errors: [
+        {
+          // error points to `buttons[1]`
+          line: 3,
+          column: 25,
+          messageId: 'noNodeAccess',
+        },
+      ],
+    },
+    {
+      code: `
+        const buttons = screen.getAllByRole('button');
         buttons[0].firstChild;
+      `,
+      errors: [
+        {
+          // error points to `buttons[0]`
+          line: 3,
+          column: 9,
+          messageId: 'noNodeAccess',
+        },
+      ],
+    },
+    {
+      code: `
+        const buttons = screen.getAllByRole('button');
         const buttonA = buttons[1];
         expect(buttonA.lastChild).toBeInTheDocument();
       `,
       errors: [
         {
+          // error points to `buttons[1]`
+          line: 3,
+          column: 25,
           messageId: 'noNodeAccess',
         },
+      ],
+    },
+    {
+      code: `
+        const buttons = screen.getAllByRole('button');
+        expect(buttons[0]).toBeInTheDocument();
+      `,
+      errors: [
         {
+          // error points to `buttons[0]`
+          line: 3,
+          column: 16,
           messageId: 'noNodeAccess',
         },
       ],
@@ -59,6 +106,9 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [
         {
+          // error points to `buttonText.closest`
+          line: 3,
+          column: 24,
           messageId: 'noNodeAccess',
         },
       ],
@@ -84,6 +134,9 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [
         {
+          // error points to `buttons[1]`
+          line: 17,
+          column: 28,
           messageId: 'noNodeAccess',
         },
       ],
@@ -109,6 +162,8 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [
         {
+          line: 17,
+          column: 33,
           messageId: 'noNodeAccess',
         },
       ],

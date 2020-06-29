@@ -35,7 +35,23 @@ export default ESLintUtils.RuleCreator(getDocsUrl)({
   create(context) {
     const variablesWithNodes: string[] = [];
 
-    function identifyVariablesWithNodes(node: TSESTree.MemberExpression) {
+    function showErrorForNodeAccess(node: TSESTree.MemberExpression) {
+      const isLiteralNumber =
+        isLiteral(node.property) && typeof node.property.value === 'number';
+      const hasForbiddenMethod =
+        isIdentifier(node.property) &&
+        ALL_RETURNING_NODES.includes(node.property.name);
+
+      if (isLiteralNumber || hasForbiddenMethod) {
+        context.report({
+          node: node,
+          loc: node.loc.start,
+          messageId: 'noNodeAccess',
+        });
+      }
+    }
+
+    function checkVariablesWithNodes(node: TSESTree.MemberExpression) {
       const callExpression = node.parent as TSESTree.CallExpression;
       const variableDeclarator = callExpression.parent as TSESTree.VariableDeclarator;
       const methodsNames = ALL_QUERIES_METHODS.filter(
@@ -50,29 +66,30 @@ export default ESLintUtils.RuleCreator(getDocsUrl)({
       }
     }
 
-    function showErrorForNodeAccess(node: TSESTree.Identifier) {
+    function checkDirectNodeAccess(node: TSESTree.Identifier) {
       if (variablesWithNodes.includes(node.name)) {
         if (isMemberExpression(node.parent)) {
-          const isLiteralNumber =
-            isLiteral(node.parent.property) &&
-            typeof node.parent.property.value === 'number';
-          const hasForbiddenMethod =
-            isIdentifier(node.parent.property) &&
-            ALL_RETURNING_NODES.includes(node.parent.property.name);
-
-          if (isLiteralNumber || hasForbiddenMethod) {
-            context.report({
-              node: node,
-              messageId: 'noNodeAccess',
-            });
-          }
+          showErrorForNodeAccess(node.parent);
         }
       }
     }
 
+    function checkDirectMethodCall(node: TSESTree.CallExpression) {
+      const methodsNames = ALL_QUERIES_METHODS.filter(
+        method =>
+          isMemberExpression(node.callee) &&
+          isIdentifier(node.callee.property) &&
+          node.callee.property.name.includes(method)
+      );
+      if (methodsNames.length && isMemberExpression(node.parent)) {
+        showErrorForNodeAccess(node.parent);
+      }
+    }
+
     return {
-      ['VariableDeclarator > CallExpression > MemberExpression']: identifyVariablesWithNodes,
-      ['MemberExpression > Identifier']: showErrorForNodeAccess,
+      ['VariableDeclarator > CallExpression > MemberExpression']: checkVariablesWithNodes,
+      ['MemberExpression > Identifier']: checkDirectNodeAccess,
+      ['CallExpression']: checkDirectMethodCall,
     };
   },
 });
