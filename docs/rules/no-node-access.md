@@ -4,7 +4,7 @@ The Testing Library already provides methods for querying DOM elements.
 
 ## Rule Details
 
-This rule aims to disallow DOM traversal using native HTML methods and properties, such as `closes`, `lastChild` and all that returns another Node element from an HTML tree.
+This rule aims to disallow DOM traversal using native HTML methods and properties, such as `closest`, `lastChild` and all that returns another Node element from an HTML tree.
 
 Examples of **incorrect** code for this rule:
 
