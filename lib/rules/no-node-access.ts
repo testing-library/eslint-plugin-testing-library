@@ -14,12 +14,17 @@ const ALL_RETURNING_NODES = [
   ...METHODS_RETURNING_NODES,
 ];
 
+const ALL_QUERIES_AND_RETURNING_NODES = [
+  ...ALL_QUERIES_METHODS,
+  ...ALL_RETURNING_NODES,
+];
+
 export default ESLintUtils.RuleCreator(getDocsUrl)({
   name: RULE_NAME,
   meta: {
     type: 'problem',
     docs: {
-      description: 'Disallow the use of methods for direct Node access.',
+      description: 'Disallow direct Node access',
       category: 'Best Practices',
       recommended: 'error',
     },
@@ -53,7 +58,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)({
     function checkVariablesWithNodes(node: TSESTree.MemberExpression) {
       const callExpression = node.parent as TSESTree.CallExpression;
       const variableDeclarator = callExpression.parent as TSESTree.VariableDeclarator;
-      const methodsNames = ALL_QUERIES_METHODS.filter(
+      const methodsNames = ALL_QUERIES_AND_RETURNING_NODES.filter(
         method =>
           isIdentifier(node.property) && node.property.name.includes(method)
       );
@@ -72,7 +77,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)({
     }
 
     function checkDirectMethodCall(node: TSESTree.CallExpression) {
-      const methodsNames = ALL_QUERIES_METHODS.filter(
+      const methodsNames = ALL_QUERIES_AND_RETURNING_NODES.filter(
         method =>
           isMemberExpression(node.callee) &&
           isIdentifier(node.callee.property) &&

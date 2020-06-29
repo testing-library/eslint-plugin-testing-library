@@ -16,16 +16,25 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
+        const buttonText = document.firstChild;
+        expect(buttonText.textContent).toBe('submit');
+      `,
+    },
+    {
+      // custom objects with the same properties names as DOM properties are allowed
+      code: `
         const myObj = {
-          firstChild: 'Some custom text'
-        }
-        const text = myObj.firstChild
+          method: () => ({
+            firstChild: 'Some custom text'
+          }),
+        };
+        const text = myObj.method().firstChild;
       `,
     },
   ],
   invalid: [
     {
-      code: `screen.getByText('submit').closest('button')`,
+      code: `document.getElementById('submit-btn').closest('button');`,
       errors: [
         {
           messageId: 'noNodeAccess',
@@ -34,7 +43,26 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        expect(screen.getByText('submit').closest('button').textContent).toBe('Submit')
+        const closestButton = document.getElementById('submit-btn').closest('button');
+        expect(closestButton).toBeInTheDocument();
+      `,
+      errors: [
+        {
+          messageId: 'noNodeAccess',
+        },
+      ],
+    },
+    {
+      code: `screen.getByText('submit').closest('button');`,
+      errors: [
+        {
+          messageId: 'noNodeAccess',
+        },
+      ],
+    },
+    {
+      code: `
+        expect(screen.getByText('submit').closest('button').textContent).toBe('Submit');
       `,
       errors: [
         {
@@ -127,10 +155,10 @@ ruleTester.run(RULE_NAME, rule, {
                 <button type="submit">Submit</button>
             \`;
             return container;
-        }
+        };
         const exampleDOM = getExampleDOM();
         const buttons = screen.getAllByRole(exampleDOM, 'button');
-        const buttonText = buttons[1].firstChild
+        const buttonText = buttons[1].firstChild;
       `,
       errors: [
         {
@@ -155,10 +183,10 @@ ruleTester.run(RULE_NAME, rule, {
                 <button type="submit">Submit</button>
             \`;
             return container;
-        }
+        };
         const exampleDOM = getExampleDOM();
         const submitButton = screen.getByText(exampleDOM, 'Submit');
-        const previousSibling = submitButton.previousSibling
+        const previousSibling = submitButton.previousSibling;
       `,
       errors: [
         {
