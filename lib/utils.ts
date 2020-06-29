@@ -73,6 +73,7 @@ const PROPERTIES_RETURNING_NODES = [
   'lastElementChild',
   'nextElementSibling',
   'nextSibling',
+  'parentElement',
   'parentNode',
   'pointerLockElement',
   'previousElementSibling',
