@@ -1,18 +1,8 @@
 import { ESLintUtils, TSESTree } from '@typescript-eslint/experimental-utils';
 import { isIdentifier, isMemberExpression, isLiteral } from '../node-utils';
-import {
-  getDocsUrl,
-  ALL_QUERIES_METHODS,
-  PROPERTIES_RETURNING_NODES,
-  METHODS_RETURNING_NODES,
-} from '../utils';
+import { getDocsUrl, ALL_QUERIES_METHODS, ALL_RETURNING_NODES } from '../utils';
 
 export const RULE_NAME = 'no-node-access';
-
-const ALL_RETURNING_NODES = [
-  ...PROPERTIES_RETURNING_NODES,
-  ...METHODS_RETURNING_NODES,
-];
 
 const ALL_QUERIES_AND_RETURNING_NODES = [
   ...ALL_QUERIES_METHODS,
