@@ -23,7 +23,9 @@
 [![Tweet][tweet-badge]][tweet-url]
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+
 [![All Contributors](https://img.shields.io/badge/all_contributors-27-orange.svg?style=flat-square)](#contributors-)
+
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 ## Installation
@@ -134,6 +136,7 @@ To enable this configuration use the `extends` property in your
 | [no-debug](docs/rules/no-debug.md)                                     | Disallow the use of `debug`                                                | ![angular-badge][] ![react-badge][] ![vue-badge][]                |                    |
 | [no-dom-import](docs/rules/no-dom-import.md)                           | Disallow importing from DOM Testing Library                                | ![angular-badge][] ![react-badge][] ![vue-badge][]                | ![fixable-badge][] |
 | [no-manual-cleanup](docs/rules/no-manual-cleanup.md)                   | Disallow the use of `cleanup`                                              |                                                                   |                    |
+| [no-node-access](docs/rules/no-node-access.md)                         | Disallow direct Node access                                                | ![angular-badge][] ![react-badge][] ![vue-badge][]                |                    |  |
 | [no-promise-in-fire-event](docs/rules/no-promise-in-fire-event.md)     | Disallow the use of promises passed to a `fireEvent` method                |                                                                   |                    |
 | [no-wait-for-empty-callback](docs/rules/no-wait-for-empty-callback.md) | Disallow empty callbacks for `waitFor` and `waitForElementToBeRemoved`     | ![dom-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] |                    |
 | [prefer-explicit-assert](docs/rules/prefer-explicit-assert.md)         | Suggest using explicit assertions rather than just `getBy*` queries        |                                                                   |                    |
