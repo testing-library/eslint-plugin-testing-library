@@ -19,13 +19,13 @@ export default ESLintUtils.RuleCreator(getDocsUrl)({
   meta: {
     type: 'problem',
     docs: {
-      description: 'Disallow the use of Node methods',
+      description: 'Disallow the use of methods for direct Node access.',
       category: 'Best Practices',
       recommended: 'error',
     },
     messages: {
       noNodeAccess:
-        'Avoid direct Node access. Prefer using the methods from Testing Library."',
+        'Avoid direct Node access. Prefer using the methods from Testing Library.',
     },
     fixable: null,
     schema: [],
@@ -36,41 +36,37 @@ export default ESLintUtils.RuleCreator(getDocsUrl)({
     const variablesWithNodes: string[] = [];
 
     function identifyVariablesWithNodes(node: TSESTree.MemberExpression) {
-      const methodCalled = ALL_QUERIES_METHODS.filter(
-        methodName =>
-          isIdentifier(node.property) && node.property.name.includes(methodName)
-      );
-      const returnsNodeElement = Boolean(methodCalled.length);
-
       const callExpression = node.parent as TSESTree.CallExpression;
       const variableDeclarator = callExpression.parent as TSESTree.VariableDeclarator;
-      const variableName =
-        isIdentifier(variableDeclarator.id) && variableDeclarator.id.name;
+      const methodsNames = ALL_QUERIES_METHODS.filter(
+        method =>
+          isIdentifier(node.property) && node.property.name.includes(method)
+      );
 
-      if (returnsNodeElement) {
-        variablesWithNodes.push(variableName);
+      if (methodsNames.length) {
+        variablesWithNodes.push(
+          isIdentifier(variableDeclarator.id) && variableDeclarator.id.name
+        );
       }
     }
 
     function showErrorForNodeAccess(node: TSESTree.Identifier) {
       if (variablesWithNodes.includes(node.name)) {
-        if (
-          isMemberExpression(node.parent) &&
-          isLiteral(node.parent.property) &&
-          typeof node.parent.property.value === 'number'
-        ) {
-          context.report({
-            node: node,
-            messageId: 'noNodeAccess',
-          });
+        if (isMemberExpression(node.parent)) {
+          const isLiteralNumber =
+            isLiteral(node.parent.property) &&
+            typeof node.parent.property.value === 'number';
+          const hasForbiddenMethod =
+            isIdentifier(node.parent.property) &&
+            ALL_RETURNING_NODES.includes(node.parent.property.name);
+
+          if (isLiteralNumber || hasForbiddenMethod) {
+            context.report({
+              node: node,
+              messageId: 'noNodeAccess',
+            });
+          }
         }
-        isMemberExpression(node.parent) &&
-          isIdentifier(node.parent.property) &&
-          ALL_RETURNING_NODES.includes(node.parent.property.name) &&
-          context.report({
-            node: node,
-            messageId: 'noNodeAccess',
-          });
       }
     }
 
