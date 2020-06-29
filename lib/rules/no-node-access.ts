@@ -42,13 +42,12 @@ export default ESLintUtils.RuleCreator(getDocsUrl)({
         isIdentifier(node.property) &&
         ALL_RETURNING_NODES.includes(node.property.name);
 
-      if (isLiteralNumber || hasForbiddenMethod) {
+      (isLiteralNumber || hasForbiddenMethod) &&
         context.report({
           node: node,
           loc: node.loc.start,
           messageId: 'noNodeAccess',
         });
-      }
     }
 
     function checkVariablesWithNodes(node: TSESTree.MemberExpression) {
@@ -68,9 +67,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)({
 
     function checkDirectNodeAccess(node: TSESTree.Identifier) {
       if (variablesWithNodes.includes(node.name)) {
-        if (isMemberExpression(node.parent)) {
-          showErrorForNodeAccess(node.parent);
-        }
+        isMemberExpression(node.parent) && showErrorForNodeAccess(node.parent);
       }
     }
 
