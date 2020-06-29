@@ -64,24 +64,32 @@ const ASYNC_UTILS = [
 ];
 
 const PROPERTIES_RETURNING_NODES = [
+  'activeElement',
+  'children',
   'firstChild',
+  'firstElementChild',
+  'fullscreenElement',
   'lastChild',
+  'lastElementChild',
   'nextElementSibling',
   'nextSibling',
   'parentNode',
+  'pointerLockElement',
   'previousElementSibling',
   'previousSibling',
   'rootNode',
+  'scripts',
 ];
 
 const METHODS_RETURNING_NODES = [
   'closest',
+  'getElementById',
   'getElementsByClassName',
+  'getElementsByName',
   'getElementsByTagName',
   'getElementsByTagNameNS',
   'querySelector',
   'querySelectorAll',
-  ''
 ];
 
 export {
