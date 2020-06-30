@@ -29,26 +29,24 @@ Examples of **correct** code for this rule:
 ```js
 const foo = async () => {
   await waitFor(() => expect(a).toEqual('a'));
-
-  // this rule only looks for expect
-  await waitFor(() => {
-    fireEvent.keyDown(input, { key: 'ArrowDown' });
-    expect(b).toEqual('b');
-  });
-
-  // or
-  await waitFor(() => {
-    console.log('testing-library');
-    expect(b).toEqual('b');
-  });
-
+  expect(b).toEqual('b');
+  
   // or
   await waitFor(function() {
     expect(a).toEqual('a')
   })
+  expect(b).toEqual('b');
+
+  // it only detects expect
+  // so this case doesn't generate warnings
+  await waitFor(() => {
+    fireEvent.keyDown(input, { key: 'ArrowDown' });
+    expect(b).toEqual('b');
+  });
 };
 ```
 
 ## Further Reading
 
 - [about `waitFor`](https://testing-library.com/docs/dom-testing-library/api-async#waitfor)
+- [inspiration for this rule](https://kentcdodds.com/blog/common-mistakes-with-react-testing-library#having-multiple-assertions-in-a-single-waitfor-callback)
