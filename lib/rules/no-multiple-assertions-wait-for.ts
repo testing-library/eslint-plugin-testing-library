@@ -21,7 +21,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
       recommended: false,
     },
     messages: {
-      noMultipleAssertionWaitFor: 'Avoid use multiple assertions to `waitFor`',
+      noMultipleAssertionWaitFor: 'Avoid using multiple assertions within `waitFor` callback',
     },
     fixable: null,
     schema: [],
