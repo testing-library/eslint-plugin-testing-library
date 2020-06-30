@@ -28,7 +28,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
   },
   defaultOptions: [],
   create: function(context) {
-    function reporttMultipleAssertion(
+    function reportMultipleAssertion(
       node: TSESTree.BlockStatement
     ) {
       const totalExpect = (body: Array<TSESTree.Node>): Array<TSESTree.Node> =>
@@ -56,8 +56,8 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
     }
 
     return {
-      [`${WAIT_EXPRESSION_QUERY} > ArrowFunctionExpression > BlockStatement`]: reporttMultipleAssertion,
-      [`${WAIT_EXPRESSION_QUERY} > FunctionExpression > BlockStatement`]: reporttMultipleAssertion,
+      [`${WAIT_EXPRESSION_QUERY} > ArrowFunctionExpression > BlockStatement`]: reportMultipleAssertion,
+      [`${WAIT_EXPRESSION_QUERY} > FunctionExpression > BlockStatement`]: reportMultipleAssertion,
     };
   }
 })
