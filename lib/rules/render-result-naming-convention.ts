@@ -1,13 +1,16 @@
 import { ESLintUtils, TSESTree } from '@typescript-eslint/experimental-utils';
 import { getDocsUrl } from '../utils';
+import {
+  isIdentifier,
+  isObjectPattern,
+  isRenderVariableDeclarator,
+} from '../node-utils';
 
 export const RULE_NAME = 'render-result-naming-convention';
-type MessageIds = 'renderResultNamingConvention';
-type Options = [];
 
 const ALLOWED_VAR_NAMES = ['view', 'utils'];
 
-export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
+export default ESLintUtils.RuleCreator(getDocsUrl)({
   name: RULE_NAME,
   meta: {
     type: 'suggestion',
@@ -17,16 +20,51 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
       recommended: false,
     },
     messages: {
-      renderResultNamingConvention: `\`{{ varName }}\` is not a recommended name for \`render\` returned value. Instead, you should destructure it, or call it using one of the valid choices: ${ALLOWED_VAR_NAMES.map(
+      invalidRenderResultName: `\`{{ varName }}\` is not a recommended name for \`render\` returned value. Instead, you should destructure it, or call it using one of the valid choices: ${ALLOWED_VAR_NAMES.map(
         name => `\`${name}\``
       ).join(', ')}`,
     },
     fixable: null,
-    schema: [],
+    schema: [
+      {
+        type: 'object',
+        properties: {
+          renderFunctions: {
+            type: 'array',
+          },
+        },
+      },
+    ],
   },
-  defaultOptions: [],
+  defaultOptions: [
+    {
+      renderFunctions: [],
+    },
+  ],
 
-  create() {
-    return {};
+  create(context, [options]) {
+    const { renderFunctions } = options;
+    let renderResultName = null;
+
+    return {
+      VariableDeclarator(node) {
+        if (
+          isRenderVariableDeclarator(node, renderFunctions) &&
+          !isObjectPattern(node.id)
+        ) {
+          renderResultName = isIdentifier(node.id) && node.id.name;
+
+          if (!ALLOWED_VAR_NAMES.includes(renderResultName)) {
+            context.report({
+              node,
+              messageId: 'invalidRenderResultName',
+              data: {
+                varName: renderResultName,
+              },
+            });
+          }
+        }
+      },
+    };
   },
 });

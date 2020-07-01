@@ -122,8 +122,11 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [
         {
-          messageId: 'renderResultNamingConvention',
-          line: 4,
+          messageId: 'invalidRenderResultName',
+          data: {
+            varName: 'wrapper',
+          },
+          line: 5,
           column: 17,
         },
       ],
@@ -139,8 +142,11 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [
         {
-          messageId: 'renderResultNamingConvention',
-          line: 4,
+          messageId: 'invalidRenderResultName',
+          data: {
+            varName: 'component',
+          },
+          line: 5,
           column: 17,
         },
       ],
@@ -156,8 +162,8 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [
         {
-          messageId: 'renderResultNamingConvention',
-          line: 4,
+          messageId: 'invalidRenderResultName',
+          line: 5,
           column: 17,
         },
       ],
@@ -173,8 +179,11 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [
         {
-          messageId: 'renderResultNamingConvention',
-          line: 4,
+          messageId: 'invalidRenderResultName',
+          data: {
+            varName: 'wrapper',
+          },
+          line: 5,
           column: 17,
         },
       ],
@@ -192,8 +201,34 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [
         {
-          messageId: 'renderResultNamingConvention',
-          line: 4,
+          messageId: 'invalidRenderResultName',
+          data: {
+            varName: 'wrapper',
+          },
+          line: 5,
+          column: 17,
+        },
+      ],
+    },
+    {
+      code: `
+        test('should report from custom render function ', () => {
+          const wrapper = renderWithSomethingElse(<SomeComponent />);
+          const button = wrapper.getByText('some button');
+        });
+      `,
+      options: [
+        {
+          renderFunctions: ['renderWithSomethingElse'],
+        },
+      ],
+      errors: [
+        {
+          messageId: 'invalidRenderResultName',
+          data: {
+            varName: 'wrapper',
+          },
+          line: 2,
           column: 17,
         },
       ],
