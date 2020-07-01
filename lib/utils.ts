@@ -1,3 +1,5 @@
+import { TSESTree } from '@typescript-eslint/experimental-utils';
+
 const combineQueries = (variants: string[], methods: string[]) => {
   const combinedQueries: string[] = [];
   variants.forEach(variant => {
@@ -21,6 +23,10 @@ const LIBRARY_MODULES = [
   '@testing-library/vue',
   '@testing-library/svelte',
 ];
+
+const hasTestingLibraryImportModule = (node: TSESTree.ImportDeclaration) => {
+  return LIBRARY_MODULES.includes(node.source.value.toString())
+}
 
 const SYNC_QUERIES_VARIANTS = ['getBy', 'getAllBy', 'queryBy', 'queryAllBy'];
 const ASYNC_QUERIES_VARIANTS = ['findBy', 'findAllBy'];
@@ -100,6 +106,7 @@ const ALL_RETURNING_NODES = [
 
 export {
   getDocsUrl,
+  hasTestingLibraryImportModule,
   SYNC_QUERIES_VARIANTS,
   ASYNC_QUERIES_VARIANTS,
   ALL_QUERIES_VARIANTS,
