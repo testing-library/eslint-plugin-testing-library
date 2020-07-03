@@ -14,9 +14,7 @@ screen.getByText('Submit').closest('button'); // chaining with Testing Library m
 
 ```js
 const buttons = screen.getAllByRole('button');
-const buttonA = buttons[1]; // getting the element directly from the array
-
-expect(buttonA.lastChild).toBeInTheDocument();
+expect(buttons[1].lastChild).toBeInTheDocument();
 ```
 
 ```js
@@ -31,8 +29,8 @@ document.getElementById('submit-btn').closest('button');
 Examples of **correct** code for this rule:
 
 ```js
-const buttonText = screen.getByRole('button');
-expect(buttonText.textContent).toBe('Submit');
+const button = screen.getByRole('button');
+expect(button).toHaveTextContent('submit');
 ```
 
 ## Further Reading
