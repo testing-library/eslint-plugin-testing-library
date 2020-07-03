@@ -16,25 +16,58 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        const buttonText = document.firstChild;
-        expect(buttonText.textContent).toBe('submit');
-      `,
-    },
-    {
-      // custom objects with the same properties names as DOM properties are allowed
-      code: `
-        const myObj = {
-          method: () => ({
-            firstChild: 'Some custom text'
-          }),
-        };
-        const text = myObj.method().firstChild;
+        const { getByText } = screen;
+        const button = getByRole('button');
+        expect(button).toHaveTextContent('submit');
       `,
     },
   ],
   invalid: [
     {
       code: `document.getElementById('submit-btn').closest('button');`,
+      errors: [
+        {
+          messageId: 'noNodeAccess',
+        },
+        {
+          messageId: 'noNodeAccess',
+        },
+      ],
+    },
+    {
+      code: `document.getElementById('submit-btn');`,
+      errors: [
+        {
+          messageId: 'noNodeAccess',
+        },
+      ],
+    },
+    {
+      code: `screen.getByText('submit').closest('button');`,
+      errors: [
+        {
+          // error points to `closest`
+          line: 1,
+          column: 28,
+          messageId: 'noNodeAccess',
+        },
+      ],
+    },
+    {
+      code: `
+      expect(screen.getByText('submit').closest('button').textContent).toBe('Submit');
+      `,
+      errors: [
+        {
+          messageId: 'noNodeAccess',
+        },
+      ],
+    },
+    {
+      code: `
+        const { getByText } = render(<Example />)
+        getByText('submit').closest('button');
+      `,
       errors: [
         {
           messageId: 'noNodeAccess',
@@ -48,26 +81,15 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [
         {
+          // error points to `getElementById`
+          line: 2,
+          column: 40,
           messageId: 'noNodeAccess',
         },
-      ],
-    },
-    {
-      code: `screen.getByText('submit').closest('button');`,
-      errors: [
         {
-          line: 1,
-          column: 28,
-          messageId: 'noNodeAccess',
-        },
-      ],
-    },
-    {
-      code: `
-        expect(screen.getByText('submit').closest('button').textContent).toBe('Submit');
-      `,
-      errors: [
-        {
+          // error points to `closest`
+          line: 2,
+          column: 69,
           messageId: 'noNodeAccess',
         },
       ],
@@ -75,56 +97,21 @@ ruleTester.run(RULE_NAME, rule, {
     {
       code: `
         const buttons = screen.getAllByRole('button');
-        const buttonA = buttons[1];
+        const childA = buttons[1].firstChild;
+        const button = buttons[2];
+        button.lastChild
       `,
       errors: [
         {
-          // error points to `[1]`
+          // error points to `firstChild`
           line: 3,
-          column: 33,
+          column: 35,
           messageId: 'noNodeAccess',
         },
-      ],
-    },
-    {
-      code: `
-        const buttons = screen.getAllByRole('button');
-        buttons[0].firstChild;
-      `,
-      errors: [
         {
-          // error points to `[0]`
-          line: 3,
-          column: 17,
-          messageId: 'noNodeAccess',
-        },
-      ],
-    },
-    {
-      code: `
-        const buttons = screen.getAllByRole('button');
-        const buttonA = buttons[1];
-        expect(buttonA.lastChild).toBeInTheDocument();
-      `,
-      errors: [
-        {
-          // error points to `[1]`
-          line: 3,
-          column: 33,
-          messageId: 'noNodeAccess',
-        },
-      ],
-    },
-    {
-      code: `
-        const buttons = screen.getAllByRole('button');
-        expect(buttons[0]).toBeInTheDocument();
-      `,
-      errors: [
-        {
-          // error points to `[0]`
-          line: 3,
-          column: 24,
+          // error points to `lastChild`
+          line: 5,
+          column: 16,
           messageId: 'noNodeAccess',
         },
       ],
@@ -136,9 +123,29 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [
         {
-          // error points to `closest`
-          line: 3,
-          column: 35,
+          messageId: 'noNodeAccess',
+        },
+      ],
+    },
+    {
+      code: `
+        const { getByText } = render(<Example />)
+        const buttonText = getByText('submit');
+        const button = buttonText.closest('button');
+      `,
+      errors: [
+        {
+          messageId: 'noNodeAccess',
+        },
+      ],
+    },
+    {
+      code: `
+        const { getByText } = render(<Example />)
+        const button = getByText('submit').closest('button');
+      `,
+      errors: [
+        {
           messageId: 'noNodeAccess',
         },
       ],
@@ -164,9 +171,9 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [
         {
-          // error points to `[1]`
+          // error points to `firstChild`
           line: 17,
-          column: 36,
+          column: 39,
           messageId: 'noNodeAccess',
         },
       ],
@@ -188,12 +195,13 @@ ruleTester.run(RULE_NAME, rule, {
         };
         const exampleDOM = getExampleDOM();
         const submitButton = screen.getByText(exampleDOM, 'Submit');
-        const previousSibling = submitButton.previousSibling;
+        const previousButton = submitButton.previousSibling;
       `,
       errors: [
         {
+          // error points to `previousSibling`
           line: 17,
-          column: 46,
+          column: 45,
           messageId: 'noNodeAccess',
         },
       ],
