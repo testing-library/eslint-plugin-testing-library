@@ -1,13 +1,8 @@
 import { ESLintUtils, TSESTree } from '@typescript-eslint/experimental-utils';
-import { isIdentifier, isMemberExpression, isLiteral } from '../node-utils';
-import { getDocsUrl, ALL_QUERIES_METHODS, ALL_RETURNING_NODES } from '../utils';
+import { getDocsUrl, ALL_RETURNING_NODES } from '../utils';
+import { isIdentifier } from '../node-utils';
 
 export const RULE_NAME = 'no-node-access';
-
-const ALL_QUERIES_AND_RETURNING_NODES = [
-  ...ALL_QUERIES_METHODS,
-  ...ALL_RETURNING_NODES,
-];
 
 export default ESLintUtils.RuleCreator(getDocsUrl)({
   name: RULE_NAME,
@@ -28,60 +23,19 @@ export default ESLintUtils.RuleCreator(getDocsUrl)({
   defaultOptions: [],
 
   create(context) {
-    const variablesWithNodes: string[] = [];
-
-    function showErrorForNodeAccess(node: TSESTree.MemberExpression) {
-      const isLiteralNumber =
-        isLiteral(node.property) && typeof node.property.value === 'number';
-      const hasForbiddenMethod =
-        isIdentifier(node.property) &&
-        ALL_RETURNING_NODES.includes(node.property.name);
-
-      (isLiteralNumber || hasForbiddenMethod) &&
+    function showErrorForNodeAccess(node: TSESTree.Identifier) {
+      isIdentifier(node) &&
+        ALL_RETURNING_NODES.includes(node.name) &&
         context.report({
           node: node,
-          loc: node.property.loc.start,
+          loc: node.loc.start,
           messageId: 'noNodeAccess',
         });
     }
 
-    function checkVariablesWithNodes(node: TSESTree.MemberExpression) {
-      const callExpression = node.parent as TSESTree.CallExpression;
-      const variableDeclarator = callExpression.parent as TSESTree.VariableDeclarator;
-      const methodsNames = ALL_QUERIES_AND_RETURNING_NODES.filter(
-        method =>
-          isIdentifier(node.property) && node.property.name.includes(method)
-      );
-
-      if (methodsNames.length) {
-        variablesWithNodes.push(
-          isIdentifier(variableDeclarator.id) && variableDeclarator.id.name
-        );
-      }
-    }
-
-    function checkDirectNodeAccess(node: TSESTree.Identifier) {
-      if (variablesWithNodes.includes(node.name)) {
-        isMemberExpression(node.parent) && showErrorForNodeAccess(node.parent);
-      }
-    }
-
-    function checkDirectMethodCall(node: TSESTree.CallExpression) {
-      const methodsNames = ALL_QUERIES_AND_RETURNING_NODES.filter(
-        method =>
-          isMemberExpression(node.callee) &&
-          isIdentifier(node.callee.property) &&
-          node.callee.property.name.includes(method)
-      );
-      if (methodsNames.length && isMemberExpression(node.parent)) {
-        showErrorForNodeAccess(node.parent);
-      }
-    }
-
     return {
-      ['VariableDeclarator > CallExpression > MemberExpression']: checkVariablesWithNodes,
-      ['MemberExpression > Identifier']: checkDirectNodeAccess,
-      ['CallExpression']: checkDirectMethodCall,
+      ['ExpressionStatement MemberExpression Identifier']: showErrorForNodeAccess,
+      ['VariableDeclarator Identifier']: showErrorForNodeAccess,
     };
   },
 });
