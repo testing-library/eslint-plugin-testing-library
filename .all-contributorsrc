@@ -294,6 +294,18 @@
         "test",
         "doc"
       ]
+    },
+    {
+      "login": "renatoagds",
+      "name": "Renato Augusto Gama dos Santos",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/1663717?v=4",
+      "profile": "https://github.com/renatoagds",
+      "contributions": [
+        "ideas",
+        "code",
+        "doc",
+        "test"
+      ]
     }
   ],
   "contributorsPerLine": 7,
