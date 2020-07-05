@@ -16,6 +16,19 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
+        const { getByText } = screen
+        const firstChild = getByText('submit');
+        expect(firstChild).toBeInTheDocument()
+      `,
+    },
+    {
+      code: `
+        const firstChild = screen.getByText('submit');
+        expect(firstChild).toBeInTheDocument()
+      `,
+    },
+    {
+      code: `
         const { getByText } = screen;
         const button = getByRole('button');
         expect(button).toHaveTextContent('submit');

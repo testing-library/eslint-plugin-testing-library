@@ -23,19 +23,19 @@ export default ESLintUtils.RuleCreator(getDocsUrl)({
   defaultOptions: [],
 
   create(context) {
-    function showErrorForNodeAccess(node: TSESTree.Identifier) {
-      isIdentifier(node) &&
-        ALL_RETURNING_NODES.includes(node.name) &&
+    function showErrorForNodeAccess(node: TSESTree.MemberExpression) {
+      isIdentifier(node.property) &&
+        ALL_RETURNING_NODES.includes(node.property.name) &&
         context.report({
           node: node,
-          loc: node.loc.start,
+          loc: node.property.loc.start,
           messageId: 'noNodeAccess',
         });
     }
 
     return {
-      ['ExpressionStatement MemberExpression Identifier']: showErrorForNodeAccess,
-      ['VariableDeclarator Identifier']: showErrorForNodeAccess,
+      ['ExpressionStatement MemberExpression']: showErrorForNodeAccess,
+      ['VariableDeclarator MemberExpression']: showErrorForNodeAccess,
     };
   },
 });
