@@ -6,6 +6,7 @@ env:
   matrix:
     - ESLINT=5
     - ESLINT=6
+    - ESLINT=7
 
 node_js:
   - 10.12
@@ -20,7 +21,7 @@ jobs:
     - stage: release
       if: branch = master AND type != pull_request
       node_js: 14
-      env: ESLINT=6
+      env: ESLINT=7
       script: npm run build
       deploy:
         provider: script
