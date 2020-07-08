@@ -13,6 +13,7 @@ import preferExplicitAssert from './rules/prefer-explicit-assert';
 import preferPresenceQueries from './rules/prefer-presence-queries';
 import preferScreenQueries from './rules/prefer-screen-queries';
 import preferWaitFor from './rules/prefer-wait-for';
+import noMultipleAssertionsWaitFor from './rules/no-multiple-assertions-wait-for'
 import preferFindBy from './rules/prefer-find-by';
 import noSideEffectsWaitFor from './rules/no-side-effects-wait-for'
 
@@ -26,6 +27,7 @@ const rules = {
   'no-debug': noDebug,
   'no-dom-import': noDomImport,
   'no-manual-cleanup': noManualCleanup,
+  'no-multiple-assertions-wait-for': noMultipleAssertionsWaitFor,
   'no-promise-in-fire-event': noPromiseInFireEvent,
   'no-side-effects-wait-for': noSideEffectsWaitFor,
   'no-wait-for-empty-callback': noWaitForEmptyCallback,
