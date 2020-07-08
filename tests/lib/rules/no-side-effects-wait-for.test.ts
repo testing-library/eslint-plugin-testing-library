@@ -60,6 +60,21 @@ ruleTester.run(RULE_NAME, rule, {
           // testing
         })
       `,
+    },
+    {
+      code: `
+        fireEvent.keyDown(input, {key: 'ArrowDown'})
+        await waitFor(() => {
+          expect(b).toEqual('b')
+        })
+      `
+    }, {
+      code: `
+        fireEvent.keyDown(input, {key: 'ArrowDown'})
+        await waitFor(function() {
+          expect(b).toEqual('b')
+        })
+      `
     }
   ],
   invalid: [
