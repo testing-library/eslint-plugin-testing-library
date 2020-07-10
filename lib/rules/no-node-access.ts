@@ -23,9 +23,16 @@ export default ESLintUtils.RuleCreator(getDocsUrl)({
   defaultOptions: [],
 
   create(context) {
+    let isTestingEnv = false;
+
+    function checkTestingEnvironment(node: TSESTree.ImportDeclaration) {
+      isTestingEnv = /testing-library/g.test(node.source.value as string);
+    }
+
     function showErrorForNodeAccess(node: TSESTree.MemberExpression) {
       isIdentifier(node.property) &&
         ALL_RETURNING_NODES.includes(node.property.name) &&
+        isTestingEnv &&
         context.report({
           node: node,
           loc: node.property.loc.start,
@@ -34,6 +41,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)({
     }
 
     return {
+      ['ImportDeclaration']: checkTestingEnvironment,
       ['ExpressionStatement MemberExpression']: showErrorForNodeAccess,
       ['VariableDeclarator MemberExpression']: showErrorForNodeAccess,
     };

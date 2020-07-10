@@ -9,28 +9,46 @@ This rule aims to disallow DOM traversal using native HTML methods and propertie
 Examples of **incorrect** code for this rule:
 
 ```js
+import { screen } from '@testing-library/react';
+
 screen.getByText('Submit').closest('button'); // chaining with Testing Library methods
 ```
 
 ```js
+import { screen } from '@testing-library/react';
+
 const buttons = screen.getAllByRole('button');
 expect(buttons[1].lastChild).toBeInTheDocument();
 ```
 
 ```js
+import { screen } from '@testing-library/react';
+
 const buttonText = screen.getByText('Submit');
 const button = buttonText.closest('button');
-```
-
-```js
-document.getElementById('submit-btn').closest('button');
 ```
 
 Examples of **correct** code for this rule:
 
 ```js
+import { screen } from '@testing-library/react';
+
 const button = screen.getByRole('button');
 expect(button).toHaveTextContent('submit');
+```
+
+```js
+import { render, within } from '@testing-library/react';
+
+const { getByLabelText } = render(<MyComponent />);
+const signinModal = getByLabelText('Sign In');
+within(signinModal).getByPlaceholderText('Username');
+```
+
+```js
+// If is not importing a testing-library package
+
+document.getElementById('submit-btn').closest('button');
 ```
 
 ## Further Reading
