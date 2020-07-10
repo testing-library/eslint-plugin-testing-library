@@ -23,16 +23,16 @@ export default ESLintUtils.RuleCreator(getDocsUrl)({
   defaultOptions: [],
 
   create(context) {
-    let isTestingEnv = false;
+    let isImportingTestingLibrary = false;
 
     function checkTestingEnvironment(node: TSESTree.ImportDeclaration) {
-      isTestingEnv = /testing-library/g.test(node.source.value as string);
+      isImportingTestingLibrary = /testing-library/g.test(node.source.value as string);
     }
 
     function showErrorForNodeAccess(node: TSESTree.MemberExpression) {
       isIdentifier(node.property) &&
         ALL_RETURNING_NODES.includes(node.property.name) &&
-        isTestingEnv &&
+        isImportingTestingLibrary &&
         context.report({
           node: node,
           loc: node.property.loc.start,
