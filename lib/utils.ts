@@ -25,8 +25,8 @@ const LIBRARY_MODULES = [
 ];
 
 const hasTestingLibraryImportModule = (node: TSESTree.ImportDeclaration) => {
-  return LIBRARY_MODULES.includes(node.source.value.toString())
-}
+  return LIBRARY_MODULES.includes(node.source.value.toString());
+};
 
 const SYNC_QUERIES_VARIANTS = ['getBy', 'getAllBy', 'queryBy', 'queryAllBy'];
 const ASYNC_QUERIES_VARIANTS = ['findBy', 'findAllBy'];

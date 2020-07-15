@@ -9,6 +9,9 @@ import {
 export const RULE_NAME = 'render-result-naming-convention';
 
 const ALLOWED_VAR_NAMES = ['view', 'utils'];
+const ALLOWED_VAR_NAMES_TEXT = ALLOWED_VAR_NAMES.map(
+  name => '`' + name + '`'
+).join(', ');
 
 export default ESLintUtils.RuleCreator(getDocsUrl)({
   name: RULE_NAME,
@@ -20,9 +23,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)({
       recommended: false,
     },
     messages: {
-      invalidRenderResultName: `\`{{ varName }}\` is not a recommended name for \`render\` returned value. Instead, you should destructure it, or call it using one of the valid choices: ${ALLOWED_VAR_NAMES.map(
-        name => `\`${name}\``
-      ).join(', ')}`,
+      invalidRenderResultName: `\`{{ varName }}\` is not a recommended name for \`render\` returned value. Instead, you should destructure it, or call it using one of the valid choices: ${ALLOWED_VAR_NAMES_TEXT}`,
     },
     fixable: null,
     schema: [
