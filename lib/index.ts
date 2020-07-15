@@ -7,6 +7,7 @@ import noContainer from './rules/no-container';
 import noDebug from './rules/no-debug';
 import noDomImport from './rules/no-dom-import';
 import noManualCleanup from './rules/no-manual-cleanup';
+import noNodeAccess from './rules/no-node-access';
 import noWaitForEmptyCallback from './rules/no-wait-for-empty-callback';
 import noPromiseInFireEvent from './rules/no-promise-in-fire-event';
 import preferExplicitAssert from './rules/prefer-explicit-assert';
@@ -27,6 +28,7 @@ const rules = {
   'no-dom-import': noDomImport,
   'no-manual-cleanup': noManualCleanup,
   'no-multiple-assertions-wait-for': noMultipleAssertionsWaitFor,
+  'no-node-access': noNodeAccess,
   'no-promise-in-fire-event': noPromiseInFireEvent,
   'no-wait-for-empty-callback': noWaitForEmptyCallback,
   'prefer-explicit-assert': preferExplicitAssert,
@@ -51,6 +53,7 @@ const angularRules = {
   'testing-library/no-container': 'error',
   'testing-library/no-debug': 'warn',
   'testing-library/no-dom-import': ['error', 'angular'],
+  'testing-library/no-node-access': 'error',
 };
 
 const reactRules = {
@@ -58,6 +61,7 @@ const reactRules = {
   'testing-library/no-container': 'error',
   'testing-library/no-debug': 'warn',
   'testing-library/no-dom-import': ['error', 'react'],
+  'testing-library/no-node-access': 'error',
 };
 
 const vueRules = {
@@ -66,6 +70,7 @@ const vueRules = {
   'testing-library/no-container': 'error',
   'testing-library/no-debug': 'warn',
   'testing-library/no-dom-import': ['error', 'vue'],
+  'testing-library/no-node-access': 'error',
 };
 
 export = {

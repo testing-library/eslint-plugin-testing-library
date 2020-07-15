@@ -63,6 +63,41 @@ const ASYNC_UTILS = [
   'waitForDomChange',
 ];
 
+const PROPERTIES_RETURNING_NODES = [
+  'activeElement',
+  'children',
+  'firstChild',
+  'firstElementChild',
+  'fullscreenElement',
+  'lastChild',
+  'lastElementChild',
+  'nextElementSibling',
+  'nextSibling',
+  'parentElement',
+  'parentNode',
+  'pointerLockElement',
+  'previousElementSibling',
+  'previousSibling',
+  'rootNode',
+  'scripts',
+];
+
+const METHODS_RETURNING_NODES = [
+  'closest',
+  'getElementById',
+  'getElementsByClassName',
+  'getElementsByName',
+  'getElementsByTagName',
+  'getElementsByTagNameNS',
+  'querySelector',
+  'querySelectorAll',
+];
+
+const ALL_RETURNING_NODES = [
+  ...PROPERTIES_RETURNING_NODES,
+  ...METHODS_RETURNING_NODES,
+];
+
 export {
   getDocsUrl,
   SYNC_QUERIES_VARIANTS,
@@ -74,4 +109,7 @@ export {
   ALL_QUERIES_COMBINATIONS,
   ASYNC_UTILS,
   LIBRARY_MODULES,
+  PROPERTIES_RETURNING_NODES,
+  METHODS_RETURNING_NODES,
+  ALL_RETURNING_NODES,
 };
