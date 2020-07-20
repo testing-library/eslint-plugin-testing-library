@@ -13,6 +13,7 @@ import noPromiseInFireEvent from './rules/no-promise-in-fire-event';
 import preferExplicitAssert from './rules/prefer-explicit-assert';
 import preferPresenceQueries from './rules/prefer-presence-queries';
 import preferScreenQueries from './rules/prefer-screen-queries';
+import preferUserEvent from './rules/prefer-user-event';
 import preferWaitFor from './rules/prefer-wait-for';
 import noMultipleAssertionsWaitFor from './rules/no-multiple-assertions-wait-for'
 import preferFindBy from './rules/prefer-find-by';
@@ -35,6 +36,7 @@ const rules = {
   'prefer-find-by': preferFindBy,
   'prefer-presence-queries': preferPresenceQueries,
   'prefer-screen-queries': preferScreenQueries,
+  'prefer-user-event': preferUserEvent,
   'prefer-wait-for': preferWaitFor,
 };
 
@@ -46,6 +48,7 @@ const domRules = {
   'testing-library/no-wait-for-empty-callback': 'error',
   'testing-library/prefer-find-by': 'error',
   'testing-library/prefer-screen-queries': 'error',
+  'testing-library/prefer-user-event': 'warn',
 };
 
 const angularRules = {

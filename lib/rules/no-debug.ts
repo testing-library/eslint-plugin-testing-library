@@ -1,5 +1,5 @@
 import { ESLintUtils, TSESTree } from '@typescript-eslint/experimental-utils';
-import { getDocsUrl, LIBRARY_MODULES } from '../utils';
+import { getDocsUrl, LIBRARY_MODULES, hasTestingLibraryImportModule } from '../utils';
 import {
   isObjectPattern,
   isProperty,
@@ -12,13 +12,6 @@ import {
 } from '../node-utils';
 
 export const RULE_NAME = 'no-debug';
-
-function hasTestingLibraryImportModule(
-  importDeclarationNode: TSESTree.ImportDeclaration
-) {
-  const literal = importDeclarationNode.source;
-  return LIBRARY_MODULES.some(module => module === literal.value);
-}
 
 export default ESLintUtils.RuleCreator(getDocsUrl)({
   name: RULE_NAME,
