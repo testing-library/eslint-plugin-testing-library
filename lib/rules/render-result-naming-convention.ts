@@ -65,10 +65,12 @@ export default ESLintUtils.RuleCreator(getDocsUrl)({
         renderAlias = renderImport.local.name;
       },
       VariableDeclarator(node) {
-        if (
-          isRenderVariableDeclarator(node, renderFunctions) &&
-          !isObjectPattern(node.id)
-        ) {
+        const isValidRenderDeclarator = isRenderVariableDeclarator(node, [
+          ...renderFunctions,
+          renderAlias,
+        ]);
+
+        if (isValidRenderDeclarator && !isObjectPattern(node.id)) {
           renderResultName = isIdentifier(node.id) && node.id.name;
           const isTestingLibraryRenderAlias = !!renderAlias;
           const isAllowedRenderResultName = ALLOWED_VAR_NAMES.includes(
