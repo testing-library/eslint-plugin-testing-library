@@ -79,6 +79,51 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
+        import { customRender } from 'test-utils';
+        
+        test('should not report straight destructured render result from custom render', () => {
+          const { rerender, getByText } = customRender(<SomeComponent />);
+          const button = getByText('some button');
+        });
+      `,
+      options: [
+        {
+          renderFunctions: ['customRender'],
+        },
+      ],
+    },
+    {
+      code: `
+        import { customRender } from 'test-utils';
+        
+        test('should not report render result called "view" from custom render', async () => {
+          const view = customRender();
+          await view.findByRole('button');
+        });
+      `,
+      options: [
+        {
+          renderFunctions: ['customRender'],
+        },
+      ],
+    },
+    {
+      code: `
+        import { customRender } from 'test-utils';
+        
+        test('should not report render result called "utils" from custom render', async () => {
+          const utils = customRender();
+          await utils.findByRole('button');
+        });
+      `,
+      options: [
+        {
+          renderFunctions: ['customRender'],
+        },
+      ],
+    },
+    {
+      code: `
         import { render } from '@foo/bar';
         
         test('should not report from render not related to testing library', () => {
