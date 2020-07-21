@@ -212,14 +212,16 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
+        import { customRender } from 'test-utils';
+
         test('should report from custom render function ', () => {
-          const wrapper = renderWithSomethingElse(<SomeComponent />);
+          const wrapper = customRender(<SomeComponent />);
           const button = wrapper.getByText('some button');
         });
       `,
       options: [
         {
-          renderFunctions: ['renderWithSomethingElse'],
+          renderFunctions: ['customRender'],
         },
       ],
       errors: [
@@ -228,7 +230,7 @@ ruleTester.run(RULE_NAME, rule, {
           data: {
             varName: 'wrapper',
           },
-          line: 3,
+          line: 5,
           column: 17,
         },
       ],

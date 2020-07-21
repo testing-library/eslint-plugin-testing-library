@@ -1,6 +1,7 @@
 import { ESLintUtils, TSESTree } from '@typescript-eslint/experimental-utils';
 import { getDocsUrl, hasTestingLibraryImportModule } from '../utils';
 import {
+  isCallExpression,
   isIdentifier,
   isImportSpecifier,
   isObjectPattern,
@@ -72,12 +73,19 @@ export default ESLintUtils.RuleCreator(getDocsUrl)({
 
         if (isValidRenderDeclarator && !isObjectPattern(node.id)) {
           renderResultName = isIdentifier(node.id) && node.id.name;
-          const isTestingLibraryRenderAlias = !!renderAlias;
+
+          const renderFunctionName =
+            isCallExpression(node.init) &&
+            isIdentifier(node.init.callee) &&
+            node.init.callee.name;
+
+          const isTestingLibraryRender =
+            !!renderAlias || renderFunctions.includes(renderFunctionName);
           const isAllowedRenderResultName = ALLOWED_VAR_NAMES.includes(
             renderResultName
           );
 
-          if (isTestingLibraryRenderAlias && !isAllowedRenderResultName) {
+          if (isTestingLibraryRender && !isAllowedRenderResultName) {
             context.report({
               node,
               messageId: 'invalidRenderResultName',
