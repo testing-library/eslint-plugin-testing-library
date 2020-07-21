@@ -154,6 +154,23 @@ ruleTester.run(RULE_NAME, rule, {
         });
       `,
     },
+    {
+      code: `
+        import { render } from '@testing-library/react';
+        
+        const setup = () => {
+          // this one must have a valid name
+          const view = render(<SomeComponent />);
+          return view;
+        };
+
+        test('should not report render result called "view" from wrapping function', async () => {
+          // this isn't a render technically so it can be called "wrapper"
+          const wrapper = setup();
+          await wrapper.findByRole('button');
+        });
+      `,
+    },
   ],
   invalid: [
     {
@@ -237,9 +254,14 @@ ruleTester.run(RULE_NAME, rule, {
       code: `
         import { render } from '@testing-library/react';
         
-        const setup = () => render(<SomeComponent />);
+        const setup = () => {
+          // this one must have a valid name
+          const wrapper = render(<SomeComponent />);
+          return wrapper;
+        };
 
         test('should report render result called "wrapper" from wrapping function', async () => {
+          // this isn't a render technically so it can be called "wrapper"
           const wrapper = setup();
           await wrapper.findByRole('button');
         });
@@ -250,7 +272,7 @@ ruleTester.run(RULE_NAME, rule, {
           data: {
             varName: 'wrapper',
           },
-          line: 7,
+          line: 6,
           column: 17,
         },
       ],
