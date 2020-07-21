@@ -205,7 +205,7 @@ ruleTester.run(RULE_NAME, rule, {
           data: {
             varName: 'wrapper',
           },
-          line: 5,
+          line: 7,
           column: 17,
         },
       ],
@@ -228,7 +228,7 @@ ruleTester.run(RULE_NAME, rule, {
           data: {
             varName: 'wrapper',
           },
-          line: 2,
+          line: 3,
           column: 17,
         },
       ],
