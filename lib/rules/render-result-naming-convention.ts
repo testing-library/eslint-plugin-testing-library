@@ -1,7 +1,8 @@
 import { ESLintUtils, TSESTree } from '@typescript-eslint/experimental-utils';
-import { getDocsUrl } from '../utils';
+import { getDocsUrl, hasTestingLibraryImportModule } from '../utils';
 import {
   isIdentifier,
+  isImportSpecifier,
   isObjectPattern,
   isRenderVariableDeclarator,
 } from '../node-utils';
@@ -45,17 +46,36 @@ export default ESLintUtils.RuleCreator(getDocsUrl)({
 
   create(context, [options]) {
     const { renderFunctions } = options;
-    let renderResultName = null;
+    let renderResultName: string | null = null;
+    let renderAlias: string | undefined;
 
     return {
+      ImportDeclaration(node: TSESTree.ImportDeclaration) {
+        if (!hasTestingLibraryImportModule(node)) {
+          return;
+        }
+        const renderImport = node.specifiers.find(
+          node => isImportSpecifier(node) && node.imported.name === 'render'
+        );
+
+        if (!renderImport) {
+          return;
+        }
+
+        renderAlias = renderImport.local.name;
+      },
       VariableDeclarator(node) {
         if (
           isRenderVariableDeclarator(node, renderFunctions) &&
           !isObjectPattern(node.id)
         ) {
           renderResultName = isIdentifier(node.id) && node.id.name;
+          const isTestingLibraryRenderAlias = !!renderAlias;
+          const isAllowedRenderResultName = ALLOWED_VAR_NAMES.includes(
+            renderResultName
+          );
 
-          if (!ALLOWED_VAR_NAMES.includes(renderResultName)) {
+          if (isTestingLibraryRenderAlias && !isAllowedRenderResultName) {
             context.report({
               node,
               messageId: 'invalidRenderResultName',
