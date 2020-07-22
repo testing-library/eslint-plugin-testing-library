@@ -20,7 +20,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)({
   meta: {
     type: 'suggestion',
     docs: {
-      description: 'TODO',
+      description: 'Enforce a valid naming for return value from `render`',
       category: 'Best Practices',
       recommended: false,
     },
