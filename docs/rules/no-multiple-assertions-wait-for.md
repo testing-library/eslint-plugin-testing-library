@@ -18,9 +18,9 @@ const foo = async () => {
 
   // or
   await waitFor(function() {
-    expect(a).toEqual('a')
+    expect(a).toEqual('a');
     expect(b).toEqual('b');
-  })
+  });
 };
 ```
 
@@ -30,11 +30,11 @@ Examples of **correct** code for this rule:
 const foo = async () => {
   await waitFor(() => expect(a).toEqual('a'));
   expect(b).toEqual('b');
-  
+
   // or
   await waitFor(function() {
-    expect(a).toEqual('a')
-  })
+    expect(a).toEqual('a');
+  });
   expect(b).toEqual('b');
 
   // it only detects expect

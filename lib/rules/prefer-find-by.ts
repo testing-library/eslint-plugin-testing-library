@@ -1,9 +1,12 @@
 import { ESLintUtils, TSESTree } from '@typescript-eslint/experimental-utils';
+import { ReportFixFunction, Scope, RuleFix } from '@typescript-eslint/experimental-utils/dist/ts-eslint'
 import {
   isIdentifier,
   isCallExpression,
   isMemberExpression,
   isArrowFunctionExpression,
+  isObjectPattern,
+  isProperty,
 } from '../node-utils';
 import { getDocsUrl, SYNC_QUERIES_COMBINATIONS } from '../utils';
 
@@ -34,24 +37,22 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
   create(context) {
     const sourceCode = context.getSourceCode();
 
+
+
     /**
      * Reports the invalid usage of wait* plus getBy/QueryBy methods and automatically fixes the scenario
      * @param {TSESTree.CallExpression} node - The CallExpresion node that contains the wait* method
      * @param {'findBy' | 'findAllBy'} replacementParams.queryVariant - The variant method used to query: findBy/findByAll.
      * @param {string} replacementParams.queryMethod - Suffix string to build the query method (the query-part that comes after the "By"): LabelText, Placeholder, Text, Role, Title, etc.
-     * @param {Array<TSESTree.Expression>} replacementParams.callArguments - Array of argument nodes which contain the parameters of the query inside the wait* method.
-     * @param {string=} replacementParams.caller - the variable name that targets screen or the value returned from `render` function.
+     * @param {ReportFixFunction} replacementParams.fix - Function that applies the fix to correct the code
      */
-    function reportInvalidUsage(node: TSESTree.CallExpression, { queryVariant, queryMethod, callArguments, caller }: { queryVariant: 'findBy' | 'findAllBy', queryMethod: string, callArguments: TSESTree.Expression[], caller?: string }) {
+    function reportInvalidUsage(node: TSESTree.CallExpression, { queryVariant, queryMethod, fix }: { queryVariant: 'findBy' | 'findAllBy', queryMethod: string, fix: ReportFixFunction }) {
       
       context.report({
         node,
         messageId: "preferFindBy",
         data: { queryVariant, queryMethod, fullQuery: sourceCode.getText(node) },
-        fix(fixer) {
-          const newCode = `${caller ? `${caller}.` : ''}${queryVariant}${queryMethod}(${callArguments.map((node) => sourceCode.getText(node)).join(', ')})`
-          return fixer.replaceText(node, newCode)
-        }
+        fix,
       });
     }
 
@@ -72,24 +73,60 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
         // ensure here it's one of the sync methods that we are calling
         if (isMemberExpression(argument.body.callee) && isIdentifier(argument.body.callee.property) && isIdentifier(argument.body.callee.object) && SYNC_QUERIES_COMBINATIONS.includes(argument.body.callee.property.name)) {
           // shape of () => screen.getByText
-          const queryMethod = argument.body.callee.property.name
+          const fullQueryMethod = argument.body.callee.property.name
           const caller = argument.body.callee.object.name
-          
+          const queryVariant = getFindByQueryVariant(fullQueryMethod)
+          const callArguments = argument.body.arguments
+          const queryMethod = fullQueryMethod.split('By')[1]
+
           reportInvalidUsage(node, {
-            queryMethod: queryMethod.split('By')[1],
-            queryVariant: getFindByQueryVariant(queryMethod),
-            callArguments: argument.body.arguments,
-            caller,
+            queryMethod,
+            queryVariant,
+            fix(fixer) {
+              const newCode = `${caller}.${queryVariant}${queryMethod}(${callArguments.map((node) => sourceCode.getText(node)).join(', ')})`
+              return fixer.replaceText(node, newCode)
+            }
           })
           return
         }
         if (isIdentifier(argument.body.callee) && SYNC_QUERIES_COMBINATIONS.includes(argument.body.callee.name)) {
           // shape of () => getByText
-          const queryMethod = argument.body.callee.name
+          const fullQueryMethod = argument.body.callee.name
+          const queryMethod = fullQueryMethod.split('By')[1]
+          const queryVariant = getFindByQueryVariant(fullQueryMethod)
+          const callArguments = argument.body.arguments
+
           reportInvalidUsage(node, {
-            queryMethod: queryMethod.split('By')[1],
-            queryVariant: getFindByQueryVariant(queryMethod),
-            callArguments: argument.body.arguments,
+            queryMethod,
+            queryVariant,
+            fix(fixer) {
+              const findByMethod = `${queryVariant}${queryMethod}`
+              const allFixes: RuleFix[] = []
+              // this updates waitFor with findBy*
+              const newCode = `${findByMethod}(${callArguments.map((node) => sourceCode.getText(node)).join(', ')})`
+              allFixes.push(fixer.replaceText(node, newCode))
+
+              // this adds the findBy* declaration - adding it to the list of destructured variables { findBy* } = render()
+              const definition = findRenderDefinitionDeclaration(context.getScope(), fullQueryMethod)
+              // I think it should always find it, otherwise code should not be valid (it'd be using undeclared variables)
+              if (!definition) {
+                return allFixes
+              }
+              // check the declaration is part of a destructuring
+              if (isObjectPattern(definition.parent.parent)) {
+                const allVariableDeclarations = definition.parent.parent
+                // verify if the findBy* method was already declared
+                if (allVariableDeclarations.properties.some((p) => isProperty(p) && isIdentifier(p.key) && p.key.name === findByMethod)) {
+                  return allFixes
+                }
+                // the last character of a destructuring is always a  "}", so we should replace it with the findBy* declaration
+                const textDestructuring = sourceCode.getText(allVariableDeclarations)
+                const text = textDestructuring.substring(0, textDestructuring.length - 2) + `, ${findByMethod} }`
+                allFixes.push(fixer.replaceText(allVariableDeclarations, text))
+              }
+
+              return allFixes
+            }
           })
           return
         }
@@ -98,6 +135,18 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
   }
 })
 
-function getFindByQueryVariant(queryMethod: string) {
+export function getFindByQueryVariant(queryMethod: string) {
   return queryMethod.includes('All') ? 'findAllBy' : 'findBy'
+}
+
+function findRenderDefinitionDeclaration(scope: Scope.Scope | null, query: string): TSESTree.Identifier  | null {
+  if (!scope) {
+    return null
+  }
+  let variable = scope.variables.find((v: Scope.Variable) => v.name === query)
+  if (variable) {
+    const def = variable.defs.find(({ name }) => name.name === query)
+    return def.name
+  }
+  return findRenderDefinitionDeclaration(scope.upper, query)
 }

@@ -7,11 +7,13 @@ import noContainer from './rules/no-container';
 import noDebug from './rules/no-debug';
 import noDomImport from './rules/no-dom-import';
 import noManualCleanup from './rules/no-manual-cleanup';
+import noNodeAccess from './rules/no-node-access';
 import noWaitForEmptyCallback from './rules/no-wait-for-empty-callback';
 import noPromiseInFireEvent from './rules/no-promise-in-fire-event';
 import preferExplicitAssert from './rules/prefer-explicit-assert';
 import preferPresenceQueries from './rules/prefer-presence-queries';
 import preferScreenQueries from './rules/prefer-screen-queries';
+import preferUserEvent from './rules/prefer-user-event';
 import preferWaitFor from './rules/prefer-wait-for';
 import noMultipleAssertionsWaitFor from './rules/no-multiple-assertions-wait-for'
 import preferFindBy from './rules/prefer-find-by';
@@ -28,6 +30,7 @@ const rules = {
   'no-dom-import': noDomImport,
   'no-manual-cleanup': noManualCleanup,
   'no-multiple-assertions-wait-for': noMultipleAssertionsWaitFor,
+  'no-node-access': noNodeAccess,
   'no-promise-in-fire-event': noPromiseInFireEvent,
   'no-side-effects-wait-for': noSideEffectsWaitFor,
   'no-wait-for-empty-callback': noWaitForEmptyCallback,
@@ -35,6 +38,7 @@ const rules = {
   'prefer-find-by': preferFindBy,
   'prefer-presence-queries': preferPresenceQueries,
   'prefer-screen-queries': preferScreenQueries,
+  'prefer-user-event': preferUserEvent,
   'prefer-wait-for': preferWaitFor,
 };
 
@@ -46,6 +50,7 @@ const domRules = {
   'testing-library/no-wait-for-empty-callback': 'error',
   'testing-library/prefer-find-by': 'error',
   'testing-library/prefer-screen-queries': 'error',
+  'testing-library/prefer-user-event': 'warn',
 };
 
 const angularRules = {
@@ -53,6 +58,7 @@ const angularRules = {
   'testing-library/no-container': 'error',
   'testing-library/no-debug': 'warn',
   'testing-library/no-dom-import': ['error', 'angular'],
+  'testing-library/no-node-access': 'error',
 };
 
 const reactRules = {
@@ -60,6 +66,7 @@ const reactRules = {
   'testing-library/no-container': 'error',
   'testing-library/no-debug': 'warn',
   'testing-library/no-dom-import': ['error', 'react'],
+  'testing-library/no-node-access': 'error',
 };
 
 const vueRules = {
@@ -68,6 +75,7 @@ const vueRules = {
   'testing-library/no-container': 'error',
   'testing-library/no-debug': 'warn',
   'testing-library/no-dom-import': ['error', 'vue'],
+  'testing-library/no-node-access': 'error',
 };
 
 export = {
