@@ -33,8 +33,8 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
     function reportSideEffects(
       node: TSESTree.BlockStatement
     ) {
-      const totalSideEffects = (body: Array<TSESTree.Node>): Array<TSESTree.Node> =>
-        body.filter((node: TSESTree.ExpressionStatement) => {
+      const hasSideEffects = (body: Array<TSESTree.Node>): boolean =>
+        body.some((node: TSESTree.ExpressionStatement) => {
           if (
             isCallExpression(node.expression) &&
             isMemberExpression(node.expression.callee) &&
@@ -48,7 +48,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
           }
         })
 
-      if (isBlockStatement(node) && totalSideEffects(node.body).length > 0) {
+      if (isBlockStatement(node) && hasSideEffects(node.body)) {
         context.report({
           node,
           loc: node.loc.start,
