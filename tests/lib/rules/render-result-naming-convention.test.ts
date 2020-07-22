@@ -23,6 +23,16 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
+        import * as RTL from '@testing-library/react';
+        
+        test('should not report straight destructured render result from wildcard import', () => {
+          const { rerender, getByText } = RTL.render(<SomeComponent />);
+          const button = getByText('some button');
+        });
+      `,
+    },
+    {
+      code: `
         import { render } from '@testing-library/react';
         
         test('should not report straight render result called "utils"', async () => {
@@ -145,6 +155,16 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
+        import * as RTL from '@foo/bar';
+        
+        test('should not report from wildcard render not imported from testing library', () => {
+          const wrapper = RTL.render(<SomeComponent />);
+          const button = wrapper.getByText('some button');
+        });
+      `,
+    },
+    {
+      code: `
         function render() {
           return 'whatever';
         }
@@ -181,6 +201,26 @@ ruleTester.run(RULE_NAME, rule, {
         test('should report straight render result called "wrapper"', async () => {
           const wrapper = render(<SomeComponent />);
           await wrapper.findByRole('button');
+        });
+      `,
+      errors: [
+        {
+          messageId: 'invalidRenderResultName',
+          data: {
+            varName: 'wrapper',
+          },
+          line: 5,
+          column: 17,
+        },
+      ],
+    },
+    {
+      code: `
+        import * as RTL from '@testing-library/react';
+        
+        test('should report straight render result called "wrapper" from wildcard import', () => {
+          const wrapper = RTL.render(<SomeComponent />);
+          const button = wrapper.getByText('some button');
         });
       `,
       errors: [

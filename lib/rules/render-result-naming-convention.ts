@@ -4,6 +4,7 @@ import {
   isCallExpression,
   isIdentifier,
   isImportSpecifier,
+  isMemberExpression,
   isObjectPattern,
   isRenderVariableDeclarator,
 } from '../node-utils';
@@ -66,30 +67,68 @@ export default ESLintUtils.RuleCreator(getDocsUrl)({
 
         renderAlias = renderImport.local.name;
       },
+      // check wildcard imports
+      'ImportDeclaration ImportNamespaceSpecifier'(
+        node: TSESTree.ImportNamespaceSpecifier
+      ) {
+        if (
+          !hasTestingLibraryImportModule(
+            node.parent as TSESTree.ImportDeclaration
+          )
+        ) {
+          return;
+        }
+
+        wildcardImportName = node.local.name;
+      },
       VariableDeclarator(node: TSESTree.VariableDeclarator) {
+        // check if destructuring return value from render
+        if (isObjectPattern(node.id)) {
+          return;
+        }
+
         const isValidRenderDeclarator = isRenderVariableDeclarator(node, [
           ...renderFunctions,
           renderAlias,
         ]);
+        const isValidWildcardImport = !!wildcardImportName;
 
-        if (!isValidRenderDeclarator || isObjectPattern(node.id)) {
+        // check if is a Testing Library related import
+        if (!isValidRenderDeclarator && !isValidWildcardImport) {
           return;
         }
-
-        const renderResultName = isIdentifier(node.id) && node.id.name;
 
         const renderFunctionName =
           isCallExpression(node.init) &&
           isIdentifier(node.init.callee) &&
           node.init.callee.name;
 
-        const isTestingLibraryRender =
-          !!renderAlias || renderFunctions.includes(renderFunctionName);
+        const renderFunctionObjectName =
+          isCallExpression(node.init) &&
+          isMemberExpression(node.init.callee) &&
+          isIdentifier(node.init.callee.property) &&
+          isIdentifier(node.init.callee.object) &&
+          node.init.callee.property.name === 'render' &&
+          node.init.callee.object.name;
+
+        const isRenderAlias = !!renderAlias;
+        const isCustomRender = renderFunctions.includes(renderFunctionName);
+        const isWildCardRender =
+          renderFunctionObjectName &&
+          renderFunctionObjectName === wildcardImportName;
+
+        // check if is a qualified render function
+        if (!isRenderAlias && !isCustomRender && !isWildCardRender) {
+          return;
+        }
+
+        const renderResultName = isIdentifier(node.id) && node.id.name;
         const isAllowedRenderResultName = ALLOWED_VAR_NAMES.includes(
           renderResultName
         );
 
-        if (!isTestingLibraryRender || isAllowedRenderResultName) {
+        // check if return value var name is allowed
+        if (isAllowedRenderResultName) {
           return;
         }
 
