@@ -10,7 +10,6 @@ This will make your side-effect run multiple times.
 Example of **incorrect** code for this rule:
 
 ```js
-const foo = async () => {
   await waitFor(() => {
     fireEvent.keyDown(input, { key: 'ArrowDown' });
     expect(b).toEqual('b');
@@ -39,7 +38,6 @@ const foo = async () => {
 Examples of **correct** code for this rule:
 
 ```js
-const foo = async () => {
   fireEvent.keyDown(input, { key: 'ArrowDown' });
   await waitFor(() => {
     expect(b).toEqual('b');
