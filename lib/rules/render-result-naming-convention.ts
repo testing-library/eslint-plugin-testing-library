@@ -47,10 +47,11 @@ export default ESLintUtils.RuleCreator(getDocsUrl)({
 
   create(context, [options]) {
     const { renderFunctions } = options;
-    let renderResultName: string | null = null;
     let renderAlias: string | undefined;
+    let wildcardImportName: string | undefined;
 
     return {
+      // check named imports
       ImportDeclaration(node: TSESTree.ImportDeclaration) {
         if (!hasTestingLibraryImportModule(node)) {
           return;
@@ -65,36 +66,40 @@ export default ESLintUtils.RuleCreator(getDocsUrl)({
 
         renderAlias = renderImport.local.name;
       },
-      VariableDeclarator(node) {
+      VariableDeclarator(node: TSESTree.VariableDeclarator) {
         const isValidRenderDeclarator = isRenderVariableDeclarator(node, [
           ...renderFunctions,
           renderAlias,
         ]);
 
-        if (isValidRenderDeclarator && !isObjectPattern(node.id)) {
-          renderResultName = isIdentifier(node.id) && node.id.name;
-
-          const renderFunctionName =
-            isCallExpression(node.init) &&
-            isIdentifier(node.init.callee) &&
-            node.init.callee.name;
-
-          const isTestingLibraryRender =
-            !!renderAlias || renderFunctions.includes(renderFunctionName);
-          const isAllowedRenderResultName = ALLOWED_VAR_NAMES.includes(
-            renderResultName
-          );
-
-          if (isTestingLibraryRender && !isAllowedRenderResultName) {
-            context.report({
-              node,
-              messageId: 'invalidRenderResultName',
-              data: {
-                varName: renderResultName,
-              },
-            });
-          }
+        if (!isValidRenderDeclarator || isObjectPattern(node.id)) {
+          return;
         }
+
+        const renderResultName = isIdentifier(node.id) && node.id.name;
+
+        const renderFunctionName =
+          isCallExpression(node.init) &&
+          isIdentifier(node.init.callee) &&
+          node.init.callee.name;
+
+        const isTestingLibraryRender =
+          !!renderAlias || renderFunctions.includes(renderFunctionName);
+        const isAllowedRenderResultName = ALLOWED_VAR_NAMES.includes(
+          renderResultName
+        );
+
+        if (!isTestingLibraryRender || isAllowedRenderResultName) {
+          return;
+        }
+
+        context.report({
+          node,
+          messageId: 'invalidRenderResultName',
+          data: {
+            varName: renderResultName,
+          },
+        });
       },
     };
   },
