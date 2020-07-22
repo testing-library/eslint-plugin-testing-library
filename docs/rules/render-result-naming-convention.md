@@ -6,7 +6,7 @@
 
 This rule aims to ensure the return value from `render` is named properly.
 
-Ideally, you should destructure what you need from `render`. In case you need to save the collection of utils returned in a variable, its name should be on of `view` or `utils`, as `render` is not wrapping anything: it's just returning a collection of utilities. Every other name for that variable will be considered invalid.
+Ideally, you should destructure the minimum utils that you need from `render`, combined with using queries from [`screen` object](https://github.com/testing-library/eslint-plugin-testing-library/blob/master/docs/rules/prefer-screen-queries.md). In case you need to save the collection of utils returned in a variable, its name should be either `view` or `utils`, as `render` is not wrapping anything: it's just returning a collection of utilities. Every other name for that variable will be considered invalid.
 
 To sum up these rules, the allowed naming convention for return value from `render` is:
 
