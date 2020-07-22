@@ -2,9 +2,9 @@ import { ESLintUtils, TSESTree } from '@typescript-eslint/experimental-utils'
 import { getDocsUrl } from '../utils'
 import { isBlockStatement, findClosestCallNode, isMemberExpression, isCallExpression, isIdentifier } from '../node-utils'
 
-export const RULE_NAME: string = 'no-side-effects-wait-for';
+export const RULE_NAME = 'no-side-effects-wait-for';
 
-const WAIT_EXPRESSION_QUERY: string =
+const WAIT_EXPRESSION_QUERY =
   'CallExpression[callee.name=/^(waitFor)$/]';
 
 const SIDE_EFFECTS: Array<string> = ['fireEvent', 'userEvent']
@@ -30,6 +30,8 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
   },
   defaultOptions: [],
   create: function(context) {
+    let isImportingTestingLibrary = false;
+
     function reportSideEffects(
       node: TSESTree.BlockStatement
     ) {
@@ -48,7 +50,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
           }
         })
 
-      if (isBlockStatement(node) && hasSideEffects(node.body)) {
+      if (isImportingTestingLibrary && isBlockStatement(node) && hasSideEffects(node.body)) {
         context.report({
           node,
           loc: node.loc.start,
@@ -60,6 +62,9 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
     return {
       [`${WAIT_EXPRESSION_QUERY} > ArrowFunctionExpression > BlockStatement`]: reportSideEffects,
       [`${WAIT_EXPRESSION_QUERY} > FunctionExpression > BlockStatement`]: reportSideEffects,
+      ImportDeclaration(node: TSESTree.ImportDeclaration) {
+        isImportingTestingLibrary = /testing-library/g.test(node.source.value as string);
+      }
     };
   }
 })
