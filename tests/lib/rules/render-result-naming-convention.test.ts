@@ -79,11 +79,12 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
+        import { screen } from '@testing-library/react';
         import { customRender } from 'test-utils';
         
         test('should not report straight destructured render result from custom render', () => {
-          const { rerender, getByText } = customRender(<SomeComponent />);
-          const button = getByText('some button');
+          const { unmount } = customRender(<SomeComponent />);
+          const button = screen.getByText('some button');
         });
       `,
       options: [
