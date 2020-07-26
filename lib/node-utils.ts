@@ -1,4 +1,4 @@
-import { TSESTree } from '@typescript-eslint/experimental-utils';
+import { TSESTree, AST_NODE_TYPES } from '@typescript-eslint/experimental-utils';
 
 export function isCallExpression(
   node: TSESTree.Node
@@ -105,4 +105,8 @@ export function hasThenProperty(node: TSESTree.Node) {
 
 export function isArrowFunctionExpression(node: TSESTree.Node): node is TSESTree.ArrowFunctionExpression {
   return node && node.type === 'ArrowFunctionExpression'
+}
+
+export function isObjectExpression(node: TSESTree.Expression): node is TSESTree.ObjectExpression {
+  return node?.type === AST_NODE_TYPES.ObjectExpression
 }

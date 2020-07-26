@@ -6,6 +6,9 @@ const ruleTester = createRuleTester();
 
 ruleTester.run(RULE_NAME, rule, {
   valid: [
+    {
+      code: `const baz = () => 'foo'`
+    },
     ...ALL_QUERIES_COMBINATIONS.map(queryMethod => ({
       code: `screen.${queryMethod}()`,
     })),
@@ -80,12 +83,55 @@ ruleTester.run(RULE_NAME, rule, {
         const utils = render(baz);
         utils.unmount();
       `
-    }
+    },
+    ...ALL_QUERIES_COMBINATIONS.map((queryMethod: string) => ({
+      code: `
+        const { ${queryMethod} } = render(baz, { baseElement: treeA })
+        expect(${queryMethod}(baz)).toBeDefined()
+      `
+    })),
+    ...ALL_QUERIES_COMBINATIONS.map((queryMethod: string) => ({
+      code: `
+        const { ${queryMethod}: aliasMethod } = render(baz, { baseElement: treeA })
+        expect(aliasMethod(baz)).toBeDefined()
+      `
+    })),
+    ...ALL_QUERIES_COMBINATIONS.map((queryMethod: string) => ({
+      code: `
+        const { ${queryMethod} } = render(baz, { container: treeA })
+        expect(${queryMethod}(baz)).toBeDefined()
+      `
+    })),
+    ...ALL_QUERIES_COMBINATIONS.map((queryMethod: string) => ({
+      code: `
+        const { ${queryMethod}: aliasMethod } = render(baz, { container: treeA })
+        expect(aliasMethod(baz)).toBeDefined()
+      `
+    })),
+    ...ALL_QUERIES_COMBINATIONS.map((queryMethod: string) => ({
+      code: `
+        const { ${queryMethod} } = render(baz, { baseElement: treeB, container: treeA })
+        expect(${queryMethod}(baz)).toBeDefined()
+      `
+    })),
+    ...ALL_QUERIES_COMBINATIONS.map((queryMethod: string) => ({
+      code: `
+        const { ${queryMethod}: aliasMethod } = render(baz, { baseElement: treeB, container: treeA })
+        expect(aliasMethod(baz)).toBeDefined()
+      `
+    })),
+    ...ALL_QUERIES_COMBINATIONS.map((queryMethod: string) => ({
+      code: `
+        render(foo, { baseElement: treeA }).${queryMethod}()
+      `
+    }))
   ],
 
   invalid: [
     ...ALL_QUERIES_COMBINATIONS.map(queryMethod => ({
-      code: `${queryMethod}()`,
+      code: `
+        const { ${queryMethod} } = render(foo)
+        ${queryMethod}()`,
       errors: [
         {
           messageId: 'preferScreenQueries',
@@ -95,7 +141,6 @@ ruleTester.run(RULE_NAME, rule, {
         },
       ],
     })),
-
     ...ALL_QUERIES_COMBINATIONS.map(queryMethod => ({
       code: `render().${queryMethod}()`,
       errors: [
@@ -107,7 +152,17 @@ ruleTester.run(RULE_NAME, rule, {
         },
       ],
     })),
-
+    ...ALL_QUERIES_COMBINATIONS.map(queryMethod => ({
+      code: `render(foo, { hydrate: true }).${queryMethod}()`,
+      errors: [
+        {
+          messageId: 'preferScreenQueries',
+          data: {
+            name: queryMethod,
+          },
+        },
+      ],
+    })),
     ...ALL_QUERIES_COMBINATIONS.map(queryMethod => ({
       code: `component.${queryMethod}()`,
       errors: [
@@ -151,6 +206,20 @@ ruleTester.run(RULE_NAME, rule, {
       code: `
         const [myVariable] = render()
         myVariable.${queryMethod}(baz)
+      `,
+      errors: [
+        {
+          messageId: 'preferScreenQueries',
+          data: {
+            name: queryMethod,
+          },
+        },
+      ],
+    })),
+    ...ALL_QUERIES_COMBINATIONS.map(queryMethod => ({
+      code: `
+        const { ${queryMethod} } = render(baz, { hydrate: true })
+        ${queryMethod}(baz)
       `,
       errors: [
         {
