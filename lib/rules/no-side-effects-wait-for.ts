@@ -1,5 +1,5 @@
 import { ESLintUtils, TSESTree } from '@typescript-eslint/experimental-utils'
-import { getDocsUrl } from '../utils'
+import { getDocsUrl, hasTestingLibraryImportModule } from '../utils'
 import { isBlockStatement, findClosestCallNode, isMemberExpression, isCallExpression, isIdentifier } from '../node-utils'
 
 export const RULE_NAME = 'no-side-effects-wait-for';
@@ -63,7 +63,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
       [`${WAIT_EXPRESSION_QUERY} > ArrowFunctionExpression > BlockStatement`]: reportSideEffects,
       [`${WAIT_EXPRESSION_QUERY} > FunctionExpression > BlockStatement`]: reportSideEffects,
       ImportDeclaration(node: TSESTree.ImportDeclaration) {
-        isImportingTestingLibrary = /testing-library/g.test(node.source.value as string);
+        isImportingTestingLibrary = hasTestingLibraryImportModule(node);
       }
     };
   }
