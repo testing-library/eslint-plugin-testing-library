@@ -85,6 +85,14 @@ ruleTester.run(RULE_NAME, rule, {
           expect(b).toEqual('b')
         })
       `
+    }, {
+      code: `
+        import { waitFor } from 'react';  
+        await waitFor(function() {
+          fireEvent.keyDown(input, {key: 'ArrowDown'})
+          expect(b).toEqual('b')
+        })
+      `
     }
   ],
   invalid: [
