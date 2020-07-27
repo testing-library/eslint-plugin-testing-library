@@ -17,7 +17,7 @@ import preferUserEvent from './rules/prefer-user-event';
 import preferWaitFor from './rules/prefer-wait-for';
 import noMultipleAssertionsWaitFor from './rules/no-multiple-assertions-wait-for';
 import preferFindBy from './rules/prefer-find-by';
-import invalidRenderResultName from './rules/render-result-naming-convention';
+import renderResultNamingConvention from './rules/render-result-naming-convention';
 
 const rules = {
   'await-async-query': awaitAsyncQuery,
@@ -39,7 +39,7 @@ const rules = {
   'prefer-screen-queries': preferScreenQueries,
   'prefer-user-event': preferUserEvent,
   'prefer-wait-for': preferWaitFor,
-  'render-result-naming-convention': invalidRenderResultName,
+  'render-result-naming-convention': renderResultNamingConvention,
 };
 
 const domRules = {
