@@ -75,3 +75,4 @@ const utils = render(<SomeComponent />);
 ## Further Reading
 
 - [Common Mistakes with React Testing Library](https://kentcdodds.com/blog/common-mistakes-with-react-testing-library#using-wrapper-as-the-variable-name-for-the-return-value-from-render)
+- [`render` Result](https://testing-library.com/docs/react-testing-library/api#render-result)
