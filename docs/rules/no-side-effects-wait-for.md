@@ -23,13 +23,13 @@ Example of **incorrect** code for this rule:
 
   // or
   await waitFor(() => {
-    userEvent.keyDown(input, { key: 'ArrowDown' });
+    userEvent.click(button);
     expect(b).toEqual('b');
   });
 
   // or
   await waitFor(function() {
-    userEvent.keyDown(input, { key: 'ArrowDown' });
+    userEvent.click(button);
     expect(b).toEqual('b');
   });
 };
@@ -50,13 +50,13 @@ Examples of **correct** code for this rule:
   });
 
   // or
-  userEvent.keyDown(input, { key: 'ArrowDown' });
+  userEvent.click(button);
   await waitFor(() => {
     expect(b).toEqual('b');
   });
 
   // or
-  userEvent.keyDown(input, { key: 'ArrowDown' });
+  userEvent.click(button);
   await waitFor(function() {
     expect(b).toEqual('b');
   });

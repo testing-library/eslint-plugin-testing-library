@@ -87,6 +87,14 @@ ruleTester.run(RULE_NAME, rule, {
       `
     }, {
       code: `
+        import { waitFor } from '@testing-library/react';  
+        userEvent.click(button)
+        await waitFor(function() {
+          expect(b).toEqual('b')
+        })
+      `
+    }, {
+      code: `
         import { waitFor } from 'react';  
         await waitFor(function() {
           fireEvent.keyDown(input, {key: 'ArrowDown'})
@@ -160,7 +168,7 @@ ruleTester.run(RULE_NAME, rule, {
       code: `
         import { waitFor } from '@testing-library/react';  
         await waitFor(() => {
-          userEvent.keyDown(input, {key: 'ArrowDown'})
+          userEvent.click(button)
         })
       `,
       errors: [{ messageId: 'noSideEffectsWaitFor' }]
@@ -170,7 +178,7 @@ ruleTester.run(RULE_NAME, rule, {
         import { waitFor } from '@testing-library/react';  
         await waitFor(() => {
           expect(b).toEqual('b')
-          userEvent.keyDown(input, {key: 'ArrowDown'})
+          userEvent.click(button)
         })
       `,
       errors: [{ messageId: 'noSideEffectsWaitFor' }]
@@ -179,7 +187,7 @@ ruleTester.run(RULE_NAME, rule, {
       code: `
         import { waitFor } from '@testing-library/react';  
         await waitFor(() => {
-          userEvent.keyDown(input, {key: 'ArrowDown'})
+          userEvent.click(button)
           expect(b).toEqual('b')
         })
       `,
@@ -189,7 +197,7 @@ ruleTester.run(RULE_NAME, rule, {
       code: `
         import { waitFor } from '@testing-library/react';  
         await waitFor(function() {
-          userEvent.keyDown(input, {key: 'ArrowDown'})
+          userEvent.click(button)
         })
       `,
       errors: [{ messageId: 'noSideEffectsWaitFor' }]
@@ -199,7 +207,7 @@ ruleTester.run(RULE_NAME, rule, {
         import { waitFor } from '@testing-library/react';  
         await waitFor(function() {
           expect(b).toEqual('b')
-          userEvent.keyDown(input, {key: 'ArrowDown'})
+          userEvent.click(button)
         })
       `,
       errors: [{ messageId: 'noSideEffectsWaitFor' }]
@@ -208,7 +216,7 @@ ruleTester.run(RULE_NAME, rule, {
       code: `
         import { waitFor } from '@testing-library/react';  
         await waitFor(function() {
-          userEvent.keyDown(input, {key: 'ArrowDown'})
+          userEvent.click(button)
           expect(b).toEqual('b')
         })
       `,
