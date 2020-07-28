@@ -17,6 +17,7 @@ import preferUserEvent from './rules/prefer-user-event';
 import preferWaitFor from './rules/prefer-wait-for';
 import noMultipleAssertionsWaitFor from './rules/no-multiple-assertions-wait-for';
 import preferFindBy from './rules/prefer-find-by';
+import noSideEffectsWaitFor from './rules/no-side-effects-wait-for';
 import renderResultNamingConvention from './rules/render-result-naming-convention';
 
 const rules = {
@@ -32,6 +33,7 @@ const rules = {
   'no-multiple-assertions-wait-for': noMultipleAssertionsWaitFor,
   'no-node-access': noNodeAccess,
   'no-promise-in-fire-event': noPromiseInFireEvent,
+  'no-side-effects-wait-for': noSideEffectsWaitFor,
   'no-wait-for-empty-callback': noWaitForEmptyCallback,
   'prefer-explicit-assert': preferExplicitAssert,
   'prefer-find-by': preferFindBy,
