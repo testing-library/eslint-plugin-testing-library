@@ -15,9 +15,10 @@ import preferPresenceQueries from './rules/prefer-presence-queries';
 import preferScreenQueries from './rules/prefer-screen-queries';
 import preferUserEvent from './rules/prefer-user-event';
 import preferWaitFor from './rules/prefer-wait-for';
-import noMultipleAssertionsWaitFor from './rules/no-multiple-assertions-wait-for'
+import noMultipleAssertionsWaitFor from './rules/no-multiple-assertions-wait-for';
 import preferFindBy from './rules/prefer-find-by';
-import noSideEffectsWaitFor from './rules/no-side-effects-wait-for'
+import noSideEffectsWaitFor from './rules/no-side-effects-wait-for';
+import renderResultNamingConvention from './rules/render-result-naming-convention';
 
 const rules = {
   'await-async-query': awaitAsyncQuery,
@@ -40,6 +41,7 @@ const rules = {
   'prefer-screen-queries': preferScreenQueries,
   'prefer-user-event': preferUserEvent,
   'prefer-wait-for': preferWaitFor,
+  'render-result-naming-convention': renderResultNamingConvention,
 };
 
 const domRules = {
@@ -59,6 +61,7 @@ const angularRules = {
   'testing-library/no-debug': 'warn',
   'testing-library/no-dom-import': ['error', 'angular'],
   'testing-library/no-node-access': 'error',
+  'testing-library/render-result-naming-convention': 'error',
 };
 
 const reactRules = {
@@ -67,6 +70,7 @@ const reactRules = {
   'testing-library/no-debug': 'warn',
   'testing-library/no-dom-import': ['error', 'react'],
   'testing-library/no-node-access': 'error',
+  'testing-library/render-result-naming-convention': 'error',
 };
 
 const vueRules = {
@@ -76,6 +80,7 @@ const vueRules = {
   'testing-library/no-debug': 'warn',
   'testing-library/no-dom-import': ['error', 'vue'],
   'testing-library/no-node-access': 'error',
+  'testing-library/render-result-naming-convention': 'error',
 };
 
 export = {

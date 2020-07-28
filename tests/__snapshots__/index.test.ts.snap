@@ -21,6 +21,7 @@ Object {
     "testing-library/prefer-find-by": "error",
     "testing-library/prefer-screen-queries": "error",
     "testing-library/prefer-user-event": "warn",
+    "testing-library/render-result-naming-convention": "error",
   },
 }
 `;
@@ -64,6 +65,7 @@ Object {
     "testing-library/prefer-find-by": "error",
     "testing-library/prefer-screen-queries": "error",
     "testing-library/prefer-user-event": "warn",
+    "testing-library/render-result-naming-convention": "error",
   },
 }
 `;
@@ -90,6 +92,7 @@ Object {
     "testing-library/prefer-find-by": "error",
     "testing-library/prefer-screen-queries": "error",
     "testing-library/prefer-user-event": "warn",
+    "testing-library/render-result-naming-convention": "error",
   },
 }
 `;
