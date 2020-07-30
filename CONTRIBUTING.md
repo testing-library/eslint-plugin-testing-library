@@ -57,13 +57,13 @@ Based on [ESLint's Rule Naming Conventions](https://eslint.org/docs/developer-gu
 In the [same way as ESLint](https://eslint.org/docs/developer-guide/working-with-rules),
 each rule has three files named with its identifier (e.g. `no-debug`):
 
-- in the `lib/rules` directory: a source file (e.g. `no-debug.js`)
-- in the `tests/lib/rules` directory: a test file (e.g. `no-debug.js`)
+- in the `lib/rules` directory: a source file (e.g. `no-debug.ts`)
+- in the `tests/lib/rules` directory: a test file (e.g. `no-debug.ts`)
 - in the `docs/rules` directory: a Markdown documentation file (e.g. `no-debug.md`)
 
 Additionally, you need to do a couple of extra things:
 
-- Import the new rule in `lib/index.js` and include it
+- Import the new rule in `lib/index.ts` and include it
   in `rules` constant (there is a test which will make sure you did
  this). Remember to include your rule under corresponding `config` if necessary
   (a snapshot test will check this too, but you can update it just running
@@ -75,8 +75,8 @@ Additionally, you need to do a couple of extra things:
 
 A couple of things you need to remember when editing already existing rules:
 
-- If renaming a rule, make sure to update all points mentioned in
-  "Adding new rules" section.
+- If renaming a rule, make sure to update all points mentioned in the
+  "[Adding new rules"](#adding-new-rules) section.
 - Try to add tests to cover the changes introduced, no matter if that's
   a bug fix or a new feature.
 
