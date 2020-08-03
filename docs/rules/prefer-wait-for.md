@@ -23,7 +23,7 @@ const foo = async () => {
   await waitForElement(() => {});
   await waitForDomChange();
   await waitForDomChange(mutationObserverOptions);
-  await waitForDomChange({ timeout: 100});
+  await waitForDomChange({ timeout: 100 });
 };
 ```
 
