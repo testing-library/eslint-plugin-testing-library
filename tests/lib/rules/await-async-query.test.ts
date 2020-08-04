@@ -140,8 +140,8 @@ ruleTester.run(RULE_NAME, rule, {
     // async queries with rejects matchers are valid
     ...createTestCase(
       query => `
-        expect(${query}("foo")).resolves.toBe("bar")
-        expect(wrappedQuery(${query}("foo"))).resolves.toBe("bar")
+        expect(${query}("foo")).rejects.toBe("bar")
+        expect(wrappedQuery(${query}("foo"))).rejects.toBe("bar")
       `
     ),
 
