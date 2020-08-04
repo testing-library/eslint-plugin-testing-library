@@ -9,18 +9,10 @@ import {
   isAwaitExpression,
   isMemberExpression,
   isImportSpecifier,
+  isRenderFunction,
 } from '../node-utils';
 
 export const RULE_NAME = 'no-debug';
-
-function isRenderFunction(
-  callNode: TSESTree.CallExpression,
-  renderFunctions: string[]
-) {
-  return ['render', ...renderFunctions].some(
-    name => isIdentifier(callNode.callee) && name === callNode.callee.name
-  );
-}
 
 function isRenderVariableDeclarator(
   node: TSESTree.VariableDeclarator,

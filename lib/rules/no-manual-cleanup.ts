@@ -21,7 +21,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
   meta: {
     type: 'problem',
     docs: {
-      description: ' Disallow the use of `cleanup`',
+      description: 'Disallow the use of `cleanup`',
       category: 'Best Practices',
       recommended: false,
     },
@@ -121,7 +121,6 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
               messageId: 'noManualCleanup',
             });
           }
-
         } else {
           defaultRequireFromTestingLibrary = declaratorNode.id;
         }

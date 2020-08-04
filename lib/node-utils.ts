@@ -50,6 +50,15 @@ export function isVariableDeclarator(
   return node && node.type === AST_NODE_TYPES.VariableDeclarator;
 }
 
+export function isRenderFunction(
+  callNode: TSESTree.CallExpression,
+  renderFunctions: string[]
+) {
+  return ['render', ...renderFunctions].some(
+    name => isIdentifier(callNode.callee) && name === callNode.callee.name
+  );
+}
+
 export function isObjectPattern(
   node: TSESTree.Node
 ): node is TSESTree.ObjectPattern {

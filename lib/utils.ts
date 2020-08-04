@@ -63,6 +63,8 @@ const ASYNC_UTILS = [
   'waitForDomChange',
 ];
 
+const BEFORE_HOOKS = ['beforeEach', 'beforeAll'];
+
 export {
   getDocsUrl,
   SYNC_QUERIES_VARIANTS,
@@ -73,5 +75,6 @@ export {
   ASYNC_QUERIES_COMBINATIONS,
   ALL_QUERIES_COMBINATIONS,
   ASYNC_UTILS,
+  BEFORE_HOOKS,
   LIBRARY_MODULES,
 };
