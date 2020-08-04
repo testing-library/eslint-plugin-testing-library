@@ -1,5 +1,5 @@
 import { ESLintUtils, TSESTree } from '@typescript-eslint/experimental-utils';
-import { getDocsUrl } from '../utils';
+import { getDocsUrl, LIBRARY_MODULES } from '../utils';
 import {
   isVariableDeclarator,
   hasThenProperty,
@@ -7,6 +7,7 @@ import {
   isIdentifier,
   isMemberExpression,
 } from '../node-utils';
+import { ReportDescriptor } from '@typescript-eslint/experimental-utils/dist/ts-eslint';
 
 export const RULE_NAME = 'await-async-query';
 export type MessageIds = 'awaitAsyncQuery';
@@ -79,6 +80,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
       node: TSESTree.Identifier | TSESTree.MemberExpression;
       queryName: string;
     }[] = [];
+
     const isQueryUsage = (
       node: TSESTree.Identifier | TSESTree.MemberExpression
     ) =>
@@ -86,7 +88,25 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
       !isPromiseResolved(node) &&
       !hasClosestExpectResolvesRejects(node);
 
+    let hasImportedFromTestingLibraryModule = false;
+
+    function report(params: ReportDescriptor<'awaitAsyncQuery'>) {
+      if (hasImportedFromTestingLibraryModule) {
+        context.report(params);
+      }
+    }
+
     return {
+      'ImportDeclaration > ImportSpecifier,ImportNamespaceSpecifier'(
+        node: TSESTree.Node
+      ) {
+        const importDeclaration = node.parent as TSESTree.ImportDeclaration;
+        const module = importDeclaration.source.value.toString();
+
+        if (LIBRARY_MODULES.includes(module)) {
+          hasImportedFromTestingLibraryModule = true;
+        }
+      },
       [`CallExpression > Identifier[name=${ASYNC_QUERIES_REGEXP}]`](
         node: TSESTree.Identifier
       ) {
@@ -115,7 +135,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
             [];
 
           if (references && references.length === 0) {
-            context.report({
+            report({
               node,
               messageId: 'awaitAsyncQuery',
               data: {
@@ -129,7 +149,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
                 !isAwaited(referenceNode.parent) &&
                 !isPromiseResolved(referenceNode)
               ) {
-                context.report({
+                report({
                   node,
                   messageId: 'awaitAsyncQuery',
                   data: {
