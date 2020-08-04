@@ -1,15 +1,10 @@
 import { AST_NODE_TYPES, TSESTree } from '@typescript-eslint/experimental-utils';
+import { RuleContext } from '@typescript-eslint/experimental-utils/dist/ts-eslint';
 
 export function isCallExpression(
   node: TSESTree.Node
 ): node is TSESTree.CallExpression {
   return node && node.type === AST_NODE_TYPES.CallExpression;
-}
-
-export function isAwaitExpression(
-  node: TSESTree.Node
-): node is TSESTree.AwaitExpression {
-  return node && node.type === AST_NODE_TYPES.AwaitExpression;
 }
 
 export function isIdentifier(node: TSESTree.Node): node is TSESTree.Identifier {
@@ -95,6 +90,10 @@ export function findClosestCallNode(
   }
 }
 
+export function isObjectExpression(node: TSESTree.Expression): node is TSESTree.ObjectExpression {
+  return node?.type === AST_NODE_TYPES.ObjectExpression
+}
+
 export function hasThenProperty(node: TSESTree.Node) {
   return (
     isMemberExpression(node) &&
@@ -103,10 +102,36 @@ export function hasThenProperty(node: TSESTree.Node) {
   );
 }
 
+export function isAwaitExpression(
+  node: TSESTree.Node
+): node is TSESTree.AwaitExpression {
+  return node && node.type === AST_NODE_TYPES.AwaitExpression;
+}
+
 export function isArrowFunctionExpression(node: TSESTree.Node): node is TSESTree.ArrowFunctionExpression {
   return node && node.type === AST_NODE_TYPES.ArrowFunctionExpression
 }
 
-export function isObjectExpression(node: TSESTree.Expression): node is TSESTree.ObjectExpression {
-  return node?.type === AST_NODE_TYPES.ObjectExpression
+export function isReturnStatement(node: TSESTree.Node): node is TSESTree.ReturnStatement {
+  return node && node.type === AST_NODE_TYPES.ReturnStatement
+}
+
+export function isAwaited(node: TSESTree.Node) {
+  return isAwaitExpression(node) || isArrowFunctionExpression(node) || isReturnStatement(node)
+}
+
+export function isPromiseResolved(node: TSESTree.Node) {
+  const parent = node.parent;
+
+  // wait(...).then(...)
+  if (isCallExpression(parent)) {
+    return hasThenProperty(parent.parent);
+  }
+
+  // promise.then(...)
+  return hasThenProperty(parent);
+}
+
+export function getVariableReferences(context: RuleContext<string, []>, node: TSESTree.Node) {
+  return (isVariableDeclarator(node) && context.getDeclaredVariables(node)[0].references.slice(1)) || [];
 }

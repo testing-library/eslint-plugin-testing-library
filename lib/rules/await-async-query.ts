@@ -1,11 +1,12 @@
 import { ESLintUtils, TSESTree } from '@typescript-eslint/experimental-utils';
 import { getDocsUrl, LIBRARY_MODULES } from '../utils';
 import {
-  isVariableDeclarator,
-  hasThenProperty,
   isCallExpression,
   isIdentifier,
   isMemberExpression,
+  isAwaited,
+  isPromiseResolved,
+  getVariableReferences,
 } from '../node-utils';
 import { ReportDescriptor } from '@typescript-eslint/experimental-utils/dist/ts-eslint';
 
@@ -13,29 +14,7 @@ export const RULE_NAME = 'await-async-query';
 export type MessageIds = 'awaitAsyncQuery';
 type Options = [];
 
-const VALID_PARENTS = [
-  'AwaitExpression',
-  'ArrowFunctionExpression',
-  'ReturnStatement',
-];
-
 const ASYNC_QUERIES_REGEXP = /^find(All)?By(LabelText|PlaceholderText|Text|AltText|Title|DisplayValue|Role|TestId)$/;
-
-function isAwaited(node: TSESTree.Node) {
-  return VALID_PARENTS.includes(node.type);
-}
-
-function isPromiseResolved(node: TSESTree.Node) {
-  const parent = node.parent;
-
-  // findByText("foo").then(...)
-  if (isCallExpression(parent)) {
-    return hasThenProperty(parent.parent);
-  }
-
-  // promise.then(...)
-  return hasThenProperty(parent);
-}
 
 function hasClosestExpectResolvesRejects(node: TSESTree.Node): boolean {
   if (!node.parent) {
@@ -125,14 +104,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
       },
       'Program:exit'() {
         testingLibraryQueryUsage.forEach(({ node, queryName }) => {
-          const variableDeclaratorParent = node.parent.parent;
-
-          const references =
-            (isVariableDeclarator(variableDeclaratorParent) &&
-              context
-                .getDeclaredVariables(variableDeclaratorParent)[0]
-                .references.slice(1)) ||
-            [];
+          const references = getVariableReferences(context, node.parent.parent);
 
           if (references && references.length === 0) {
             report({

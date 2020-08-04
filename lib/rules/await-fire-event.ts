@@ -1,28 +1,10 @@
 import { ESLintUtils, TSESTree } from '@typescript-eslint/experimental-utils';
 import { getDocsUrl } from '../utils';
-import { isIdentifier, isCallExpression, hasThenProperty } from '../node-utils';
+import { isIdentifier, isAwaited, isPromiseResolved } from '../node-utils';
 
 export const RULE_NAME = 'await-fire-event';
 export type MessageIds = 'awaitFireEvent';
 type Options = [];
-
-const VALID_PARENTS = [
-  'AwaitExpression',
-  'ArrowFunctionExpression',
-  'ReturnStatement',
-];
-
-function isAwaited(node: TSESTree.Node) {
-  return VALID_PARENTS.includes(node.type);
-}
-
-function isPromiseResolved(node: TSESTree.Node) {
-  const parent = node.parent.parent;
-
-  // fireEvent.click().then(...)
-  return isCallExpression(parent) && hasThenProperty(parent.parent);
-}
-
 export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
   name: RULE_NAME,
   meta: {
@@ -51,7 +33,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
         if (
           isIdentifier(fireEventMethodNode) &&
           !isAwaited(node.parent.parent.parent) &&
-          !isPromiseResolved(fireEventMethodNode)
+          !isPromiseResolved(fireEventMethodNode.parent)
         ) {
           context.report({
             node: fireEventMethodNode,
