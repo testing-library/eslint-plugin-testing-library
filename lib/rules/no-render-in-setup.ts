@@ -1,5 +1,5 @@
 import { ESLintUtils, TSESTree } from '@typescript-eslint/experimental-utils';
-import { getDocsUrl, BEFORE_HOOKS } from '../utils';
+import { getDocsUrl, TESTING_FRAMEWORK_SETUP_HOOKS } from '../utils';
 import {
   isIdentifier,
   isCallExpression,
@@ -10,18 +10,19 @@ export const RULE_NAME = 'no-render-in-setup';
 export type MessageIds = 'noRenderInSetup';
 
 export function findClosestBeforeHook(
-  node: TSESTree.Node
+  node: TSESTree.Node,
+  testingFrameworkSetupHooksToFilter: string[]
 ): TSESTree.Identifier | null {
   if (node === null) return null;
   if (
     isCallExpression(node) &&
     isIdentifier(node.callee) &&
-    BEFORE_HOOKS.includes(node.callee.name)
+    testingFrameworkSetupHooksToFilter.includes(node.callee.name)
   ) {
     return node.callee;
   }
 
-  return findClosestBeforeHook(node.parent);
+  return findClosestBeforeHook(node.parent, testingFrameworkSetupHooksToFilter);
 }
 
 export default ESLintUtils.RuleCreator(getDocsUrl)({
@@ -35,7 +36,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)({
     },
     messages: {
       noRenderInSetup:
-        'Combine assertions into a single test instead of re-rendering the component.',
+        'Move `render` out of `{{name}}` and into individual tests.',
     },
     fixable: null,
     schema: [
@@ -45,20 +46,41 @@ export default ESLintUtils.RuleCreator(getDocsUrl)({
           renderFunctions: {
             type: 'array',
           },
+          allowTestingFrameworkSetupHook: {
+            enum: TESTING_FRAMEWORK_SETUP_HOOKS,
+          },
         },
+        anyOf: [
+          {
+            required: ['renderFunctions'],
+          },
+          {
+            required: ['allowTestingFrameworkSetupHook'],
+          },
+        ],
       },
     ],
   },
   defaultOptions: [
     {
       renderFunctions: [],
+      allowTestingFrameworkSetupHook: '',
     },
   ],
 
-  create(context, [{ renderFunctions }]) {
+  create(context, [{ renderFunctions, allowTestingFrameworkSetupHook }]) {
     return {
       CallExpression(node) {
-        const beforeHook = findClosestBeforeHook(node);
+        let testingFrameworkSetupHooksToFilter = TESTING_FRAMEWORK_SETUP_HOOKS;
+        if (allowTestingFrameworkSetupHook.length !== 0) {
+          testingFrameworkSetupHooksToFilter = TESTING_FRAMEWORK_SETUP_HOOKS.filter(
+            hook => hook !== allowTestingFrameworkSetupHook
+          );
+        }
+        const beforeHook = findClosestBeforeHook(
+          node,
+          testingFrameworkSetupHooksToFilter
+        );
         if (isRenderFunction(node, renderFunctions) && beforeHook) {
           context.report({
             node,

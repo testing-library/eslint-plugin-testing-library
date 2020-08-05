@@ -1,5 +1,5 @@
 import { createRuleTester } from '../test-utils';
-import { BEFORE_HOOKS } from '../../../lib/utils';
+import { TESTING_FRAMEWORK_SETUP_HOOKS } from '../../../lib/utils';
 import rule, { RULE_NAME } from '../../../lib/rules/no-render-in-setup';
 
 const ruleTester = createRuleTester({
@@ -17,12 +17,28 @@ ruleTester.run(RULE_NAME, rule, {
         })
       `,
     },
+    ...TESTING_FRAMEWORK_SETUP_HOOKS.map(setupHook => ({
+      code: `
+        ${setupHook}(() => {
+          const wrapper = () => {
+            renderWithRedux(<Component/>)
+          }
+          wrapper();
+        })
+      `,
+      options: [
+        {
+          allowTestingFrameworkSetupHook: setupHook,
+          renderFunctions: ['renderWithRedux'],
+        },
+      ],
+    })),
   ],
 
   invalid: [
-    ...BEFORE_HOOKS.map(beforeHook => ({
+    ...TESTING_FRAMEWORK_SETUP_HOOKS.map(setupHook => ({
       code: `
-        ${beforeHook}(() => {
+        ${setupHook}(() => {
           render(<Component/>)
         })
       `,
@@ -32,9 +48,9 @@ ruleTester.run(RULE_NAME, rule, {
         },
       ],
     })),
-    ...BEFORE_HOOKS.map(beforeHook => ({
+    ...TESTING_FRAMEWORK_SETUP_HOOKS.map(setupHook => ({
       code: `
-        ${beforeHook}(function() {
+        ${setupHook}(function() {
           render(<Component/>)
         })
       `,
@@ -45,9 +61,9 @@ ruleTester.run(RULE_NAME, rule, {
       ],
     })),
     // custom render function
-    ...BEFORE_HOOKS.map(beforeHook => ({
+    ...TESTING_FRAMEWORK_SETUP_HOOKS.map(setupHook => ({
       code: `
-        ${beforeHook}(() => {
+        ${setupHook}(() => {
           renderWithRedux(<Component/>)
         })
       `,
@@ -63,9 +79,9 @@ ruleTester.run(RULE_NAME, rule, {
       ],
     })),
     // call render within a wrapper function
-    ...BEFORE_HOOKS.map(beforeHook => ({
+    ...TESTING_FRAMEWORK_SETUP_HOOKS.map(setupHook => ({
       code: `
-        ${beforeHook}(() => {
+        ${setupHook}(() => {
           const wrapper = () => {
             render(<Component/>)
           }
@@ -78,5 +94,30 @@ ruleTester.run(RULE_NAME, rule, {
         },
       ],
     })),
+    ...TESTING_FRAMEWORK_SETUP_HOOKS.map(allowedSetupHook => {
+      const [disallowedHook] = TESTING_FRAMEWORK_SETUP_HOOKS.filter(
+        setupHook => setupHook !== allowedSetupHook
+      );
+      return {
+        code: `
+        ${disallowedHook}(() => {
+          const wrapper = () => {
+            render(<Component/>)
+          }
+          wrapper();
+        })
+      `,
+        options: [
+          {
+            allowTestingFrameworkSetupHook: allowedSetupHook,
+          },
+        ],
+        errors: [
+          {
+            messageId: 'noRenderInSetup',
+          },
+        ],
+      };
+    }),
   ],
 });
