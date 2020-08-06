@@ -54,9 +54,16 @@ export function isRenderFunction(
   callNode: TSESTree.CallExpression,
   renderFunctions: string[]
 ) {
-  return ['render', ...renderFunctions].some(
-    name => isIdentifier(callNode.callee) && name === callNode.callee.name
-  );
+  // returns true for `render` and e.g. `customRenderFn`
+  // as well as `someLib.render` and `someUtils.customRenderFn`
+  return ['render', ...renderFunctions].some(name => {
+    return (
+      (isIdentifier(callNode.callee) && name === callNode.callee.name) ||
+      (isMemberExpression(callNode.callee) &&
+        isIdentifier(callNode.callee.property) &&
+        name === callNode.callee.property.name)
+    );
+  });
 }
 
 export function isObjectPattern(
