@@ -12,6 +12,7 @@ ruleTester.run(RULE_NAME, rule, {
   valid: [
     {
       code: `
+        import { render } from '@testing-library/foo';
         it('Test', () => {
           render(<Component/>)
         })
@@ -20,6 +21,7 @@ ruleTester.run(RULE_NAME, rule, {
     // test config options
     ...TESTING_FRAMEWORK_SETUP_HOOKS.map(setupHook => ({
       code: `
+        import { renderWithRedux } from '../test-utils';
         ${setupHook}(() => {
           renderWithRedux(<Component/>)
         })
@@ -31,19 +33,44 @@ ruleTester.run(RULE_NAME, rule, {
         },
       ],
     })),
-    // // test usage of a non-Testing Library render fn
-    // ...TESTING_FRAMEWORK_SETUP_HOOKS.map(setupHook => ({
-    //   code: `import { render } from 'imNoTestingLibrary';
-
-    //   ${setupHook}(() => {
-    //     render(<Component/>)
-    //   })`,
-    // })),
+    // test usage of a non-Testing Library render fn
+    ...TESTING_FRAMEWORK_SETUP_HOOKS.map(setupHook => ({
+      code: `
+        import { render } from 'imNoTestingLibrary';
+        ${setupHook}(() => {
+          render(<Component/>)
+        })
+      `,
+    })),
+    ...TESTING_FRAMEWORK_SETUP_HOOKS.map(allowedSetupHook => {
+      const [disallowedHook] = TESTING_FRAMEWORK_SETUP_HOOKS.filter(
+        setupHook => setupHook !== allowedSetupHook
+      );
+      return {
+        code: `
+          import utils from 'imNoTestingLibrary';
+          import { renderWithRedux } from '../test-utils';
+          ${allowedSetupHook}(() => {
+            renderWithRedux(<Component/>)
+          })
+          ${disallowedHook}(() => {
+            utils.render(<Component/>)
+          })
+        `,
+        options: [
+          {
+            allowTestingFrameworkSetupHook: allowedSetupHook,
+            renderFunctions: ['renderWithRedux'],
+          },
+        ],
+      };
+    }),
   ],
 
   invalid: [
     ...TESTING_FRAMEWORK_SETUP_HOOKS.map(setupHook => ({
       code: `
+        import { render } from '@testing-library/foo';
         ${setupHook}(() => {
           render(<Component/>)
         })
@@ -56,6 +83,7 @@ ruleTester.run(RULE_NAME, rule, {
     })),
     ...TESTING_FRAMEWORK_SETUP_HOOKS.map(setupHook => ({
       code: `
+        import { render } from '@testing-library/foo';
         ${setupHook}(function() {
           render(<Component/>)
         })
@@ -69,6 +97,7 @@ ruleTester.run(RULE_NAME, rule, {
     // custom render function
     ...TESTING_FRAMEWORK_SETUP_HOOKS.map(setupHook => ({
       code: `
+        import { renderWithRedux } from '../test-utils';
         ${setupHook}(() => {
           renderWithRedux(<Component/>)
         })
@@ -87,6 +116,7 @@ ruleTester.run(RULE_NAME, rule, {
     // call render within a wrapper function
     ...TESTING_FRAMEWORK_SETUP_HOOKS.map(setupHook => ({
       code: `
+      import { render } from '@testing-library/foo';
         ${setupHook}(() => {
           const wrapper = () => {
             render(<Component/>)
@@ -106,10 +136,11 @@ ruleTester.run(RULE_NAME, rule, {
       );
       return {
         code: `
-        ${disallowedHook}(() => {
-          render(<Component/>)
-        })
-      `,
+          import { render } from '@testing-library/foo';
+          ${disallowedHook}(() => {
+            render(<Component/>)
+          })
+        `,
         options: [
           {
             allowTestingFrameworkSetupHook: allowedSetupHook,
@@ -123,11 +154,12 @@ ruleTester.run(RULE_NAME, rule, {
       };
     }),
     ...TESTING_FRAMEWORK_SETUP_HOOKS.map(setupHook => ({
-      code: `import { render } from '@testing-library/foo';
-
-      ${setupHook}(() => {
-        render(<Component/>)
-      })`,
+      code: `
+        import * as testingLibrary from '@testing-library/foo';
+        ${setupHook}(() => {
+          testingLibrary.render(<Component/>)
+        })
+      `,
       errors: [
         {
           messageId: 'noRenderInSetup',
@@ -135,34 +167,35 @@ ruleTester.run(RULE_NAME, rule, {
       ],
     })),
     ...TESTING_FRAMEWORK_SETUP_HOOKS.map(setupHook => ({
-      code: `import * as testingLibrary from '@testing-library/foo';
-
-      ${setupHook}(() => {
-        testingLibrary.render(<Component/>)
-      })`,
-      errors: [
-        {
-          messageId: 'noRenderInSetup',
-        },
-      ],
-    })),
-    ...TESTING_FRAMEWORK_SETUP_HOOKS.map(setupHook => ({
-      code: `import { render } from 'imNoTestingLibrary';
-      import * as testUtils from '../utils';
-
-      ${setupHook}(() => {
-        testUtils.renderWithRedux(<Component/>)
-      })
-
-      it('Test', () => {
-        render(<Component/>)
-      })
+      code: `
+        import { render } from 'imNoTestingLibrary';
+        import * as testUtils from '../test-utils';
+        ${setupHook}(() => {
+          testUtils.renderWithRedux(<Component/>)
+        })
+        it('Test', () => {
+          render(<Component/>)
+        })
       `,
       options: [
         {
           renderFunctions: ['renderWithRedux'],
         },
       ],
+      errors: [
+        {
+          messageId: 'noRenderInSetup',
+        },
+      ],
+    })),
+    ...TESTING_FRAMEWORK_SETUP_HOOKS.map(setupHook => ({
+      code: `
+        const { render } = require('@testing-library/foo')
+
+        ${setupHook}(() => {
+          render(<Component/>)
+        })
+      `,
       errors: [
         {
           messageId: 'noRenderInSetup',

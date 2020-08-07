@@ -56,7 +56,7 @@ export function isRenderFunction(
 ) {
   // returns true for `render` and e.g. `customRenderFn`
   // as well as `someLib.render` and `someUtils.customRenderFn`
-  return ['render', ...renderFunctions].some(name => {
+  return renderFunctions.some(name => {
     return (
       (isIdentifier(callNode.callee) && name === callNode.callee.name) ||
       (isMemberExpression(callNode.callee) &&

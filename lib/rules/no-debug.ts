@@ -22,15 +22,15 @@ function isRenderVariableDeclarator(
     if (isAwaitExpression(node.init)) {
       return (
         node.init.argument &&
-        isRenderFunction(
-          node.init.argument as TSESTree.CallExpression,
-          renderFunctions
-        )
+        isRenderFunction(node.init.argument as TSESTree.CallExpression, [
+          'render',
+          ...renderFunctions,
+        ])
       );
     } else {
       return (
         isCallExpression(node.init) &&
-        isRenderFunction(node.init, renderFunctions)
+        isRenderFunction(node.init, ['render', ...renderFunctions])
       );
     }
   }
