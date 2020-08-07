@@ -97,15 +97,16 @@ export default ESLintUtils.RuleCreator(getDocsUrl)({
       [`VariableDeclarator > CallExpression > Identifier[name="require"]`](
         node: TSESTree.Identifier
       ) {
-        if (!isCallExpression(node.parent)) return;
-        const { arguments: callExpressionArgs } = node.parent;
-        const literalNodeScreenModuleName = callExpressionArgs.find(
+        const {
+          arguments: callExpressionArgs,
+        } = node.parent as TSESTree.CallExpression;
+        const testingLibImport = callExpressionArgs.find(
           args =>
             isLiteral(args) &&
             typeof args.value === 'string' &&
             RegExp(/testing-library/, 'g').test(args.value)
         );
-        if (!literalNodeScreenModuleName) {
+        if (!testingLibImport) {
           return;
         }
         const declaratorNode = node.parent

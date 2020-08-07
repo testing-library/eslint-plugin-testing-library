@@ -65,6 +65,20 @@ ruleTester.run(RULE_NAME, rule, {
         ],
       };
     }),
+    ...TESTING_FRAMEWORK_SETUP_HOOKS.map(setupHook => ({
+      code: `
+        const { render } = require('imNoTestingLibrary')
+
+        ${setupHook}(() => {
+          render(<Component/>)
+        })
+      `,
+      errors: [
+        {
+          messageId: 'noRenderInSetup',
+        },
+      ],
+    })),
   ],
 
   invalid: [
