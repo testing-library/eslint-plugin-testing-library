@@ -24,10 +24,10 @@ const baz = props => <div>...</div>;
 
 ## Options
 
-| Option            | Required | Default       | Details                                                                                                                                                                                                                                                       | Example                                |
-| ----------------- | -------- | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------- |
-| `testIdPattern`   | Yes      | None          | A regex used to validate the format of the `data-testid` value. `{fileName}` can optionally be used as a placeholder and will be substituted with the name of the file OR the name of the files parent directory in the case when the file name is `index.js` | `^{fileName}(\_\_([A-Z]+[a-z]_?)+)_\$` |
-| `testIdAttribute` | No       | `data-testid` | A string used to specify the attribute used for querying by ID. This is only required if data-testid has been explicitly overridden in the [RTL configuration](https://testing-library.com/docs/dom-testing-library/api-queries#overriding-data-testid)       | `data-my-test-attribute`               |
+| Option            | Required | Default       | Details                                                                                                                                                                                                                                                                       | Example                                               |
+| ----------------- | -------- | ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------- |
+| `testIdPattern`   | Yes      | None          | A regex used to validate the format of the `data-testid` value. `{fileName}` can optionally be used as a placeholder and will be substituted with the name of the file OR the name of the files parent directory in the case when the file name is `index.js`                 | `^{fileName}(\_\_([A-Z]+[a-z]_?)+)_\$`                |
+| `testIdAttribute` | No       | `data-testid` | A string (or array of strings) used to specify the attribute used for querying by ID. This is only required if data-testid has been explicitly overridden in the [RTL configuration](https://testing-library.com/docs/dom-testing-library/api-queries#overriding-data-testid) | `data-my-test-attribute`, `["data-testid", "testId"]` |
 
 ## Example
 
@@ -37,6 +37,17 @@ const baz = props => <div>...</div>;
     2,
     {
       "testIdPattern": "^TestId(__[A-Z]*)?$"
+    }
+  ]
+}
+```
+
+```json
+{
+  "testing-library/consistent-data-testid": [
+    2,
+    {
+      "testIdAttribute": ["data-testid", "testId"]
     }
   ]
 }
