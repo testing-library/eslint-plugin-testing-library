@@ -45,6 +45,22 @@ export function isVariableDeclarator(
   return node && node.type === AST_NODE_TYPES.VariableDeclarator;
 }
 
+export function isRenderFunction(
+  callNode: TSESTree.CallExpression,
+  renderFunctions: string[]
+) {
+  // returns true for `render` and e.g. `customRenderFn`
+  // as well as `someLib.render` and `someUtils.customRenderFn`
+  return renderFunctions.some(name => {
+    return (
+      (isIdentifier(callNode.callee) && name === callNode.callee.name) ||
+      (isMemberExpression(callNode.callee) &&
+        isIdentifier(callNode.callee.property) &&
+        name === callNode.callee.property.name)
+    );
+  });
+}
+
 export function isObjectPattern(
   node: TSESTree.Node
 ): node is TSESTree.ObjectPattern {

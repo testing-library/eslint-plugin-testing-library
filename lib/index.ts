@@ -6,6 +6,7 @@ import noAwaitSyncQuery from './rules/no-await-sync-query';
 import noDebug from './rules/no-debug';
 import noDomImport from './rules/no-dom-import';
 import noManualCleanup from './rules/no-manual-cleanup';
+import noRenderInSetup from './rules/no-render-in-setup';
 import noWaitForEmptyCallback from './rules/no-wait-for-empty-callback';
 import preferExplicitAssert from './rules/prefer-explicit-assert';
 import preferPresenceQueries from './rules/prefer-presence-queries';
@@ -22,6 +23,7 @@ const rules = {
   'no-debug': noDebug,
   'no-dom-import': noDomImport,
   'no-manual-cleanup': noManualCleanup,
+  'no-render-in-setup': noRenderInSetup,
   'no-wait-for-empty-callback': noWaitForEmptyCallback,
   'prefer-explicit-assert': preferExplicitAssert,
   'prefer-find-by': preferFindBy,

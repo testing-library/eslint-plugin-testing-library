@@ -9,18 +9,10 @@ import {
   isAwaitExpression,
   isMemberExpression,
   isImportSpecifier,
+  isRenderFunction,
 } from '../node-utils';
 
 export const RULE_NAME = 'no-debug';
-
-function isRenderFunction(
-  callNode: TSESTree.CallExpression,
-  renderFunctions: string[]
-) {
-  return ['render', ...renderFunctions].some(
-    name => isIdentifier(callNode.callee) && name === callNode.callee.name
-  );
-}
 
 function isRenderVariableDeclarator(
   node: TSESTree.VariableDeclarator,
@@ -30,15 +22,15 @@ function isRenderVariableDeclarator(
     if (isAwaitExpression(node.init)) {
       return (
         node.init.argument &&
-        isRenderFunction(
-          node.init.argument as TSESTree.CallExpression,
-          renderFunctions
-        )
+        isRenderFunction(node.init.argument as TSESTree.CallExpression, [
+          'render',
+          ...renderFunctions,
+        ])
       );
     } else {
       return (
         isCallExpression(node.init) &&
-        isRenderFunction(node.init, renderFunctions)
+        isRenderFunction(node.init, ['render', ...renderFunctions])
       );
     }
   }
