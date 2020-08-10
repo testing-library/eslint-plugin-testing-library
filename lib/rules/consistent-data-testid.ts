@@ -7,7 +7,7 @@ export type MessageIds = 'invalidTestId';
 type Options = [
   {
     testIdPattern: string;
-    testIdAttribute: string;
+    testIdAttribute?: string | string[];
   }
 ];
 
@@ -37,8 +37,18 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
             type: 'string',
           },
           testIdAttribute: {
-            type: 'string',
             default: 'data-testid',
+            oneOf: [
+              {
+                type: 'string',
+              },
+              {
+                type: 'array',
+                items: {
+                  type: 'string',
+                },
+              },
+            ],
           },
         },
       },
@@ -70,9 +80,21 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
       return new RegExp(testIdPattern.replace(FILENAME_PLACEHOLDER, fileName));
     }
 
+    function isTestIdAttribute(name: string) {
+      if (typeof attr === 'string') {
+        return attr === name;
+      } else {
+        return attr.includes(name);
+      }
+    }
+
     return {
-      [`JSXIdentifier[name=${attr}]`]: (node: TSESTree.JSXIdentifier) => {
-        if (!isJSXAttribute(node.parent) || !isLiteral(node.parent.value)) {
+      [`JSXIdentifier`]: (node: TSESTree.JSXIdentifier) => {
+        if (
+          !isJSXAttribute(node.parent) ||
+          !isLiteral(node.parent.value) ||
+          !isTestIdAttribute(node.name)
+        ) {
           return;
         }
 
@@ -85,7 +107,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
             node,
             messageId: 'invalidTestId',
             data: {
-              attr,
+              attr: node.name,
               value,
               regex,
             },

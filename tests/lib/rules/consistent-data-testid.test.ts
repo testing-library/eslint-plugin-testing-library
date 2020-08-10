@@ -138,6 +138,25 @@ ruleTester.run(RULE_NAME, rule, {
             
             const TestComponent = props => {
               return (
+                <div another-custom-attr="right-1" custom-attr="right-2">
+                  Hello
+                </div>
+              )
+            };
+          `,
+      options: [
+        {
+          testIdPattern: '^right(.*)$',
+          testIdAttribute: ['custom-attr', 'another-custom-attr'],
+        },
+      ],
+    },
+    {
+      code: `
+            import React from 'react';
+            
+            const TestComponent = props => {
+              return (
                 <div data-test-id="Parent">
                   Hello
                 </div>
@@ -248,6 +267,44 @@ ruleTester.run(RULE_NAME, rule, {
             attr: 'my-custom-attr',
             value: 'WrongComponent__cool',
             regex: '/^Parent(__([A-Z]+[a-z]*?)+)*$/',
+          },
+        },
+      ],
+    },
+    {
+      code: `
+            import React from 'react';
+            
+            const TestComponent = props => {
+              return (
+                <div custom-attr="wrong" another-custom-attr="wrong">
+                  Hello
+                </div>
+              )
+            };
+          `,
+      options: [
+        {
+          testIdPattern: '^right$',
+          testIdAttribute: ['custom-attr', 'another-custom-attr'],
+        },
+      ],
+      filename: '/my/cool/__tests__/Parent/index.js',
+      errors: [
+        {
+          messageId: 'invalidTestId',
+          data: {
+            attr: 'custom-attr',
+            value: 'wrong',
+            regex: '/^right$/',
+          },
+        },
+        {
+          messageId: 'invalidTestId',
+          data: {
+            attr: 'another-custom-attr',
+            value: 'wrong',
+            regex: '/^right$/',
           },
         },
       ],
