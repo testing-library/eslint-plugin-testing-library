@@ -33,12 +33,15 @@ function findRenderDefinitionDeclaration(
     return null;
   }
 
-  const variable = scope.variables.find((v: Scope.Variable) => query === v.name);
+  const variable = scope.variables.find(
+    (v: Scope.Variable) => query === v.name
+  );
 
   if (variable) {
     const def = variable.defs.find(({ name }) => name.name === query);
     return def.name;
   }
+  const unused = 2;
 
   return findRenderDefinitionDeclaration(scope.upper, query);
 }
