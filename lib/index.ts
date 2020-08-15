@@ -8,6 +8,7 @@ import noDebug from './rules/no-debug';
 import noDomImport from './rules/no-dom-import';
 import noManualCleanup from './rules/no-manual-cleanup';
 import noNodeAccess from './rules/no-node-access';
+import noRenderInSetup from './rules/no-render-in-setup';
 import noWaitForEmptyCallback from './rules/no-wait-for-empty-callback';
 import noPromiseInFireEvent from './rules/no-promise-in-fire-event';
 import preferExplicitAssert from './rules/prefer-explicit-assert';
@@ -33,6 +34,7 @@ const rules = {
   'no-multiple-assertions-wait-for': noMultipleAssertionsWaitFor,
   'no-node-access': noNodeAccess,
   'no-promise-in-fire-event': noPromiseInFireEvent,
+  'no-render-in-setup': noRenderInSetup,
   'no-side-effects-wait-for': noSideEffectsWaitFor,
   'no-wait-for-empty-callback': noWaitForEmptyCallback,
   'prefer-explicit-assert': preferExplicitAssert,

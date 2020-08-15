@@ -76,7 +76,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)({
 
     return {
       VariableDeclarator(node) {
-        if (isRenderVariableDeclarator(node, renderFunctions)) {
+        if (isRenderVariableDeclarator(node, ['render', ...renderFunctions])) {
           if (isObjectPattern(node.id)) {
             const containerIndex = node.id.properties.findIndex(
               property =>

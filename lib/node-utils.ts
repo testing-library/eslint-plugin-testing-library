@@ -1,15 +1,10 @@
-import { TSESTree } from '@typescript-eslint/experimental-utils';
+import { AST_NODE_TYPES, TSESTree } from '@typescript-eslint/experimental-utils';
+import { RuleContext } from '@typescript-eslint/experimental-utils/dist/ts-eslint';
 
 export function isCallExpression(
   node: TSESTree.Node
 ): node is TSESTree.CallExpression {
-  return node && node.type === 'CallExpression';
-}
-
-export function isAwaitExpression(
-  node: TSESTree.Node
-): node is TSESTree.AwaitExpression {
-  return node && node.type === 'AwaitExpression';
+  return node && node.type === AST_NODE_TYPES.CallExpression;
 }
 
 export function isNewExpression(
@@ -19,57 +14,57 @@ export function isNewExpression(
 }
 
 export function isIdentifier(node: TSESTree.Node): node is TSESTree.Identifier {
-  return node && node.type === 'Identifier';
+  return node && node.type === AST_NODE_TYPES.Identifier;
 }
 
 export function isMemberExpression(
   node: TSESTree.Node
 ): node is TSESTree.MemberExpression {
-  return node && node.type === 'MemberExpression';
+  return node && node.type === AST_NODE_TYPES.MemberExpression;
 }
 
 export function isLiteral(node: TSESTree.Node): node is TSESTree.Literal {
-  return node && node.type === 'Literal';
+  return node && node.type === AST_NODE_TYPES.Literal;
 }
 
 export function isImportSpecifier(
   node: TSESTree.Node
 ): node is TSESTree.ImportSpecifier {
-  return node && node.type === 'ImportSpecifier';
+  return node && node.type === AST_NODE_TYPES.ImportSpecifier;
 }
 
 export function isImportDefaultSpecifier(
   node: TSESTree.Node
 ): node is TSESTree.ImportDefaultSpecifier {
-  return node && node.type === 'ImportDefaultSpecifier';
+  return node && node.type === AST_NODE_TYPES.ImportDefaultSpecifier;
 }
 
 export function isBlockStatement(
   node: TSESTree.Node
 ): node is TSESTree.BlockStatement {
-  return node && node.type === 'BlockStatement';
+  return node && node.type === AST_NODE_TYPES.BlockStatement;
 }
 
 export function isVariableDeclarator(
   node: TSESTree.Node
 ): node is TSESTree.VariableDeclarator {
-  return node && node.type === 'VariableDeclarator';
+  return node && node.type === AST_NODE_TYPES.VariableDeclarator;
 }
 
 export function isObjectPattern(
   node: TSESTree.Node
 ): node is TSESTree.ObjectPattern {
-  return node && node.type === 'ObjectPattern';
+  return node && node.type === AST_NODE_TYPES.ObjectPattern;
 }
 
 export function isProperty(node: TSESTree.Node): node is TSESTree.Property {
-  return node && node.type === 'Property';
+  return node && node.type === AST_NODE_TYPES.Property;
 }
 
 export function isJSXAttribute(
   node: TSESTree.Node
 ): node is TSESTree.JSXAttribute {
-  return node && node.type === 'JSXAttribute';
+  return node && node.type === AST_NODE_TYPES.JSXAttribute;
 }
 
 export function findClosestCallExpressionNode(
@@ -101,6 +96,10 @@ export function findClosestCallNode(
   }
 }
 
+export function isObjectExpression(node: TSESTree.Expression): node is TSESTree.ObjectExpression {
+  return node?.type === AST_NODE_TYPES.ObjectExpression
+}
+
 export function hasThenProperty(node: TSESTree.Node) {
   return (
     isMemberExpression(node) &&
@@ -109,19 +108,54 @@ export function hasThenProperty(node: TSESTree.Node) {
   );
 }
 
-export function isArrowFunctionExpression(
+export function isAwaitExpression(
   node: TSESTree.Node
-): node is TSESTree.ArrowFunctionExpression {
-  return node && node.type === 'ArrowFunctionExpression';
+): node is TSESTree.AwaitExpression {
+  return node && node.type === AST_NODE_TYPES.AwaitExpression;
 }
 
-function isRenderFunction(
+export function isArrowFunctionExpression(node: TSESTree.Node): node is TSESTree.ArrowFunctionExpression {
+  return node && node.type === AST_NODE_TYPES.ArrowFunctionExpression
+}
+
+export function isReturnStatement(node: TSESTree.Node): node is TSESTree.ReturnStatement {
+  return node && node.type === AST_NODE_TYPES.ReturnStatement
+}
+
+export function isAwaited(node: TSESTree.Node) {
+  return isAwaitExpression(node) || isArrowFunctionExpression(node) || isReturnStatement(node)
+}
+
+export function isPromiseResolved(node: TSESTree.Node) {
+  const parent = node.parent;
+
+  // wait(...).then(...)
+  if (isCallExpression(parent)) {
+    return hasThenProperty(parent.parent);
+  }
+
+  // promise.then(...)
+  return hasThenProperty(parent);
+}
+
+export function getVariableReferences(context: RuleContext<string, []>, node: TSESTree.Node) {
+  return (isVariableDeclarator(node) && context.getDeclaredVariables(node)[0].references.slice(1)) || [];
+}
+
+export function isRenderFunction(
   callNode: TSESTree.CallExpression,
   renderFunctions: string[]
 ) {
-  return ['render', ...renderFunctions].some(
-    name => isIdentifier(callNode.callee) && name === callNode.callee.name
-  );
+  // returns true for `render` and e.g. `customRenderFn`
+  // as well as `someLib.render` and `someUtils.customRenderFn`
+  return renderFunctions.some(name => {
+    return (
+      (isIdentifier(callNode.callee) && name === callNode.callee.name) ||
+      (isMemberExpression(callNode.callee) &&
+        isIdentifier(callNode.callee.property) &&
+        name === callNode.callee.property.name)
+    );
+  });
 }
 
 export function isRenderVariableDeclarator(

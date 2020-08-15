@@ -35,6 +35,7 @@
     "test:update": "npm run test:local -- --u",
     "test:watch": "npm run test:local -- --watch",
     "test": "is-ci test:ci test:local",
+    "type-check": "tsc --noEmit",
     "semantic-release": "semantic-release"
   },
   "dependencies": {

@@ -6,13 +6,20 @@ import {
   isCallExpression,
   isProperty,
   isIdentifier,
+  isObjectExpression,
 } from '../node-utils';
 
 export const RULE_NAME = 'prefer-screen-queries';
 export type MessageIds = 'preferScreenQueries';
 type Options = [];
 
+const ALLOWED_RENDER_PROPERTIES_FOR_DESTRUCTURING = ['container', 'baseElement']
 const ALL_QUERIES_COMBINATIONS_REGEXP = ALL_QUERIES_COMBINATIONS.join('|');
+
+function usesContainerOrBaseElement(node: TSESTree.CallExpression) {
+  const secondArgument = node.arguments[1]
+  return isObjectExpression(secondArgument) && secondArgument.properties.some((property) => isProperty(property) && isIdentifier(property.key) && ALLOWED_RENDER_PROPERTIES_FOR_DESTRUCTURING.includes(property.key.name))
+}
 
 export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
   name: RULE_NAME,
@@ -50,12 +57,17 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
 
     return {
       VariableDeclarator(node) {
+        if (!
+          isCallExpression(node.init) || !
+          isIdentifier(node.init.callee) ) {
+          return
+        }
         const isWithinFunction =
-          isCallExpression(node.init) &&
-          isIdentifier(node.init.callee) &&
           node.init.callee.name === 'within';
+        // TODO add the custom render option #198
+        const usesRenderOptions = node.init.callee.name === 'render' && usesContainerOrBaseElement(node.init);
 
-        if (!isWithinFunction) {
+        if (!isWithinFunction && !usesRenderOptions) {
           return;
         }
 
@@ -104,11 +116,13 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
           isMemberExpression(node.parent) &&
           isCallExpression(node.parent.object) &&
           isIdentifier(node.parent.object.callee) &&
-          node.parent.object.callee.name !== 'within'
+          node.parent.object.callee.name !== 'within' &&
+          node.parent.object.callee.name === 'render' && !usesContainerOrBaseElement(node.parent.object)
         ) {
           reportInvalidUsage(node);
           return;
         }
+
         if (
           isMemberExpression(node.parent) &&
           isIdentifier(node.parent.object) &&

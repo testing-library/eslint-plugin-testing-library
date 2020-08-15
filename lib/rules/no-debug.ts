@@ -1,5 +1,9 @@
 import { ESLintUtils, TSESTree } from '@typescript-eslint/experimental-utils';
-import { getDocsUrl, LIBRARY_MODULES, hasTestingLibraryImportModule } from '../utils';
+import {
+  getDocsUrl,
+  LIBRARY_MODULES,
+  hasTestingLibraryImportModule,
+} from '../utils';
 import {
   isObjectPattern,
   isProperty,
@@ -54,7 +58,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)({
 
     return {
       VariableDeclarator(node) {
-        if (isRenderVariableDeclarator(node, renderFunctions)) {
+        if (isRenderVariableDeclarator(node, ['render', ...renderFunctions])) {
           if (
             isObjectPattern(node.id) &&
             node.id.properties.some(

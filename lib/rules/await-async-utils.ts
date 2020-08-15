@@ -1,35 +1,17 @@
 import { ESLintUtils, TSESTree } from '@typescript-eslint/experimental-utils';
 
 import { getDocsUrl, ASYNC_UTILS, LIBRARY_MODULES } from '../utils';
-import { isCallExpression, hasThenProperty } from '../node-utils';
+import {
+  isAwaited,
+  isPromiseResolved,
+  getVariableReferences,
+} from '../node-utils';
 
 export const RULE_NAME = 'await-async-utils';
 export type MessageIds = 'awaitAsyncUtil';
 type Options = [];
 
-const VALID_PARENTS = [
-  'AwaitExpression',
-  'ArrowFunctionExpression',
-  'ReturnStatement',
-];
-
 const ASYNC_UTILS_REGEXP = new RegExp(`^(${ASYNC_UTILS.join('|')})$`);
-
-function isAwaited(node: TSESTree.Node) {
-  return VALID_PARENTS.includes(node.type);
-}
-
-function isPromiseResolved(node: TSESTree.Node) {
-  const parent = node.parent;
-
-  // wait(...).then(...)
-  if (isCallExpression(parent)) {
-    return hasThenProperty(parent.parent);
-  }
-
-  // promise.then(...)
-  return hasThenProperty(parent);
-}
 
 export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
   name: RULE_NAME,
@@ -49,12 +31,17 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
   defaultOptions: [],
 
   create(context) {
-    const asyncUtilsUsage: Array<{ node: TSESTree.Identifier | TSESTree.MemberExpression, name: string }> = [];
+    const asyncUtilsUsage: Array<{
+      node: TSESTree.Identifier | TSESTree.MemberExpression;
+      name: string;
+    }> = [];
     const importedAsyncUtils: string[] = [];
 
     return {
-      'ImportDeclaration > ImportSpecifier,ImportNamespaceSpecifier'(node: TSESTree.Node) {
-        const parent = (node.parent as TSESTree.ImportDeclaration);
+      'ImportDeclaration > ImportSpecifier,ImportNamespaceSpecifier'(
+        node: TSESTree.Node
+      ) {
+        const parent = node.parent as TSESTree.ImportDeclaration;
 
         if (!LIBRARY_MODULES.includes(parent.source.value.toString())) return;
 
@@ -78,28 +65,24 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
         const identifier = memberExpression.object as TSESTree.Identifier;
         const memberExpressionName = identifier.name;
 
-        asyncUtilsUsage.push({ node: memberExpression, name: memberExpressionName });
+        asyncUtilsUsage.push({
+          node: memberExpression,
+          name: memberExpressionName,
+        });
       },
       'Program:exit'() {
         const testingLibraryUtilUsage = asyncUtilsUsage.filter(usage => {
           if (usage.node.type === 'MemberExpression') {
             const object = usage.node.object as TSESTree.Identifier;
 
-            return importedAsyncUtils.includes(object.name)
+            return importedAsyncUtils.includes(object.name);
           }
 
-          return importedAsyncUtils.includes(usage.name)
+          return importedAsyncUtils.includes(usage.name);
         });
 
         testingLibraryUtilUsage.forEach(({ node, name }) => {
-          const variableDeclaratorParent = node.parent.parent;
-
-          const references =
-            (variableDeclaratorParent.type === 'VariableDeclarator' &&
-              context
-                .getDeclaredVariables(variableDeclaratorParent)[0]
-                .references.slice(1)) ||
-            [];
+          const references = getVariableReferences(context, node.parent.parent);
 
           if (
             references &&

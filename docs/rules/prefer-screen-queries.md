@@ -60,6 +60,11 @@ const { rerender, unmount, asFragment } = render(<Foo />);
 rerender(<Foo />);
 asFragment();
 unmount();
+
+// using baseElement
+const { getByText } = render(<Foo />, { baseElement: treeA });
+// using container
+const { getAllByText } = render(<Foo />, { container: treeA });
 ```
 
 ## Further Reading

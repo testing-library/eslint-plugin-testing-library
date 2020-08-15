@@ -1,40 +1,20 @@
 import { ESLintUtils, TSESTree } from '@typescript-eslint/experimental-utils';
-import { getDocsUrl } from '../utils';
+import { getDocsUrl, LIBRARY_MODULES } from '../utils';
 import {
-  isVariableDeclarator,
-  hasThenProperty,
   isCallExpression,
   isIdentifier,
   isMemberExpression,
+  isAwaited,
+  isPromiseResolved,
+  getVariableReferences,
 } from '../node-utils';
+import { ReportDescriptor } from '@typescript-eslint/experimental-utils/dist/ts-eslint';
 
 export const RULE_NAME = 'await-async-query';
 export type MessageIds = 'awaitAsyncQuery';
 type Options = [];
 
-const VALID_PARENTS = [
-  'AwaitExpression',
-  'ArrowFunctionExpression',
-  'ReturnStatement',
-];
-
 const ASYNC_QUERIES_REGEXP = /^find(All)?By(LabelText|PlaceholderText|Text|AltText|Title|DisplayValue|Role|TestId)$/;
-
-function isAwaited(node: TSESTree.Node) {
-  return VALID_PARENTS.includes(node.type);
-}
-
-function isPromiseResolved(node: TSESTree.Node) {
-  const parent = node.parent;
-
-  // findByText("foo").then(...)
-  if (isCallExpression(parent)) {
-    return hasThenProperty(parent.parent);
-  }
-
-  // promise.then(...)
-  return hasThenProperty(parent);
-}
 
 function hasClosestExpectResolvesRejects(node: TSESTree.Node): boolean {
   if (!node.parent) {
@@ -79,6 +59,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
       node: TSESTree.Identifier | TSESTree.MemberExpression;
       queryName: string;
     }[] = [];
+
     const isQueryUsage = (
       node: TSESTree.Identifier | TSESTree.MemberExpression
     ) =>
@@ -86,7 +67,25 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
       !isPromiseResolved(node) &&
       !hasClosestExpectResolvesRejects(node);
 
+    let hasImportedFromTestingLibraryModule = false;
+
+    function report(params: ReportDescriptor<'awaitAsyncQuery'>) {
+      if (hasImportedFromTestingLibraryModule) {
+        context.report(params);
+      }
+    }
+
     return {
+      'ImportDeclaration > ImportSpecifier,ImportNamespaceSpecifier'(
+        node: TSESTree.Node
+      ) {
+        const importDeclaration = node.parent as TSESTree.ImportDeclaration;
+        const module = importDeclaration.source.value.toString();
+
+        if (LIBRARY_MODULES.includes(module)) {
+          hasImportedFromTestingLibraryModule = true;
+        }
+      },
       [`CallExpression > Identifier[name=${ASYNC_QUERIES_REGEXP}]`](
         node: TSESTree.Identifier
       ) {
@@ -105,17 +104,10 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
       },
       'Program:exit'() {
         testingLibraryQueryUsage.forEach(({ node, queryName }) => {
-          const variableDeclaratorParent = node.parent.parent;
-
-          const references =
-            (isVariableDeclarator(variableDeclaratorParent) &&
-              context
-                .getDeclaredVariables(variableDeclaratorParent)[0]
-                .references.slice(1)) ||
-            [];
+          const references = getVariableReferences(context, node.parent.parent);
 
           if (references && references.length === 0) {
-            context.report({
+            report({
               node,
               messageId: 'awaitAsyncQuery',
               data: {
@@ -129,7 +121,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
                 !isAwaited(referenceNode.parent) &&
                 !isPromiseResolved(referenceNode)
               ) {
-                context.report({
+                report({
                   node,
                   messageId: 'awaitAsyncQuery',
                   data: {

@@ -24,7 +24,7 @@
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 
-[![All Contributors](https://img.shields.io/badge/all_contributors-28-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-31-orange.svg?style=flat-square)](#contributors-)
 
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
@@ -138,6 +138,7 @@ To enable this configuration use the `extends` property in your
 | [no-manual-cleanup](docs/rules/no-manual-cleanup.md)                             | Disallow the use of `cleanup`                                                            |                                                                   |                    |
 | [no-multiple-assertions-wait-for](docs/rules/no-multiple-assertions-wait-for.md) | Disallow the use of multiple expect inside `waitFor`                                     |                                                                   |                    |
 | [no-node-access](docs/rules/no-node-access.md)                                   | Disallow direct Node access                                                              | ![angular-badge][] ![react-badge][] ![vue-badge][]                |                    |
+| [no-render-in-setup](docs/rules/no-render-in-setup.md)                           | Disallow the use of `render` in setup functions                                          |                                                                   |                    |
 | [no-promise-in-fire-event](docs/rules/no-promise-in-fire-event.md)               | Disallow the use of promises passed to a `fireEvent` method                              |                                                                   |                    |
 | [no-side-effects-wait-for](docs/rules/no-side-effects-wait-for.md)               | Disallow the use of side effects inside `waitFor`                                        |                                                                   |                    |
 | [no-wait-for-empty-callback](docs/rules/no-wait-for-empty-callback.md)           | Disallow empty callbacks for `waitFor` and `waitForElementToBeRemoved`                   | ![dom-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] |                    |
@@ -212,6 +213,11 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <td align="center"><a href="https://stefancameron.com/"><img src="https://avatars3.githubusercontent.com/u/2855350?v=4" width="100px;" alt=""/><br /><sub><b>Stefan Cameron</b></sub></a><br /><a href="https://github.com/testing-library/eslint-plugin-testing-library/issues?q=author%3Astefcameron" title="Bug reports">🐛</a></td>
     <td align="center"><a href="https://www.linkedin.com/in/mateusfelix/"><img src="https://avatars2.githubusercontent.com/u/4968788?v=4" width="100px;" alt=""/><br /><sub><b>Mateus Felix</b></sub></a><br /><a href="https://github.com/testing-library/eslint-plugin-testing-library/commits?author=thebinaryfelix" title="Code">💻</a> <a href="https://github.com/testing-library/eslint-plugin-testing-library/commits?author=thebinaryfelix" title="Tests">⚠️</a> <a href="https://github.com/testing-library/eslint-plugin-testing-library/commits?author=thebinaryfelix" title="Documentation">📖</a></td>
     <td align="center"><a href="https://github.com/renatoagds"><img src="https://avatars2.githubusercontent.com/u/1663717?v=4" width="100px;" alt=""/><br /><sub><b>Renato Augusto Gama dos Santos</b></sub></a><br /><a href="#ideas-renatoagds" title="Ideas, Planning, & Feedback">🤔</a> <a href="https://github.com/testing-library/eslint-plugin-testing-library/commits?author=renatoagds" title="Code">💻</a> <a href="https://github.com/testing-library/eslint-plugin-testing-library/commits?author=renatoagds" title="Documentation">📖</a> <a href="https://github.com/testing-library/eslint-plugin-testing-library/commits?author=renatoagds" title="Tests">⚠️</a></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="https://github.com/codecog"><img src="https://avatars0.githubusercontent.com/u/5106076?v=4" width="100px;" alt=""/><br /><sub><b>Josh Kelly</b></sub></a><br /><a href="https://github.com/testing-library/eslint-plugin-testing-library/commits?author=codecog" title="Code">💻</a></td>
+    <td align="center"><a href="http://aless.co"><img src="https://avatars0.githubusercontent.com/u/5139846?v=4" width="100px;" alt=""/><br /><sub><b>Alessia Bellisario</b></sub></a><br /><a href="https://github.com/testing-library/eslint-plugin-testing-library/commits?author=alessbell" title="Code">💻</a> <a href="https://github.com/testing-library/eslint-plugin-testing-library/commits?author=alessbell" title="Tests">⚠️</a> <a href="https://github.com/testing-library/eslint-plugin-testing-library/commits?author=alessbell" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://skovy.dev"><img src="https://avatars1.githubusercontent.com/u/5247455?v=4" width="100px;" alt=""/><br /><sub><b>Spencer Miskoviak</b></sub></a><br /><a href="https://github.com/testing-library/eslint-plugin-testing-library/commits?author=skovy" title="Code">💻</a> <a href="https://github.com/testing-library/eslint-plugin-testing-library/commits?author=skovy" title="Tests">⚠️</a> <a href="https://github.com/testing-library/eslint-plugin-testing-library/commits?author=skovy" title="Documentation">📖</a></td>
   </tr>
 </table>
 
