@@ -181,3 +181,48 @@ export function isRenderVariableDeclarator(
 
   return false;
 }
+
+type GetTestingLibraryUtilImportArgs = {
+  context: any,
+  utilName: string,
+  extraModules?: string[],
+};
+
+export function getTestingLibraryUtilImport(options: GetTestingLibraryUtilImportArgs): null | string {
+
+  /* Here we need to:
+   - look for imports of shape: import { <utilName> } from '@testing-library/whatever';
+   - look for imports of shape: import { <utilName> as <alias> } from '@testing-library/whatever';
+   - look for imports of shape: import * as testingLibrary from '@testing-library/whatever';
+   - look for imports of shape: const render = require('@testing-library/whatever').render;
+
+   From 3rd case, this method can't return what's the imported name for `utilName` as it's contained within an object.
+   What should we do in that case? Return an object or array to indicate if `utilName` has been imported directly or
+   under a namespace?
+  */
+
+
+  /*
+  Would be nice to be able to find everything from `context.getSourceCode()` but I haven't done that before.
+  This way, we don't have to look for different import methods in the rule implementation, and just call this method
+  before returning the object with corresponding AST selectors.
+   */
+
+  return null;
+}
+
+export function getTestingLibraryRenderImport(context: any): null | string {
+  const customRenders = context.settings['testing-library/custom-renders'] || [];
+  const possibleRenderOptions = ['render', ...customRenders];
+
+  let importedRenderName = null;
+
+  possibleRenderOptions.forEach((renderOption) => {
+    const importedRenderOption = getTestingLibraryUtilImport({ context, utilName: renderOption});
+    if (importedRenderOption) {
+      importedRenderName = importedRenderOption
+    }
+  })
+
+  return importedRenderName
+}

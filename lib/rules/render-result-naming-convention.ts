@@ -1,6 +1,7 @@
 import { ESLintUtils, TSESTree } from '@typescript-eslint/experimental-utils';
 import { getDocsUrl, hasTestingLibraryImportModule } from '../utils';
 import {
+  getTestingLibraryRenderImport,
   isCallExpression,
   isIdentifier,
   isImportSpecifier,
@@ -51,9 +52,12 @@ export default ESLintUtils.RuleCreator(getDocsUrl)({
     let renderAlias: string | undefined;
     let wildcardImportName: string | undefined;
 
+    const testingLibraryRenderName = getTestingLibraryRenderImport(context);
+
     return {
       // check named imports
       ImportDeclaration(node: TSESTree.ImportDeclaration) {
+        // <-- this check would disappear
         if (!hasTestingLibraryImportModule(node)) {
           return;
         }
@@ -69,6 +73,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)({
       },
       // check wildcard imports
       'ImportDeclaration ImportNamespaceSpecifier'(
+        // <-- this check would disappear
         node: TSESTree.ImportNamespaceSpecifier
       ) {
         if (

@@ -97,11 +97,24 @@ ruleTester.run(RULE_NAME, rule, {
           const button = screen.getByText('some button');
         });
       `,
-      options: [
-        {
-          renderFunctions: ['customRender'],
-        },
-      ],
+      settings: {
+        'testing-library/custom-renders': ['customRender'],
+        'testing-library/custom-modules': ['test-utils'],
+      },
+    },
+    {
+      code: `
+        import { render, screen } from 'test-utils';
+        
+        test('should not report straight destructured render result from custom module', () => {
+          const { unmount } = render(<SomeComponent />);
+          const button = screen.getByText('some button');
+        });
+      `,
+      settings: {
+        'testing-library/custom-renders': ['customRender'],
+        'testing-library/custom-modules': ['test-utils'],
+      },
     },
     {
       code: `
@@ -112,11 +125,23 @@ ruleTester.run(RULE_NAME, rule, {
           await view.findByRole('button');
         });
       `,
-      options: [
-        {
-          renderFunctions: ['customRender'],
-        },
-      ],
+      settings: {
+        'testing-library/custom-renders': ['customRender'],
+        'testing-library/custom-modules': ['test-utils'],
+      },
+    },
+    {
+      code: `
+        import { render } from 'test-utils';
+        
+        test('should not report render result called "view" from custom module', async () => {
+          const view = render();
+          await view.findByRole('button');
+        });
+      `,
+      settings: {
+        'testing-library/custom-modules': ['test-utils'],
+      },
     },
     {
       code: `
@@ -127,11 +152,23 @@ ruleTester.run(RULE_NAME, rule, {
           await utils.findByRole('button');
         });
       `,
-      options: [
-        {
-          renderFunctions: ['customRender'],
-        },
-      ],
+      settings: {
+        'testing-library/custom-renders': ['customRender'],
+        'testing-library/custom-modules': ['test-utils'],
+      },
+    },
+    {
+      code: `
+        import { render } from 'test-utils';
+        
+        test('should not report render result called "utils" from custom module', async () => {
+          const utils = render();
+          await utils.findByRole('button');
+        });
+      `,
+      settings: {
+        'testing-library/custom-modules': ['test-utils'],
+      },
     },
     {
       code: `
@@ -327,11 +364,33 @@ ruleTester.run(RULE_NAME, rule, {
           const button = wrapper.getByText('some button');
         });
       `,
-      options: [
+      settings: {
+        'testing-library/custom-renders': ['customRender'],
+        'testing-library/custom-modules': ['test-utils'],
+      },
+      errors: [
         {
-          renderFunctions: ['customRender'],
+          messageId: 'invalidRenderResultName',
+          data: {
+            varName: 'wrapper',
+          },
+          line: 5,
+          column: 17,
         },
       ],
+    },
+    {
+      code: `
+        import { render } from 'test-utils';
+
+        test('should report from custom render module ', () => {
+          const wrapper = render(<SomeComponent />);
+          const button = wrapper.getByText('some button');
+        });
+      `,
+      settings: {
+        'testing-library/custom-modules': ['test-utils'],
+      },
       errors: [
         {
           messageId: 'invalidRenderResultName',
