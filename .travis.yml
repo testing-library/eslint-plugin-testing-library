@@ -17,7 +17,7 @@ before_script:
 
 jobs:
   include:
-    - stage: test
+    - stage: validation
       node_js: 14
       env: ESLINT=6
       script:
