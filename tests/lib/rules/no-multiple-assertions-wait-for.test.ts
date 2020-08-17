@@ -1,5 +1,7 @@
 import { createRuleTester } from '../test-utils';
-import rule, { RULE_NAME } from '../../../lib/rules/no-multiple-assertions-wait-for';
+import rule, {
+  RULE_NAME,
+} from '../../../lib/rules/no-multiple-assertions-wait-for';
 
 const ruleTester = createRuleTester({
   ecmaFeatures: {
@@ -80,7 +82,7 @@ ruleTester.run(RULE_NAME, rule, {
           expect(b).toEqual('b')
         })
       `,
-      errors: [{ messageId: 'noMultipleAssertionWaitFor' }]
+      errors: [{ messageId: 'noMultipleAssertionWaitFor' }],
     },
     {
       code: `
@@ -90,7 +92,7 @@ ruleTester.run(RULE_NAME, rule, {
           expect(b).toEqual('b')
         })
       `,
-      errors: [{ messageId: 'noMultipleAssertionWaitFor' }]
+      errors: [{ messageId: 'noMultipleAssertionWaitFor' }],
     },
     {
       code: `
@@ -99,7 +101,7 @@ ruleTester.run(RULE_NAME, rule, {
           expect(b).toEqual('b')
         })
       `,
-      errors: [{ messageId: 'noMultipleAssertionWaitFor' }]
+      errors: [{ messageId: 'noMultipleAssertionWaitFor' }],
     },
     {
       code: `
@@ -109,7 +111,7 @@ ruleTester.run(RULE_NAME, rule, {
           expect(b).toEqual('b')
         })
       `,
-      errors: [{ messageId: 'noMultipleAssertionWaitFor' }]
-    }
-  ]
-})
+      errors: [{ messageId: 'noMultipleAssertionWaitFor' }],
+    },
+  ],
+});

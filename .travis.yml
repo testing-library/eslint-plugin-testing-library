@@ -17,6 +17,12 @@ before_script:
 
 jobs:
   include:
+    - stage: validation
+      node_js: 14
+      env: ESLINT=6
+      script:
+        - npm run format:check
+        - npm run lint -- --max-warnings 0
     - stage: release
       if: branch = master AND type != pull_request
       node_js: 14
