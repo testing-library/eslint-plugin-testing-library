@@ -50,7 +50,17 @@ getByNonTestingLibraryVariant('foo');
 
 ## Options
 
-This rule accepts a single options argument:
+This rule has a few options:
+
+- `assertion`: this string allows defining the preferred assertion to use
+  with `getBy*` queries. By default, any assertion is valid (`toBeTruthy`,
+  `toBeDefined`, etc.). However, they all assert slightly different things.
+  This option ensures all `getBy*` assertions are consistent and use the same
+  assertion.
+
+  ```js
+  "testing-library/prefer-explicit-assert": ["error", {"assertion": "toBeInTheDocument"}],
+  ```
 
 - `customQueryNames`: this array option allows to extend default Testing
   Library queries with custom ones for including them into rule

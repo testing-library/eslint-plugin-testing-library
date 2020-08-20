@@ -66,6 +66,14 @@ ruleTester.run(RULE_NAME, rule, {
     {
       code: `queryByText("foo")`,
     },
+    {
+      code: `expect(getByText('foo')).toBeTruthy()`,
+      options: [
+        {
+          assertion: 'toBeTruthy',
+        },
+      ],
+    },
   ],
 
   invalid: [
@@ -129,6 +137,21 @@ ruleTester.run(RULE_NAME, rule, {
       errors: [
         {
           messageId: 'preferExplicitAssert',
+        },
+      ],
+    },
+    {
+      code: `expect(getByText('foo')).toBeDefined()`,
+      options: [
+        {
+          assertion: 'toBeInDocument',
+        },
+      ],
+      errors: [
+        {
+          messageId: 'preferExplicitAssertAssertion',
+          column: 26,
+          data: { assertion: 'toBeInDocument' },
         },
       ],
     },
