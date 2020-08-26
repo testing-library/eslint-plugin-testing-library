@@ -23,7 +23,9 @@
 [![Tweet][tweet-badge]][tweet-url]
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+
 [![All Contributors](https://img.shields.io/badge/all_contributors-31-orange.svg?style=flat-square)](#contributors-)
+
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 ## Installation
@@ -143,6 +145,7 @@ To enable this configuration use the `extends` property in your
 | [no-manual-cleanup](docs/rules/no-manual-cleanup.md)                   | Disallow the use of `cleanup`                                              |                                                                           |                    |
 | [no-render-in-setup](docs/rules/no-render-in-setup.md)                 | Disallow the use of `render` in setup functions                            |                                                                           |                    |
 | [no-wait-for-empty-callback](docs/rules/no-wait-for-empty-callback.md) | Disallow empty callbacks for `waitFor` and `waitForElementToBeRemoved`     |                                                                           |                    |
+| [no-wait-for-snapshot](docs/rules/no-wait-for-snapshot.md)             | Ensures no snapshot is generated inside of a `waitFor` call                |                                                                           |                    |
 | [prefer-explicit-assert](docs/rules/prefer-explicit-assert.md)         | Suggest using explicit assertions rather than just `getBy*` queries        |                                                                           |                    |
 | [prefer-find-by](docs/rules/prefer-find-by.md)                         | Suggest using `findBy*` methods instead of the `waitFor` + `getBy` queries | ![recommended-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] | ![fixable-badge][] |
 | [prefer-presence-queries](docs/rules/prefer-presence-queries.md)       | Enforce specific queries when checking element is present or not           |                                                                           |                    |
@@ -222,6 +225,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 
 <!-- markdownlint-enable -->
 <!-- prettier-ignore-end -->
+
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!

@@ -84,6 +84,8 @@ export function findClosestCallExpressionNode(
     return node;
   }
 
+  if(!node.parent) return null
+
   return findClosestCallExpressionNode(node.parent);
 }
 
