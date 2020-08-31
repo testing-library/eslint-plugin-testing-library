@@ -8,6 +8,7 @@ import noDomImport from './rules/no-dom-import';
 import noManualCleanup from './rules/no-manual-cleanup';
 import noRenderInSetup from './rules/no-render-in-setup';
 import noWaitForEmptyCallback from './rules/no-wait-for-empty-callback';
+import noWaitForSnapshot from './rules/no-wait-for-snapshot';
 import preferExplicitAssert from './rules/prefer-explicit-assert';
 import preferPresenceQueries from './rules/prefer-presence-queries';
 import preferScreenQueries from './rules/prefer-screen-queries';
@@ -25,6 +26,7 @@ const rules = {
   'no-manual-cleanup': noManualCleanup,
   'no-render-in-setup': noRenderInSetup,
   'no-wait-for-empty-callback': noWaitForEmptyCallback,
+  'no-wait-for-snapshot': noWaitForSnapshot,
   'prefer-explicit-assert': preferExplicitAssert,
   'prefer-find-by': preferFindBy,
   'prefer-presence-queries': preferPresenceQueries,
