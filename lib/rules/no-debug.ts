@@ -13,6 +13,10 @@ import {
 } from '../node-utils';
 
 export const RULE_NAME = 'no-debug';
+export type MessageIds = 'noDebug';
+type Options = [
+  { renderFunctions?: string[]; }
+];
 
 function isRenderVariableDeclarator(
   node: TSESTree.VariableDeclarator,
@@ -45,7 +49,7 @@ function hasTestingLibraryImportModule(
   return LIBRARY_MODULES.some(module => module === literal.value);
 }
 
-export default ESLintUtils.RuleCreator(getDocsUrl)({
+export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
   name: RULE_NAME,
   meta: {
     type: 'problem',
