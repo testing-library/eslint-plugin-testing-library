@@ -13,12 +13,23 @@ export const RULE_NAME = 'prefer-screen-queries';
 export type MessageIds = 'preferScreenQueries';
 type Options = [];
 
-const ALLOWED_RENDER_PROPERTIES_FOR_DESTRUCTURING = ['container', 'baseElement']
+const ALLOWED_RENDER_PROPERTIES_FOR_DESTRUCTURING = [
+  'container',
+  'baseElement',
+];
 const ALL_QUERIES_COMBINATIONS_REGEXP = ALL_QUERIES_COMBINATIONS.join('|');
 
 function usesContainerOrBaseElement(node: TSESTree.CallExpression) {
-  const secondArgument = node.arguments[1]
-  return isObjectExpression(secondArgument) && secondArgument.properties.some((property) => isProperty(property) && isIdentifier(property.key) && ALLOWED_RENDER_PROPERTIES_FOR_DESTRUCTURING.includes(property.key.name))
+  const secondArgument = node.arguments[1];
+  return (
+    isObjectExpression(secondArgument) &&
+    secondArgument.properties.some(
+      property =>
+        isProperty(property) &&
+        isIdentifier(property.key) &&
+        ALLOWED_RENDER_PROPERTIES_FOR_DESTRUCTURING.includes(property.key.name)
+    )
+  );
 }
 
 export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
@@ -53,33 +64,43 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
     const queriesRegex = new RegExp(ALL_QUERIES_COMBINATIONS_REGEXP);
     const queriesDestructuredInWithinDeclaration: string[] = [];
     // use an array as within might be used more than once in a test
-    const withinDeclaredVariables : string[] = []
+    const withinDeclaredVariables: string[] = [];
 
     return {
       VariableDeclarator(node) {
         if (!isCallExpression(node.init) || !isIdentifier(node.init.callee)) {
-          return
+          return;
         }
-        const isWithinFunction =  node.init.callee.name === 'within';
+        const isWithinFunction = node.init.callee.name === 'within';
         // TODO add the custom render option #198
-        const usesRenderOptions = node.init.callee.name === 'render' && usesContainerOrBaseElement(node.init);
+        const usesRenderOptions =
+          node.init.callee.name === 'render' &&
+          usesContainerOrBaseElement(node.init);
 
         if (!isWithinFunction && !usesRenderOptions) {
-          return
+          return;
         }
 
         if (isObjectPattern(node.id)) {
           // save the destructured query methods
           const identifiers = node.id.properties
-            .filter(property => isProperty(property) && isIdentifier(property.key) && queriesRegex.test(property.key.name))
-            .map((property: TSESTree.Property) => (property.key as TSESTree.Identifier).name);
+            .filter(
+              property =>
+                isProperty(property) &&
+                isIdentifier(property.key) &&
+                queriesRegex.test(property.key.name)
+            )
+            .map(
+              (property: TSESTree.Property) =>
+                (property.key as TSESTree.Identifier).name
+            );
 
           queriesDestructuredInWithinDeclaration.push(...identifiers);
-          return
+          return;
         }
 
         if (isIdentifier(node.id)) {
-          withinDeclaredVariables.push(node.id.name)
+          withinDeclaredVariables.push(node.id.name);
         }
       },
       [`CallExpression > Identifier[name=/^${ALL_QUERIES_COMBINATIONS_REGEXP}$/]`](
@@ -96,18 +117,18 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
       [`MemberExpression > Identifier[name=/^${ALL_QUERIES_COMBINATIONS_REGEXP}$/]`](
         node: TSESTree.Identifier
       ) {
-
         function isIdentifierAllowed(name: string) {
-          return ['screen', ...withinDeclaredVariables].includes(name)
+          return ['screen', ...withinDeclaredVariables].includes(name);
         }
 
         if (
           isIdentifier(node) &&
           isMemberExpression(node.parent) &&
           isCallExpression(node.parent.object) &&
-          isIdentifier(node.parent.object.callee) && 
-          node.parent.object.callee.name !== 'within' && 
-          node.parent.object.callee.name === 'render' && !usesContainerOrBaseElement(node.parent.object)
+          isIdentifier(node.parent.object.callee) &&
+          node.parent.object.callee.name !== 'within' &&
+          node.parent.object.callee.name === 'render' &&
+          !usesContainerOrBaseElement(node.parent.object)
         ) {
           reportInvalidUsage(node);
           return;

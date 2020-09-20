@@ -1,4 +1,7 @@
-import { AST_NODE_TYPES, TSESTree } from '@typescript-eslint/experimental-utils';
+import {
+  AST_NODE_TYPES,
+  TSESTree,
+} from '@typescript-eslint/experimental-utils';
 import { RuleContext } from '@typescript-eslint/experimental-utils/dist/ts-eslint';
 
 export function isCallExpression(
@@ -84,7 +87,7 @@ export function findClosestCallExpressionNode(
     return node;
   }
 
-  if(!node.parent) return null
+  if (!node.parent) return null;
 
   return findClosestCallExpressionNode(node.parent);
 }
@@ -108,8 +111,10 @@ export function findClosestCallNode(
   }
 }
 
-export function isObjectExpression(node: TSESTree.Expression): node is TSESTree.ObjectExpression {
-  return node?.type === AST_NODE_TYPES.ObjectExpression
+export function isObjectExpression(
+  node: TSESTree.Expression
+): node is TSESTree.ObjectExpression {
+  return node?.type === AST_NODE_TYPES.ObjectExpression;
 }
 
 export function hasThenProperty(node: TSESTree.Node) {
@@ -126,16 +131,24 @@ export function isAwaitExpression(
   return node && node.type === AST_NODE_TYPES.AwaitExpression;
 }
 
-export function isArrowFunctionExpression(node: TSESTree.Node): node is TSESTree.ArrowFunctionExpression {
-  return node && node.type === AST_NODE_TYPES.ArrowFunctionExpression
+export function isArrowFunctionExpression(
+  node: TSESTree.Node
+): node is TSESTree.ArrowFunctionExpression {
+  return node && node.type === AST_NODE_TYPES.ArrowFunctionExpression;
 }
 
-export function isReturnStatement(node: TSESTree.Node): node is TSESTree.ReturnStatement {
-  return node && node.type === AST_NODE_TYPES.ReturnStatement
+export function isReturnStatement(
+  node: TSESTree.Node
+): node is TSESTree.ReturnStatement {
+  return node && node.type === AST_NODE_TYPES.ReturnStatement;
 }
 
 export function isAwaited(node: TSESTree.Node) {
-  return isAwaitExpression(node) || isArrowFunctionExpression(node) || isReturnStatement(node)
+  return (
+    isAwaitExpression(node) ||
+    isArrowFunctionExpression(node) ||
+    isReturnStatement(node)
+  );
 }
 
 export function isPromiseResolved(node: TSESTree.Node) {
@@ -150,6 +163,13 @@ export function isPromiseResolved(node: TSESTree.Node) {
   return hasThenProperty(parent);
 }
 
-export function getVariableReferences(context: RuleContext<string, []>, node: TSESTree.Node) {
-  return (isVariableDeclarator(node) && context.getDeclaredVariables(node)[0].references.slice(1)) || [];
+export function getVariableReferences(
+  context: RuleContext<string, []>,
+  node: TSESTree.Node
+) {
+  return (
+    (isVariableDeclarator(node) &&
+      context.getDeclaredVariables(node)[0].references.slice(1)) ||
+    []
+  );
 }

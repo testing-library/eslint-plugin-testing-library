@@ -7,7 +7,7 @@ const ruleTester = createRuleTester();
 ruleTester.run(RULE_NAME, rule, {
   valid: [
     {
-      code: `const baz = () => 'foo'`
+      code: `const baz = () => 'foo'`,
     },
     ...ALL_QUERIES_COMBINATIONS.map(queryMethod => ({
       code: `screen.${queryMethod}()`,
@@ -40,91 +40,91 @@ ruleTester.run(RULE_NAME, rule, {
       code: `
         const screen = render(baz);
         screen.container.querySelector('foo');
-      `
+      `,
     },
     {
       code: `
         const screen = render(baz);
         screen.baseElement.querySelector('foo');
-      `
+      `,
     },
     {
       code: `
         const { rerender } = render(baz);
         rerender();
-      `
+      `,
     },
     {
       code: `
         const utils = render(baz);
         utils.rerender();
-      `
+      `,
     },
     {
       code: `
         const utils = render(baz);
         utils.asFragment();
-      `
+      `,
     },
     {
       code: `
         const { asFragment } = render(baz);
         asFragment();
-      `
+      `,
     },
     {
       code: `
         const { unmount } = render(baz);
         unmount();
-      `
+      `,
     },
     {
       code: `
         const utils = render(baz);
         utils.unmount();
-      `
+      `,
     },
     ...ALL_QUERIES_COMBINATIONS.map((queryMethod: string) => ({
       code: `
         const { ${queryMethod} } = render(baz, { baseElement: treeA })
         expect(${queryMethod}(baz)).toBeDefined()
-      `
+      `,
     })),
     ...ALL_QUERIES_COMBINATIONS.map((queryMethod: string) => ({
       code: `
         const { ${queryMethod}: aliasMethod } = render(baz, { baseElement: treeA })
         expect(aliasMethod(baz)).toBeDefined()
-      `
+      `,
     })),
     ...ALL_QUERIES_COMBINATIONS.map((queryMethod: string) => ({
       code: `
         const { ${queryMethod} } = render(baz, { container: treeA })
         expect(${queryMethod}(baz)).toBeDefined()
-      `
+      `,
     })),
     ...ALL_QUERIES_COMBINATIONS.map((queryMethod: string) => ({
       code: `
         const { ${queryMethod}: aliasMethod } = render(baz, { container: treeA })
         expect(aliasMethod(baz)).toBeDefined()
-      `
+      `,
     })),
     ...ALL_QUERIES_COMBINATIONS.map((queryMethod: string) => ({
       code: `
         const { ${queryMethod} } = render(baz, { baseElement: treeB, container: treeA })
         expect(${queryMethod}(baz)).toBeDefined()
-      `
+      `,
     })),
     ...ALL_QUERIES_COMBINATIONS.map((queryMethod: string) => ({
       code: `
         const { ${queryMethod}: aliasMethod } = render(baz, { baseElement: treeB, container: treeA })
         expect(aliasMethod(baz)).toBeDefined()
-      `
+      `,
     })),
     ...ALL_QUERIES_COMBINATIONS.map((queryMethod: string) => ({
       code: `
         render(foo, { baseElement: treeA }).${queryMethod}()
-      `
-    }))
+      `,
+    })),
   ],
 
   invalid: [
