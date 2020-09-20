@@ -14,9 +14,7 @@ import {
 
 export const RULE_NAME = 'no-debug';
 export type MessageIds = 'noDebug';
-type Options = [
-  { renderFunctions?: string[]; }
-];
+type Options = [{ renderFunctions?: string[] }];
 
 function isRenderVariableDeclarator(
   node: TSESTree.VariableDeclarator,
