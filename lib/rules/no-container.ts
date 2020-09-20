@@ -81,7 +81,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
         if (isRenderVariableDeclarator(node, ['render', ...renderFunctions])) {
           if (isObjectPattern(node.id)) {
             const containerIndex = node.id.properties.findIndex(
-              property =>
+              (property) =>
                 isProperty(property) &&
                 isIdentifier(property.key) &&
                 property.key.name === 'container'
@@ -93,7 +93,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
             } else {
               isObjectPattern(nodeValue) &&
                 nodeValue.properties.forEach(
-                  property =>
+                  (property) =>
                     isProperty(property) &&
                     isIdentifier(property.key) &&
                     destructuredContainerPropNames.push(property.key.name)

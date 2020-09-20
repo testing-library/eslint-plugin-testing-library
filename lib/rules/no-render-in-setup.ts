@@ -97,7 +97,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
       'ImportDeclaration[source.value=/testing-library/]'(
         node: TSESTree.ImportDeclaration
       ) {
-        renderImportedFromTestingLib = node.specifiers.some(specifier => {
+        renderImportedFromTestingLib = node.specifiers.some((specifier) => {
           return (
             isImportSpecifier(specifier) && specifier.local.name === 'render'
           );
@@ -110,7 +110,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
           arguments: callExpressionArgs,
         } = node.parent as TSESTree.CallExpression;
         const testingLibImport = callExpressionArgs.find(
-          args =>
+          (args) =>
             isLiteral(args) &&
             typeof args.value === 'string' &&
             RegExp(/testing-library/, 'g').test(args.value)
@@ -124,7 +124,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
         renderImportedFromTestingLib =
           isObjectPattern(declaratorNode.id) &&
           declaratorNode.id.properties.some(
-            property =>
+            (property) =>
               isProperty(property) &&
               isIdentifier(property.key) &&
               property.key.name === 'render'
@@ -134,7 +134,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
         let testingFrameworkSetupHooksToFilter = TESTING_FRAMEWORK_SETUP_HOOKS;
         if (allowTestingFrameworkSetupHook.length !== 0) {
           testingFrameworkSetupHooksToFilter = TESTING_FRAMEWORK_SETUP_HOOKS.filter(
-            hook => hook !== allowTestingFrameworkSetupHook
+            (hook) => hook !== allowTestingFrameworkSetupHook
           );
         }
         const beforeHook = findClosestBeforeHook(

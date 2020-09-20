@@ -32,7 +32,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
     schema: [],
   },
   defaultOptions: [],
-  create: function(context) {
+  create: function (context) {
     let isImportingTestingLibrary = false;
 
     function reportSideEffects(node: TSESTree.BlockStatement) {

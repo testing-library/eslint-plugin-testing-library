@@ -11,11 +11,11 @@ Examples of **incorrect** code for this rule:
 ```js
 const foo = async () => {
   await waitFor(() => {});
-  await waitFor(function() {});
+  await waitFor(function () {});
   await waitFor(noop);
 
   await waitForElementToBeRemoved(() => {});
-  await waitForElementToBeRemoved(function() {});
+  await waitForElementToBeRemoved(function () {});
   await waitForElementToBeRemoved(noop);
 };
 ```

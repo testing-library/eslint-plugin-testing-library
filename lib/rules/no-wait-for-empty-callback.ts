@@ -34,7 +34,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
 
   // trimmed down implementation of https://github.com/eslint/eslint/blob/master/lib/rules/no-empty-function.js
   // TODO: var referencing any of previously mentioned?
-  create: function(context) {
+  create: function (context) {
     function reportIfEmpty(
       node: TSESTree.ArrowFunctionExpression | TSESTree.FunctionExpression
     ) {

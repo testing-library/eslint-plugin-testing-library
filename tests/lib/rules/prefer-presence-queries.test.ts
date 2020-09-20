@@ -7,11 +7,11 @@ import { ALL_QUERIES_METHODS } from '../../../lib/utils';
 
 const ruleTester = createRuleTester();
 
-const getByQueries = ALL_QUERIES_METHODS.map(method => `get${method}`);
-const getAllByQueries = ALL_QUERIES_METHODS.map(method => `getAll${method}`);
-const queryByQueries = ALL_QUERIES_METHODS.map(method => `query${method}`);
+const getByQueries = ALL_QUERIES_METHODS.map((method) => `get${method}`);
+const getAllByQueries = ALL_QUERIES_METHODS.map((method) => `getAll${method}`);
+const queryByQueries = ALL_QUERIES_METHODS.map((method) => `query${method}`);
 const queryAllByQueries = ALL_QUERIES_METHODS.map(
-  method => `queryAll${method}`
+  (method) => `queryAll${method}`
 );
 
 const allQueryUseInAssertion = (queryName: string) => [
@@ -20,7 +20,7 @@ const allQueryUseInAssertion = (queryName: string) => [
 ];
 
 const getValidAssertion = (query: string, matcher: string) =>
-  allQueryUseInAssertion(query).map(query => ({
+  allQueryUseInAssertion(query).map((query) => ({
     code: `expect(${query}('Hello'))${matcher}`,
   }));
 
@@ -29,7 +29,7 @@ const getInvalidAssertion = (
   matcher: string,
   messageId: MessageIds
 ) =>
-  allQueryUseInAssertion(query).map(query => ({
+  allQueryUseInAssertion(query).map((query) => ({
     code: `expect(${query}('Hello'))${matcher}`,
     errors: [{ messageId }],
   }));

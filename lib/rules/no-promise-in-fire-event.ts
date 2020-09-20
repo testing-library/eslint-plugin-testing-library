@@ -36,7 +36,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
         node: TSESTree.ImportDeclaration
       ) {
         const fireEventImportNode = node.specifiers.find(
-          specifier =>
+          (specifier) =>
             isImportSpecifier(specifier) &&
             specifier.imported &&
             'fireEvent' === specifier.imported.name
@@ -58,7 +58,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
                   .property as TSESTree.Identifier).name;
 
             if (
-              ASYNC_QUERIES_VARIANTS.some(q => methodName.startsWith(q)) ||
+              ASYNC_QUERIES_VARIANTS.some((q) => methodName.startsWith(q)) ||
               methodName === 'Promise'
             ) {
               context.report({

@@ -106,7 +106,8 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
           return;
         }
         const fireEventImport = node.specifiers.find(
-          node => isImportSpecifier(node) && node.imported.name === 'fireEvent'
+          (node) =>
+            isImportSpecifier(node) && node.imported.name === 'fireEvent'
         );
         hasNamedImportedFireEvent = !!fireEventImport;
         if (!hasNamedImportedFireEvent) {

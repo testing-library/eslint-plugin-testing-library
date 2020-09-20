@@ -64,7 +64,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
           if (
             isObjectPattern(node.id) &&
             node.id.properties.some(
-              property =>
+              (property) =>
                 isProperty(property) &&
                 isIdentifier(property.key) &&
                 property.key.name === 'debug'
@@ -84,7 +84,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
         const { arguments: args } = node.parent as TSESTree.CallExpression;
 
         const literalNodeScreenModuleName = args.find(
-          args =>
+          (args) =>
             isLiteral(args) &&
             typeof args.value === 'string' &&
             LIBRARY_MODULES.includes(args.value)
@@ -100,7 +100,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
         hasImportedScreen =
           isObjectPattern(declaratorNode.id) &&
           declaratorNode.id.properties.some(
-            property =>
+            (property) =>
               isProperty(property) &&
               isIdentifier(property.key) &&
               property.key.name === 'screen'
@@ -114,7 +114,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
         }
 
         hasImportedScreen = node.specifiers.some(
-          s => isImportSpecifier(s) && s.imported.name === 'screen'
+          (s) => isImportSpecifier(s) && s.imported.name === 'screen'
         );
       },
       // checks if import has shape:
@@ -171,11 +171,11 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
         }
       },
       'Program:exit'() {
-        renderVariableDeclarators.forEach(renderVar => {
+        renderVariableDeclarators.forEach((renderVar) => {
           const renderVarReferences = context
             .getDeclaredVariables(renderVar)[0]
             .references.slice(1);
-          renderVarReferences.forEach(ref => {
+          renderVarReferences.forEach((ref) => {
             const parent = ref.identifier.parent;
             if (
               isMemberExpression(parent) &&

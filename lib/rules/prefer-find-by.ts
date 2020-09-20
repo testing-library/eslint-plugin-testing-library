@@ -137,7 +137,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
             queryVariant,
             fix(fixer) {
               const newCode = `${caller}.${queryVariant}${queryMethod}(${callArguments
-                .map(node => sourceCode.getText(node))
+                .map((node) => sourceCode.getText(node))
                 .join(', ')})`;
               return fixer.replaceText(node, newCode);
             },
@@ -162,7 +162,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
               const allFixes: RuleFix[] = [];
               // this updates waitFor with findBy*
               const newCode = `${findByMethod}(${callArguments
-                .map(node => sourceCode.getText(node))
+                .map((node) => sourceCode.getText(node))
                 .join(', ')})`;
               allFixes.push(fixer.replaceText(node, newCode));
 
@@ -181,7 +181,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
                 // verify if the findBy* method was already declared
                 if (
                   allVariableDeclarations.properties.some(
-                    p =>
+                    (p) =>
                       isProperty(p) &&
                       isIdentifier(p.key) &&
                       p.key.name === findByMethod

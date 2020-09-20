@@ -7,12 +7,12 @@ const ALL_WAIT_METHODS = ['waitFor', 'waitForElementToBeRemoved'];
 
 ruleTester.run(RULE_NAME, rule, {
   valid: [
-    ...ALL_WAIT_METHODS.map(m => ({
+    ...ALL_WAIT_METHODS.map((m) => ({
       code: `${m}(() => {
           screen.getByText(/submit/i)
         })`,
     })),
-    ...ALL_WAIT_METHODS.map(m => ({
+    ...ALL_WAIT_METHODS.map((m) => ({
       code: `${m}(function() {
           screen.getByText(/submit/i)
         })`,
@@ -32,7 +32,7 @@ ruleTester.run(RULE_NAME, rule, {
   ],
 
   invalid: [
-    ...ALL_WAIT_METHODS.map(m => ({
+    ...ALL_WAIT_METHODS.map((m) => ({
       code: `${m}(() => {})`,
       errors: [
         {
@@ -40,7 +40,7 @@ ruleTester.run(RULE_NAME, rule, {
         },
       ],
     })),
-    ...ALL_WAIT_METHODS.map(m => ({
+    ...ALL_WAIT_METHODS.map((m) => ({
       code: `${m}((a, b) => {})`,
       errors: [
         {
@@ -48,7 +48,7 @@ ruleTester.run(RULE_NAME, rule, {
         },
       ],
     })),
-    ...ALL_WAIT_METHODS.map(m => ({
+    ...ALL_WAIT_METHODS.map((m) => ({
       code: `${m}(() => { /* I'm empty anyway */ })`,
       errors: [
         {
@@ -57,7 +57,7 @@ ruleTester.run(RULE_NAME, rule, {
       ],
     })),
 
-    ...ALL_WAIT_METHODS.map(m => ({
+    ...ALL_WAIT_METHODS.map((m) => ({
       code: `${m}(function() {
 
       })`,
@@ -67,7 +67,7 @@ ruleTester.run(RULE_NAME, rule, {
         },
       ],
     })),
-    ...ALL_WAIT_METHODS.map(m => ({
+    ...ALL_WAIT_METHODS.map((m) => ({
       code: `${m}(function(a) {
 
       })`,
@@ -77,7 +77,7 @@ ruleTester.run(RULE_NAME, rule, {
         },
       ],
     })),
-    ...ALL_WAIT_METHODS.map(m => ({
+    ...ALL_WAIT_METHODS.map((m) => ({
       code: `${m}(function() {
         // another empty callback
       })`,
@@ -88,7 +88,7 @@ ruleTester.run(RULE_NAME, rule, {
       ],
     })),
 
-    ...ALL_WAIT_METHODS.map(m => ({
+    ...ALL_WAIT_METHODS.map((m) => ({
       code: `${m}(noop)`,
       errors: [
         {

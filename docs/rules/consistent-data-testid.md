@@ -9,17 +9,17 @@ Ensure `data-testid` values match a provided regex. This rule is un-opinionated,
 Examples of **incorrect** code for this rule:
 
 ```js
-const foo = props => <div data-testid="my-test-id">...</div>;
-const foo = props => <div data-testid="myTestId">...</div>;
-const foo = props => <div data-testid="TestIdEXAMPLE">...</div>;
+const foo = (props) => <div data-testid="my-test-id">...</div>;
+const foo = (props) => <div data-testid="myTestId">...</div>;
+const foo = (props) => <div data-testid="TestIdEXAMPLE">...</div>;
 ```
 
 Examples of **correct** code for this rule:
 
 ```js
-const foo = props => <div data-testid="TestId__EXAMPLE">...</div>;
-const bar = props => <div data-testid="TestId">...</div>;
-const baz = props => <div>...</div>;
+const foo = (props) => <div data-testid="TestId__EXAMPLE">...</div>;
+const bar = (props) => <div data-testid="TestId">...</div>;
+const baz = (props) => <div>...</div>;
 ```
 
 ## Options

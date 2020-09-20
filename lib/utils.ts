@@ -2,9 +2,9 @@ import { TSESTree } from '@typescript-eslint/experimental-utils';
 
 const combineQueries = (variants: string[], methods: string[]) => {
   const combinedQueries: string[] = [];
-  variants.forEach(variant => {
+  variants.forEach((variant) => {
     const variantPrefix = variant.replace('By', '');
-    methods.forEach(method => {
+    methods.forEach((method) => {
       combinedQueries.push(`${variantPrefix}${method}`);
     });
   });

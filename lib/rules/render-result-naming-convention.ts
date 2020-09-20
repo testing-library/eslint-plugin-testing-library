@@ -15,7 +15,7 @@ type Options = [{ renderFunctions?: string[] }];
 
 const ALLOWED_VAR_NAMES = ['view', 'utils'];
 const ALLOWED_VAR_NAMES_TEXT = ALLOWED_VAR_NAMES.map(
-  name => `\`${name}\``
+  (name) => `\`${name}\``
 ).join(', ');
 
 export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
@@ -60,7 +60,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
           return;
         }
         const renderImport = node.specifiers.find(
-          node => isImportSpecifier(node) && node.imported.name === 'render'
+          (node) => isImportSpecifier(node) && node.imported.name === 'render'
         );
 
         if (!renderImport) {

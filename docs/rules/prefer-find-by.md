@@ -41,7 +41,7 @@ await waitForElementToBeRemoved(() => queryAllByLabel('my label'));
 await waitForElementToBeRemoved(document.querySelector('foo'));
 
 // using waitFor with a function
-await waitFor(function() {
+await waitFor(function () {
   foo();
   return getByText('name');
 });

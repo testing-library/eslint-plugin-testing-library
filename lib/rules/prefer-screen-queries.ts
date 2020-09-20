@@ -24,7 +24,7 @@ function usesContainerOrBaseElement(node: TSESTree.CallExpression) {
   return (
     isObjectExpression(secondArgument) &&
     secondArgument.properties.some(
-      property =>
+      (property) =>
         isProperty(property) &&
         isIdentifier(property.key) &&
         ALLOWED_RENDER_PROPERTIES_FOR_DESTRUCTURING.includes(property.key.name)
@@ -85,7 +85,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
           // save the destructured query methods
           const identifiers = node.id.properties
             .filter(
-              property =>
+              (property) =>
                 isProperty(property) &&
                 isIdentifier(property.key) &&
                 queriesRegex.test(property.key.name)
@@ -108,7 +108,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
       ) {
         if (
           !queriesDestructuredInWithinDeclaration.some(
-            queryName => queryName === node.name
+            (queryName) => queryName === node.name
           )
         ) {
           reportInvalidUsage(node);

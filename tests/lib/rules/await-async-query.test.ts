@@ -34,7 +34,7 @@ function createTestCase(
   ) => string | { code: string; errors?: TestCaseError<'awaitAsyncQuery'>[] },
   { combinations = ASYNC_QUERIES_COMBINATIONS, isAsync }: TestCaseParams = {}
 ) {
-  return combinations.map(query => {
+  return combinations.map((query) => {
     const test = getTest(query);
 
     return typeof test === 'string'
@@ -49,16 +49,16 @@ function createTestCase(
 ruleTester.run(RULE_NAME, rule, {
   valid: [
     // async queries declaration from render functions are valid
-    ...createTestCase(query => `const { ${query} } = render()`, {
+    ...createTestCase((query) => `const { ${query} } = render()`, {
       isAsync: false,
     }),
 
     // async screen queries declaration are valid
-    ...createTestCase(query => `await screen.${query}('foo')`),
+    ...createTestCase((query) => `await screen.${query}('foo')`),
 
     // async queries are valid with await operator
     ...createTestCase(
-      query => `
+      (query) => `
         doSomething()
         await ${query}('foo')
       `
@@ -66,7 +66,7 @@ ruleTester.run(RULE_NAME, rule, {
 
     // async queries are valid when saved in a variable with await operator
     ...createTestCase(
-      query => `
+      (query) => `
         doSomething()
         const foo = await ${query}('foo')
         expect(foo).toBeInTheDocument();
@@ -75,7 +75,7 @@ ruleTester.run(RULE_NAME, rule, {
 
     // async queries are valid when saved in a promise variable immediately resolved
     ...createTestCase(
-      query => `
+      (query) => `
         const promise = ${query}('foo')
         await promise
       `
@@ -83,7 +83,7 @@ ruleTester.run(RULE_NAME, rule, {
 
     // async queries are valid when saved in a promise variable resolved by an await operator
     ...createTestCase(
-      query => `
+      (query) => `
         const promise = ${query}('foo')
         await promise
       `
@@ -91,7 +91,7 @@ ruleTester.run(RULE_NAME, rule, {
 
     // async queries are valid when used with then method
     ...createTestCase(
-      query => `
+      (query) => `
         ${query}('foo').then(() => {
           done()
         })
@@ -100,21 +100,23 @@ ruleTester.run(RULE_NAME, rule, {
 
     // async queries are valid with promise in variable resolved by then method
     ...createTestCase(
-      query => `
+      (query) => `
         const promise = ${query}('foo')
         promise.then((done) => done())
       `
     ),
 
     // async queries are valid with promise returned in arrow function
-    ...createTestCase(query => `const anArrowFunction = () => ${query}('foo')`),
+    ...createTestCase(
+      (query) => `const anArrowFunction = () => ${query}('foo')`
+    ),
 
     // async queries are valid with promise returned in regular function
-    ...createTestCase(query => `function foo() { return ${query}('foo') }`),
+    ...createTestCase((query) => `function foo() { return ${query}('foo') }`),
 
     // async queries are valid with promise in variable and returned in regular functio
     ...createTestCase(
-      query => `
+      (query) => `
         const promise = ${query}('foo')
         return promise
       `
@@ -122,7 +124,7 @@ ruleTester.run(RULE_NAME, rule, {
 
     // sync queries are valid
     ...createTestCase(
-      query => `
+      (query) => `
         doSomething()
         ${query}('foo')
       `,
@@ -131,7 +133,7 @@ ruleTester.run(RULE_NAME, rule, {
 
     // async queries with resolves matchers are valid
     ...createTestCase(
-      query => `
+      (query) => `
         expect(${query}("foo")).resolves.toBe("bar")
         expect(wrappedQuery(${query}("foo"))).resolves.toBe("bar")
       `
@@ -139,7 +141,7 @@ ruleTester.run(RULE_NAME, rule, {
 
     // async queries with rejects matchers are valid
     ...createTestCase(
-      query => `
+      (query) => `
         expect(${query}("foo")).rejects.toBe("bar")
         expect(wrappedQuery(${query}("foo"))).rejects.toBe("bar")
       `
@@ -154,7 +156,7 @@ ruleTester.run(RULE_NAME, rule, {
     }),
 
     // unresolved async queries are valid if there are no imports from a testing library module
-    ...ASYNC_QUERIES_COMBINATIONS.map(query => ({
+    ...ASYNC_QUERIES_COMBINATIONS.map((query) => ({
       code: `
         import { render } from "another-library"
 
@@ -167,7 +169,7 @@ ruleTester.run(RULE_NAME, rule, {
 
   invalid: [
     // async queries without await operator or then method are not valid
-    ...createTestCase(query => ({
+    ...createTestCase((query) => ({
       code: `
         doSomething()
         const foo = ${query}('foo')
@@ -176,12 +178,12 @@ ruleTester.run(RULE_NAME, rule, {
     })),
 
     // async screen queries without await operator or then method are not valid
-    ...createTestCase(query => ({
+    ...createTestCase((query) => ({
       code: `screen.${query}('foo')`,
       errors: [{ messageId: 'awaitAsyncQuery' }],
     })),
 
-    ...createTestCase(query => ({
+    ...createTestCase((query) => ({
       code: `
         const foo = ${query}('foo')
         expect(foo).toBeInTheDocument()
