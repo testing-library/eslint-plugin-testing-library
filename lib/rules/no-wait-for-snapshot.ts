@@ -1,29 +1,30 @@
 import { ESLintUtils, TSESTree } from '@typescript-eslint/experimental-utils';
-
 import { getDocsUrl, ASYNC_UTILS, LIBRARY_MODULES } from '../utils';
 import {
-  isAwaited,
-  isPromiseResolved,
-  getVariableReferences,
+  findClosestCallExpressionNode,
+  isMemberExpression,
 } from '../node-utils';
 
-export const RULE_NAME = 'await-async-utils';
-export type MessageIds = 'awaitAsyncUtil';
+export const RULE_NAME = 'no-wait-for-snapshot';
+export type MessageIds = 'noWaitForSnapshot';
 type Options = [];
 
 const ASYNC_UTILS_REGEXP = new RegExp(`^(${ASYNC_UTILS.join('|')})$`);
+const SNAPSHOT_REGEXP = /^(toMatchSnapshot|toMatchInlineSnapshot)$/;
 
 export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
   name: RULE_NAME,
   meta: {
     type: 'problem',
     docs: {
-      description: 'Enforce async utils to be awaited properly',
+      description:
+        'Ensures no snapshot is generated inside of a `waitFor` call',
       category: 'Best Practices',
       recommended: 'warn',
     },
     messages: {
-      awaitAsyncUtil: 'Promise returned from `{{ name }}` must be handled',
+      noWaitForSnapshot:
+        "A snapshot can't be generated inside of a `{{ name }}` call",
     },
     fixable: null,
     schema: [],
@@ -36,6 +37,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
       name: string;
     }> = [];
     const importedAsyncUtils: string[] = [];
+    const snapshotUsage: TSESTree.Identifier[] = [];
 
     return {
       'ImportDeclaration > ImportSpecifier,ImportNamespaceSpecifier'(
@@ -47,13 +49,16 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
           return;
         }
 
+        let name;
         if (node.type === 'ImportSpecifier') {
-          importedAsyncUtils.push(node.imported.name);
+          name = node.imported.name;
         }
 
         if (node.type === 'ImportNamespaceSpecifier') {
-          importedAsyncUtils.push(node.local.name);
+          name = node.local.name;
         }
+
+        importedAsyncUtils.push(name);
       },
       [`CallExpression > Identifier[name=${ASYNC_UTILS_REGEXP}]`](
         node: TSESTree.Identifier
@@ -72,9 +77,12 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
           name: memberExpressionName,
         });
       },
+      [`Identifier[name=${SNAPSHOT_REGEXP}]`](node: TSESTree.Identifier) {
+        snapshotUsage.push(node);
+      },
       'Program:exit'() {
         const testingLibraryUtilUsage = asyncUtilsUsage.filter(usage => {
-          if (usage.node.type === 'MemberExpression') {
+          if (isMemberExpression(usage.node)) {
             const object = usage.node.object as TSESTree.Identifier;
 
             return importedAsyncUtils.includes(object.name);
@@ -83,41 +91,42 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
           return importedAsyncUtils.includes(usage.name);
         });
 
-        testingLibraryUtilUsage.forEach(({ node, name }) => {
-          const references = getVariableReferences(context, node.parent.parent);
-
-          if (
-            references &&
-            references.length === 0 &&
-            !isAwaited(node.parent.parent) &&
-            !isPromiseResolved(node)
-          ) {
-            context.report({
-              node,
-              messageId: 'awaitAsyncUtil',
-              data: {
-                name,
-              },
-            });
-          } else {
-            for (const reference of references) {
-              const referenceNode = reference.identifier;
-              if (
-                !isAwaited(referenceNode.parent) &&
-                !isPromiseResolved(referenceNode)
-              ) {
-                context.report({
-                  node,
-                  messageId: 'awaitAsyncUtil',
-                  data: {
-                    name,
-                  },
-                });
-
-                break;
-              }
-            }
+        function getClosestAsyncUtil(
+          asyncUtilUsage: {
+            node: TSESTree.Identifier | TSESTree.MemberExpression;
+            name: string;
+          },
+          node: TSESTree.Node
+        ) {
+          let callExpression = findClosestCallExpressionNode(node);
+          while (callExpression != null) {
+            if (callExpression.callee === asyncUtilUsage.node)
+              return asyncUtilUsage;
+            callExpression = findClosestCallExpressionNode(
+              callExpression.parent
+            );
           }
+          return null;
+        }
+
+        snapshotUsage.forEach(node => {
+          testingLibraryUtilUsage.forEach(asyncUtilUsage => {
+            const closestAsyncUtil = getClosestAsyncUtil(asyncUtilUsage, node);
+            if (closestAsyncUtil != null) {
+              let name;
+              if (isMemberExpression(closestAsyncUtil.node)) {
+                name = (closestAsyncUtil.node.property as TSESTree.Identifier)
+                  .name;
+              } else {
+                name = closestAsyncUtil.name;
+              }
+              context.report({
+                node,
+                messageId: 'noWaitForSnapshot',
+                data: { name },
+              });
+            }
+          });
         });
       },
     };

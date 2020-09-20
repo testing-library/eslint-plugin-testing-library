@@ -12,12 +12,21 @@ import {
 
 export const RULE_NAME = 'no-render-in-setup';
 export type MessageIds = 'noRenderInSetup';
+type Options = [
+  {
+    allowTestingFrameworkSetupHook?: string;
+    renderFunctions?: string[];
+  }
+];
 
 export function findClosestBeforeHook(
   node: TSESTree.Node,
   testingFrameworkSetupHooksToFilter: string[]
 ): TSESTree.Identifier | null {
-  if (node === null) return null;
+  if (node === null) {
+    return null;
+  }
+
   if (
     isCallExpression(node) &&
     isIdentifier(node.callee) &&
@@ -29,7 +38,7 @@ export function findClosestBeforeHook(
   return findClosestBeforeHook(node.parent, testingFrameworkSetupHooksToFilter);
 }
 
-export default ESLintUtils.RuleCreator(getDocsUrl)({
+export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
   name: RULE_NAME,
   meta: {
     type: 'problem',

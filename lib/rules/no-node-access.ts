@@ -3,8 +3,10 @@ import { getDocsUrl, ALL_RETURNING_NODES } from '../utils';
 import { isIdentifier } from '../node-utils';
 
 export const RULE_NAME = 'no-node-access';
+export type MessageIds = 'noNodeAccess';
+type Options = [];
 
-export default ESLintUtils.RuleCreator(getDocsUrl)({
+export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
   name: RULE_NAME,
   meta: {
     type: 'problem',

@@ -6,9 +6,12 @@ env:
   matrix:
     - ESLINT=5
     - ESLINT=6
+    - ESLINT=7
 
 node_js:
   - 10.12
+  - 10
+  - 12.0
   - 12
   - 14
 
@@ -19,14 +22,14 @@ jobs:
   include:
     - stage: validation
       node_js: 14
-      env: ESLINT=6
+      env: ESLINT=7
       script:
         - npm run format:check
         - npm run lint -- --max-warnings 0
     - stage: release
-      if: branch = master AND type != pull_request
+      if: branch = master AND type != pull_request AND fork = false
       node_js: 14
-      env: ESLINT=6
+      env: ESLINT=7
       script: npm run build
       deploy:
         provider: script

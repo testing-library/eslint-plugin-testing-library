@@ -9,8 +9,10 @@ import {
 } from '../node-utils';
 
 export const RULE_NAME = 'no-container';
+export type MessageIds = 'noContainer';
+type Options = [{ renderFunctions?: string[] }];
 
-export default ESLintUtils.RuleCreator(getDocsUrl)({
+export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
   name: RULE_NAME,
   meta: {
     type: 'problem',

@@ -8,13 +8,12 @@ import {
 } from '../node-utils';
 
 export const RULE_NAME = 'no-side-effects-wait-for';
+export type MessageIds = 'noSideEffectsWaitFor';
+type Options = [];
 
 const WAIT_EXPRESSION_QUERY = 'CallExpression[callee.name=/^(waitFor)$/]';
 
 const SIDE_EFFECTS: Array<string> = ['fireEvent', 'userEvent'];
-
-export type MessageIds = 'noSideEffectsWaitFor';
-type Options = [];
 
 export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
   name: RULE_NAME,

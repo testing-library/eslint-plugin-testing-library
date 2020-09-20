@@ -205,7 +205,7 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [
         {
-          messageId: 'invalidRenderResultName',
+          messageId: 'renderResultNamingConvention',
           data: {
             varName: 'wrapper',
           },
@@ -225,7 +225,7 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [
         {
-          messageId: 'invalidRenderResultName',
+          messageId: 'renderResultNamingConvention',
           data: {
             varName: 'wrapper',
           },
@@ -245,7 +245,7 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [
         {
-          messageId: 'invalidRenderResultName',
+          messageId: 'renderResultNamingConvention',
           data: {
             varName: 'component',
           },
@@ -265,7 +265,7 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [
         {
-          messageId: 'invalidRenderResultName',
+          messageId: 'renderResultNamingConvention',
           line: 5,
           column: 17,
         },
@@ -282,7 +282,7 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [
         {
-          messageId: 'invalidRenderResultName',
+          messageId: 'renderResultNamingConvention',
           data: {
             varName: 'wrapper',
           },
@@ -309,7 +309,7 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [
         {
-          messageId: 'invalidRenderResultName',
+          messageId: 'renderResultNamingConvention',
           data: {
             varName: 'wrapper',
           },
@@ -334,7 +334,7 @@ ruleTester.run(RULE_NAME, rule, {
       ],
       errors: [
         {
-          messageId: 'invalidRenderResultName',
+          messageId: 'renderResultNamingConvention',
           data: {
             varName: 'wrapper',
           },

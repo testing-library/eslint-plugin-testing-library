@@ -8,11 +8,10 @@ import {
 } from '../node-utils';
 
 export const RULE_NAME = 'no-multiple-assertions-wait-for';
-
-const WAIT_EXPRESSION_QUERY = 'CallExpression[callee.name=/^(waitFor)$/]';
-
 export type MessageIds = 'noMultipleAssertionWaitFor';
 type Options = [];
+
+const WAIT_EXPRESSION_QUERY = 'CallExpression[callee.name=/^(waitFor)$/]';
 
 export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
   name: RULE_NAME,

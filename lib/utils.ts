@@ -12,7 +12,7 @@ const combineQueries = (variants: string[], methods: string[]) => {
   return combinedQueries;
 };
 
-const getDocsUrl = (ruleName: string) =>
+const getDocsUrl = (ruleName: string): string =>
   `https://github.com/testing-library/eslint-plugin-testing-library/tree/master/docs/rules/${ruleName}.md`;
 
 const LIBRARY_MODULES = [
@@ -24,7 +24,9 @@ const LIBRARY_MODULES = [
   '@testing-library/svelte',
 ];
 
-const hasTestingLibraryImportModule = (node: TSESTree.ImportDeclaration) => {
+const hasTestingLibraryImportModule = (
+  node: TSESTree.ImportDeclaration
+): boolean => {
   return LIBRARY_MODULES.includes(node.source.value.toString());
 };
 

@@ -3,10 +3,13 @@ import { getDocsUrl, ALL_QUERIES_METHODS } from '../utils';
 import { isMemberExpression } from '../node-utils';
 
 export const RULE_NAME = 'prefer-explicit-assert';
-export type MessageIds = 'preferExplicitAssert';
+export type MessageIds =
+  | 'preferExplicitAssert'
+  | 'preferExplicitAssertAssertion';
 type Options = [
   {
-    customQueryNames: string[];
+    assertion?: string;
+    customQueryNames?: string[];
   }
 ];
 
@@ -34,12 +37,18 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
     messages: {
       preferExplicitAssert:
         'Wrap stand-alone `getBy*` query with `expect` function for better explicit assertion',
+      preferExplicitAssertAssertion:
+        '`getBy*` queries must be asserted with `{{assertion}}`',
     },
     fixable: null,
     schema: [
       {
         type: 'object',
+        additionalProperties: false,
         properties: {
+          assertion: {
+            type: 'string',
+          },
           customQueryNames: {
             type: 'array',
           },
@@ -54,7 +63,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
   ],
 
   create: function(context, [options]) {
-    const { customQueryNames } = options;
+    const { customQueryNames, assertion } = options;
     const getQueryCalls: TSESTree.Identifier[] = [];
 
     return {
@@ -74,6 +83,22 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
               node: queryCall,
               messageId: 'preferExplicitAssert',
             });
+          } else if (assertion) {
+            const expectation = node.parent.parent.parent;
+
+            if (
+              expectation.type === 'MemberExpression' &&
+              expectation.property.type === 'Identifier' &&
+              expectation.property.name !== assertion
+            ) {
+              context.report({
+                node: expectation.property,
+                messageId: 'preferExplicitAssertAssertion',
+                data: {
+                  assertion,
+                },
+              });
+            }
           }
         });
       },
