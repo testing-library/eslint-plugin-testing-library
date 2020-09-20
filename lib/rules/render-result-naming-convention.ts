@@ -10,13 +10,15 @@ import {
 } from '../node-utils';
 
 export const RULE_NAME = 'render-result-naming-convention';
+export type MessageIds = 'renderResultNamingConvention';
+type Options = [{ renderFunctions?: string[] }];
 
 const ALLOWED_VAR_NAMES = ['view', 'utils'];
 const ALLOWED_VAR_NAMES_TEXT = ALLOWED_VAR_NAMES.map(
-  name => '`' + name + '`'
+  name => `\`${name}\``
 ).join(', ');
 
-export default ESLintUtils.RuleCreator(getDocsUrl)({
+export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
   name: RULE_NAME,
   meta: {
     type: 'suggestion',
@@ -26,7 +28,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)({
       recommended: false,
     },
     messages: {
-      invalidRenderResultName: `\`{{ varName }}\` is not a recommended name for \`render\` returned value. Instead, you should destructure it, or call it using one of the valid choices: ${ALLOWED_VAR_NAMES_TEXT}`,
+      renderResultNamingConvention: `\`{{ varName }}\` is not a recommended name for \`render\` returned value. Instead, you should destructure it, or call it using one of the valid choices: ${ALLOWED_VAR_NAMES_TEXT}`,
     },
     fixable: null,
     schema: [
@@ -134,7 +136,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)({
 
         context.report({
           node,
-          messageId: 'invalidRenderResultName',
+          messageId: 'renderResultNamingConvention',
           data: {
             varName: renderResultName,
           },

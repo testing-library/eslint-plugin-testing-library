@@ -8,9 +8,10 @@ import noDebug from './rules/no-debug';
 import noDomImport from './rules/no-dom-import';
 import noManualCleanup from './rules/no-manual-cleanup';
 import noNodeAccess from './rules/no-node-access';
+import noPromiseInFireEvent from './rules/no-promise-in-fire-event';
 import noRenderInSetup from './rules/no-render-in-setup';
 import noWaitForEmptyCallback from './rules/no-wait-for-empty-callback';
-import noPromiseInFireEvent from './rules/no-promise-in-fire-event';
+import noWaitForSnapshot from './rules/no-wait-for-snapshot';
 import preferExplicitAssert from './rules/prefer-explicit-assert';
 import preferPresenceQueries from './rules/prefer-presence-queries';
 import preferScreenQueries from './rules/prefer-screen-queries';
@@ -37,6 +38,7 @@ const rules = {
   'no-render-in-setup': noRenderInSetup,
   'no-side-effects-wait-for': noSideEffectsWaitFor,
   'no-wait-for-empty-callback': noWaitForEmptyCallback,
+  'no-wait-for-snapshot': noWaitForSnapshot,
   'prefer-explicit-assert': preferExplicitAssert,
   'prefer-find-by': preferFindBy,
   'prefer-presence-queries': preferPresenceQueries,

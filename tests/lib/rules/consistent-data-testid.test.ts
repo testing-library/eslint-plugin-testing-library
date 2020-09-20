@@ -203,7 +203,7 @@ ruleTester.run(RULE_NAME, rule, {
       options: [{ testIdPattern: 'error' }],
       errors: [
         {
-          messageId: 'invalidTestId',
+          messageId: 'consistentDataTestId',
           data: {
             attr: 'data-testid',
             value: 'Awesome__CoolStuff',
@@ -232,7 +232,7 @@ ruleTester.run(RULE_NAME, rule, {
       filename: '/my/cool/__tests__/Parent/index.js',
       errors: [
         {
-          messageId: 'invalidTestId',
+          messageId: 'consistentDataTestId',
           data: {
             attr: 'data-testid',
             value: 'Nope',
@@ -262,7 +262,7 @@ ruleTester.run(RULE_NAME, rule, {
       filename: '/my/cool/__tests__/Parent/index.js',
       errors: [
         {
-          messageId: 'invalidTestId',
+          messageId: 'consistentDataTestId',
           data: {
             attr: 'my-custom-attr',
             value: 'WrongComponent__cool',
@@ -292,7 +292,7 @@ ruleTester.run(RULE_NAME, rule, {
       filename: '/my/cool/__tests__/Parent/index.js',
       errors: [
         {
-          messageId: 'invalidTestId',
+          messageId: 'consistentDataTestId',
           data: {
             attr: 'custom-attr',
             value: 'wrong',
@@ -300,7 +300,7 @@ ruleTester.run(RULE_NAME, rule, {
           },
         },
         {
-          messageId: 'invalidTestId',
+          messageId: 'consistentDataTestId',
           data: {
             attr: 'another-custom-attr',
             value: 'wrong',
@@ -329,7 +329,7 @@ ruleTester.run(RULE_NAME, rule, {
       filename: '/my/cool/__tests__/Parent/index.js',
       errors: [
         {
-          messageId: 'invalidTestId',
+          messageId: 'consistentDataTestId',
           data: {
             attr: 'data-testid',
             value: 'WrongComponent__cool',

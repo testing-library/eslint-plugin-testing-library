@@ -1,4 +1,4 @@
-# Output 
+# Output
 dist
 
 # Logs
@@ -66,3 +66,8 @@ yarn-error.log
 .pnp.js
 # Yarn Integrity file
 .yarn-integrity
+
+# these cause more harm than good
+# when working with contributors
+package-lock.json
+yarn.lock

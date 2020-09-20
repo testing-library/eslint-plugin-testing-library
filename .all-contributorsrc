@@ -335,7 +335,38 @@
       "contributions": [
         "code",
         "test",
+        "doc",
+        "ideas"
+      ]
+    },
+    {
+      "login": "Gpx",
+      "name": "Giorgio Polvara",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/767959?v=4",
+      "profile": "https://twitter.com/Gpx",
+      "contributions": [
+        "code",
+        "test",
         "doc"
+      ]
+    },
+    {
+      "login": "jdanil",
+      "name": "Josh David",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/8342105?v=4",
+      "profile": "https://github.com/jdanil",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "MichaelDeBoey",
+      "name": "Michaël De Boey",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/6643991?v=4",
+      "profile": "https://michaeldeboey.be",
+      "contributions": [
+        "code",
+        "platform"
       ]
     }
   ],

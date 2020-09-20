@@ -1,5 +1,6 @@
 import {
   AST_NODE_TYPES,
+  TSESLint,
   TSESTree,
 } from '@typescript-eslint/experimental-utils';
 import { RuleContext } from '@typescript-eslint/experimental-utils/dist/ts-eslint';
@@ -77,6 +78,10 @@ export function findClosestCallExpressionNode(
     return node;
   }
 
+  if (!node.parent) {
+    return null;
+  }
+
   return findClosestCallExpressionNode(node.parent);
 }
 
@@ -105,7 +110,7 @@ export function isObjectExpression(
   return node?.type === AST_NODE_TYPES.ObjectExpression;
 }
 
-export function hasThenProperty(node: TSESTree.Node) {
+export function hasThenProperty(node: TSESTree.Node): boolean {
   return (
     isMemberExpression(node) &&
     isIdentifier(node.property) &&
@@ -131,7 +136,7 @@ export function isReturnStatement(
   return node && node.type === AST_NODE_TYPES.ReturnStatement;
 }
 
-export function isAwaited(node: TSESTree.Node) {
+export function isAwaited(node: TSESTree.Node): boolean {
   return (
     isAwaitExpression(node) ||
     isArrowFunctionExpression(node) ||
@@ -139,7 +144,7 @@ export function isAwaited(node: TSESTree.Node) {
   );
 }
 
-export function isPromiseResolved(node: TSESTree.Node) {
+export function isPromiseResolved(node: TSESTree.Node): boolean {
   const parent = node.parent;
 
   // wait(...).then(...)
@@ -154,7 +159,7 @@ export function isPromiseResolved(node: TSESTree.Node) {
 export function getVariableReferences(
   context: RuleContext<string, []>,
   node: TSESTree.Node
-) {
+): TSESLint.Scope.Reference[] {
   return (
     (isVariableDeclarator(node) &&
       context.getDeclaredVariables(node)[0].references.slice(1)) ||
@@ -165,7 +170,7 @@ export function getVariableReferences(
 export function isRenderFunction(
   callNode: TSESTree.CallExpression,
   renderFunctions: string[]
-) {
+): boolean {
   // returns true for `render` and e.g. `customRenderFn`
   // as well as `someLib.render` and `someUtils.customRenderFn`
   return renderFunctions.some(name => {
@@ -181,7 +186,7 @@ export function isRenderFunction(
 export function isRenderVariableDeclarator(
   node: TSESTree.VariableDeclarator,
   renderFunctions: string[]
-) {
+): boolean {
   if (node.init) {
     if (isAwaitExpression(node.init)) {
       return (

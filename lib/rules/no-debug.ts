@@ -16,8 +16,10 @@ import {
 } from '../node-utils';
 
 export const RULE_NAME = 'no-debug';
+export type MessageIds = 'noDebug';
+type Options = [{ renderFunctions?: string[] }];
 
-export default ESLintUtils.RuleCreator(getDocsUrl)({
+export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
   name: RULE_NAME,
   meta: {
     type: 'problem',
@@ -107,7 +109,10 @@ export default ESLintUtils.RuleCreator(getDocsUrl)({
       // checks if import has shape:
       // import { screen } from '@testing-library/dom';
       ImportDeclaration(node: TSESTree.ImportDeclaration) {
-        if (!hasTestingLibraryImportModule(node)) return;
+        if (!hasTestingLibraryImportModule(node)) {
+          return;
+        }
+
         hasImportedScreen = node.specifiers.some(
           s => isImportSpecifier(s) && s.imported.name === 'screen'
         );
@@ -118,7 +123,9 @@ export default ESLintUtils.RuleCreator(getDocsUrl)({
         node: TSESTree.ImportNamespaceSpecifier
       ) {
         const importDeclarationNode = node.parent as TSESTree.ImportDeclaration;
-        if (!hasTestingLibraryImportModule(importDeclarationNode)) return;
+        if (!hasTestingLibraryImportModule(importDeclarationNode)) {
+          return;
+        }
 
         wildcardImportName = node.local && node.local.name;
       },

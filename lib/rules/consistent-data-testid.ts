@@ -3,11 +3,11 @@ import { ESLintUtils, TSESTree } from '@typescript-eslint/experimental-utils';
 import { isJSXAttribute, isLiteral } from '../node-utils';
 
 export const RULE_NAME = 'consistent-data-testid';
-export type MessageIds = 'invalidTestId';
+export type MessageIds = 'consistentDataTestId';
 type Options = [
   {
-    testIdPattern: string;
     testIdAttribute?: string | string[];
+    testIdPattern: string;
   }
 ];
 
@@ -23,7 +23,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
       recommended: false,
     },
     messages: {
-      invalidTestId: '`{{attr}}` "{{value}}" should match `{{regex}}`',
+      consistentDataTestId: '`{{attr}}` "{{value}}" should match `{{regex}}`',
     },
     fixable: null,
     schema: [
@@ -105,7 +105,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
         if (value && typeof value === 'string' && !regex.test(value)) {
           context.report({
             node,
-            messageId: 'invalidTestId',
+            messageId: 'consistentDataTestId',
             data: {
               attr: node.name,
               value,
