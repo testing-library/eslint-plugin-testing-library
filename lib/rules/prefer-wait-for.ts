@@ -65,9 +65,9 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
       });
     };
 
-    const reportWait = (node: TSESTree.Identifier) => {
+    const reportWait = (node: TSESTree.Identifier | TSESTree.JSXIdentifier) => {
       context.report({
-        node: node,
+        node,
         messageId: 'preferWaitForMethod',
         data: {
           methodName: node.name,

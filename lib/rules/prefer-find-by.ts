@@ -39,8 +39,10 @@ function findRenderDefinitionDeclaration(
   );
 
   if (variable) {
-    const def = variable.defs.find(({ name }) => name.name === query);
-    return def.name;
+    return variable.defs
+      .map(({ name }) => name)
+      .filter(isIdentifier)
+      .find(({ name }) => name === query);
   }
 
   return findRenderDefinitionDeclaration(scope.upper, query);
