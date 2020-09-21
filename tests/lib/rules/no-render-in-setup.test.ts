@@ -19,7 +19,7 @@ ruleTester.run(RULE_NAME, rule, {
       `,
     },
     // test config options
-    ...TESTING_FRAMEWORK_SETUP_HOOKS.map(setupHook => ({
+    ...TESTING_FRAMEWORK_SETUP_HOOKS.map((setupHook) => ({
       code: `
         import { renderWithRedux } from '../test-utils';
         ${setupHook}(() => {
@@ -34,7 +34,7 @@ ruleTester.run(RULE_NAME, rule, {
       ],
     })),
     // test usage of a non-Testing Library render fn
-    ...TESTING_FRAMEWORK_SETUP_HOOKS.map(setupHook => ({
+    ...TESTING_FRAMEWORK_SETUP_HOOKS.map((setupHook) => ({
       code: `
         import { render } from 'imNoTestingLibrary';
         ${setupHook}(() => {
@@ -42,9 +42,9 @@ ruleTester.run(RULE_NAME, rule, {
         })
       `,
     })),
-    ...TESTING_FRAMEWORK_SETUP_HOOKS.map(allowedSetupHook => {
+    ...TESTING_FRAMEWORK_SETUP_HOOKS.map((allowedSetupHook) => {
       const [disallowedHook] = TESTING_FRAMEWORK_SETUP_HOOKS.filter(
-        setupHook => setupHook !== allowedSetupHook
+        (setupHook) => setupHook !== allowedSetupHook
       );
       return {
         code: `
@@ -65,7 +65,7 @@ ruleTester.run(RULE_NAME, rule, {
         ],
       };
     }),
-    ...TESTING_FRAMEWORK_SETUP_HOOKS.map(setupHook => ({
+    ...TESTING_FRAMEWORK_SETUP_HOOKS.map((setupHook) => ({
       code: `
         const { render } = require('imNoTestingLibrary')
 
@@ -82,7 +82,7 @@ ruleTester.run(RULE_NAME, rule, {
   ],
 
   invalid: [
-    ...TESTING_FRAMEWORK_SETUP_HOOKS.map(setupHook => ({
+    ...TESTING_FRAMEWORK_SETUP_HOOKS.map((setupHook) => ({
       code: `
         import { render } from '@testing-library/foo';
         ${setupHook}(() => {
@@ -95,7 +95,7 @@ ruleTester.run(RULE_NAME, rule, {
         },
       ],
     })),
-    ...TESTING_FRAMEWORK_SETUP_HOOKS.map(setupHook => ({
+    ...TESTING_FRAMEWORK_SETUP_HOOKS.map((setupHook) => ({
       code: `
         import { render } from '@testing-library/foo';
         ${setupHook}(function() {
@@ -109,7 +109,7 @@ ruleTester.run(RULE_NAME, rule, {
       ],
     })),
     // custom render function
-    ...TESTING_FRAMEWORK_SETUP_HOOKS.map(setupHook => ({
+    ...TESTING_FRAMEWORK_SETUP_HOOKS.map((setupHook) => ({
       code: `
         import { renderWithRedux } from '../test-utils';
         ${setupHook}(() => {
@@ -128,7 +128,7 @@ ruleTester.run(RULE_NAME, rule, {
       ],
     })),
     // call render within a wrapper function
-    ...TESTING_FRAMEWORK_SETUP_HOOKS.map(setupHook => ({
+    ...TESTING_FRAMEWORK_SETUP_HOOKS.map((setupHook) => ({
       code: `
       import { render } from '@testing-library/foo';
         ${setupHook}(() => {
@@ -144,9 +144,9 @@ ruleTester.run(RULE_NAME, rule, {
         },
       ],
     })),
-    ...TESTING_FRAMEWORK_SETUP_HOOKS.map(allowedSetupHook => {
+    ...TESTING_FRAMEWORK_SETUP_HOOKS.map((allowedSetupHook) => {
       const [disallowedHook] = TESTING_FRAMEWORK_SETUP_HOOKS.filter(
-        setupHook => setupHook !== allowedSetupHook
+        (setupHook) => setupHook !== allowedSetupHook
       );
       return {
         code: `
@@ -167,7 +167,7 @@ ruleTester.run(RULE_NAME, rule, {
         ],
       };
     }),
-    ...TESTING_FRAMEWORK_SETUP_HOOKS.map(setupHook => ({
+    ...TESTING_FRAMEWORK_SETUP_HOOKS.map((setupHook) => ({
       code: `
         import * as testingLibrary from '@testing-library/foo';
         ${setupHook}(() => {
@@ -180,7 +180,7 @@ ruleTester.run(RULE_NAME, rule, {
         },
       ],
     })),
-    ...TESTING_FRAMEWORK_SETUP_HOOKS.map(setupHook => ({
+    ...TESTING_FRAMEWORK_SETUP_HOOKS.map((setupHook) => ({
       code: `
         import { render } from 'imNoTestingLibrary';
         import * as testUtils from '../test-utils';
@@ -202,7 +202,7 @@ ruleTester.run(RULE_NAME, rule, {
         },
       ],
     })),
-    ...TESTING_FRAMEWORK_SETUP_HOOKS.map(setupHook => ({
+    ...TESTING_FRAMEWORK_SETUP_HOOKS.map((setupHook) => ({
       code: `
         const { render } = require('@testing-library/foo')
 

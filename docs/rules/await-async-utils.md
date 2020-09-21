@@ -54,7 +54,7 @@ test('something correctly', async () => {
   // `then` chained method is correct
   waitFor(() => {}, { timeout: 100 })
     .then(() => console.log('DOM changed!'))
-    .catch(err => console.log(`Error you need to deal with: ${err}`));
+    .catch((err) => console.log(`Error you need to deal with: ${err}`));
 
   // return the promise within a function is correct too!
   const makeCustomWait = () =>

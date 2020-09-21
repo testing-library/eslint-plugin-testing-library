@@ -22,7 +22,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
   },
   defaultOptions: [],
 
-  create: function(context) {
+  create: function (context) {
     return {
       'CallExpression > MemberExpression > Identifier[name=fireEvent]'(
         node: TSESTree.Identifier

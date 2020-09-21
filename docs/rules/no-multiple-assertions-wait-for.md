@@ -17,7 +17,7 @@ const foo = async () => {
   });
 
   // or
-  await waitFor(function() {
+  await waitFor(function () {
     expect(a).toEqual('a');
     expect(b).toEqual('b');
   });
@@ -32,7 +32,7 @@ const foo = async () => {
   expect(b).toEqual('b');
 
   // or
-  await waitFor(function() {
+  await waitFor(function () {
     expect(a).toEqual('a');
   });
   expect(b).toEqual('b');

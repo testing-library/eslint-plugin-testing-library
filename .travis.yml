@@ -4,12 +4,11 @@ env:
   global:
     - FORCE_COLOR=true
   matrix:
-    - ESLINT=5
-    - ESLINT=6
+    - ESLINT=7.5
     - ESLINT=7
 
 node_js:
-  - 10.12
+  - 10.22.1
   - 10
   - 12.0
   - 12

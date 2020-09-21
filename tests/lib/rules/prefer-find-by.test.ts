@@ -30,7 +30,7 @@ function createScenario<
   return WAIT_METHODS.reduce(
     (acc: T[], waitMethod) =>
       acc.concat(
-        SYNC_QUERIES_COMBINATIONS.map(queryMethod =>
+        SYNC_QUERIES_COMBINATIONS.map((queryMethod) =>
           callback(waitMethod, queryMethod)
         )
       ),
@@ -40,19 +40,19 @@ function createScenario<
 
 ruleTester.run(RULE_NAME, rule, {
   valid: [
-    ...ASYNC_QUERIES_COMBINATIONS.map(queryMethod => ({
+    ...ASYNC_QUERIES_COMBINATIONS.map((queryMethod) => ({
       code: `
         const { ${queryMethod} } = setup()
         const submitButton = await ${queryMethod}('foo')
       `,
     })),
-    ...ASYNC_QUERIES_COMBINATIONS.map(queryMethod => ({
+    ...ASYNC_QUERIES_COMBINATIONS.map((queryMethod) => ({
       code: `const submitButton = await screen.${queryMethod}('foo')`,
     })),
-    ...SYNC_QUERIES_COMBINATIONS.map(queryMethod => ({
+    ...SYNC_QUERIES_COMBINATIONS.map((queryMethod) => ({
       code: `await waitForElementToBeRemoved(() => ${queryMethod}(baz))`,
     })),
-    ...SYNC_QUERIES_COMBINATIONS.map(queryMethod => ({
+    ...SYNC_QUERIES_COMBINATIONS.map((queryMethod) => ({
       code: `await waitFor(function() {
         return ${queryMethod}('baz', { name: 'foo' })
       })`,
@@ -66,7 +66,7 @@ ruleTester.run(RULE_NAME, rule, {
     {
       code: `await waitForElementToBeRemoved(document.querySelector('foo'))`,
     },
-    ...SYNC_QUERIES_COMBINATIONS.map(queryMethod => ({
+    ...SYNC_QUERIES_COMBINATIONS.map((queryMethod) => ({
       code: `
         await waitFor(() => {
           foo()
@@ -74,12 +74,12 @@ ruleTester.run(RULE_NAME, rule, {
         })
       `,
     })),
-    ...SYNC_QUERIES_COMBINATIONS.map(queryMethod => ({
+    ...SYNC_QUERIES_COMBINATIONS.map((queryMethod) => ({
       code: `
         await waitFor(() => expect(screen.${queryMethod}('baz')).toBeDisabled());
       `,
     })),
-    ...SYNC_QUERIES_COMBINATIONS.map(queryMethod => ({
+    ...SYNC_QUERIES_COMBINATIONS.map((queryMethod) => ({
       code: `
         await waitFor(() => expect(${queryMethod}('baz')).toBeInTheDocument());
       `,

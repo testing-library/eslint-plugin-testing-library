@@ -80,7 +80,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
       ImportDeclaration(node) {
         const value = node.source.value;
         const domModuleName = DOM_TESTING_LIBRARY_MODULES.find(
-          module => module === value
+          (module) => module === value
         );
 
         if (domModuleName) {
@@ -95,7 +95,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
         const { arguments: args } = callExpression;
 
         const literalNodeDomModuleName = args.find(
-          args =>
+          (args) =>
             isLiteral(args) &&
             typeof args.value === 'string' &&
             DOM_TESTING_LIBRARY_MODULES.includes(args.value)

@@ -73,7 +73,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
         });
       },
       'Program:exit'() {
-        const testingLibraryUtilUsage = asyncUtilsUsage.filter(usage => {
+        const testingLibraryUtilUsage = asyncUtilsUsage.filter((usage) => {
           if (usage.node.type === 'MemberExpression') {
             const object = usage.node.object as TSESTree.Identifier;
 

@@ -13,22 +13,22 @@ const ALL_TESTING_LIBRARIES_WITH_CLEANUP = [
 
 ruleTester.run(RULE_NAME, rule, {
   valid: [
-    ...ALL_TESTING_LIBRARIES_WITH_CLEANUP.map(lib => ({
+    ...ALL_TESTING_LIBRARIES_WITH_CLEANUP.map((lib) => ({
       code: `import { render } from "${lib}"`,
     })),
     {
       code: `import { cleanup } from "any-other-library"`,
     },
-    ...ALL_TESTING_LIBRARIES_WITH_CLEANUP.map(lib => ({
+    ...ALL_TESTING_LIBRARIES_WITH_CLEANUP.map((lib) => ({
       code: `import utils from "${lib}"`,
     })),
-    ...ALL_TESTING_LIBRARIES_WITH_CLEANUP.map(lib => ({
+    ...ALL_TESTING_LIBRARIES_WITH_CLEANUP.map((lib) => ({
       code: `
         import utils from "${lib}"
         utils.render()
       `,
     })),
-    ...ALL_TESTING_LIBRARIES_WITH_CLEANUP.map(lib => ({
+    ...ALL_TESTING_LIBRARIES_WITH_CLEANUP.map((lib) => ({
       code: `const { render, within } = require("${lib}")`,
     })),
     {
@@ -49,7 +49,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
   ],
   invalid: [
-    ...ALL_TESTING_LIBRARIES_WITH_CLEANUP.map(lib => ({
+    ...ALL_TESTING_LIBRARIES_WITH_CLEANUP.map((lib) => ({
       code: `import { render, cleanup } from "${lib}"`,
       errors: [
         {
@@ -59,7 +59,7 @@ ruleTester.run(RULE_NAME, rule, {
         },
       ],
     })),
-    ...ALL_TESTING_LIBRARIES_WITH_CLEANUP.map(lib => ({
+    ...ALL_TESTING_LIBRARIES_WITH_CLEANUP.map((lib) => ({
       code: `import { cleanup as myCustomCleanup } from "${lib}"`,
       errors: [
         {
@@ -69,7 +69,7 @@ ruleTester.run(RULE_NAME, rule, {
         },
       ],
     })),
-    ...ALL_TESTING_LIBRARIES_WITH_CLEANUP.map(lib => ({
+    ...ALL_TESTING_LIBRARIES_WITH_CLEANUP.map((lib) => ({
       code: `import utils, { cleanup } from "${lib}"`,
       errors: [
         {
@@ -79,7 +79,7 @@ ruleTester.run(RULE_NAME, rule, {
         },
       ],
     })),
-    ...ALL_TESTING_LIBRARIES_WITH_CLEANUP.map(lib => ({
+    ...ALL_TESTING_LIBRARIES_WITH_CLEANUP.map((lib) => ({
       code: `
         import utils from "${lib}"
         afterEach(() => utils.cleanup())
@@ -92,7 +92,7 @@ ruleTester.run(RULE_NAME, rule, {
         },
       ],
     })),
-    ...ALL_TESTING_LIBRARIES_WITH_CLEANUP.map(lib => ({
+    ...ALL_TESTING_LIBRARIES_WITH_CLEANUP.map((lib) => ({
       code: `
         import utils from "${lib}"
         afterEach(utils.cleanup)
@@ -105,7 +105,7 @@ ruleTester.run(RULE_NAME, rule, {
         },
       ],
     })),
-    ...ALL_TESTING_LIBRARIES_WITH_CLEANUP.map(lib => ({
+    ...ALL_TESTING_LIBRARIES_WITH_CLEANUP.map((lib) => ({
       code: `const { cleanup } = require("${lib}")`,
       errors: [
         {
@@ -115,7 +115,7 @@ ruleTester.run(RULE_NAME, rule, {
         },
       ],
     })),
-    ...ALL_TESTING_LIBRARIES_WITH_CLEANUP.map(lib => ({
+    ...ALL_TESTING_LIBRARIES_WITH_CLEANUP.map((lib) => ({
       code: `
         const utils = require("${lib}")
         afterEach(() => utils.cleanup())
@@ -128,7 +128,7 @@ ruleTester.run(RULE_NAME, rule, {
         },
       ],
     })),
-    ...ALL_TESTING_LIBRARIES_WITH_CLEANUP.map(lib => ({
+    ...ALL_TESTING_LIBRARIES_WITH_CLEANUP.map((lib) => ({
       code: `
         const utils = require("${lib}")
         afterEach(utils.cleanup)

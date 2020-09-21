@@ -14,7 +14,7 @@ type Options = [
 ];
 
 const ALL_GET_BY_QUERIES = ALL_QUERIES_METHODS.map(
-  queryMethod => `get${queryMethod}`
+  (queryMethod) => `get${queryMethod}`
 );
 
 const isValidQuery = (node: TSESTree.Identifier, customQueryNames: string[]) =>
@@ -62,7 +62,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
     },
   ],
 
-  create: function(context, [options]) {
+  create: function (context, [options]) {
     const { customQueryNames, assertion } = options;
     const getQueryCalls: TSESTree.Identifier[] = [];
 
@@ -73,7 +73,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
         }
       },
       'Program:exit'() {
-        getQueryCalls.forEach(queryCall => {
+        getQueryCalls.forEach((queryCall) => {
           const node = isMemberExpression(queryCall.parent)
             ? queryCall.parent
             : queryCall;

@@ -30,7 +30,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
     schema: [],
   },
   defaultOptions: [],
-  create: function(context) {
+  create: function (context) {
     function reportMultipleAssertion(node: TSESTree.BlockStatement) {
       const totalExpect = (body: Array<TSESTree.Node>): Array<TSESTree.Node> =>
         body.filter((node: TSESTree.ExpressionStatement) => {

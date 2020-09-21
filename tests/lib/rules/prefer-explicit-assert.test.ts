@@ -77,7 +77,7 @@ ruleTester.run(RULE_NAME, rule, {
   ],
 
   invalid: [
-    ...ALL_QUERIES_METHODS.map(queryMethod => ({
+    ...ALL_QUERIES_METHODS.map((queryMethod) => ({
       code: `get${queryMethod}('foo')`,
       errors: [
         {
@@ -85,7 +85,7 @@ ruleTester.run(RULE_NAME, rule, {
         },
       ],
     })),
-    ...ALL_QUERIES_METHODS.map(queryMethod => ({
+    ...ALL_QUERIES_METHODS.map((queryMethod) => ({
       code: `const utils = render()
 
       utils.get${queryMethod}('foo')`,
@@ -97,7 +97,7 @@ ruleTester.run(RULE_NAME, rule, {
         },
       ],
     })),
-    ...ALL_QUERIES_METHODS.map(queryMethod => ({
+    ...ALL_QUERIES_METHODS.map((queryMethod) => ({
       code: `() => {
         get${queryMethod}('foo')
         doSomething()

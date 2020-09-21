@@ -44,7 +44,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     function reportImportReferences(references: any[]) {
       if (references && references.length > 0) {
-        references.forEach(reference => {
+        references.forEach((reference) => {
           const utilsUsage = reference.identifier.parent;
           if (
             isMemberExpression(utilsUsage) &&
@@ -75,7 +75,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
         }
 
         const cleanupSpecifier = node.specifiers.find(
-          specifier =>
+          (specifier) =>
             isImportSpecifier(specifier) &&
             specifier.imported &&
             specifier.imported.name === 'cleanup'
@@ -94,7 +94,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
         const { arguments: args } = node.parent as TSESTree.CallExpression;
 
         const literalNodeCleanupModuleName = args.find(
-          args =>
+          (args) =>
             isLiteral(args) &&
             typeof args.value === 'string' &&
             args.value.match(CLEANUP_LIBRARY_REGEX)
@@ -109,7 +109,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
 
         if (isObjectPattern(declaratorNode.id)) {
           const cleanupProperty = declaratorNode.id.properties.find(
-            property =>
+            (property) =>
               isProperty(property) &&
               isIdentifier(property.key) &&
               property.key.name === 'cleanup'

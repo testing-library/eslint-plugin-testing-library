@@ -10,7 +10,7 @@ const ruleTester = createRuleTester();
 ruleTester.run(RULE_NAME, rule, {
   valid: [
     // sync queries without await are valid
-    ...SYNC_QUERIES_COMBINATIONS.map(query => ({
+    ...SYNC_QUERIES_COMBINATIONS.map((query) => ({
       code: `() => {
         ${query}('foo')
       }
@@ -18,7 +18,7 @@ ruleTester.run(RULE_NAME, rule, {
     })),
 
     // async queries with await operator are valid
-    ...ASYNC_QUERIES_COMBINATIONS.map(query => ({
+    ...ASYNC_QUERIES_COMBINATIONS.map((query) => ({
       code: `async () => {
         await ${query}('foo')
       }
@@ -26,7 +26,7 @@ ruleTester.run(RULE_NAME, rule, {
     })),
 
     // async queries with then method are valid
-    ...ASYNC_QUERIES_COMBINATIONS.map(query => ({
+    ...ASYNC_QUERIES_COMBINATIONS.map((query) => ({
       code: `() => {
         ${query}('foo').then(() => {});
       }
@@ -36,7 +36,7 @@ ruleTester.run(RULE_NAME, rule, {
 
   invalid: [
     // sync queries with await operator are not valid
-    ...SYNC_QUERIES_COMBINATIONS.map(query => ({
+    ...SYNC_QUERIES_COMBINATIONS.map((query) => ({
       code: `async () => {
         await ${query}('foo')
       }
@@ -49,7 +49,7 @@ ruleTester.run(RULE_NAME, rule, {
     })),
 
     // sync queries in screen with await operator are not valid
-    ...SYNC_QUERIES_COMBINATIONS.map(query => ({
+    ...SYNC_QUERIES_COMBINATIONS.map((query) => ({
       code: `async () => {
         await screen.${query}('foo')
       }

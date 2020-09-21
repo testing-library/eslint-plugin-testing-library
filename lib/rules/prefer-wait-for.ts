@@ -44,7 +44,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
           // get all import names excluding all testing library `wait*` utils...
           const newImports = node.specifiers
             .filter(
-              specifier =>
+              (specifier) =>
                 isImportSpecifier(specifier) &&
                 !excludedImports.includes(specifier.imported.name)
             )
@@ -65,9 +65,9 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
       });
     };
 
-    const reportWait = (node: TSESTree.Identifier) => {
+    const reportWait = (node: TSESTree.Identifier | TSESTree.JSXIdentifier) => {
       context.report({
-        node: node,
+        node,
         messageId: 'preferWaitForMethod',
         data: {
           methodName: node.name,
@@ -116,7 +116,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
         node: TSESTree.ImportDeclaration
       ) {
         const deprecatedImportSpecifiers = node.specifiers.filter(
-          specifier =>
+          (specifier) =>
             isImportSpecifier(specifier) &&
             specifier.imported &&
             DEPRECATED_METHODS.includes(specifier.imported.name)
@@ -129,8 +129,8 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
 
           context
             .getDeclaredVariables(importSpecifier)
-            .forEach(variable =>
-              variable.references.forEach(reference =>
+            .forEach((variable) =>
+              variable.references.forEach((reference) =>
                 reportWait(reference.identifier)
               )
             );
@@ -139,8 +139,8 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
       'ImportDeclaration[source.value=/testing-library/] > ImportNamespaceSpecifier'(
         node: TSESTree.ImportNamespaceSpecifier
       ) {
-        context.getDeclaredVariables(node).forEach(variable =>
-          variable.references.forEach(reference => {
+        context.getDeclaredVariables(node).forEach((variable) =>
+          variable.references.forEach((reference) => {
             if (
               isMemberExpression(reference.identifier.parent) &&
               isIdentifier(reference.identifier.parent.property) &&

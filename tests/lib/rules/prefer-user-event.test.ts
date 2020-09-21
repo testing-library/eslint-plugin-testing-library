@@ -20,7 +20,7 @@ function createScenarioWithImport<
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (acc: any, libraryModule) =>
       acc.concat(
-        Object.keys(MappingToUserEvent).map(fireEventMethod =>
+        Object.keys(MappingToUserEvent).map((fireEventMethod) =>
           callback(libraryModule, fireEventMethod)
         )
       ),
@@ -44,7 +44,7 @@ ruleTester.run(RULE_NAME, rule, {
         const element = utils.getByText(foo)
       `,
     },
-    ...UserEventMethods.map(userEventMethod => ({
+    ...UserEventMethods.map((userEventMethod) => ({
       code: `
         import userEvent from '@testing-library/user-event'
         const node = document.createElement(elementType)
@@ -80,7 +80,7 @@ ruleTester.run(RULE_NAME, rule, {
         options: [{ allowedMethods: [fireEventMethod] }],
       })
     ),
-    ...LIBRARY_MODULES.map(libraryModule => ({
+    ...LIBRARY_MODULES.map((libraryModule) => ({
       // imported fireEvent and not used,
       code: `
         import { fireEvent } from '${libraryModule}'
@@ -88,7 +88,7 @@ ruleTester.run(RULE_NAME, rule, {
         foo.baz()
       `,
     })),
-    ...LIBRARY_MODULES.map(libraryModule => ({
+    ...LIBRARY_MODULES.map((libraryModule) => ({
       // imported dom, but not using fireEvent
       code: `
         import * as dom from '${libraryModule}'
@@ -96,7 +96,7 @@ ruleTester.run(RULE_NAME, rule, {
         const foo = dom.screen.container.querySelector('baz')
       `,
     })),
-    ...LIBRARY_MODULES.map(libraryModule => ({
+    ...LIBRARY_MODULES.map((libraryModule) => ({
       code: `
         import { fireEvent as aliasedFireEvent } from '${libraryModule}'
         function fireEvent() {
