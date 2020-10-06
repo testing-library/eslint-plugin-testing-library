@@ -5,6 +5,12 @@ import {
   isAwaited,
   isPromiseResolved,
   getVariableReferences,
+  isMemberExpression,
+  isImportSpecifier,
+  isImportNamespaceSpecifier,
+  isCallExpression,
+  isArrayExpression,
+  isIdentifier
 } from '../node-utils';
 
 export const RULE_NAME = 'await-async-utils';
@@ -12,6 +18,17 @@ export type MessageIds = 'awaitAsyncUtil';
 type Options = [];
 
 const ASYNC_UTILS_REGEXP = new RegExp(`^(${ASYNC_UTILS.join('|')})$`);
+
+// verifies the CallExpression is Promise.all()
+function isPromiseAll(node: TSESTree.CallExpression) {
+  return isMemberExpression(node.callee) && isIdentifier(node.callee.object) && node.callee.object.name === 'Promise' && isIdentifier(node.callee.property) && node.callee.property.name === 'all'
+}
+
+// verifies the node is part of an array used in a CallExpression
+function isInPromiseAll(node: TSESTree.Node) {
+  const parent = node.parent
+  return isCallExpression(parent) && isArrayExpression(parent.parent) && isCallExpression(parent.parent.parent) && isPromiseAll(parent.parent.parent)
+}
 
 export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
   name: RULE_NAME,
@@ -45,11 +62,11 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
 
         if (!LIBRARY_MODULES.includes(parent.source.value.toString())) return;
 
-        if (node.type === 'ImportSpecifier') {
+        if (isImportSpecifier(node)) {
           importedAsyncUtils.push(node.imported.name);
         }
 
-        if (node.type === 'ImportNamespaceSpecifier') {
+        if (isImportNamespaceSpecifier(node)) {
           importedAsyncUtils.push(node.local.name);
         }
       },
@@ -72,7 +89,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
       },
       'Program:exit'() {
         const testingLibraryUtilUsage = asyncUtilsUsage.filter(usage => {
-          if (usage.node.type === 'MemberExpression') {
+          if (isMemberExpression(usage.node)) {
             const object = usage.node.object as TSESTree.Identifier;
 
             return importedAsyncUtils.includes(object.name);
@@ -88,7 +105,8 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
             references &&
             references.length === 0 &&
             !isAwaited(node.parent.parent) &&
-            !isPromiseResolved(node)
+            !isPromiseResolved(node) &&
+            !isInPromiseAll(node)
           ) {
             context.report({
               node,

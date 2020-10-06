@@ -120,7 +120,50 @@ ruleTester.run(RULE_NAME, rule, {
         });
       `,
     })),
-
+    ...ASYNC_UTILS.map(asyncUtil => ({
+      code: `
+        import { ${asyncUtil} } from '@testing-library/dom';
+        test('${asyncUtil} util used in with Promise.all() does not trigger an error', async () => {
+          await Promise.all([
+            ${asyncUtil}(callback1),
+            ${asyncUtil}(callback2),
+          ]);
+        });
+      `,
+    })),
+    ...ASYNC_UTILS.map(asyncUtil => ({
+      code: `
+        import { ${asyncUtil} } from '@testing-library/dom';
+        test('${asyncUtil} util used in with Promise.all() with an await does not trigger an error', async () => {
+          await Promise.all([
+            await ${asyncUtil}(callback1),
+            await ${asyncUtil}(callback2),
+          ]);
+        });
+      `,
+    })),
+    ...ASYNC_UTILS.map(asyncUtil => ({
+      code: `
+        import { ${asyncUtil} } from '@testing-library/dom';
+        test('${asyncUtil} util used in with Promise.all() with ".then" does not trigger an error', async () => {
+          Promise.all([
+            ${asyncUtil}(callback1),
+            ${asyncUtil}(callback2),
+          ]).then(() => console.log('foo'));
+        });
+      `,
+    })),
+    {
+      code: `
+        import { waitFor, waitForElementToBeRemoved } from '@testing-library/dom';
+        test('combining different async methods with Promise.all does not throw an error', async () => {
+          await Promise.all([
+            waitFor(() => getByLabelText('email')),
+            waitForElementToBeRemoved(() => document.querySelector('div.getOuttaHere')),
+          ])
+        });
+      `
+    },
     {
       code: `
         import { waitForElementToBeRemoved } from '@testing-library/dom';
@@ -139,6 +182,17 @@ ruleTester.run(RULE_NAME, rule, {
         });
       `,
     },
+    {
+      code: `
+      test('using unrelated promises with Promise.all do not throw an error', async () => {
+        await Promise.all([
+          someMethod(),
+          promise1,
+          await foo().then(() => baz())
+        ])
+      })
+      `
+    }
   ],
   invalid: [
     ...ASYNC_UTILS.map(asyncUtil => ({
