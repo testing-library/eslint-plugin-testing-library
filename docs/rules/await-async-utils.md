@@ -59,6 +59,12 @@ test('something correctly', async () => {
   // return the promise within a function is correct too!
   const makeCustomWait = () =>
     waitForElementToBeRemoved(() => document.querySelector('div.getOuttaHere'));
+
+  // using Promise.all combining the methods
+  await Promise.all([
+    waitFor(() => getByLabelText('email')),
+    waitForElementToBeRemoved(() => document.querySelector('div.getOuttaHere')),
+  ]);
 });
 ```
 
