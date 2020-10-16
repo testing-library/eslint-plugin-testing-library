@@ -1,6 +1,15 @@
 import { ESLintUtils, TSESTree } from '@typescript-eslint/experimental-utils';
-import { getDocsUrl, ALL_QUERIES_METHODS } from '../utils';
-import { isMemberExpression } from '../node-utils';
+import {
+  getDocsUrl,
+  ALL_QUERIES_METHODS,
+  PRESENCE_MATCHERS,
+  ABSENCE_MATCHERS,
+} from '../utils';
+import {
+  findClosestCallNode,
+  isIdentifier,
+  isMemberExpression,
+} from '../node-utils';
 
 export const RULE_NAME = 'prefer-explicit-assert';
 export type MessageIds =
@@ -48,6 +57,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
         properties: {
           assertion: {
             type: 'string',
+            enum: PRESENCE_MATCHERS,
           },
           customQueryNames: {
             type: 'array',
@@ -84,15 +94,29 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
               messageId: 'preferExplicitAssert',
             });
           } else if (assertion) {
-            const expectation = node.parent.parent.parent;
+            const expectCallNode = findClosestCallNode(node, 'expect');
+
+            const expectStatement = expectCallNode.parent as TSESTree.MemberExpression;
+            const property = expectStatement.property as TSESTree.Identifier;
+            let matcher = property.name;
+            let isNegatedMatcher = false;
 
             if (
-              expectation.type === 'MemberExpression' &&
-              expectation.property.type === 'Identifier' &&
-              expectation.property.name !== assertion
+              matcher === 'not' &&
+              isMemberExpression(expectStatement.parent) &&
+              isIdentifier(expectStatement.parent.property)
             ) {
+              isNegatedMatcher = true;
+              matcher = expectStatement.parent.property.name;
+            }
+
+            const shouldEnforceAssertion =
+              (!isNegatedMatcher && PRESENCE_MATCHERS.includes(matcher)) ||
+              (isNegatedMatcher && ABSENCE_MATCHERS.includes(matcher));
+
+            if (shouldEnforceAssertion && matcher !== assertion) {
               context.report({
-                node: expectation.property,
+                node: property,
                 messageId: 'preferExplicitAssertAssertion',
                 data: {
                   assertion,

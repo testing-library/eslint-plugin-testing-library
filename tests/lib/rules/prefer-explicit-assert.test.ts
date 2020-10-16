@@ -74,6 +74,14 @@ ruleTester.run(RULE_NAME, rule, {
         },
       ],
     },
+    {
+      code: `expect(getByText('foo')).toBeEnabled()`,
+      options: [
+        {
+          assertion: 'toBeInTheDocument',
+        },
+      ],
+    },
   ],
 
   invalid: [
@@ -144,14 +152,44 @@ ruleTester.run(RULE_NAME, rule, {
       code: `expect(getByText('foo')).toBeDefined()`,
       options: [
         {
-          assertion: 'toBeInDocument',
+          assertion: 'toBeInTheDocument',
         },
       ],
       errors: [
         {
           messageId: 'preferExplicitAssertAssertion',
           column: 26,
-          data: { assertion: 'toBeInDocument' },
+          data: { assertion: 'toBeInTheDocument' },
+        },
+      ],
+    },
+    {
+      code: `expect(getByText('foo')).not.toBeNull()`,
+      options: [
+        {
+          assertion: 'toBeInTheDocument',
+        },
+      ],
+      errors: [
+        {
+          messageId: 'preferExplicitAssertAssertion',
+          column: 26,
+          data: { assertion: 'toBeInTheDocument' },
+        },
+      ],
+    },
+    {
+      code: `expect(getByText('foo')).not.toBeFalsy()`,
+      options: [
+        {
+          assertion: 'toBeInTheDocument',
+        },
+      ],
+      errors: [
+        {
+          messageId: 'preferExplicitAssertAssertion',
+          column: 26,
+          data: { assertion: 'toBeInTheDocument' },
         },
       ],
     },
