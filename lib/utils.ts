@@ -65,6 +65,9 @@ const ASYNC_UTILS = [
 
 const TESTING_FRAMEWORK_SETUP_HOOKS = ['beforeEach', 'beforeAll'];
 
+const PRESENCE_MATCHERS = ['toBeInTheDocument', 'toBeTruthy', 'toBeDefined'];
+const ABSENCE_MATCHERS = ['toBeNull', 'toBeFalsy'];
+
 export {
   getDocsUrl,
   SYNC_QUERIES_VARIANTS,
@@ -77,4 +80,6 @@ export {
   ASYNC_UTILS,
   TESTING_FRAMEWORK_SETUP_HOOKS,
   LIBRARY_MODULES,
+  PRESENCE_MATCHERS,
+  ABSENCE_MATCHERS
 };

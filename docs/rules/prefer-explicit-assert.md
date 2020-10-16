@@ -56,7 +56,11 @@ This rule has a few options:
   with `getBy*` queries. By default, any assertion is valid (`toBeTruthy`,
   `toBeDefined`, etc.). However, they all assert slightly different things.
   This option ensures all `getBy*` assertions are consistent and use the same
-  assertion.
+  assertion. This rule only allows defining a presence matcher
+  (`toBeInTheDocument`, `toBeTruthy`, or `toBeDefined`), but checks for both
+  presence and absence matchers (`not.toBeFalsy` and `not.toBeNull`). This means
+  other assertions such as `toHaveValue` or `toBeDisabled` will not trigger this
+  rule since these are valid uses with `getBy*`.
 
   ```js
   "testing-library/prefer-explicit-assert": ["error", {"assertion": "toBeInTheDocument"}],
