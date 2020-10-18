@@ -81,7 +81,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
         snapshotUsage.push(node);
       },
       'Program:exit'() {
-        const testingLibraryUtilUsage = asyncUtilsUsage.filter((usage) => {
+        const testingLibraryUtilUsage = asyncUtilsUsage.filter(usage => {
           if (isMemberExpression(usage.node)) {
             const object = usage.node.object as TSESTree.Identifier;
 
@@ -109,8 +109,8 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
           return null;
         }
 
-        snapshotUsage.forEach((node) => {
-          testingLibraryUtilUsage.forEach((asyncUtilUsage) => {
+        snapshotUsage.forEach(node => {
+          testingLibraryUtilUsage.forEach(asyncUtilUsage => {
             const closestAsyncUtil = getClosestAsyncUtil(asyncUtilUsage, node);
             if (closestAsyncUtil != null) {
               let name;

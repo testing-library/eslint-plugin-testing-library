@@ -24,7 +24,7 @@ function usesContainerOrBaseElement(node: TSESTree.CallExpression) {
   return (
     isObjectExpression(secondArgument) &&
     secondArgument.properties.some(
-      (property) =>
+      property =>
         isProperty(property) &&
         isIdentifier(property.key) &&
         ALLOWED_RENDER_PROPERTIES_FOR_DESTRUCTURING.includes(property.key.name)
