@@ -12,7 +12,7 @@ module.exports = {
     },
     // TODO drop this custom threshold in v4
     './lib/detect-testing-library-utils.ts': {
-      branches: 90,
+      branches: 50,
       functions: 90,
       lines: 90,
       statements: 90,
