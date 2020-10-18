@@ -37,6 +37,12 @@ export function isImportSpecifier(
   return node && node.type === AST_NODE_TYPES.ImportSpecifier;
 }
 
+export function isImportNamespaceSpecifier(
+  node: TSESTree.Node
+): node is TSESTree.ImportNamespaceSpecifier {
+  return node?.type === AST_NODE_TYPES.ImportNamespaceSpecifier
+}
+
 export function isImportDefaultSpecifier(
   node: TSESTree.Node
 ): node is TSESTree.ImportDefaultSpecifier {
@@ -134,6 +140,12 @@ export function isReturnStatement(
   node: TSESTree.Node
 ): node is TSESTree.ReturnStatement {
   return node && node.type === AST_NODE_TYPES.ReturnStatement;
+}
+
+export function isArrayExpression(
+  node: TSESTree.Node
+): node is TSESTree.ArrayExpression {
+  return node?.type === AST_NODE_TYPES.ArrayExpression
 }
 
 export function isAwaited(node: TSESTree.Node): boolean {

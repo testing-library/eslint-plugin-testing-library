@@ -108,6 +108,9 @@ const ALL_RETURNING_NODES = [
   ...METHODS_RETURNING_NODES,
 ];
 
+const PRESENCE_MATCHERS = ['toBeInTheDocument', 'toBeTruthy', 'toBeDefined'];
+const ABSENCE_MATCHERS = ['toBeNull', 'toBeFalsy'];
+
 export {
   getDocsUrl,
   hasTestingLibraryImportModule,
@@ -124,4 +127,6 @@ export {
   PROPERTIES_RETURNING_NODES,
   METHODS_RETURNING_NODES,
   ALL_RETURNING_NODES,
+  PRESENCE_MATCHERS,
+  ABSENCE_MATCHERS
 };

@@ -1,5 +1,10 @@
 import { ESLintUtils, TSESTree } from '@typescript-eslint/experimental-utils';
-import { getDocsUrl, ALL_QUERIES_METHODS } from '../utils';
+import {
+  getDocsUrl,
+  ALL_QUERIES_METHODS,
+  PRESENCE_MATCHERS,
+  ABSENCE_MATCHERS,
+} from '../utils';
 import {
   findClosestCallNode,
   isMemberExpression,
@@ -13,8 +18,6 @@ type Options = [];
 const QUERIES_REGEXP = new RegExp(
   `^(get|query)(All)?(${ALL_QUERIES_METHODS.join('|')})$`
 );
-const PRESENCE_MATCHERS = ['toBeInTheDocument', 'toBeTruthy', 'toBeDefined'];
-const ABSENCE_MATCHERS = ['toBeNull', 'toBeFalsy'];
 
 function isThrowingQuery(node: TSESTree.Identifier) {
   return node.name.startsWith('get');
