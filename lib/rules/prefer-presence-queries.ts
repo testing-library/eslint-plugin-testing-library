@@ -1,5 +1,10 @@
 import { ESLintUtils, TSESTree } from '@typescript-eslint/experimental-utils';
-import { getDocsUrl, ALL_QUERIES_METHODS, PRESENCE_MATCHERS, ABSENCE_MATCHERS } from '../utils';
+import {
+  getDocsUrl,
+  ALL_QUERIES_METHODS,
+  PRESENCE_MATCHERS,
+  ABSENCE_MATCHERS,
+} from '../utils';
 import {
   findClosestCallNode,
   isMemberExpression,

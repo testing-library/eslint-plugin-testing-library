@@ -10,7 +10,7 @@ import {
   isImportNamespaceSpecifier,
   isCallExpression,
   isArrayExpression,
-  isIdentifier
+  isIdentifier,
 } from '../node-utils';
 
 export const RULE_NAME = 'await-async-utils';
@@ -21,13 +21,24 @@ const ASYNC_UTILS_REGEXP = new RegExp(`^(${ASYNC_UTILS.join('|')})$`);
 
 // verifies the CallExpression is Promise.all()
 function isPromiseAll(node: TSESTree.CallExpression) {
-  return isMemberExpression(node.callee) && isIdentifier(node.callee.object) && node.callee.object.name === 'Promise' && isIdentifier(node.callee.property) && node.callee.property.name === 'all'
+  return (
+    isMemberExpression(node.callee) &&
+    isIdentifier(node.callee.object) &&
+    node.callee.object.name === 'Promise' &&
+    isIdentifier(node.callee.property) &&
+    node.callee.property.name === 'all'
+  );
 }
 
 // verifies the node is part of an array used in a CallExpression
 function isInPromiseAll(node: TSESTree.Node) {
-  const parent = node.parent
-  return isCallExpression(parent) && isArrayExpression(parent.parent) && isCallExpression(parent.parent.parent) && isPromiseAll(parent.parent.parent)
+  const parent = node.parent;
+  return (
+    isCallExpression(parent) &&
+    isArrayExpression(parent.parent) &&
+    isCallExpression(parent.parent.parent) &&
+    isPromiseAll(parent.parent.parent)
+  );
 }
 
 export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
