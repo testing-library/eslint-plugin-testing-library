@@ -40,7 +40,7 @@ export function isImportSpecifier(
 export function isImportNamespaceSpecifier(
   node: TSESTree.Node
 ): node is TSESTree.ImportNamespaceSpecifier {
-  return node?.type === AST_NODE_TYPES.ImportNamespaceSpecifier
+  return node?.type === AST_NODE_TYPES.ImportNamespaceSpecifier;
 }
 
 export function isImportDefaultSpecifier(
@@ -145,7 +145,7 @@ export function isReturnStatement(
 export function isArrayExpression(
   node: TSESTree.Node
 ): node is TSESTree.ArrayExpression {
-  return node?.type === AST_NODE_TYPES.ArrayExpression
+  return node?.type === AST_NODE_TYPES.ArrayExpression;
 }
 
 export function isAwaited(node: TSESTree.Node): boolean {

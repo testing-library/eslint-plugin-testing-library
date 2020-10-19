@@ -6,7 +6,7 @@ const ruleTester = createRuleTester();
 
 ruleTester.run(RULE_NAME, rule, {
   valid: [
-    ...ASYNC_UTILS.map(asyncUtil => ({
+    ...ASYNC_UTILS.map((asyncUtil) => ({
       code: `
         import { ${asyncUtil} } from '@testing-library/dom';
         test('snapshot calls outside of ${asyncUtil} are valid', () => {
@@ -16,7 +16,7 @@ ruleTester.run(RULE_NAME, rule, {
         })
       `,
     })),
-    ...ASYNC_UTILS.map(asyncUtil => ({
+    ...ASYNC_UTILS.map((asyncUtil) => ({
       code: `
         import { ${asyncUtil} } from '@testing-library/dom';
         test('snapshot calls outside of ${asyncUtil} are valid', () => {
@@ -28,7 +28,7 @@ ruleTester.run(RULE_NAME, rule, {
         })
       `,
     })),
-    ...ASYNC_UTILS.map(asyncUtil => ({
+    ...ASYNC_UTILS.map((asyncUtil) => ({
       code: `
         import * as asyncUtils from '@testing-library/dom';
         test('snapshot calls outside of ${asyncUtil} are valid', () => {
@@ -38,7 +38,7 @@ ruleTester.run(RULE_NAME, rule, {
         })
       `,
     })),
-    ...ASYNC_UTILS.map(asyncUtil => ({
+    ...ASYNC_UTILS.map((asyncUtil) => ({
       code: `
         import * as asyncUtils from '@testing-library/dom';
         test('snapshot calls outside of ${asyncUtil} are valid', () => {
@@ -50,7 +50,7 @@ ruleTester.run(RULE_NAME, rule, {
         })
       `,
     })),
-    ...ASYNC_UTILS.map(asyncUtil => ({
+    ...ASYNC_UTILS.map((asyncUtil) => ({
       code: `
         import { ${asyncUtil} } from 'some-other-library';
         test('snapshot calls within ${asyncUtil} are not valid', async () => {
@@ -58,7 +58,7 @@ ruleTester.run(RULE_NAME, rule, {
         });
       `,
     })),
-    ...ASYNC_UTILS.map(asyncUtil => ({
+    ...ASYNC_UTILS.map((asyncUtil) => ({
       code: `
         import { ${asyncUtil} } from 'some-other-library';
         test('snapshot calls within ${asyncUtil} are not valid', async () => {
@@ -68,7 +68,7 @@ ruleTester.run(RULE_NAME, rule, {
         });
       `,
     })),
-    ...ASYNC_UTILS.map(asyncUtil => ({
+    ...ASYNC_UTILS.map((asyncUtil) => ({
       code: `
         import * as asyncUtils from 'some-other-library';
         test('snapshot calls within ${asyncUtil} are not valid', async () => {
@@ -76,7 +76,7 @@ ruleTester.run(RULE_NAME, rule, {
         });
       `,
     })),
-    ...ASYNC_UTILS.map(asyncUtil => ({
+    ...ASYNC_UTILS.map((asyncUtil) => ({
       code: `
         import * as asyncUtils from 'some-other-library';
         test('snapshot calls within ${asyncUtil} are not valid', async () => {
@@ -86,7 +86,7 @@ ruleTester.run(RULE_NAME, rule, {
         });
       `,
     })),
-    ...ASYNC_UTILS.map(asyncUtil => ({
+    ...ASYNC_UTILS.map((asyncUtil) => ({
       code: `
         import { ${asyncUtil} } from 'some-other-library';
         test('snapshot calls within ${asyncUtil} are not valid', async () => {
@@ -94,7 +94,7 @@ ruleTester.run(RULE_NAME, rule, {
         });
       `,
     })),
-    ...ASYNC_UTILS.map(asyncUtil => ({
+    ...ASYNC_UTILS.map((asyncUtil) => ({
       code: `
         import { ${asyncUtil} } from 'some-other-library';
         test('snapshot calls within ${asyncUtil} are not valid', async () => {
@@ -104,7 +104,7 @@ ruleTester.run(RULE_NAME, rule, {
         });
       `,
     })),
-    ...ASYNC_UTILS.map(asyncUtil => ({
+    ...ASYNC_UTILS.map((asyncUtil) => ({
       code: `
         import * as asyncUtils from 'some-other-library';
         test('snapshot calls within ${asyncUtil} are not valid', async () => {
@@ -112,7 +112,7 @@ ruleTester.run(RULE_NAME, rule, {
         });
       `,
     })),
-    ...ASYNC_UTILS.map(asyncUtil => ({
+    ...ASYNC_UTILS.map((asyncUtil) => ({
       code: `
         import * as asyncUtils from 'some-other-library';
         test('snapshot calls within ${asyncUtil} are not valid', async () => {
@@ -124,7 +124,7 @@ ruleTester.run(RULE_NAME, rule, {
     })),
   ],
   invalid: [
-    ...ASYNC_UTILS.map(asyncUtil => ({
+    ...ASYNC_UTILS.map((asyncUtil) => ({
       code: `
         import { ${asyncUtil} } from '@testing-library/dom';
         test('snapshot calls within ${asyncUtil} are not valid', async () => {
@@ -133,7 +133,7 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [{ line: 4, messageId: 'noWaitForSnapshot' }],
     })),
-    ...ASYNC_UTILS.map(asyncUtil => ({
+    ...ASYNC_UTILS.map((asyncUtil) => ({
       code: `
         import { ${asyncUtil} } from '@testing-library/dom';
         test('snapshot calls within ${asyncUtil} are not valid', async () => {
@@ -144,7 +144,7 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [{ line: 5, messageId: 'noWaitForSnapshot' }],
     })),
-    ...ASYNC_UTILS.map(asyncUtil => ({
+    ...ASYNC_UTILS.map((asyncUtil) => ({
       code: `
         import * as asyncUtils from '@testing-library/dom';
         test('snapshot calls within ${asyncUtil} are not valid', async () => {
@@ -153,7 +153,7 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [{ line: 4, messageId: 'noWaitForSnapshot' }],
     })),
-    ...ASYNC_UTILS.map(asyncUtil => ({
+    ...ASYNC_UTILS.map((asyncUtil) => ({
       code: `
         import * as asyncUtils from '@testing-library/dom';
         test('snapshot calls within ${asyncUtil} are not valid', async () => {
@@ -164,7 +164,7 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [{ line: 5, messageId: 'noWaitForSnapshot' }],
     })),
-    ...ASYNC_UTILS.map(asyncUtil => ({
+    ...ASYNC_UTILS.map((asyncUtil) => ({
       code: `
         import { ${asyncUtil} } from '@testing-library/dom';
         test('snapshot calls within ${asyncUtil} are not valid', async () => {
@@ -173,7 +173,7 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [{ line: 4, messageId: 'noWaitForSnapshot' }],
     })),
-    ...ASYNC_UTILS.map(asyncUtil => ({
+    ...ASYNC_UTILS.map((asyncUtil) => ({
       code: `
         import { ${asyncUtil} } from '@testing-library/dom';
         test('snapshot calls within ${asyncUtil} are not valid', async () => {
@@ -184,7 +184,7 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [{ line: 5, messageId: 'noWaitForSnapshot' }],
     })),
-    ...ASYNC_UTILS.map(asyncUtil => ({
+    ...ASYNC_UTILS.map((asyncUtil) => ({
       code: `
         import * as asyncUtils from '@testing-library/dom';
         test('snapshot calls within ${asyncUtil} are not valid', async () => {
@@ -193,7 +193,7 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [{ line: 4, messageId: 'noWaitForSnapshot' }],
     })),
-    ...ASYNC_UTILS.map(asyncUtil => ({
+    ...ASYNC_UTILS.map((asyncUtil) => ({
       code: `
         import * as asyncUtils from '@testing-library/dom';
         test('snapshot calls within ${asyncUtil} are not valid', async () => {
