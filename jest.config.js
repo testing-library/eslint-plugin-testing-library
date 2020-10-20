@@ -11,11 +11,17 @@ module.exports = {
       statements: 100,
     },
     // TODO drop this custom threshold in v4
-    "./lib/node-utils.ts": {
+    './lib/detect-testing-library-utils.ts': {
+      branches: 50,
+      functions: 90,
+      lines: 90,
+      statements: 90,
+    },
+    './lib/node-utils.ts': {
       branches: 90,
       functions: 90,
       lines: 90,
       statements: 90,
-    }
+    },
   },
 };

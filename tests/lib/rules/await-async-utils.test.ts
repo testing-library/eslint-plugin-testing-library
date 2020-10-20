@@ -120,7 +120,7 @@ ruleTester.run(RULE_NAME, rule, {
         });
       `,
     })),
-    ...ASYNC_UTILS.map(asyncUtil => ({
+    ...ASYNC_UTILS.map((asyncUtil) => ({
       code: `
         import { ${asyncUtil} } from '@testing-library/dom';
         test('${asyncUtil} util used in with Promise.all() does not trigger an error', async () => {
@@ -131,7 +131,7 @@ ruleTester.run(RULE_NAME, rule, {
         });
       `,
     })),
-    ...ASYNC_UTILS.map(asyncUtil => ({
+    ...ASYNC_UTILS.map((asyncUtil) => ({
       code: `
         import { ${asyncUtil} } from '@testing-library/dom';
         test('${asyncUtil} util used in with Promise.all() with an await does not trigger an error', async () => {
@@ -142,7 +142,7 @@ ruleTester.run(RULE_NAME, rule, {
         });
       `,
     })),
-    ...ASYNC_UTILS.map(asyncUtil => ({
+    ...ASYNC_UTILS.map((asyncUtil) => ({
       code: `
         import { ${asyncUtil} } from '@testing-library/dom';
         test('${asyncUtil} util used in with Promise.all() with ".then" does not trigger an error', async () => {
@@ -162,7 +162,7 @@ ruleTester.run(RULE_NAME, rule, {
             waitForElementToBeRemoved(() => document.querySelector('div.getOuttaHere')),
           ])
         });
-      `
+      `,
     },
     {
       code: `
@@ -191,8 +191,8 @@ ruleTester.run(RULE_NAME, rule, {
           await foo().then(() => baz())
         ])
       })
-      `
-    }
+      `,
+    },
   ],
   invalid: [
     ...ASYNC_UTILS.map((asyncUtil) => ({

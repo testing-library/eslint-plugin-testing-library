@@ -1,12 +1,13 @@
-import { ESLintUtils, TSESTree } from '@typescript-eslint/experimental-utils';
-import { getDocsUrl, ALL_RETURNING_NODES } from '../utils';
+import { TSESTree } from '@typescript-eslint/experimental-utils';
+import { ALL_RETURNING_NODES } from '../utils';
 import { isIdentifier } from '../node-utils';
+import { createTestingLibraryRule } from '../create-testing-library-rule';
 
 export const RULE_NAME = 'no-node-access';
 export type MessageIds = 'noNodeAccess';
 type Options = [];
 
-export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
+export default createTestingLibraryRule<Options, MessageIds>({
   name: RULE_NAME,
   meta: {
     type: 'problem',
@@ -24,19 +25,11 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
   },
   defaultOptions: [],
 
-  create(context) {
-    let isImportingTestingLibrary = false;
-
-    function checkTestingEnvironment(node: TSESTree.ImportDeclaration) {
-      isImportingTestingLibrary = /testing-library/g.test(
-        node.source.value as string
-      );
-    }
-
+  create: (context, _, helpers) => {
     function showErrorForNodeAccess(node: TSESTree.MemberExpression) {
       isIdentifier(node.property) &&
         ALL_RETURNING_NODES.includes(node.property.name) &&
-        isImportingTestingLibrary &&
+        helpers.getIsImportingTestingLibrary() &&
         context.report({
           node: node,
           loc: node.property.loc.start,
@@ -45,7 +38,6 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
     }
 
     return {
-      ['ImportDeclaration']: checkTestingEnvironment,
       ['ExpressionStatement MemberExpression']: showErrorForNodeAccess,
       ['VariableDeclarator MemberExpression']: showErrorForNodeAccess,
     };
