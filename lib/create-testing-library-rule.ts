@@ -5,6 +5,7 @@ import {
   DetectionHelpers,
 } from './detect-testing-library-utils';
 
+// These 2 types are copied from @typescript-eslint/experimental-utils
 type CreateRuleMetaDocs = Omit<TSESLint.RuleMetaDataDocs, 'url'>;
 type CreateRuleMeta<TMessageIds extends string> = {
   docs: CreateRuleMetaDocs;
