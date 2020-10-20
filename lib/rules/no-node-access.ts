@@ -25,11 +25,10 @@ export default createTestingLibraryRule<Options, MessageIds>({
   },
   defaultOptions: [],
 
-  create: (context, _, helpers) => {
+  create(context) {
     function showErrorForNodeAccess(node: TSESTree.MemberExpression) {
       isIdentifier(node.property) &&
         ALL_RETURNING_NODES.includes(node.property.name) &&
-        helpers.getIsImportingTestingLibrary() &&
         context.report({
           node: node,
           loc: node.property.loc.start,

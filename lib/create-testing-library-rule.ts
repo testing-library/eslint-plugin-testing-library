@@ -26,7 +26,7 @@ export function createTestingLibraryRule<
       detectionHelpers: Readonly<DetectionHelpers>
     ) => TRuleListener;
   }>
-): TSESLint.RuleModule<TMessageIds, TOptions, TRuleListener> {
+): TSESLint.RuleModule<TMessageIds, TOptions> {
   const { create, ...remainingConfig } = config;
 
   return ESLintUtils.RuleCreator(getDocsUrl)({

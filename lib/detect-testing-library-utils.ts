@@ -1,7 +1,8 @@
 import { TSESLint, TSESTree } from '@typescript-eslint/experimental-utils';
 
 export type DetectionHelpers = {
-  getIsImportingTestingLibrary: () => boolean;
+  getIsTestingLibraryImported: () => boolean;
+  canReportErrors: () => boolean;
 };
 
 /**
@@ -21,19 +22,24 @@ export function detectTestingLibraryUtils<
   return (
     context: Readonly<TSESLint.RuleContext<TMessageIds, TOptions>>,
     optionsWithDefault: Readonly<TOptions>
-  ): TRuleListener => {
+  ): TSESLint.RuleListener => {
     let isImportingTestingLibrary = false;
 
     // TODO: init here options based on shared ESLint config
 
-    // helpers for Testing Library detection
+    // Helpers for Testing Library detection.
     const helpers: DetectionHelpers = {
-      getIsImportingTestingLibrary() {
+      getIsTestingLibraryImported() {
         return isImportingTestingLibrary;
+      },
+      canReportErrors() {
+        return this.getIsTestingLibraryImported();
       },
     };
 
-    // instructions for Testing Library detection
+    // Instructions for Testing Library detection.
+    // `ImportDeclaration` must be first in order to know if Testing Library
+    // is imported ASAP.
     const detectionInstructions: TSESLint.RuleListener = {
       ImportDeclaration(node: TSESTree.ImportDeclaration) {
         isImportingTestingLibrary = /testing-library/g.test(
@@ -44,17 +50,23 @@ export function detectTestingLibraryUtils<
 
     // update given rule to inject Testing Library detection
     const ruleInstructions = ruleCreate(context, optionsWithDefault, helpers);
-    const enhancedRuleInstructions = Object.assign({}, ruleInstructions);
+    const enhancedRuleInstructions: TSESLint.RuleListener = {};
 
-    Object.keys(detectionInstructions).forEach((instruction) => {
-      (enhancedRuleInstructions as TSESLint.RuleListener)[instruction] = (
-        node
-      ) => {
+    // The order here is important too: detection instructions must come before
+    // than rule instructions to:
+    //  - detect Testing Library things before the rule is applied
+    //  - be able to prevent the rule about to be applied if necessary
+    const allKeys = new Set(
+      Object.keys(detectionInstructions).concat(Object.keys(ruleInstructions))
+    );
+
+    allKeys.forEach((instruction) => {
+      enhancedRuleInstructions[instruction] = (node) => {
         if (instruction in detectionInstructions) {
           detectionInstructions[instruction](node);
         }
 
-        if (ruleInstructions[instruction]) {
+        if (helpers.canReportErrors() && ruleInstructions[instruction]) {
           return ruleInstructions[instruction](node);
         }
       };
