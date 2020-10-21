@@ -6,25 +6,84 @@ const ruleTester = createRuleTester();
 ruleTester.run(RULE_NAME, rule, {
   valid: [
     {
-      // should NOT report `render` imported for non-related Testing Library module
       code: `
+      // case: render imported for different custom module
       import { render } from '@somewhere/else'
       
       const utils = render();
       `,
+      settings: {
+        'testing-library/module': 'test-utils',
+      },
     },
   ],
   invalid: [
     {
-      // should report `render` imported from Testing Library module
       code: `
-      import { render } from '@testing-library/react'
+      // case: render imported from any module by default (aggressive reporting)
+      import { render } from '@somewhere/else'
+      import { somethingElse } from 'another-module'
       
       const utils = render();
       `,
       errors: [
         {
-          line: 4,
+          line: 6,
+          column: 21,
+          messageId: 'fakeError',
+        },
+      ],
+    },
+    {
+      code: `
+      // case: render imported from Testing Library module
+      import { render } from '@testing-library/react'
+      import { somethingElse } from 'another-module'
+      
+      const utils = render();
+      `,
+      errors: [
+        {
+          line: 6,
+          column: 21,
+          messageId: 'fakeError',
+        },
+      ],
+    },
+    {
+      code: `
+      // case: render imported from config custom module
+      import { render } from 'test-utils'
+      import { somethingElse } from 'another-module'
+      
+      const utils = render();
+      `,
+      settings: {
+        'testing-library/module': 'test-utils',
+      },
+      errors: [
+        {
+          line: 6,
+          column: 21,
+          messageId: 'fakeError',
+        },
+      ],
+    },
+    {
+      code: `
+      // case: render imported from Testing Library module if
+      // custom module setup
+      import { render } from '@testing-library/react'
+      import { somethingElse } from 'another-module'
+      
+      const utils = render();
+      `,
+      settings: {
+        'testing-library/module': 'test-utils',
+      },
+      errors: [
+        {
+          line: 7,
           column: 21,
           messageId: 'fakeError',
         },

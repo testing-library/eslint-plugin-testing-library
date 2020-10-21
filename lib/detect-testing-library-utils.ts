@@ -5,6 +5,10 @@ export type DetectionHelpers = {
   canReportErrors: () => boolean;
 };
 
+export type TestingLibrarySettings = {
+  'testing-library/module'?: string;
+};
+
 /**
  * Enhances a given rule `create` with helpers to detect Testing Library utils.
  */
@@ -14,23 +18,37 @@ export function detectTestingLibraryUtils<
   TRuleListener extends TSESLint.RuleListener = TSESLint.RuleListener
 >(
   ruleCreate: (
-    context: Readonly<TSESLint.RuleContext<TMessageIds, TOptions>>,
+    context: Readonly<
+      TSESLint.RuleContext<TMessageIds, TOptions> & {
+        settings: TestingLibrarySettings;
+      }
+    >,
     optionsWithDefault: Readonly<TOptions>,
     detectionHelpers: Readonly<DetectionHelpers>
   ) => TRuleListener
 ) {
   return (
-    context: Readonly<TSESLint.RuleContext<TMessageIds, TOptions>>,
+    context: Readonly<
+      TSESLint.RuleContext<TMessageIds, TOptions> & {
+        settings: TestingLibrarySettings;
+      }
+    >,
     optionsWithDefault: Readonly<TOptions>
   ): TSESLint.RuleListener => {
-    let isImportingTestingLibrary = false;
+    let isImportingTestingLibraryModule = false;
+    let isImportingCustomModule = false;
 
-    // TODO: init here options based on shared ESLint config
+    // Init options based on shared ESLint settings
+    const customModule = context.settings['testing-library/module'];
 
     // Helpers for Testing Library detection.
     const helpers: DetectionHelpers = {
       getIsTestingLibraryImported() {
-        return isImportingTestingLibrary;
+        if (!customModule) {
+          return true;
+        }
+
+        return isImportingTestingLibraryModule || isImportingCustomModule;
       },
       canReportErrors() {
         return this.getIsTestingLibraryImported();
@@ -42,9 +60,20 @@ export function detectTestingLibraryUtils<
     // is imported ASAP.
     const detectionInstructions: TSESLint.RuleListener = {
       ImportDeclaration(node: TSESTree.ImportDeclaration) {
-        isImportingTestingLibrary = /testing-library/g.test(
-          node.source.value as string
-        );
+        if (!isImportingTestingLibraryModule) {
+          // check only if testing library import not found yet so we avoid
+          // to override isImportingTestingLibraryModule after it's found
+          isImportingTestingLibraryModule = /testing-library/g.test(
+            node.source.value as string
+          );
+        }
+
+        if (!isImportingCustomModule) {
+          // check only if custom module import not found yet so we avoid
+          // to override isImportingCustomModule after it's found
+          const importName = String(node.source.value);
+          isImportingCustomModule = importName.endsWith(customModule);
+        }
       },
     };
 
