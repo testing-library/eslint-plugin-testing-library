@@ -63,6 +63,11 @@ const ASYNC_UTILS = [
   'waitForDomChange',
 ];
 
+const ASYNC_EVENTS = [
+  'fireEvent',
+  'userEvent',
+];
+
 const TESTING_FRAMEWORK_SETUP_HOOKS = ['beforeEach', 'beforeAll'];
 
 const PRESENCE_MATCHERS = ['toBeInTheDocument', 'toBeTruthy', 'toBeDefined'];
@@ -78,6 +83,7 @@ export {
   ASYNC_QUERIES_COMBINATIONS,
   ALL_QUERIES_COMBINATIONS,
   ASYNC_UTILS,
+  ASYNC_EVENTS,
   TESTING_FRAMEWORK_SETUP_HOOKS,
   LIBRARY_MODULES,
   PRESENCE_MATCHERS,
