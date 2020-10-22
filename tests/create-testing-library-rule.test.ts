@@ -1,10 +1,22 @@
 import { createRuleTester } from './lib/test-utils';
 import rule, { RULE_NAME } from './fake-rule';
 
-const ruleTester = createRuleTester();
+const ruleTester = createRuleTester({
+  ecmaFeatures: {
+    jsx: true,
+  },
+});
 
 ruleTester.run(RULE_NAME, rule, {
   valid: [
+    {
+      code: `
+      // case: nothing related to Testing Library at all
+      import { shallow } from 'enzyme';
+      
+      const wrapper = shallow(<MyComponent />);
+      `,
+    },
     {
       code: `
       // case: render imported for different custom module
