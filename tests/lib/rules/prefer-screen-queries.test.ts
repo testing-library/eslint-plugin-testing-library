@@ -125,6 +125,16 @@ ruleTester.run(RULE_NAME, rule, {
         render(foo, { baseElement: treeA }).${queryMethod}()
       `,
     })),
+    {
+      code: `
+        import { screen, within } from "@testing-library/react";
+
+        const container = within(screen.getByRole("foo"));
+        
+        expect(container.getByText("bar"));
+        expect(container.getByText("baz"));
+      `
+    }
   ],
 
   invalid: [
