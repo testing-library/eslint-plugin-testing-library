@@ -77,9 +77,14 @@ export function detectTestingLibraryUtils<
     };
 
     // Instructions for Testing Library detection.
-    // `ImportDeclaration` must be first in order to know if Testing Library
-    // is imported ASAP.
     const detectionInstructions: TSESLint.RuleListener = {
+      /**
+       * This ImportDeclaration rule listener will check if Testing Library related
+       * modules are loaded. Since imports happen first thing in a file, it's
+       * safe to use `isImportingTestingLibraryModule` and `isImportingCustomModule`
+       * since they will have corresponding value already updated when reporting other
+       * parts of the file.
+       */
       ImportDeclaration(node: TSESTree.ImportDeclaration) {
         if (!isImportingTestingLibraryModule) {
           // check only if testing library import not found yet so we avoid
@@ -102,14 +107,12 @@ export function detectTestingLibraryUtils<
     const ruleInstructions = ruleCreate(context, optionsWithDefault, helpers);
     const enhancedRuleInstructions: TSESLint.RuleListener = {};
 
-    // The order here is important too: detection instructions must come before
-    // than rule instructions to:
-    //  - detect Testing Library things before the rule is applied
-    //  - be able to prevent the rule about to be applied if necessary
     const allKeys = new Set(
       Object.keys(detectionInstructions).concat(Object.keys(ruleInstructions))
     );
 
+    // Iterate over ALL instructions keys so we can override original rule instructions
+    // to prevent their execution if conditions to report errors are not met.
     allKeys.forEach((instruction) => {
       enhancedRuleInstructions[instruction] = (node) => {
         if (instruction in detectionInstructions) {
