@@ -19,7 +19,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-      // case: render imported for different custom module
+      // case: render imported from other than custom module
       import { render } from '@somewhere/else'
       
       const utils = render();
@@ -28,8 +28,25 @@ ruleTester.run(RULE_NAME, rule, {
         'testing-library/module': 'test-utils',
       },
     },
+    {
+      code: `
+      // case: prevent import which should trigger an error since it's imported
+      // from other than custom module
+      import { foo } from 'report-me'
+      `,
+      settings: {
+        'testing-library/module': 'test-utils',
+      },
+    },
   ],
   invalid: [
+    {
+      code: `
+      // case: import module forced to be reported
+      import { foo } from 'report-me'
+    `,
+      errors: [{ line: 3, column: 7, messageId: 'fakeError' }],
+    },
     {
       code: `
       // case: render imported from any module by default (aggressive reporting)

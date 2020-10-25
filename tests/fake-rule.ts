@@ -35,8 +35,21 @@ export default createTestingLibraryRule<Options, MessageIds>({
       }
     };
 
+    const checkImportDeclaration = (node: TSESTree.ImportDeclaration) => {
+      // This is just to check that defining an `ImportDeclaration` doesn't
+      // override `ImportDeclaration` from `detectTestingLibraryUtils`
+
+      if (node.source.value === 'report-me') {
+        context.report({
+          node,
+          messageId: 'fakeError',
+        });
+      }
+    };
+
     return {
       'CallExpression Identifier': reportRenderIdentifier,
+      ImportDeclaration: checkImportDeclaration,
     };
   },
 });
