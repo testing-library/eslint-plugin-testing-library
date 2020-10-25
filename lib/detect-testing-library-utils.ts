@@ -48,6 +48,18 @@ export function detectTestingLibraryUtils<
 
     // Helpers for Testing Library detection.
     const helpers: DetectionHelpers = {
+      /**
+       * Gets if Testing Library is considered as imported or not.
+       *
+       * By default, it is ALWAYS considered as imported. This is what we call
+       * "aggressive reporting" so we don't miss TL utils reexported from
+       * custom modules.
+       *
+       * However, there is a setting to customize the module where TL utils can
+       * be imported from: "testing-library/module". If this setting is enabled,
+       * then this method will return `true` ONLY IF a testing-library package
+       * or custom module are imported.
+       */
       getIsTestingLibraryImported() {
         if (!customModule) {
           return true;
@@ -55,6 +67,10 @@ export function detectTestingLibraryUtils<
 
         return isImportingTestingLibraryModule || isImportingCustomModule;
       },
+
+      /**
+       * Wraps all conditions that must be met to report rules.
+       */
       canReportErrors() {
         return this.getIsTestingLibraryImported();
       },
