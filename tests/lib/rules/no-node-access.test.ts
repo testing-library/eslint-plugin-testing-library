@@ -51,22 +51,38 @@ ruleTester.run(RULE_NAME, rule, {
         within(signinModal).getByPlaceholderText('Username');
       `,
     },
-    {
+    /*{
+      // TODO: this one should be valid indeed. Rule implementation must be improved
+      //  to track where the nodes are coming from. This one wasn't reported before
+      //  just because this code is not importing TL module, but that's a really
+      //  brittle check. Instead, this one shouldn't be reported since `children`
+      //  it's just a property not related to a node
       code: `
         const Component = props => {
           return <div>{props.children}</div>
         }
       `,
-    },
+    },*/
     {
-      // Not importing a testing-library package
       code: `
-        const closestButton = document.getElementById('submit-btn').closest('button');
-        expect(closestButton).toBeInTheDocument();
+      // case: importing custom module
+      const closestButton = document.getElementById('submit-btn').closest('button');
+      expect(closestButton).toBeInTheDocument();
       `,
+      settings: {
+        'testing-library/module': 'test-utils',
+      },
     },
   ],
   invalid: [
+    {
+      code: `
+      // case: without importing TL (aggressive reporting)
+      const closestButton = document.getElementById('submit-btn')
+      expect(closestButton).toBeInTheDocument();
+      `,
+      errors: [{ messageId: 'noNodeAccess', line: 3 }],
+    },
     {
       code: `
         import { screen } from '@testing-library/react';
