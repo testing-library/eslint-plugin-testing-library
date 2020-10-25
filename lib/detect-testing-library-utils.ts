@@ -1,12 +1,31 @@
 import { TSESLint, TSESTree } from '@typescript-eslint/experimental-utils';
 
+export type TestingLibrarySettings = {
+  'testing-library/module'?: string;
+};
+
+export type TestingLibraryContext<
+  TOptions extends readonly unknown[],
+  TMessageIds extends string
+> = Readonly<
+  TSESLint.RuleContext<TMessageIds, TOptions> & {
+    settings: TestingLibrarySettings;
+  }
+>;
+
+export type EnhancedRuleCreate<
+  TOptions extends readonly unknown[],
+  TMessageIds extends string,
+  TRuleListener extends TSESLint.RuleListener = TSESLint.RuleListener
+> = (
+  context: TestingLibraryContext<TOptions, TMessageIds>,
+  optionsWithDefault: Readonly<TOptions>,
+  detectionHelpers: Readonly<DetectionHelpers>
+) => TRuleListener;
+
 export type DetectionHelpers = {
   getIsTestingLibraryImported: () => boolean;
   canReportErrors: () => boolean;
-};
-
-export type TestingLibrarySettings = {
-  'testing-library/module'?: string;
 };
 
 /**
@@ -16,23 +35,9 @@ export function detectTestingLibraryUtils<
   TOptions extends readonly unknown[],
   TMessageIds extends string,
   TRuleListener extends TSESLint.RuleListener = TSESLint.RuleListener
->(
-  ruleCreate: (
-    context: Readonly<
-      TSESLint.RuleContext<TMessageIds, TOptions> & {
-        settings: TestingLibrarySettings;
-      }
-    >,
-    optionsWithDefault: Readonly<TOptions>,
-    detectionHelpers: Readonly<DetectionHelpers>
-  ) => TRuleListener
-) {
+>(ruleCreate: EnhancedRuleCreate<TOptions, TMessageIds, TRuleListener>) {
   return (
-    context: Readonly<
-      TSESLint.RuleContext<TMessageIds, TOptions> & {
-        settings: TestingLibrarySettings;
-      }
-    >,
+    context: TestingLibraryContext<TOptions, TMessageIds>,
     optionsWithDefault: Readonly<TOptions>
   ): TSESLint.RuleListener => {
     let isImportingTestingLibraryModule = false;
