@@ -9,6 +9,10 @@ export const createRuleTester = (
     parserOptions: {
       ecmaVersion: 2018,
       sourceType: 'module',
+      // TODO: we should deep merge here
+      ecmaFeatures: {
+        jsx: true,
+      },
       ...parserOptions,
     },
   });

@@ -1,15 +1,12 @@
 import { createRuleTester } from './lib/test-utils';
 import rule, { RULE_NAME } from './fake-rule';
 
-const ruleTester = createRuleTester({
-  ecmaFeatures: {
-    jsx: true,
-  },
-});
+const ruleTester = createRuleTester();
 
 ruleTester.run(RULE_NAME, rule, {
   valid: [
     {
+      filename: 'MyComponent.test.js',
       code: `
       // case: nothing related to Testing Library at all
       import { shallow } from 'enzyme';
@@ -18,6 +15,7 @@ ruleTester.run(RULE_NAME, rule, {
       `,
     },
     {
+      filename: 'MyComponent.test.js',
       code: `
       // case: render imported from other than custom module
       import { render } from '@somewhere/else'
@@ -29,6 +27,7 @@ ruleTester.run(RULE_NAME, rule, {
       },
     },
     {
+      filename: 'MyComponent.test.js',
       code: `
       // case: prevent import which should trigger an error since it's imported
       // from other than custom module
@@ -38,9 +37,20 @@ ruleTester.run(RULE_NAME, rule, {
         'testing-library/module': 'test-utils',
       },
     },
+    {
+      filename: 'MyComponent.test.js',
+      code: `
+      // case: import module forced to be reported but not matching file name
+      import { foo } from 'report-me'
+    `,
+      settings: {
+        'testing-library/file-name': 'testing-library\\.js',
+      },
+    },
   ],
   invalid: [
     {
+      filename: 'MyComponent.test.js',
       code: `
       // case: import module forced to be reported
       import { foo } from 'report-me'
@@ -48,6 +58,26 @@ ruleTester.run(RULE_NAME, rule, {
       errors: [{ line: 3, column: 7, messageId: 'fakeError' }],
     },
     {
+      filename: 'MyComponent.spec.js',
+      code: `
+      // case: import module forced to be reported but from .spec.js named file
+      import { foo } from 'report-me'
+    `,
+      errors: [{ line: 3, column: 7, messageId: 'fakeError' }],
+    },
+    {
+      filename: 'MyComponent.testing-library.js',
+      code: `
+      // case: import module forced to be reported with custom file name
+      import { foo } from 'report-me'
+    `,
+      settings: {
+        'testing-library/file-name': 'testing-library\\.js',
+      },
+      errors: [{ line: 3, column: 7, messageId: 'fakeError' }],
+    },
+    {
+      filename: 'MyComponent.test.js',
       code: `
       // case: render imported from any module by default (aggressive reporting)
       import { render } from '@somewhere/else'
@@ -64,6 +94,7 @@ ruleTester.run(RULE_NAME, rule, {
       ],
     },
     {
+      filename: 'MyComponent.test.js',
       code: `
       // case: render imported from Testing Library module
       import { render } from '@testing-library/react'
@@ -80,6 +111,7 @@ ruleTester.run(RULE_NAME, rule, {
       ],
     },
     {
+      filename: 'MyComponent.test.js',
       code: `
       // case: render imported from config custom module
       import { render } from 'test-utils'
@@ -99,6 +131,7 @@ ruleTester.run(RULE_NAME, rule, {
       ],
     },
     {
+      filename: 'MyComponent.test.js',
       code: `
       // case: render imported from Testing Library module if
       // custom module setup

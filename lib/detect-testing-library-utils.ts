@@ -2,6 +2,7 @@ import { TSESLint, TSESTree } from '@typescript-eslint/experimental-utils';
 
 export type TestingLibrarySettings = {
   'testing-library/module'?: string;
+  'testing-library/file-name'?: string;
 };
 
 export type TestingLibraryContext<
@@ -25,8 +26,11 @@ export type EnhancedRuleCreate<
 
 export type DetectionHelpers = {
   getIsTestingLibraryImported: () => boolean;
+  getIsValidFileName: () => boolean;
   canReportErrors: () => boolean;
 };
+
+const DEFAULT_FILE_NAME_PATTERN = '^.*\\.(test|spec)\\.[jt]sx?$';
 
 /**
  * Enhances a given rule `create` with helpers to detect Testing Library utils.
@@ -45,6 +49,9 @@ export function detectTestingLibraryUtils<
 
     // Init options based on shared ESLint settings
     const customModule = context.settings['testing-library/module'];
+    const fileNamePattern =
+      context.settings['testing-library/file-name'] ??
+      DEFAULT_FILE_NAME_PATTERN;
 
     // Helpers for Testing Library detection.
     const helpers: DetectionHelpers = {
@@ -69,10 +76,20 @@ export function detectTestingLibraryUtils<
       },
 
       /**
+       * Gets if file name being analyzed is valid or not.
+       *
+       * This is based on "testing-library/file-name" setting.
+       */
+      getIsValidFileName() {
+        const fileName = context.getFilename();
+        return !!fileName.match(fileNamePattern);
+      },
+
+      /**
        * Wraps all conditions that must be met to report rules.
        */
       canReportErrors() {
-        return this.getIsTestingLibraryImported();
+        return this.getIsTestingLibraryImported() && this.getIsValidFileName();
       },
     };
 
