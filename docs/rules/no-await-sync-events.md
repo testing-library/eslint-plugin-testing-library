@@ -55,8 +55,9 @@ const bar = () => {
 };
 
 const baz = () => {
-  // ...
+  // await userEvent.type only with delay option
   await userEvent.type(textInput, 'abc', {delay: 1000});
+  userEvent.type(textInput, '123');
   // ...
 };
 ```
