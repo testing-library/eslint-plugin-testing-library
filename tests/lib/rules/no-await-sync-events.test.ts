@@ -1,6 +1,6 @@
 import { createRuleTester } from '../test-utils';
 import rule, { RULE_NAME } from '../../../lib/rules/no-await-sync-events';
-import { ASYNC_EVENTS } from '../../../lib/utils';
+import { SYNC_EVENTS } from '../../../lib/utils';
 
 const ruleTester = createRuleTester();
 
@@ -103,7 +103,7 @@ const userEventFunctions = [
   'unhover',
 ];
 let eventFunctions: string[] = [];
-ASYNC_EVENTS.forEach(event => {
+SYNC_EVENTS.forEach(event => {
   switch (event) {
     case 'fireEvent':
       eventFunctions = eventFunctions.concat(fireEventFunctions.map((f: string): string => `${event}.${f}`));
@@ -134,7 +134,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `() => {
-        await userEvent.type('foo')
+        await userEvent.type('foo', 'bar', {delay: 1234})
       }
       `,
     },
@@ -143,15 +143,23 @@ ruleTester.run(RULE_NAME, rule, {
   invalid: [
     // sync events with await operator are not valid
     ...eventFunctions.map(func => ({
-      code: `() => {
-        await ${func}('foo')
-      }
+      code: `
+        import { fireEvent } from '@testing-library/framework';
+        import userEvent from '@testing-library/user-event';
+        test('should report sync event awaited', async() => {
+          await ${func}('foo');
+        });
       `,
-      errors: [
-        {
-          messageId: 'noAwaitSyncEvents',
-        },
-      ],
+      errors: [{ line: 5, messageId: 'noAwaitSyncEvents' },],
     })),
+    {
+      code: `
+        import userEvent from '@testing-library/user-event';
+        test('should report sync event awaited', async() => {
+          await userEvent.type('foo', 'bar', {hello: 1234});
+        });
+      `,
+      errors: [{ line: 4, messageId: 'noAwaitSyncEvents' },],
+    }
   ],
 });

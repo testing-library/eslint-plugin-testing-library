@@ -23,7 +23,9 @@
 [![Tweet][tweet-badge]][tweet-url]
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+
 [![All Contributors](https://img.shields.io/badge/all_contributors-34-orange.svg?style=flat-square)](#contributors-)
+
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 ## Installation
@@ -137,6 +139,7 @@ To enable this configuration use the `extends` property in your
 | [await-async-utils](docs/rules/await-async-utils.md)                   | Enforce async utils to be awaited properly                                 | ![recommended-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] |                    |
 | [await-fire-event](docs/rules/await-fire-event.md)                     | Enforce async fire event methods to be awaited                             | ![vue-badge][]                                                            |                    |
 | [consistent-data-testid](docs/rules/consistent-data-testid.md)         | Ensure `data-testid` values match a provided regex.                        |                                                                           |                    |
+| [no-await-sync-events](docs/rules/no-await-sync-events.md)             | Disallow unnecessary `await` for sync events                               | ![recommended-badge][] ![angular-badge][] ![react-badge][]                |                    |
 | [no-await-sync-query](docs/rules/no-await-sync-query.md)               | Disallow unnecessary `await` for sync queries                              | ![recommended-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] |                    |
 | [no-debug](docs/rules/no-debug.md)                                     | Disallow the use of `debug`                                                | ![angular-badge][] ![react-badge][] ![vue-badge][]                        |                    |
 | [no-dom-import](docs/rules/no-dom-import.md)                           | Disallow importing from DOM Testing Library                                | ![angular-badge][] ![react-badge][] ![vue-badge][]                        | ![fixable-badge][] |
@@ -226,6 +229,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 
 <!-- markdownlint-enable -->
 <!-- prettier-ignore-end -->
+
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!

@@ -63,7 +63,7 @@ const ASYNC_UTILS = [
   'waitForDomChange',
 ];
 
-const ASYNC_EVENTS = [
+const SYNC_EVENTS = [
   'fireEvent',
   'userEvent',
 ];
@@ -83,7 +83,7 @@ export {
   ASYNC_QUERIES_COMBINATIONS,
   ALL_QUERIES_COMBINATIONS,
   ASYNC_UTILS,
-  ASYNC_EVENTS,
+  SYNC_EVENTS,
   TESTING_FRAMEWORK_SETUP_HOOKS,
   LIBRARY_MODULES,
   PRESENCE_MATCHERS,
