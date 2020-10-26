@@ -6,7 +6,9 @@ Ensure that sync events are not awaited unnecessarily.
 
 Functions in the event object provided by Testing Library, including
 fireEvent and userEvent, do NOT return Promise, with an exception of
-`userEvent.type`. Some examples are:
+`userEvent.type`, which delays the promise resolve only if [`delay`
+option](https://github.com/testing-library/user-event#typeelement-text-options) is specified.
+Some examples are:
 
 - `fireEvent.click`
 - `fireEvent.select`
@@ -29,6 +31,12 @@ const bar = () => {
   await userEvent.tab();
   // ...
 };
+
+const baz = () => {
+  // ...
+  await userEvent.type(textInput, 'abc');
+  // ...
+};
 ```
 
 Examples of **correct** code for this rule:
@@ -43,6 +51,12 @@ const foo = () => {
 const bar = () => {
   // ...
   userEvent.tab();
+  // ...
+};
+
+const baz = () => {
+  // ...
+  await userEvent.type(textInput, 'abc', {delay: 1000});
   // ...
 };
 ```
