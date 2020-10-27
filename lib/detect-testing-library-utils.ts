@@ -76,7 +76,7 @@ export function detectTestingLibraryUtils<
       },
 
       /**
-       * Gets if file name being analyzed is valid or not.
+       * Gets if name of the file being analyzed is valid or not.
        *
        * This is based on "testing-library/file-name" setting.
        */
