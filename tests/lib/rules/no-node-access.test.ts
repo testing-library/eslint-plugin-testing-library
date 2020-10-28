@@ -1,16 +1,11 @@
 import { createRuleTester } from '../test-utils';
 import rule, { RULE_NAME } from '../../../lib/rules/no-node-access';
 
-const ruleTester = createRuleTester({
-  ecmaFeatures: {
-    jsx: true,
-  },
-});
+const ruleTester = createRuleTester();
 
 ruleTester.run(RULE_NAME, rule, {
   valid: [
     {
-      filename: 'MyComponent.test.js',
       code: `
         import { screen } from '@testing-library/react';
         
@@ -18,7 +13,6 @@ ruleTester.run(RULE_NAME, rule, {
       `,
     },
     {
-      filename: 'MyComponent.test.js',
       code: `
         import { screen } from '@testing-library/react';
 
@@ -28,7 +22,6 @@ ruleTester.run(RULE_NAME, rule, {
       `,
     },
     {
-      filename: 'MyComponent.test.js',
       code: `
         import { screen } from '@testing-library/react';
 
@@ -37,7 +30,6 @@ ruleTester.run(RULE_NAME, rule, {
       `,
     },
     {
-      filename: 'MyComponent.test.js',
       code: `
         import { screen } from '@testing-library/react';  
         
@@ -47,7 +39,6 @@ ruleTester.run(RULE_NAME, rule, {
       `,
     },
     {
-      filename: 'MyComponent.test.js',
       code: `
         import { render, within } from '@testing-library/react';
 
@@ -57,7 +48,6 @@ ruleTester.run(RULE_NAME, rule, {
       `,
     },
     {
-      filename: 'MyComponent.test.js',
       code: `
         const Component = props => {
           return <div>{props.children}</div>
@@ -68,7 +58,6 @@ ruleTester.run(RULE_NAME, rule, {
       },
     },
     {
-      filename: 'MyComponent.test.js',
       code: `
       // case: importing custom module
       const closestButton = document.getElementById('submit-btn').closest('button');
@@ -81,7 +70,6 @@ ruleTester.run(RULE_NAME, rule, {
   ],
   invalid: [
     {
-      filename: 'MyComponent.test.js',
       code: `
       // case: without importing TL (aggressive reporting)
       const closestButton = document.getElementById('submit-btn')
@@ -90,7 +78,6 @@ ruleTester.run(RULE_NAME, rule, {
       errors: [{ messageId: 'noNodeAccess', line: 3 }],
     },
     {
-      filename: 'MyComponent.test.js',
       code: `
         import { screen } from '@testing-library/react';
     
@@ -106,7 +93,6 @@ ruleTester.run(RULE_NAME, rule, {
       ],
     },
     {
-      filename: 'MyComponent.test.js',
       code: `
         import { screen } from '@testing-library/react';
 
@@ -119,7 +105,6 @@ ruleTester.run(RULE_NAME, rule, {
       ],
     },
     {
-      filename: 'MyComponent.test.js',
       code: `
         import { screen } from '@testing-library/react';
         
@@ -135,7 +120,6 @@ ruleTester.run(RULE_NAME, rule, {
       ],
     },
     {
-      filename: 'MyComponent.test.js',
       code: `
         import { screen } from '@testing-library/react';
       
@@ -148,7 +132,6 @@ ruleTester.run(RULE_NAME, rule, {
       ],
     },
     {
-      filename: 'MyComponent.test.js',
       code: `
         import { render } from '@testing-library/react';  
         
@@ -162,7 +145,6 @@ ruleTester.run(RULE_NAME, rule, {
       ],
     },
     {
-      filename: 'MyComponent.test.js',
       code: `
         import { screen } from '@testing-library/react';
 
@@ -187,7 +169,6 @@ ruleTester.run(RULE_NAME, rule, {
       ],
     },
     {
-      filename: 'MyComponent.test.js',
       code: `
         import { screen } from '@testing-library/react';
         
@@ -201,7 +182,6 @@ ruleTester.run(RULE_NAME, rule, {
       ],
     },
     {
-      filename: 'MyComponent.test.js',
       code: `
         import { render } from '@testing-library/react';
         
@@ -216,7 +196,6 @@ ruleTester.run(RULE_NAME, rule, {
       ],
     },
     {
-      filename: 'MyComponent.test.js',
       code: `
         import { render } from '@testing-library/react';
         
@@ -230,7 +209,6 @@ ruleTester.run(RULE_NAME, rule, {
       ],
     },
     {
-      filename: 'MyComponent.test.js',
       code: `
         import { screen } from '@testing-library/react';
         
@@ -261,7 +239,6 @@ ruleTester.run(RULE_NAME, rule, {
       ],
     },
     {
-      filename: 'MyComponent.test.js',
       code: `
         import { screen } from '@testing-library/react';
 

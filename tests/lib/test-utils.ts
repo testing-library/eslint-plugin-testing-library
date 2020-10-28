@@ -1,8 +1,6 @@
 import { resolve } from 'path';
 import { TSESLint } from '@typescript-eslint/experimental-utils';
 
-// TODO: remove ecmaFeatures object from other tests files
-
 const DEFAULT_TEST_CASE_CONFIG = {
   filename: 'MyComponent.test.js',
 };
@@ -42,7 +40,6 @@ export const createRuleTester = (
     parserOptions: {
       ecmaVersion: 2018,
       sourceType: 'module',
-      // TODO: should we deep merge here?
       ecmaFeatures: {
         jsx: true,
       },

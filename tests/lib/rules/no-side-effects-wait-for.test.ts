@@ -1,11 +1,7 @@
 import { createRuleTester } from '../test-utils';
 import rule, { RULE_NAME } from '../../../lib/rules/no-side-effects-wait-for';
 
-const ruleTester = createRuleTester({
-  ecmaFeatures: {
-    jsx: true,
-  },
-});
+const ruleTester = createRuleTester();
 
 ruleTester.run(RULE_NAME, rule, {
   valid: [
