@@ -1,6 +1,6 @@
-import { ESLintUtils, TSESTree } from '@typescript-eslint/experimental-utils';
-import { getDocsUrl } from '../utils';
-import { isLiteral, isIdentifier } from '../node-utils';
+import { TSESTree } from '@typescript-eslint/experimental-utils';
+import { isIdentifier, isLiteral } from '../node-utils';
+import { createTestingLibraryRule } from '../create-testing-library-rule';
 
 export const RULE_NAME = 'no-dom-import';
 export type MessageIds = 'noDomImport' | 'noDomImportFramework';
@@ -11,7 +11,7 @@ const DOM_TESTING_LIBRARY_MODULES = [
   '@testing-library/dom',
 ];
 
-export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
+export default createTestingLibraryRule<Options, MessageIds>({
   name: RULE_NAME,
   meta: {
     type: 'problem',
