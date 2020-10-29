@@ -23,7 +23,7 @@
 [![Tweet][tweet-badge]][tweet-url]
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-34-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-35-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 ## Installation
@@ -222,6 +222,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <td align="center"><a href="https://twitter.com/Gpx"><img src="https://avatars0.githubusercontent.com/u/767959?v=4" width="100px;" alt=""/><br /><sub><b>Giorgio Polvara</b></sub></a><br /><a href="https://github.com/testing-library/eslint-plugin-testing-library/commits?author=Gpx" title="Code">💻</a> <a href="https://github.com/testing-library/eslint-plugin-testing-library/commits?author=Gpx" title="Tests">⚠️</a> <a href="https://github.com/testing-library/eslint-plugin-testing-library/commits?author=Gpx" title="Documentation">📖</a></td>
     <td align="center"><a href="https://github.com/jdanil"><img src="https://avatars0.githubusercontent.com/u/8342105?v=4" width="100px;" alt=""/><br /><sub><b>Josh David</b></sub></a><br /><a href="https://github.com/testing-library/eslint-plugin-testing-library/commits?author=jdanil" title="Documentation">📖</a></td>
     <td align="center"><a href="https://michaeldeboey.be"><img src="https://avatars3.githubusercontent.com/u/6643991?v=4" width="100px;" alt=""/><br /><sub><b>Michaël De Boey</b></sub></a><br /><a href="https://github.com/testing-library/eslint-plugin-testing-library/commits?author=MichaelDeBoey" title="Code">💻</a> <a href="#platform-MichaelDeBoey" title="Packaging/porting to new platform">📦</a> <a href="#maintenance-MichaelDeBoey" title="Maintenance">🚧</a></td>
+    <td align="center"><a href="https://github.com/J-Huang"><img src="https://avatars0.githubusercontent.com/u/4263459?v=4" width="100px;" alt=""/><br /><sub><b>Jian Huang</b></sub></a><br /><a href="https://github.com/testing-library/eslint-plugin-testing-library/commits?author=J-Huang" title="Code">💻</a> <a href="https://github.com/testing-library/eslint-plugin-testing-library/commits?author=J-Huang" title="Tests">⚠️</a> <a href="https://github.com/testing-library/eslint-plugin-testing-library/commits?author=J-Huang" title="Documentation">📖</a></td>
   </tr>
 </table>
 
