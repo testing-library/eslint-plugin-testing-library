@@ -2,6 +2,7 @@ import awaitAsyncQuery from './rules/await-async-query';
 import awaitAsyncUtils from './rules/await-async-utils';
 import awaitFireEvent from './rules/await-fire-event';
 import consistentDataTestid from './rules/consistent-data-testid';
+import noAwaitSyncEvents from './rules/no-await-sync-events';
 import noAwaitSyncQuery from './rules/no-await-sync-query';
 import noDebug from './rules/no-debug';
 import noDomImport from './rules/no-dom-import';
@@ -20,6 +21,7 @@ const rules = {
   'await-async-utils': awaitAsyncUtils,
   'await-fire-event': awaitFireEvent,
   'consistent-data-testid': consistentDataTestid,
+  'no-await-sync-events': noAwaitSyncEvents,
   'no-await-sync-query': noAwaitSyncQuery,
   'no-debug': noDebug,
   'no-dom-import': noDomImport,
