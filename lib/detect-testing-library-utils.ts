@@ -1,8 +1,9 @@
 import { TSESLint, TSESTree } from '@typescript-eslint/experimental-utils';
+import { isLiteral } from './node-utils';
 
 export type TestingLibrarySettings = {
   'testing-library/module'?: string;
-  'testing-library/file-name'?: string;
+  'testing-library/filename'?: string;
 };
 
 export type TestingLibraryContext<
@@ -26,11 +27,11 @@ export type EnhancedRuleCreate<
 
 export type DetectionHelpers = {
   getIsTestingLibraryImported: () => boolean;
-  getIsValidFileName: () => boolean;
+  getIsValidFilename: () => boolean;
   canReportErrors: () => boolean;
 };
 
-const DEFAULT_FILE_NAME_PATTERN = '^.*\\.(test|spec)\\.[jt]sx?$';
+const DEFAULT_FILENAME_PATTERN = '^.*\\.(test|spec)\\.[jt]sx?$';
 
 /**
  * Enhances a given rule `create` with helpers to detect Testing Library utils.
@@ -50,8 +51,7 @@ export function detectTestingLibraryUtils<
     // Init options based on shared ESLint settings
     const customModule = context.settings['testing-library/module'];
     const fileNamePattern =
-      context.settings['testing-library/file-name'] ??
-      DEFAULT_FILE_NAME_PATTERN;
+      context.settings['testing-library/filename'] ?? DEFAULT_FILENAME_PATTERN;
 
     // Helpers for Testing Library detection.
     const helpers: DetectionHelpers = {
@@ -76,11 +76,11 @@ export function detectTestingLibraryUtils<
       },
 
       /**
-       * Gets if name of the file being analyzed is valid or not.
+       * Gets if filename being analyzed is valid or not.
        *
-       * This is based on "testing-library/file-name" setting.
+       * This is based on "testing-library/filename" setting.
        */
-      getIsValidFileName() {
+      getIsValidFilename() {
         const fileName = context.getFilename();
         return !!fileName.match(fileNamePattern);
       },
@@ -89,7 +89,7 @@ export function detectTestingLibraryUtils<
        * Wraps all conditions that must be met to report rules.
        */
       canReportErrors() {
-        return this.getIsTestingLibraryImported() && this.getIsValidFileName();
+        return this.getIsTestingLibraryImported() && this.getIsValidFilename();
       },
     };
 
@@ -97,7 +97,7 @@ export function detectTestingLibraryUtils<
     const detectionInstructions: TSESLint.RuleListener = {
       /**
        * This ImportDeclaration rule listener will check if Testing Library related
-       * modules are loaded. Since imports happen first thing in a file, it's
+       * modules are imported. Since imports happen first thing in a file, it's
        * safe to use `isImportingTestingLibraryModule` and `isImportingCustomModule`
        * since they will have corresponding value already updated when reporting other
        * parts of the file.
@@ -116,6 +116,32 @@ export function detectTestingLibraryUtils<
           // to override isImportingCustomModule after it's found
           const importName = String(node.source.value);
           isImportingCustomModule = importName.endsWith(customModule);
+        }
+      },
+
+      // Check if Testing Library related modules are loaded with required.
+      [`CallExpression > Identifier[name="require"]`](
+        node: TSESTree.Identifier
+      ) {
+        const callExpression = node.parent as TSESTree.CallExpression;
+        const { arguments: args } = callExpression;
+
+        if (!isImportingTestingLibraryModule) {
+          isImportingTestingLibraryModule = args.some(
+            (arg) =>
+              isLiteral(arg) &&
+              typeof arg.value === 'string' &&
+              /testing-library/g.test(arg.value)
+          );
+        }
+
+        if (!isImportingCustomModule) {
+          isImportingCustomModule = args.some(
+            (arg) =>
+              isLiteral(arg) &&
+              typeof arg.value === 'string' &&
+              arg.value.endsWith(customModule)
+          );
         }
       },
     };

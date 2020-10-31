@@ -1,8 +1,9 @@
 {
-   "*.{js,ts}": [
+  "*.ts": "tsc -p tsconfig.json --noEmit",
+  "*.{js,ts}": [
     "eslint --fix",
     "prettier --write",
-    "jest --findRelatedTests",
+    "jest --findRelatedTests"
   ],
   "*.md": ["prettier --write"]
 }

@@ -76,6 +76,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
         });
       }
     }
+
     return {
       ImportDeclaration(node) {
         const value = node.source.value;

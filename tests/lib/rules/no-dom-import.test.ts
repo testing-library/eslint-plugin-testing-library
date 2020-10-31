@@ -31,7 +31,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: 'import { fireEvent } from "dom-testing-library"',
-      settings: { 'testing-library/file-name': '^.*\\.(nope)\\.js$' },
+      settings: { 'testing-library/filename': '^.*\\.(nope)\\.js$' },
     },
     {
       code: 'const { fireEvent } = require("dom-testing-library")',
@@ -39,7 +39,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: 'const { fireEvent } = require("dom-testing-library")',
-      settings: { 'testing-library/file-name': '^.*\\.(nope)\\.js$' },
+      settings: { 'testing-library/filename': '^.*\\.(nope)\\.js$' },
     },
     {
       code: 'import { fireEvent } from "@testing-library/dom"',
@@ -47,7 +47,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: 'import { fireEvent } from "@testing-library/dom"',
-      settings: { 'testing-library/file-name': '^.*\\.(nope)\\.js$' },
+      settings: { 'testing-library/filename': '^.*\\.(nope)\\.js$' },
     },
     {
       code: 'const { fireEvent } = require("@testing-library/dom")',
@@ -55,10 +55,12 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: 'const { fireEvent } = require("@testing-library/dom")',
-      settings: { 'testing-library/file-name': '^.*\\.(nope)\\.js$' },
+      settings: { 'testing-library/filename': '^.*\\.(nope)\\.js$' },
     },
   ],
   invalid: [
+    // TODO: add invalid cases:
+    //  - custom filename importing from dom-testing-library
     {
       code: 'import { fireEvent } from "dom-testing-library"',
       errors: [
