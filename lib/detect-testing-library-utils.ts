@@ -3,7 +3,7 @@ import { isLiteral } from './node-utils';
 
 export type TestingLibrarySettings = {
   'testing-library/module'?: string;
-  'testing-library/filename'?: string;
+  'testing-library/filename-pattern'?: string;
 };
 
 export type TestingLibraryContext<
@@ -57,8 +57,9 @@ export function detectTestingLibraryUtils<
 
     // Init options based on shared ESLint settings
     const customModule = context.settings['testing-library/module'];
-    const fileNamePattern =
-      context.settings['testing-library/filename'] ?? DEFAULT_FILENAME_PATTERN;
+    const filenamePattern =
+      context.settings['testing-library/filename-pattern'] ??
+      DEFAULT_FILENAME_PATTERN;
 
     // Helpers for Testing Library detection.
     const helpers: DetectionHelpers = {
@@ -91,11 +92,11 @@ export function detectTestingLibraryUtils<
       /**
        * Gets if filename being analyzed is valid or not.
        *
-       * This is based on "testing-library/filename" setting.
+       * This is based on "testing-library/filename-pattern" setting.
        */
       getIsValidFilename() {
         const fileName = context.getFilename();
-        return !!fileName.match(fileNamePattern);
+        return !!fileName.match(filenamePattern);
       },
 
       /**

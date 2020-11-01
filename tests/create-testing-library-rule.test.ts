@@ -70,7 +70,7 @@ ruleTester.run(RULE_NAME, rule, {
       import { foo } from 'report-me'
     `,
       settings: {
-        'testing-library/filename': 'testing-library\\.js',
+        'testing-library/filename-pattern': 'testing-library\\.js',
       },
     },
     {
@@ -80,7 +80,7 @@ ruleTester.run(RULE_NAME, rule, {
       const { foo } = require('report-me')
     `,
       settings: {
-        'testing-library/filename': 'testing-library\\.js',
+        'testing-library/filename-pattern': 'testing-library\\.js',
       },
     },
     {
@@ -114,7 +114,7 @@ ruleTester.run(RULE_NAME, rule, {
       import { foo } from 'report-me'
     `,
       settings: {
-        'testing-library/filename': 'testing-library\\.js',
+        'testing-library/filename-pattern': 'testing-library\\.js',
       },
       errors: [{ line: 3, column: 7, messageId: 'fakeError' }],
     },
