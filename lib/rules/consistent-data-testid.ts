@@ -1,6 +1,5 @@
-import { getDocsUrl } from '../utils';
-import { ESLintUtils, TSESTree } from '@typescript-eslint/experimental-utils';
 import { isJSXAttribute, isLiteral } from '../node-utils';
+import { createTestingLibraryRule } from '../create-testing-library-rule';
 
 export const RULE_NAME = 'consistent-data-testid';
 export type MessageIds = 'consistentDataTestId';
@@ -13,7 +12,7 @@ type Options = [
 
 const FILENAME_PLACEHOLDER = '{fileName}';
 
-export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
+export default createTestingLibraryRule<Options, MessageIds>({
   name: RULE_NAME,
   meta: {
     type: 'suggestion',
@@ -60,6 +59,9 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
       testIdAttribute: 'data-testid',
     },
   ],
+  detectionOptions: {
+    skipRuleReportingCheck: true,
+  },
 
   create(context, [options]) {
     const { getFilename } = context;
@@ -89,7 +91,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
     }
 
     return {
-      [`JSXIdentifier`]: (node: TSESTree.JSXIdentifier) => {
+      JSXIdentifier: (node) => {
         if (
           !isJSXAttribute(node.parent) ||
           !isLiteral(node.parent.value) ||
