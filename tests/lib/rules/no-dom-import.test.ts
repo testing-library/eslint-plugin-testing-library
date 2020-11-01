@@ -5,22 +5,58 @@ const ruleTester = createRuleTester();
 
 ruleTester.run(RULE_NAME, rule, {
   valid: [
-    { code: 'import { foo } from "foo"' },
-    { code: 'import "foo"' },
-    { code: 'import { fireEvent } from "react-testing-library"' },
-    { code: 'import * as testing from "react-testing-library"' },
-    { code: 'import { fireEvent } from "@testing-library/react"' },
-    { code: 'import * as testing from "@testing-library/react"' },
-    { code: 'import "react-testing-library"' },
-    { code: 'import "@testing-library/react"' },
-    { code: 'const { foo } = require("foo")' },
-    { code: 'require("foo")' },
-    { code: 'require("")' },
-    { code: 'require()' },
-    { code: 'const { fireEvent } = require("react-testing-library")' },
-    { code: 'const { fireEvent } = require("@testing-library/react")' },
-    { code: 'require("react-testing-library")' },
-    { code: 'require("@testing-library/react")' },
+    'import { foo } from "foo"',
+    'import "foo"',
+    'import { fireEvent } from "react-testing-library"',
+    'import * as testing from "react-testing-library"',
+    'import { fireEvent } from "@testing-library/react"',
+    'import * as testing from "@testing-library/react"',
+    'import "react-testing-library"',
+    'import "@testing-library/react"',
+    'const { foo } = require("foo")',
+    'require("foo")',
+    'require("")',
+    'require()',
+    'const { fireEvent } = require("react-testing-library")',
+    'const { fireEvent } = require("@testing-library/react")',
+    'require("react-testing-library")',
+    'require("@testing-library/react")',
+    {
+      code: 'import { fireEvent } from "test-utils"',
+      settings: { 'testing-library/module': 'test-utils' },
+    },
+    {
+      code: 'import { fireEvent } from "dom-testing-library"',
+      filename: 'filename.not-matching.js',
+    },
+    {
+      code: 'import { fireEvent } from "dom-testing-library"',
+      settings: { 'testing-library/filename-pattern': '^.*\\.(nope)\\.js$' },
+    },
+    {
+      code: 'const { fireEvent } = require("dom-testing-library")',
+      filename: 'filename.not-matching.js',
+    },
+    {
+      code: 'const { fireEvent } = require("dom-testing-library")',
+      settings: { 'testing-library/filename-pattern': '^.*\\.(nope)\\.js$' },
+    },
+    {
+      code: 'import { fireEvent } from "@testing-library/dom"',
+      filename: 'filename.not-matching.js',
+    },
+    {
+      code: 'import { fireEvent } from "@testing-library/dom"',
+      settings: { 'testing-library/filename-pattern': '^.*\\.(nope)\\.js$' },
+    },
+    {
+      code: 'const { fireEvent } = require("@testing-library/dom")',
+      filename: 'filename.not-matching.js',
+    },
+    {
+      code: 'const { fireEvent } = require("@testing-library/dom")',
+      settings: { 'testing-library/filename-pattern': '^.*\\.(nope)\\.js$' },
+    },
   ],
   invalid: [
     {
@@ -31,6 +67,23 @@ ruleTester.run(RULE_NAME, rule, {
         },
       ],
       output: 'import { fireEvent } from "dom-testing-library"',
+    },
+    {
+      settings: {
+        'testing-library/module': 'test-utils',
+      },
+      code: `
+      // case: dom-testing-library imported with custom module setting
+      import { fireEvent } from "dom-testing-library"`,
+      errors: [
+        {
+          line: 3,
+          messageId: 'noDomImport',
+        },
+      ],
+      output: `
+      // case: dom-testing-library imported with custom module setting
+      import { fireEvent } from "dom-testing-library"`,
     },
     {
       code: 'import { fireEvent } from "dom-testing-library"',
@@ -68,9 +121,37 @@ ruleTester.run(RULE_NAME, rule, {
       ],
     },
     {
+      settings: {
+        'testing-library/module': 'test-utils',
+      },
+      code: `
+      // case: dom-testing-library wildcard imported with custom module setting
+      import * as testing from "dom-testing-library"`,
+      errors: [
+        {
+          line: 3,
+          messageId: 'noDomImport',
+        },
+      ],
+    },
+    {
       code: 'import { fireEvent } from "@testing-library/dom"',
       errors: [
         {
+          messageId: 'noDomImport',
+        },
+      ],
+    },
+    {
+      settings: {
+        'testing-library/module': 'test-utils',
+      },
+      code: `
+      // case: @testing-library/dom imported with custom module setting
+      import { fireEvent } from "@testing-library/dom"`,
+      errors: [
+        {
+          line: 3,
           messageId: 'noDomImport',
         },
       ],
@@ -108,6 +189,20 @@ ruleTester.run(RULE_NAME, rule, {
       ],
     },
     {
+      settings: {
+        'testing-library/module': 'test-utils',
+      },
+      code: `
+      // case: dom-testing-library required with custom module setting
+      const { fireEvent } = require("dom-testing-library")`,
+      errors: [
+        {
+          line: 3,
+          messageId: 'noDomImport',
+        },
+      ],
+    },
+    {
       code: 'const { fireEvent } = require("@testing-library/dom")',
       errors: [
         {
@@ -127,6 +222,26 @@ ruleTester.run(RULE_NAME, rule, {
         },
       ],
       output: 'const { fireEvent } = require("@testing-library/vue")',
+    },
+    {
+      settings: {
+        'testing-library/module': 'test-utils',
+      },
+      code: `
+      // case: @testing-library/dom required with custom module setting
+      const { fireEvent } = require("@testing-library/dom")`,
+      options: ['vue'],
+      errors: [
+        {
+          messageId: 'noDomImportFramework',
+          data: {
+            module: '@testing-library/vue',
+          },
+        },
+      ],
+      output: `
+      // case: @testing-library/dom required with custom module setting
+      const { fireEvent } = require("@testing-library/vue")`,
     },
     {
       code: 'require("dom-testing-library")',

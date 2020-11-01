@@ -27,8 +27,10 @@ export function isMemberExpression(
   return node && node.type === AST_NODE_TYPES.MemberExpression;
 }
 
-export function isLiteral(node: TSESTree.Node): node is TSESTree.Literal {
-  return node && node.type === AST_NODE_TYPES.Literal;
+export function isLiteral(
+  node: TSESTree.Node | null | undefined
+): node is TSESTree.Literal {
+  return node?.type === AST_NODE_TYPES.Literal;
 }
 
 export function isImportSpecifier(

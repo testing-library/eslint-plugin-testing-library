@@ -54,7 +54,7 @@ ruleTester.run(RULE_NAME, rule, {
         }
       `,
       settings: {
-        'testing-library/file-name': 'testing-library\\.js',
+        'testing-library/filename-pattern': 'testing-library\\.js',
       },
     },
     {

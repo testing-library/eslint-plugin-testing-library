@@ -1,8 +1,8 @@
 {
-   "*.{js,ts}": [
+  "*.{js,ts}": [
     "eslint --fix",
     "prettier --write",
-    "jest --findRelatedTests",
+    "jest --findRelatedTests"
   ],
   "*.md": ["prettier --write"]
 }

@@ -1,8 +1,9 @@
 import { TSESLint, TSESTree } from '@typescript-eslint/experimental-utils';
+import { isLiteral } from './node-utils';
 
 export type TestingLibrarySettings = {
   'testing-library/module'?: string;
-  'testing-library/file-name'?: string;
+  'testing-library/filename-pattern'?: string;
 };
 
 export type TestingLibraryContext<
@@ -24,13 +25,20 @@ export type EnhancedRuleCreate<
   detectionHelpers: Readonly<DetectionHelpers>
 ) => TRuleListener;
 
+type ModuleImportation =
+  | TSESTree.ImportDeclaration
+  | TSESTree.CallExpression
+  | null;
+
 export type DetectionHelpers = {
+  getTestingLibraryImportNode: () => ModuleImportation;
+  getCustomModuleImportNode: () => ModuleImportation;
   getIsTestingLibraryImported: () => boolean;
-  getIsValidFileName: () => boolean;
+  getIsValidFilename: () => boolean;
   canReportErrors: () => boolean;
 };
 
-const DEFAULT_FILE_NAME_PATTERN = '^.*\\.(test|spec)\\.[jt]sx?$';
+const DEFAULT_FILENAME_PATTERN = '^.*\\.(test|spec)\\.[jt]sx?$';
 
 /**
  * Enhances a given rule `create` with helpers to detect Testing Library utils.
@@ -44,17 +52,23 @@ export function detectTestingLibraryUtils<
     context: TestingLibraryContext<TOptions, TMessageIds>,
     optionsWithDefault: Readonly<TOptions>
   ): TSESLint.RuleListener => {
-    let isImportingTestingLibraryModule = false;
-    let isImportingCustomModule = false;
+    let importedTestingLibraryNode: ModuleImportation = null;
+    let importedCustomModuleNode: ModuleImportation = null;
 
     // Init options based on shared ESLint settings
     const customModule = context.settings['testing-library/module'];
-    const fileNamePattern =
-      context.settings['testing-library/file-name'] ??
-      DEFAULT_FILE_NAME_PATTERN;
+    const filenamePattern =
+      context.settings['testing-library/filename-pattern'] ??
+      DEFAULT_FILENAME_PATTERN;
 
     // Helpers for Testing Library detection.
     const helpers: DetectionHelpers = {
+      getTestingLibraryImportNode() {
+        return importedTestingLibraryNode;
+      },
+      getCustomModuleImportNode() {
+        return importedCustomModuleNode;
+      },
       /**
        * Gets if Testing Library is considered as imported or not.
        *
@@ -72,24 +86,24 @@ export function detectTestingLibraryUtils<
           return true;
         }
 
-        return isImportingTestingLibraryModule || isImportingCustomModule;
+        return !!importedTestingLibraryNode || !!importedCustomModuleNode;
       },
 
       /**
-       * Gets if name of the file being analyzed is valid or not.
+       * Gets if filename being analyzed is valid or not.
        *
-       * This is based on "testing-library/file-name" setting.
+       * This is based on "testing-library/filename-pattern" setting.
        */
-      getIsValidFileName() {
+      getIsValidFilename() {
         const fileName = context.getFilename();
-        return !!fileName.match(fileNamePattern);
+        return !!fileName.match(filenamePattern);
       },
 
       /**
        * Wraps all conditions that must be met to report rules.
        */
       canReportErrors() {
-        return this.getIsTestingLibraryImported() && this.getIsValidFileName();
+        return this.getIsTestingLibraryImported() && this.getIsValidFilename();
       },
     };
 
@@ -97,25 +111,60 @@ export function detectTestingLibraryUtils<
     const detectionInstructions: TSESLint.RuleListener = {
       /**
        * This ImportDeclaration rule listener will check if Testing Library related
-       * modules are loaded. Since imports happen first thing in a file, it's
+       * modules are imported. Since imports happen first thing in a file, it's
        * safe to use `isImportingTestingLibraryModule` and `isImportingCustomModule`
        * since they will have corresponding value already updated when reporting other
        * parts of the file.
        */
       ImportDeclaration(node: TSESTree.ImportDeclaration) {
-        if (!isImportingTestingLibraryModule) {
-          // check only if testing library import not found yet so we avoid
-          // to override isImportingTestingLibraryModule after it's found
-          isImportingTestingLibraryModule = /testing-library/g.test(
-            node.source.value as string
-          );
+        // check only if testing library import not found yet so we avoid
+        // to override importedTestingLibraryNode after it's found
+        if (
+          !importedTestingLibraryNode &&
+          /testing-library/g.test(node.source.value as string)
+        ) {
+          importedTestingLibraryNode = node;
         }
 
-        if (!isImportingCustomModule) {
-          // check only if custom module import not found yet so we avoid
-          // to override isImportingCustomModule after it's found
-          const importName = String(node.source.value);
-          isImportingCustomModule = importName.endsWith(customModule);
+        // check only if custom module import not found yet so we avoid
+        // to override importedCustomModuleNode after it's found
+        if (
+          !importedCustomModuleNode &&
+          String(node.source.value).endsWith(customModule)
+        ) {
+          importedCustomModuleNode = node;
+        }
+      },
+
+      // Check if Testing Library related modules are loaded with required.
+      [`CallExpression > Identifier[name="require"]`](
+        node: TSESTree.Identifier
+      ) {
+        const callExpression = node.parent as TSESTree.CallExpression;
+        const { arguments: args } = callExpression;
+
+        if (
+          !importedTestingLibraryNode &&
+          args.some(
+            (arg) =>
+              isLiteral(arg) &&
+              typeof arg.value === 'string' &&
+              /testing-library/g.test(arg.value)
+          )
+        ) {
+          importedTestingLibraryNode = callExpression;
+        }
+
+        if (
+          !importedCustomModuleNode &&
+          args.some(
+            (arg) =>
+              isLiteral(arg) &&
+              typeof arg.value === 'string' &&
+              arg.value.endsWith(customModule)
+          )
+        ) {
+          importedCustomModuleNode = callExpression;
         }
       },
     };
