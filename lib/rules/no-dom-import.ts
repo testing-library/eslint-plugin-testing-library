@@ -1,4 +1,7 @@
-import { TSESTree } from '@typescript-eslint/experimental-utils';
+import {
+  AST_NODE_TYPES,
+  TSESTree,
+} from '@typescript-eslint/experimental-utils';
 import { isIdentifier, isLiteral } from '../node-utils';
 import { createTestingLibraryRule } from '../create-testing-library-rule';
 
@@ -35,7 +38,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
   },
   defaultOptions: [''],
 
-  create(context, [framework]) {
+  create(context, [framework], helpers) {
     function report(
       node: TSESTree.ImportDeclaration | TSESTree.Identifier,
       moduleName: string
@@ -78,32 +81,36 @@ export default createTestingLibraryRule<Options, MessageIds>({
     }
 
     return {
-      ImportDeclaration(node) {
-        const value = node.source.value;
-        const domModuleName = DOM_TESTING_LIBRARY_MODULES.find(
-          (module) => module === value
-        );
+      'Program:exit'() {
+        const importNode = helpers.getTestingLibraryImportNode();
 
-        if (domModuleName) {
-          report(node, domModuleName);
+        if (!importNode) {
+          return;
         }
-      },
 
-      [`CallExpression > Identifier[name="require"]`](
-        node: TSESTree.Identifier
-      ) {
-        const callExpression = node.parent as TSESTree.CallExpression;
-        const { arguments: args } = callExpression;
+        // import node of shape: import { foo } from 'bar'
+        if (importNode.type === AST_NODE_TYPES.ImportDeclaration) {
+          const domModuleName = DOM_TESTING_LIBRARY_MODULES.find(
+            (module) => module === importNode.source.value
+          );
 
-        const literalNodeDomModuleName = args.find(
-          (args) =>
-            isLiteral(args) &&
-            typeof args.value === 'string' &&
-            DOM_TESTING_LIBRARY_MODULES.includes(args.value)
-        ) as TSESTree.Literal;
+          domModuleName && report(importNode, domModuleName);
+        }
 
-        if (literalNodeDomModuleName) {
-          report(node, literalNodeDomModuleName.value as string);
+        // import node of shape: const { foo } = require('bar')
+        if (importNode.type === AST_NODE_TYPES.CallExpression) {
+          const literalNodeDomModuleName = importNode.arguments.find(
+            (arg) =>
+              isLiteral(arg) &&
+              typeof arg.value === 'string' &&
+              DOM_TESTING_LIBRARY_MODULES.includes(arg.value)
+          ) as TSESTree.Literal;
+
+          literalNodeDomModuleName &&
+            report(
+              importNode.callee as TSESTree.Identifier,
+              literalNodeDomModuleName.value as string
+            );
         }
       },
     };

@@ -25,7 +25,14 @@ export type EnhancedRuleCreate<
   detectionHelpers: Readonly<DetectionHelpers>
 ) => TRuleListener;
 
+type ModuleImportation =
+  | TSESTree.ImportDeclaration
+  | TSESTree.CallExpression
+  | null;
+
 export type DetectionHelpers = {
+  getTestingLibraryImportNode: () => ModuleImportation;
+  getCustomModuleImportNode: () => ModuleImportation;
   getIsTestingLibraryImported: () => boolean;
   getIsValidFilename: () => boolean;
   canReportErrors: () => boolean;
@@ -45,8 +52,8 @@ export function detectTestingLibraryUtils<
     context: TestingLibraryContext<TOptions, TMessageIds>,
     optionsWithDefault: Readonly<TOptions>
   ): TSESLint.RuleListener => {
-    let isImportingTestingLibraryModule = false;
-    let isImportingCustomModule = false;
+    let importedTestingLibraryNode: ModuleImportation = null;
+    let importedCustomModuleNode: ModuleImportation = null;
 
     // Init options based on shared ESLint settings
     const customModule = context.settings['testing-library/module'];
@@ -55,6 +62,12 @@ export function detectTestingLibraryUtils<
 
     // Helpers for Testing Library detection.
     const helpers: DetectionHelpers = {
+      getTestingLibraryImportNode() {
+        return importedTestingLibraryNode;
+      },
+      getCustomModuleImportNode() {
+        return importedCustomModuleNode;
+      },
       /**
        * Gets if Testing Library is considered as imported or not.
        *
@@ -72,7 +85,7 @@ export function detectTestingLibraryUtils<
           return true;
         }
 
-        return isImportingTestingLibraryModule || isImportingCustomModule;
+        return !!importedTestingLibraryNode || !!importedCustomModuleNode;
       },
 
       /**
@@ -103,19 +116,22 @@ export function detectTestingLibraryUtils<
        * parts of the file.
        */
       ImportDeclaration(node: TSESTree.ImportDeclaration) {
-        if (!isImportingTestingLibraryModule) {
-          // check only if testing library import not found yet so we avoid
-          // to override isImportingTestingLibraryModule after it's found
-          isImportingTestingLibraryModule = /testing-library/g.test(
-            node.source.value as string
-          );
+        // check only if testing library import not found yet so we avoid
+        // to override importedTestingLibraryNode after it's found
+        if (
+          !importedTestingLibraryNode &&
+          /testing-library/g.test(node.source.value as string)
+        ) {
+          importedTestingLibraryNode = node;
         }
 
-        if (!isImportingCustomModule) {
-          // check only if custom module import not found yet so we avoid
-          // to override isImportingCustomModule after it's found
-          const importName = String(node.source.value);
-          isImportingCustomModule = importName.endsWith(customModule);
+        // check only if custom module import not found yet so we avoid
+        // to override importedCustomModuleNode after it's found
+        if (
+          !importedCustomModuleNode &&
+          String(node.source.value).endsWith(customModule)
+        ) {
+          importedCustomModuleNode = node;
         }
       },
 
@@ -126,22 +142,28 @@ export function detectTestingLibraryUtils<
         const callExpression = node.parent as TSESTree.CallExpression;
         const { arguments: args } = callExpression;
 
-        if (!isImportingTestingLibraryModule) {
-          isImportingTestingLibraryModule = args.some(
+        if (
+          !importedTestingLibraryNode &&
+          args.some(
             (arg) =>
               isLiteral(arg) &&
               typeof arg.value === 'string' &&
               /testing-library/g.test(arg.value)
-          );
+          )
+        ) {
+          importedTestingLibraryNode = callExpression;
         }
 
-        if (!isImportingCustomModule) {
-          isImportingCustomModule = args.some(
+        if (
+          !importedCustomModuleNode &&
+          args.some(
             (arg) =>
               isLiteral(arg) &&
               typeof arg.value === 'string' &&
               arg.value.endsWith(customModule)
-          );
+          )
+        ) {
+          importedCustomModuleNode = callExpression;
         }
       },
     };
