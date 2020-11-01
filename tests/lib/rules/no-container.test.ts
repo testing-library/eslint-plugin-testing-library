@@ -1,11 +1,7 @@
 import { createRuleTester } from '../test-utils';
 import rule, { RULE_NAME } from '../../../lib/rules/no-container';
 
-const ruleTester = createRuleTester({
-  ecmaFeatures: {
-    jsx: true,
-  },
-});
+const ruleTester = createRuleTester();
 
 ruleTester.run(RULE_NAME, rule, {
   valid: [

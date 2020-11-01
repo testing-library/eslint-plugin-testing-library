@@ -3,11 +3,7 @@ import rule, {
   RULE_NAME,
 } from '../../../lib/rules/render-result-naming-convention';
 
-const ruleTester = createRuleTester({
-  ecmaFeatures: {
-    jsx: true,
-  },
-});
+const ruleTester = createRuleTester();
 
 ruleTester.run(RULE_NAME, rule, {
   valid: [

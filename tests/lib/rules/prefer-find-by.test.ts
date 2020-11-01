@@ -14,11 +14,7 @@ import rule, {
   MessageIds,
 } from '../../../lib/rules/prefer-find-by';
 
-const ruleTester = createRuleTester({
-  ecmaFeatures: {
-    jsx: true,
-  },
-});
+const ruleTester = createRuleTester();
 
 function buildFindByMethod(queryMethod: string) {
   return `${getFindByQueryVariant(queryMethod)}${queryMethod.split('By')[1]}`;

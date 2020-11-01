@@ -2,11 +2,7 @@ import { createRuleTester } from '../test-utils';
 import { TESTING_FRAMEWORK_SETUP_HOOKS } from '../../../lib/utils';
 import rule, { RULE_NAME } from '../../../lib/rules/no-render-in-setup';
 
-const ruleTester = createRuleTester({
-  ecmaFeatures: {
-    jsx: true,
-  },
-});
+const ruleTester = createRuleTester();
 
 ruleTester.run(RULE_NAME, rule, {
   valid: [

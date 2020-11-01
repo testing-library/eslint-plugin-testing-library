@@ -1,11 +1,7 @@
 import { createRuleTester } from './lib/test-utils';
 import rule, { RULE_NAME } from './fake-rule';
 
-const ruleTester = createRuleTester({
-  ecmaFeatures: {
-    jsx: true,
-  },
-});
+const ruleTester = createRuleTester();
 
 ruleTester.run(RULE_NAME, rule, {
   valid: [
@@ -38,6 +34,15 @@ ruleTester.run(RULE_NAME, rule, {
         'testing-library/module': 'test-utils',
       },
     },
+    {
+      code: `
+      // case: import module forced to be reported but not matching file name
+      import { foo } from 'report-me'
+    `,
+      settings: {
+        'testing-library/file-name': 'testing-library\\.js',
+      },
+    },
   ],
   invalid: [
     {
@@ -45,6 +50,25 @@ ruleTester.run(RULE_NAME, rule, {
       // case: import module forced to be reported
       import { foo } from 'report-me'
     `,
+      errors: [{ line: 3, column: 7, messageId: 'fakeError' }],
+    },
+    {
+      filename: 'MyComponent.spec.js',
+      code: `
+      // case: import module forced to be reported but from .spec.js named file
+      import { foo } from 'report-me'
+    `,
+      errors: [{ line: 3, column: 7, messageId: 'fakeError' }],
+    },
+    {
+      filename: 'MyComponent.testing-library.js',
+      code: `
+      // case: import module forced to be reported with custom file name
+      import { foo } from 'report-me'
+    `,
+      settings: {
+        'testing-library/file-name': 'testing-library\\.js',
+      },
       errors: [{ line: 3, column: 7, messageId: 'fakeError' }],
     },
     {
