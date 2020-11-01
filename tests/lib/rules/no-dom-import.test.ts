@@ -59,8 +59,6 @@ ruleTester.run(RULE_NAME, rule, {
     },
   ],
   invalid: [
-    // TODO: add invalid cases:
-    //  - custom filename importing from dom-testing-library
     {
       code: 'import { fireEvent } from "dom-testing-library"',
       errors: [
@@ -69,6 +67,23 @@ ruleTester.run(RULE_NAME, rule, {
         },
       ],
       output: 'import { fireEvent } from "dom-testing-library"',
+    },
+    {
+      settings: {
+        'testing-library/module': 'test-utils',
+      },
+      code: `
+      // case: dom-testing-library imported with custom module setting
+      import { fireEvent } from "dom-testing-library"`,
+      errors: [
+        {
+          line: 3,
+          messageId: 'noDomImport',
+        },
+      ],
+      output: `
+      // case: dom-testing-library imported with custom module setting
+      import { fireEvent } from "dom-testing-library"`,
     },
     {
       code: 'import { fireEvent } from "dom-testing-library"',
@@ -106,9 +121,37 @@ ruleTester.run(RULE_NAME, rule, {
       ],
     },
     {
+      settings: {
+        'testing-library/module': 'test-utils',
+      },
+      code: `
+      // case: dom-testing-library wildcard imported with custom module setting
+      import * as testing from "dom-testing-library"`,
+      errors: [
+        {
+          line: 3,
+          messageId: 'noDomImport',
+        },
+      ],
+    },
+    {
       code: 'import { fireEvent } from "@testing-library/dom"',
       errors: [
         {
+          messageId: 'noDomImport',
+        },
+      ],
+    },
+    {
+      settings: {
+        'testing-library/module': 'test-utils',
+      },
+      code: `
+      // case: @testing-library/dom imported with custom module setting
+      import { fireEvent } from "@testing-library/dom"`,
+      errors: [
+        {
+          line: 3,
           messageId: 'noDomImport',
         },
       ],
@@ -146,6 +189,20 @@ ruleTester.run(RULE_NAME, rule, {
       ],
     },
     {
+      settings: {
+        'testing-library/module': 'test-utils',
+      },
+      code: `
+      // case: dom-testing-library required with custom module setting
+      const { fireEvent } = require("dom-testing-library")`,
+      errors: [
+        {
+          line: 3,
+          messageId: 'noDomImport',
+        },
+      ],
+    },
+    {
       code: 'const { fireEvent } = require("@testing-library/dom")',
       errors: [
         {
@@ -165,6 +222,26 @@ ruleTester.run(RULE_NAME, rule, {
         },
       ],
       output: 'const { fireEvent } = require("@testing-library/vue")',
+    },
+    {
+      settings: {
+        'testing-library/module': 'test-utils',
+      },
+      code: `
+      // case: @testing-library/dom required with custom module setting
+      const { fireEvent } = require("@testing-library/dom")`,
+      options: ['vue'],
+      errors: [
+        {
+          messageId: 'noDomImportFramework',
+          data: {
+            module: '@testing-library/vue',
+          },
+        },
+      ],
+      output: `
+      // case: @testing-library/dom required with custom module setting
+      const { fireEvent } = require("@testing-library/vue")`,
     },
     {
       code: 'require("dom-testing-library")',
