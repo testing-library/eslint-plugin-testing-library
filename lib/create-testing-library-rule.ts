@@ -1,6 +1,7 @@
 import { ESLintUtils, TSESLint } from '@typescript-eslint/experimental-utils';
 import { getDocsUrl } from './utils';
 import {
+  DetectionOptions,
   detectTestingLibraryUtils,
   EnhancedRuleCreate,
 } from './detect-testing-library-utils';
@@ -21,14 +22,16 @@ export function createTestingLibraryRule<
     meta: CreateRuleMeta<TMessageIds>;
     defaultOptions: Readonly<TOptions>;
     create: EnhancedRuleCreate<TOptions, TMessageIds, TRuleListener>;
+    detectionOptions?: Partial<DetectionOptions>;
   }>
 ): TSESLint.RuleModule<TMessageIds, TOptions> {
-  const { create, ...remainingConfig } = config;
+  const { create, detectionOptions, ...remainingConfig } = config;
 
   return ESLintUtils.RuleCreator(getDocsUrl)({
     ...remainingConfig,
     create: detectTestingLibraryUtils<TOptions, TMessageIds, TRuleListener>(
-      create
+      create,
+      detectionOptions
     ),
   });
 }
