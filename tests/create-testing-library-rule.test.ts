@@ -83,6 +83,12 @@ ruleTester.run(RULE_NAME, rule, {
         'testing-library/filename': 'testing-library\\.js',
       },
     },
+    {
+      code: `
+      // case: import custom module forced to be reported without custom module setting
+      import { foo } from 'custom-module-forced-report'
+    `,
+    },
   ],
   invalid: [
     // Test Cases for Imports & Filename
@@ -243,6 +249,16 @@ ruleTester.run(RULE_NAME, rule, {
           messageId: 'fakeError',
         },
       ],
+    },
+    {
+      settings: {
+        'testing-library/module': 'custom-module-forced-report',
+      },
+      code: `
+      // case: import custom module forced to be reported with custom module setting
+      import { foo } from 'custom-module-forced-report'
+    `,
+      errors: [{ line: 3, column: 7, messageId: 'fakeError' }],
     },
   ],
 });
