@@ -38,22 +38,7 @@ export type DetectionHelpers = {
   canReportErrors: () => boolean;
 };
 
-export type DetectionOptions = {
-  /**
-   * If true, force `detectTestingLibraryUtils` to skip `canReportErrors`
-   * so it doesn't opt-out rule listener.
-   *
-   * Useful when some rule apply to files other than testing ones
-   * (e.g. `consistent-data-testid`)
-   */
-  skipRuleReportingCheck?: boolean;
-};
-
 const DEFAULT_FILENAME_PATTERN = '^.*\\.(test|spec)\\.[jt]sx?$';
-
-const DEFAULT_DETECTION_OPTIONS: DetectionOptions = {
-  skipRuleReportingCheck: false,
-};
 
 /**
  * Enhances a given rule `create` with helpers to detect Testing Library utils.
@@ -62,19 +47,11 @@ export function detectTestingLibraryUtils<
   TOptions extends readonly unknown[],
   TMessageIds extends string,
   TRuleListener extends TSESLint.RuleListener = TSESLint.RuleListener
->(
-  ruleCreate: EnhancedRuleCreate<TOptions, TMessageIds, TRuleListener>,
-  options?: Partial<DetectionOptions>
-) {
+>(ruleCreate: EnhancedRuleCreate<TOptions, TMessageIds, TRuleListener>) {
   return (
     context: TestingLibraryContext<TOptions, TMessageIds>,
     optionsWithDefault: Readonly<TOptions>
   ): TSESLint.RuleListener => {
-    const { skipRuleReportingCheck } = Object.assign(
-      {},
-      DEFAULT_DETECTION_OPTIONS,
-      options
-    );
     let importedTestingLibraryNode: ModuleImportation = null;
     let importedCustomModuleNode: ModuleImportation = null;
 
@@ -124,14 +101,9 @@ export function detectTestingLibraryUtils<
 
       /**
        * Wraps all conditions that must be met to report rules.
-       *
-       * A rule can skip it if necessary.
        */
       canReportErrors() {
-        return (
-          skipRuleReportingCheck ||
-          (this.getIsTestingLibraryImported() && this.getIsValidFilename())
-        );
+        return this.getIsTestingLibraryImported() && this.getIsValidFilename();
       },
     };
 
