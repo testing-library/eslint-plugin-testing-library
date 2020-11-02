@@ -1,5 +1,5 @@
 import { getDocsUrl } from '../utils';
-import { ESLintUtils, TSESTree } from '@typescript-eslint/experimental-utils';
+import { ESLintUtils } from '@typescript-eslint/experimental-utils';
 import { isJSXAttribute, isLiteral } from '../node-utils';
 
 export const RULE_NAME = 'consistent-data-testid';
@@ -13,6 +13,11 @@ type Options = [
 
 const FILENAME_PLACEHOLDER = '{fileName}';
 
+/**
+ * This rule is not created with `createTestingLibraryRule` since:
+ * - it doesn't need any detection helper
+ * - it doesn't apply to testing files but component files
+ */
 export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
   name: RULE_NAME,
   meta: {
@@ -89,7 +94,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
     }
 
     return {
-      [`JSXIdentifier`]: (node: TSESTree.JSXIdentifier) => {
+      JSXIdentifier: (node) => {
         if (
           !isJSXAttribute(node.parent) ||
           !isLiteral(node.parent.value) ||
