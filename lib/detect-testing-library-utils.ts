@@ -1,5 +1,9 @@
 import { TSESLint, TSESTree } from '@typescript-eslint/experimental-utils';
-import { isLiteral } from './node-utils';
+import {
+  getImportModuleName,
+  isLiteral,
+  ModuleImportation,
+} from './node-utils';
 
 export type TestingLibrarySettings = {
   'testing-library/module'?: string;
@@ -25,14 +29,11 @@ export type EnhancedRuleCreate<
   detectionHelpers: Readonly<DetectionHelpers>
 ) => TRuleListener;
 
-type ModuleImportation =
-  | TSESTree.ImportDeclaration
-  | TSESTree.CallExpression
-  | null;
-
 export type DetectionHelpers = {
   getTestingLibraryImportNode: () => ModuleImportation;
   getCustomModuleImportNode: () => ModuleImportation;
+  getTestingLibraryImportName: () => string | undefined;
+  getCustomModuleImportName: () => string | undefined;
   getIsTestingLibraryImported: () => boolean;
   getIsValidFilename: () => boolean;
   canReportErrors: () => boolean;
@@ -68,6 +69,12 @@ export function detectTestingLibraryUtils<
       },
       getCustomModuleImportNode() {
         return importedCustomModuleNode;
+      },
+      getTestingLibraryImportName() {
+        return getImportModuleName(importedTestingLibraryNode);
+      },
+      getCustomModuleImportName() {
+        return getImportModuleName(importedCustomModuleNode);
       },
       /**
        * Gets if Testing Library is considered as imported or not.

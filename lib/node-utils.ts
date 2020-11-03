@@ -220,3 +220,29 @@ export function isRenderVariableDeclarator(
 
   return false;
 }
+
+export type ModuleImportation =
+  | TSESTree.ImportDeclaration
+  | TSESTree.CallExpression
+  | null;
+
+export function getImportModuleName(
+  node: ModuleImportation | undefined
+): string | undefined {
+  // import node of shape: import { foo } from 'bar'
+  if (
+    node?.type === AST_NODE_TYPES.ImportDeclaration &&
+    typeof node.source.value === 'string'
+  ) {
+    return node.source.value;
+  }
+
+  // import node of shape: const { foo } = require('bar')
+  if (
+    node?.type === AST_NODE_TYPES.CallExpression &&
+    isLiteral(node.arguments[0]) &&
+    typeof node.arguments[0].value === 'string'
+  ) {
+    return node.arguments[0].value;
+  }
+}

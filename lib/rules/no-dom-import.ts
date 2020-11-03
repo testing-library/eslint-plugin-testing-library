@@ -2,7 +2,6 @@ import {
   AST_NODE_TYPES,
   TSESTree,
 } from '@typescript-eslint/experimental-utils';
-import { isIdentifier, isLiteral } from '../node-utils';
 import { createTestingLibraryRule } from '../create-testing-library-rule';
 
 export const RULE_NAME = 'no-dom-import';
@@ -40,11 +39,10 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
   create(context, [framework], helpers) {
     function report(
-      node: TSESTree.ImportDeclaration | TSESTree.Identifier,
+      node: TSESTree.ImportDeclaration | TSESTree.CallExpression,
       moduleName: string
     ) {
       if (framework) {
-        const isRequire = isIdentifier(node) && node.name === 'require';
         const correctModuleName = moduleName.replace('dom', framework);
         context.report({
           node,
@@ -53,9 +51,8 @@ export default createTestingLibraryRule<Options, MessageIds>({
             module: correctModuleName,
           },
           fix(fixer) {
-            if (isRequire) {
-              const callExpression = node.parent as TSESTree.CallExpression;
-              const name = callExpression.arguments[0] as TSESTree.Literal;
+            if (node.type === AST_NODE_TYPES.CallExpression) {
+              const name = node.arguments[0] as TSESTree.Literal;
 
               // Replace the module name with the raw module name as we can't predict which punctuation the user is going to use
               return fixer.replaceText(
@@ -63,8 +60,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
                 name.raw.replace(moduleName, correctModuleName)
               );
             } else {
-              const importDeclaration = node as TSESTree.ImportDeclaration;
-              const name = importDeclaration.source;
+              const name = node.source;
               return fixer.replaceText(
                 name,
                 name.raw.replace(moduleName, correctModuleName)
@@ -82,36 +78,22 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
     return {
       'Program:exit'() {
+        const importName = helpers.getTestingLibraryImportName();
         const importNode = helpers.getTestingLibraryImportNode();
 
         if (!importNode) {
           return;
         }
 
-        // import node of shape: import { foo } from 'bar'
-        if (importNode.type === AST_NODE_TYPES.ImportDeclaration) {
-          const domModuleName = DOM_TESTING_LIBRARY_MODULES.find(
-            (module) => module === importNode.source.value
-          );
+        const domModuleName = DOM_TESTING_LIBRARY_MODULES.find(
+          (module) => module === importName
+        );
 
-          domModuleName && report(importNode, domModuleName);
+        if (!domModuleName) {
+          return;
         }
 
-        // import node of shape: const { foo } = require('bar')
-        if (importNode.type === AST_NODE_TYPES.CallExpression) {
-          const literalNodeDomModuleName = importNode.arguments.find(
-            (arg) =>
-              isLiteral(arg) &&
-              typeof arg.value === 'string' &&
-              DOM_TESTING_LIBRARY_MODULES.includes(arg.value)
-          ) as TSESTree.Literal;
-
-          literalNodeDomModuleName &&
-            report(
-              importNode.callee as TSESTree.Identifier,
-              literalNodeDomModuleName.value as string
-            );
-        }
+        report(importNode, domModuleName);
       },
     };
   },
