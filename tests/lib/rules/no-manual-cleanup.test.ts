@@ -13,12 +13,18 @@ const ALL_TESTING_LIBRARIES_WITH_CLEANUP = [
 
 ruleTester.run(RULE_NAME, rule, {
   valid: [
-    ...ALL_TESTING_LIBRARIES_WITH_CLEANUP.map((lib) => ({
-      code: `import { render } from "${lib}"`,
-    })),
+    {
+      code: `import "@testing-library/react"`,
+    },
     {
       code: `import { cleanup } from "any-other-library"`,
     },
+    {
+      code: `import { cleanup } from "@testing-library/angular"`,
+    },
+    ...ALL_TESTING_LIBRARIES_WITH_CLEANUP.map((lib) => ({
+      code: `import { render } from "${lib}"`,
+    })),
     ...ALL_TESTING_LIBRARIES_WITH_CLEANUP.map((lib) => ({
       code: `import utils from "${lib}"`,
     })),

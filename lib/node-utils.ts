@@ -17,6 +17,7 @@ export function isNewExpression(
   return node && node.type === 'NewExpression';
 }
 
+// TODO: remove this one and use ASTUtils one instead
 export function isIdentifier(node: TSESTree.Node): node is TSESTree.Identifier {
   return node && node.type === AST_NODE_TYPES.Identifier;
 }
@@ -69,8 +70,10 @@ export function isObjectPattern(
   return node && node.type === AST_NODE_TYPES.ObjectPattern;
 }
 
-export function isProperty(node: TSESTree.Node): node is TSESTree.Property {
-  return node && node.type === AST_NODE_TYPES.Property;
+export function isProperty(
+  node: TSESTree.Node | null | undefined
+): node is TSESTree.Property {
+  return node?.type === AST_NODE_TYPES.Property;
 }
 
 export function isJSXAttribute(
@@ -126,6 +129,7 @@ export function hasThenProperty(node: TSESTree.Node): boolean {
   );
 }
 
+// TODO: remove this one and use ASTUtils one instead
 export function isAwaitExpression(
   node: TSESTree.Node
 ): node is TSESTree.AwaitExpression {
@@ -176,7 +180,7 @@ export function getVariableReferences(
 ): TSESLint.Scope.Reference[] {
   return (
     (isVariableDeclarator(node) &&
-      context.getDeclaredVariables(node)[0].references.slice(1)) ||
+      context.getDeclaredVariables(node)[0]?.references?.slice(1)) ||
     []
   );
 }

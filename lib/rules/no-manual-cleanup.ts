@@ -1,9 +1,11 @@
 import {
   AST_NODE_TYPES,
+  ASTUtils,
   TSESTree,
+  TSESLint,
 } from '@typescript-eslint/experimental-utils';
 import {
-  isIdentifier,
+  getVariableReferences,
   isImportDefaultSpecifier,
   isImportSpecifier,
   isMemberExpression,
@@ -39,22 +41,20 @@ export default createTestingLibraryRule<Options, MessageIds>({
   create(context, _, helpers) {
     // can't find the right type?
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    function reportImportReferences(references: any[]) {
-      if (references && references.length > 0) {
-        references.forEach((reference) => {
-          const utilsUsage = reference.identifier.parent;
-          if (
-            isMemberExpression(utilsUsage) &&
-            isIdentifier(utilsUsage.property) &&
-            utilsUsage.property.name === 'cleanup'
-          ) {
-            context.report({
-              node: utilsUsage.property,
-              messageId: 'noManualCleanup',
-            });
-          }
-        });
-      }
+    function reportImportReferences(references: TSESLint.Scope.Reference[]) {
+      references.forEach((reference) => {
+        const utilsUsage = reference.identifier.parent;
+        if (
+          isMemberExpression(utilsUsage) &&
+          ASTUtils.isIdentifier(utilsUsage.property) &&
+          utilsUsage.property.name === 'cleanup'
+        ) {
+          context.report({
+            node: utilsUsage.property,
+            messageId: 'noManualCleanup',
+          });
+        }
+      });
     }
 
     return {
@@ -74,8 +74,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
         if (moduleNode.type === AST_NODE_TYPES.ImportDeclaration) {
           // case: import utils from 'testing-library-module'
           if (isImportDefaultSpecifier(moduleNode.specifiers[0])) {
-            const references = context.getDeclaredVariables(moduleNode)[0]
-              ?.references;
+            const { references } = context.getDeclaredVariables(moduleNode)[0];
 
             reportImportReferences(references);
           }
@@ -101,7 +100,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
             const cleanupProperty = declaratorNode.id.properties.find(
               (property) =>
                 isProperty(property) &&
-                isIdentifier(property.key) &&
+                ASTUtils.isIdentifier(property.key) &&
                 property.key.name === 'cleanup'
             );
 
@@ -113,9 +112,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
             }
           } else {
             // case: const utils = require('testing-library-module')
-            const references = context
-              .getDeclaredVariables(declaratorNode)[0]
-              ?.references?.slice(1);
+            const references = getVariableReferences(context, declaratorNode);
             reportImportReferences(references);
           }
         }
