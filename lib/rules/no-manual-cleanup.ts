@@ -1,14 +1,14 @@
-import { ESLintUtils, TSESTree } from '@typescript-eslint/experimental-utils';
-import { getDocsUrl } from '../utils';
+import { TSESTree } from '@typescript-eslint/experimental-utils';
 import {
-  isImportDefaultSpecifier,
-  isLiteral,
   isIdentifier,
+  isImportDefaultSpecifier,
+  isImportSpecifier,
+  isLiteral,
+  isMemberExpression,
   isObjectPattern,
   isProperty,
-  isMemberExpression,
-  isImportSpecifier,
 } from '../node-utils';
+import { createTestingLibraryRule } from '../create-testing-library-rule';
 
 export const RULE_NAME = 'no-manual-cleanup';
 export type MessageIds = 'noManualCleanup';
@@ -16,7 +16,7 @@ type Options = [];
 
 const CLEANUP_LIBRARY_REGEX = /(@testing-library\/(preact|react|svelte|vue))|@marko\/testing-library/;
 
-export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
+export default createTestingLibraryRule<Options, MessageIds>({
   name: RULE_NAME,
   meta: {
     type: 'problem',
