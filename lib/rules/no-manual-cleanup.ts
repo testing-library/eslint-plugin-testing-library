@@ -11,6 +11,7 @@ import {
   isMemberExpression,
   isObjectPattern,
   isProperty,
+  ModuleImportation,
 } from '../node-utils';
 import { createTestingLibraryRule } from '../create-testing-library-rule';
 
@@ -57,64 +58,70 @@ export default createTestingLibraryRule<Options, MessageIds>({
       });
     }
 
-    return {
-      'Program:exit'() {
-        const moduleName = helpers.getTestingLibraryImportName();
-        const moduleNode = helpers.getTestingLibraryImportNode();
+    function reportCandidateModule(moduleNode: ModuleImportation) {
+      if (moduleNode.type === AST_NODE_TYPES.ImportDeclaration) {
+        // case: import utils from 'testing-library-module'
+        if (isImportDefaultSpecifier(moduleNode.specifiers[0])) {
+          const { references } = context.getDeclaredVariables(moduleNode)[0];
 
-        if (!moduleNode) {
-          return;
+          reportImportReferences(references);
         }
 
-        // Early return if the library doesn't support `cleanup`
-        if (!moduleName.match(CLEANUP_LIBRARY_REGEXP)) {
-          return;
+        // case: import { cleanup } from 'testing-library-module'
+        const cleanupSpecifier = moduleNode.specifiers.find(
+          (specifier) =>
+            isImportSpecifier(specifier) &&
+            specifier.imported.name === 'cleanup'
+        );
+
+        if (cleanupSpecifier) {
+          context.report({
+            node: cleanupSpecifier,
+            messageId: 'noManualCleanup',
+          });
         }
+      } else {
+        const declaratorNode = moduleNode.parent as TSESTree.VariableDeclarator;
 
-        if (moduleNode.type === AST_NODE_TYPES.ImportDeclaration) {
-          // case: import utils from 'testing-library-module'
-          if (isImportDefaultSpecifier(moduleNode.specifiers[0])) {
-            const { references } = context.getDeclaredVariables(moduleNode)[0];
-
-            reportImportReferences(references);
-          }
-
-          // case: import { cleanup } from 'testing-library-module'
-          const cleanupSpecifier = moduleNode.specifiers.find(
-            (specifier) =>
-              isImportSpecifier(specifier) &&
-              specifier.imported.name === 'cleanup'
+        if (isObjectPattern(declaratorNode.id)) {
+          // case: const { cleanup } = require('testing-library-module')
+          const cleanupProperty = declaratorNode.id.properties.find(
+            (property) =>
+              isProperty(property) &&
+              ASTUtils.isIdentifier(property.key) &&
+              property.key.name === 'cleanup'
           );
 
-          if (cleanupSpecifier) {
+          if (cleanupProperty) {
             context.report({
-              node: cleanupSpecifier,
+              node: cleanupProperty,
               messageId: 'noManualCleanup',
             });
           }
         } else {
-          const declaratorNode = moduleNode.parent as TSESTree.VariableDeclarator;
+          // case: const utils = require('testing-library-module')
+          const references = getVariableReferences(context, declaratorNode);
+          reportImportReferences(references);
+        }
+      }
+    }
 
-          if (isObjectPattern(declaratorNode.id)) {
-            // case: const { cleanup } = require('testing-library-module')
-            const cleanupProperty = declaratorNode.id.properties.find(
-              (property) =>
-                isProperty(property) &&
-                ASTUtils.isIdentifier(property.key) &&
-                property.key.name === 'cleanup'
-            );
+    return {
+      'Program:exit'() {
+        const testingLibraryImportName = helpers.getTestingLibraryImportName();
+        const testingLibraryImportNode = helpers.getTestingLibraryImportNode();
+        const customModuleImportNode = helpers.getCustomModuleImportNode();
 
-            if (cleanupProperty) {
-              context.report({
-                node: cleanupProperty,
-                messageId: 'noManualCleanup',
-              });
-            }
-          } else {
-            // case: const utils = require('testing-library-module')
-            const references = getVariableReferences(context, declaratorNode);
-            reportImportReferences(references);
-          }
+        if (
+          testingLibraryImportName &&
+          testingLibraryImportNode &&
+          testingLibraryImportName.match(CLEANUP_LIBRARY_REGEXP)
+        ) {
+          reportCandidateModule(testingLibraryImportNode);
+        }
+
+        if (customModuleImportNode) {
+          reportCandidateModule(customModuleImportNode);
         }
       },
     };

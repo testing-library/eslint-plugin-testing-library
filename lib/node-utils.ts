@@ -225,13 +225,13 @@ export function isRenderVariableDeclarator(
   return false;
 }
 
+// TODO: extract into types file?
 export type ModuleImportation =
   | TSESTree.ImportDeclaration
-  | TSESTree.CallExpression
-  | null;
+  | TSESTree.CallExpression;
 
 export function getImportModuleName(
-  node: ModuleImportation | undefined
+  node: ModuleImportation | undefined | null
 ): string | undefined {
   // import node of shape: import { foo } from 'bar'
   if (

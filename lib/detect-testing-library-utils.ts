@@ -30,8 +30,8 @@ export type EnhancedRuleCreate<
 ) => TRuleListener;
 
 export type DetectionHelpers = {
-  getTestingLibraryImportNode: () => ModuleImportation;
-  getCustomModuleImportNode: () => ModuleImportation;
+  getTestingLibraryImportNode: () => ModuleImportation | null;
+  getCustomModuleImportNode: () => ModuleImportation | null;
   getTestingLibraryImportName: () => string | undefined;
   getCustomModuleImportName: () => string | undefined;
   getIsTestingLibraryImported: () => boolean;
@@ -53,8 +53,8 @@ export function detectTestingLibraryUtils<
     context: TestingLibraryContext<TOptions, TMessageIds>,
     optionsWithDefault: Readonly<TOptions>
   ): TSESLint.RuleListener => {
-    let importedTestingLibraryNode: ModuleImportation = null;
-    let importedCustomModuleNode: ModuleImportation = null;
+    let importedTestingLibraryNode: ModuleImportation | null = null;
+    let importedCustomModuleNode: ModuleImportation | null = null;
 
     // Init options based on shared ESLint settings
     const customModule = context.settings['testing-library/module'];

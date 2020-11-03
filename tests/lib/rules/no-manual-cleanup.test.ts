@@ -17,9 +17,10 @@ ruleTester.run(RULE_NAME, rule, {
       code: `import "@testing-library/react"`,
     },
     {
-      code: `import { cleanup } from "any-other-library"`,
+      code: `import { cleanup } from "test-utils"`,
     },
     {
+      // Angular Testing Library doesn't have `cleanup` util
       code: `import { cleanup } from "@testing-library/angular"`,
     },
     ...ALL_TESTING_LIBRARIES_WITH_CLEANUP.map((lib) => ({
@@ -87,6 +88,15 @@ ruleTester.run(RULE_NAME, rule, {
         },
       ],
     })),
+    {
+      settings: {
+        'testing-library/module': 'test-utils',
+      },
+      code: `
+        import { render, cleanup } from 'test-utils'
+      `,
+      errors: [{ line: 2, column: 26, messageId: 'noManualCleanup' }],
+    },
     ...ALL_TESTING_LIBRARIES_WITH_CLEANUP.map((lib) => ({
       code: `import { cleanup as myCustomCleanup } from "${lib}"`,
       errors: [
@@ -97,6 +107,15 @@ ruleTester.run(RULE_NAME, rule, {
         },
       ],
     })),
+    {
+      settings: {
+        'testing-library/module': 'test-utils',
+      },
+      code: `
+        import { cleanup as myCustomCleanup } from 'test-utils'
+      `,
+      errors: [{ line: 2, column: 18, messageId: 'noManualCleanup' }],
+    },
     ...ALL_TESTING_LIBRARIES_WITH_CLEANUP.map((lib) => ({
       code: `import utils, { cleanup } from "${lib}"`,
       errors: [
@@ -107,6 +126,15 @@ ruleTester.run(RULE_NAME, rule, {
         },
       ],
     })),
+    {
+      settings: {
+        'testing-library/module': 'test-utils',
+      },
+      code: `
+        import utils, { cleanup } from 'test-utils'
+      `,
+      errors: [{ line: 2, column: 25, messageId: 'noManualCleanup' }],
+    },
     ...ALL_TESTING_LIBRARIES_WITH_CLEANUP.map((lib) => ({
       code: `
         import utils from "${lib}"
@@ -120,6 +148,16 @@ ruleTester.run(RULE_NAME, rule, {
         },
       ],
     })),
+    {
+      settings: {
+        'testing-library/module': 'test-utils',
+      },
+      code: `
+        import utils from 'test-utils'
+        afterEach(() => utils.cleanup())
+      `,
+      errors: [{ line: 3, column: 31, messageId: 'noManualCleanup' }],
+    },
     ...ALL_TESTING_LIBRARIES_WITH_CLEANUP.map((lib) => ({
       code: `
         import utils from "${lib}"
@@ -143,6 +181,15 @@ ruleTester.run(RULE_NAME, rule, {
         },
       ],
     })),
+    {
+      settings: {
+        'testing-library/module': 'test-utils',
+      },
+      code: `
+        const { render, cleanup } = require('test-utils')
+      `,
+      errors: [{ line: 2, column: 25, messageId: 'noManualCleanup' }],
+    },
     ...ALL_TESTING_LIBRARIES_WITH_CLEANUP.map((lib) => ({
       code: `
         const utils = require("${lib}")
