@@ -1,9 +1,11 @@
-import { TSESTree } from '@typescript-eslint/experimental-utils';
+import {
+  AST_NODE_TYPES,
+  TSESTree,
+} from '@typescript-eslint/experimental-utils';
 import {
   isIdentifier,
   isImportDefaultSpecifier,
   isImportSpecifier,
-  isLiteral,
   isMemberExpression,
   isObjectPattern,
   isProperty,
@@ -14,7 +16,7 @@ export const RULE_NAME = 'no-manual-cleanup';
 export type MessageIds = 'noManualCleanup';
 type Options = [];
 
-const CLEANUP_LIBRARY_REGEX = /(@testing-library\/(preact|react|svelte|vue))|@marko\/testing-library/;
+const CLEANUP_LIBRARY_REGEXP = /(@testing-library\/(preact|react|svelte|vue))|@marko\/testing-library/;
 
 export default createTestingLibraryRule<Options, MessageIds>({
   name: RULE_NAME,
@@ -34,12 +36,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
   },
   defaultOptions: [],
 
-  create(context) {
-    let defaultImportFromTestingLibrary: TSESTree.ImportDeclaration;
-    let defaultRequireFromTestingLibrary:
-      | TSESTree.Identifier
-      | TSESTree.ArrayPattern;
-
+  create(context, _, helpers) {
     // can't find the right type?
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     function reportImportReferences(references: any[]) {
@@ -61,85 +58,66 @@ export default createTestingLibraryRule<Options, MessageIds>({
     }
 
     return {
-      ImportDeclaration(node) {
-        const value = node.source.value as string;
-        const testingLibraryWithCleanup = value.match(CLEANUP_LIBRARY_REGEX);
+      'Program:exit'() {
+        const moduleName = helpers.getTestingLibraryImportName();
+        const moduleNode = helpers.getTestingLibraryImportNode();
+
+        if (!moduleNode) {
+          return;
+        }
 
         // Early return if the library doesn't support `cleanup`
-        if (!testingLibraryWithCleanup) {
+        if (!moduleName.match(CLEANUP_LIBRARY_REGEXP)) {
           return;
         }
 
-        if (isImportDefaultSpecifier(node.specifiers[0])) {
-          defaultImportFromTestingLibrary = node;
-        }
+        if (moduleNode.type === AST_NODE_TYPES.ImportDeclaration) {
+          // case: import utils from 'testing-library-module'
+          if (isImportDefaultSpecifier(moduleNode.specifiers[0])) {
+            const references = context.getDeclaredVariables(moduleNode)[0]
+              ?.references;
 
-        const cleanupSpecifier = node.specifiers.find(
-          (specifier) =>
-            isImportSpecifier(specifier) &&
-            specifier.imported &&
-            specifier.imported.name === 'cleanup'
-        );
+            reportImportReferences(references);
+          }
 
-        if (cleanupSpecifier) {
-          context.report({
-            node: cleanupSpecifier,
-            messageId: 'noManualCleanup',
-          });
-        }
-      },
-      [`VariableDeclarator > CallExpression > Identifier[name="require"]`](
-        node: TSESTree.Identifier
-      ) {
-        const { arguments: args } = node.parent as TSESTree.CallExpression;
-
-        const literalNodeCleanupModuleName = args.find(
-          (args) =>
-            isLiteral(args) &&
-            typeof args.value === 'string' &&
-            args.value.match(CLEANUP_LIBRARY_REGEX)
-        );
-
-        if (!literalNodeCleanupModuleName) {
-          return;
-        }
-
-        const declaratorNode = node.parent
-          .parent as TSESTree.VariableDeclarator;
-
-        if (isObjectPattern(declaratorNode.id)) {
-          const cleanupProperty = declaratorNode.id.properties.find(
-            (property) =>
-              isProperty(property) &&
-              isIdentifier(property.key) &&
-              property.key.name === 'cleanup'
+          // case: import { cleanup } from 'testing-library-module'
+          const cleanupSpecifier = moduleNode.specifiers.find(
+            (specifier) =>
+              isImportSpecifier(specifier) &&
+              specifier.imported.name === 'cleanup'
           );
 
-          if (cleanupProperty) {
+          if (cleanupSpecifier) {
             context.report({
-              node: cleanupProperty,
+              node: cleanupSpecifier,
               messageId: 'noManualCleanup',
             });
           }
         } else {
-          defaultRequireFromTestingLibrary = declaratorNode.id;
-        }
-      },
-      'Program:exit'() {
-        if (defaultImportFromTestingLibrary) {
-          const references = context.getDeclaredVariables(
-            defaultImportFromTestingLibrary
-          )[0].references;
+          const declaratorNode = moduleNode.parent as TSESTree.VariableDeclarator;
 
-          reportImportReferences(references);
-        }
+          if (isObjectPattern(declaratorNode.id)) {
+            // case: const { cleanup } = require('testing-library-module')
+            const cleanupProperty = declaratorNode.id.properties.find(
+              (property) =>
+                isProperty(property) &&
+                isIdentifier(property.key) &&
+                property.key.name === 'cleanup'
+            );
 
-        if (defaultRequireFromTestingLibrary) {
-          const references = context
-            .getDeclaredVariables(defaultRequireFromTestingLibrary.parent)[0]
-            .references.slice(1);
-
-          reportImportReferences(references);
+            if (cleanupProperty) {
+              context.report({
+                node: cleanupProperty,
+                messageId: 'noManualCleanup',
+              });
+            }
+          } else {
+            // case: const utils = require('testing-library-module')
+            const references = context
+              .getDeclaredVariables(declaratorNode)[0]
+              ?.references?.slice(1);
+            reportImportReferences(references);
+          }
         }
       },
     };
