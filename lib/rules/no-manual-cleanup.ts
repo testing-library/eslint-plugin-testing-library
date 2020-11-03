@@ -11,7 +11,7 @@ import {
   isMemberExpression,
   isObjectPattern,
   isProperty,
-  ModuleImportation,
+  ImportModuleNode,
 } from '../node-utils';
 import { createTestingLibraryRule } from '../create-testing-library-rule';
 
@@ -58,7 +58,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
       });
     }
 
-    function reportCandidateModule(moduleNode: ModuleImportation) {
+    function reportCandidateModule(moduleNode: ImportModuleNode) {
       if (moduleNode.type === AST_NODE_TYPES.ImportDeclaration) {
         // case: import utils from 'testing-library-module'
         if (isImportDefaultSpecifier(moduleNode.specifiers[0])) {

@@ -1,9 +1,5 @@
 import { TSESLint, TSESTree } from '@typescript-eslint/experimental-utils';
-import {
-  getImportModuleName,
-  isLiteral,
-  ModuleImportation,
-} from './node-utils';
+import { getImportModuleName, isLiteral, ImportModuleNode } from './node-utils';
 
 export type TestingLibrarySettings = {
   'testing-library/module'?: string;
@@ -30,8 +26,8 @@ export type EnhancedRuleCreate<
 ) => TRuleListener;
 
 export type DetectionHelpers = {
-  getTestingLibraryImportNode: () => ModuleImportation | null;
-  getCustomModuleImportNode: () => ModuleImportation | null;
+  getTestingLibraryImportNode: () => ImportModuleNode | null;
+  getCustomModuleImportNode: () => ImportModuleNode | null;
   getTestingLibraryImportName: () => string | undefined;
   getCustomModuleImportName: () => string | undefined;
   getIsTestingLibraryImported: () => boolean;
@@ -53,8 +49,8 @@ export function detectTestingLibraryUtils<
     context: TestingLibraryContext<TOptions, TMessageIds>,
     optionsWithDefault: Readonly<TOptions>
   ): TSESLint.RuleListener => {
-    let importedTestingLibraryNode: ModuleImportation | null = null;
-    let importedCustomModuleNode: ModuleImportation | null = null;
+    let importedTestingLibraryNode: ImportModuleNode | null = null;
+    let importedCustomModuleNode: ImportModuleNode | null = null;
 
     // Init options based on shared ESLint settings
     const customModule = context.settings['testing-library/module'];
