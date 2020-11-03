@@ -53,6 +53,14 @@ ruleTester.run(RULE_NAME, rule, {
     {
       code: `const utils = require(moduleName)`,
     },
+    {
+      settings: {
+        'testing-library/filename-pattern': 'testing-library\\.js',
+      },
+      code: `
+      import { render, cleanup } from "${ALL_TESTING_LIBRARIES_WITH_CLEANUP[0]}"
+      `,
+    },
   ],
   invalid: [
     ...ALL_TESTING_LIBRARIES_WITH_CLEANUP.map((lib) => ({
@@ -61,6 +69,20 @@ ruleTester.run(RULE_NAME, rule, {
         {
           line: 1,
           column: 18, // error points to `cleanup`
+          messageId: 'noManualCleanup',
+        },
+      ],
+    })),
+    ...ALL_TESTING_LIBRARIES_WITH_CLEANUP.map((lib) => ({
+      // official testing-library packages should be reported with custom module setting
+      settings: {
+        'testing-library/module': 'test-utils',
+      },
+      code: `import { cleanup, render } from "${lib}"`,
+      errors: [
+        {
+          line: 1,
+          column: 10, // error points to `cleanup`
           messageId: 'noManualCleanup',
         },
       ],
