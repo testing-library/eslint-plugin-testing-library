@@ -1,5 +1,4 @@
 import {
-  AST_NODE_TYPES,
   ASTUtils,
   TSESTree,
   TSESLint,
