@@ -105,7 +105,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
         }
       },
 
-      CallExpression(node: TSESTree.CallExpression) {
+      CallExpression(node) {
         if (isMemberExpression(node.callee)) {
           showErrorIfChainedContainerMethod(node.callee);
         } else {

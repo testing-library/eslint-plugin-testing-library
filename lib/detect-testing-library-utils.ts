@@ -1,5 +1,5 @@
 import { TSESLint, TSESTree } from '@typescript-eslint/experimental-utils';
-import { isLiteral } from './node-utils';
+import { getImportModuleName, isLiteral, ImportModuleNode } from './node-utils';
 
 export type TestingLibrarySettings = {
   'testing-library/module'?: string;
@@ -25,14 +25,11 @@ export type EnhancedRuleCreate<
   detectionHelpers: Readonly<DetectionHelpers>
 ) => TRuleListener;
 
-type ModuleImportation =
-  | TSESTree.ImportDeclaration
-  | TSESTree.CallExpression
-  | null;
-
 export type DetectionHelpers = {
-  getTestingLibraryImportNode: () => ModuleImportation;
-  getCustomModuleImportNode: () => ModuleImportation;
+  getTestingLibraryImportNode: () => ImportModuleNode | null;
+  getCustomModuleImportNode: () => ImportModuleNode | null;
+  getTestingLibraryImportName: () => string | undefined;
+  getCustomModuleImportName: () => string | undefined;
   getIsTestingLibraryImported: () => boolean;
   getIsValidFilename: () => boolean;
   canReportErrors: () => boolean;
@@ -52,8 +49,8 @@ export function detectTestingLibraryUtils<
     context: TestingLibraryContext<TOptions, TMessageIds>,
     optionsWithDefault: Readonly<TOptions>
   ): TSESLint.RuleListener => {
-    let importedTestingLibraryNode: ModuleImportation = null;
-    let importedCustomModuleNode: ModuleImportation = null;
+    let importedTestingLibraryNode: ImportModuleNode | null = null;
+    let importedCustomModuleNode: ImportModuleNode | null = null;
 
     // Init options based on shared ESLint settings
     const customModule = context.settings['testing-library/module'];
@@ -68,6 +65,12 @@ export function detectTestingLibraryUtils<
       },
       getCustomModuleImportNode() {
         return importedCustomModuleNode;
+      },
+      getTestingLibraryImportName() {
+        return getImportModuleName(importedTestingLibraryNode);
+      },
+      getCustomModuleImportName() {
+        return getImportModuleName(importedCustomModuleNode);
       },
       /**
        * Gets if Testing Library is considered as imported or not.

@@ -2,10 +2,7 @@
  * @file Fake rule to be able to test createTestingLibraryRule and
  * detectTestingLibraryUtils properly
  */
-import {
-  AST_NODE_TYPES,
-  TSESTree,
-} from '@typescript-eslint/experimental-utils';
+import { TSESTree } from '@typescript-eslint/experimental-utils';
 import { createTestingLibraryRule } from '../lib/create-testing-library-rule';
 
 export const RULE_NAME = 'fake-rule';
@@ -55,14 +52,12 @@ export default createTestingLibraryRule<Options, MessageIds>({
       ImportDeclaration: checkImportDeclaration,
       'Program:exit'() {
         const importNode = helpers.getCustomModuleImportNode();
+        const importName = helpers.getCustomModuleImportName();
         if (!importNode) {
           return;
         }
 
-        if (
-          importNode.type === AST_NODE_TYPES.ImportDeclaration &&
-          importNode.source.value === 'custom-module-forced-report'
-        ) {
+        if (importName === 'custom-module-forced-report') {
           context.report({
             node: importNode,
             messageId: 'fakeError',

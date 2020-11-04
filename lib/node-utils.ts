@@ -6,9 +6,9 @@ import {
 import { RuleContext } from '@typescript-eslint/experimental-utils/dist/ts-eslint';
 
 export function isCallExpression(
-  node: TSESTree.Node
+  node: TSESTree.Node | null | undefined
 ): node is TSESTree.CallExpression {
-  return node && node.type === AST_NODE_TYPES.CallExpression;
+  return node?.type === AST_NODE_TYPES.CallExpression;
 }
 
 export function isNewExpression(
@@ -17,6 +17,7 @@ export function isNewExpression(
   return node && node.type === 'NewExpression';
 }
 
+// TODO: remove this one and use ASTUtils one instead
 export function isIdentifier(node: TSESTree.Node): node is TSESTree.Identifier {
   return node && node.type === AST_NODE_TYPES.Identifier;
 }
@@ -69,8 +70,10 @@ export function isObjectPattern(
   return node && node.type === AST_NODE_TYPES.ObjectPattern;
 }
 
-export function isProperty(node: TSESTree.Node): node is TSESTree.Property {
-  return node && node.type === AST_NODE_TYPES.Property;
+export function isProperty(
+  node: TSESTree.Node | null | undefined
+): node is TSESTree.Property {
+  return node?.type === AST_NODE_TYPES.Property;
 }
 
 export function isJSXAttribute(
@@ -126,6 +129,7 @@ export function hasThenProperty(node: TSESTree.Node): boolean {
   );
 }
 
+// TODO: remove this one and use ASTUtils one instead
 export function isAwaitExpression(
   node: TSESTree.Node
 ): node is TSESTree.AwaitExpression {
@@ -148,6 +152,12 @@ export function isArrayExpression(
   node: TSESTree.Node
 ): node is TSESTree.ArrayExpression {
   return node?.type === AST_NODE_TYPES.ArrayExpression;
+}
+
+export function isImportDeclaration(
+  node: TSESTree.Node | null | undefined
+): node is TSESTree.ImportDeclaration {
+  return node?.type === AST_NODE_TYPES.ImportDeclaration;
 }
 
 export function isAwaited(node: TSESTree.Node): boolean {
@@ -176,7 +186,7 @@ export function getVariableReferences(
 ): TSESLint.Scope.Reference[] {
   return (
     (isVariableDeclarator(node) &&
-      context.getDeclaredVariables(node)[0].references.slice(1)) ||
+      context.getDeclaredVariables(node)[0]?.references?.slice(1)) ||
     []
   );
 }
@@ -219,4 +229,27 @@ export function isRenderVariableDeclarator(
   }
 
   return false;
+}
+
+// TODO: extract into types file?
+export type ImportModuleNode =
+  | TSESTree.ImportDeclaration
+  | TSESTree.CallExpression;
+
+export function getImportModuleName(
+  node: ImportModuleNode | undefined | null
+): string | undefined {
+  // import node of shape: import { foo } from 'bar'
+  if (isImportDeclaration(node) && typeof node.source.value === 'string') {
+    return node.source.value;
+  }
+
+  // import node of shape: const { foo } = require('bar')
+  if (
+    isCallExpression(node) &&
+    isLiteral(node.arguments[0]) &&
+    typeof node.arguments[0].value === 'string'
+  ) {
+    return node.arguments[0].value;
+  }
 }

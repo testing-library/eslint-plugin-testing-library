@@ -1,22 +1,27 @@
-import { ESLintUtils, TSESTree } from '@typescript-eslint/experimental-utils';
-import { getDocsUrl } from '../utils';
 import {
+  ASTUtils,
+  TSESTree,
+  TSESLint,
+} from '@typescript-eslint/experimental-utils';
+import {
+  getVariableReferences,
   isImportDefaultSpecifier,
-  isLiteral,
-  isIdentifier,
+  isImportSpecifier,
+  isMemberExpression,
   isObjectPattern,
   isProperty,
-  isMemberExpression,
-  isImportSpecifier,
+  ImportModuleNode,
+  isImportDeclaration,
 } from '../node-utils';
+import { createTestingLibraryRule } from '../create-testing-library-rule';
 
 export const RULE_NAME = 'no-manual-cleanup';
 export type MessageIds = 'noManualCleanup';
 type Options = [];
 
-const CLEANUP_LIBRARY_REGEX = /(@testing-library\/(preact|react|svelte|vue))|@marko\/testing-library/;
+const CLEANUP_LIBRARY_REGEXP = /(@testing-library\/(preact|react|svelte|vue))|@marko\/testing-library/;
 
-export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
+export default createTestingLibraryRule<Options, MessageIds>({
   name: RULE_NAME,
   meta: {
     type: 'problem',
@@ -34,50 +39,36 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
   },
   defaultOptions: [],
 
-  create(context) {
-    let defaultImportFromTestingLibrary: TSESTree.ImportDeclaration;
-    let defaultRequireFromTestingLibrary:
-      | TSESTree.Identifier
-      | TSESTree.ArrayPattern;
-
-    // can't find the right type?
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    function reportImportReferences(references: any[]) {
-      if (references && references.length > 0) {
-        references.forEach((reference) => {
-          const utilsUsage = reference.identifier.parent;
-          if (
-            isMemberExpression(utilsUsage) &&
-            isIdentifier(utilsUsage.property) &&
-            utilsUsage.property.name === 'cleanup'
-          ) {
-            context.report({
-              node: utilsUsage.property,
-              messageId: 'noManualCleanup',
-            });
-          }
-        });
-      }
+  create(context, _, helpers) {
+    function reportImportReferences(references: TSESLint.Scope.Reference[]) {
+      references.forEach((reference) => {
+        const utilsUsage = reference.identifier.parent;
+        if (
+          isMemberExpression(utilsUsage) &&
+          ASTUtils.isIdentifier(utilsUsage.property) &&
+          utilsUsage.property.name === 'cleanup'
+        ) {
+          context.report({
+            node: utilsUsage.property,
+            messageId: 'noManualCleanup',
+          });
+        }
+      });
     }
 
-    return {
-      ImportDeclaration(node) {
-        const value = node.source.value as string;
-        const testingLibraryWithCleanup = value.match(CLEANUP_LIBRARY_REGEX);
+    function reportCandidateModule(moduleNode: ImportModuleNode) {
+      if (isImportDeclaration(moduleNode)) {
+        // case: import utils from 'testing-library-module'
+        if (isImportDefaultSpecifier(moduleNode.specifiers[0])) {
+          const { references } = context.getDeclaredVariables(moduleNode)[0];
 
-        // Early return if the library doesn't support `cleanup`
-        if (!testingLibraryWithCleanup) {
-          return;
+          reportImportReferences(references);
         }
 
-        if (isImportDefaultSpecifier(node.specifiers[0])) {
-          defaultImportFromTestingLibrary = node;
-        }
-
-        const cleanupSpecifier = node.specifiers.find(
+        // case: import { cleanup } from 'testing-library-module'
+        const cleanupSpecifier = moduleNode.specifiers.find(
           (specifier) =>
             isImportSpecifier(specifier) &&
-            specifier.imported &&
             specifier.imported.name === 'cleanup'
         );
 
@@ -87,31 +78,15 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
             messageId: 'noManualCleanup',
           });
         }
-      },
-      [`VariableDeclarator > CallExpression > Identifier[name="require"]`](
-        node: TSESTree.Identifier
-      ) {
-        const { arguments: args } = node.parent as TSESTree.CallExpression;
-
-        const literalNodeCleanupModuleName = args.find(
-          (args) =>
-            isLiteral(args) &&
-            typeof args.value === 'string' &&
-            args.value.match(CLEANUP_LIBRARY_REGEX)
-        );
-
-        if (!literalNodeCleanupModuleName) {
-          return;
-        }
-
-        const declaratorNode = node.parent
-          .parent as TSESTree.VariableDeclarator;
+      } else {
+        const declaratorNode = moduleNode.parent as TSESTree.VariableDeclarator;
 
         if (isObjectPattern(declaratorNode.id)) {
+          // case: const { cleanup } = require('testing-library-module')
           const cleanupProperty = declaratorNode.id.properties.find(
             (property) =>
               isProperty(property) &&
-              isIdentifier(property.key) &&
+              ASTUtils.isIdentifier(property.key) &&
               property.key.name === 'cleanup'
           );
 
@@ -122,24 +97,29 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
             });
           }
         } else {
-          defaultRequireFromTestingLibrary = declaratorNode.id;
+          // case: const utils = require('testing-library-module')
+          const references = getVariableReferences(context, declaratorNode);
+          reportImportReferences(references);
         }
-      },
+      }
+    }
+
+    return {
       'Program:exit'() {
-        if (defaultImportFromTestingLibrary) {
-          const references = context.getDeclaredVariables(
-            defaultImportFromTestingLibrary
-          )[0].references;
+        const testingLibraryImportName = helpers.getTestingLibraryImportName();
+        const testingLibraryImportNode = helpers.getTestingLibraryImportNode();
+        const customModuleImportNode = helpers.getCustomModuleImportNode();
 
-          reportImportReferences(references);
+        if (
+          testingLibraryImportName &&
+          testingLibraryImportNode &&
+          testingLibraryImportName.match(CLEANUP_LIBRARY_REGEXP)
+        ) {
+          reportCandidateModule(testingLibraryImportNode);
         }
 
-        if (defaultRequireFromTestingLibrary) {
-          const references = context
-            .getDeclaredVariables(defaultRequireFromTestingLibrary.parent)[0]
-            .references.slice(1);
-
-          reportImportReferences(references);
+        if (customModuleImportNode) {
+          reportCandidateModule(customModuleImportNode);
         }
       },
     };
