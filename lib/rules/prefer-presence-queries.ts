@@ -1,27 +1,11 @@
-import { TSESTree } from '@typescript-eslint/experimental-utils';
-import {
-  ABSENCE_MATCHERS,
-  ALL_QUERIES_METHODS,
-  PRESENCE_MATCHERS,
-} from '../utils';
-import {
-  findClosestCallNode,
-  isIdentifier,
-  isMemberExpression,
-} from '../node-utils';
+import { ASTUtils, TSESTree } from '@typescript-eslint/experimental-utils';
+import { ABSENCE_MATCHERS, PRESENCE_MATCHERS } from '../utils';
+import { findClosestCallNode, isMemberExpression } from '../node-utils';
 import { createTestingLibraryRule } from '../create-testing-library-rule';
 
 export const RULE_NAME = 'prefer-presence-queries';
 export type MessageIds = 'presenceQuery' | 'absenceQuery';
 type Options = [];
-
-const QUERIES_REGEXP = new RegExp(
-  `^(get|query)(All)?(${ALL_QUERIES_METHODS.join('|')})$`
-);
-
-function isThrowingQuery(node: TSESTree.Identifier) {
-  return node.name.startsWith('get');
-}
 
 export default createTestingLibraryRule<Options, MessageIds>({
   name: RULE_NAME,
@@ -44,49 +28,53 @@ export default createTestingLibraryRule<Options, MessageIds>({
   },
   defaultOptions: [],
 
-  create(context) {
+  create(context, _, helpers) {
     return {
-      [`CallExpression Identifier[name=${QUERIES_REGEXP}]`](
-        node: TSESTree.Identifier
-      ) {
+      'CallExpression Identifier'(node: TSESTree.Identifier) {
         const expectCallNode = findClosestCallNode(node, 'expect');
 
-        if (expectCallNode && isMemberExpression(expectCallNode.parent)) {
-          const expectStatement = expectCallNode.parent;
-          const property = expectStatement.property as TSESTree.Identifier;
-          let matcher = property.name;
-          let isNegatedMatcher = false;
+        if (!expectCallNode || !isMemberExpression(expectCallNode.parent)) {
+          return;
+        }
 
-          if (
-            matcher === 'not' &&
-            isMemberExpression(expectStatement.parent) &&
-            isIdentifier(expectStatement.parent.property)
-          ) {
-            isNegatedMatcher = true;
-            matcher = expectStatement.parent.property.name;
-          }
+        if (!helpers.isSyncQuery(node)) {
+          return;
+        }
 
-          const validMatchers = isThrowingQuery(node)
-            ? PRESENCE_MATCHERS
-            : ABSENCE_MATCHERS;
+        const isPresenceQuery = helpers.isGetByQuery(node);
+        const expectStatement = expectCallNode.parent;
+        let matcher =
+          ASTUtils.isIdentifier(expectStatement.property) &&
+          expectStatement.property.name;
+        let isNegatedMatcher = false;
 
-          const invalidMatchers = isThrowingQuery(node)
-            ? ABSENCE_MATCHERS
-            : PRESENCE_MATCHERS;
+        if (
+          matcher === 'not' &&
+          isMemberExpression(expectStatement.parent) &&
+          ASTUtils.isIdentifier(expectStatement.parent.property)
+        ) {
+          isNegatedMatcher = true;
+          matcher = expectStatement.parent.property.name;
+        }
 
-          const messageId = isThrowingQuery(node)
-            ? 'absenceQuery'
-            : 'presenceQuery';
+        const validMatchers = isPresenceQuery
+          ? PRESENCE_MATCHERS
+          : ABSENCE_MATCHERS;
 
-          if (
-            (!isNegatedMatcher && invalidMatchers.includes(matcher)) ||
-            (isNegatedMatcher && validMatchers.includes(matcher))
-          ) {
-            return context.report({
-              node,
-              messageId,
-            });
-          }
+        const invalidMatchers = isPresenceQuery
+          ? ABSENCE_MATCHERS
+          : PRESENCE_MATCHERS;
+
+        const messageId = isPresenceQuery ? 'absenceQuery' : 'presenceQuery';
+
+        if (
+          (!isNegatedMatcher && invalidMatchers.includes(matcher)) ||
+          (isNegatedMatcher && validMatchers.includes(matcher))
+        ) {
+          context.report({
+            node,
+            messageId,
+          });
         }
       },
     };

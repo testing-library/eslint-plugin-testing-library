@@ -347,28 +347,24 @@ ruleTester.run(RULE_NAME, rule, {
       code: 'const el = queryByText("button")',
     },
     {
-      // TODO: this one is gonna be reported by aggressive query reporting
-      code:
-        'expect(getByNonTestingLibraryQuery("button")).not.toBeInTheDocument()',
-    },
-    {
-      // TODO: this one is gonna be reported by aggressive query reporting
-      code:
-        'expect(queryByNonTestingLibraryQuery("button")).toBeInTheDocument()',
-    },
-    {
       code: `async () => {
         const el = await findByText('button')
         expect(el).toBeInTheDocument()
       }`,
     },
+    `// case: query an element with getBy but then check its absence after doing
+     // some action which makes it disappear.
+
+     // submit button exists
+     const submitButton = screen.getByRole('button')
+     fireEvent.click(submitButton)
+    
+     // right after clicking submit button it disappears
+     expect(submitButton).not.toBeInTheDocument()
+    `,
     // some weird examples after here to check guard against parent nodes
-    {
-      code: 'expect(getByText("button")).not()',
-    },
-    {
-      code: 'expect(queryByText("button")).not()',
-    },
+    'expect(getByText("button")).not()',
+    'expect(queryByText("button")).not()',
   ],
   invalid: [
     // cases: asserting absence incorrectly with `getBy*` queries
@@ -655,7 +651,20 @@ ruleTester.run(RULE_NAME, rule, {
       code: 'expect(screen.queryAllByText("button")[1]).toBeInTheDocument()',
       errors: [{ messageId: 'presenceQuery', line: 1, column: 15 }],
     },
-    // TODO: add more tests for using custom queries
+    {
+      code: `
+      // case: asserting presence incorrectly with custom queryBy* query
+        expect(queryByCustomQuery("button")).toBeInTheDocument()
+      `,
+      errors: [{ messageId: 'presenceQuery', line: 3, column: 16 }],
+    },
+    {
+      code: `
+        // case: asserting absence incorrectly with custom getBy* query
+        expect(getByCustomQuery("button")).not.toBeInTheDocument()
+      `,
+      errors: [{ messageId: 'absenceQuery', line: 3, column: 16 }],
+    },
     // TODO: add more tests for importing custom module
   ],
 });
