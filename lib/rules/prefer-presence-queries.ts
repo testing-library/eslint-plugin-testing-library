@@ -1,18 +1,18 @@
-import { ESLintUtils, TSESTree } from '@typescript-eslint/experimental-utils';
+import { TSESTree } from '@typescript-eslint/experimental-utils';
 import {
-  getDocsUrl,
+  ABSENCE_MATCHERS,
   ALL_QUERIES_METHODS,
   PRESENCE_MATCHERS,
-  ABSENCE_MATCHERS,
 } from '../utils';
 import {
   findClosestCallNode,
-  isMemberExpression,
   isIdentifier,
+  isMemberExpression,
 } from '../node-utils';
+import { createTestingLibraryRule } from '../create-testing-library-rule';
 
 export const RULE_NAME = 'prefer-presence-queries';
-export type MessageIds = 'presenceQuery' | 'absenceQuery' | 'expectQueryBy';
+export type MessageIds = 'presenceQuery' | 'absenceQuery';
 type Options = [];
 
 const QUERIES_REGEXP = new RegExp(
@@ -23,7 +23,7 @@ function isThrowingQuery(node: TSESTree.Identifier) {
   return node.name.startsWith('get');
 }
 
-export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
+export default createTestingLibraryRule<Options, MessageIds>({
   name: RULE_NAME,
   meta: {
     docs: {
@@ -37,8 +37,6 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
         'Use `getBy*` queries rather than `queryBy*` for checking element is present',
       absenceQuery:
         'Use `queryBy*` queries rather than `getBy*` for checking element is NOT present',
-      expectQueryBy:
-        'Use `getBy*` only when checking elements are present, otherwise use `queryBy*`',
     },
     schema: [],
     type: 'suggestion',
