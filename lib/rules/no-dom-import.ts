@@ -3,6 +3,7 @@ import {
   TSESTree,
 } from '@typescript-eslint/experimental-utils';
 import { createTestingLibraryRule } from '../create-testing-library-rule';
+import { isCallExpression } from '../node-utils';
 
 export const RULE_NAME = 'no-dom-import';
 export type MessageIds = 'noDomImport' | 'noDomImportFramework';
@@ -51,7 +52,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
             module: correctModuleName,
           },
           fix(fixer) {
-            if (node.type === AST_NODE_TYPES.CallExpression) {
+            if (isCallExpression(node)) {
               const name = node.arguments[0] as TSESTree.Literal;
 
               // Replace the module name with the raw module name as we can't predict which punctuation the user is going to use

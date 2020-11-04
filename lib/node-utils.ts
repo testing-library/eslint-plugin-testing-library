@@ -6,9 +6,9 @@ import {
 import { RuleContext } from '@typescript-eslint/experimental-utils/dist/ts-eslint';
 
 export function isCallExpression(
-  node: TSESTree.Node
+  node: TSESTree.Node | null | undefined
 ): node is TSESTree.CallExpression {
-  return node && node.type === AST_NODE_TYPES.CallExpression;
+  return node?.type === AST_NODE_TYPES.CallExpression;
 }
 
 export function isNewExpression(
@@ -154,6 +154,12 @@ export function isArrayExpression(
   return node?.type === AST_NODE_TYPES.ArrayExpression;
 }
 
+export function isImportDeclaration(
+  node: TSESTree.Node | null | undefined
+): node is TSESTree.ImportDeclaration {
+  return node?.type === AST_NODE_TYPES.ImportDeclaration;
+}
+
 export function isAwaited(node: TSESTree.Node): boolean {
   return (
     isAwaitExpression(node) ||
@@ -234,16 +240,13 @@ export function getImportModuleName(
   node: ImportModuleNode | undefined | null
 ): string | undefined {
   // import node of shape: import { foo } from 'bar'
-  if (
-    node?.type === AST_NODE_TYPES.ImportDeclaration &&
-    typeof node.source.value === 'string'
-  ) {
+  if (isImportDeclaration(node) && typeof node.source.value === 'string') {
     return node.source.value;
   }
 
   // import node of shape: const { foo } = require('bar')
   if (
-    node?.type === AST_NODE_TYPES.CallExpression &&
+    isCallExpression(node) &&
     isLiteral(node.arguments[0]) &&
     typeof node.arguments[0].value === 'string'
   ) {

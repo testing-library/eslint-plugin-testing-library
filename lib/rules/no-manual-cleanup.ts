@@ -12,6 +12,7 @@ import {
   isObjectPattern,
   isProperty,
   ImportModuleNode,
+  isImportDeclaration,
 } from '../node-utils';
 import { createTestingLibraryRule } from '../create-testing-library-rule';
 
@@ -59,7 +60,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
     }
 
     function reportCandidateModule(moduleNode: ImportModuleNode) {
-      if (moduleNode.type === AST_NODE_TYPES.ImportDeclaration) {
+      if (isImportDeclaration(moduleNode)) {
         // case: import utils from 'testing-library-module'
         if (isImportDefaultSpecifier(moduleNode.specifiers[0])) {
           const { references } = context.getDeclaredVariables(moduleNode)[0];
