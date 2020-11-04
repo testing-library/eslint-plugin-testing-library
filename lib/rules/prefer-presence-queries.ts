@@ -4,7 +4,7 @@ import { findClosestCallNode, isMemberExpression } from '../node-utils';
 import { createTestingLibraryRule } from '../create-testing-library-rule';
 
 export const RULE_NAME = 'prefer-presence-queries';
-export type MessageIds = 'presenceQuery' | 'absenceQuery';
+export type MessageIds = 'wrongPresenceQuery' | 'wrongAbsenceQuery';
 type Options = [];
 
 export default createTestingLibraryRule<Options, MessageIds>({
@@ -17,9 +17,9 @@ export default createTestingLibraryRule<Options, MessageIds>({
       recommended: 'error',
     },
     messages: {
-      presenceQuery:
+      wrongPresenceQuery:
         'Use `getBy*` queries rather than `queryBy*` for checking element is present',
-      absenceQuery:
+      wrongAbsenceQuery:
         'Use `queryBy*` queries rather than `getBy*` for checking element is NOT present',
     },
     schema: [],
@@ -65,7 +65,9 @@ export default createTestingLibraryRule<Options, MessageIds>({
           ? ABSENCE_MATCHERS
           : PRESENCE_MATCHERS;
 
-        const messageId = isPresenceQuery ? 'absenceQuery' : 'presenceQuery';
+        const messageId = isPresenceQuery
+          ? 'wrongAbsenceQuery'
+          : 'wrongPresenceQuery';
 
         if (
           (!isNegatedMatcher && invalidMatchers.includes(matcher)) ||

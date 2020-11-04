@@ -374,27 +374,27 @@ ruleTester.run(RULE_NAME, rule, {
         getInvalidAssertion({
           query: queryName,
           matcher: '.toBeNull()',
-          messageId: 'absenceQuery',
+          messageId: 'wrongAbsenceQuery',
         }),
         getInvalidAssertion({
           query: queryName,
           matcher: '.toBeFalsy()',
-          messageId: 'absenceQuery',
+          messageId: 'wrongAbsenceQuery',
         }),
         getInvalidAssertion({
           query: queryName,
           matcher: '.not.toBeInTheDocument()',
-          messageId: 'absenceQuery',
+          messageId: 'wrongAbsenceQuery',
         }),
         getInvalidAssertion({
           query: queryName,
           matcher: '.not.toBeTruthy()',
-          messageId: 'absenceQuery',
+          messageId: 'wrongAbsenceQuery',
         }),
         getInvalidAssertion({
           query: queryName,
           matcher: '.not.toBeDefined()',
-          messageId: 'absenceQuery',
+          messageId: 'wrongAbsenceQuery',
         }),
       ],
       []
@@ -406,31 +406,31 @@ ruleTester.run(RULE_NAME, rule, {
         getInvalidAssertion({
           query: queryName,
           matcher: '.toBeNull()',
-          messageId: 'absenceQuery',
+          messageId: 'wrongAbsenceQuery',
           shouldUseScreen: true,
         }),
         getInvalidAssertion({
           query: queryName,
           matcher: '.toBeFalsy()',
-          messageId: 'absenceQuery',
+          messageId: 'wrongAbsenceQuery',
           shouldUseScreen: true,
         }),
         getInvalidAssertion({
           query: queryName,
           matcher: '.not.toBeInTheDocument()',
-          messageId: 'absenceQuery',
+          messageId: 'wrongAbsenceQuery',
           shouldUseScreen: true,
         }),
         getInvalidAssertion({
           query: queryName,
           matcher: '.not.toBeTruthy()',
-          messageId: 'absenceQuery',
+          messageId: 'wrongAbsenceQuery',
           shouldUseScreen: true,
         }),
         getInvalidAssertion({
           query: queryName,
           matcher: '.not.toBeDefined()',
-          messageId: 'absenceQuery',
+          messageId: 'wrongAbsenceQuery',
           shouldUseScreen: true,
         }),
       ],
@@ -443,27 +443,27 @@ ruleTester.run(RULE_NAME, rule, {
         getInvalidAssertion({
           query: queryName,
           matcher: '.toBeNull()',
-          messageId: 'absenceQuery',
+          messageId: 'wrongAbsenceQuery',
         }),
         getInvalidAssertion({
           query: queryName,
           matcher: '.toBeFalsy()',
-          messageId: 'absenceQuery',
+          messageId: 'wrongAbsenceQuery',
         }),
         getInvalidAssertion({
           query: queryName,
           matcher: '.not.toBeInTheDocument()',
-          messageId: 'absenceQuery',
+          messageId: 'wrongAbsenceQuery',
         }),
         getInvalidAssertion({
           query: queryName,
           matcher: '.not.toBeTruthy()',
-          messageId: 'absenceQuery',
+          messageId: 'wrongAbsenceQuery',
         }),
         getInvalidAssertion({
           query: queryName,
           matcher: '.not.toBeDefined()',
-          messageId: 'absenceQuery',
+          messageId: 'wrongAbsenceQuery',
         }),
       ],
       []
@@ -475,31 +475,31 @@ ruleTester.run(RULE_NAME, rule, {
         getInvalidAssertion({
           query: queryName,
           matcher: '.toBeNull()',
-          messageId: 'absenceQuery',
+          messageId: 'wrongAbsenceQuery',
           shouldUseScreen: true,
         }),
         getInvalidAssertion({
           query: queryName,
           matcher: '.toBeFalsy()',
-          messageId: 'absenceQuery',
+          messageId: 'wrongAbsenceQuery',
           shouldUseScreen: true,
         }),
         getInvalidAssertion({
           query: queryName,
           matcher: '.not.toBeInTheDocument()',
-          messageId: 'absenceQuery',
+          messageId: 'wrongAbsenceQuery',
           shouldUseScreen: true,
         }),
         getInvalidAssertion({
           query: queryName,
           matcher: '.not.toBeTruthy()',
-          messageId: 'absenceQuery',
+          messageId: 'wrongAbsenceQuery',
           shouldUseScreen: true,
         }),
         getInvalidAssertion({
           query: queryName,
           matcher: '.not.toBeDefined()',
-          messageId: 'absenceQuery',
+          messageId: 'wrongAbsenceQuery',
           shouldUseScreen: true,
         }),
       ],
@@ -512,27 +512,27 @@ ruleTester.run(RULE_NAME, rule, {
         getInvalidAssertion({
           query: queryName,
           matcher: '.toBeTruthy()',
-          messageId: 'presenceQuery',
+          messageId: 'wrongPresenceQuery',
         }),
         getInvalidAssertion({
           query: queryName,
           matcher: '.toBeDefined()',
-          messageId: 'presenceQuery',
+          messageId: 'wrongPresenceQuery',
         }),
         getInvalidAssertion({
           query: queryName,
           matcher: '.toBeInTheDocument()',
-          messageId: 'presenceQuery',
+          messageId: 'wrongPresenceQuery',
         }),
         getInvalidAssertion({
           query: queryName,
           matcher: '.not.toBeFalsy()',
-          messageId: 'presenceQuery',
+          messageId: 'wrongPresenceQuery',
         }),
         getInvalidAssertion({
           query: queryName,
           matcher: '.not.toBeNull()',
-          messageId: 'presenceQuery',
+          messageId: 'wrongPresenceQuery',
         }),
       ],
       []
@@ -544,31 +544,31 @@ ruleTester.run(RULE_NAME, rule, {
         getInvalidAssertion({
           query: queryName,
           matcher: '.toBeTruthy()',
-          messageId: 'presenceQuery',
+          messageId: 'wrongPresenceQuery',
           shouldUseScreen: true,
         }),
         getInvalidAssertion({
           query: queryName,
           matcher: '.toBeDefined()',
-          messageId: 'presenceQuery',
+          messageId: 'wrongPresenceQuery',
           shouldUseScreen: true,
         }),
         getInvalidAssertion({
           query: queryName,
           matcher: '.toBeInTheDocument()',
-          messageId: 'presenceQuery',
+          messageId: 'wrongPresenceQuery',
           shouldUseScreen: true,
         }),
         getInvalidAssertion({
           query: queryName,
           matcher: '.not.toBeFalsy()',
-          messageId: 'presenceQuery',
+          messageId: 'wrongPresenceQuery',
           shouldUseScreen: true,
         }),
         getInvalidAssertion({
           query: queryName,
           matcher: '.not.toBeNull()',
-          messageId: 'presenceQuery',
+          messageId: 'wrongPresenceQuery',
           shouldUseScreen: true,
         }),
       ],
@@ -581,27 +581,27 @@ ruleTester.run(RULE_NAME, rule, {
         getInvalidAssertion({
           query: queryName,
           matcher: '.toBeTruthy()',
-          messageId: 'presenceQuery',
+          messageId: 'wrongPresenceQuery',
         }),
         getInvalidAssertion({
           query: queryName,
           matcher: '.toBeDefined()',
-          messageId: 'presenceQuery',
+          messageId: 'wrongPresenceQuery',
         }),
         getInvalidAssertion({
           query: queryName,
           matcher: '.toBeInTheDocument()',
-          messageId: 'presenceQuery',
+          messageId: 'wrongPresenceQuery',
         }),
         getInvalidAssertion({
           query: queryName,
           matcher: '.not.toBeFalsy()',
-          messageId: 'presenceQuery',
+          messageId: 'wrongPresenceQuery',
         }),
         getInvalidAssertion({
           query: queryName,
           matcher: '.not.toBeNull()',
-          messageId: 'presenceQuery',
+          messageId: 'wrongPresenceQuery',
         }),
       ],
       []
@@ -613,31 +613,31 @@ ruleTester.run(RULE_NAME, rule, {
         getInvalidAssertion({
           query: queryName,
           matcher: '.toBeTruthy()',
-          messageId: 'presenceQuery',
+          messageId: 'wrongPresenceQuery',
           shouldUseScreen: true,
         }),
         getInvalidAssertion({
           query: queryName,
           matcher: '.toBeDefined()',
-          messageId: 'presenceQuery',
+          messageId: 'wrongPresenceQuery',
           shouldUseScreen: true,
         }),
         getInvalidAssertion({
           query: queryName,
           matcher: '.toBeInTheDocument()',
-          messageId: 'presenceQuery',
+          messageId: 'wrongPresenceQuery',
           shouldUseScreen: true,
         }),
         getInvalidAssertion({
           query: queryName,
           matcher: '.not.toBeFalsy()',
-          messageId: 'presenceQuery',
+          messageId: 'wrongPresenceQuery',
           shouldUseScreen: true,
         }),
         getInvalidAssertion({
           query: queryName,
           matcher: '.not.toBeNull()',
-          messageId: 'presenceQuery',
+          messageId: 'wrongPresenceQuery',
           shouldUseScreen: true,
         }),
       ],
@@ -645,25 +645,25 @@ ruleTester.run(RULE_NAME, rule, {
     ),
     {
       code: 'expect(screen.getAllByText("button")[1]).not.toBeInTheDocument()',
-      errors: [{ messageId: 'absenceQuery', line: 1, column: 15 }],
+      errors: [{ messageId: 'wrongAbsenceQuery', line: 1, column: 15 }],
     },
     {
       code: 'expect(screen.queryAllByText("button")[1]).toBeInTheDocument()',
-      errors: [{ messageId: 'presenceQuery', line: 1, column: 15 }],
+      errors: [{ messageId: 'wrongPresenceQuery', line: 1, column: 15 }],
     },
     {
       code: `
       // case: asserting presence incorrectly with custom queryBy* query
         expect(queryByCustomQuery("button")).toBeInTheDocument()
       `,
-      errors: [{ messageId: 'presenceQuery', line: 3, column: 16 }],
+      errors: [{ messageId: 'wrongPresenceQuery', line: 3, column: 16 }],
     },
     {
       code: `
         // case: asserting absence incorrectly with custom getBy* query
         expect(getByCustomQuery("button")).not.toBeInTheDocument()
       `,
-      errors: [{ messageId: 'absenceQuery', line: 3, column: 16 }],
+      errors: [{ messageId: 'wrongAbsenceQuery', line: 3, column: 16 }],
     },
     // TODO: add more tests for importing custom module
   ],
