@@ -40,8 +40,6 @@ export default createTestingLibraryRule<Options, MessageIds>({
   defaultOptions: [],
 
   create(context, _, helpers) {
-    // can't find the right type?
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     function reportImportReferences(references: TSESLint.Scope.Reference[]) {
       references.forEach((reference) => {
         const utilsUsage = reference.identifier.parent;
