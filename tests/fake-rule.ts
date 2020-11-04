@@ -7,7 +7,7 @@ import { createTestingLibraryRule } from '../lib/create-testing-library-rule';
 
 export const RULE_NAME = 'fake-rule';
 type Options = [];
-type MessageIds = 'fakeError';
+type MessageIds = 'fakeError' | 'getByError' | 'queryByError';
 
 export default createTestingLibraryRule<Options, MessageIds>({
   name: RULE_NAME,
@@ -20,18 +20,27 @@ export default createTestingLibraryRule<Options, MessageIds>({
     },
     messages: {
       fakeError: 'fake error reported',
+      getByError: 'some error related to getBy reported',
+      queryByError: 'some error related to queryBy reported',
     },
     fixable: null,
     schema: [],
   },
   defaultOptions: [],
   create(context, _, helpers) {
-    const reportRenderIdentifier = (node: TSESTree.Identifier) => {
+    const reportCallExpressionIdentifier = (node: TSESTree.Identifier) => {
+      // force "render" to be reported
       if (node.name === 'render') {
-        context.report({
-          node,
-          messageId: 'fakeError',
-        });
+        return context.report({ node, messageId: 'fakeError' });
+      }
+
+      // force queries to be reported
+      if (helpers.isGetByQuery(node)) {
+        return context.report({ node, messageId: 'getByError' });
+      }
+
+      if (helpers.isQueryByQuery(node)) {
+        return context.report({ node, messageId: 'queryByError' });
       }
     };
 
@@ -40,15 +49,12 @@ export default createTestingLibraryRule<Options, MessageIds>({
       // override `ImportDeclaration` from `detectTestingLibraryUtils`
 
       if (node.source.value === 'report-me') {
-        context.report({
-          node,
-          messageId: 'fakeError',
-        });
+        context.report({ node, messageId: 'fakeError' });
       }
     };
 
     return {
-      'CallExpression Identifier': reportRenderIdentifier,
+      'CallExpression Identifier': reportCallExpressionIdentifier,
       ImportDeclaration: checkImportDeclaration,
       'Program:exit'() {
         const importNode = helpers.getCustomModuleImportNode();

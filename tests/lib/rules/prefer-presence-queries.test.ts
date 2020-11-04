@@ -665,6 +665,27 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [{ messageId: 'wrongAbsenceQuery', line: 3, column: 16 }],
     },
-    // TODO: add more tests for importing custom module
+    {
+      settings: {
+        'testing-library/module': 'test-utils',
+      },
+      code: `
+      // case: asserting presence incorrectly importing custom module
+      import 'test-utils'
+      expect(queryByRole("button")).toBeInTheDocument()
+      `,
+      errors: [{ line: 4, column: 14, messageId: 'wrongPresenceQuery' }],
+    },
+    {
+      settings: {
+        'testing-library/module': 'test-utils',
+      },
+      code: `
+      // case: asserting absence incorrectly importing custom module
+      import 'test-utils'
+      expect(getByRole("button")).not.toBeInTheDocument()
+      `,
+      errors: [{ line: 4, column: 14, messageId: 'wrongAbsenceQuery' }],
+    },
   ],
 });
