@@ -31,7 +31,9 @@ const getInvalidAssertion = (
 ) =>
   allQueryUseInAssertion(query).map((query) => ({
     code: `expect(${query}('Hello'))${matcher}`,
-    errors: [{ messageId }],
+    // TODO: column can't be checked as queries are generated with and without `screen` prefix
+    //  so this must be generated in a different way to be able to check error column.
+    errors: [{ messageId, line: 1 }],
   }));
 
 ruleTester.run(RULE_NAME, rule, {
@@ -152,8 +154,9 @@ ruleTester.run(RULE_NAME, rule, {
       []
     ),
     {
+      // TODO: improve this case to get error on `queryAllByText` rather than `screen`
       code: 'expect(screen.getAllByText("button")[1]).not.toBeInTheDocument()',
-      errors: [{ messageId: 'absenceQuery' }],
+      errors: [{ messageId: 'absenceQuery', line: 1, column: 15 }],
     },
     ...queryByQueries.reduce(
       (validRules, queryName) => [
@@ -186,8 +189,10 @@ ruleTester.run(RULE_NAME, rule, {
       []
     ),
     {
+      // TODO: improve this case to get error on `queryAllByText` rather than `screen`
       code: 'expect(screen.queryAllByText("button")[1]).toBeInTheDocument()',
-      errors: [{ messageId: 'presenceQuery' }],
+      errors: [{ messageId: 'presenceQuery', line: 1, column: 15 }],
     },
+    // TODO: add more tests for custom queries
   ],
 });
