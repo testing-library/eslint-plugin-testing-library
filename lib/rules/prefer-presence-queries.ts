@@ -1,5 +1,4 @@
-import { ASTUtils, TSESTree } from '@typescript-eslint/experimental-utils';
-import { ABSENCE_MATCHERS, PRESENCE_MATCHERS } from '../utils';
+import { TSESTree } from '@typescript-eslint/experimental-utils';
 import { findClosestCallNode, isMemberExpression } from '../node-utils';
 import { createTestingLibraryRule } from '../create-testing-library-rule';
 
@@ -37,46 +36,27 @@ export default createTestingLibraryRule<Options, MessageIds>({
           return;
         }
 
+        // Sync queries (getBy and queryBy) are corresponding ones used
+        // to check presence or absence. If none found, stop the rule.
         if (!helpers.isSyncQuery(node)) {
           return;
         }
 
         const isPresenceQuery = helpers.isGetByQuery(node);
         const expectStatement = expectCallNode.parent;
-        let matcher =
-          ASTUtils.isIdentifier(expectStatement.property) &&
-          expectStatement.property.name;
-        let isNegatedMatcher = false;
+        const isPresenceAssert = helpers.isPresenceAssert(expectStatement);
+        const isAbsenceAssert = helpers.isAbsenceAssert(expectStatement);
 
-        if (
-          matcher === 'not' &&
-          isMemberExpression(expectStatement.parent) &&
-          ASTUtils.isIdentifier(expectStatement.parent.property)
-        ) {
-          isNegatedMatcher = true;
-          matcher = expectStatement.parent.property.name;
+        if (!isPresenceAssert && !isAbsenceAssert) {
+          return;
         }
 
-        const validMatchers = isPresenceQuery
-          ? PRESENCE_MATCHERS
-          : ABSENCE_MATCHERS;
+        if (isPresenceAssert && !isPresenceQuery) {
+          return context.report({ node, messageId: 'wrongPresenceQuery' });
+        }
 
-        const invalidMatchers = isPresenceQuery
-          ? ABSENCE_MATCHERS
-          : PRESENCE_MATCHERS;
-
-        const messageId = isPresenceQuery
-          ? 'wrongAbsenceQuery'
-          : 'wrongPresenceQuery';
-
-        if (
-          (!isNegatedMatcher && invalidMatchers.includes(matcher)) ||
-          (isNegatedMatcher && validMatchers.includes(matcher))
-        ) {
-          context.report({
-            node,
-            messageId,
-          });
+        if (isAbsenceAssert && isPresenceQuery) {
+          return context.report({ node, messageId: 'wrongAbsenceQuery' });
         }
       },
     };

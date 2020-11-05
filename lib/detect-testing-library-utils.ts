@@ -135,12 +135,19 @@ export function detectTestingLibraryUtils<
       },
 
       /**
-       * Determines whether a given node is sync query.
+       * Determines whether a given node is sync query or not.
        */
       isSyncQuery(node) {
         return this.isGetByQuery(node) || this.isQueryByQuery(node);
       },
 
+      /**
+       * Determines whether a given MemberExpression node is a presence assert
+       *
+       * Presence asserts could have shape of:
+       *  - expect(element).toBeInTheDocument()
+       *  - expect(element).not.toBeNull()
+       */
       isPresenceAssert(node) {
         const { matcher, isNegated } = getAssertNodeInfo(node);
 
@@ -153,6 +160,13 @@ export function detectTestingLibraryUtils<
           : PRESENCE_MATCHERS.includes(matcher);
       },
 
+      /**
+       * Determines whether a given MemberExpression node is an absence assert
+       *
+       * Absence asserts could have shape of:
+       *  - expect(element).toBeNull()
+       *  - expect(element).not.toBeInTheDocument()
+       */
       isAbsenceAssert(node) {
         const { matcher, isNegated } = getAssertNodeInfo(node);
 
