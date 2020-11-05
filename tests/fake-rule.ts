@@ -7,7 +7,12 @@ import { createTestingLibraryRule } from '../lib/create-testing-library-rule';
 
 export const RULE_NAME = 'fake-rule';
 type Options = [];
-type MessageIds = 'fakeError' | 'getByError' | 'queryByError';
+type MessageIds =
+  | 'fakeError'
+  | 'getByError'
+  | 'queryByError'
+  | 'presenceAssertError'
+  | 'absenceAssertError';
 
 export default createTestingLibraryRule<Options, MessageIds>({
   name: RULE_NAME,
@@ -22,6 +27,8 @@ export default createTestingLibraryRule<Options, MessageIds>({
       fakeError: 'fake error reported',
       getByError: 'some error related to getBy reported',
       queryByError: 'some error related to queryBy reported',
+      presenceAssertError: 'some error related to presence assert reported',
+      absenceAssertError: 'some error related to absence assert reported',
     },
     fixable: null,
     schema: [],
@@ -44,7 +51,17 @@ export default createTestingLibraryRule<Options, MessageIds>({
       }
     };
 
-    const checkImportDeclaration = (node: TSESTree.ImportDeclaration) => {
+    const reportMemberExpression = (node: TSESTree.MemberExpression) => {
+      if (helpers.isPresenceAssert(node)) {
+        return context.report({ node, messageId: 'presenceAssertError' });
+      }
+
+      if (helpers.isAbsenceAssert(node)) {
+        return context.report({ node, messageId: 'absenceAssertError' });
+      }
+    };
+
+    const reportImportDeclaration = (node: TSESTree.ImportDeclaration) => {
       // This is just to check that defining an `ImportDeclaration` doesn't
       // override `ImportDeclaration` from `detectTestingLibraryUtils`
 
@@ -55,7 +72,8 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
     return {
       'CallExpression Identifier': reportCallExpressionIdentifier,
-      ImportDeclaration: checkImportDeclaration,
+      MemberExpression: reportMemberExpression,
+      ImportDeclaration: reportImportDeclaration,
       'Program:exit'() {
         const importNode = helpers.getCustomModuleImportNode();
         const importName = helpers.getCustomModuleImportName();

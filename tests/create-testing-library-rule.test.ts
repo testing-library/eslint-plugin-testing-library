@@ -121,6 +121,19 @@ ruleTester.run(RULE_NAME, rule, {
       `,
     },
 
+    // Test Cases for presence/absence assertions
+    // cases: asserts not related to presence/absence
+    'expect(element).toBeDisabled()',
+    'expect(element).toBeEnabled()',
+
+    // cases: presence/absence matcher not related to assert
+    'element.toBeInTheDocument()',
+    'element.not.toBeInTheDocument()',
+
+    // cases: weird scenarios to check guard against parent nodes
+    'expect(element).not()',
+    'expect(element).not()',
+
     // Test Cases for Queries and Aggressive Queries Reporting
     {
       code: `
@@ -360,6 +373,36 @@ ruleTester.run(RULE_NAME, rule, {
       const utils = render();
       `,
       errors: [{ line: 7, column: 21, messageId: 'fakeError' }],
+    },
+
+    // Test Cases for presence/absence assertions
+    {
+      code: `
+      // case: presence matcher .toBeInTheDocument forced to be reported
+      expect(element).toBeInTheDocument()
+      `,
+      errors: [{ line: 3, column: 7, messageId: 'presenceAssertError' }],
+    },
+    {
+      code: `
+      // case: absence matcher .not.toBeInTheDocument forced to be reported
+      expect(element).not.toBeInTheDocument()
+      `,
+      errors: [{ line: 3, column: 7, messageId: 'absenceAssertError' }],
+    },
+    {
+      code: `
+      // case: presence matcher .not.toBeNull forced to be reported
+      expect(element).not.toBeNull()
+      `,
+      errors: [{ line: 3, column: 7, messageId: 'presenceAssertError' }],
+    },
+    {
+      code: `
+      // case: absence matcher .toBeNull forced to be reported
+      expect(element).toBeNull()
+      `,
+      errors: [{ line: 3, column: 7, messageId: 'absenceAssertError' }],
     },
 
     // Test Cases for Queries and Aggressive Queries Reporting

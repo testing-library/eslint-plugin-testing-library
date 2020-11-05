@@ -362,9 +362,6 @@ ruleTester.run(RULE_NAME, rule, {
      // right after clicking submit button it disappears
      expect(submitButton).not.toBeInTheDocument()
     `,
-    // some weird examples after here to check guard against parent nodes
-    'expect(getByText("button")).not()',
-    'expect(queryByText("button")).not()',
   ],
   invalid: [
     // cases: asserting absence incorrectly with `getBy*` queries

@@ -1,6 +1,7 @@
 import { ASTUtils, TSESLint, TSESTree } from '@typescript-eslint/experimental-utils';
 import {
   getImportModuleName,
+  getAssertNodeInfo,
   isLiteral,
   ImportModuleNode,
   isImportDeclaration,
@@ -8,6 +9,7 @@ import {
   isImportSpecifier,
   isProperty,
 } from './node-utils';
+import { ABSENCE_MATCHERS, PRESENCE_MATCHERS } from './utils';
 
 export type TestingLibrarySettings = {
   'testing-library/module'?: string;
@@ -43,6 +45,8 @@ export type DetectionHelpers = {
   isGetByQuery: (node: TSESTree.Identifier) => boolean;
   isQueryByQuery: (node: TSESTree.Identifier) => boolean;
   isSyncQuery: (node: TSESTree.Identifier) => boolean;
+  isPresenceAssert: (node: TSESTree.MemberExpression) => boolean;
+  isAbsenceAssert: (node: TSESTree.MemberExpression) => boolean;
   canReportErrors: () => boolean;
   findImportedUtilSpecifier: (
     specifierName: string
@@ -135,6 +139,30 @@ export function detectTestingLibraryUtils<
        */
       isSyncQuery(node) {
         return this.isGetByQuery(node) || this.isQueryByQuery(node);
+      },
+
+      isPresenceAssert(node) {
+        const { matcher, isNegated } = getAssertNodeInfo(node);
+
+        if (!matcher) {
+          return false;
+        }
+
+        return isNegated
+          ? ABSENCE_MATCHERS.includes(matcher)
+          : PRESENCE_MATCHERS.includes(matcher);
+      },
+
+      isAbsenceAssert(node) {
+        const { matcher, isNegated } = getAssertNodeInfo(node);
+
+        if (!matcher) {
+          return false;
+        }
+
+        return isNegated
+          ? PRESENCE_MATCHERS.includes(matcher)
+          : ABSENCE_MATCHERS.includes(matcher);
       },
 
       /**
