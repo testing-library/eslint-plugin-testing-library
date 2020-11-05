@@ -145,6 +145,30 @@ export function detectTestingLibraryUtils<
         return this.isGetByQuery(node) || this.isQueryByQuery(node);
       },
 
+      isPresenceAssert(node) {
+        const { matcher, isNegated } = getAssertNodeInfo(node);
+
+        if (!matcher) {
+          return false;
+        }
+
+        return isNegated
+          ? ABSENCE_MATCHERS.includes(matcher)
+          : PRESENCE_MATCHERS.includes(matcher);
+      },
+
+      isAbsenceAssert(node) {
+        const { matcher, isNegated } = getAssertNodeInfo(node);
+
+        if (!matcher) {
+          return false;
+        }
+
+        return isNegated
+          ? PRESENCE_MATCHERS.includes(matcher)
+          : ABSENCE_MATCHERS.includes(matcher);
+      },
+
       /**
        * Determines whether a given MemberExpression node is a presence assert
        *
