@@ -253,22 +253,3 @@ export function getImportModuleName(
     return node.arguments[0].value;
   }
 }
-
-export function getSpecifierFromImport(
-  node: ImportModuleNode,
-  specifierName: string
-) {
-  if (isImportDeclaration(node)) {
-    const namedExport = node.specifiers.find(
-      (node) => isImportSpecifier(node) && node.imported.name === specifierName
-    );
-    // it is "import { foo } from 'baz'""
-    if (namedExport) {
-      return namedExport;
-    }
-    // it could be "import * as rtl from 'baz'"
-    return node.specifiers.find((n) => isImportNamespaceSpecifier(n));
-  } else {
-    // TODO make it work for require
-  }
-}

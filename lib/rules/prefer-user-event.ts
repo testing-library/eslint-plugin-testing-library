@@ -1,10 +1,6 @@
 import { TSESTree } from '@typescript-eslint/experimental-utils';
 import { createTestingLibraryRule } from '../create-testing-library-rule';
-import {
-  isIdentifier,
-  isMemberExpression,
-  getSpecifierFromImport,
-} from '../node-utils';
+import { isIdentifier, isMemberExpression } from '../node-utils';
 
 export const RULE_NAME = 'prefer-user-event';
 
@@ -96,14 +92,10 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
     return {
       ['CallExpression > MemberExpression'](node: TSESTree.MemberExpression) {
-        if (!helpers.getIsTestingLibraryImported()) {
-          return;
-        }
-        const testingLibraryImportNode = helpers.getTestingLibraryImportNode();
-        const fireEventAliasOrWildcard = getSpecifierFromImport(
-          testingLibraryImportNode,
-          'fireEvent'
-        )?.local.name;
+        const util = helpers.findImportedUtilSpecifier('fireEvent');
+        const fireEventAliasOrWildcard = isIdentifier(util)
+          ? util?.name
+          : util?.local.name;
 
         if (!fireEventAliasOrWildcard) {
           // testing library was imported, but fireEvent was not imported
