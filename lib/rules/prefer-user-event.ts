@@ -93,14 +93,14 @@ export default createTestingLibraryRule<Options, MessageIds>({
     return {
       ['CallExpression > MemberExpression'](node: TSESTree.MemberExpression) {
         const util = helpers.findImportedUtilSpecifier('fireEvent');
-        const fireEventAliasOrWildcard = isIdentifier(util)
-          ? util?.name
-          : util?.local.name;
-
-        if (!fireEventAliasOrWildcard) {
+        if (!util) {
           // testing library was imported, but fireEvent was not imported
           return;
         }
+        const fireEventAliasOrWildcard = isIdentifier(util)
+          ? util.name
+          : util.local.name;
+
         const fireEventUsed =
           isIdentifier(node.object) &&
           node.object.name === fireEventAliasOrWildcard;

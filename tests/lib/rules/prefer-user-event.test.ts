@@ -178,6 +178,8 @@ ruleTester.run(RULE_NAME, rule, {
         errors: [
           {
             messageId: 'preferUserEvent',
+            line: 4,
+            column: 9,
           },
         ],
       })
@@ -188,7 +190,7 @@ ruleTester.run(RULE_NAME, rule, {
         import * as dom from '${libraryModule}'
         dom.fireEvent.${fireEventMethod}(foo)
       `,
-        errors: [{ messageId: 'preferUserEvent' }],
+        errors: [{ messageId: 'preferUserEvent', line: 3, column: 9 }],
       })
     ),
     ...createScenarioWithImport<InvalidTestCase<MessageIds, Options>>(
@@ -197,7 +199,7 @@ ruleTester.run(RULE_NAME, rule, {
         const { fireEvent } = require('${libraryModule}')
         fireEvent.${fireEventMethod}(foo)
       `,
-        errors: [{ messageId: 'preferUserEvent' }],
+        errors: [{ messageId: 'preferUserEvent', line: 3, column: 9 }],
       })
     ),
     ...createScenarioWithImport<InvalidTestCase<MessageIds, Options>>(
@@ -206,7 +208,7 @@ ruleTester.run(RULE_NAME, rule, {
         const rtl = require('${libraryModule}')
         rtl.fireEvent.${fireEventMethod}(foo)
       `,
-        errors: [{ messageId: 'preferUserEvent' }],
+        errors: [{ messageId: 'preferUserEvent', line: 3, column: 9 }],
       })
     ),
     ...Object.keys(MappingToUserEvent).map((fireEventMethod: string) => ({
@@ -217,7 +219,7 @@ ruleTester.run(RULE_NAME, rule, {
         import * as dom from 'test-utils'
         dom.fireEvent.${fireEventMethod}(foo)
       `,
-      errors: [{ messageId: 'preferUserEvent' }],
+      errors: [{ messageId: 'preferUserEvent', line: 3, column: 9 }],
     })),
     ...Object.keys(MappingToUserEvent).map((fireEventMethod: string) => ({
       settings: {
@@ -227,7 +229,7 @@ ruleTester.run(RULE_NAME, rule, {
         import { fireEvent } from 'test-utils'
         fireEvent.${fireEventMethod}(foo)
       `,
-      errors: [{ messageId: 'preferUserEvent' }],
+      errors: [{ messageId: 'preferUserEvent', line: 3, column: 9 }],
     })),
     ...Object.keys(MappingToUserEvent).map((fireEventMethod: string) => ({
       settings: {
@@ -237,7 +239,7 @@ ruleTester.run(RULE_NAME, rule, {
         import { fireEvent as fireEventAliased } from 'test-utils'
         fireEventAliased.${fireEventMethod}(foo)
       `,
-      errors: [{ messageId: 'preferUserEvent' }],
+      errors: [{ messageId: 'preferUserEvent', line: 3, column: 9 }],
     })),
   ],
 });
