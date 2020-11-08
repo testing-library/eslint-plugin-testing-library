@@ -279,12 +279,11 @@ export function getAssertNodeInfo(
   }
 
   let matcher = ASTUtils.getPropertyName(node);
-  let isNegated = false;
-  if (matcher === 'not') {
+  const isNegated = matcher === 'not';
+  if (isNegated) {
     matcher = isMemberExpression(node.parent)
       ? ASTUtils.getPropertyName(node.parent)
       : null;
-    isNegated = true;
   }
 
   if (!matcher) {
