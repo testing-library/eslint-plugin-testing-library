@@ -44,8 +44,8 @@ export type DetectionHelpers = {
   getCustomModuleImportNode: () => ImportModuleNode | null;
   getTestingLibraryImportName: () => string | undefined;
   getCustomModuleImportName: () => string | undefined;
-  getIsTestingLibraryImported: () => boolean;
-  getIsValidFilename: () => boolean;
+  isTestingLibraryImported: () => boolean;
+  isValidFilename: () => boolean;
   isGetByQuery: (node: TSESTree.Identifier) => boolean;
   isQueryByQuery: (node: TSESTree.Identifier) => boolean;
   isSyncQuery: (node: TSESTree.Identifier) => boolean;
@@ -107,7 +107,7 @@ export function detectTestingLibraryUtils<
        * then this method will return `true` ONLY IF a testing-library package
        * or custom module are imported.
        */
-      getIsTestingLibraryImported() {
+      isTestingLibraryImported() {
         if (!customModule) {
           return true;
         }
@@ -119,7 +119,7 @@ export function detectTestingLibraryUtils<
        * Determines whether filename is valid or not for current file
        * being analyzed based on "testing-library/filename-pattern" setting.
        */
-      getIsValidFilename() {
+      isValidFilename() {
         const fileName = context.getFilename();
         return !!fileName.match(filenamePattern);
       },
@@ -225,9 +225,7 @@ export function detectTestingLibraryUtils<
        * Determines if file inspected meets all conditions to be reported by rules or not.
        */
       canReportErrors() {
-        return (
-          helpers.getIsTestingLibraryImported() && helpers.getIsValidFilename()
-        );
+        return helpers.isTestingLibraryImported() && helpers.isValidFilename();
       },
       /**
        * Gets a string and verifies if it was imported/required by our custom module node
