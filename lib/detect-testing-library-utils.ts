@@ -1,5 +1,14 @@
 import { TSESLint, TSESTree } from '@typescript-eslint/experimental-utils';
-import { getImportModuleName, isLiteral, ImportModuleNode } from './node-utils';
+import {
+  getImportModuleName,
+  isLiteral,
+  ImportModuleNode,
+  isImportDeclaration,
+  isImportNamespaceSpecifier,
+  isImportSpecifier,
+  isIdentifier,
+  isProperty,
+} from './node-utils';
 
 export type TestingLibrarySettings = {
   'testing-library/module'?: string;
@@ -33,6 +42,9 @@ export type DetectionHelpers = {
   getIsTestingLibraryImported: () => boolean;
   getIsValidFilename: () => boolean;
   canReportErrors: () => boolean;
+  findImportedUtilSpecifier: (
+    specifierName: string
+  ) => TSESTree.ImportClause | TSESTree.Identifier | undefined;
 };
 
 const DEFAULT_FILENAME_PATTERN = '^.*\\.(test|spec)\\.[jt]sx?$';
@@ -106,7 +118,46 @@ export function detectTestingLibraryUtils<
        * Wraps all conditions that must be met to report rules.
        */
       canReportErrors() {
-        return this.getIsTestingLibraryImported() && this.getIsValidFilename();
+        return (
+          helpers.getIsTestingLibraryImported() && helpers.getIsValidFilename()
+        );
+      },
+      /**
+       * Gets a string and verifies if it was imported/required by our custom module node
+       */
+      findImportedUtilSpecifier(specifierName: string) {
+        const node =
+          helpers.getCustomModuleImportNode() ??
+          helpers.getTestingLibraryImportNode();
+        if (!node) {
+          return null;
+        }
+        if (isImportDeclaration(node)) {
+          const namedExport = node.specifiers.find(
+            (n) => isImportSpecifier(n) && n.imported.name === specifierName
+          );
+          // it is "import { foo [as alias] } from 'baz'""
+          if (namedExport) {
+            return namedExport;
+          }
+          // it could be "import * as rtl from 'baz'"
+          return node.specifiers.find((n) => isImportNamespaceSpecifier(n));
+        } else {
+          const requireNode = node.parent as TSESTree.VariableDeclarator;
+          if (isIdentifier(requireNode.id)) {
+            // this is const rtl = require('foo')
+            return requireNode.id;
+          }
+          // this should be const { something } = require('foo')
+          const destructuring = requireNode.id as TSESTree.ObjectPattern;
+          const property = destructuring.properties.find(
+            (n) =>
+              isProperty(n) &&
+              isIdentifier(n.key) &&
+              n.key.name === specifierName
+          );
+          return (property as TSESTree.Property).key as TSESTree.Identifier;
+        }
       },
     };
 

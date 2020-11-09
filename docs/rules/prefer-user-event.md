@@ -18,6 +18,7 @@ Examples of **incorrect** code for this rule:
 ```ts
 // a method in fireEvent that has a userEvent equivalent
 import { fireEvent } from '@testing-library/dom';
+// or const { fireEvent } = require('@testing-library/dom');
 fireEvent.click(node);
 
 // using fireEvent with an alias
@@ -26,6 +27,7 @@ fireEventAliased.click(node);
 
 // using fireEvent after importing the entire library
 import * as dom from '@testing-library/dom';
+// or const dom = require(@testing-library/dom');
 dom.fireEvent.click(node);
 ```
 
@@ -33,14 +35,18 @@ Examples of **correct** code for this rule:
 
 ```ts
 import userEvent from '@testing-library/user-event';
+// or const userEvent = require('@testing-library/user-event');
 
 // any userEvent method
 userEvent.click();
 
 // fireEvent method that does not have an alternative in userEvent
+import { fireEvent } from '@testing-library/dom';
+// or const { fireEvent } = require('@testing-library/dom');
 fireEvent.cut(node);
 
 import * as dom from '@testing-library/dom';
+// or const dom = require('@testing-library/dom');
 dom.fireEvent.cut(node);
 ```
 
@@ -69,6 +75,7 @@ With this configuration example, the following use cases are considered valid
 ```ts
 // using a named import
 import { fireEvent } from '@testing-library/dom';
+// or const { fireEvent } = require('@testing-library/dom');
 fireEvent.click(node);
 fireEvent.change(node, { target: { value: 'foo' } });
 
@@ -79,6 +86,7 @@ fireEventAliased.change(node, { target: { value: 'foo' } });
 
 // using fireEvent after importing the entire library
 import * as dom from '@testing-library/dom';
+// or const dom = require('@testing-library/dom');
 dom.fireEvent.click(node);
 dom.fireEvent.change(node, { target: { value: 'foo' } });
 ```

@@ -1,10 +1,6 @@
-import { ESLintUtils, TSESTree } from '@typescript-eslint/experimental-utils';
-import { getDocsUrl, hasTestingLibraryImportModule } from '../utils';
-import {
-  isImportSpecifier,
-  isIdentifier,
-  isMemberExpression,
-} from '../node-utils';
+import { TSESTree } from '@typescript-eslint/experimental-utils';
+import { createTestingLibraryRule } from '../create-testing-library-rule';
+import { isIdentifier, isMemberExpression } from '../node-utils';
 
 export const RULE_NAME = 'prefer-user-event';
 
@@ -65,7 +61,7 @@ function buildErrorMessage(fireEventMethod: string) {
 
 const fireEventMappedMethods = Object.keys(MappingToUserEvent);
 
-export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
+export default createTestingLibraryRule<Options, MessageIds>({
   name: RULE_NAME,
   meta: {
     type: 'suggestion',
@@ -90,59 +86,34 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
   },
   defaultOptions: [{ allowedMethods: [] }],
 
-  create(context, [options]) {
+  create(context, [options], helpers) {
     const { allowedMethods } = options;
     const sourceCode = context.getSourceCode();
-    let hasNamedImportedFireEvent = false;
-    let hasImportedFireEvent = false;
-    let fireEventAlias: string | undefined;
-    let wildcardImportName: string | undefined;
 
     return {
-      // checks if import has shape:
-      // import { fireEvent } from '@testing-library/dom';
-      ImportDeclaration(node: TSESTree.ImportDeclaration) {
-        if (!hasTestingLibraryImportModule(node)) {
-          return;
-        }
-        const fireEventImport = node.specifiers.find(
-          (node) =>
-            isImportSpecifier(node) && node.imported.name === 'fireEvent'
-        );
-        hasNamedImportedFireEvent = !!fireEventImport;
-        if (!hasNamedImportedFireEvent) {
-          return;
-        }
-        fireEventAlias = fireEventImport.local.name;
-      },
-
-      // checks if import has shape:
-      // import * as dom from '@testing-library/dom';
-      'ImportDeclaration ImportNamespaceSpecifier'(
-        node: TSESTree.ImportNamespaceSpecifier
-      ) {
-        const importDeclarationNode = node.parent as TSESTree.ImportDeclaration;
-        if (!hasTestingLibraryImportModule(importDeclarationNode)) {
-          return;
-        }
-        hasImportedFireEvent = !!node.local.name;
-        wildcardImportName = node.local.name;
-      },
       ['CallExpression > MemberExpression'](node: TSESTree.MemberExpression) {
-        if (!hasImportedFireEvent && !hasNamedImportedFireEvent) {
+        const util = helpers.findImportedUtilSpecifier('fireEvent');
+        if (!util) {
+          // testing library was imported, but fireEvent was not imported
           return;
         }
-        // check node is fireEvent or it's alias from the named import
+        const fireEventAliasOrWildcard = isIdentifier(util)
+          ? util.name
+          : util.local.name;
+
         const fireEventUsed =
-          isIdentifier(node.object) && node.object.name === fireEventAlias;
+          isIdentifier(node.object) &&
+          node.object.name === fireEventAliasOrWildcard;
+
         const fireEventFromWildcardUsed =
           isMemberExpression(node.object) &&
           isIdentifier(node.object.object) &&
-          node.object.object.name === wildcardImportName &&
+          node.object.object.name === fireEventAliasOrWildcard &&
           isIdentifier(node.object.property) &&
           node.object.property.name === 'fireEvent';
 
         if (!fireEventUsed && !fireEventFromWildcardUsed) {
+          // fireEvent was imported but it was not used
           return;
         }
 
