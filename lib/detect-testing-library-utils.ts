@@ -1,4 +1,8 @@
-import { ASTUtils, TSESLint, TSESTree } from '@typescript-eslint/experimental-utils';
+import {
+  ASTUtils,
+  TSESLint,
+  TSESTree,
+} from '@typescript-eslint/experimental-utils';
 import {
   getImportModuleName,
   getAssertNodeInfo,
