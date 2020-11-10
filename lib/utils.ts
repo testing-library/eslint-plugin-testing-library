@@ -24,6 +24,7 @@ const LIBRARY_MODULES = [
   '@testing-library/svelte',
 ];
 
+// TODO: should be deleted after all rules are migrated to v4
 const hasTestingLibraryImportModule = (
   node: TSESTree.ImportDeclaration
 ): boolean => {

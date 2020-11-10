@@ -1,14 +1,19 @@
-import { TSESLint, TSESTree } from '@typescript-eslint/experimental-utils';
+import {
+  ASTUtils,
+  TSESLint,
+  TSESTree,
+} from '@typescript-eslint/experimental-utils';
 import {
   getImportModuleName,
+  getAssertNodeInfo,
   isLiteral,
   ImportModuleNode,
   isImportDeclaration,
   isImportNamespaceSpecifier,
   isImportSpecifier,
-  isIdentifier,
   isProperty,
 } from './node-utils';
+import { ABSENCE_MATCHERS, PRESENCE_MATCHERS } from './utils';
 
 export type TestingLibrarySettings = {
   'testing-library/module'?: string;
@@ -41,6 +46,11 @@ export type DetectionHelpers = {
   getCustomModuleImportName: () => string | undefined;
   getIsTestingLibraryImported: () => boolean;
   getIsValidFilename: () => boolean;
+  isGetByQuery: (node: TSESTree.Identifier) => boolean;
+  isQueryByQuery: (node: TSESTree.Identifier) => boolean;
+  isSyncQuery: (node: TSESTree.Identifier) => boolean;
+  isPresenceAssert: (node: TSESTree.MemberExpression) => boolean;
+  isAbsenceAssert: (node: TSESTree.MemberExpression) => boolean;
   canReportErrors: () => boolean;
   findImportedUtilSpecifier: (
     specifierName: string
@@ -85,7 +95,8 @@ export function detectTestingLibraryUtils<
         return getImportModuleName(importedCustomModuleNode);
       },
       /**
-       * Gets if Testing Library is considered as imported or not.
+       * Determines whether Testing Library utils are imported or not for
+       * current file being analyzed.
        *
        * By default, it is ALWAYS considered as imported. This is what we call
        * "aggressive reporting" so we don't miss TL utils reexported from
@@ -105,9 +116,8 @@ export function detectTestingLibraryUtils<
       },
 
       /**
-       * Gets if filename being analyzed is valid or not.
-       *
-       * This is based on "testing-library/filename-pattern" setting.
+       * Determines whether filename is valid or not for current file
+       * being analyzed based on "testing-library/filename-pattern" setting.
        */
       getIsValidFilename() {
         const fileName = context.getFilename();
@@ -115,7 +125,66 @@ export function detectTestingLibraryUtils<
       },
 
       /**
-       * Wraps all conditions that must be met to report rules.
+       * Determines whether a given node is `getBy*` or `getAllBy*` query variant or not.
+       */
+      isGetByQuery(node) {
+        return !!node.name.match(/^get(All)?By.+$/);
+      },
+
+      /**
+       * Determines whether a given node is `queryBy*` or `queryAllBy*` query variant or not.
+       */
+      isQueryByQuery(node) {
+        return !!node.name.match(/^query(All)?By.+$/);
+      },
+
+      /**
+       * Determines whether a given node is sync query or not.
+       */
+      isSyncQuery(node) {
+        return this.isGetByQuery(node) || this.isQueryByQuery(node);
+      },
+
+      /**
+       * Determines whether a given MemberExpression node is a presence assert
+       *
+       * Presence asserts could have shape of:
+       *  - expect(element).toBeInTheDocument()
+       *  - expect(element).not.toBeNull()
+       */
+      isPresenceAssert(node) {
+        const { matcher, isNegated } = getAssertNodeInfo(node);
+
+        if (!matcher) {
+          return false;
+        }
+
+        return isNegated
+          ? ABSENCE_MATCHERS.includes(matcher)
+          : PRESENCE_MATCHERS.includes(matcher);
+      },
+
+      /**
+       * Determines whether a given MemberExpression node is an absence assert
+       *
+       * Absence asserts could have shape of:
+       *  - expect(element).toBeNull()
+       *  - expect(element).not.toBeInTheDocument()
+       */
+      isAbsenceAssert(node) {
+        const { matcher, isNegated } = getAssertNodeInfo(node);
+
+        if (!matcher) {
+          return false;
+        }
+
+        return isNegated
+          ? PRESENCE_MATCHERS.includes(matcher)
+          : ABSENCE_MATCHERS.includes(matcher);
+      },
+
+      /**
+       * Determines if file inspected meets all conditions to be reported by rules or not.
        */
       canReportErrors() {
         return (
@@ -144,7 +213,7 @@ export function detectTestingLibraryUtils<
           return node.specifiers.find((n) => isImportNamespaceSpecifier(n));
         } else {
           const requireNode = node.parent as TSESTree.VariableDeclarator;
-          if (isIdentifier(requireNode.id)) {
+          if (ASTUtils.isIdentifier(requireNode.id)) {
             // this is const rtl = require('foo')
             return requireNode.id;
           }
@@ -153,7 +222,7 @@ export function detectTestingLibraryUtils<
           const property = destructuring.properties.find(
             (n) =>
               isProperty(n) &&
-              isIdentifier(n.key) &&
+              ASTUtils.isIdentifier(n.key) &&
               n.key.name === specifierName
           );
           return (property as TSESTree.Property).key as TSESTree.Identifier;

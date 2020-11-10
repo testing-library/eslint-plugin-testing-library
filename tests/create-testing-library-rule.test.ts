@@ -89,6 +89,102 @@ ruleTester.run(RULE_NAME, rule, {
       import { foo } from 'custom-module-forced-report'
     `,
     },
+
+    // Test Cases for all settings mixed
+    {
+      settings: {
+        'testing-library/module': 'test-utils',
+        'testing-library/filename-pattern': 'testing-library\\.js',
+      },
+      code: `
+      // case: matching custom settings partially - module but not filename
+      import { render } from 'test-utils'
+      import { somethingElse } from 'another-module'
+      const foo = require('bar')
+      
+      const utils = render();
+      `,
+    },
+    {
+      settings: {
+        'testing-library/module': 'test-utils',
+        'testing-library/filename-pattern': 'testing-library\\.js',
+      },
+      filename: 'MyComponent.testing-library.js',
+      code: `
+      // case: matching custom settings partially - filename but not module
+      import { render } from 'other-utils'
+      import { somethingElse } from 'another-module'
+      const foo = require('bar')
+      
+      const utils = render();
+      `,
+    },
+
+    // Test Cases for presence/absence assertions
+    // cases: asserts not related to presence/absence
+    'expect(element).toBeDisabled()',
+    'expect(element).toBeEnabled()',
+
+    // cases: presence/absence matcher not related to assert
+    'element.toBeInTheDocument()',
+    'element.not.toBeInTheDocument()',
+
+    // cases: weird scenarios to check guard against parent nodes
+    'expect(element).not()',
+    'expect(element).not()',
+
+    // Test Cases for Queries and Aggressive Queries Reporting
+    {
+      code: `
+      // case: custom method not matching "getBy*" variant pattern
+      getSomeElement('button')
+    `,
+    },
+    {
+      code: `
+      // case: custom method not matching "queryBy*" variant pattern
+      querySomeElement('button')
+    `,
+    },
+    {
+      settings: {
+        'testing-library/module': 'test-utils',
+      },
+      code: `
+      // case: built-in "getBy*" query not reported because custom module not imported
+      import { render } from 'other-module'
+      getByRole('button')
+    `,
+    },
+    {
+      settings: {
+        'testing-library/module': 'test-utils',
+      },
+      code: `
+      // case: built-in "queryBy*" query not reported because custom module not imported
+      import { render } from 'other-module'
+      queryByRole('button')
+    `,
+    },
+    {
+      settings: {
+        'testing-library/filename-pattern': 'testing-library\\.js',
+      },
+      code: `
+      // case: built-in "getBy*" query not reported because custom filename doesn't match
+      getByRole('button')
+    `,
+    },
+    {
+      settings: {
+        'testing-library/filename-pattern': 'testing-library\\.js',
+      },
+      code: `
+      // case: built-in "queryBy*" query not reported because custom filename doesn't match
+      queryByRole('button')
+    `,
+    },
   ],
   invalid: [
     // Test Cases for Imports & Filename
@@ -259,6 +355,166 @@ ruleTester.run(RULE_NAME, rule, {
       import { foo } from 'custom-module-forced-report'
     `,
       errors: [{ line: 3, column: 7, messageId: 'fakeError' }],
+    },
+
+    // Test Cases for all settings mixed
+    {
+      settings: {
+        'testing-library/module': 'test-utils',
+        'testing-library/filename-pattern': 'testing-library\\.js',
+      },
+      filename: 'MyComponent.testing-library.js',
+      code: `
+      // case: matching all custom settings
+      import { render } from 'test-utils'
+      import { somethingElse } from 'another-module'
+      const foo = require('bar')
+      
+      const utils = render();
+      `,
+      errors: [{ line: 7, column: 21, messageId: 'fakeError' }],
+    },
+
+    // Test Cases for presence/absence assertions
+    {
+      code: `
+      // case: presence matcher .toBeInTheDocument forced to be reported
+      expect(element).toBeInTheDocument()
+      `,
+      errors: [{ line: 3, column: 7, messageId: 'presenceAssertError' }],
+    },
+    {
+      code: `
+      // case: absence matcher .not.toBeInTheDocument forced to be reported
+      expect(element).not.toBeInTheDocument()
+      `,
+      errors: [{ line: 3, column: 7, messageId: 'absenceAssertError' }],
+    },
+    {
+      code: `
+      // case: presence matcher .not.toBeNull forced to be reported
+      expect(element).not.toBeNull()
+      `,
+      errors: [{ line: 3, column: 7, messageId: 'presenceAssertError' }],
+    },
+    {
+      code: `
+      // case: absence matcher .toBeNull forced to be reported
+      expect(element).toBeNull()
+      `,
+      errors: [{ line: 3, column: 7, messageId: 'absenceAssertError' }],
+    },
+
+    // Test Cases for Queries and Aggressive Queries Reporting
+    {
+      code: `
+      // case: built-in "getBy*" query reported without import (aggressive reporting)
+      getByRole('button')
+    `,
+      errors: [{ line: 3, column: 7, messageId: 'getByError' }],
+    },
+    {
+      code: `
+      // case: built-in "queryBy*" query reported without import (aggressive reporting)
+      queryByRole('button')
+    `,
+      errors: [{ line: 3, column: 7, messageId: 'queryByError' }],
+    },
+    {
+      filename: 'MyComponent.spec.js',
+      code: `
+      // case: custom "getBy*" query reported without import (aggressive reporting)
+      getByIcon('search')
+    `,
+      errors: [{ line: 3, column: 7, messageId: 'getByError' }],
+    },
+    {
+      code: `
+      // case: custom "queryBy*" query reported without import (aggressive reporting)
+      queryByIcon('search')
+    `,
+      errors: [{ line: 3, column: 7, messageId: 'queryByError' }],
+    },
+    {
+      settings: {
+        'testing-library/module': 'test-utils',
+      },
+      code: `
+      // case: built-in "getBy*" query reported with custom module + Testing Library package import
+      import { render } from '@testing-library/react'
+      getByRole('button')
+    `,
+      errors: [{ line: 4, column: 7, messageId: 'getByError' }],
+    },
+    {
+      filename: 'MyComponent.spec.js',
+      code: `
+      // case: built-in "queryBy*" query reported with custom module + Testing Library package import
+      import { render } from '@testing-library/framework'
+      queryByRole('button')
+    `,
+      errors: [{ line: 4, column: 7, messageId: 'queryByError' }],
+    },
+    {
+      settings: {
+        'testing-library/module': 'test-utils',
+      },
+      code: `
+      // case: built-in "getBy*" query reported with custom module + custom module import
+      import { render } from 'test-utils'
+      getByRole('button')
+    `,
+      errors: [{ line: 4, column: 7, messageId: 'getByError' }],
+    },
+    {
+      filename: 'MyComponent.spec.js',
+      code: `
+      // case: built-in "queryBy*" query reported with custom module + custom module import
+      import { render } from 'test-utils'
+      queryByRole('button')
+    `,
+      errors: [{ line: 4, column: 7, messageId: 'queryByError' }],
+    },
+
+    {
+      settings: {
+        'testing-library/module': 'test-utils',
+      },
+      code: `
+      // case: custom "getBy*" query reported with custom module + Testing Library package import
+      import { render } from '@testing-library/react'
+      getByIcon('search')
+    `,
+      errors: [{ line: 4, column: 7, messageId: 'getByError' }],
+    },
+    {
+      filename: 'MyComponent.spec.js',
+      code: `
+      // case: custom "queryBy*" query reported with custom module + Testing Library package import
+      import { render } from '@testing-library/framework'
+      queryByIcon('search')
+    `,
+      errors: [{ line: 4, column: 7, messageId: 'queryByError' }],
+    },
+    {
+      settings: {
+        'testing-library/module': 'test-utils',
+      },
+      code: `
+      // case: custom "getBy*" query reported with custom module + custom module import
+      import { render } from 'test-utils'
+      getByIcon('search')
+    `,
+      errors: [{ line: 4, column: 7, messageId: 'getByError' }],
+    },
+    {
+      filename: 'MyComponent.spec.js',
+      code: `
+      // case: custom "queryBy*" query reported with custom module + custom module import
+      import { render } from 'test-utils'
+      queryByIcon('search')
+    `,
+      errors: [{ line: 4, column: 7, messageId: 'queryByError' }],
     },
   ],
 });

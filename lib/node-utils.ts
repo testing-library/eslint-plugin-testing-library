@@ -1,5 +1,6 @@
 import {
   AST_NODE_TYPES,
+  ASTUtils,
   TSESLint,
   TSESTree,
 } from '@typescript-eslint/experimental-utils';
@@ -252,4 +253,42 @@ export function getImportModuleName(
   ) {
     return node.arguments[0].value;
   }
+}
+
+type AssertNodeInfo = {
+  matcher: string | null;
+  isNegated: boolean;
+};
+/**
+ * Extracts matcher info from MemberExpression node representing an assert.
+ */
+export function getAssertNodeInfo(
+  node: TSESTree.MemberExpression
+): AssertNodeInfo {
+  const emptyInfo = { matcher: null, isNegated: false } as AssertNodeInfo;
+
+  if (
+    !isCallExpression(node.object) ||
+    !ASTUtils.isIdentifier(node.object.callee)
+  ) {
+    return emptyInfo;
+  }
+
+  if (node.object.callee.name !== 'expect') {
+    return emptyInfo;
+  }
+
+  let matcher = ASTUtils.getPropertyName(node);
+  const isNegated = matcher === 'not';
+  if (isNegated) {
+    matcher = isMemberExpression(node.parent)
+      ? ASTUtils.getPropertyName(node.parent)
+      : null;
+  }
+
+  if (!matcher) {
+    return emptyInfo;
+  }
+
+  return { matcher, isNegated };
 }

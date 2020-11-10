@@ -1,29 +1,12 @@
-import { ESLintUtils, TSESTree } from '@typescript-eslint/experimental-utils';
-import {
-  getDocsUrl,
-  ALL_QUERIES_METHODS,
-  PRESENCE_MATCHERS,
-  ABSENCE_MATCHERS,
-} from '../utils';
-import {
-  findClosestCallNode,
-  isMemberExpression,
-  isIdentifier,
-} from '../node-utils';
+import { TSESTree } from '@typescript-eslint/experimental-utils';
+import { findClosestCallNode, isMemberExpression } from '../node-utils';
+import { createTestingLibraryRule } from '../create-testing-library-rule';
 
 export const RULE_NAME = 'prefer-presence-queries';
-export type MessageIds = 'presenceQuery' | 'absenceQuery' | 'expectQueryBy';
+export type MessageIds = 'wrongPresenceQuery' | 'wrongAbsenceQuery';
 type Options = [];
 
-const QUERIES_REGEXP = new RegExp(
-  `^(get|query)(All)?(${ALL_QUERIES_METHODS.join('|')})$`
-);
-
-function isThrowingQuery(node: TSESTree.Identifier) {
-  return node.name.startsWith('get');
-}
-
-export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
+export default createTestingLibraryRule<Options, MessageIds>({
   name: RULE_NAME,
   meta: {
     docs: {
@@ -33,12 +16,10 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
       recommended: 'error',
     },
     messages: {
-      presenceQuery:
+      wrongPresenceQuery:
         'Use `getBy*` queries rather than `queryBy*` for checking element is present',
-      absenceQuery:
+      wrongAbsenceQuery:
         'Use `queryBy*` queries rather than `getBy*` for checking element is NOT present',
-      expectQueryBy:
-        'Use `getBy*` only when checking elements are present, otherwise use `queryBy*`',
     },
     schema: [],
     type: 'suggestion',
@@ -46,49 +27,36 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
   },
   defaultOptions: [],
 
-  create(context) {
+  create(context, _, helpers) {
     return {
-      [`CallExpression Identifier[name=${QUERIES_REGEXP}]`](
-        node: TSESTree.Identifier
-      ) {
+      'CallExpression Identifier'(node: TSESTree.Identifier) {
         const expectCallNode = findClosestCallNode(node, 'expect');
 
-        if (expectCallNode && isMemberExpression(expectCallNode.parent)) {
-          const expectStatement = expectCallNode.parent;
-          const property = expectStatement.property as TSESTree.Identifier;
-          let matcher = property.name;
-          let isNegatedMatcher = false;
+        if (!expectCallNode || !isMemberExpression(expectCallNode.parent)) {
+          return;
+        }
 
-          if (
-            matcher === 'not' &&
-            isMemberExpression(expectStatement.parent) &&
-            isIdentifier(expectStatement.parent.property)
-          ) {
-            isNegatedMatcher = true;
-            matcher = expectStatement.parent.property.name;
-          }
+        // Sync queries (getBy and queryBy) are corresponding ones used
+        // to check presence or absence. If none found, stop the rule.
+        if (!helpers.isSyncQuery(node)) {
+          return;
+        }
 
-          const validMatchers = isThrowingQuery(node)
-            ? PRESENCE_MATCHERS
-            : ABSENCE_MATCHERS;
+        const isPresenceQuery = helpers.isGetByQuery(node);
+        const expectStatement = expectCallNode.parent;
+        const isPresenceAssert = helpers.isPresenceAssert(expectStatement);
+        const isAbsenceAssert = helpers.isAbsenceAssert(expectStatement);
 
-          const invalidMatchers = isThrowingQuery(node)
-            ? ABSENCE_MATCHERS
-            : PRESENCE_MATCHERS;
+        if (!isPresenceAssert && !isAbsenceAssert) {
+          return;
+        }
 
-          const messageId = isThrowingQuery(node)
-            ? 'absenceQuery'
-            : 'presenceQuery';
+        if (isPresenceAssert && !isPresenceQuery) {
+          return context.report({ node, messageId: 'wrongPresenceQuery' });
+        }
 
-          if (
-            (!isNegatedMatcher && invalidMatchers.includes(matcher)) ||
-            (isNegatedMatcher && validMatchers.includes(matcher))
-          ) {
-            return context.report({
-              node,
-              messageId,
-            });
-          }
+        if (isAbsenceAssert && isPresenceQuery) {
+          return context.report({ node, messageId: 'wrongAbsenceQuery' });
         }
       },
     };
