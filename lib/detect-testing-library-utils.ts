@@ -44,8 +44,8 @@ export type DetectionHelpers = {
   getCustomModuleImportNode: () => ImportModuleNode | null;
   getTestingLibraryImportName: () => string | undefined;
   getCustomModuleImportName: () => string | undefined;
-  getIsTestingLibraryImported: () => boolean;
-  getIsValidFilename: () => boolean;
+  isTestingLibraryImported: () => boolean;
+  isValidFilename: () => boolean;
   isGetByQuery: (node: TSESTree.Identifier) => boolean;
   isQueryByQuery: (node: TSESTree.Identifier) => boolean;
   isSyncQuery: (node: TSESTree.Identifier) => boolean;
@@ -81,153 +81,169 @@ export function detectTestingLibraryUtils<
       DEFAULT_FILENAME_PATTERN;
 
     // Helpers for Testing Library detection.
-    const helpers: DetectionHelpers = {
-      getTestingLibraryImportNode() {
-        return importedTestingLibraryNode;
-      },
-      getCustomModuleImportNode() {
-        return importedCustomModuleNode;
-      },
-      getTestingLibraryImportName() {
-        return getImportModuleName(importedTestingLibraryNode);
-      },
-      getCustomModuleImportName() {
-        return getImportModuleName(importedCustomModuleNode);
-      },
-      /**
-       * Determines whether Testing Library utils are imported or not for
-       * current file being analyzed.
-       *
-       * By default, it is ALWAYS considered as imported. This is what we call
-       * "aggressive reporting" so we don't miss TL utils reexported from
-       * custom modules.
-       *
-       * However, there is a setting to customize the module where TL utils can
-       * be imported from: "testing-library/module". If this setting is enabled,
-       * then this method will return `true` ONLY IF a testing-library package
-       * or custom module are imported.
-       */
-      getIsTestingLibraryImported() {
-        if (!customModule) {
-          return true;
-        }
+    const getTestingLibraryImportNode: DetectionHelpers['getTestingLibraryImportNode'] = () => {
+      return importedTestingLibraryNode;
+    };
 
-        return !!importedTestingLibraryNode || !!importedCustomModuleNode;
-      },
+    const getCustomModuleImportNode: DetectionHelpers['getCustomModuleImportNode'] = () => {
+      return importedCustomModuleNode;
+    };
 
-      /**
-       * Determines whether filename is valid or not for current file
-       * being analyzed based on "testing-library/filename-pattern" setting.
-       */
-      getIsValidFilename() {
-        const fileName = context.getFilename();
-        return !!fileName.match(filenamePattern);
-      },
+    const getTestingLibraryImportName: DetectionHelpers['getTestingLibraryImportName'] = () => {
+      return getImportModuleName(importedTestingLibraryNode);
+    };
 
-      /**
-       * Determines whether a given node is `getBy*` or `getAllBy*` query variant or not.
-       */
-      isGetByQuery(node) {
-        return !!node.name.match(/^get(All)?By.+$/);
-      },
+    const getCustomModuleImportName: DetectionHelpers['getCustomModuleImportName'] = () => {
+      return getImportModuleName(importedCustomModuleNode);
+    };
+    /**
+     * Determines whether Testing Library utils are imported or not for
+     * current file being analyzed.
+     *
+     * By default, it is ALWAYS considered as imported. This is what we call
+     * "aggressive reporting" so we don't miss TL utils reexported from
+     * custom modules.
+     *
+     * However, there is a setting to customize the module where TL utils can
+     * be imported from: "testing-library/module". If this setting is enabled,
+     * then this method will return `true` ONLY IF a testing-library package
+     * or custom module are imported.
+     */
+    const isTestingLibraryImported: DetectionHelpers['isTestingLibraryImported'] = () => {
+      if (!customModule) {
+        return true;
+      }
 
-      /**
-       * Determines whether a given node is `queryBy*` or `queryAllBy*` query variant or not.
-       */
-      isQueryByQuery(node) {
-        return !!node.name.match(/^query(All)?By.+$/);
-      },
+      return !!importedTestingLibraryNode || !!importedCustomModuleNode;
+    };
 
-      /**
-       * Determines whether a given node is sync query or not.
-       */
-      isSyncQuery(node) {
-        return this.isGetByQuery(node) || this.isQueryByQuery(node);
-      },
+    /**
+     * Determines whether filename is valid or not for current file
+     * being analyzed based on "testing-library/filename-pattern" setting.
+     */
+    const isValidFilename: DetectionHelpers['isValidFilename'] = () => {
+      const fileName = context.getFilename();
+      return !!fileName.match(filenamePattern);
+    };
 
-      /**
-       * Determines whether a given MemberExpression node is a presence assert
-       *
-       * Presence asserts could have shape of:
-       *  - expect(element).toBeInTheDocument()
-       *  - expect(element).not.toBeNull()
-       */
-      isPresenceAssert(node) {
-        const { matcher, isNegated } = getAssertNodeInfo(node);
+    /**
+     * Determines whether a given node is `getBy*` or `getAllBy*` query variant or not.
+     */
+    const isGetByQuery: DetectionHelpers['isGetByQuery'] = (node) => {
+      return !!node.name.match(/^get(All)?By.+$/);
+    };
 
-        if (!matcher) {
-          return false;
-        }
+    /**
+     * Determines whether a given node is `queryBy*` or `queryAllBy*` query variant or not.
+     */
+    const isQueryByQuery: DetectionHelpers['isQueryByQuery'] = (node) => {
+      return !!node.name.match(/^query(All)?By.+$/);
+    };
 
-        return isNegated
-          ? ABSENCE_MATCHERS.includes(matcher)
-          : PRESENCE_MATCHERS.includes(matcher);
-      },
+    /**
+     * Determines whether a given node is sync query or not.
+     */
+    const isSyncQuery: DetectionHelpers['isSyncQuery'] = (node) => {
+      return isGetByQuery(node) || isQueryByQuery(node);
+    };
 
-      /**
-       * Determines whether a given MemberExpression node is an absence assert
-       *
-       * Absence asserts could have shape of:
-       *  - expect(element).toBeNull()
-       *  - expect(element).not.toBeInTheDocument()
-       */
-      isAbsenceAssert(node) {
-        const { matcher, isNegated } = getAssertNodeInfo(node);
+    /**
+     * Determines whether a given MemberExpression node is a presence assert
+     *
+     * Presence asserts could have shape of:
+     *  - expect(element).toBeInTheDocument()
+     *  - expect(element).not.toBeNull()
+     */
+    const isPresenceAssert: DetectionHelpers['isPresenceAssert'] = (node) => {
+      const { matcher, isNegated } = getAssertNodeInfo(node);
 
-        if (!matcher) {
-          return false;
-        }
+      if (!matcher) {
+        return false;
+      }
 
-        return isNegated
-          ? PRESENCE_MATCHERS.includes(matcher)
-          : ABSENCE_MATCHERS.includes(matcher);
-      },
+      return isNegated
+        ? ABSENCE_MATCHERS.includes(matcher)
+        : PRESENCE_MATCHERS.includes(matcher);
+    };
 
-      /**
-       * Determines if file inspected meets all conditions to be reported by rules or not.
-       */
-      canReportErrors() {
-        return (
-          helpers.getIsTestingLibraryImported() && helpers.getIsValidFilename()
+    /**
+     * Determines whether a given MemberExpression node is an absence assert
+     *
+     * Absence asserts could have shape of:
+     *  - expect(element).toBeNull()
+     *  - expect(element).not.toBeInTheDocument()
+     */
+    const isAbsenceAssert: DetectionHelpers['isAbsenceAssert'] = (node) => {
+      const { matcher, isNegated } = getAssertNodeInfo(node);
+
+      if (!matcher) {
+        return false;
+      }
+
+      return isNegated
+        ? PRESENCE_MATCHERS.includes(matcher)
+        : ABSENCE_MATCHERS.includes(matcher);
+    };
+
+    /**
+     * Gets a string and verifies if it was imported/required by our custom module node
+     */
+    const findImportedUtilSpecifier: DetectionHelpers['findImportedUtilSpecifier'] = (
+      specifierName
+    ) => {
+      const node = getCustomModuleImportNode() ?? getTestingLibraryImportNode();
+      if (!node) {
+        return null;
+      }
+      if (isImportDeclaration(node)) {
+        const namedExport = node.specifiers.find(
+          (n) => isImportSpecifier(n) && n.imported.name === specifierName
         );
-      },
-      /**
-       * Gets a string and verifies if it was imported/required by our custom module node
-       */
-      findImportedUtilSpecifier(specifierName: string) {
-        const node =
-          helpers.getCustomModuleImportNode() ??
-          helpers.getTestingLibraryImportNode();
-        if (!node) {
-          return null;
+        // it is "import { foo [as alias] } from 'baz'""
+        if (namedExport) {
+          return namedExport;
         }
-        if (isImportDeclaration(node)) {
-          const namedExport = node.specifiers.find(
-            (n) => isImportSpecifier(n) && n.imported.name === specifierName
-          );
-          // it is "import { foo [as alias] } from 'baz'""
-          if (namedExport) {
-            return namedExport;
-          }
-          // it could be "import * as rtl from 'baz'"
-          return node.specifiers.find((n) => isImportNamespaceSpecifier(n));
-        } else {
-          const requireNode = node.parent as TSESTree.VariableDeclarator;
-          if (ASTUtils.isIdentifier(requireNode.id)) {
-            // this is const rtl = require('foo')
-            return requireNode.id;
-          }
-          // this should be const { something } = require('foo')
-          const destructuring = requireNode.id as TSESTree.ObjectPattern;
-          const property = destructuring.properties.find(
-            (n) =>
-              isProperty(n) &&
-              ASTUtils.isIdentifier(n.key) &&
-              n.key.name === specifierName
-          );
-          return (property as TSESTree.Property).key as TSESTree.Identifier;
+        // it could be "import * as rtl from 'baz'"
+        return node.specifiers.find((n) => isImportNamespaceSpecifier(n));
+      } else {
+        const requireNode = node.parent as TSESTree.VariableDeclarator;
+        if (ASTUtils.isIdentifier(requireNode.id)) {
+          // this is const rtl = require('foo')
+          return requireNode.id;
         }
-      },
+        // this should be const { something } = require('foo')
+        const destructuring = requireNode.id as TSESTree.ObjectPattern;
+        const property = destructuring.properties.find(
+          (n) =>
+            isProperty(n) &&
+            ASTUtils.isIdentifier(n.key) &&
+            n.key.name === specifierName
+        );
+        return (property as TSESTree.Property).key as TSESTree.Identifier;
+      }
+    };
+
+    /**
+     * Determines if file inspected meets all conditions to be reported by rules or not.
+     */
+    const canReportErrors: DetectionHelpers['canReportErrors'] = () => {
+      return isTestingLibraryImported() && isValidFilename();
+    };
+
+    const helpers = {
+      getTestingLibraryImportNode,
+      getCustomModuleImportNode,
+      getTestingLibraryImportName,
+      getCustomModuleImportName,
+      isTestingLibraryImported,
+      isValidFilename,
+      isGetByQuery,
+      isQueryByQuery,
+      isSyncQuery,
+      isPresenceAssert,
+      isAbsenceAssert,
+      canReportErrors,
+      findImportedUtilSpecifier,
     };
 
     // Instructions for Testing Library detection.
@@ -308,7 +324,7 @@ export function detectTestingLibraryUtils<
           detectionInstructions[instruction](node);
         }
 
-        if (helpers.canReportErrors() && ruleInstructions[instruction]) {
+        if (canReportErrors() && ruleInstructions[instruction]) {
           return ruleInstructions[instruction](node);
         }
       };
