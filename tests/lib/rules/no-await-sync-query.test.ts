@@ -46,6 +46,8 @@ ruleTester.run(RULE_NAME, rule, {
       errors: [
         {
           messageId: 'noAwaitSyncQuery',
+          line: 2,
+          column: 15,
         },
       ],
     })),
@@ -59,6 +61,8 @@ ruleTester.run(RULE_NAME, rule, {
       errors: [
         {
           messageId: 'noAwaitSyncQuery',
+          line: 2,
+          column: 22,
         },
       ],
     })),
