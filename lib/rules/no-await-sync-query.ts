@@ -17,7 +17,8 @@ export default createTestingLibraryRule<Options, MessageIds>({
       recommended: 'error',
     },
     messages: {
-      noAwaitSyncQuery: '`{{ name }}` does not need `await` operator',
+      noAwaitSyncQuery:
+        '`{{ name }}` query is sync so it does not need to be awaited',
     },
     fixable: null,
     schema: [],
