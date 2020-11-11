@@ -8,7 +8,6 @@ import {
 const ruleTester = createRuleTester();
 
 ruleTester.run(RULE_NAME, rule, {
-  // TODO: add variants for custom queries for each map
   valid: [
     // sync queries without await are valid
     ...SYNC_QUERIES_COMBINATIONS.map((query) => ({
@@ -17,6 +16,23 @@ ruleTester.run(RULE_NAME, rule, {
       }
       `,
     })),
+    // custom sync queries without await are valid
+    `() => {
+      const element = getByIcon('search')
+    }
+    `,
+    `() => {
+      const element = queryByIcon('search')
+    }
+    `,
+    `() => {
+      const element = getAllByIcon('search')
+    }
+    `,
+    `() => {
+      const element = queryAllByIcon('search')
+    }
+    `,
     // sync queries without await inside assert are valid
     ...SYNC_QUERIES_COMBINATIONS.map((query) => ({
       code: `() => {
@@ -40,9 +56,28 @@ ruleTester.run(RULE_NAME, rule, {
       }
       `,
     })),
+
+    // sync query awaited but not related to custom module is invalid but not reported
+    {
+      settings: { 'testing-library/module': 'test-utils' },
+      code: `
+      import { screen } from 'somewhere-else'
+      () => {
+        const element = await screen.getByRole('button')
+      }
+      `,
+    },
+    // sync query awaited but not matching filename pattern is invalid but not reported
+    {
+      settings: { 'testing-library/filename-pattern': '^.*\\.(nope)\\.js$' },
+      code: `
+      () => {
+        const element = await getByRole('button')
+      }
+      `,
+    },
   ],
 
-  // TODO: add variants for custom queries for each map
   invalid: [
     // sync queries with await operator are not valid
     ...SYNC_QUERIES_COMBINATIONS.map((query) => ({
@@ -58,6 +93,39 @@ ruleTester.run(RULE_NAME, rule, {
         },
       ],
     })),
+    // custom sync queries with await operator are not valid
+    {
+      code: `
+      async () => {
+        const element = await getByIcon('search')
+      }
+      `,
+      errors: [{ messageId: 'noAwaitSyncQuery', line: 3, column: 31 }],
+    },
+    {
+      code: `
+      async () => {
+        const element = await queryByIcon('search')
+      }
+      `,
+      errors: [{ messageId: 'noAwaitSyncQuery', line: 3, column: 31 }],
+    },
+    {
+      code: `
+      async () => {
+        const element = await screen.getAllByIcon('search')
+      }
+      `,
+      errors: [{ messageId: 'noAwaitSyncQuery', line: 3, column: 38 }],
+    },
+    {
+      code: `
+      async () => {
+        const element = await screen.queryAllByIcon('search')
+      }
+      `,
+      errors: [{ messageId: 'noAwaitSyncQuery', line: 3, column: 38 }],
+    },
     // sync queries with await operator inside assert are not valid
     ...SYNC_QUERIES_COMBINATIONS.map((query) => ({
       code: `async () => {
@@ -102,5 +170,29 @@ ruleTester.run(RULE_NAME, rule, {
         },
       ],
     })),
+
+    // sync query awaited and related to testing library module
+    // with custom module setting is not valid
+    {
+      settings: { 'testing-library/module': 'test-utils' },
+      code: `
+      import { screen } from '@testing-library/react'
+      () => {
+        const element = await screen.getByRole('button')
+      }
+      `,
+      errors: [{ messageId: 'noAwaitSyncQuery', line: 4, column: 38 }],
+    },
+    // sync query awaited and related to custom module is not valid
+    {
+      settings: { 'testing-library/module': 'test-utils' },
+      code: `
+      import { screen } from 'test-utils'
+      () => {
+        const element = await screen.getByRole('button')
+      }
+      `,
+      errors: [{ messageId: 'noAwaitSyncQuery', line: 4, column: 38 }],
+    },
   ],
 });
