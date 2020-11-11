@@ -13,7 +13,14 @@ ruleTester.run(RULE_NAME, rule, {
     // sync queries without await are valid
     ...SYNC_QUERIES_COMBINATIONS.map((query) => ({
       code: `() => {
-        ${query}('foo')
+        const element = ${query}('foo')
+      }
+      `,
+    })),
+    // sync queries without await inside assert are valid
+    ...SYNC_QUERIES_COMBINATIONS.map((query) => ({
+      code: `() => {
+        expect(${query}('foo')).toBeEnabled()
       }
       `,
     })),
@@ -21,7 +28,7 @@ ruleTester.run(RULE_NAME, rule, {
     // async queries with await operator are valid
     ...ASYNC_QUERIES_COMBINATIONS.map((query) => ({
       code: `async () => {
-        await ${query}('foo')
+        const element = await ${query}('foo')
       }
       `,
     })),
@@ -40,22 +47,21 @@ ruleTester.run(RULE_NAME, rule, {
     // sync queries with await operator are not valid
     ...SYNC_QUERIES_COMBINATIONS.map((query) => ({
       code: `async () => {
-        await ${query}('foo')
+        const element = await ${query}('foo')
       }
       `,
       errors: [
         {
           messageId: 'noAwaitSyncQuery',
           line: 2,
-          column: 15,
+          column: 31,
         },
       ],
     })),
-
-    // sync queries in screen with await operator are not valid
+    // sync queries with await operator inside assert are not valid
     ...SYNC_QUERIES_COMBINATIONS.map((query) => ({
       code: `async () => {
-        await screen.${query}('foo')
+        expect(await ${query}('foo')).toBeEnabled()
       }
       `,
       errors: [
@@ -63,6 +69,36 @@ ruleTester.run(RULE_NAME, rule, {
           messageId: 'noAwaitSyncQuery',
           line: 2,
           column: 22,
+        },
+      ],
+    })),
+
+    // sync queries in screen with await operator are not valid
+    ...SYNC_QUERIES_COMBINATIONS.map((query) => ({
+      code: `async () => {
+        const element = await screen.${query}('foo')
+      }
+      `,
+      errors: [
+        {
+          messageId: 'noAwaitSyncQuery',
+          line: 2,
+          column: 38,
+        },
+      ],
+    })),
+
+    // sync queries in screen with await operator inside assert are not valid
+    ...SYNC_QUERIES_COMBINATIONS.map((query) => ({
+      code: `async () => {
+        expect(await screen.${query}('foo')).toBeEnabled()
+      }
+      `,
+      errors: [
+        {
+          messageId: 'noAwaitSyncQuery',
+          line: 2,
+          column: 29,
         },
       ],
     })),
