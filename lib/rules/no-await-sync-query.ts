@@ -5,8 +5,6 @@ export const RULE_NAME = 'no-await-sync-query';
 export type MessageIds = 'noAwaitSyncQuery';
 type Options = [];
 
-const SYNC_QUERIES_REGEXP = /^(get|query)(All)?By(LabelText|PlaceholderText|Text|AltText|Title|DisplayValue|Role|TestId)$/;
-
 export default createTestingLibraryRule<Options, MessageIds>({
   name: RULE_NAME,
   meta: {
@@ -25,18 +23,19 @@ export default createTestingLibraryRule<Options, MessageIds>({
   },
   defaultOptions: [],
 
-  create(context) {
-    const reportError = (node: TSESTree.Identifier) =>
-      context.report({
-        node,
-        messageId: 'noAwaitSyncQuery',
-        data: {
-          name: node.name,
-        },
-      });
+  create(context, _, helpers) {
     return {
-      [`AwaitExpression > CallExpression > Identifier[name=${SYNC_QUERIES_REGEXP}]`]: reportError,
-      [`AwaitExpression > CallExpression > MemberExpression > Identifier[name=${SYNC_QUERIES_REGEXP}]`]: reportError,
+      'AwaitExpression > CallExpression Identifier'(node: TSESTree.Identifier) {
+        if (helpers.isSyncQuery(node)) {
+          context.report({
+            node,
+            messageId: 'noAwaitSyncQuery',
+            data: {
+              name: node.name,
+            },
+          });
+        }
+      },
     };
   },
 });
