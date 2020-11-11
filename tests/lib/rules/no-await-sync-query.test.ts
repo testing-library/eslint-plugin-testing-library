@@ -8,6 +8,7 @@ import {
 const ruleTester = createRuleTester();
 
 ruleTester.run(RULE_NAME, rule, {
+  // TODO: add variants for custom queries for each map
   valid: [
     // sync queries without await are valid
     ...SYNC_QUERIES_COMBINATIONS.map((query) => ({
@@ -34,6 +35,7 @@ ruleTester.run(RULE_NAME, rule, {
     })),
   ],
 
+  // TODO: add variants for custom queries for each map
   invalid: [
     // sync queries with await operator are not valid
     ...SYNC_QUERIES_COMBINATIONS.map((query) => ({
