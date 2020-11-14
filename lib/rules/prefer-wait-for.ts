@@ -1,19 +1,28 @@
-import { ESLintUtils, TSESTree } from '@typescript-eslint/experimental-utils';
-import { getDocsUrl } from '../utils';
+import { TSESTree } from '@typescript-eslint/experimental-utils';
+import { createTestingLibraryRule } from '../create-testing-library-rule';
 import {
   isImportSpecifier,
   isMemberExpression,
   isIdentifier,
   findClosestCallExpressionNode,
+  isCallExpression,
+  isImportDeclaration,
+  isImportNamespaceSpecifier,
+  isVariableDeclarator,
+  isObjectPattern,
+  isProperty,
 } from '../node-utils';
 
 export const RULE_NAME = 'prefer-wait-for';
-export type MessageIds = 'preferWaitForMethod' | 'preferWaitForImport';
+export type MessageIds =
+  | 'preferWaitForMethod'
+  | 'preferWaitForImport'
+  | 'preferWaitForRequire';
 type Options = [];
 
 const DEPRECATED_METHODS = ['wait', 'waitForElement', 'waitForDomChange'];
 
-export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
+export default createTestingLibraryRule<Options, MessageIds>({
   name: RULE_NAME,
   meta: {
     type: 'suggestion',
@@ -26,6 +35,8 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
       preferWaitForMethod:
         '`{{ methodName }}` is deprecated in favour of `waitFor`',
       preferWaitForImport: 'import `waitFor` instead of deprecated async utils',
+      preferWaitForRequire:
+        'require `waitFor` instead of deprecated async utils',
     },
 
     fixable: 'code',
@@ -33,7 +44,34 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
   },
   defaultOptions: [],
 
-  create(context) {
+  create(context, _, helpers) {
+    let addWaitFor = false;
+
+    const reportRequire = (node: TSESTree.ObjectPattern) => {
+      context.report({
+        node: node,
+        messageId: 'preferWaitForRequire',
+        fix(fixer) {
+          const excludedImports = [...DEPRECATED_METHODS, 'waitFor'];
+
+          const newAllRequired = node.properties
+            .filter(
+              (s) =>
+                isProperty(s) &&
+                isIdentifier(s.key) &&
+                !excludedImports.includes(s.key.name)
+            )
+            .map(
+              (s) => ((s as TSESTree.Property).key as TSESTree.Identifier).name
+            );
+
+          newAllRequired.push('waitFor');
+
+          return fixer.replaceText(node, `{ ${newAllRequired.join(',')} }`);
+        },
+      });
+    };
+
     const reportImport = (node: TSESTree.ImportDeclaration) => {
       context.report({
         node: node,
@@ -112,46 +150,100 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
     };
 
     return {
-      'ImportDeclaration[source.value=/testing-library/]'(
-        node: TSESTree.ImportDeclaration
-      ) {
-        const deprecatedImportSpecifiers = node.specifiers.filter(
-          (specifier) =>
-            isImportSpecifier(specifier) &&
-            specifier.imported &&
-            DEPRECATED_METHODS.includes(specifier.imported.name)
-        );
-
-        deprecatedImportSpecifiers.forEach((importSpecifier, i) => {
-          if (i === 0) {
-            reportImport(node);
-          }
-
-          context
-            .getDeclaredVariables(importSpecifier)
-            .forEach((variable) =>
-              variable.references.forEach((reference) =>
-                reportWait(reference.identifier)
-              )
-            );
-        });
+      'CallExpression > MemberExpression'(node: TSESTree.MemberExpression) {
+        const isDeprecatedMethod =
+          isIdentifier(node.property) &&
+          DEPRECATED_METHODS.includes(node.property.name);
+        if (!isDeprecatedMethod) {
+          // the method does not match a deprecated method
+          return;
+        }
+        const testingLibraryNode =
+          helpers.getCustomModuleImportNode() ??
+          helpers.getTestingLibraryImportNode();
+        // this verifies the owner of the MemberExpression is the same as the node if it was imported with "import * as TL from 'foo'"
+        const callerIsTestingLibraryFromImport =
+          isIdentifier(node.object) &&
+          isImportDeclaration(testingLibraryNode) &&
+          isImportNamespaceSpecifier(testingLibraryNode.specifiers[0]) &&
+          node.object.name === testingLibraryNode.specifiers[0].local.name;
+        // this verifies the owner of the MemberExpression is the same as the node if it was imported with "const tl = require('foo')"
+        const callerIsTestingLibraryFromRequire =
+          isIdentifier(node.object) &&
+          isCallExpression(testingLibraryNode) &&
+          isVariableDeclarator(testingLibraryNode.parent) &&
+          isIdentifier(testingLibraryNode.parent.id) &&
+          node.object.name === testingLibraryNode.parent.id.name;
+        if (
+          !callerIsTestingLibraryFromImport &&
+          !callerIsTestingLibraryFromRequire
+        ) {
+          // the method does not match from the imported elements from TL (even from custom)
+          return;
+        }
+        addWaitFor = true;
+        reportWait(node.property as TSESTree.Identifier); // compiler is not picking up correctly, it should have inferred it is an identifier
       },
-      'ImportDeclaration[source.value=/testing-library/] > ImportNamespaceSpecifier'(
-        node: TSESTree.ImportNamespaceSpecifier
-      ) {
-        context.getDeclaredVariables(node).forEach((variable) =>
-          variable.references.forEach((reference) => {
-            if (
-              isMemberExpression(reference.identifier.parent) &&
-              isIdentifier(reference.identifier.parent.property) &&
-              DEPRECATED_METHODS.includes(
-                reference.identifier.parent.property.name
-              )
-            ) {
-              reportWait(reference.identifier.parent.property);
-            }
-          })
-        );
+      'CallExpression > Identifier'(node: TSESTree.Identifier) {
+        const testingLibraryNode =
+          helpers.getCustomModuleImportNode() ??
+          helpers.getTestingLibraryImportNode();
+        // this verifies the owner of the MemberExpression is the same as the node if it was imported with "import { deprecated as aliased } from 'foo'"
+        const callerIsTestingLibraryFromImport =
+          isImportDeclaration(testingLibraryNode) &&
+          testingLibraryNode.specifiers.some(
+            (s) =>
+              isImportSpecifier(s) &&
+              DEPRECATED_METHODS.includes(s.imported.name) &&
+              s.local.name === node.name
+          );
+        // this verifies the owner of the MemberExpression is the same as the node if it was imported with "const { deprecatedMethod } = require('foo')"
+        const callerIsTestingLibraryFromRequire =
+          isCallExpression(testingLibraryNode) &&
+          isVariableDeclarator(testingLibraryNode.parent) &&
+          isObjectPattern(testingLibraryNode.parent.id) &&
+          testingLibraryNode.parent.id.properties.some(
+            (p) =>
+              isProperty(p) &&
+              isIdentifier(p.key) &&
+              isIdentifier(p.value) &&
+              p.value.name === node.name &&
+              DEPRECATED_METHODS.includes(p.key.name)
+          );
+        if (
+          !callerIsTestingLibraryFromRequire &&
+          !callerIsTestingLibraryFromImport
+        ) {
+          return;
+        }
+        addWaitFor = true;
+        reportWait(node);
+      },
+      'Program:exit'() {
+        if (!addWaitFor) {
+          return;
+        }
+        // now that all usages of deprecated methods were replaced, remove the extra imports
+        const testingLibraryNode =
+          helpers.getCustomModuleImportNode() ??
+          helpers.getTestingLibraryImportNode();
+        if (isCallExpression(testingLibraryNode)) {
+          const parent = testingLibraryNode.parent as TSESTree.VariableDeclarator;
+          if (!isObjectPattern(parent.id)) {
+            // if there is no destructuring, there is nothing to replace
+            return;
+          }
+          reportRequire(parent.id);
+        } else {
+          if (
+            testingLibraryNode.specifiers.length === 1 &&
+            isImportNamespaceSpecifier(testingLibraryNode.specifiers[0])
+          ) {
+            // if we import everything, there is nothing to replace
+            return;
+          }
+          reportImport(testingLibraryNode);
+        }
       },
     };
   },
