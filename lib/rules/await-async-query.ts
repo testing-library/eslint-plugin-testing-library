@@ -50,7 +50,8 @@ export default createTestingLibraryRule<Options, MessageIds>({
       recommended: 'warn',
     },
     messages: {
-      awaitAsyncQuery: '`{{ name }}` must have `await` operator',
+      awaitAsyncQuery:
+        '`{{ name }}` query is async but returned promise is unhandled',
     },
     fixable: null,
     schema: [],
