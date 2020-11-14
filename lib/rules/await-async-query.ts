@@ -1,17 +1,17 @@
 import {
-  ESLintUtils,
   TSESTree,
   ASTUtils,
 } from '@typescript-eslint/experimental-utils';
-import { getDocsUrl, LIBRARY_MODULES } from '../utils';
+import { LIBRARY_MODULES } from '../utils';
 import {
+  getVariableReferences,
+  isAwaited,
   isCallExpression,
   isMemberExpression,
-  isAwaited,
   isPromiseResolved,
-  getVariableReferences,
 } from '../node-utils';
 import { ReportDescriptor } from '@typescript-eslint/experimental-utils/dist/ts-eslint';
+import { createTestingLibraryRule } from '../create-testing-library-rule';
 
 export const RULE_NAME = 'await-async-query';
 export type MessageIds = 'awaitAsyncQuery';
@@ -40,7 +40,7 @@ function hasClosestExpectResolvesRejects(node: TSESTree.Node): boolean {
   }
 }
 
-export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
+export default createTestingLibraryRule<Options, MessageIds>({
   name: RULE_NAME,
   meta: {
     type: 'problem',
