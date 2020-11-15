@@ -148,6 +148,12 @@ ruleTester.run(RULE_NAME, rule, {
     `,
     },
     {
+      code: `
+      // case: custom method not matching "findBy*" variant pattern
+      findSomeElement('button')
+    `,
+    },
+    {
       settings: {
         'testing-library/module': 'test-utils',
       },
@@ -169,6 +175,16 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       settings: {
+        'testing-library/module': 'test-utils',
+      },
+      code: `
+      // case: built-in "findBy*" query not reported because custom module not imported
+      import { render } from 'other-module'
+      findByRole('button')
+    `,
+    },
+    {
+      settings: {
         'testing-library/filename-pattern': 'testing-library\\.js',
       },
       code: `
@@ -183,6 +199,15 @@ ruleTester.run(RULE_NAME, rule, {
       code: `
       // case: built-in "queryBy*" query not reported because custom filename doesn't match
       queryByRole('button')
+    `,
+    },
+    {
+      settings: {
+        'testing-library/filename-pattern': 'testing-library\\.js',
+      },
+      code: `
+      // case: built-in "findBy*" query not reported because custom filename doesn't match
+      findByRole('button')
     `,
     },
     {
@@ -431,6 +456,13 @@ ruleTester.run(RULE_NAME, rule, {
       errors: [{ line: 3, column: 7, messageId: 'queryByError' }],
     },
     {
+      code: `
+      // case: built-in "findBy*" query reported without import (aggressive reporting)
+      findByRole('button')
+    `,
+      errors: [{ line: 3, column: 7, messageId: 'findByError' }],
+    },
+    {
       filename: 'MyComponent.spec.js',
       code: `
       // case: custom "getBy*" query reported without import (aggressive reporting)
@@ -446,6 +478,13 @@ ruleTester.run(RULE_NAME, rule, {
       errors: [{ line: 3, column: 7, messageId: 'queryByError' }],
     },
     {
+      code: `
+      // case: custom "findBy*" query reported without import (aggressive reporting)
+      findByIcon('search')
+    `,
+      errors: [{ line: 3, column: 7, messageId: 'findByError' }],
+    },
+    {
       settings: {
         'testing-library/module': 'test-utils',
       },
@@ -458,12 +497,27 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       filename: 'MyComponent.spec.js',
+      settings: {
+        'testing-library/module': 'test-utils',
+      },
       code: `
       // case: built-in "queryBy*" query reported with custom module + Testing Library package import
-      import { render } from '@testing-library/framework'
+      import { render } from '@testing-library/react'
       queryByRole('button')
     `,
       errors: [{ line: 4, column: 7, messageId: 'queryByError' }],
+    },
+    {
+      filename: 'MyComponent.spec.js',
+      settings: {
+        'testing-library/module': 'test-utils',
+      },
+      code: `
+      // case: built-in "findBy*" query reported with custom module + Testing Library package import
+      import { render } from '@testing-library/react'
+      findByRole('button')
+    `,
+      errors: [{ line: 4, column: 7, messageId: 'findByError' }],
     },
     {
       settings: {
@@ -478,12 +532,27 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       filename: 'MyComponent.spec.js',
+      settings: {
+        'testing-library/module': 'test-utils',
+      },
       code: `
       // case: built-in "queryBy*" query reported with custom module + custom module import
       import { render } from 'test-utils'
       queryByRole('button')
     `,
       errors: [{ line: 4, column: 7, messageId: 'queryByError' }],
+    },
+    {
+      filename: 'MyComponent.spec.js',
+      settings: {
+        'testing-library/module': 'test-utils',
+      },
+      code: `
+      // case: built-in "queryBy*" query reported with custom module + custom module import
+      import { render } from 'test-utils'
+      findByRole('button')
+    `,
+      errors: [{ line: 4, column: 7, messageId: 'findByError' }],
     },
 
     {
@@ -499,12 +568,27 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       filename: 'MyComponent.spec.js',
+      settings: {
+        'testing-library/module': 'test-utils',
+      },
       code: `
       // case: custom "queryBy*" query reported with custom module + Testing Library package import
       import { render } from '@testing-library/framework'
       queryByIcon('search')
     `,
       errors: [{ line: 4, column: 7, messageId: 'queryByError' }],
+    },
+    {
+      filename: 'MyComponent.spec.js',
+      settings: {
+        'testing-library/module': 'test-utils',
+      },
+      code: `
+      // case: custom "findBy*" query reported with custom module + Testing Library package import
+      import { render } from '@testing-library/framework'
+      findByIcon('search')
+    `,
+      errors: [{ line: 4, column: 7, messageId: 'findByError' }],
     },
     {
       settings: {
@@ -519,12 +603,27 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       filename: 'MyComponent.spec.js',
+      settings: {
+        'testing-library/module': 'test-utils',
+      },
       code: `
       // case: custom "queryBy*" query reported with custom module + custom module import
       import { render } from 'test-utils'
       queryByIcon('search')
     `,
       errors: [{ line: 4, column: 7, messageId: 'queryByError' }],
+    },
+    {
+      filename: 'MyComponent.spec.js',
+      settings: {
+        'testing-library/module': 'test-utils',
+      },
+      code: `
+      // case: custom "findBy*" query reported with custom module + custom module import
+      import { render } from 'test-utils'
+      findByIcon('search')
+    `,
+      errors: [{ line: 4, column: 7, messageId: 'findByError' }],
     },
     {
       settings: {
