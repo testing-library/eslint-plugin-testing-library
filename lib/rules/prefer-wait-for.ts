@@ -6,11 +6,11 @@ import {
   isIdentifier,
   findClosestCallExpressionNode,
   isCallExpression,
-  isImportDeclaration,
   isImportNamespaceSpecifier,
-  isVariableDeclarator,
   isObjectPattern,
   isProperty,
+  isMemberFromMethodCallFromTestingLibrary,
+  isIdentifierInCallExpressionFromTestingLibrary,
 } from '../node-utils';
 
 export const RULE_NAME = 'prefer-wait-for';
@@ -158,26 +158,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
           // the method does not match a deprecated method
           return;
         }
-        const testingLibraryNode =
-          helpers.getCustomModuleImportNode() ??
-          helpers.getTestingLibraryImportNode();
-        // this verifies the owner of the MemberExpression is the same as the node if it was imported with "import * as TL from 'foo'"
-        const callerIsTestingLibraryFromImport =
-          isIdentifier(node.object) &&
-          isImportDeclaration(testingLibraryNode) &&
-          isImportNamespaceSpecifier(testingLibraryNode.specifiers[0]) &&
-          node.object.name === testingLibraryNode.specifiers[0].local.name;
-        // this verifies the owner of the MemberExpression is the same as the node if it was imported with "const tl = require('foo')"
-        const callerIsTestingLibraryFromRequire =
-          isIdentifier(node.object) &&
-          isCallExpression(testingLibraryNode) &&
-          isVariableDeclarator(testingLibraryNode.parent) &&
-          isIdentifier(testingLibraryNode.parent.id) &&
-          node.object.name === testingLibraryNode.parent.id.name;
-        if (
-          !callerIsTestingLibraryFromImport &&
-          !callerIsTestingLibraryFromRequire
-        ) {
+        if (!isMemberFromMethodCallFromTestingLibrary(node, helpers)) {
           // the method does not match from the imported elements from TL (even from custom)
           return;
         }
@@ -185,35 +166,11 @@ export default createTestingLibraryRule<Options, MessageIds>({
         reportWait(node.property as TSESTree.Identifier); // compiler is not picking up correctly, it should have inferred it is an identifier
       },
       'CallExpression > Identifier'(node: TSESTree.Identifier) {
-        const testingLibraryNode =
-          helpers.getCustomModuleImportNode() ??
-          helpers.getTestingLibraryImportNode();
-        // this verifies the owner of the MemberExpression is the same as the node if it was imported with "import { deprecated as aliased } from 'foo'"
-        const callerIsTestingLibraryFromImport =
-          isImportDeclaration(testingLibraryNode) &&
-          testingLibraryNode.specifiers.some(
-            (s) =>
-              isImportSpecifier(s) &&
-              DEPRECATED_METHODS.includes(s.imported.name) &&
-              s.local.name === node.name
-          );
-        // this verifies the owner of the MemberExpression is the same as the node if it was imported with "const { deprecatedMethod } = require('foo')"
-        const callerIsTestingLibraryFromRequire =
-          isCallExpression(testingLibraryNode) &&
-          isVariableDeclarator(testingLibraryNode.parent) &&
-          isObjectPattern(testingLibraryNode.parent.id) &&
-          testingLibraryNode.parent.id.properties.some(
-            (p) =>
-              isProperty(p) &&
-              isIdentifier(p.key) &&
-              isIdentifier(p.value) &&
-              p.value.name === node.name &&
-              DEPRECATED_METHODS.includes(p.key.name)
-          );
-        if (
-          !callerIsTestingLibraryFromRequire &&
-          !callerIsTestingLibraryFromImport
-        ) {
+        if (!DEPRECATED_METHODS.includes(node.name)) {
+          return;
+        }
+
+        if (!isIdentifierInCallExpressionFromTestingLibrary(node, helpers)) {
           return;
         }
         addWaitFor = true;

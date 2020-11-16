@@ -5,6 +5,7 @@ import {
   TSESTree,
 } from '@typescript-eslint/experimental-utils';
 import { RuleContext } from '@typescript-eslint/experimental-utils/dist/ts-eslint';
+import { DetectionHelpers } from './detect-testing-library-utils';
 
 export function isCallExpression(
   node: TSESTree.Node | null | undefined
@@ -291,4 +292,85 @@ export function getAssertNodeInfo(
   }
 
   return { matcher, isNegated };
+}
+
+/**
+ * Returns a boolean indicating if the member expression passed as argument comes from a import clause in the provided node
+ */
+function isMemberFromCallExpressionComingFromImport(
+  object: TSESTree.Identifier,
+  importNode: TSESTree.ImportDeclaration
+) {
+  return (
+    isImportDeclaration(importNode) &&
+    isImportNamespaceSpecifier(importNode.specifiers[0]) &&
+    object.name === importNode.specifiers[0].local.name
+  );
+}
+
+/**
+ * Returns a boolean indicating if the member expression passed as argument comes from a require clause in the provided node
+ */
+function isMemberFromCallExpressionComingFromRequire(
+  object: TSESTree.Identifier,
+  requireNode: TSESTree.CallExpression
+) {
+  return (
+    isCallExpression(requireNode) &&
+    isVariableDeclarator(requireNode.parent) &&
+    isIdentifier(requireNode.parent.id) &&
+    object.name === requireNode.parent.id.name
+  );
+}
+
+/** Returns a boolean if the MemberExpression matches the one imported from RTL in a custom/standard import/require clause */
+export function isMemberFromMethodCallFromTestingLibrary(
+  node: TSESTree.MemberExpression,
+  helpers: DetectionHelpers
+): boolean {
+  const importOrRequire =
+    helpers.getCustomModuleImportNode() ??
+    helpers.getTestingLibraryImportNode();
+  if (!isIdentifier(node.object)) {
+    return false;
+  }
+  if (isImportDeclaration(importOrRequire)) {
+    return isMemberFromCallExpressionComingFromImport(
+      node.object,
+      importOrRequire
+    );
+  }
+  return isMemberFromCallExpressionComingFromRequire(
+    node.object,
+    importOrRequire
+  );
+}
+
+export function isIdentifierInCallExpressionFromTestingLibrary(
+  node: TSESTree.Identifier,
+  helpers: DetectionHelpers
+): boolean {
+  const importOrRequire =
+    helpers.getCustomModuleImportNode() ??
+    helpers.getTestingLibraryImportNode();
+  if (!importOrRequire) {
+    return false;
+  }
+  if (isImportDeclaration(importOrRequire)) {
+    return importOrRequire.specifiers.some(
+      (s) => isImportSpecifier(s) && s.local.name === node.name
+    );
+  } else {
+    return (
+      isVariableDeclarator(importOrRequire.parent) &&
+      isObjectPattern(importOrRequire.parent.id) &&
+      importOrRequire.parent.id.properties.some(
+        (p) =>
+          isProperty(p) &&
+          isIdentifier(p.key) &&
+          isIdentifier(p.value) &&
+          p.value.name === node.name
+      )
+    );
+  }
 }
