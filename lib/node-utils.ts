@@ -15,13 +15,13 @@ export function isCallExpression(
 export function isNewExpression(
   node: TSESTree.Node
 ): node is TSESTree.NewExpression {
-  return node && node.type === 'NewExpression';
+  return node?.type === 'NewExpression';
 }
 
 export function isMemberExpression(
   node: TSESTree.Node
 ): node is TSESTree.MemberExpression {
-  return node && node.type === AST_NODE_TYPES.MemberExpression;
+  return node?.type === AST_NODE_TYPES.MemberExpression;
 }
 
 export function isLiteral(
@@ -33,7 +33,7 @@ export function isLiteral(
 export function isImportSpecifier(
   node: TSESTree.Node
 ): node is TSESTree.ImportSpecifier {
-  return node && node.type === AST_NODE_TYPES.ImportSpecifier;
+  return node?.type === AST_NODE_TYPES.ImportSpecifier;
 }
 
 export function isImportNamespaceSpecifier(
@@ -45,25 +45,25 @@ export function isImportNamespaceSpecifier(
 export function isImportDefaultSpecifier(
   node: TSESTree.Node
 ): node is TSESTree.ImportDefaultSpecifier {
-  return node && node.type === AST_NODE_TYPES.ImportDefaultSpecifier;
+  return node?.type === AST_NODE_TYPES.ImportDefaultSpecifier;
 }
 
 export function isBlockStatement(
   node: TSESTree.Node
 ): node is TSESTree.BlockStatement {
-  return node && node.type === AST_NODE_TYPES.BlockStatement;
+  return node?.type === AST_NODE_TYPES.BlockStatement;
 }
 
 export function isVariableDeclarator(
   node: TSESTree.Node
 ): node is TSESTree.VariableDeclarator {
-  return node && node.type === AST_NODE_TYPES.VariableDeclarator;
+  return node?.type === AST_NODE_TYPES.VariableDeclarator;
 }
 
 export function isObjectPattern(
   node: TSESTree.Node
 ): node is TSESTree.ObjectPattern {
-  return node && node.type === AST_NODE_TYPES.ObjectPattern;
+  return node?.type === AST_NODE_TYPES.ObjectPattern;
 }
 
 export function isProperty(
@@ -75,7 +75,7 @@ export function isProperty(
 export function isJSXAttribute(
   node: TSESTree.Node
 ): node is TSESTree.JSXAttribute {
-  return node && node.type === AST_NODE_TYPES.JSXAttribute;
+  return node?.type === AST_NODE_TYPES.JSXAttribute;
 }
 
 export function findClosestCallExpressionNode(
@@ -128,13 +128,13 @@ export function hasThenProperty(node: TSESTree.Node): boolean {
 export function isArrowFunctionExpression(
   node: TSESTree.Node
 ): node is TSESTree.ArrowFunctionExpression {
-  return node && node.type === AST_NODE_TYPES.ArrowFunctionExpression;
+  return node?.type === AST_NODE_TYPES.ArrowFunctionExpression;
 }
 
 export function isReturnStatement(
   node: TSESTree.Node
 ): node is TSESTree.ReturnStatement {
-  return node && node.type === AST_NODE_TYPES.ReturnStatement;
+  return node?.type === AST_NODE_TYPES.ReturnStatement;
 }
 
 export function isArrayExpression(
