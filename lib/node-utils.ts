@@ -18,11 +18,6 @@ export function isNewExpression(
   return node && node.type === 'NewExpression';
 }
 
-// TODO: remove this one and use ASTUtils one instead
-export function isIdentifier(node: TSESTree.Node): node is TSESTree.Identifier {
-  return node && node.type === AST_NODE_TYPES.Identifier;
-}
-
 export function isMemberExpression(
   node: TSESTree.Node
 ): node is TSESTree.MemberExpression {
@@ -107,7 +102,7 @@ export function findClosestCallNode(
 
   if (
     isCallExpression(node) &&
-    isIdentifier(node.callee) &&
+    ASTUtils.isIdentifier(node.callee) &&
     node.callee.name === name
   ) {
     return node;
@@ -125,7 +120,7 @@ export function isObjectExpression(
 export function hasThenProperty(node: TSESTree.Node): boolean {
   return (
     isMemberExpression(node) &&
-    isIdentifier(node.property) &&
+    ASTUtils.isIdentifier(node.property) &&
     node.property.name === 'then'
   );
 }
@@ -200,9 +195,10 @@ export function isRenderFunction(
   // as well as `someLib.render` and `someUtils.customRenderFn`
   return renderFunctions.some((name) => {
     return (
-      (isIdentifier(callNode.callee) && name === callNode.callee.name) ||
+      (ASTUtils.isIdentifier(callNode.callee) &&
+        name === callNode.callee.name) ||
       (isMemberExpression(callNode.callee) &&
-        isIdentifier(callNode.callee.property) &&
+        ASTUtils.isIdentifier(callNode.callee.property) &&
         name === callNode.callee.property.name)
     );
   });

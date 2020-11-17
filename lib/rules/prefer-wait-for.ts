@@ -1,9 +1,12 @@
-import { ESLintUtils, TSESTree } from '@typescript-eslint/experimental-utils';
+import {
+  ESLintUtils,
+  TSESTree,
+  ASTUtils,
+} from '@typescript-eslint/experimental-utils';
 import { getDocsUrl } from '../utils';
 import {
   isImportSpecifier,
   isMemberExpression,
-  isIdentifier,
   findClosestCallExpressionNode,
 } from '../node-utils';
 
@@ -97,7 +100,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
             // member expression to get `foo.waitFor(() => {})`
             if (
               isMemberExpression(node.parent) &&
-              isIdentifier(node.parent.object)
+              ASTUtils.isIdentifier(node.parent.object)
             ) {
               methodReplacement = `${node.parent.object.name}.${methodReplacement}`;
             }
@@ -143,7 +146,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
           variable.references.forEach((reference) => {
             if (
               isMemberExpression(reference.identifier.parent) &&
-              isIdentifier(reference.identifier.parent.property) &&
+              ASTUtils.isIdentifier(reference.identifier.parent.property) &&
               DEPRECATED_METHODS.includes(
                 reference.identifier.parent.property.name
               )

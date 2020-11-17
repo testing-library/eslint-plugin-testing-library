@@ -1,8 +1,11 @@
-import { TSESTree, ESLintUtils } from '@typescript-eslint/experimental-utils';
+import {
+  TSESTree,
+  ESLintUtils,
+  ASTUtils,
+} from '@typescript-eslint/experimental-utils';
 import { getDocsUrl, ASYNC_QUERIES_VARIANTS } from '../utils';
 import {
   isNewExpression,
-  isIdentifier,
   isImportSpecifier,
   isCallExpression,
 } from '../node-utils';
@@ -52,7 +55,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
             .parent as TSESTree.CallExpression;
           const [element] = callExpression.arguments as TSESTree.Node[];
           if (isCallExpression(element) || isNewExpression(element)) {
-            const methodName = isIdentifier(element.callee)
+            const methodName = ASTUtils.isIdentifier(element.callee)
               ? element.callee.name
               : ((element.callee as TSESTree.MemberExpression)
                   .property as TSESTree.Identifier).name;

@@ -1,4 +1,8 @@
-import { ESLintUtils, TSESTree } from '@typescript-eslint/experimental-utils';
+import {
+  ESLintUtils,
+  TSESTree,
+  ASTUtils,
+} from '@typescript-eslint/experimental-utils';
 
 import { getDocsUrl, ASYNC_UTILS, LIBRARY_MODULES } from '../utils';
 import {
@@ -10,7 +14,6 @@ import {
   isImportNamespaceSpecifier,
   isCallExpression,
   isArrayExpression,
-  isIdentifier,
 } from '../node-utils';
 
 export const RULE_NAME = 'await-async-utils';
@@ -23,9 +26,9 @@ const ASYNC_UTILS_REGEXP = new RegExp(`^(${ASYNC_UTILS.join('|')})$`);
 function isPromiseAll(node: TSESTree.CallExpression) {
   return (
     isMemberExpression(node.callee) &&
-    isIdentifier(node.callee.object) &&
+    ASTUtils.isIdentifier(node.callee.object) &&
     node.callee.object.name === 'Promise' &&
-    isIdentifier(node.callee.property) &&
+    ASTUtils.isIdentifier(node.callee.property) &&
     node.callee.property.name === 'all'
   );
 }

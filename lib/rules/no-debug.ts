@@ -1,4 +1,8 @@
-import { ESLintUtils, TSESTree } from '@typescript-eslint/experimental-utils';
+import {
+  ESLintUtils,
+  TSESTree,
+  ASTUtils,
+} from '@typescript-eslint/experimental-utils';
 import {
   getDocsUrl,
   LIBRARY_MODULES,
@@ -7,7 +11,6 @@ import {
 import {
   isObjectPattern,
   isProperty,
-  isIdentifier,
   isCallExpression,
   isLiteral,
   isMemberExpression,
@@ -66,7 +69,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
             node.id.properties.some(
               (property) =>
                 isProperty(property) &&
-                isIdentifier(property.key) &&
+                ASTUtils.isIdentifier(property.key) &&
                 property.key.name === 'debug'
             )
           ) {
@@ -102,7 +105,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
           declaratorNode.id.properties.some(
             (property) =>
               isProperty(property) &&
-              isIdentifier(property.key) &&
+              ASTUtils.isIdentifier(property.key) &&
               property.key.name === 'screen'
           );
       },
@@ -179,7 +182,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
             const parent = ref.identifier.parent;
             if (
               isMemberExpression(parent) &&
-              isIdentifier(parent.property) &&
+              ASTUtils.isIdentifier(parent.property) &&
               parent.property.name === 'debug' &&
               isCallExpression(parent.parent)
             ) {

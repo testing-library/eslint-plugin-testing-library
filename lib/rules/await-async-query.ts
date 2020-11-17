@@ -1,8 +1,11 @@
-import { ESLintUtils, TSESTree } from '@typescript-eslint/experimental-utils';
+import {
+  ESLintUtils,
+  TSESTree,
+  ASTUtils,
+} from '@typescript-eslint/experimental-utils';
 import { getDocsUrl, LIBRARY_MODULES } from '../utils';
 import {
   isCallExpression,
-  isIdentifier,
   isMemberExpression,
   isAwaited,
   isPromiseResolved,
@@ -23,13 +26,13 @@ function hasClosestExpectResolvesRejects(node: TSESTree.Node): boolean {
 
   if (
     isCallExpression(node) &&
-    isIdentifier(node.callee) &&
+    ASTUtils.isIdentifier(node.callee) &&
     isMemberExpression(node.parent) &&
     node.callee.name === 'expect'
   ) {
     const expectMatcher = node.parent.property;
     return (
-      isIdentifier(expectMatcher) &&
+      ASTUtils.isIdentifier(expectMatcher) &&
       (expectMatcher.name === 'resolves' || expectMatcher.name === 'rejects')
     );
   } else {

@@ -1,15 +1,15 @@
-import { ESLintUtils, TSESTree } from '@typescript-eslint/experimental-utils';
+import {
+  ESLintUtils,
+  TSESTree,
+  ASTUtils,
+} from '@typescript-eslint/experimental-utils';
 import {
   getDocsUrl,
   ALL_QUERIES_METHODS,
   PRESENCE_MATCHERS,
   ABSENCE_MATCHERS,
 } from '../utils';
-import {
-  findClosestCallNode,
-  isIdentifier,
-  isMemberExpression,
-} from '../node-utils';
+import { findClosestCallNode, isMemberExpression } from '../node-utils';
 
 export const RULE_NAME = 'prefer-explicit-assert';
 export type MessageIds =
@@ -104,7 +104,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
             if (
               matcher === 'not' &&
               isMemberExpression(expectStatement.parent) &&
-              isIdentifier(expectStatement.parent.property)
+              ASTUtils.isIdentifier(expectStatement.parent.property)
             ) {
               isNegatedMatcher = true;
               matcher = expectStatement.parent.property.name;

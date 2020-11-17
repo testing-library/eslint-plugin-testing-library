@@ -1,11 +1,14 @@
-import { ESLintUtils, TSESTree } from '@typescript-eslint/experimental-utils';
+import {
+  ESLintUtils,
+  TSESTree,
+  ASTUtils,
+} from '@typescript-eslint/experimental-utils';
 import { getDocsUrl, ALL_QUERIES_COMBINATIONS } from '../utils';
 import {
   isMemberExpression,
   isObjectPattern,
   isCallExpression,
   isProperty,
-  isIdentifier,
   isObjectExpression,
 } from '../node-utils';
 
@@ -26,7 +29,7 @@ function usesContainerOrBaseElement(node: TSESTree.CallExpression) {
     secondArgument.properties.some(
       (property) =>
         isProperty(property) &&
-        isIdentifier(property.key) &&
+        ASTUtils.isIdentifier(property.key) &&
         ALLOWED_RENDER_PROPERTIES_FOR_DESTRUCTURING.includes(property.key.name)
     )
   );
@@ -68,7 +71,10 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
 
     return {
       VariableDeclarator(node) {
-        if (!isCallExpression(node.init) || !isIdentifier(node.init.callee)) {
+        if (
+          !isCallExpression(node.init) ||
+          !ASTUtils.isIdentifier(node.init.callee)
+        ) {
           return;
         }
         const isWithinFunction = node.init.callee.name === 'within';
@@ -87,7 +93,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
             .filter(
               (property) =>
                 isProperty(property) &&
-                isIdentifier(property.key) &&
+                ASTUtils.isIdentifier(property.key) &&
                 queriesRegex.test(property.key.name)
             )
             .map(
@@ -99,7 +105,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
           return;
         }
 
-        if (isIdentifier(node.id)) {
+        if (ASTUtils.isIdentifier(node.id)) {
           withinDeclaredVariables.push(node.id.name);
         }
       },
@@ -122,10 +128,10 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
         }
 
         if (
-          isIdentifier(node) &&
+          ASTUtils.isIdentifier(node) &&
           isMemberExpression(node.parent) &&
           isCallExpression(node.parent.object) &&
-          isIdentifier(node.parent.object.callee) &&
+          ASTUtils.isIdentifier(node.parent.object.callee) &&
           node.parent.object.callee.name !== 'within' &&
           node.parent.object.callee.name === 'render' &&
           !usesContainerOrBaseElement(node.parent.object)
@@ -136,7 +142,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
 
         if (
           isMemberExpression(node.parent) &&
-          isIdentifier(node.parent.object) &&
+          ASTUtils.isIdentifier(node.parent.object) &&
           !isIdentifierAllowed(node.parent.object.name)
         ) {
           reportInvalidUsage(node);
