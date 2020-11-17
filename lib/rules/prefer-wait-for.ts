@@ -9,8 +9,6 @@ import {
   isImportNamespaceSpecifier,
   isObjectPattern,
   isProperty,
-  isMemberFromMethodCallFromTestingLibrary,
-  isIdentifierInCallExpressionFromTestingLibrary,
 } from '../node-utils';
 
 export const RULE_NAME = 'prefer-wait-for';
@@ -158,7 +156,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
           // the method does not match a deprecated method
           return;
         }
-        if (!isMemberFromMethodCallFromTestingLibrary(node, helpers)) {
+        if (!helpers.isNodeComingFromTestingLibrary(node)) {
           // the method does not match from the imported elements from TL (even from custom)
           return;
         }
@@ -170,7 +168,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
           return;
         }
 
-        if (!isIdentifierInCallExpressionFromTestingLibrary(node, helpers)) {
+        if (!helpers.isNodeComingFromTestingLibrary(node)) {
           return;
         }
         addWaitFor = true;

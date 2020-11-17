@@ -12,6 +12,8 @@ import {
   isImportNamespaceSpecifier,
   isImportSpecifier,
   isProperty,
+  isCallExpression,
+  isObjectPattern,
 } from './node-utils';
 import { ABSENCE_MATCHERS, PRESENCE_MATCHERS } from './utils';
 
@@ -55,6 +57,9 @@ export type DetectionHelpers = {
   findImportedUtilSpecifier: (
     specifierName: string
   ) => TSESTree.ImportClause | TSESTree.Identifier | undefined;
+  isNodeComingFromTestingLibrary: (
+    node: TSESTree.MemberExpression | TSESTree.Identifier
+  ) => boolean;
 };
 
 const DEFAULT_FILENAME_PATTERN = '^.*\\.(test|spec)\\.[jt]sx?$';
@@ -229,6 +234,55 @@ export function detectTestingLibraryUtils<
     const canReportErrors: DetectionHelpers['canReportErrors'] = () => {
       return isTestingLibraryImported() && isValidFilename();
     };
+    /**
+     * Takes a MemberExpression or an Identifier and verifies if its name comes from the import in TL
+     * @param node a MemberExpression (in "foo.property" it would be property) or an Identifier (it should be provided from a CallExpression, for example "foo()")
+     */
+    const isNodeComingFromTestingLibrary: DetectionHelpers['isNodeComingFromTestingLibrary'] = (
+      node: TSESTree.MemberExpression | TSESTree.Identifier
+    ) => {
+      const importOrRequire =
+        getCustomModuleImportNode() ?? getTestingLibraryImportNode();
+      if (!importOrRequire) {
+        return false;
+      }
+      if (ASTUtils.isIdentifier(node)) {
+        if (isImportDeclaration(importOrRequire)) {
+          return importOrRequire.specifiers.some(
+            (s) => isImportSpecifier(s) && s.local.name === node.name
+          );
+        } else {
+          return (
+            ASTUtils.isVariableDeclarator(importOrRequire.parent) &&
+            isObjectPattern(importOrRequire.parent.id) &&
+            importOrRequire.parent.id.properties.some(
+              (p) =>
+                isProperty(p) &&
+                ASTUtils.isIdentifier(p.key) &&
+                ASTUtils.isIdentifier(p.value) &&
+                p.value.name === node.name
+            )
+          );
+        }
+      } else {
+        if (!ASTUtils.isIdentifier(node.object)) {
+          return false;
+        }
+        if (isImportDeclaration(importOrRequire)) {
+          return (
+            isImportDeclaration(importOrRequire) &&
+            isImportNamespaceSpecifier(importOrRequire.specifiers[0]) &&
+            node.object.name === importOrRequire.specifiers[0].local.name
+          );
+        }
+        return (
+          isCallExpression(importOrRequire) &&
+          ASTUtils.isVariableDeclarator(importOrRequire.parent) &&
+          ASTUtils.isIdentifier(importOrRequire.parent.id) &&
+          node.object.name === importOrRequire.parent.id.name
+        );
+      }
+    };
 
     const helpers = {
       getTestingLibraryImportNode,
@@ -244,6 +298,7 @@ export function detectTestingLibraryUtils<
       isAbsenceAssert,
       canReportErrors,
       findImportedUtilSpecifier,
+      isNodeComingFromTestingLibrary,
     };
 
     // Instructions for Testing Library detection.
