@@ -1,10 +1,13 @@
-import { ESLintUtils, TSESTree } from '@typescript-eslint/experimental-utils';
+import {
+  ESLintUtils,
+  TSESTree,
+  ASTUtils,
+} from '@typescript-eslint/experimental-utils';
 import { getDocsUrl, hasTestingLibraryImportModule } from '../utils';
 import {
   isBlockStatement,
   isMemberExpression,
   isCallExpression,
-  isIdentifier,
 } from '../node-utils';
 
 export const RULE_NAME = 'no-side-effects-wait-for';
@@ -41,7 +44,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
           if (
             isCallExpression(node.expression) &&
             isMemberExpression(node.expression.callee) &&
-            isIdentifier(node.expression.callee.object)
+            ASTUtils.isIdentifier(node.expression.callee.object)
           ) {
             const object: TSESTree.Identifier = node.expression.callee.object;
             const identifierName: string = object.name;

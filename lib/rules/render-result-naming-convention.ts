@@ -1,8 +1,11 @@
-import { ESLintUtils, TSESTree } from '@typescript-eslint/experimental-utils';
+import {
+  ESLintUtils,
+  TSESTree,
+  ASTUtils,
+} from '@typescript-eslint/experimental-utils';
 import { getDocsUrl, hasTestingLibraryImportModule } from '../utils';
 import {
   isCallExpression,
-  isIdentifier,
   isImportSpecifier,
   isMemberExpression,
   isObjectPattern,
@@ -102,14 +105,14 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
 
         const renderFunctionName =
           isCallExpression(node.init) &&
-          isIdentifier(node.init.callee) &&
+          ASTUtils.isIdentifier(node.init.callee) &&
           node.init.callee.name;
 
         const renderFunctionObjectName =
           isCallExpression(node.init) &&
           isMemberExpression(node.init.callee) &&
-          isIdentifier(node.init.callee.property) &&
-          isIdentifier(node.init.callee.object) &&
+          ASTUtils.isIdentifier(node.init.callee.property) &&
+          ASTUtils.isIdentifier(node.init.callee.object) &&
           node.init.callee.property.name === 'render' &&
           node.init.callee.object.name;
 
@@ -124,7 +127,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
           return;
         }
 
-        const renderResultName = isIdentifier(node.id) && node.id.name;
+        const renderResultName = ASTUtils.isIdentifier(node.id) && node.id.name;
         const isAllowedRenderResultName = ALLOWED_VAR_NAMES.includes(
           renderResultName
         );

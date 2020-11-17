@@ -1,6 +1,6 @@
-import { TSESTree } from '@typescript-eslint/experimental-utils';
+import { TSESTree, ASTUtils } from '@typescript-eslint/experimental-utils';
 import { createTestingLibraryRule } from '../create-testing-library-rule';
-import { isIdentifier, isMemberExpression } from '../node-utils';
+import { isMemberExpression } from '../node-utils';
 
 export const RULE_NAME = 'prefer-user-event';
 
@@ -97,19 +97,19 @@ export default createTestingLibraryRule<Options, MessageIds>({
           // testing library was imported, but fireEvent was not imported
           return;
         }
-        const fireEventAliasOrWildcard = isIdentifier(util)
+        const fireEventAliasOrWildcard = ASTUtils.isIdentifier(util)
           ? util.name
           : util.local.name;
 
         const fireEventUsed =
-          isIdentifier(node.object) &&
+          ASTUtils.isIdentifier(node.object) &&
           node.object.name === fireEventAliasOrWildcard;
 
         const fireEventFromWildcardUsed =
           isMemberExpression(node.object) &&
-          isIdentifier(node.object.object) &&
+          ASTUtils.isIdentifier(node.object.object) &&
           node.object.object.name === fireEventAliasOrWildcard &&
-          isIdentifier(node.object.property) &&
+          ASTUtils.isIdentifier(node.object.property) &&
           node.object.property.name === 'fireEvent';
 
         if (!fireEventUsed && !fireEventFromWildcardUsed) {
@@ -118,7 +118,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
         }
 
         if (
-          !isIdentifier(node.property) ||
+          !ASTUtils.isIdentifier(node.property) ||
           !fireEventMappedMethods.includes(node.property.name) ||
           allowedMethods.includes(node.property.name)
         ) {

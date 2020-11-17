@@ -1,7 +1,10 @@
-import { ESLintUtils, TSESTree } from '@typescript-eslint/experimental-utils';
+import {
+  ESLintUtils,
+  TSESTree,
+  ASTUtils,
+} from '@typescript-eslint/experimental-utils';
 import { getDocsUrl } from '../utils';
 import {
-  isIdentifier,
   isMemberExpression,
   isObjectPattern,
   isProperty,
@@ -54,12 +57,12 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
       innerNode: TSESTree.MemberExpression
     ) {
       if (isMemberExpression(innerNode)) {
-        if (isIdentifier(innerNode.object)) {
+        if (ASTUtils.isIdentifier(innerNode.object)) {
           const isContainerName = innerNode.object.name === containerName;
           const isRenderWrapper = innerNode.object.name === renderWrapperName;
 
           containerCallsMethod =
-            isIdentifier(innerNode.property) &&
+            ASTUtils.isIdentifier(innerNode.property) &&
             innerNode.property.name === 'container' &&
             isRenderWrapper;
 
@@ -83,24 +86,24 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
             const containerIndex = node.id.properties.findIndex(
               (property) =>
                 isProperty(property) &&
-                isIdentifier(property.key) &&
+                ASTUtils.isIdentifier(property.key) &&
                 property.key.name === 'container'
             );
             const nodeValue =
               containerIndex !== -1 && node.id.properties[containerIndex].value;
-            if (isIdentifier(nodeValue)) {
+            if (ASTUtils.isIdentifier(nodeValue)) {
               containerName = nodeValue.name;
             } else {
               isObjectPattern(nodeValue) &&
                 nodeValue.properties.forEach(
                   (property) =>
                     isProperty(property) &&
-                    isIdentifier(property.key) &&
+                    ASTUtils.isIdentifier(property.key) &&
                     destructuredContainerPropNames.push(property.key.name)
                 );
             }
           } else {
-            renderWrapperName = isIdentifier(node.id) && node.id.name;
+            renderWrapperName = ASTUtils.isIdentifier(node.id) && node.id.name;
           }
         }
       },
@@ -109,7 +112,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
         if (isMemberExpression(node.callee)) {
           showErrorIfChainedContainerMethod(node.callee);
         } else {
-          isIdentifier(node.callee) &&
+          ASTUtils.isIdentifier(node.callee) &&
             destructuredContainerPropNames.includes(node.callee.name) &&
             context.report({
               node,

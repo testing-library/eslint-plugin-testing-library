@@ -15,18 +15,13 @@ export function isCallExpression(
 export function isNewExpression(
   node: TSESTree.Node
 ): node is TSESTree.NewExpression {
-  return node && node.type === 'NewExpression';
-}
-
-// TODO: remove this one and use ASTUtils one instead
-export function isIdentifier(node: TSESTree.Node): node is TSESTree.Identifier {
-  return node && node.type === AST_NODE_TYPES.Identifier;
+  return node?.type === 'NewExpression';
 }
 
 export function isMemberExpression(
   node: TSESTree.Node
 ): node is TSESTree.MemberExpression {
-  return node && node.type === AST_NODE_TYPES.MemberExpression;
+  return node?.type === AST_NODE_TYPES.MemberExpression;
 }
 
 export function isLiteral(
@@ -38,7 +33,7 @@ export function isLiteral(
 export function isImportSpecifier(
   node: TSESTree.Node
 ): node is TSESTree.ImportSpecifier {
-  return node && node.type === AST_NODE_TYPES.ImportSpecifier;
+  return node?.type === AST_NODE_TYPES.ImportSpecifier;
 }
 
 export function isImportNamespaceSpecifier(
@@ -50,25 +45,25 @@ export function isImportNamespaceSpecifier(
 export function isImportDefaultSpecifier(
   node: TSESTree.Node
 ): node is TSESTree.ImportDefaultSpecifier {
-  return node && node.type === AST_NODE_TYPES.ImportDefaultSpecifier;
+  return node?.type === AST_NODE_TYPES.ImportDefaultSpecifier;
 }
 
 export function isBlockStatement(
   node: TSESTree.Node
 ): node is TSESTree.BlockStatement {
-  return node && node.type === AST_NODE_TYPES.BlockStatement;
+  return node?.type === AST_NODE_TYPES.BlockStatement;
 }
 
 export function isVariableDeclarator(
   node: TSESTree.Node
 ): node is TSESTree.VariableDeclarator {
-  return node && node.type === AST_NODE_TYPES.VariableDeclarator;
+  return node?.type === AST_NODE_TYPES.VariableDeclarator;
 }
 
 export function isObjectPattern(
   node: TSESTree.Node
 ): node is TSESTree.ObjectPattern {
-  return node && node.type === AST_NODE_TYPES.ObjectPattern;
+  return node?.type === AST_NODE_TYPES.ObjectPattern;
 }
 
 export function isProperty(
@@ -80,7 +75,7 @@ export function isProperty(
 export function isJSXAttribute(
   node: TSESTree.Node
 ): node is TSESTree.JSXAttribute {
-  return node && node.type === AST_NODE_TYPES.JSXAttribute;
+  return node?.type === AST_NODE_TYPES.JSXAttribute;
 }
 
 export function findClosestCallExpressionNode(
@@ -107,7 +102,7 @@ export function findClosestCallNode(
 
   if (
     isCallExpression(node) &&
-    isIdentifier(node.callee) &&
+    ASTUtils.isIdentifier(node.callee) &&
     node.callee.name === name
   ) {
     return node;
@@ -125,28 +120,21 @@ export function isObjectExpression(
 export function hasThenProperty(node: TSESTree.Node): boolean {
   return (
     isMemberExpression(node) &&
-    isIdentifier(node.property) &&
+    ASTUtils.isIdentifier(node.property) &&
     node.property.name === 'then'
   );
-}
-
-// TODO: remove this one and use ASTUtils one instead
-export function isAwaitExpression(
-  node: TSESTree.Node
-): node is TSESTree.AwaitExpression {
-  return node && node.type === AST_NODE_TYPES.AwaitExpression;
 }
 
 export function isArrowFunctionExpression(
   node: TSESTree.Node
 ): node is TSESTree.ArrowFunctionExpression {
-  return node && node.type === AST_NODE_TYPES.ArrowFunctionExpression;
+  return node?.type === AST_NODE_TYPES.ArrowFunctionExpression;
 }
 
 export function isReturnStatement(
   node: TSESTree.Node
 ): node is TSESTree.ReturnStatement {
-  return node && node.type === AST_NODE_TYPES.ReturnStatement;
+  return node?.type === AST_NODE_TYPES.ReturnStatement;
 }
 
 export function isArrayExpression(
@@ -163,7 +151,7 @@ export function isImportDeclaration(
 
 export function isAwaited(node: TSESTree.Node): boolean {
   return (
-    isAwaitExpression(node) ||
+    ASTUtils.isAwaitExpression(node) ||
     isArrowFunctionExpression(node) ||
     isReturnStatement(node)
   );
@@ -200,9 +188,10 @@ export function isRenderFunction(
   // as well as `someLib.render` and `someUtils.customRenderFn`
   return renderFunctions.some((name) => {
     return (
-      (isIdentifier(callNode.callee) && name === callNode.callee.name) ||
+      (ASTUtils.isIdentifier(callNode.callee) &&
+        name === callNode.callee.name) ||
       (isMemberExpression(callNode.callee) &&
-        isIdentifier(callNode.callee.property) &&
+        ASTUtils.isIdentifier(callNode.callee.property) &&
         name === callNode.callee.property.name)
     );
   });
@@ -213,7 +202,7 @@ export function isRenderVariableDeclarator(
   renderFunctions: string[]
 ): boolean {
   if (node.init) {
-    if (isAwaitExpression(node.init)) {
+    if (ASTUtils.isAwaitExpression(node.init)) {
       return (
         node.init.argument &&
         isRenderFunction(
