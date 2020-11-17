@@ -1,9 +1,8 @@
-import { TSESTree } from '@typescript-eslint/experimental-utils';
+import { TSESTree, ASTUtils } from '@typescript-eslint/experimental-utils';
 import { createTestingLibraryRule } from '../create-testing-library-rule';
 import {
   isImportSpecifier,
   isMemberExpression,
-  isIdentifier,
   findClosestCallExpressionNode,
   isCallExpression,
   isImportNamespaceSpecifier,
@@ -56,7 +55,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
             .filter(
               (s) =>
                 isProperty(s) &&
-                isIdentifier(s.key) &&
+                ASTUtils.isIdentifier(s.key) &&
                 !excludedImports.includes(s.key.name)
             )
             .map(
@@ -133,7 +132,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
             // member expression to get `foo.waitFor(() => {})`
             if (
               isMemberExpression(node.parent) &&
-              isIdentifier(node.parent.object)
+              ASTUtils.isIdentifier(node.parent.object)
             ) {
               methodReplacement = `${node.parent.object.name}.${methodReplacement}`;
             }
@@ -150,7 +149,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
     return {
       'CallExpression > MemberExpression'(node: TSESTree.MemberExpression) {
         const isDeprecatedMethod =
-          isIdentifier(node.property) &&
+          ASTUtils.isIdentifier(node.property) &&
           DEPRECATED_METHODS.includes(node.property.name);
         if (!isDeprecatedMethod) {
           // the method does not match a deprecated method

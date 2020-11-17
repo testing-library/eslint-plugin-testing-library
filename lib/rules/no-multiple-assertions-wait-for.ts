@@ -1,10 +1,13 @@
-import { ESLintUtils, TSESTree } from '@typescript-eslint/experimental-utils';
+import {
+  ESLintUtils,
+  TSESTree,
+  ASTUtils,
+} from '@typescript-eslint/experimental-utils';
 import { getDocsUrl } from '../utils';
 import {
   isBlockStatement,
   isMemberExpression,
   isCallExpression,
-  isIdentifier,
 } from '../node-utils';
 
 export const RULE_NAME = 'no-multiple-assertions-wait-for';
@@ -42,7 +45,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
             const object: TSESTree.CallExpression =
               node.expression.callee.object;
             const expressionName: string =
-              isIdentifier(object.callee) && object.callee.name;
+              ASTUtils.isIdentifier(object.callee) && object.callee.name;
             return expressionName === 'expect';
           } else {
             return false;

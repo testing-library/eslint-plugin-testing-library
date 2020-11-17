@@ -1,4 +1,8 @@
-import { ESLintUtils, TSESTree } from '@typescript-eslint/experimental-utils';
+import {
+  ESLintUtils,
+  TSESTree,
+  ASTUtils,
+} from '@typescript-eslint/experimental-utils';
 import {
   ReportFixFunction,
   RuleFix,
@@ -7,7 +11,6 @@ import {
 import {
   isArrowFunctionExpression,
   isCallExpression,
-  isIdentifier,
   isMemberExpression,
   isObjectPattern,
   isProperty,
@@ -41,7 +44,7 @@ function findRenderDefinitionDeclaration(
   if (variable) {
     return variable.defs
       .map(({ name }) => name)
-      .filter(isIdentifier)
+      .filter(ASTUtils.isIdentifier)
       .find(({ name }) => name === query);
   }
 
@@ -104,7 +107,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
     return {
       'AwaitExpression > CallExpression'(node: TSESTree.CallExpression) {
         if (
-          !isIdentifier(node.callee) ||
+          !ASTUtils.isIdentifier(node.callee) ||
           !WAIT_METHODS.includes(node.callee.name)
         ) {
           return;
@@ -121,8 +124,8 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
         // ensure here it's one of the sync methods that we are calling
         if (
           isMemberExpression(argument.body.callee) &&
-          isIdentifier(argument.body.callee.property) &&
-          isIdentifier(argument.body.callee.object) &&
+          ASTUtils.isIdentifier(argument.body.callee.property) &&
+          ASTUtils.isIdentifier(argument.body.callee.object) &&
           SYNC_QUERIES_COMBINATIONS.includes(argument.body.callee.property.name)
         ) {
           // shape of () => screen.getByText
@@ -145,7 +148,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
           return;
         }
         if (
-          isIdentifier(argument.body.callee) &&
+          ASTUtils.isIdentifier(argument.body.callee) &&
           SYNC_QUERIES_COMBINATIONS.includes(argument.body.callee.name)
         ) {
           // shape of () => getByText
@@ -183,7 +186,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
                   allVariableDeclarations.properties.some(
                     (p) =>
                       isProperty(p) &&
-                      isIdentifier(p.key) &&
+                      ASTUtils.isIdentifier(p.key) &&
                       p.key.name === findByMethod
                   )
                 ) {

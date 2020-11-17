@@ -1,6 +1,10 @@
-import { ESLintUtils, TSESTree } from '@typescript-eslint/experimental-utils';
+import {
+  ASTUtils,
+  ESLintUtils,
+  TSESTree,
+} from '@typescript-eslint/experimental-utils';
 import { getDocsUrl, SYNC_EVENTS } from '../utils';
-import { isObjectExpression, isProperty, isIdentifier } from '../node-utils';
+import { isObjectExpression, isProperty } from '../node-utils';
 export const RULE_NAME = 'no-await-sync-events';
 export type MessageIds = 'noAwaitSyncEvents';
 type Options = [];
@@ -41,7 +45,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
           callExpression.arguments[2].properties.some(
             (property) =>
               isProperty(property) &&
-              isIdentifier(property.key) &&
+              ASTUtils.isIdentifier(property.key) &&
               property.key.name === 'delay'
           );
 

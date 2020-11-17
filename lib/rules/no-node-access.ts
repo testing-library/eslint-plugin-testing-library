@@ -1,6 +1,5 @@
-import { TSESTree } from '@typescript-eslint/experimental-utils';
+import { TSESTree, ASTUtils } from '@typescript-eslint/experimental-utils';
 import { ALL_RETURNING_NODES } from '../utils';
-import { isIdentifier } from '../node-utils';
 import { createTestingLibraryRule } from '../create-testing-library-rule';
 
 export const RULE_NAME = 'no-node-access';
@@ -27,7 +26,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
   create(context) {
     function showErrorForNodeAccess(node: TSESTree.MemberExpression) {
-      isIdentifier(node.property) &&
+      ASTUtils.isIdentifier(node.property) &&
         ALL_RETURNING_NODES.includes(node.property.name) &&
         context.report({
           node: node,

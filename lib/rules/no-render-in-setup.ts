@@ -1,9 +1,12 @@
-import { ESLintUtils, TSESTree } from '@typescript-eslint/experimental-utils';
+import {
+  ESLintUtils,
+  TSESTree,
+  ASTUtils,
+} from '@typescript-eslint/experimental-utils';
 import { getDocsUrl, TESTING_FRAMEWORK_SETUP_HOOKS } from '../utils';
 import {
   isLiteral,
   isProperty,
-  isIdentifier,
   isObjectPattern,
   isCallExpression,
   isRenderFunction,
@@ -29,7 +32,7 @@ export function findClosestBeforeHook(
 
   if (
     isCallExpression(node) &&
-    isIdentifier(node.callee) &&
+    ASTUtils.isIdentifier(node.callee) &&
     testingFrameworkSetupHooksToFilter.includes(node.callee.name)
   ) {
     return node.callee;
@@ -126,7 +129,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
           declaratorNode.id.properties.some(
             (property) =>
               isProperty(property) &&
-              isIdentifier(property.key) &&
+              ASTUtils.isIdentifier(property.key) &&
               property.key.name === 'render'
           );
       },

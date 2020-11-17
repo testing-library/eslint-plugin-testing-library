@@ -1,10 +1,10 @@
-import { ESLintUtils, TSESTree } from '@typescript-eslint/experimental-utils';
-import { getDocsUrl } from '../utils';
 import {
-  isBlockStatement,
-  isCallExpression,
-  isIdentifier,
-} from '../node-utils';
+  ESLintUtils,
+  TSESTree,
+  ASTUtils,
+} from '@typescript-eslint/experimental-utils';
+import { getDocsUrl } from '../utils';
+import { isBlockStatement, isCallExpression } from '../node-utils';
 
 export const RULE_NAME = 'no-wait-for-empty-callback';
 export type MessageIds = 'noWaitForEmptyCallback';
@@ -42,7 +42,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
         isBlockStatement(node.body) &&
         node.body.body.length === 0 &&
         isCallExpression(node.parent) &&
-        isIdentifier(node.parent.callee)
+        ASTUtils.isIdentifier(node.parent.callee)
       ) {
         context.report({
           node,
