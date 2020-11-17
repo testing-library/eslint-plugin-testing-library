@@ -125,13 +125,6 @@ export function hasThenProperty(node: TSESTree.Node): boolean {
   );
 }
 
-// TODO: remove this one and use ASTUtils one instead
-export function isAwaitExpression(
-  node: TSESTree.Node
-): node is TSESTree.AwaitExpression {
-  return node && node.type === AST_NODE_TYPES.AwaitExpression;
-}
-
 export function isArrowFunctionExpression(
   node: TSESTree.Node
 ): node is TSESTree.ArrowFunctionExpression {
@@ -158,7 +151,7 @@ export function isImportDeclaration(
 
 export function isAwaited(node: TSESTree.Node): boolean {
   return (
-    isAwaitExpression(node) ||
+    ASTUtils.isAwaitExpression(node) ||
     isArrowFunctionExpression(node) ||
     isReturnStatement(node)
   );
@@ -209,7 +202,7 @@ export function isRenderVariableDeclarator(
   renderFunctions: string[]
 ): boolean {
   if (node.init) {
-    if (isAwaitExpression(node.init)) {
+    if (ASTUtils.isAwaitExpression(node.init)) {
       return (
         node.init.argument &&
         isRenderFunction(
