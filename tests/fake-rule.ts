@@ -73,6 +73,12 @@ export default createTestingLibraryRule<Options, MessageIds>({
     return {
       'CallExpression Identifier': reportCallExpressionIdentifier,
       MemberExpression: reportMemberExpression,
+      'CallExpression > MemberExpression'(node: TSESTree.MemberExpression) {
+        if (!helpers.isNodeComingFromTestingLibrary(node)) {
+          return;
+        }
+        context.report({ node, messageId: 'fakeError' });
+      },
       ImportDeclaration: reportImportDeclaration,
       'Program:exit'() {
         const importNode = helpers.getCustomModuleImportNode();

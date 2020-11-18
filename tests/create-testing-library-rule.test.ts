@@ -185,6 +185,16 @@ ruleTester.run(RULE_NAME, rule, {
       queryByRole('button')
     `,
     },
+    {
+      settings: {
+        'testing-library/module': 'test-utils',
+      },
+      code: `
+        import * as tl from 'test-utils'
+        const obj = { tl }
+        obj.tl.waitFor(() => {})
+      `,
+    },
   ],
   invalid: [
     // Test Cases for Imports & Filename
@@ -515,6 +525,16 @@ ruleTester.run(RULE_NAME, rule, {
       queryByIcon('search')
     `,
       errors: [{ line: 4, column: 7, messageId: 'queryByError' }],
+    },
+    {
+      settings: {
+        'testing-library/module': 'test-utils',
+      },
+      code: `
+        import * as tl from 'test-utils'
+        tl.waitFor(() => {})
+      `,
+      errors: [{ line: 3, column: 9, messageId: 'fakeError' }],
     },
   ],
 });
