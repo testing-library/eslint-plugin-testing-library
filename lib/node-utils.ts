@@ -222,6 +222,7 @@ export function getVariableReferences(
   );
 }
 
+// TODO: should be removed after v4 is finished
 export function isRenderFunction(
   callNode: TSESTree.CallExpression,
   renderFunctions: string[]
@@ -239,6 +240,7 @@ export function isRenderFunction(
   });
 }
 
+// TODO: should be removed after v4 is finished
 export function isRenderVariableDeclarator(
   node: TSESTree.VariableDeclarator,
   renderFunctions: string[]

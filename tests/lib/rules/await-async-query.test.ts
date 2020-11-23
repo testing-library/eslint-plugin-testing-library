@@ -27,7 +27,7 @@ function createTestCode({ code, isAsync = true }: TestCode) {
 interface TestCaseParams {
   isAsync?: boolean;
   combinations?: string[];
-  errors?: TestCaseError<'awaitAsyncQuery'>[];
+  errors?: TestCaseError<'awaitAsyncQuery' | 'asyncQueryWrapper'>[];
 }
 
 function createTestCase(
@@ -90,14 +90,6 @@ ruleTester.run(RULE_NAME, rule, {
     ),
 
     // async queries are valid when saved in a promise variable immediately resolved
-    ...createTestCase(
-      (query) => `
-        const promise = ${query}('foo')
-        await promise
-      `
-    ),
-
-    // async queries are valid when saved in a promise variable resolved by an await operator
     ...createTestCase(
       (query) => `
         const promise = ${query}('foo')
@@ -183,8 +175,6 @@ ruleTester.run(RULE_NAME, rule, {
     `,
   ],
 
-  // TODO: improve invalid cases by
-  //  - check references from functions
   invalid: [
     // async queries without await operator or then method are not valid
     ...createTestCase((query) => ({
@@ -229,6 +219,27 @@ ruleTester.run(RULE_NAME, rule, {
         })
       `,
       errors: [{ messageId: 'awaitAsyncQuery', line: 5, column: 27 }],
+    })),
+
+    // TODO: add cases for arrow functions (both implicit and explicit return)
+    // unhandled promise returned from async queries function wrapper are invalid
+    ...ALL_ASYNC_COMBINATIONS_TO_TEST.map((query) => ({
+      code: `
+        function queryWrapper() {
+          doSomethingElse();
+          
+          return screen.${query}('foo')
+        }
+        
+        test("An invalid example test", () => {
+          const element = queryWrapper()
+        })
+        
+        test("An valid example test", async () => {
+          const element = await queryWrapper()
+        })
+      `,
+      errors: [{ messageId: 'asyncQueryWrapper', line: 9, column: 27 }],
     })),
   ],
 });
