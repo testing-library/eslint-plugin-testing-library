@@ -72,13 +72,23 @@ ruleTester.run(RULE_NAME, rule, {
       `
     ),
 
-    // async queries are valid when saved in a variable with await operator
+    // built-in async queries are valid when saved in a variable with await operator
     ...createTestCase(
       (query) => `
         doSomething()
         const foo = await ${query}('foo')
         expect(foo).toBeInTheDocument();
       `
+    ),
+
+    // custom async queries are valid when saved in a variable with await operator
+    ...createTestCase(
+      (query) => `
+        doSomething()
+        const foo = await ${query}('foo')
+        expect(foo).toBeInTheDocument();
+      `,
+      { combinations: CUSTOM_ASYNC_QUERIES_COMBINATIONS }
     ),
 
     // async queries are valid when saved in a promise variable immediately resolved
@@ -154,6 +164,30 @@ ruleTester.run(RULE_NAME, rule, {
         expect(wrappedQuery(${query}("foo"))).rejects.toBe("bar")
       `
     ),
+
+    // unresolved built-in async queries with aggressive reporting opted-out are valid
+    ...ASYNC_QUERIES_COMBINATIONS.map((query) => ({
+      settings: { 'testing-library/module': 'test-utils' },
+      code: `
+        import { render } from "another-library"
+
+        test('An example test', async () => {
+          const example = ${query}("my example")
+        })
+      `,
+    })),
+
+    // unresolved custom async queries with aggressive reporting opted-out are valid
+    ...CUSTOM_ASYNC_QUERIES_COMBINATIONS.map((query) => ({
+      settings: { 'testing-library/module': 'test-utils' },
+      code: `
+        import { render } from "another-library"
+
+        test('An example test', async () => {
+          const example = ${query}("my example")
+        })
+      `,
+    })),
   ],
 
   // TODO: improve invalid cases by
@@ -226,8 +260,9 @@ ruleTester.run(RULE_NAME, rule, {
 
     // unresolved custom async queries are not valid (aggressive reporting)
     ...CUSTOM_ASYNC_QUERIES_COMBINATIONS.map((query) => ({
+      settings: { 'testing-library/module': 'test-utils' },
       code: `
-        import { render } from "another-library"
+        import { render } from "test-utils"
 
         test('An example test', async () => {
           const example = ${query}("my example")
