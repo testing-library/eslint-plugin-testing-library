@@ -28,6 +28,7 @@ interface TestCaseParams {
   errors?: TestCaseError<'awaitAsyncQuery'>[];
 }
 
+// TODO: simplify test cases generation
 function createTestCase(
   getTest: (
     query: string
@@ -114,7 +115,7 @@ ruleTester.run(RULE_NAME, rule, {
     // async queries are valid with promise returned in regular function
     ...createTestCase((query) => `function foo() { return ${query}('foo') }`),
 
-    // async queries are valid with promise in variable and returned in regular functio
+    // async queries are valid with promise in variable and returned in regular function
     ...createTestCase(
       (query) => `
         const promise = ${query}('foo')
@@ -146,27 +147,12 @@ ruleTester.run(RULE_NAME, rule, {
         expect(wrappedQuery(${query}("foo"))).rejects.toBe("bar")
       `
     ),
-
-    // non existing queries are valid
-    createTestCode({
-      code: `
-        doSomething()
-        const foo = findByNonExistingTestingLibraryQuery('foo')
-      `,
-    }),
-
-    // unresolved async queries are valid if there are no imports from a testing library module
-    ...ASYNC_QUERIES_COMBINATIONS.map((query) => ({
-      code: `
-        import { render } from "another-library"
-
-        test('An example test', async () => {
-          const example = ${query}("my example")
-        })
-      `,
-    })),
   ],
 
+  // TODO: improve invalid cases by
+  //  - checking line and column
+  //  - include custom query in async queries list to check aggressive reporting
+  //  - check references from functions
   invalid: [
     // async queries without await operator or then method are not valid
     ...createTestCase((query) => ({
@@ -198,6 +184,18 @@ ruleTester.run(RULE_NAME, rule, {
           },
         },
       ],
+    })),
+
+    // unresolved async queries are not valid (aggressive reporting)
+    ...ASYNC_QUERIES_COMBINATIONS.map((query) => ({
+      code: `
+        import { render } from "another-library"
+
+        test('An example test', async () => {
+          const example = ${query}("my example")
+        })
+      `,
+      errors: [{ messageId: 'awaitAsyncQuery', line: 5, column: 27 }],
     })),
   ],
 });

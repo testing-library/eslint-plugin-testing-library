@@ -6,6 +6,35 @@ import {
 } from '@typescript-eslint/experimental-utils';
 import { RuleContext } from '@typescript-eslint/experimental-utils/dist/ts-eslint';
 
+const ValidLeftHandSideExpressions = [
+  AST_NODE_TYPES.CallExpression,
+  AST_NODE_TYPES.ClassExpression,
+  AST_NODE_TYPES.ClassDeclaration,
+  AST_NODE_TYPES.FunctionExpression,
+  AST_NODE_TYPES.Literal,
+  AST_NODE_TYPES.TemplateLiteral,
+  AST_NODE_TYPES.MemberExpression,
+  AST_NODE_TYPES.ArrayExpression,
+  AST_NODE_TYPES.ArrayPattern,
+  AST_NODE_TYPES.ClassExpression,
+  AST_NODE_TYPES.FunctionExpression,
+  AST_NODE_TYPES.Identifier,
+  AST_NODE_TYPES.JSXElement,
+  AST_NODE_TYPES.JSXFragment,
+  AST_NODE_TYPES.JSXOpeningElement,
+  AST_NODE_TYPES.MetaProperty,
+  AST_NODE_TYPES.ObjectExpression,
+  AST_NODE_TYPES.ObjectPattern,
+  AST_NODE_TYPES.Super,
+  AST_NODE_TYPES.TemplateLiteral,
+  AST_NODE_TYPES.ThisExpression,
+  AST_NODE_TYPES.TSNullKeyword,
+  AST_NODE_TYPES.TaggedTemplateExpression,
+  AST_NODE_TYPES.TSNonNullExpression,
+  AST_NODE_TYPES.TSAsExpression,
+  AST_NODE_TYPES.ArrowFunctionExpression,
+];
+
 export function isCallExpression(
   node: TSESTree.Node | null | undefined
 ): node is TSESTree.CallExpression {
@@ -78,14 +107,27 @@ export function isJSXAttribute(
   return node?.type === AST_NODE_TYPES.JSXAttribute;
 }
 
+/**
+ * Finds the closest CallExpression node for a given node.
+ * @param node
+ * @param shouldRestrictInnerScope - If true, CallExpression must be directly related to node
+ */
 export function findClosestCallExpressionNode(
-  node: TSESTree.Node
-): TSESTree.CallExpression {
+  node: TSESTree.Node,
+  shouldRestrictInnerScope = false
+): TSESTree.CallExpression | null {
   if (isCallExpression(node)) {
     return node;
   }
 
-  if (!node.parent) {
+  if (!node || !node.parent) {
+    return null;
+  }
+
+  if (
+    shouldRestrictInnerScope &&
+    !ValidLeftHandSideExpressions.includes(node.parent.type)
+  ) {
     return null;
   }
 
@@ -280,4 +322,30 @@ export function getAssertNodeInfo(
   }
 
   return { matcher, isNegated };
+}
+
+/**
+ * Determines whether a node belongs to an async assertion
+ * fulfilled by `resolves` or `rejects` properties.
+ *
+ */
+export function hasClosestExpectResolvesRejects(node: TSESTree.Node): boolean {
+  if (
+    isCallExpression(node) &&
+    ASTUtils.isIdentifier(node.callee) &&
+    isMemberExpression(node.parent) &&
+    node.callee.name === 'expect'
+  ) {
+    const expectMatcher = node.parent.property;
+    return (
+      ASTUtils.isIdentifier(expectMatcher) &&
+      (expectMatcher.name === 'resolves' || expectMatcher.name === 'rejects')
+    );
+  }
+
+  if (!node.parent) {
+    return false;
+  }
+
+  return hasClosestExpectResolvesRejects(node.parent);
 }
