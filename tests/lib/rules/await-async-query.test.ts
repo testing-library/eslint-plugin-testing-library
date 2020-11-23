@@ -174,6 +174,13 @@ ruleTester.run(RULE_NAME, rule, {
         })
       `,
     })),
+
+    // non-matching query is valid
+    `
+    test('An example test', async () => {
+      const example = findText("my example")
+    })
+    `,
   ],
 
   // TODO: improve invalid cases by
