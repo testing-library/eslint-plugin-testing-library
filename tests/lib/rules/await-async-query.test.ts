@@ -191,7 +191,6 @@ ruleTester.run(RULE_NAME, rule, {
   ],
 
   // TODO: improve invalid cases by
-  //  - checking line and column
   //  - check references from functions
   invalid: [
     // built-in async queries without await operator or then method are not valid
@@ -200,7 +199,7 @@ ruleTester.run(RULE_NAME, rule, {
         doSomething()
         const foo = ${query}('foo')
       `,
-      errors: [{ messageId: 'awaitAsyncQuery' }],
+      errors: [{ messageId: 'awaitAsyncQuery', line: 6, column: 21 }],
     })),
     // custom async queries without await operator or then method are not valid
     ...createTestCase(
@@ -209,7 +208,7 @@ ruleTester.run(RULE_NAME, rule, {
         doSomething()
         const foo = ${query}('foo')
       `,
-        errors: [{ messageId: 'awaitAsyncQuery' }],
+        errors: [{ messageId: 'awaitAsyncQuery', line: 6, column: 21 }],
       }),
       { combinations: CUSTOM_ASYNC_QUERIES_COMBINATIONS }
     ),
@@ -217,14 +216,14 @@ ruleTester.run(RULE_NAME, rule, {
     // built-in async screen queries without await operator or then method are not valid
     ...createTestCase((query) => ({
       code: `screen.${query}('foo')`,
-      errors: [{ messageId: 'awaitAsyncQuery' }],
+      errors: [{ messageId: 'awaitAsyncQuery', line: 4, column: 14 }],
     })),
 
     // custom async screen queries without await operator or then method are not valid
     ...createTestCase(
       (query) => ({
         code: `screen.${query}('foo')`,
-        errors: [{ messageId: 'awaitAsyncQuery' }],
+        errors: [{ messageId: 'awaitAsyncQuery', line: 4, column: 14 }],
       }),
       { combinations: CUSTOM_ASYNC_QUERIES_COMBINATIONS }
     ),
@@ -238,6 +237,7 @@ ruleTester.run(RULE_NAME, rule, {
       errors: [
         {
           line: 5,
+          column: 21,
           messageId: 'awaitAsyncQuery',
           data: {
             name: query,
