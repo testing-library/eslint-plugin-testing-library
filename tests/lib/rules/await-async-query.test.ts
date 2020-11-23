@@ -3,6 +3,8 @@ import { createRuleTester } from '../test-utils';
 import rule, { RULE_NAME } from '../../../lib/rules/await-async-query';
 import {
   ASYNC_QUERIES_COMBINATIONS,
+  ASYNC_QUERIES_VARIANTS,
+  combineQueries,
   SYNC_QUERIES_COMBINATIONS,
 } from '../../../lib/utils';
 
@@ -46,6 +48,11 @@ function createTestCase(
         };
   });
 }
+
+const CUSTOM_ASYNC_QUERIES_COMBINATIONS = combineQueries(
+  ASYNC_QUERIES_VARIANTS,
+  ['ByIcon', 'ByButton']
+);
 
 ruleTester.run(RULE_NAME, rule, {
   valid: [
@@ -151,10 +158,9 @@ ruleTester.run(RULE_NAME, rule, {
 
   // TODO: improve invalid cases by
   //  - checking line and column
-  //  - include custom query in async queries list to check aggressive reporting
   //  - check references from functions
   invalid: [
-    // async queries without await operator or then method are not valid
+    // built-in async queries without await operator or then method are not valid
     ...createTestCase((query) => ({
       code: `
         doSomething()
@@ -162,12 +168,32 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [{ messageId: 'awaitAsyncQuery' }],
     })),
+    // custom async queries without await operator or then method are not valid
+    ...createTestCase(
+      (query) => ({
+        code: `
+        doSomething()
+        const foo = ${query}('foo')
+      `,
+        errors: [{ messageId: 'awaitAsyncQuery' }],
+      }),
+      { combinations: CUSTOM_ASYNC_QUERIES_COMBINATIONS }
+    ),
 
-    // async screen queries without await operator or then method are not valid
+    // built-in async screen queries without await operator or then method are not valid
     ...createTestCase((query) => ({
       code: `screen.${query}('foo')`,
       errors: [{ messageId: 'awaitAsyncQuery' }],
     })),
+
+    // custom async screen queries without await operator or then method are not valid
+    ...createTestCase(
+      (query) => ({
+        code: `screen.${query}('foo')`,
+        errors: [{ messageId: 'awaitAsyncQuery' }],
+      }),
+      { combinations: CUSTOM_ASYNC_QUERIES_COMBINATIONS }
+    ),
 
     ...createTestCase((query) => ({
       code: `
@@ -186,8 +212,20 @@ ruleTester.run(RULE_NAME, rule, {
       ],
     })),
 
-    // unresolved async queries are not valid (aggressive reporting)
+    // unresolved built-in async queries are not valid (aggressive reporting)
     ...ASYNC_QUERIES_COMBINATIONS.map((query) => ({
+      code: `
+        import { render } from "another-library"
+
+        test('An example test', async () => {
+          const example = ${query}("my example")
+        })
+      `,
+      errors: [{ messageId: 'awaitAsyncQuery', line: 5, column: 27 }],
+    })),
+
+    // unresolved custom async queries are not valid (aggressive reporting)
+    ...CUSTOM_ASYNC_QUERIES_COMBINATIONS.map((query) => ({
       code: `
         import { render } from "another-library"
 
