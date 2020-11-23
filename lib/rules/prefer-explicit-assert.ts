@@ -95,6 +95,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
             });
           } else if (assertion) {
             const expectCallNode = findClosestCallNode(node, 'expect');
+            if (!expectCallNode) return;
 
             const expectStatement = expectCallNode.parent as TSESTree.MemberExpression;
             const property = expectStatement.property as TSESTree.Identifier;

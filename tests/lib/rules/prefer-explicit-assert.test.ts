@@ -67,7 +67,9 @@ ruleTester.run(RULE_NAME, rule, {
       code: `queryByText("foo")`,
     },
     {
-      code: `expect(getByText('foo')).toBeTruthy()`,
+      code: `expect(getByText('foo')).toBeTruthy()
+      
+      fireEvent.click(getByText('bar'));`,
       options: [
         {
           assertion: 'toBeTruthy',
