@@ -240,5 +240,39 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [{ messageId: 'asyncQueryWrapper', line: 9, column: 27 }],
     })),
+    // unhandled promise from async query arrow function wrapper is invalid
+    ...ALL_ASYNC_COMBINATIONS_TO_TEST.map((query) => ({
+      code: `
+        const queryWrapper = () => {
+          doSomethingElse();
+
+          return ${query}('foo')
+        }
+
+        test("An invalid example test", () => {
+          const element = queryWrapper()
+        })
+
+        test("An valid example test", async () => {
+          const element = await queryWrapper()
+        })
+      `,
+      errors: [{ messageId: 'asyncQueryWrapper', line: 9, column: 27 }],
+    })),
+    // unhandled promise implicitly returned from async query arrow function wrapper is invalid
+    ...ALL_ASYNC_COMBINATIONS_TO_TEST.map((query) => ({
+      code: `
+        const queryWrapper = () => screen.${query}('foo')
+
+        test("An invalid example test", () => {
+          const element = queryWrapper()
+        })
+
+        test("An valid example test", async () => {
+          const element = await queryWrapper()
+        })
+      `,
+      errors: [{ messageId: 'asyncQueryWrapper', line: 5, column: 27 }],
+    })),
   ],
 });

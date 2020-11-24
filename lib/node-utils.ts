@@ -242,38 +242,46 @@ export function getInnermostFunctionScope(
   return null;
 }
 
-export function getFunctionReturnStatementIdentifier(
-  functionScope: TSESLintScope.FunctionScope
+export function getFunctionReturnStatementNode(
+  functionNode:
+    | TSESTree.FunctionDeclaration
+    | TSESTree.FunctionExpression
+    | TSESTree.ArrowFunctionExpression
+): TSESTree.Node | null {
+  if (isBlockStatement(functionNode.body)) {
+    // regular function or arrow function with block
+    const returnStatementNode = functionNode.body.body.find((statement) =>
+      isReturnStatement(statement)
+    ) as TSESTree.ReturnStatement | null;
+
+    if (!returnStatementNode) {
+      return null;
+    }
+    return returnStatementNode.argument;
+  } else if (functionNode.expression) {
+    // arrow function with implicit return
+    return functionNode.body;
+  }
+}
+
+export function getIdentifierNode(
+  node: TSESTree.Node
 ): TSESTree.Identifier | null {
-  if (!ASTUtils.isFunction(functionScope.block)) {
-    return null;
+  if (ASTUtils.isIdentifier(node)) {
+    return node;
   }
 
-  if (!isBlockStatement(functionScope.block.body)) {
-    return null;
-  }
+  if (isCallExpression(node)) {
+    const callExpressionCallee = node.callee;
 
-  const returnStatementNode = functionScope.block.body.body.find((statement) =>
-    isReturnStatement(statement)
-  ) as TSESTree.ReturnStatement | null;
-
-  if (!returnStatementNode) {
-    return null;
-  }
-
-  if (!isCallExpression(returnStatementNode.argument)) {
-    return null;
-  }
-
-  const returnCallee = returnStatementNode.argument.callee;
-
-  if (ASTUtils.isIdentifier(returnCallee)) {
-    return returnCallee;
-  } else if (
-    isMemberExpression(returnCallee) &&
-    ASTUtils.isIdentifier(returnCallee.property)
-  ) {
-    return returnCallee.property;
+    if (ASTUtils.isIdentifier(callExpressionCallee)) {
+      return callExpressionCallee;
+    } else if (
+      isMemberExpression(callExpressionCallee) &&
+      ASTUtils.isIdentifier(callExpressionCallee.property)
+    ) {
+      return callExpressionCallee.property;
+    }
   }
 
   return null;

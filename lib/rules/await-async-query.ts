@@ -2,7 +2,8 @@ import { ASTUtils, TSESTree } from '@typescript-eslint/experimental-utils';
 import {
   findClosestCallExpressionNode,
   getFunctionName,
-  getFunctionReturnStatementIdentifier,
+  getFunctionReturnStatementNode,
+  getIdentifierNode,
   getInnermostFunctionScope,
   getVariableReferences,
   hasClosestExpectResolvesRejects,
@@ -37,24 +38,38 @@ export default createTestingLibraryRule<Options, MessageIds>({
   create(context, _, helpers) {
     const functionWrappersNames: string[] = [];
 
+    function detectAsyncQueryWrapper(node: TSESTree.Identifier) {
+      const functionScope = getInnermostFunctionScope(context, node);
+
+      if (functionScope && ASTUtils.isFunction(functionScope.block)) {
+        // save function wrapper calls rather than async calls to be reported later
+        const returnStatementNode = getFunctionReturnStatementNode(
+          functionScope.block
+        );
+
+        if (!returnStatementNode) {
+          return;
+        }
+
+        const returnStatementIdentifier = getIdentifierNode(
+          returnStatementNode
+        );
+
+        if (!returnStatementIdentifier) {
+          return;
+        }
+
+        if (returnStatementIdentifier?.name === node.name) {
+          functionWrappersNames.push(getFunctionName(functionScope.block));
+        }
+      }
+    }
+
     return {
       'CallExpression Identifier'(node: TSESTree.Identifier) {
         // check async query direct calls or related function wrapper
         if (helpers.isAsyncQuery(node)) {
-          const functionScope = getInnermostFunctionScope(context, node);
-
-          if (functionScope) {
-            // save function wrapper calls rather than async calls to be reported later
-            const returnStatementIdentifier = getFunctionReturnStatementIdentifier(
-              functionScope
-            );
-            if (
-              returnStatementIdentifier?.name === node.name &&
-              ASTUtils.isFunction(functionScope.block)
-            ) {
-              functionWrappersNames.push(getFunctionName(functionScope.block));
-            }
-          }
+          detectAsyncQueryWrapper(node);
 
           const closestCallExpressionNode = findClosestCallExpressionNode(
             node,
