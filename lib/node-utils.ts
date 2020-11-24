@@ -216,9 +216,9 @@ export function hasChainedThen(node: TSESTree.Node): boolean {
  * Determines whether an Identifier related to a promise is considered as handled.
  *
  * It will be considered as handled if:
- * - it belongs to await expression
+ * - it belongs to `await` expression
+ * - it's chained with `then` method
  * - it's returned from a function
- * - it's resolved with `then` method
  * - has `resolves` or `rejects`
  */
 export function isPromiseHandled(nodeIdentifier: TSESTree.Identifier): boolean {

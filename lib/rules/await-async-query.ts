@@ -19,7 +19,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
   meta: {
     type: 'problem',
     docs: {
-      description: 'Enforce async queries to have proper `await`',
+      description: 'Enforce promise from async queries to be handled',
       category: 'Best Practices',
       recommended: 'warn',
     },
