@@ -221,8 +221,7 @@ ruleTester.run(RULE_NAME, rule, {
       errors: [{ messageId: 'awaitAsyncQuery', line: 5, column: 27 }],
     })),
 
-    // TODO: add cases for arrow functions (both implicit and explicit return)
-    // unhandled promise returned from async queries function wrapper are invalid
+    // unhandled promise from async query function wrapper is invalid
     ...ALL_ASYNC_COMBINATIONS_TO_TEST.map((query) => ({
       code: `
         function queryWrapper() {

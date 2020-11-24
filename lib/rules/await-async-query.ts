@@ -1,17 +1,13 @@
-import {
-  TSESTree,
-  ASTUtils,
-  TSESLintScope,
-} from '@typescript-eslint/experimental-utils';
+import { ASTUtils, TSESTree } from '@typescript-eslint/experimental-utils';
 import {
   findClosestCallExpressionNode,
+  getFunctionName,
+  getFunctionReturnStatementIdentifier,
+  getInnermostFunctionScope,
   getVariableReferences,
   hasClosestExpectResolvesRejects,
   isAwaited,
-  isBlockStatement,
-  isCallExpression,
   isPromiseResolved,
-  isReturnStatement,
 } from '../node-utils';
 import { createTestingLibraryRule } from '../create-testing-library-rule';
 
@@ -41,45 +37,22 @@ export default createTestingLibraryRule<Options, MessageIds>({
   create(context, _, helpers) {
     const functionWrappersNames: string[] = [];
 
-    function getInnermostFunctionScope(
-      asyncQueryNode: TSESTree.Identifier
-    ): TSESLintScope.FunctionScope | null {
-      const innermostScope = ASTUtils.getInnermostScope(
-        context.getScope(),
-        asyncQueryNode
-      );
-
-      if (innermostScope?.type === 'function') {
-        return (innermostScope as unknown) as TSESLintScope.FunctionScope;
-      }
-
-      return null;
-    }
-
     return {
       'CallExpression Identifier'(node: TSESTree.Identifier) {
         // check async query direct calls or related function wrapper
         if (helpers.isAsyncQuery(node)) {
-          const functionScope = getInnermostFunctionScope(node);
+          const functionScope = getInnermostFunctionScope(context, node);
 
-          if (
-            functionScope &&
-            ASTUtils.isFunction(functionScope.block) &&
-            isBlockStatement(functionScope.block.body)
-          ) {
-            // report function wrapper calls rather than async calls
-
-            const returnStatementNode = functionScope.block.body.body.find(
-              (statement) => isReturnStatement(statement)
-            ) as TSESTree.ReturnStatement | null;
-
+          if (functionScope) {
+            // save function wrapper calls rather than async calls to be reported later
+            const returnStatementIdentifier = getFunctionReturnStatementIdentifier(
+              functionScope
+            );
             if (
-              returnStatementNode &&
-              isCallExpression(returnStatementNode.argument)
+              returnStatementIdentifier?.name === node.name &&
+              ASTUtils.isFunction(functionScope.block)
             ) {
-              // TODO: improve this check,
-              //  assume for now the query is within the return statement
-              functionWrappersNames.push(functionScope.block.id.name);
+              functionWrappersNames.push(getFunctionName(functionScope.block));
             }
           }
 

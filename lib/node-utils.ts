@@ -2,6 +2,7 @@ import {
   AST_NODE_TYPES,
   ASTUtils,
   TSESLint,
+  TSESLintScope,
   TSESTree,
 } from '@typescript-eslint/experimental-utils';
 import { RuleContext } from '@typescript-eslint/experimental-utils/dist/ts-eslint';
@@ -219,6 +220,75 @@ export function getVariableReferences(
     (isVariableDeclarator(node) &&
       context.getDeclaredVariables(node)[0]?.references?.slice(1)) ||
     []
+  );
+}
+
+export function getInnermostFunctionScope(
+  context: RuleContext<string, []>,
+  asyncQueryNode: TSESTree.Identifier
+): TSESLintScope.FunctionScope | null {
+  const innermostScope = ASTUtils.getInnermostScope(
+    context.getScope(),
+    asyncQueryNode
+  );
+
+  if (
+    innermostScope?.type === 'function' &&
+    ASTUtils.isFunction(innermostScope.block)
+  ) {
+    return (innermostScope as unknown) as TSESLintScope.FunctionScope;
+  }
+
+  return null;
+}
+
+export function getFunctionReturnStatementIdentifier(
+  functionScope: TSESLintScope.FunctionScope
+): TSESTree.Identifier | null {
+  if (!ASTUtils.isFunction(functionScope.block)) {
+    return null;
+  }
+
+  if (!isBlockStatement(functionScope.block.body)) {
+    return null;
+  }
+
+  const returnStatementNode = functionScope.block.body.body.find((statement) =>
+    isReturnStatement(statement)
+  ) as TSESTree.ReturnStatement | null;
+
+  if (!returnStatementNode) {
+    return null;
+  }
+
+  if (!isCallExpression(returnStatementNode.argument)) {
+    return null;
+  }
+
+  const returnCallee = returnStatementNode.argument.callee;
+
+  if (ASTUtils.isIdentifier(returnCallee)) {
+    return returnCallee;
+  } else if (
+    isMemberExpression(returnCallee) &&
+    ASTUtils.isIdentifier(returnCallee.property)
+  ) {
+    return returnCallee.property;
+  }
+
+  return null;
+}
+
+export function getFunctionName(
+  node:
+    | TSESTree.FunctionDeclaration
+    | TSESTree.FunctionExpression
+    | TSESTree.ArrowFunctionExpression
+): string {
+  return (
+    ASTUtils.getFunctionNameWithKind(node)
+      .match(/('\w+')/g)?.[0]
+      .replace(/'/g, '') ?? ''
   );
 }
 
