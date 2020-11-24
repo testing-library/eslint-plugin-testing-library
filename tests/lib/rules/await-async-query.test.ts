@@ -125,8 +125,10 @@ ruleTester.run(RULE_NAME, rule, {
     // async queries are valid with promise in variable and returned in regular function
     ...createTestCase(
       (query) => `
-        const promise = ${query}('foo')
-        return promise
+        async function queryWrapper() {
+          const promise = ${query}('foo')
+          return promise
+        }
       `
     ),
 
@@ -169,10 +171,41 @@ ruleTester.run(RULE_NAME, rule, {
 
     // non-matching query is valid
     `
-    test('An example test', async () => {
+    test('An valid example test', async () => {
       const example = findText("my example")
     })
     `,
+
+    // unhandled promise from non-matching query is valid
+    `
+    async function findButton() {
+      const element = findByText('outer element')
+      return somethingElse(element)
+    }
+
+    test('An valid example test', async () => {
+      // findButton doesn't match async query pattern
+      const button = findButton()
+    })
+    `,
+
+    // edge case for coverage
+    // return non-matching query and other than Identifier or CallExpression
+    `
+    async function someSetup() {
+      const element = await findByText('outer element')
+      return element ? findSomethingElse(element) : null
+    }
+
+    test('An valid example test', async () => {
+      someSetup()
+    })
+    `,
+
+    // edge case for coverage
+    // valid async query usage without any function defined
+    // so there is no innermost function scope found
+    `const element = await findByRole('button')`,
   ],
 
   invalid: [

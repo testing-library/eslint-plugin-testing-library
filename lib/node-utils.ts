@@ -266,10 +266,17 @@ export function getVariableReferences(
   );
 }
 
+interface InnermostFunctionScope extends TSESLintScope.FunctionScope {
+  block:
+    | TSESTree.FunctionDeclaration
+    | TSESTree.FunctionExpression
+    | TSESTree.ArrowFunctionExpression;
+}
+
 export function getInnermostFunctionScope(
   context: RuleContext<string, []>,
   asyncQueryNode: TSESTree.Identifier
-): TSESLintScope.FunctionScope | null {
+): InnermostFunctionScope | null {
   const innermostScope = ASTUtils.getInnermostScope(
     context.getScope(),
     asyncQueryNode
@@ -279,7 +286,7 @@ export function getInnermostFunctionScope(
     innermostScope?.type === 'function' &&
     ASTUtils.isFunction(innermostScope.block)
   ) {
-    return (innermostScope as unknown) as TSESLintScope.FunctionScope;
+    return (innermostScope as unknown) as InnermostFunctionScope;
   }
 
   return null;
@@ -314,17 +321,12 @@ export function getIdentifierNode(
     return node;
   }
 
-  if (isCallExpression(node)) {
-    const callExpressionCallee = node.callee;
+  if (isMemberExpression(node) && ASTUtils.isIdentifier(node.property)) {
+    return node.property;
+  }
 
-    if (ASTUtils.isIdentifier(callExpressionCallee)) {
-      return callExpressionCallee;
-    } else if (
-      isMemberExpression(callExpressionCallee) &&
-      ASTUtils.isIdentifier(callExpressionCallee.property)
-    ) {
-      return callExpressionCallee.property;
-    }
+  if (isCallExpression(node)) {
+    return getIdentifierNode(node.callee);
   }
 
   return null;

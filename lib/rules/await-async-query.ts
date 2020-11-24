@@ -39,7 +39,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
     function detectAsyncQueryWrapper(node: TSESTree.Identifier) {
       const functionScope = getInnermostFunctionScope(context, node);
 
-      if (functionScope && ASTUtils.isFunction(functionScope.block)) {
+      if (functionScope) {
         // save function wrapper calls rather than async calls to be reported later
         const returnStatementNode = getFunctionReturnStatementNode(
           functionScope.block
@@ -62,6 +62,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
     return {
       'CallExpression Identifier'(node: TSESTree.Identifier) {
         if (helpers.isAsyncQuery(node)) {
+          // detect async query used within wrapper function for later analysis
           detectAsyncQueryWrapper(node);
 
           const closestCallExpressionNode = findClosestCallExpressionNode(
@@ -78,6 +79,8 @@ export default createTestingLibraryRule<Options, MessageIds>({
             closestCallExpressionNode.parent
           );
 
+          // check direct usage of async query:
+          //  const element = await findByRole('button')
           if (references && references.length === 0) {
             if (!isPromiseHandled(node)) {
               return context.report({
@@ -88,6 +91,9 @@ export default createTestingLibraryRule<Options, MessageIds>({
             }
           }
 
+          // check references usages of async query:
+          //  const promise = findByRole('button')
+          //  const element = await promise
           for (const reference of references) {
             if (
               ASTUtils.isIdentifier(reference.identifier) &&
@@ -101,6 +107,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
             }
           }
         } else if (functionWrappersNames.includes(node.name)) {
+          // check async queries used within a wrapper previously detected
           if (!isPromiseHandled(node)) {
             return context.report({
               node,
