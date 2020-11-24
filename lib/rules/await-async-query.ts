@@ -6,9 +6,7 @@ import {
   getIdentifierNode,
   getInnermostFunctionScope,
   getVariableReferences,
-  hasClosestExpectResolvesRejects,
-  isAwaited,
-  isPromiseResolved,
+  isPromiseHandled,
 } from '../node-utils';
 import { createTestingLibraryRule } from '../create-testing-library-rule';
 
@@ -28,7 +26,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
     messages: {
       awaitAsyncQuery: 'promise returned from {{ name }} query must be handled',
       asyncQueryWrapper:
-        'promise returned from {{ name }} wrapper must be handled',
+        'promise returned from {{ name }} wrapper over async query must be handled',
     },
     fixable: null,
     schema: [],
@@ -55,10 +53,6 @@ export default createTestingLibraryRule<Options, MessageIds>({
           returnStatementNode
         );
 
-        if (!returnStatementIdentifier) {
-          return;
-        }
-
         if (returnStatementIdentifier?.name === node.name) {
           functionWrappersNames.push(getFunctionName(functionScope.block));
         }
@@ -67,7 +61,6 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
     return {
       'CallExpression Identifier'(node: TSESTree.Identifier) {
-        // check async query direct calls or related function wrapper
         if (helpers.isAsyncQuery(node)) {
           detectAsyncQueryWrapper(node);
 
@@ -76,7 +69,6 @@ export default createTestingLibraryRule<Options, MessageIds>({
             true
           );
 
-          // stop checking if Identifier doesn't belong to CallExpression
           if (!closestCallExpressionNode) {
             return;
           }
@@ -87,69 +79,35 @@ export default createTestingLibraryRule<Options, MessageIds>({
           );
 
           if (references && references.length === 0) {
-            // stop checking if already awaited
-            if (isAwaited(closestCallExpressionNode.parent)) {
-              return;
+            if (!isPromiseHandled(node)) {
+              return context.report({
+                node,
+                messageId: 'awaitAsyncQuery',
+                data: { name: node.name },
+              });
             }
-
-            // stop checking if promise already handled
-            if (isPromiseResolved(node)) {
-              return;
-            }
-
-            // stop checking if belongs to async assert already handled
-            if (hasClosestExpectResolvesRejects(closestCallExpressionNode)) {
-              return;
-            }
-
-            return context.report({
-              node,
-              messageId: 'awaitAsyncQuery',
-              data: { name: node.name },
-            });
           }
 
           for (const reference of references) {
-            const referenceNode = reference.identifier;
-
-            if (isAwaited(referenceNode.parent)) {
-              return;
+            if (
+              ASTUtils.isIdentifier(reference.identifier) &&
+              !isPromiseHandled(reference.identifier)
+            ) {
+              return context.report({
+                node,
+                messageId: 'awaitAsyncQuery',
+                data: { name: node.name },
+              });
             }
-
-            if (isPromiseResolved(referenceNode)) {
-              return;
-            }
-
+          }
+        } else if (functionWrappersNames.includes(node.name)) {
+          if (!isPromiseHandled(node)) {
             return context.report({
               node,
-              messageId: 'awaitAsyncQuery',
+              messageId: 'asyncQueryWrapper',
               data: { name: node.name },
             });
           }
-        } else if (functionWrappersNames.includes(node.name)) {
-          const closestCallExpressionNode = findClosestCallExpressionNode(
-            node,
-            true
-          );
-
-          // stop checking if Identifier doesn't belong to CallExpression
-          if (!closestCallExpressionNode) {
-            return;
-          }
-
-          if (isAwaited(closestCallExpressionNode.parent)) {
-            return;
-          }
-
-          if (isPromiseResolved(node)) {
-            return;
-          }
-
-          return context.report({
-            node,
-            messageId: 'asyncQueryWrapper',
-            data: { name: node.name },
-          });
         }
       },
     };

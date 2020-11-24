@@ -111,7 +111,7 @@ export function isJSXAttribute(
 /**
  * Finds the closest CallExpression node for a given node.
  * @param node
- * @param shouldRestrictInnerScope - If true, CallExpression must be directly related to node
+ * @param shouldRestrictInnerScope - If true, CallExpression must belong to innermost scope of given node
  */
 export function findClosestCallExpressionNode(
   node: TSESTree.Node,
@@ -210,6 +210,49 @@ export function isPromiseResolved(node: TSESTree.Node): boolean {
 
   // promise.then(...)
   return hasThenProperty(parent);
+}
+
+/**
+ * Determines whether an Identifier related to a promise is considered as handled.
+ *
+ * It will be considered as handled if:
+ * - it belongs to await expression
+ * - it's returned from a function
+ * - it's resolved with `then` method
+ * - has `resolves` or `rejects`
+ */
+export function isPromiseHandled(nodeIdentifier: TSESTree.Identifier): boolean {
+  const closestCallExpressionNode = findClosestCallExpressionNode(
+    nodeIdentifier,
+    true
+  );
+
+  const suspiciousNodes = [nodeIdentifier, closestCallExpressionNode].filter(
+    Boolean
+  );
+
+  for (const node of suspiciousNodes) {
+    if (ASTUtils.isAwaitExpression(node.parent)) {
+      return true;
+    }
+
+    if (
+      isArrowFunctionExpression(node.parent) ||
+      isReturnStatement(node.parent)
+    ) {
+      return true;
+    }
+
+    if (hasClosestExpectResolvesRejects(node.parent)) {
+      return true;
+    }
+
+    if (isPromiseResolved(node)) {
+      return true;
+    }
+  }
+
+  return false;
 }
 
 export function getVariableReferences(
