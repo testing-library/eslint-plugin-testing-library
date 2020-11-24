@@ -200,7 +200,7 @@ export function isAwaited(node: TSESTree.Node): boolean {
   );
 }
 
-export function isPromiseResolved(node: TSESTree.Node): boolean {
+export function hasChainedThen(node: TSESTree.Node): boolean {
   const parent = node.parent;
 
   // wait(...).then(...)
@@ -247,7 +247,7 @@ export function isPromiseHandled(nodeIdentifier: TSESTree.Identifier): boolean {
       return true;
     }
 
-    if (isPromiseResolved(node)) {
+    if (hasChainedThen(node)) {
       return true;
     }
   }
