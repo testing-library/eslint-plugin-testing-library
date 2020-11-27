@@ -1,10 +1,10 @@
-# Enforce promise from async queries to be handled (await-async-query)
+# Enforce promises from async queries to be handled (await-async-query)
 
 Ensure that promises returned by async queries are handled properly.
 
 ## Rule Details
 
-Some of the queries variants that Testing Library provides are
+Some queries variants that Testing Library provides are
 asynchronous as they return a promise which resolves when elements are
 found. Those queries variants are:
 
