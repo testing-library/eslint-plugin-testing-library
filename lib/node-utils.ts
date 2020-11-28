@@ -312,6 +312,8 @@ export function getFunctionReturnStatementNode(
     // arrow function with implicit return
     return functionNode.body;
   }
+
+  return null;
 }
 
 export function getIdentifierNode(
