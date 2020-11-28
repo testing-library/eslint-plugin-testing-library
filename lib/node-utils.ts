@@ -302,7 +302,7 @@ export function getFunctionReturnStatementNode(
     // regular function or arrow function with block
     const returnStatementNode = functionNode.body.body.find((statement) =>
       isReturnStatement(statement)
-    ) as TSESTree.ReturnStatement | null;
+    ) as TSESTree.ReturnStatement | undefined;
 
     if (!returnStatementNode) {
       return null;
