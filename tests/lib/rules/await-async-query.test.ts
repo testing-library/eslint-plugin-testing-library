@@ -3,6 +3,8 @@ import { createRuleTester } from '../test-utils';
 import rule, { RULE_NAME } from '../../../lib/rules/await-async-query';
 import {
   ASYNC_QUERIES_COMBINATIONS,
+  ASYNC_QUERIES_VARIANTS,
+  combineQueries,
   SYNC_QUERIES_COMBINATIONS,
 } from '../../../lib/utils';
 
@@ -25,14 +27,17 @@ function createTestCode({ code, isAsync = true }: TestCode) {
 interface TestCaseParams {
   isAsync?: boolean;
   combinations?: string[];
-  errors?: TestCaseError<'awaitAsyncQuery'>[];
+  errors?: TestCaseError<'awaitAsyncQuery' | 'asyncQueryWrapper'>[];
 }
 
 function createTestCase(
   getTest: (
     query: string
   ) => string | { code: string; errors?: TestCaseError<'awaitAsyncQuery'>[] },
-  { combinations = ASYNC_QUERIES_COMBINATIONS, isAsync }: TestCaseParams = {}
+  {
+    combinations = ALL_ASYNC_COMBINATIONS_TO_TEST,
+    isAsync,
+  }: TestCaseParams = {}
 ) {
   return combinations.map((query) => {
     const test = getTest(query);
@@ -45,6 +50,17 @@ function createTestCase(
         };
   });
 }
+
+const CUSTOM_ASYNC_QUERIES_COMBINATIONS = combineQueries(
+  ASYNC_QUERIES_VARIANTS,
+  ['ByIcon', 'ByButton']
+);
+
+// built-in queries + custom queries
+const ALL_ASYNC_COMBINATIONS_TO_TEST = [
+  ...ASYNC_QUERIES_COMBINATIONS,
+  ...CUSTOM_ASYNC_QUERIES_COMBINATIONS,
+];
 
 ruleTester.run(RULE_NAME, rule, {
   valid: [
@@ -81,14 +97,6 @@ ruleTester.run(RULE_NAME, rule, {
       `
     ),
 
-    // async queries are valid when saved in a promise variable resolved by an await operator
-    ...createTestCase(
-      (query) => `
-        const promise = ${query}('foo')
-        await promise
-      `
-    ),
-
     // async queries are valid when used with then method
     ...createTestCase(
       (query) => `
@@ -114,11 +122,13 @@ ruleTester.run(RULE_NAME, rule, {
     // async queries are valid with promise returned in regular function
     ...createTestCase((query) => `function foo() { return ${query}('foo') }`),
 
-    // async queries are valid with promise in variable and returned in regular functio
+    // async queries are valid with promise in variable and returned in regular function
     ...createTestCase(
       (query) => `
-        const promise = ${query}('foo')
-        return promise
+        async function queryWrapper() {
+          const promise = ${query}('foo')
+          return promise
+        }
       `
     ),
 
@@ -147,16 +157,9 @@ ruleTester.run(RULE_NAME, rule, {
       `
     ),
 
-    // non existing queries are valid
-    createTestCode({
-      code: `
-        doSomething()
-        const foo = findByNonExistingTestingLibraryQuery('foo')
-      `,
-    }),
-
-    // unresolved async queries are valid if there are no imports from a testing library module
-    ...ASYNC_QUERIES_COMBINATIONS.map((query) => ({
+    // unresolved async queries with aggressive reporting opted-out are valid
+    ...ALL_ASYNC_COMBINATIONS_TO_TEST.map((query) => ({
+      settings: { 'testing-library/module': 'test-utils' },
       code: `
         import { render } from "another-library"
 
@@ -165,6 +168,44 @@ ruleTester.run(RULE_NAME, rule, {
         })
       `,
     })),
+
+    // non-matching query is valid
+    `
+    test('An valid example test', async () => {
+      const example = findText("my example")
+    })
+    `,
+
+    // unhandled promise from non-matching query is valid
+    `
+    async function findButton() {
+      const element = findByText('outer element')
+      return somethingElse(element)
+    }
+
+    test('An valid example test', async () => {
+      // findButton doesn't match async query pattern
+      const button = findButton()
+    })
+    `,
+
+    // edge case for coverage
+    // return non-matching query and other than Identifier or CallExpression
+    `
+    async function someSetup() {
+      const element = await findByText('outer element')
+      return element ? findSomethingElse(element) : null
+    }
+
+    test('An valid example test', async () => {
+      someSetup()
+    })
+    `,
+
+    // edge case for coverage
+    // valid async query usage without any function defined
+    // so there is no innermost function scope found
+    `const element = await findByRole('button')`,
   ],
 
   invalid: [
@@ -174,13 +215,13 @@ ruleTester.run(RULE_NAME, rule, {
         doSomething()
         const foo = ${query}('foo')
       `,
-      errors: [{ messageId: 'awaitAsyncQuery' }],
+      errors: [{ messageId: 'awaitAsyncQuery', line: 6, column: 21 }],
     })),
 
     // async screen queries without await operator or then method are not valid
     ...createTestCase((query) => ({
       code: `screen.${query}('foo')`,
-      errors: [{ messageId: 'awaitAsyncQuery' }],
+      errors: [{ messageId: 'awaitAsyncQuery', line: 4, column: 14 }],
     })),
 
     ...createTestCase((query) => ({
@@ -192,12 +233,79 @@ ruleTester.run(RULE_NAME, rule, {
       errors: [
         {
           line: 5,
+          column: 21,
           messageId: 'awaitAsyncQuery',
           data: {
             name: query,
           },
         },
       ],
+    })),
+
+    // unresolved async queries are not valid (aggressive reporting)
+    ...ALL_ASYNC_COMBINATIONS_TO_TEST.map((query) => ({
+      code: `
+        import { render } from "another-library"
+
+        test('An example test', async () => {
+          const example = ${query}("my example")
+        })
+      `,
+      errors: [{ messageId: 'awaitAsyncQuery', line: 5, column: 27 }],
+    })),
+
+    // unhandled promise from async query function wrapper is invalid
+    ...ALL_ASYNC_COMBINATIONS_TO_TEST.map((query) => ({
+      code: `
+        function queryWrapper() {
+          doSomethingElse();
+          
+          return screen.${query}('foo')
+        }
+        
+        test("An invalid example test", () => {
+          const element = queryWrapper()
+        })
+        
+        test("An valid example test", async () => {
+          const element = await queryWrapper()
+        })
+      `,
+      errors: [{ messageId: 'asyncQueryWrapper', line: 9, column: 27 }],
+    })),
+    // unhandled promise from async query arrow function wrapper is invalid
+    ...ALL_ASYNC_COMBINATIONS_TO_TEST.map((query) => ({
+      code: `
+        const queryWrapper = () => {
+          doSomethingElse();
+
+          return ${query}('foo')
+        }
+
+        test("An invalid example test", () => {
+          const element = queryWrapper()
+        })
+
+        test("An valid example test", async () => {
+          const element = await queryWrapper()
+        })
+      `,
+      errors: [{ messageId: 'asyncQueryWrapper', line: 9, column: 27 }],
+    })),
+    // unhandled promise implicitly returned from async query arrow function wrapper is invalid
+    ...ALL_ASYNC_COMBINATIONS_TO_TEST.map((query) => ({
+      code: `
+        const queryWrapper = () => screen.${query}('foo')
+
+        test("An invalid example test", () => {
+          const element = queryWrapper()
+        })
+
+        test("An valid example test", async () => {
+          const element = await queryWrapper()
+        })
+      `,
+      errors: [{ messageId: 'asyncQueryWrapper', line: 5, column: 27 }],
     })),
   ],
 });

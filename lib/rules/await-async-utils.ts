@@ -7,7 +7,7 @@ import {
 import { getDocsUrl, ASYNC_UTILS, LIBRARY_MODULES } from '../utils';
 import {
   isAwaited,
-  isPromiseResolved,
+  hasChainedThen,
   getVariableReferences,
   isMemberExpression,
   isImportSpecifier,
@@ -121,7 +121,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
             references &&
             references.length === 0 &&
             !isAwaited(node.parent.parent) &&
-            !isPromiseResolved(node) &&
+            !hasChainedThen(node) &&
             !isInPromiseAll(node)
           ) {
             context.report({
@@ -136,7 +136,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
               const referenceNode = reference.identifier;
               if (
                 !isAwaited(referenceNode.parent) &&
-                !isPromiseResolved(referenceNode)
+                !hasChainedThen(referenceNode)
               ) {
                 context.report({
                   node,

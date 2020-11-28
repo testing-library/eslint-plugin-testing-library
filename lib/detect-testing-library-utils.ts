@@ -50,7 +50,9 @@ export type DetectionHelpers = {
   isValidFilename: () => boolean;
   isGetByQuery: (node: TSESTree.Identifier) => boolean;
   isQueryByQuery: (node: TSESTree.Identifier) => boolean;
+  isFindByQuery: (node: TSESTree.Identifier) => boolean;
   isSyncQuery: (node: TSESTree.Identifier) => boolean;
+  isAsyncQuery: (node: TSESTree.Identifier) => boolean;
   isPresenceAssert: (node: TSESTree.MemberExpression) => boolean;
   isAbsenceAssert: (node: TSESTree.MemberExpression) => boolean;
   canReportErrors: () => boolean;
@@ -135,14 +137,21 @@ export function detectTestingLibraryUtils<
      * Determines whether a given node is `getBy*` or `getAllBy*` query variant or not.
      */
     const isGetByQuery: DetectionHelpers['isGetByQuery'] = (node) => {
-      return !!node.name.match(/^get(All)?By.+$/);
+      return /^get(All)?By.+$/.test(node.name);
     };
 
     /**
      * Determines whether a given node is `queryBy*` or `queryAllBy*` query variant or not.
      */
     const isQueryByQuery: DetectionHelpers['isQueryByQuery'] = (node) => {
-      return !!node.name.match(/^query(All)?By.+$/);
+      return /^query(All)?By.+$/.test(node.name);
+    };
+
+    /**
+     * Determines whether a given node is `findBy*` or `findAllBy*` query variant or not.
+     */
+    const isFindByQuery: DetectionHelpers['isFindByQuery'] = (node) => {
+      return /^find(All)?By.+$/.test(node.name);
     };
 
     /**
@@ -150,6 +159,13 @@ export function detectTestingLibraryUtils<
      */
     const isSyncQuery: DetectionHelpers['isSyncQuery'] = (node) => {
       return isGetByQuery(node) || isQueryByQuery(node);
+    };
+
+    /**
+     * Determines whether a given node is async query or not.
+     */
+    const isAsyncQuery: DetectionHelpers['isAsyncQuery'] = (node) => {
+      return isFindByQuery(node);
     };
 
     /**
@@ -293,7 +309,9 @@ export function detectTestingLibraryUtils<
       isValidFilename,
       isGetByQuery,
       isQueryByQuery,
+      isFindByQuery,
       isSyncQuery,
+      isAsyncQuery,
       isPresenceAssert,
       isAbsenceAssert,
       canReportErrors,

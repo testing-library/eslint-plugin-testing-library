@@ -4,7 +4,7 @@ import {
   ASTUtils,
 } from '@typescript-eslint/experimental-utils';
 import { getDocsUrl } from '../utils';
-import { isAwaited, isPromiseResolved } from '../node-utils';
+import { isAwaited, hasChainedThen } from '../node-utils';
 
 export const RULE_NAME = 'await-fire-event';
 export type MessageIds = 'awaitFireEvent';
@@ -37,7 +37,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
         if (
           ASTUtils.isIdentifier(fireEventMethodNode) &&
           !isAwaited(node.parent.parent.parent) &&
-          !isPromiseResolved(fireEventMethodNode.parent)
+          !hasChainedThen(fireEventMethodNode.parent)
         ) {
           context.report({
             node: fireEventMethodNode,

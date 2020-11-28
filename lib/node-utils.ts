@@ -2,9 +2,39 @@ import {
   AST_NODE_TYPES,
   ASTUtils,
   TSESLint,
+  TSESLintScope,
   TSESTree,
 } from '@typescript-eslint/experimental-utils';
 import { RuleContext } from '@typescript-eslint/experimental-utils/dist/ts-eslint';
+
+const ValidLeftHandSideExpressions = [
+  AST_NODE_TYPES.CallExpression,
+  AST_NODE_TYPES.ClassExpression,
+  AST_NODE_TYPES.ClassDeclaration,
+  AST_NODE_TYPES.FunctionExpression,
+  AST_NODE_TYPES.Literal,
+  AST_NODE_TYPES.TemplateLiteral,
+  AST_NODE_TYPES.MemberExpression,
+  AST_NODE_TYPES.ArrayExpression,
+  AST_NODE_TYPES.ArrayPattern,
+  AST_NODE_TYPES.ClassExpression,
+  AST_NODE_TYPES.FunctionExpression,
+  AST_NODE_TYPES.Identifier,
+  AST_NODE_TYPES.JSXElement,
+  AST_NODE_TYPES.JSXFragment,
+  AST_NODE_TYPES.JSXOpeningElement,
+  AST_NODE_TYPES.MetaProperty,
+  AST_NODE_TYPES.ObjectExpression,
+  AST_NODE_TYPES.ObjectPattern,
+  AST_NODE_TYPES.Super,
+  AST_NODE_TYPES.TemplateLiteral,
+  AST_NODE_TYPES.ThisExpression,
+  AST_NODE_TYPES.TSNullKeyword,
+  AST_NODE_TYPES.TaggedTemplateExpression,
+  AST_NODE_TYPES.TSNonNullExpression,
+  AST_NODE_TYPES.TSAsExpression,
+  AST_NODE_TYPES.ArrowFunctionExpression,
+];
 
 export function isCallExpression(
   node: TSESTree.Node | null | undefined
@@ -78,14 +108,27 @@ export function isJSXAttribute(
   return node?.type === AST_NODE_TYPES.JSXAttribute;
 }
 
+/**
+ * Finds the closest CallExpression node for a given node.
+ * @param node
+ * @param shouldRestrictInnerScope - If true, CallExpression must belong to innermost scope of given node
+ */
 export function findClosestCallExpressionNode(
-  node: TSESTree.Node
-): TSESTree.CallExpression {
+  node: TSESTree.Node,
+  shouldRestrictInnerScope = false
+): TSESTree.CallExpression | null {
   if (isCallExpression(node)) {
     return node;
   }
 
-  if (!node.parent) {
+  if (!node || !node.parent) {
+    return null;
+  }
+
+  if (
+    shouldRestrictInnerScope &&
+    !ValidLeftHandSideExpressions.includes(node.parent.type)
+  ) {
     return null;
   }
 
@@ -157,7 +200,7 @@ export function isAwaited(node: TSESTree.Node): boolean {
   );
 }
 
-export function isPromiseResolved(node: TSESTree.Node): boolean {
+export function hasChainedThen(node: TSESTree.Node): boolean {
   const parent = node.parent;
 
   // wait(...).then(...)
@@ -167,6 +210,49 @@ export function isPromiseResolved(node: TSESTree.Node): boolean {
 
   // promise.then(...)
   return hasThenProperty(parent);
+}
+
+/**
+ * Determines whether an Identifier related to a promise is considered as handled.
+ *
+ * It will be considered as handled if:
+ * - it belongs to the `await` expression
+ * - it's chained with the `then` method
+ * - it's returned from a function
+ * - has `resolves` or `rejects`
+ */
+export function isPromiseHandled(nodeIdentifier: TSESTree.Identifier): boolean {
+  const closestCallExpressionNode = findClosestCallExpressionNode(
+    nodeIdentifier,
+    true
+  );
+
+  const suspiciousNodes = [nodeIdentifier, closestCallExpressionNode].filter(
+    Boolean
+  );
+
+  for (const node of suspiciousNodes) {
+    if (ASTUtils.isAwaitExpression(node.parent)) {
+      return true;
+    }
+
+    if (
+      isArrowFunctionExpression(node.parent) ||
+      isReturnStatement(node.parent)
+    ) {
+      return true;
+    }
+
+    if (hasClosestExpectResolvesRejects(node.parent)) {
+      return true;
+    }
+
+    if (hasChainedThen(node)) {
+      return true;
+    }
+  }
+
+  return false;
 }
 
 export function getVariableReferences(
@@ -180,6 +266,88 @@ export function getVariableReferences(
   );
 }
 
+interface InnermostFunctionScope extends TSESLintScope.FunctionScope {
+  block:
+    | TSESTree.FunctionDeclaration
+    | TSESTree.FunctionExpression
+    | TSESTree.ArrowFunctionExpression;
+}
+
+export function getInnermostFunctionScope(
+  context: RuleContext<string, []>,
+  asyncQueryNode: TSESTree.Identifier
+): InnermostFunctionScope | null {
+  const innermostScope = ASTUtils.getInnermostScope(
+    context.getScope(),
+    asyncQueryNode
+  );
+
+  if (
+    innermostScope?.type === 'function' &&
+    ASTUtils.isFunction(innermostScope.block)
+  ) {
+    return (innermostScope as unknown) as InnermostFunctionScope;
+  }
+
+  return null;
+}
+
+export function getFunctionReturnStatementNode(
+  functionNode:
+    | TSESTree.FunctionDeclaration
+    | TSESTree.FunctionExpression
+    | TSESTree.ArrowFunctionExpression
+): TSESTree.Node | null {
+  if (isBlockStatement(functionNode.body)) {
+    // regular function or arrow function with block
+    const returnStatementNode = functionNode.body.body.find((statement) =>
+      isReturnStatement(statement)
+    ) as TSESTree.ReturnStatement | undefined;
+
+    if (!returnStatementNode) {
+      return null;
+    }
+    return returnStatementNode.argument;
+  } else if (functionNode.expression) {
+    // arrow function with implicit return
+    return functionNode.body;
+  }
+
+  return null;
+}
+
+export function getIdentifierNode(
+  node: TSESTree.Node
+): TSESTree.Identifier | null {
+  if (ASTUtils.isIdentifier(node)) {
+    return node;
+  }
+
+  if (isMemberExpression(node) && ASTUtils.isIdentifier(node.property)) {
+    return node.property;
+  }
+
+  if (isCallExpression(node)) {
+    return getIdentifierNode(node.callee);
+  }
+
+  return null;
+}
+
+export function getFunctionName(
+  node:
+    | TSESTree.FunctionDeclaration
+    | TSESTree.FunctionExpression
+    | TSESTree.ArrowFunctionExpression
+): string {
+  return (
+    ASTUtils.getFunctionNameWithKind(node)
+      .match(/('\w+')/g)?.[0]
+      .replace(/'/g, '') ?? ''
+  );
+}
+
+// TODO: should be removed after v4 is finished
 export function isRenderFunction(
   callNode: TSESTree.CallExpression,
   renderFunctions: string[]
@@ -197,6 +365,7 @@ export function isRenderFunction(
   });
 }
 
+// TODO: should be removed after v4 is finished
 export function isRenderVariableDeclarator(
   node: TSESTree.VariableDeclarator,
   renderFunctions: string[]
@@ -280,4 +449,30 @@ export function getAssertNodeInfo(
   }
 
   return { matcher, isNegated };
+}
+
+/**
+ * Determines whether a node belongs to an async assertion
+ * fulfilled by `resolves` or `rejects` properties.
+ *
+ */
+export function hasClosestExpectResolvesRejects(node: TSESTree.Node): boolean {
+  if (
+    isCallExpression(node) &&
+    ASTUtils.isIdentifier(node.callee) &&
+    isMemberExpression(node.parent) &&
+    node.callee.name === 'expect'
+  ) {
+    const expectMatcher = node.parent.property;
+    return (
+      ASTUtils.isIdentifier(expectMatcher) &&
+      (expectMatcher.name === 'resolves' || expectMatcher.name === 'rejects')
+    );
+  }
+
+  if (!node.parent) {
+    return false;
+  }
+
+  return hasClosestExpectResolvesRejects(node.parent);
 }

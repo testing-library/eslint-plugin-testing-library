@@ -1,6 +1,6 @@
 import { TSESTree } from '@typescript-eslint/experimental-utils';
 
-const combineQueries = (variants: string[], methods: string[]) => {
+const combineQueries = (variants: string[], methods: string[]): string[] => {
   const combinedQueries: string[] = [];
   variants.forEach((variant) => {
     const variantPrefix = variant.replace('By', '');
@@ -115,6 +115,7 @@ const PRESENCE_MATCHERS = ['toBeInTheDocument', 'toBeTruthy', 'toBeDefined'];
 const ABSENCE_MATCHERS = ['toBeNull', 'toBeFalsy'];
 
 export {
+  combineQueries,
   getDocsUrl,
   hasTestingLibraryImportModule,
   SYNC_QUERIES_VARIANTS,
