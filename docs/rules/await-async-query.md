@@ -15,10 +15,10 @@ This rule aims to prevent users from forgetting to handle the returned
 promise from those async queries to be fulfilled, which could lead to
 errors in the tests. The promise will be considered as handled when:
 
-- using `await` operator
-- chaining `then` method
+- using the `await` operator
+- chaining the `then` method
 - chaining `resolves` or `rejects` from jest
-- is returned from a function (in this case, that particular function will be analyzed by this rule too)
+- it's returned from a function (in this case, that particular function will be analyzed by this rule too)
 
 Examples of **incorrect** code for this rule:
 
