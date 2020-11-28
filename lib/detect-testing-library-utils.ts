@@ -137,21 +137,21 @@ export function detectTestingLibraryUtils<
      * Determines whether a given node is `getBy*` or `getAllBy*` query variant or not.
      */
     const isGetByQuery: DetectionHelpers['isGetByQuery'] = (node) => {
-      return !!node.name.match(/^get(All)?By.+$/);
+      return /^get(All)?By.+$/.test(node.name);
     };
 
     /**
      * Determines whether a given node is `queryBy*` or `queryAllBy*` query variant or not.
      */
     const isQueryByQuery: DetectionHelpers['isQueryByQuery'] = (node) => {
-      return !!node.name.match(/^query(All)?By.+$/);
+      return /^query(All)?By.+$/.test(node.name);
     };
 
     /**
      * Determines whether a given node is `findBy*` or `findAllBy*` query variant or not.
      */
     const isFindByQuery: DetectionHelpers['isFindByQuery'] = (node) => {
-      return !!node.name.match(/^find(All)?By.+$/);
+      return /^find(All)?By.+$/.test(node.name);
     };
 
     /**
