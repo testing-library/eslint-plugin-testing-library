@@ -1,6 +1,6 @@
 import { ASTUtils, TSESTree } from '@typescript-eslint/experimental-utils';
 
-import { ASYNC_UTILS, LIBRARY_MODULES } from '../utils';
+import { LIBRARY_MODULES } from '../utils';
 import {
   getVariableReferences,
   hasChainedThen,
@@ -16,8 +16,6 @@ import { createTestingLibraryRule } from '../create-testing-library-rule';
 export const RULE_NAME = 'await-async-utils';
 export type MessageIds = 'awaitAsyncUtil';
 type Options = [];
-
-const ASYNC_UTILS_REGEXP = new RegExp(`^(${ASYNC_UTILS.join('|')})$`);
 
 // verifies the CallExpression is Promise.all()
 function isPromiseAll(node: TSESTree.CallExpression) {
@@ -58,7 +56,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
   },
   defaultOptions: [],
 
-  create(context) {
+  create(context, _, helpers) {
     const asyncUtilsUsage: Array<{
       node: TSESTree.Identifier | TSESTree.MemberExpression;
       name: string;
@@ -83,14 +81,20 @@ export default createTestingLibraryRule<Options, MessageIds>({
           importedAsyncUtils.push(node.local.name);
         }
       },
-      [`CallExpression > Identifier[name=${ASYNC_UTILS_REGEXP}]`](
-        node: TSESTree.Identifier
-      ) {
+      [`CallExpression > Identifier`](node: TSESTree.Identifier) {
+        if (!helpers.isAsyncUtil(node)) {
+          return;
+        }
+
         asyncUtilsUsage.push({ node, name: node.name });
       },
-      [`CallExpression > MemberExpression > Identifier[name=${ASYNC_UTILS_REGEXP}]`](
+      [`CallExpression > MemberExpression > Identifier`](
         node: TSESTree.Identifier
       ) {
+        if (!helpers.isAsyncUtil(node)) {
+          return;
+        }
+
         const memberExpression = node.parent as TSESTree.MemberExpression;
         const identifier = memberExpression.object as TSESTree.Identifier;
         const memberExpressionName = identifier.name;
