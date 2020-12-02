@@ -1,14 +1,10 @@
 import { ASTUtils, TSESTree } from '@typescript-eslint/experimental-utils';
-
-import { LIBRARY_MODULES } from '../utils';
 import {
   getVariableReferences,
   hasChainedThen,
   isArrayExpression,
   isAwaited,
   isCallExpression,
-  isImportNamespaceSpecifier,
-  isImportSpecifier,
   isMemberExpression,
 } from '../node-utils';
 import { createTestingLibraryRule } from '../create-testing-library-rule';
@@ -61,26 +57,8 @@ export default createTestingLibraryRule<Options, MessageIds>({
       node: TSESTree.Identifier | TSESTree.MemberExpression;
       name: string;
     }> = [];
-    const importedAsyncUtils: string[] = [];
 
     return {
-      'ImportDeclaration > ImportSpecifier,ImportNamespaceSpecifier'(
-        node: TSESTree.Node
-      ) {
-        const parent = node.parent as TSESTree.ImportDeclaration;
-
-        if (!LIBRARY_MODULES.includes(parent.source.value.toString())) {
-          return;
-        }
-
-        if (isImportSpecifier(node)) {
-          importedAsyncUtils.push(node.imported.name);
-        }
-
-        if (isImportNamespaceSpecifier(node)) {
-          importedAsyncUtils.push(node.local.name);
-        }
-      },
       [`CallExpression > Identifier`](node: TSESTree.Identifier) {
         if (!helpers.isAsyncUtil(node)) {
           return;
@@ -105,14 +83,8 @@ export default createTestingLibraryRule<Options, MessageIds>({
         });
       },
       'Program:exit'() {
-        const testingLibraryUtilUsage = asyncUtilsUsage.filter((usage) => {
-          if (isMemberExpression(usage.node)) {
-            const object = usage.node.object as TSESTree.Identifier;
-
-            return importedAsyncUtils.includes(object.name);
-          }
-
-          return importedAsyncUtils.includes(usage.name);
+        const testingLibraryUtilUsage = asyncUtilsUsage.filter(({ node }) => {
+          return helpers.isNodeComingFromTestingLibrary(node);
         });
 
         testingLibraryUtilUsage.forEach(({ node, name }) => {

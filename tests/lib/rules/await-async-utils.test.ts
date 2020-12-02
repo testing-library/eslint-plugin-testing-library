@@ -5,6 +5,7 @@ import { ASYNC_UTILS } from '../../../lib/utils';
 const ruleTester = createRuleTester();
 
 // FIXME: add cases for Promise.allSettled
+// FIXME: check column on invalid cases
 
 ruleTester.run(RULE_NAME, rule, {
   valid: [
@@ -176,19 +177,20 @@ ruleTester.run(RULE_NAME, rule, {
         });
       `,
     },
-    {
+    ...ASYNC_UTILS.map((asyncUtil) => ({
       code: `
-        test('util not related to testing library is valid', async () => {
+        import { ${asyncUtil} } from '@somewhere/else';
+        test('util unhandled but not related to testing library is valid', async () => {
           doSomethingElse();
-          waitNotRelatedToTestingLibrary();
+          ${asyncUtil}('not related to testing library')
         });
       `,
-    },
+    })),
     {
       code: `
       test('using unrelated promises with Promise.all do not throw an error', async () => {
         await Promise.all([
-          someMethod(),
+          waitFor('not related to testing library'),
           promise1,
           await foo().then(() => baz())
         ])
