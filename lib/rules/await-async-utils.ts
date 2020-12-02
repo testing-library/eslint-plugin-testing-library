@@ -1,20 +1,17 @@
-import {
-  ESLintUtils,
-  TSESTree,
-  ASTUtils,
-} from '@typescript-eslint/experimental-utils';
+import { ASTUtils, TSESTree } from '@typescript-eslint/experimental-utils';
 
-import { getDocsUrl, ASYNC_UTILS, LIBRARY_MODULES } from '../utils';
+import { ASYNC_UTILS, LIBRARY_MODULES } from '../utils';
 import {
-  isAwaited,
-  hasChainedThen,
   getVariableReferences,
-  isMemberExpression,
-  isImportSpecifier,
-  isImportNamespaceSpecifier,
-  isCallExpression,
+  hasChainedThen,
   isArrayExpression,
+  isAwaited,
+  isCallExpression,
+  isImportNamespaceSpecifier,
+  isImportSpecifier,
+  isMemberExpression,
 } from '../node-utils';
+import { createTestingLibraryRule } from '../create-testing-library-rule';
 
 export const RULE_NAME = 'await-async-utils';
 export type MessageIds = 'awaitAsyncUtil';
@@ -44,12 +41,12 @@ function isInPromiseAll(node: TSESTree.Node) {
   );
 }
 
-export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
+export default createTestingLibraryRule<Options, MessageIds>({
   name: RULE_NAME,
   meta: {
     type: 'problem',
     docs: {
-      description: 'Enforce async utils to be awaited properly',
+      description: 'Enforce promises from async utils to be handled',
       category: 'Best Practices',
       recommended: 'warn',
     },

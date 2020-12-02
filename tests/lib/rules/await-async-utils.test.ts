@@ -4,6 +4,8 @@ import { ASYNC_UTILS } from '../../../lib/utils';
 
 const ruleTester = createRuleTester();
 
+// FIXME: add cases for Promise.allSettled
+
 ruleTester.run(RULE_NAME, rule, {
   valid: [
     ...ASYNC_UTILS.map((asyncUtil) => ({

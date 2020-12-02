@@ -40,7 +40,6 @@ export default createTestingLibraryRule<Options, MessageIds>({
       const functionScope = getInnermostFunctionScope(context, node);
 
       if (functionScope) {
-        // save function wrapper calls rather than async calls to be reported later
         const returnStatementNode = getFunctionReturnStatementNode(
           functionScope.block
         );
