@@ -71,6 +71,19 @@ const someButton = await findMyButton();
 ```
 
 ```js
+// several promises handled with `Promise.all` is correct
+await Promise.all([findByText('my button'), findByText('something else')]);
+```
+
+```js
+// several promises handled `Promise.allSettled` is correct
+await Promise.allSettled([
+  findByText('my button'),
+  findByText('something else'),
+]);
+```
+
+```js
 // using a resolves/rejects matcher is also correct
 expect(findByTestId('alert')).resolves.toBe('Success');
 expect(findByTestId('alert')).rejects.toBe('Error');
