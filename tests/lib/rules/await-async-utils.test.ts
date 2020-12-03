@@ -5,7 +5,6 @@ import { ASYNC_UTILS } from '../../../lib/utils';
 const ruleTester = createRuleTester();
 
 // FIXME: add cases for Promise.allSettled
-// FIXME: check column on invalid cases
 
 ruleTester.run(RULE_NAME, rule, {
   valid: [
@@ -207,7 +206,7 @@ ruleTester.run(RULE_NAME, rule, {
           ${asyncUtil}(() => getByLabelText('email'));
         });
       `,
-      errors: [{ line: 5, messageId: 'awaitAsyncUtil' }],
+      errors: [{ line: 5, column: 11, messageId: 'awaitAsyncUtil' }],
     })),
     ...ASYNC_UTILS.map((asyncUtil) => ({
       code: `
@@ -217,7 +216,7 @@ ruleTester.run(RULE_NAME, rule, {
           asyncUtil.${asyncUtil}(() => getByLabelText('email'));
         });
       `,
-      errors: [{ line: 5, messageId: 'awaitAsyncUtil' }],
+      errors: [{ line: 5, column: 21, messageId: 'awaitAsyncUtil' }],
     })),
     ...ASYNC_UTILS.map((asyncUtil) => ({
       code: `
