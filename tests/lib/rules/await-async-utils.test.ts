@@ -230,6 +230,16 @@ ruleTester.run(RULE_NAME, rule, {
       })
       `,
     },
+
+    // edge case for coverage
+    // valid async query usage without any function defined
+    // so there is no innermost function scope found
+    `
+    import { waitFor } from '@testing-library/dom';
+    test('edge case for no innermost function scope', () => {
+      const foo = waitFor
+    })
+    `,
   ],
   invalid: [
     ...ASYNC_UTILS.map((asyncUtil) => ({
