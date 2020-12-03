@@ -514,3 +514,33 @@ export function hasClosestExpectResolvesRejects(node: TSESTree.Node): boolean {
 
   return hasClosestExpectResolvesRejects(node.parent);
 }
+
+/**
+ * Gets the name of the function which returns the given Identifier.
+ */
+export function getInnermostReturningFunctionName(
+  context: RuleContext<string, []>,
+  node: TSESTree.Identifier
+): string | undefined {
+  const functionScope = getInnermostFunctionScope(context, node);
+
+  if (!functionScope) {
+    return;
+  }
+
+  const returnStatementNode = getFunctionReturnStatementNode(
+    functionScope.block
+  );
+
+  if (!returnStatementNode) {
+    return;
+  }
+
+  const returnStatementIdentifier = getIdentifierNode(returnStatementNode);
+
+  if (returnStatementIdentifier?.name !== node.name) {
+    return;
+  }
+
+  return getFunctionName(functionScope.block);
+}

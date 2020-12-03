@@ -1,10 +1,7 @@
 import { ASTUtils, TSESTree } from '@typescript-eslint/experimental-utils';
 import {
   findClosestCallExpressionNode,
-  getFunctionName,
-  getFunctionReturnStatementNode,
-  getIdentifierNode,
-  getInnermostFunctionScope,
+  getInnermostReturningFunctionName,
   getVariableReferences,
   isPromiseHandled,
 } from '../node-utils';
@@ -37,25 +34,8 @@ export default createTestingLibraryRule<Options, MessageIds>({
     const functionWrappersNames: string[] = [];
 
     function detectAsyncQueryWrapper(node: TSESTree.Identifier) {
-      const functionScope = getInnermostFunctionScope(context, node);
-
-      if (functionScope) {
-        const returnStatementNode = getFunctionReturnStatementNode(
-          functionScope.block
-        );
-
-        if (!returnStatementNode) {
-          return;
-        }
-
-        const returnStatementIdentifier = getIdentifierNode(
-          returnStatementNode
-        );
-
-        if (returnStatementIdentifier?.name === node.name) {
-          functionWrappersNames.push(getFunctionName(functionScope.block));
-        }
-      }
+      const functionName = getInnermostReturningFunctionName(context, node);
+      functionName && functionWrappersNames.push(functionName);
     }
 
     return {
