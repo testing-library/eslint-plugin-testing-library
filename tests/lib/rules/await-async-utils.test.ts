@@ -123,7 +123,7 @@ ruleTester.run(RULE_NAME, rule, {
     ...ASYNC_UTILS.map((asyncUtil) => ({
       code: `
         import { ${asyncUtil} } from '@testing-library/dom';
-        test('${asyncUtil} util used in with Promise.all() does not trigger an error', async () => {
+        test('${asyncUtil} util used in with Promise.all() is valid', async () => {
           await Promise.all([
             ${asyncUtil}(callback1),
             ${asyncUtil}(callback2),
@@ -134,7 +134,7 @@ ruleTester.run(RULE_NAME, rule, {
     ...ASYNC_UTILS.map((asyncUtil) => ({
       code: `
         import { ${asyncUtil} } from '@testing-library/dom';
-        test('${asyncUtil} util used in with Promise.all() with an await does not trigger an error', async () => {
+        test('${asyncUtil} util used in with Promise.all() with an await is valid', async () => {
           await Promise.all([
             await ${asyncUtil}(callback1),
             await ${asyncUtil}(callback2),
@@ -145,7 +145,7 @@ ruleTester.run(RULE_NAME, rule, {
     ...ASYNC_UTILS.map((asyncUtil) => ({
       code: `
         import { ${asyncUtil} } from '@testing-library/dom';
-        test('${asyncUtil} util used in with Promise.all() with ".then" does not trigger an error', async () => {
+        test('${asyncUtil} util used in with Promise.all() with ".then" is valid', async () => {
           Promise.all([
             ${asyncUtil}(callback1),
             ${asyncUtil}(callback2),
@@ -187,7 +187,7 @@ ruleTester.run(RULE_NAME, rule, {
     ...ASYNC_UTILS.map((asyncUtil) => ({
       code: `
         import { ${asyncUtil} } from '@testing-library/dom';
-        test('${asyncUtil} util used in Promise.allSettled + await expression does not trigger an error', async () => {
+        test('${asyncUtil} util used in Promise.allSettled + await expression is valid', async () => {
           await Promise.allSettled([
             ${asyncUtil}(callback1),
             ${asyncUtil}(callback2),
@@ -198,7 +198,7 @@ ruleTester.run(RULE_NAME, rule, {
     ...ASYNC_UTILS.map((asyncUtil) => ({
       code: `
         import { ${asyncUtil} } from '@testing-library/dom';
-        test('${asyncUtil} util used in Promise.allSettled + then method does not trigger an error', async () => {
+        test('${asyncUtil} util used in Promise.allSettled + then method is valid', async () => {
           Promise.allSettled([
             ${asyncUtil}(callback1),
             ${asyncUtil}(callback2),
@@ -206,9 +206,22 @@ ruleTester.run(RULE_NAME, rule, {
         });
       `,
     })),
+    ...ASYNC_UTILS.map((asyncUtil) => ({
+      code: `
+        import { ${asyncUtil} } from '@testing-library/dom';
+        
+        function waitForSomethingAsync() {
+          return ${asyncUtil}(() => somethingAsync())
+        }
+
+        test('handled promise from function wrapping ${asyncUtil} util is valid', async () => {
+          await waitForSomethingAsync()
+        });
+      `,
+    })),
     {
       code: `
-      test('using unrelated promises with Promise.all do not throw an error', async () => {
+      test('using unrelated promises with Promise.all is valid', async () => {
         Promise.all([
           waitForNotRelatedToTestingLibrary(),
           promise1,
@@ -222,7 +235,7 @@ ruleTester.run(RULE_NAME, rule, {
     ...ASYNC_UTILS.map((asyncUtil) => ({
       code: `
         import { ${asyncUtil} } from '@testing-library/dom';
-        test('${asyncUtil} util not waited', () => {
+        test('${asyncUtil} util not waited is invalid', () => {
           doSomethingElse();
           ${asyncUtil}(() => getByLabelText('email'));
         });
@@ -232,7 +245,7 @@ ruleTester.run(RULE_NAME, rule, {
     ...ASYNC_UTILS.map((asyncUtil) => ({
       code: `
         import * as asyncUtil from '@testing-library/dom';
-        test('asyncUtil.${asyncUtil} util not waited', () => {
+        test('asyncUtil.${asyncUtil} util not handled is invalid', () => {
           doSomethingElse();
           asyncUtil.${asyncUtil}(() => getByLabelText('email'));
         });
@@ -242,7 +255,7 @@ ruleTester.run(RULE_NAME, rule, {
     ...ASYNC_UTILS.map((asyncUtil) => ({
       code: `
         import { ${asyncUtil} } from '@testing-library/dom';
-        test('${asyncUtil} util promise saved not waited', () => {
+        test('${asyncUtil} util promise saved not handled is invalid', () => {
           doSomethingElse();
           const aPromise = ${asyncUtil}(() => getByLabelText('email'));
         });
@@ -252,7 +265,7 @@ ruleTester.run(RULE_NAME, rule, {
     ...ASYNC_UTILS.map((asyncUtil) => ({
       code: `
         import { ${asyncUtil} } from '@testing-library/dom';
-        test('several ${asyncUtil} utils not waited', () => {
+        test('several ${asyncUtil} utils not handled are invalid', () => {
           const aPromise = ${asyncUtil}(() => getByLabelText('username'));
           doSomethingElse(aPromise);
           ${asyncUtil}(() => getByLabelText('email'));
@@ -262,6 +275,21 @@ ruleTester.run(RULE_NAME, rule, {
         { line: 4, column: 28, messageId: 'awaitAsyncUtil' },
         { line: 6, column: 11, messageId: 'awaitAsyncUtil' },
       ],
+    })),
+    ...ASYNC_UTILS.map((asyncUtil) => ({
+      code: `
+        import { ${asyncUtil}, render } from '@testing-library/dom';
+        
+        function waitForSomethingAsync() {
+          return ${asyncUtil}(() => somethingAsync())
+        }
+
+        test('unhandled promise from function wrapping ${asyncUtil} util is invalid', async () => {
+          render()
+          waitForSomethingAsync()
+        });
+      `,
+      errors: [{ messageId: 'asyncUtilWrapper', line: 10, column: 11 }],
     })),
   ],
 });
