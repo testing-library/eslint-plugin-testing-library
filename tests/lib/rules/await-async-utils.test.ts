@@ -4,8 +4,6 @@ import { ASYNC_UTILS } from '../../../lib/utils';
 
 const ruleTester = createRuleTester();
 
-// FIXME: add cases for Promise.allSettled
-
 ruleTester.run(RULE_NAME, rule, {
   valid: [
     ...ASYNC_UTILS.map((asyncUtil) => ({
@@ -182,14 +180,37 @@ ruleTester.run(RULE_NAME, rule, {
         test('util unhandled but not related to testing library is valid', async () => {
           doSomethingElse();
           ${asyncUtil}('not related to testing library')
+          waitForNotRelatedToTestingLibrary()
+        });
+      `,
+    })),
+    ...ASYNC_UTILS.map((asyncUtil) => ({
+      code: `
+        import { ${asyncUtil} } from '@testing-library/dom';
+        test('${asyncUtil} util used in Promise.allSettled + await expression does not trigger an error', async () => {
+          await Promise.allSettled([
+            ${asyncUtil}(callback1),
+            ${asyncUtil}(callback2),
+          ]);
+        });
+      `,
+    })),
+    ...ASYNC_UTILS.map((asyncUtil) => ({
+      code: `
+        import { ${asyncUtil} } from '@testing-library/dom';
+        test('${asyncUtil} util used in Promise.allSettled + then method does not trigger an error', async () => {
+          Promise.allSettled([
+            ${asyncUtil}(callback1),
+            ${asyncUtil}(callback2),
+          ]).then(() => {})
         });
       `,
     })),
     {
       code: `
       test('using unrelated promises with Promise.all do not throw an error', async () => {
-        await Promise.all([
-          waitFor('not related to testing library'),
+        Promise.all([
+          waitForNotRelatedToTestingLibrary(),
           promise1,
           await foo().then(() => baz())
         ])
