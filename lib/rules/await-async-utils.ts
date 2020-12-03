@@ -1,39 +1,14 @@
-import { ASTUtils, TSESTree } from '@typescript-eslint/experimental-utils';
+import { TSESTree } from '@typescript-eslint/experimental-utils';
 import {
+  findClosestCallExpressionNode,
   getVariableReferences,
-  hasChainedThen,
-  isArrayExpression,
-  isAwaited,
-  isCallExpression,
-  isMemberExpression,
+  isPromiseHandled,
 } from '../node-utils';
 import { createTestingLibraryRule } from '../create-testing-library-rule';
 
 export const RULE_NAME = 'await-async-utils';
 export type MessageIds = 'awaitAsyncUtil';
 type Options = [];
-
-// verifies the CallExpression is Promise.all()
-function isPromiseAll(node: TSESTree.CallExpression) {
-  return (
-    isMemberExpression(node.callee) &&
-    ASTUtils.isIdentifier(node.callee.object) &&
-    node.callee.object.name === 'Promise' &&
-    ASTUtils.isIdentifier(node.callee.property) &&
-    node.callee.property.name === 'all'
-  );
-}
-
-// verifies the node is part of an array used in a CallExpression
-function isInPromiseAll(node: TSESTree.Node) {
-  const parent = node.parent;
-  return (
-    isCallExpression(parent) &&
-    isArrayExpression(parent.parent) &&
-    isCallExpression(parent.parent.parent) &&
-    isPromiseAll(parent.parent.parent)
-  );
-}
 
 export default createTestingLibraryRule<Options, MessageIds>({
   name: RULE_NAME,
@@ -88,38 +63,41 @@ export default createTestingLibraryRule<Options, MessageIds>({
         });
 
         testingLibraryUtilUsage.forEach(({ node, name }) => {
-          const references = getVariableReferences(context, node.parent.parent);
+          const closestCallExpression = findClosestCallExpressionNode(
+            node,
+            true
+          );
 
-          if (
-            references &&
-            references.length === 0 &&
-            !isAwaited(node.parent.parent) &&
-            !hasChainedThen(node) &&
-            !isInPromiseAll(node)
-          ) {
-            context.report({
-              node,
-              messageId: 'awaitAsyncUtil',
-              data: {
-                name,
-              },
-            });
+          if (!closestCallExpression) {
+            return;
+          }
+
+          const references = getVariableReferences(
+            context,
+            closestCallExpression.parent
+          );
+
+          if (references && references.length === 0) {
+            if (!isPromiseHandled(node as TSESTree.Identifier)) {
+              return context.report({
+                node,
+                messageId: 'awaitAsyncUtil',
+                data: {
+                  name,
+                },
+              });
+            }
           } else {
             for (const reference of references) {
-              const referenceNode = reference.identifier;
-              if (
-                !isAwaited(referenceNode.parent) &&
-                !hasChainedThen(referenceNode)
-              ) {
-                context.report({
+              const referenceNode = reference.identifier as TSESTree.Identifier;
+              if (!isPromiseHandled(referenceNode)) {
+                return context.report({
                   node,
                   messageId: 'awaitAsyncUtil',
                   data: {
                     name,
                   },
                 });
-
-                break;
               }
             }
           }
