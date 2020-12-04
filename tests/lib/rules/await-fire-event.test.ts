@@ -3,6 +3,13 @@ import rule, { RULE_NAME } from '../../../lib/rules/await-fire-event';
 
 const ruleTester = createRuleTester();
 
+// TODO: add cases for fireEvent method destructured
+// TODO: add import statement to all current cases
+// TODO: add cases for fireEvent wildcard imported
+// TODO: add cases for fireEvent method promise returned from function
+// TODO: add cases for fireEvent not coming from TL
+// TODO: iterate cases for more fireEvent method variants
+
 ruleTester.run(RULE_NAME, rule, {
   valid: [
     {

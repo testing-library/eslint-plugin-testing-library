@@ -253,7 +253,7 @@ export function isPromisesArrayResolved(node: TSESTree.Node): boolean {
  * - it belongs to the `Promise.allSettled` method
  * - it's chained with the `then` method
  * - it's returned from a function
- * - has `resolves` or `rejects`
+ * - has `resolves` or `rejects` jest methods
  */
 export function isPromiseHandled(nodeIdentifier: TSESTree.Identifier): boolean {
   const closestCallExpressionNode = findClosestCallExpressionNode(

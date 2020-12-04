@@ -1,5 +1,5 @@
 import { ASTUtils, TSESTree } from '@typescript-eslint/experimental-utils';
-import { hasChainedThen, isAwaited } from '../node-utils';
+import { isPromiseHandled } from '../node-utils';
 import { createTestingLibraryRule } from '../create-testing-library-rule';
 
 export const RULE_NAME = 'await-fire-event';
@@ -36,8 +36,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
         if (
           ASTUtils.isIdentifier(fireEventMethodNode) &&
-          !isAwaited(node.parent.parent.parent) &&
-          !hasChainedThen(fireEventMethodNode.parent)
+          !isPromiseHandled(node)
         ) {
           context.report({
             node: fireEventMethodNode,
