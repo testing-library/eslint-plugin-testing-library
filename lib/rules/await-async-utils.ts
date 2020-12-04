@@ -1,7 +1,8 @@
 import { TSESTree } from '@typescript-eslint/experimental-utils';
 import {
   findClosestCallExpressionNode,
-  getInnermostReturningFunctionName,
+  getFunctionName,
+  getInnermostReturningFunction,
   getVariableReferences,
   isMemberExpression,
   isPromiseHandled,
@@ -35,9 +36,11 @@ export default createTestingLibraryRule<Options, MessageIds>({
     const functionWrappersNames: string[] = [];
 
     function detectAsyncUtilWrapper(node: TSESTree.Identifier) {
-      const functionName = getInnermostReturningFunctionName(context, node);
+      const innerFunction = getInnermostReturningFunction(context, node);
 
-      functionName && functionWrappersNames.push(functionName);
+      if (innerFunction) {
+        functionWrappersNames.push(getFunctionName(innerFunction));
+      }
     }
 
     return {

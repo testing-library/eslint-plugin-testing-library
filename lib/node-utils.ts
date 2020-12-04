@@ -516,12 +516,16 @@ export function hasClosestExpectResolvesRejects(node: TSESTree.Node): boolean {
 }
 
 /**
- * Gets the name of the function which returns the given Identifier.
+ * Gets the Function node which returns the given Identifier.
  */
-export function getInnermostReturningFunctionName(
+export function getInnermostReturningFunction(
   context: RuleContext<string, []>,
   node: TSESTree.Identifier
-): string | undefined {
+):
+  | TSESTree.FunctionDeclaration
+  | TSESTree.FunctionExpression
+  | TSESTree.ArrowFunctionExpression
+  | undefined {
   const functionScope = getInnermostFunctionScope(context, node);
 
   if (!functionScope) {
@@ -542,5 +546,5 @@ export function getInnermostReturningFunctionName(
     return;
   }
 
-  return getFunctionName(functionScope.block);
+  return functionScope.block;
 }
