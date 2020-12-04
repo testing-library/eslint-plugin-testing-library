@@ -1,15 +1,12 @@
-import {
-  ESLintUtils,
-  TSESTree,
-  ASTUtils,
-} from '@typescript-eslint/experimental-utils';
-import { getDocsUrl } from '../utils';
-import { isAwaited, hasChainedThen } from '../node-utils';
+import { ASTUtils, TSESTree } from '@typescript-eslint/experimental-utils';
+import { hasChainedThen, isAwaited } from '../node-utils';
+import { createTestingLibraryRule } from '../create-testing-library-rule';
 
 export const RULE_NAME = 'await-fire-event';
 export type MessageIds = 'awaitFireEvent' | 'fireEventWrapper';
 type Options = [];
-export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
+
+export default createTestingLibraryRule<Options, MessageIds>({
   name: RULE_NAME,
   meta: {
     type: 'problem',
