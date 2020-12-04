@@ -7,19 +7,22 @@ import { getDocsUrl } from '../utils';
 import { isAwaited, hasChainedThen } from '../node-utils';
 
 export const RULE_NAME = 'await-fire-event';
-export type MessageIds = 'awaitFireEvent';
+export type MessageIds = 'awaitFireEvent' | 'fireEventWrapper';
 type Options = [];
 export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
   name: RULE_NAME,
   meta: {
     type: 'problem',
     docs: {
-      description: 'Enforce async fire event methods to be awaited',
+      description: 'Enforce promises from fire event methods to be handled',
       category: 'Best Practices',
       recommended: false,
     },
     messages: {
-      awaitFireEvent: 'async `fireEvent.{{ methodName }}` must be awaited',
+      awaitFireEvent:
+        'Promise returned from `fireEvent.{{ methodName }}` must be handled',
+      fireEventWrapper:
+        'Promise returned from `{{ wrapperName }}` wrapper over fire event method must be handled',
     },
     fixable: null,
     schema: [],
