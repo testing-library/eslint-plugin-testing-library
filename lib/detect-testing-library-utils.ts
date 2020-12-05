@@ -4,16 +4,15 @@ import {
   TSESTree,
 } from '@typescript-eslint/experimental-utils';
 import {
-  getImportModuleName,
   getAssertNodeInfo,
-  isLiteral,
+  getImportModuleName,
   ImportModuleNode,
   isImportDeclaration,
   isImportNamespaceSpecifier,
   isImportSpecifier,
+  isLiteral,
+  isMemberExpression,
   isProperty,
-  isCallExpression,
-  isObjectPattern,
 } from './node-utils';
 import { ABSENCE_MATCHERS, ASYNC_UTILS, PRESENCE_MATCHERS } from './utils';
 
@@ -215,7 +214,8 @@ export function detectTestingLibraryUtils<
     };
 
     /**
-     * Gets a string and verifies if it was imported/required by our custom module node
+     * Gets a string and verifies if it was imported/required by Testing Library
+     * related module.
      */
     const findImportedUtilSpecifier: DetectionHelpers['findImportedUtilSpecifier'] = (
       specifierName
@@ -260,52 +260,24 @@ export function detectTestingLibraryUtils<
     };
     /**
      * Takes a MemberExpression or an Identifier and verifies if its name comes from the import in TL
-     * @param node a MemberExpression (in "foo.property" it would be property) or an Identifier (it should be provided from a CallExpression, for example "foo()")
+     * @param node a MemberExpression (in "foo.property" it would be property) or an Identifier
      */
     const isNodeComingFromTestingLibrary: DetectionHelpers['isNodeComingFromTestingLibrary'] = (
       node: TSESTree.MemberExpression | TSESTree.Identifier
     ) => {
-      const importOrRequire =
-        getCustomModuleImportNode() ?? getTestingLibraryImportNode();
-      if (!importOrRequire) {
-        return false;
-      }
+      let identifierName: string | undefined;
+
       if (ASTUtils.isIdentifier(node)) {
-        if (isImportDeclaration(importOrRequire)) {
-          return importOrRequire.specifiers.some(
-            (s) => isImportSpecifier(s) && s.local.name === node.name
-          );
-        } else {
-          return (
-            ASTUtils.isVariableDeclarator(importOrRequire.parent) &&
-            isObjectPattern(importOrRequire.parent.id) &&
-            importOrRequire.parent.id.properties.some(
-              (p) =>
-                isProperty(p) &&
-                ASTUtils.isIdentifier(p.key) &&
-                ASTUtils.isIdentifier(p.value) &&
-                p.value.name === node.name
-            )
-          );
-        }
-      } else {
-        if (!ASTUtils.isIdentifier(node.object)) {
-          return false;
-        }
-        if (isImportDeclaration(importOrRequire)) {
-          return (
-            isImportDeclaration(importOrRequire) &&
-            isImportNamespaceSpecifier(importOrRequire.specifiers[0]) &&
-            node.object.name === importOrRequire.specifiers[0].local.name
-          );
-        }
-        return (
-          isCallExpression(importOrRequire) &&
-          ASTUtils.isVariableDeclarator(importOrRequire.parent) &&
-          ASTUtils.isIdentifier(importOrRequire.parent.id) &&
-          node.object.name === importOrRequire.parent.id.name
-        );
+        identifierName = node.name;
+      } else if (ASTUtils.isIdentifier(node.object)) {
+        identifierName = node.object.name;
       }
+
+      if (!identifierName) {
+        return;
+      }
+
+      return !!findImportedUtilSpecifier(identifierName);
     };
 
     const helpers = {
