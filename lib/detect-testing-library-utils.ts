@@ -53,6 +53,7 @@ export type DetectionHelpers = {
   isSyncQuery: (node: TSESTree.Identifier) => boolean;
   isAsyncQuery: (node: TSESTree.Identifier) => boolean;
   isAsyncUtil: (node: TSESTree.Identifier) => boolean;
+  isFireEventMethod: (node: TSESTree.Identifier) => boolean;
   isPresenceAssert: (node: TSESTree.MemberExpression) => boolean;
   isAbsenceAssert: (node: TSESTree.MemberExpression) => boolean;
   canReportErrors: () => boolean;
@@ -65,6 +66,8 @@ export type DetectionHelpers = {
 };
 
 const DEFAULT_FILENAME_PATTERN = '^.*\\.(test|spec)\\.[jt]sx?$';
+
+const FIRE_EVENT_NAME = 'fireEvent';
 
 /**
  * Enhances a given rule `create` with helpers to detect Testing Library utils.
@@ -86,6 +89,15 @@ export function detectTestingLibraryUtils<
     const filenamePattern =
       context.settings['testing-library/filename-pattern'] ??
       DEFAULT_FILENAME_PATTERN;
+
+    /**
+     * Determines whether aggressive reporting is enabled or not.
+     *
+     * Aggressive reporting is considered as enabled when:
+     * - custom module is not set (so we need to assume everything
+     *    matching TL utils is related to TL no matter where it was imported from)
+     */
+    const isAggressiveReportingEnabled = () => !customModule;
 
     // Helpers for Testing Library detection.
     const getTestingLibraryImportNode: DetectionHelpers['getTestingLibraryImportNode'] = () => {
@@ -117,7 +129,7 @@ export function detectTestingLibraryUtils<
      * or custom module are imported.
      */
     const isTestingLibraryImported: DetectionHelpers['isTestingLibraryImported'] = () => {
-      if (!customModule) {
+      if (isAggressiveReportingEnabled()) {
         return true;
       }
 
@@ -173,6 +185,50 @@ export function detectTestingLibraryUtils<
      */
     const isAsyncUtil: DetectionHelpers['isAsyncUtil'] = (node) => {
       return ASYNC_UTILS.includes(node.name);
+    };
+
+    /**
+     * Determines whether a given node is fireEvent method or not
+     * @param node
+     */
+    const isFireEventMethod: DetectionHelpers['isFireEventMethod'] = (node) => {
+      const fireEventUtil = findImportedUtilSpecifier(FIRE_EVENT_NAME);
+      let fireEventUtilName: string | undefined;
+
+      if (fireEventUtil) {
+        fireEventUtilName = ASTUtils.isIdentifier(fireEventUtil)
+          ? fireEventUtil.name
+          : fireEventUtil.local.name;
+      } else if (isAggressiveReportingEnabled()) {
+        fireEventUtilName = FIRE_EVENT_NAME;
+      }
+
+      if (!fireEventUtilName) {
+        return;
+      }
+
+      const parentMemberExpression:
+        | TSESTree.MemberExpression
+        | undefined = isMemberExpression(node.parent) ? node.parent : undefined;
+
+      if (parentMemberExpression) {
+        // checking fireEvent.click() usage
+        const regularCall =
+          ASTUtils.isIdentifier(parentMemberExpression.object) &&
+          parentMemberExpression.object.name === fireEventUtilName;
+
+        // checking testingLibraryUtils.fireEvent.click() usage
+        const wildcardCall =
+          isMemberExpression(parentMemberExpression.object) &&
+          ASTUtils.isIdentifier(parentMemberExpression.object.object) &&
+          parentMemberExpression.object.object.name === fireEventUtilName &&
+          ASTUtils.isIdentifier(parentMemberExpression.object.property) &&
+          parentMemberExpression.object.property.name === FIRE_EVENT_NAME;
+
+        return regularCall || wildcardCall;
+      }
+
+      return false;
     };
 
     /**
@@ -293,6 +349,7 @@ export function detectTestingLibraryUtils<
       isSyncQuery,
       isAsyncQuery,
       isAsyncUtil,
+      isFireEventMethod,
       isPresenceAssert,
       isAbsenceAssert,
       canReportErrors,
