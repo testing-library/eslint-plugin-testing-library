@@ -27,7 +27,6 @@ const ValidLeftHandSideExpressions = [
   AST_NODE_TYPES.ObjectExpression,
   AST_NODE_TYPES.ObjectPattern,
   AST_NODE_TYPES.Super,
-  AST_NODE_TYPES.TemplateLiteral,
   AST_NODE_TYPES.ThisExpression,
   AST_NODE_TYPES.TSNullKeyword,
   AST_NODE_TYPES.TaggedTemplateExpression,
@@ -132,7 +131,7 @@ export function findClosestCallExpressionNode(
     return null;
   }
 
-  return findClosestCallExpressionNode(node.parent);
+  return findClosestCallExpressionNode(node.parent, shouldRestrictInnerScope);
 }
 
 export function findClosestCallNode(
