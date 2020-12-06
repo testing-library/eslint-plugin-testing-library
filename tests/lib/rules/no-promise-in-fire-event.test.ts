@@ -28,6 +28,7 @@ ruleTester.run(RULE_NAME, rule, {
       code: `fireEvent.click(findByText('submit'))`,
     },
     {
+      // TODO: report this as invalid
       code: `
         import {fireEvent} from '@testing-library/foo';
 
@@ -54,6 +55,9 @@ ruleTester.run(RULE_NAME, rule, {
       errors: [
         {
           messageId: 'noPromiseInFireEvent',
+          line: 4,
+          column: 25,
+          endColumn: 52,
         },
       ],
     },
@@ -65,6 +69,9 @@ ruleTester.run(RULE_NAME, rule, {
       errors: [
         {
           messageId: 'noPromiseInFireEvent',
+          line: 4,
+          column: 25,
+          endColumn: 45,
         },
       ],
     },
@@ -76,6 +83,9 @@ ruleTester.run(RULE_NAME, rule, {
       errors: [
         {
           messageId: 'noPromiseInFireEvent',
+          line: 4,
+          column: 25,
+          endColumn: 39,
         },
       ],
     },
@@ -87,6 +97,9 @@ ruleTester.run(RULE_NAME, rule, {
       errors: [
         {
           messageId: 'noPromiseInFireEvent',
+          line: 4,
+          column: 25,
+          endColumn: 43,
         },
       ],
     },
