@@ -28,7 +28,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
       noPromiseInFireEvent:
         "A promise shouldn't be passed to a `fireEvent` method, instead pass the DOM element",
     },
-    fixable: 'code',
+    fixable: null,
     schema: [],
   },
   defaultOptions: [],

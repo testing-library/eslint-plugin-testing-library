@@ -1,6 +1,6 @@
 # Disallow the use of promises passed to a `fireEvent` method (no-promise-in-fire-event)
 
-The `fireEvent` method expects that a DOM element is passed.
+Methods from `fireEvent` expect to receive a DOM element. Passing a promise will end up in an error, so it must be prevented.
 
 Examples of **incorrect** code for this rule:
 
@@ -11,7 +11,7 @@ import { screen, fireEvent } from '@testing-library/react';
 fireEvent.click(screen.findByRole('button'));
 
 // usage of promises
-fireEvent.click(new Promise(jest.fn())
+fireEvent.click(new Promise(jest.fn()));
 ```
 
 Examples of **correct** code for this rule:
@@ -27,7 +27,7 @@ fireEvent.click(await screen.findByRole('button'));
 
 // this won't give a linting error, but it will throw a runtime error
 const promise = new Promise();
-fireEvent.click(promise)`,
+fireEvent.click(promise);
 ```
 
 ## Further Reading
