@@ -25,9 +25,6 @@ ruleTester.run(RULE_NAME, rule, {
         fireEvent.click(someRef)`,
     },
     {
-      code: `fireEvent.click(findByText('submit'))`,
-    },
-    {
       // TODO: report this as invalid
       code: `
         import {fireEvent} from '@testing-library/foo';
@@ -42,11 +39,32 @@ ruleTester.run(RULE_NAME, rule, {
         fireEvent.click(await screen.findByRole('button'))
       `,
     },
-    {
-      code: `fireEvent.click(Promise())`,
-    },
   ],
   invalid: [
+    {
+      // aggressive reporting opted-in
+      code: `fireEvent.click(findByText('submit'))`,
+      errors: [
+        {
+          messageId: 'noPromiseInFireEvent',
+          line: 1,
+          column: 17,
+          endColumn: 37,
+        },
+      ],
+    },
+    {
+      // aggressive reporting opted-in
+      code: `fireEvent.click(Promise())`,
+      errors: [
+        {
+          messageId: 'noPromiseInFireEvent',
+          line: 1,
+          column: 17,
+          endColumn: 26,
+        },
+      ],
+    },
     {
       code: `
         import {fireEvent} from '@testing-library/foo';
