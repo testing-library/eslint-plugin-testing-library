@@ -214,10 +214,11 @@ export function detectTestingLibraryUtils<
         return false;
       }
 
-      // make sure that given node it's not fireEvent util itself
+      // make sure that given node it's not fireEvent object itself
       if (
-        ASTUtils.isIdentifier(parentMemberExpression.object) &&
-        parentMemberExpression.object.name === node.name
+        [fireEventUtilName, FIRE_EVENT_NAME].includes(node.name) ||
+        (ASTUtils.isIdentifier(parentMemberExpression.object) &&
+          parentMemberExpression.object.name === node.name)
       ) {
         return false;
       }

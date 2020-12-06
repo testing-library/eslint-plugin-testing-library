@@ -231,15 +231,22 @@ export function isPromiseAllSettled(node: TSESTree.CallExpression): boolean {
   );
 }
 
+/**
+ * Determines whether a given node belongs to handled Promise.all or Promise.allSettled
+ * array expression.
+ */
 export function isPromisesArrayResolved(node: TSESTree.Node): boolean {
-  const parent = node.parent;
+  const closestCallExpression = findClosestCallExpressionNode(node, true);
+
+  if (!closestCallExpression) {
+    return false;
+  }
 
   return (
-    isCallExpression(parent) &&
-    isArrayExpression(parent.parent) &&
-    isCallExpression(parent.parent.parent) &&
-    (isPromiseAll(parent.parent.parent) ||
-      isPromiseAllSettled(parent.parent.parent))
+    isArrayExpression(closestCallExpression.parent) &&
+    isCallExpression(closestCallExpression.parent.parent) &&
+    (isPromiseAll(closestCallExpression.parent.parent) ||
+      isPromiseAllSettled(closestCallExpression.parent.parent))
   );
 }
 

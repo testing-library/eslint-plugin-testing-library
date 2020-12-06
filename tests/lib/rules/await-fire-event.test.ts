@@ -66,16 +66,15 @@ ruleTester.run(RULE_NAME, rule, {
       })
       `,
     })),
-    // TODO: this one should be valid
-    // `import { fireEvent } from '@testing-library/vue'
-    //
-    // test('fireEvent methods wrapped with Promise.all are valid', async () => {
-    //   await Promise.all([
-    //     fireEvent.blur(getByText('Click me')),
-    //     fireEvent.click(getByText('Click me')),
-    //   ])
-    // })
-    // `,
+    `import { fireEvent } from '@testing-library/vue'
+
+    test('fireEvent methods wrapped with Promise.all are valid', async () => {
+      await Promise.all([
+        fireEvent.blur(getByText('Click me')),
+        fireEvent.click(getByText('Click me')),
+      ])
+    })
+    `,
     ...COMMON_FIRE_EVENT_METHODS.map((fireEventMethod) => ({
       code: `
       import { fireEvent } from '@testing-library/vue'
@@ -136,6 +135,41 @@ ruleTester.run(RULE_NAME, rule, {
         {
           line: 4,
           column: 9,
+          endColumn: 19 + fireEventMethod.length,
+          messageId: 'awaitFireEvent',
+          data: { name: fireEventMethod },
+        },
+      ],
+    })),
+    ...COMMON_FIRE_EVENT_METHODS.map((fireEventMethod) => ({
+      code: `
+      import { fireEvent as testingLibraryFireEvent } from '@testing-library/vue'
+      test('unhandled promise from aliased fire event method is invalid', async () => {
+        testingLibraryFireEvent.${fireEventMethod}(getByLabelText('username'))
+      })
+      `,
+      errors: [
+        {
+          line: 4,
+          column: 9,
+          endColumn: 33 + fireEventMethod.length,
+          messageId: 'awaitFireEvent',
+          data: { name: fireEventMethod },
+        },
+      ],
+    })),
+    ...COMMON_FIRE_EVENT_METHODS.map((fireEventMethod) => ({
+      code: `
+      import * as testingLibrary from '@testing-library/vue'
+      test('unhandled promise from wildcard imported fire event method is invalid', async () => {
+        testingLibrary.fireEvent.${fireEventMethod}(getByLabelText('username'))
+      })
+      `,
+      errors: [
+        {
+          line: 4,
+          column: 9,
+          endColumn: 34 + fireEventMethod.length,
           messageId: 'awaitFireEvent',
           data: { name: fireEventMethod },
         },
