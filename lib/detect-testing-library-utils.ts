@@ -189,7 +189,6 @@ export function detectTestingLibraryUtils<
 
     /**
      * Determines whether a given node is fireEvent method or not
-     * @param node
      */
     const isFireEventMethod: DetectionHelpers['isFireEventMethod'] = (node) => {
       const fireEventUtil = findImportedUtilSpecifier(FIRE_EVENT_NAME);
@@ -204,31 +203,39 @@ export function detectTestingLibraryUtils<
       }
 
       if (!fireEventUtilName) {
-        return;
+        return false;
       }
 
       const parentMemberExpression:
         | TSESTree.MemberExpression
         | undefined = isMemberExpression(node.parent) ? node.parent : undefined;
 
-      if (parentMemberExpression) {
-        // checking fireEvent.click() usage
-        const regularCall =
-          ASTUtils.isIdentifier(parentMemberExpression.object) &&
-          parentMemberExpression.object.name === fireEventUtilName;
-
-        // checking testingLibraryUtils.fireEvent.click() usage
-        const wildcardCall =
-          isMemberExpression(parentMemberExpression.object) &&
-          ASTUtils.isIdentifier(parentMemberExpression.object.object) &&
-          parentMemberExpression.object.object.name === fireEventUtilName &&
-          ASTUtils.isIdentifier(parentMemberExpression.object.property) &&
-          parentMemberExpression.object.property.name === FIRE_EVENT_NAME;
-
-        return regularCall || wildcardCall;
+      if (!parentMemberExpression) {
+        return false;
       }
 
-      return false;
+      // make sure that given node it's not fireEvent util itself
+      if (
+        ASTUtils.isIdentifier(parentMemberExpression.object) &&
+        parentMemberExpression.object.name === node.name
+      ) {
+        return false;
+      }
+
+      // check fireEvent.click() usage
+      const regularCall =
+        ASTUtils.isIdentifier(parentMemberExpression.object) &&
+        parentMemberExpression.object.name === fireEventUtilName;
+
+      // check testingLibraryUtils.fireEvent.click() usage
+      const wildcardCall =
+        isMemberExpression(parentMemberExpression.object) &&
+        ASTUtils.isIdentifier(parentMemberExpression.object.object) &&
+        parentMemberExpression.object.object.name === fireEventUtilName &&
+        ASTUtils.isIdentifier(parentMemberExpression.object.property) &&
+        parentMemberExpression.object.property.name === FIRE_EVENT_NAME;
+
+      return regularCall || wildcardCall;
     };
 
     /**
