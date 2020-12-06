@@ -121,6 +121,21 @@ ruleTester.run(RULE_NAME, rule, {
       })
       `,
     })),
+
+    // edge case for coverage:
+    // valid use case without call expression
+    // so there is no innermost function scope found
+    `
+    import { fireEvent } from 'test-utils'
+    test('edge case for innermost function without call expression', async () => {
+      function triggerEvent() {
+          doSomething()
+          return fireEvent.focus(getByLabelText('username'))
+        }
+        
+      const reassignedFunction = triggerEvent
+    })
+    `,
   ],
 
   invalid: [
