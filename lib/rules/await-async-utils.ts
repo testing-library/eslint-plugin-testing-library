@@ -1,156 +1,112 @@
+import { TSESTree } from '@typescript-eslint/experimental-utils';
 import {
-  ESLintUtils,
-  TSESTree,
-  ASTUtils,
-} from '@typescript-eslint/experimental-utils';
-
-import { getDocsUrl, ASYNC_UTILS, LIBRARY_MODULES } from '../utils';
-import {
-  isAwaited,
-  hasChainedThen,
+  findClosestCallExpressionNode,
+  getFunctionName,
+  getInnermostReturningFunction,
   getVariableReferences,
   isMemberExpression,
-  isImportSpecifier,
-  isImportNamespaceSpecifier,
-  isCallExpression,
-  isArrayExpression,
+  isPromiseHandled,
 } from '../node-utils';
+import { createTestingLibraryRule } from '../create-testing-library-rule';
 
 export const RULE_NAME = 'await-async-utils';
-export type MessageIds = 'awaitAsyncUtil';
+export type MessageIds = 'awaitAsyncUtil' | 'asyncUtilWrapper';
 type Options = [];
 
-const ASYNC_UTILS_REGEXP = new RegExp(`^(${ASYNC_UTILS.join('|')})$`);
-
-// verifies the CallExpression is Promise.all()
-function isPromiseAll(node: TSESTree.CallExpression) {
-  return (
-    isMemberExpression(node.callee) &&
-    ASTUtils.isIdentifier(node.callee.object) &&
-    node.callee.object.name === 'Promise' &&
-    ASTUtils.isIdentifier(node.callee.property) &&
-    node.callee.property.name === 'all'
-  );
-}
-
-// verifies the node is part of an array used in a CallExpression
-function isInPromiseAll(node: TSESTree.Node) {
-  const parent = node.parent;
-  return (
-    isCallExpression(parent) &&
-    isArrayExpression(parent.parent) &&
-    isCallExpression(parent.parent.parent) &&
-    isPromiseAll(parent.parent.parent)
-  );
-}
-
-export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
+export default createTestingLibraryRule<Options, MessageIds>({
   name: RULE_NAME,
   meta: {
     type: 'problem',
     docs: {
-      description: 'Enforce async utils to be awaited properly',
+      description: 'Enforce promises from async utils to be handled',
       category: 'Best Practices',
       recommended: 'warn',
     },
     messages: {
       awaitAsyncUtil: 'Promise returned from `{{ name }}` must be handled',
+      asyncUtilWrapper:
+        'Promise returned from {{ name }} wrapper over async util must be handled',
     },
     fixable: null,
     schema: [],
   },
   defaultOptions: [],
 
-  create(context) {
-    const asyncUtilsUsage: Array<{
-      node: TSESTree.Identifier | TSESTree.MemberExpression;
-      name: string;
-    }> = [];
-    const importedAsyncUtils: string[] = [];
+  create(context, _, helpers) {
+    const functionWrappersNames: string[] = [];
+
+    function detectAsyncUtilWrapper(node: TSESTree.Identifier) {
+      const innerFunction = getInnermostReturningFunction(context, node);
+
+      if (innerFunction) {
+        functionWrappersNames.push(getFunctionName(innerFunction));
+      }
+    }
 
     return {
-      'ImportDeclaration > ImportSpecifier,ImportNamespaceSpecifier'(
-        node: TSESTree.Node
-      ) {
-        const parent = node.parent as TSESTree.ImportDeclaration;
-
-        if (!LIBRARY_MODULES.includes(parent.source.value.toString())) {
-          return;
-        }
-
-        if (isImportSpecifier(node)) {
-          importedAsyncUtils.push(node.imported.name);
-        }
-
-        if (isImportNamespaceSpecifier(node)) {
-          importedAsyncUtils.push(node.local.name);
-        }
-      },
-      [`CallExpression > Identifier[name=${ASYNC_UTILS_REGEXP}]`](
-        node: TSESTree.Identifier
-      ) {
-        asyncUtilsUsage.push({ node, name: node.name });
-      },
-      [`CallExpression > MemberExpression > Identifier[name=${ASYNC_UTILS_REGEXP}]`](
-        node: TSESTree.Identifier
-      ) {
-        const memberExpression = node.parent as TSESTree.MemberExpression;
-        const identifier = memberExpression.object as TSESTree.Identifier;
-        const memberExpressionName = identifier.name;
-
-        asyncUtilsUsage.push({
-          node: memberExpression,
-          name: memberExpressionName,
-        });
-      },
-      'Program:exit'() {
-        const testingLibraryUtilUsage = asyncUtilsUsage.filter((usage) => {
-          if (isMemberExpression(usage.node)) {
-            const object = usage.node.object as TSESTree.Identifier;
-
-            return importedAsyncUtils.includes(object.name);
+      'CallExpression Identifier'(node: TSESTree.Identifier) {
+        if (helpers.isAsyncUtil(node)) {
+          if (
+            !helpers.isNodeComingFromTestingLibrary(node) &&
+            !(
+              isMemberExpression(node.parent) &&
+              helpers.isNodeComingFromTestingLibrary(node.parent)
+            )
+          ) {
+            return;
           }
 
-          return importedAsyncUtils.includes(usage.name);
-        });
+          // detect async query used within wrapper function for later analysis
+          detectAsyncUtilWrapper(node);
 
-        testingLibraryUtilUsage.forEach(({ node, name }) => {
-          const references = getVariableReferences(context, node.parent.parent);
+          const closestCallExpression = findClosestCallExpressionNode(
+            node,
+            true
+          );
 
-          if (
-            references &&
-            references.length === 0 &&
-            !isAwaited(node.parent.parent) &&
-            !hasChainedThen(node) &&
-            !isInPromiseAll(node)
-          ) {
-            context.report({
-              node,
-              messageId: 'awaitAsyncUtil',
-              data: {
-                name,
-              },
-            });
+          if (!closestCallExpression) {
+            return;
+          }
+
+          const references = getVariableReferences(
+            context,
+            closestCallExpression.parent
+          );
+
+          if (references && references.length === 0) {
+            if (!isPromiseHandled(node as TSESTree.Identifier)) {
+              return context.report({
+                node,
+                messageId: 'awaitAsyncUtil',
+                data: {
+                  name: node.name,
+                },
+              });
+            }
           } else {
             for (const reference of references) {
-              const referenceNode = reference.identifier;
-              if (
-                !isAwaited(referenceNode.parent) &&
-                !hasChainedThen(referenceNode)
-              ) {
-                context.report({
+              const referenceNode = reference.identifier as TSESTree.Identifier;
+              if (!isPromiseHandled(referenceNode)) {
+                return context.report({
                   node,
                   messageId: 'awaitAsyncUtil',
                   data: {
-                    name,
+                    name: referenceNode.name,
                   },
                 });
-
-                break;
               }
             }
           }
-        });
+        } else if (functionWrappersNames.includes(node.name)) {
+          // check async queries used within a wrapper previously detected
+          if (!isPromiseHandled(node)) {
+            return context.report({
+              node,
+              messageId: 'asyncUtilWrapper',
+              data: { name: node.name },
+            });
+          }
+        }
       },
     };
   },

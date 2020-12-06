@@ -212,11 +212,45 @@ export function hasChainedThen(node: TSESTree.Node): boolean {
   return hasThenProperty(parent);
 }
 
+export function isPromiseAll(node: TSESTree.CallExpression): boolean {
+  return (
+    isMemberExpression(node.callee) &&
+    ASTUtils.isIdentifier(node.callee.object) &&
+    node.callee.object.name === 'Promise' &&
+    ASTUtils.isIdentifier(node.callee.property) &&
+    node.callee.property.name === 'all'
+  );
+}
+
+export function isPromiseAllSettled(node: TSESTree.CallExpression): boolean {
+  return (
+    isMemberExpression(node.callee) &&
+    ASTUtils.isIdentifier(node.callee.object) &&
+    node.callee.object.name === 'Promise' &&
+    ASTUtils.isIdentifier(node.callee.property) &&
+    node.callee.property.name === 'allSettled'
+  );
+}
+
+export function isPromisesArrayResolved(node: TSESTree.Node): boolean {
+  const parent = node.parent;
+
+  return (
+    isCallExpression(parent) &&
+    isArrayExpression(parent.parent) &&
+    isCallExpression(parent.parent.parent) &&
+    (isPromiseAll(parent.parent.parent) ||
+      isPromiseAllSettled(parent.parent.parent))
+  );
+}
+
 /**
  * Determines whether an Identifier related to a promise is considered as handled.
  *
  * It will be considered as handled if:
  * - it belongs to the `await` expression
+ * - it belongs to the `Promise.all` method
+ * - it belongs to the `Promise.allSettled` method
  * - it's chained with the `then` method
  * - it's returned from a function
  * - has `resolves` or `rejects`
@@ -248,6 +282,10 @@ export function isPromiseHandled(nodeIdentifier: TSESTree.Identifier): boolean {
     }
 
     if (hasChainedThen(node)) {
+      return true;
+    }
+
+    if (isPromisesArrayResolved(node)) {
       return true;
     }
   }
@@ -475,4 +513,38 @@ export function hasClosestExpectResolvesRejects(node: TSESTree.Node): boolean {
   }
 
   return hasClosestExpectResolvesRejects(node.parent);
+}
+
+/**
+ * Gets the Function node which returns the given Identifier.
+ */
+export function getInnermostReturningFunction(
+  context: RuleContext<string, []>,
+  node: TSESTree.Identifier
+):
+  | TSESTree.FunctionDeclaration
+  | TSESTree.FunctionExpression
+  | TSESTree.ArrowFunctionExpression
+  | undefined {
+  const functionScope = getInnermostFunctionScope(context, node);
+
+  if (!functionScope) {
+    return;
+  }
+
+  const returnStatementNode = getFunctionReturnStatementNode(
+    functionScope.block
+  );
+
+  if (!returnStatementNode) {
+    return;
+  }
+
+  const returnStatementIdentifier = getIdentifierNode(returnStatementNode);
+
+  if (returnStatementIdentifier?.name !== node.name) {
+    return;
+  }
+
+  return functionScope.block;
 }

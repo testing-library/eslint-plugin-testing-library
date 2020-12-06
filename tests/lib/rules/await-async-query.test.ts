@@ -114,6 +114,54 @@ ruleTester.run(RULE_NAME, rule, {
       `
     ),
 
+    // async queries are valid when wrapped within Promise.all + await expression
+    ...createTestCase(
+      (query) => `
+        doSomething()
+        
+        await Promise.all([
+          ${query}('foo'),
+          ${query}('bar'),
+        ]);
+      `
+    ),
+
+    // async queries are valid when wrapped within Promise.all + then chained
+    ...createTestCase(
+      (query) => `
+        doSomething()
+        
+        Promise.all([
+          ${query}('foo'),
+          ${query}('bar'),
+        ]).then()
+      `
+    ),
+
+    // async queries are valid when wrapped within Promise.allSettled + await expression
+    ...createTestCase(
+      (query) => `
+        doSomething()
+        
+        await Promise.allSettled([
+          ${query}('foo'),
+          ${query}('bar'),
+        ]);
+      `
+    ),
+
+    // async queries are valid when wrapped within Promise.allSettled + then chained
+    ...createTestCase(
+      (query) => `
+        doSomething()
+        
+        Promise.allSettled([
+          ${query}('foo'),
+          ${query}('bar'),
+        ]).then()
+      `
+    ),
+
     // async queries are valid with promise returned in arrow function
     ...createTestCase(
       (query) => `const anArrowFunction = () => ${query}('foo')`

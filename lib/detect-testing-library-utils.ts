@@ -15,7 +15,7 @@ import {
   isCallExpression,
   isObjectPattern,
 } from './node-utils';
-import { ABSENCE_MATCHERS, PRESENCE_MATCHERS } from './utils';
+import { ABSENCE_MATCHERS, ASYNC_UTILS, PRESENCE_MATCHERS } from './utils';
 
 export type TestingLibrarySettings = {
   'testing-library/module'?: string;
@@ -53,6 +53,7 @@ export type DetectionHelpers = {
   isFindByQuery: (node: TSESTree.Identifier) => boolean;
   isSyncQuery: (node: TSESTree.Identifier) => boolean;
   isAsyncQuery: (node: TSESTree.Identifier) => boolean;
+  isAsyncUtil: (node: TSESTree.Identifier) => boolean;
   isPresenceAssert: (node: TSESTree.MemberExpression) => boolean;
   isAbsenceAssert: (node: TSESTree.MemberExpression) => boolean;
   canReportErrors: () => boolean;
@@ -166,6 +167,13 @@ export function detectTestingLibraryUtils<
      */
     const isAsyncQuery: DetectionHelpers['isAsyncQuery'] = (node) => {
       return isFindByQuery(node);
+    };
+
+    /**
+     * Determines whether a given node is async util or not.
+     */
+    const isAsyncUtil: DetectionHelpers['isAsyncUtil'] = (node) => {
+      return ASYNC_UTILS.includes(node.name);
     };
 
     /**
@@ -312,6 +320,7 @@ export function detectTestingLibraryUtils<
       isFindByQuery,
       isSyncQuery,
       isAsyncQuery,
+      isAsyncUtil,
       isPresenceAssert,
       isAbsenceAssert,
       canReportErrors,

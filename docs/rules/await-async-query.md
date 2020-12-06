@@ -12,10 +12,11 @@ found. Those queries variants are:
 - `findAllBy*`
 
 This rule aims to prevent users from forgetting to handle the returned
-promise from those async queries to be fulfilled, which could lead to
-errors in the tests. The promise will be considered as handled when:
+promise from those async queries, which could lead to
+problems in the tests. The promise will be considered as handled when:
 
 - using the `await` operator
+- wrapped within `Promise.all` or `Promise.allSettled` methods
 - chaining the `then` method
 - chaining `resolves` or `rejects` from jest
 - it's returned from a function (in this case, that particular function will be analyzed by this rule too)
@@ -68,6 +69,19 @@ const findMyButton = () => findByText('my button');
 const findMyButton = () => findByText('my button');
 
 const someButton = await findMyButton();
+```
+
+```js
+// several promises handled with `Promise.all` is correct
+await Promise.all([findByText('my button'), findByText('something else')]);
+```
+
+```js
+// several promises handled `Promise.allSettled` is correct
+await Promise.allSettled([
+  findByText('my button'),
+  findByText('something else'),
+]);
 ```
 
 ```js
