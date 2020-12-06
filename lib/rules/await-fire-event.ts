@@ -1,6 +1,8 @@
 import { TSESTree } from '@typescript-eslint/experimental-utils';
 import {
   findClosestCallExpressionNode,
+  getFunctionName,
+  getInnermostReturningFunction,
   getVariableReferences,
   isPromiseHandled,
 } from '../node-utils';
@@ -31,6 +33,8 @@ export default createTestingLibraryRule<Options, MessageIds>({
   defaultOptions: [],
 
   create: function (context, _, helpers) {
+    const functionWrappersNames: string[] = [];
+
     function reportUnhandledNode(
       node: TSESTree.Identifier,
       closestCallExpressionNode: TSESTree.CallExpression,
@@ -45,10 +49,18 @@ export default createTestingLibraryRule<Options, MessageIds>({
       }
     }
 
+    function detectFireEventMethodWrapper(node: TSESTree.Identifier): void {
+      const innerFunction = getInnermostReturningFunction(context, node);
+
+      if (innerFunction) {
+        functionWrappersNames.push(getFunctionName(innerFunction));
+      }
+    }
+
     return {
       'CallExpression Identifier'(node: TSESTree.Identifier) {
         if (helpers.isFireEventMethod(node)) {
-          // TODO: detectFireEventMethodWrapper
+          detectFireEventMethodWrapper(node);
 
           const closestCallExpression = findClosestCallExpressionNode(
             node,
@@ -72,6 +84,23 @@ export default createTestingLibraryRule<Options, MessageIds>({
               return reportUnhandledNode(referenceNode, closestCallExpression);
             }
           }
+        } else if (functionWrappersNames.includes(node.name)) {
+          // report promise returned from function wrapping fire event method
+          // previously detected
+          const closestCallExpression = findClosestCallExpressionNode(
+            node,
+            true
+          );
+
+          if (!closestCallExpression) {
+            return;
+          }
+
+          return reportUnhandledNode(
+            node,
+            closestCallExpression,
+            'fireEventWrapper'
+          );
         }
       },
     };

@@ -244,27 +244,26 @@ ruleTester.run(RULE_NAME, rule, {
         },
       ],
     })),
-    // TODO: enable this one in next block of features
-    // ...COMMON_FIRE_EVENT_METHODS.map((fireEventMethod) => ({
-    //   code: `
-    //   import { fireEvent } from '@testing-library/vue'
-    //   test('unhandled promise returned from function wrapping fire event method is invalid', () => {
-    //     function triggerEvent() {
-    //       doSomething()
-    //       return fireEvent.${fireEventMethod}(getByLabelText('username'))
-    //     }
-    //
-    //     triggerEvent()
-    //   })
-    //   `,
-    //   errors: [
-    //     {
-    //       line: 9,
-    //       column: 9,
-    //       messageId: 'fireEventWrapper',
-    //       data: { name: fireEventMethod },
-    //     },
-    //   ],
-    // })),
+    ...COMMON_FIRE_EVENT_METHODS.map((fireEventMethod) => ({
+      code: `
+      import { fireEvent } from '@testing-library/vue'
+      test('unhandled promise returned from function wrapping fire event method is invalid', () => {
+        function triggerEvent() {
+          doSomething()
+          return fireEvent.${fireEventMethod}(getByLabelText('username'))
+        }
+
+        triggerEvent()
+      })
+      `,
+      errors: [
+        {
+          line: 9,
+          column: 9,
+          messageId: 'fireEventWrapper',
+          data: { name: fireEventMethod },
+        },
+      ],
+    })),
   ],
 });
