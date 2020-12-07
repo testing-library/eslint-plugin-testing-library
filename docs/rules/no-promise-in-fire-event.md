@@ -7,11 +7,18 @@ Examples of **incorrect** code for this rule:
 ```js
 import { screen, fireEvent } from '@testing-library/react';
 
-// usage of findBy queries
+// usage of unhandled findBy queries
 fireEvent.click(screen.findByRole('button'));
 
-// usage of promises
+// usage of unhandled promises
 fireEvent.click(new Promise(jest.fn()));
+
+// usage of references to unhandled promises
+const promise = new Promise();
+fireEvent.click(promise);
+
+const anotherPromise = screen.findByRole('button');
+fireEvent.click(anotherPromise);
 ```
 
 Examples of **correct** code for this rule:
@@ -19,15 +26,20 @@ Examples of **correct** code for this rule:
 ```js
 import { screen, fireEvent } from '@testing-library/react';
 
-// use getBy queries
+// usage of getBy queries
 fireEvent.click(screen.getByRole('button'));
 
-// use awaited findBy queries
+// usage of awaited findBy queries
 fireEvent.click(await screen.findByRole('button'));
 
-// this won't give a linting error, but it will throw a runtime error
+// usage of references to handled promises
 const promise = new Promise();
-fireEvent.click(promise);
+const element = await promise;
+fireEvent.click(element);
+
+const anotherPromise = screen.findByRole('button');
+const button = await anotherPromise;
+fireEvent.click(button);
 ```
 
 ## Further Reading
