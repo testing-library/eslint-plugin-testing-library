@@ -83,12 +83,6 @@ export function isBlockStatement(
   return node?.type === AST_NODE_TYPES.BlockStatement;
 }
 
-export function isVariableDeclarator(
-  node: TSESTree.Node
-): node is TSESTree.VariableDeclarator {
-  return node?.type === AST_NODE_TYPES.VariableDeclarator;
-}
-
 export function isObjectPattern(
   node: TSESTree.Node
 ): node is TSESTree.ObjectPattern {
@@ -300,7 +294,7 @@ export function getVariableReferences(
   node: TSESTree.Node
 ): TSESLint.Scope.Reference[] {
   return (
-    (isVariableDeclarator(node) &&
+    (ASTUtils.isVariableDeclarator(node) &&
       context.getDeclaredVariables(node)[0]?.references?.slice(1)) ||
     []
   );

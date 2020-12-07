@@ -25,19 +25,28 @@ ruleTester.run(RULE_NAME, rule, {
         fireEvent.click(someRef)`,
     },
     {
-      // TODO: report this as invalid
-      code: `
-        import {fireEvent} from '@testing-library/foo';
-
-        const promise = new Promise();
-        fireEvent.click(promise)`,
-    },
-    {
       code: `
         import {fireEvent} from '@testing-library/foo';
         
         fireEvent.click(await screen.findByRole('button'))
       `,
+    },
+    {
+      code: `
+        import {fireEvent} from '@testing-library/foo'
+
+        const elementPromise = screen.findByRole('button')
+        const button = await elementPromise
+        fireEvent.click(button)`,
+    },
+    {
+      settings: {
+        'testing-library/module': 'test-utils',
+      },
+      code: `// invalid usage but aggressive reporting opted-out
+        import { fireEvent } from 'somewhere-else'
+        fireEvent.click(findByText('submit'))
+    `,
     },
   ],
   invalid: [
@@ -62,6 +71,36 @@ ruleTester.run(RULE_NAME, rule, {
           line: 1,
           column: 17,
           endColumn: 26,
+        },
+      ],
+    },
+    {
+      code: `
+        import {fireEvent} from '@testing-library/foo';
+
+        const promise = new Promise();
+        fireEvent.click(promise)`,
+      errors: [
+        {
+          messageId: 'noPromiseInFireEvent',
+          line: 5,
+          column: 25,
+          endColumn: 32,
+        },
+      ],
+    },
+    {
+      code: `
+        import {fireEvent} from '@testing-library/foo'
+
+        const elementPromise = screen.findByRole('button')
+        fireEvent.click(elementPromise)`,
+      errors: [
+        {
+          messageId: 'noPromiseInFireEvent',
+          line: 5,
+          column: 25,
+          endColumn: 39,
         },
       ],
     },

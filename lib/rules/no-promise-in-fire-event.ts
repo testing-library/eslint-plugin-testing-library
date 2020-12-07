@@ -32,6 +32,59 @@ export default createTestingLibraryRule<Options, MessageIds>({
   defaultOptions: [],
 
   create(context, _, helpers) {
+    function checkSuspiciousNode(
+      node: TSESTree.Node,
+      originalNode?: TSESTree.Node
+    ): void {
+      if (ASTUtils.isAwaitExpression(node)) {
+        return;
+      }
+
+      if (isNewExpression(node)) {
+        if (isPromiseIdentifier(node.callee)) {
+          return context.report({
+            node: originalNode ?? node,
+            messageId: 'noPromiseInFireEvent',
+          });
+        }
+      }
+
+      if (isCallExpression(node)) {
+        const domElementIdentifier = getIdentifierNode(node);
+
+        if (!domElementIdentifier) {
+          return;
+        }
+
+        if (
+          helpers.isAsyncQuery(domElementIdentifier) ||
+          isPromiseIdentifier(domElementIdentifier)
+        ) {
+          return context.report({
+            node: originalNode ?? node,
+            messageId: 'noPromiseInFireEvent',
+          });
+        }
+      }
+
+      if (ASTUtils.isIdentifier(node)) {
+        const nodeVariable = ASTUtils.findVariable(
+          context.getScope(),
+          node.name
+        );
+        if (!nodeVariable || !nodeVariable.defs) {
+          return;
+        }
+
+        for (const definition of nodeVariable.defs) {
+          if (!ASTUtils.isVariableDeclarator(definition.node)) {
+            return;
+          }
+          checkSuspiciousNode(definition.node.init, node);
+        }
+      }
+    }
+
     return {
       'CallExpression Identifier'(node: TSESTree.Identifier) {
         if (!helpers.isFireEventMethod(node)) {
@@ -46,36 +99,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
         const domElementArgument = closestCallExpression.arguments[0];
 
-        if (ASTUtils.isAwaitExpression(domElementArgument)) {
-          return;
-        }
-
-        if (isNewExpression(domElementArgument)) {
-          if (isPromiseIdentifier(domElementArgument.callee)) {
-            return context.report({
-              node: domElementArgument,
-              messageId: 'noPromiseInFireEvent',
-            });
-          }
-        }
-
-        if (isCallExpression(domElementArgument)) {
-          const domElementIdentifier = getIdentifierNode(domElementArgument);
-
-          if (!domElementIdentifier) {
-            return;
-          }
-
-          if (
-            helpers.isAsyncQuery(domElementIdentifier) ||
-            isPromiseIdentifier(domElementIdentifier)
-          ) {
-            return context.report({
-              node: domElementArgument,
-              messageId: 'noPromiseInFireEvent',
-            });
-          }
-        }
+        checkSuspiciousNode(domElementArgument);
       },
     };
   },
