@@ -9,6 +9,7 @@ This rule aims to prevent users from forgetting to handle promise returned from 
 methods.
 
 > ⚠️ `fireEvent` methods are async only on following Testing Library packages:
+>
 > - `@testing-library/vue` (supported by this plugin)
 > - `@testing-library/svelte` (not supported yet by this plugin)
 
