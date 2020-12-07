@@ -76,7 +76,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
             closestCallExpression.parent
           );
 
-          if (!references || references.length === 0) {
+          if (references.length === 0) {
             return reportUnhandledNode(node, closestCallExpression);
           } else {
             for (const reference of references) {
