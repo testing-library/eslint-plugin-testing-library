@@ -8,7 +8,9 @@ properly.
 This rule aims to prevent users from forgetting to handle promise returned from `fireEvent`
 methods.
 
-> ⚠️ `fireEvent` methods are async only on `@testing-library/vue` package
+> ⚠️ `fireEvent` methods are async only on following Testing Library packages:
+> - `@testing-library/vue` (supported by this plugin)
+> - `@testing-library/svelte` (not supported yet by this plugin)
 
 Examples of **incorrect** code for this rule:
 
@@ -55,7 +57,7 @@ await Promise.all([
 
 ## When Not To Use It
 
-`fireEvent` methods are only async in Vue Testing Library so if you are using another Testing Library module, you shouldn't use this rule.
+`fireEvent` methods are not async on all Testing Library packages. If you are not using Testing Library package with async fire event, you shouldn't use this rule.
 
 ## Further Reading
 
