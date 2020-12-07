@@ -52,10 +52,6 @@ export default createTestingLibraryRule<Options, MessageIds>({
       if (isCallExpression(node)) {
         const domElementIdentifier = getIdentifierNode(node);
 
-        if (!domElementIdentifier) {
-          return;
-        }
-
         if (
           helpers.isAsyncQuery(domElementIdentifier) ||
           isPromiseIdentifier(domElementIdentifier)
@@ -77,10 +73,8 @@ export default createTestingLibraryRule<Options, MessageIds>({
         }
 
         for (const definition of nodeVariable.defs) {
-          if (!ASTUtils.isVariableDeclarator(definition.node)) {
-            return;
-          }
-          checkSuspiciousNode(definition.node.init, node);
+          const variableDeclarator = definition.node as TSESTree.VariableDeclarator;
+          checkSuspiciousNode(variableDeclarator.init, node);
         }
       }
     }

@@ -48,6 +48,17 @@ ruleTester.run(RULE_NAME, rule, {
         fireEvent.click(findByText('submit'))
     `,
     },
+    `// edge case for coverage:
+     // valid use case without call expression
+     // so there is no innermost function scope found
+     test('edge case for no innermost function scope', () => {
+      const click = fireEvent.click
+    })
+    `,
+    `// edge case for coverage:
+     // new expression of something else than Promise
+     fireEvent.click(new SomeElement())
+    `,
   ],
   invalid: [
     {
