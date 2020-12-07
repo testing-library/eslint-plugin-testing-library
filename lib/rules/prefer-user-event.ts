@@ -1,6 +1,6 @@
-import { TSESTree, ASTUtils } from '@typescript-eslint/experimental-utils';
+import { TSESTree } from '@typescript-eslint/experimental-utils';
 import { createTestingLibraryRule } from '../create-testing-library-rule';
-import { isMemberExpression } from '../node-utils';
+import { findClosestCallExpressionNode } from '../node-utils';
 
 export const RULE_NAME = 'prefer-user-event';
 
@@ -22,7 +22,7 @@ export const UserEventMethods = [
 ] as const;
 type UserEventMethodsType = typeof UserEventMethods[number];
 
-// maps fireEvent methods to userEvent. Those not found here, do not have an equivalet (yet)
+// maps fireEvent methods to userEvent. Those not found here, do not have an equivalent (yet)
 export const MappingToUserEvent: Record<string, UserEventMethodsType[]> = {
   click: ['click', 'type', 'selectOptions', 'deselectOptions'],
   change: ['upload', 'type', 'clear', 'selectOptions', 'deselectOptions'],
@@ -72,7 +72,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
     },
     messages: {
       preferUserEvent:
-        'Prefer using {{userEventMethods}} over {{fireEventMethod}}()',
+        'Prefer using {{userEventMethods}} over fireEvent.{{fireEventMethod}}()',
     },
     schema: [
       {
@@ -88,50 +88,34 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
   create(context, [options], helpers) {
     const { allowedMethods } = options;
-    const sourceCode = context.getSourceCode();
 
     return {
-      ['CallExpression > MemberExpression'](node: TSESTree.MemberExpression) {
-        const util = helpers.findImportedUtilSpecifier('fireEvent');
-        if (!util) {
-          // testing library was imported, but fireEvent was not imported
+      'CallExpression Identifier'(node: TSESTree.Identifier) {
+        if (!helpers.isFireEventMethod(node)) {
           return;
         }
-        const fireEventAliasOrWildcard = ASTUtils.isIdentifier(util)
-          ? util.name
-          : util.local.name;
 
-        const fireEventUsed =
-          ASTUtils.isIdentifier(node.object) &&
-          node.object.name === fireEventAliasOrWildcard;
+        const closestCallExpression = findClosestCallExpressionNode(node, true);
 
-        const fireEventFromWildcardUsed =
-          isMemberExpression(node.object) &&
-          ASTUtils.isIdentifier(node.object.object) &&
-          node.object.object.name === fireEventAliasOrWildcard &&
-          ASTUtils.isIdentifier(node.object.property) &&
-          node.object.property.name === 'fireEvent';
-
-        if (!fireEventUsed && !fireEventFromWildcardUsed) {
-          // fireEvent was imported but it was not used
+        if (!closestCallExpression) {
           return;
         }
+
+        const fireEventMethodName: string = node.name;
 
         if (
-          !ASTUtils.isIdentifier(node.property) ||
-          !fireEventMappedMethods.includes(node.property.name) ||
-          allowedMethods.includes(node.property.name)
+          !fireEventMappedMethods.includes(fireEventMethodName) ||
+          allowedMethods.includes(fireEventMethodName)
         ) {
-          // the fire event does not have an equivalent in userEvent, or it's excluded
           return;
         }
 
         context.report({
-          node,
+          node: closestCallExpression.callee,
           messageId: 'preferUserEvent',
           data: {
-            userEventMethods: buildErrorMessage(node.property.name),
-            fireEventMethod: sourceCode.getText(node),
+            userEventMethods: buildErrorMessage(fireEventMethodName),
+            fireEventMethod: fireEventMethodName,
           },
         });
       },

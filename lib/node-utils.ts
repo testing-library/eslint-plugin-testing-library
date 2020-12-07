@@ -27,7 +27,6 @@ const ValidLeftHandSideExpressions = [
   AST_NODE_TYPES.ObjectExpression,
   AST_NODE_TYPES.ObjectPattern,
   AST_NODE_TYPES.Super,
-  AST_NODE_TYPES.TemplateLiteral,
   AST_NODE_TYPES.ThisExpression,
   AST_NODE_TYPES.TSNullKeyword,
   AST_NODE_TYPES.TaggedTemplateExpression,
@@ -132,7 +131,7 @@ export function findClosestCallExpressionNode(
     return null;
   }
 
-  return findClosestCallExpressionNode(node.parent);
+  return findClosestCallExpressionNode(node.parent, shouldRestrictInnerScope);
 }
 
 export function findClosestCallNode(
@@ -232,15 +231,22 @@ export function isPromiseAllSettled(node: TSESTree.CallExpression): boolean {
   );
 }
 
+/**
+ * Determines whether a given node belongs to handled Promise.all or Promise.allSettled
+ * array expression.
+ */
 export function isPromisesArrayResolved(node: TSESTree.Node): boolean {
-  const parent = node.parent;
+  const closestCallExpression = findClosestCallExpressionNode(node, true);
+
+  if (!closestCallExpression) {
+    return false;
+  }
 
   return (
-    isCallExpression(parent) &&
-    isArrayExpression(parent.parent) &&
-    isCallExpression(parent.parent.parent) &&
-    (isPromiseAll(parent.parent.parent) ||
-      isPromiseAllSettled(parent.parent.parent))
+    isArrayExpression(closestCallExpression.parent) &&
+    isCallExpression(closestCallExpression.parent.parent) &&
+    (isPromiseAll(closestCallExpression.parent.parent) ||
+      isPromiseAllSettled(closestCallExpression.parent.parent))
   );
 }
 
@@ -253,7 +259,7 @@ export function isPromisesArrayResolved(node: TSESTree.Node): boolean {
  * - it belongs to the `Promise.allSettled` method
  * - it's chained with the `then` method
  * - it's returned from a function
- * - has `resolves` or `rejects`
+ * - has `resolves` or `rejects` jest methods
  */
 export function isPromiseHandled(nodeIdentifier: TSESTree.Identifier): boolean {
   const closestCallExpressionNode = findClosestCallExpressionNode(

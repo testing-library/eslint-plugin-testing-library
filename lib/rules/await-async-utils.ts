@@ -74,7 +74,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
           );
 
           if (references && references.length === 0) {
-            if (!isPromiseHandled(node as TSESTree.Identifier)) {
+            if (!isPromiseHandled(node)) {
               return context.report({
                 node,
                 messageId: 'awaitAsyncUtil',

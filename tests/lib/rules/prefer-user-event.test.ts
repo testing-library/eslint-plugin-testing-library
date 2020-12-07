@@ -16,9 +16,7 @@ function createScenarioWithImport<
   T extends ValidTestCase<Options> | InvalidTestCase<MessageIds, Options>
 >(callback: (libraryModule: string, fireEventMethod: string) => T) {
   return LIBRARY_MODULES.reduce(
-    // can't find the right type
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (acc: any, libraryModule) =>
+    (acc: Array<T>, libraryModule) =>
       acc.concat(
         Object.keys(MappingToUserEvent).map((fireEventMethod) =>
           callback(libraryModule, fireEventMethod)
@@ -139,6 +137,17 @@ ruleTester.run(RULE_NAME, rule, {
         'testing-library/module': 'test-utils',
       },
       code: `
+        // fireEvent method used but not imported from TL related module
+        // (aggressive reporting opted out)
+        import { fireEvent } from 'somewhere-else'
+        fireEvent.${fireEventMethod}(foo)
+      `,
+    })),
+    ...Object.keys(MappingToUserEvent).map((fireEventMethod: string) => ({
+      settings: {
+        'testing-library/module': 'test-utils',
+      },
+      code: `
       import { fireEvent } from 'test-utils'
       const node = document.createElement(elementType)
       fireEvent.${fireEventMethod}(foo)
@@ -166,6 +175,15 @@ ruleTester.run(RULE_NAME, rule, {
     `,
       options: [{ allowedMethods: [fireEventMethod] }],
     })),
+    // edge case for coverage:
+    // valid use case without call expression
+    // so there is no innermost function scope found
+    `
+    import { fireEvent } from '@testing-library/react';
+    test('edge case for no innermost function scope', () => {
+      const click = fireEvent.click
+    })
+    `,
   ],
   invalid: [
     ...createScenarioWithImport<InvalidTestCase<MessageIds, Options>>(
@@ -232,6 +250,15 @@ ruleTester.run(RULE_NAME, rule, {
       errors: [{ messageId: 'preferUserEvent', line: 3, column: 9 }],
     })),
     ...Object.keys(MappingToUserEvent).map((fireEventMethod: string) => ({
+      code: `
+        // same as previous group of test cases but without custom module set
+        // (aggressive reporting)
+        import { fireEvent } from 'test-utils'
+        fireEvent.${fireEventMethod}(foo)
+      `,
+      errors: [{ messageId: 'preferUserEvent', line: 5, column: 9 }],
+    })),
+    ...Object.keys(MappingToUserEvent).map((fireEventMethod: string) => ({
       settings: {
         'testing-library/module': 'test-utils',
       },
@@ -241,5 +268,26 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [{ messageId: 'preferUserEvent', line: 3, column: 9 }],
     })),
+    {
+      code: ` // simple test to check error in detail
+      import { fireEvent } from '@testing-library/react'
+      
+      fireEvent.click(element)
+      `,
+      errors: [
+        {
+          messageId: 'preferUserEvent',
+          line: 4,
+          endLine: 4,
+          column: 7,
+          endColumn: 22,
+          data: {
+            userEventMethods:
+              'userEvent.click(), userEvent.type() or userEvent.deselectOptions()',
+            fireEventMethod: 'click',
+          },
+        },
+      ],
+    },
   ],
 });

@@ -1,12 +1,17 @@
-# Enforce async fire event methods to be awaited (await-fire-event)
+# Enforce promises from fire event methods to be handled (await-fire-event)
 
-Ensure that promises returned by `fireEvent` methods are awaited
+Ensure that promises returned by `fireEvent` methods are handled
 properly.
 
 ## Rule Details
 
-This rule aims to prevent users from forgetting to await `fireEvent`
-methods when they are async.
+This rule aims to prevent users from forgetting to handle promise returned from `fireEvent`
+methods.
+
+> ⚠️ `fireEvent` methods are async only on following Testing Library packages:
+>
+> - `@testing-library/vue` (supported by this plugin)
+> - `@testing-library/svelte` (not supported yet by this plugin)
 
 Examples of **incorrect** code for this rule:
 
@@ -15,6 +20,12 @@ fireEvent.click(getByText('Click me'));
 
 fireEvent.focus(getByLabelText('username'));
 fireEvent.blur(getByLabelText('username'));
+
+// wrap a fireEvent method within a function...
+function triggerEvent() {
+  return fireEvent.click(button);
+}
+triggerEvent(); // ...but not handling promise from it is incorrect too
 ```
 
 Examples of **correct** code for this rule:
@@ -30,15 +41,24 @@ fireEvent.click(getByText('Click me')).then(() => {
 });
 
 // return the promise within a function is correct too!
-function clickMeRegularFn() {
-  return fireEvent.click(getByText('Click me'));
-}
 const clickMeArrowFn = () => fireEvent.click(getByText('Click me'));
+
+// wrap a fireEvent method within a function...
+function triggerEvent() {
+  return fireEvent.click(button);
+}
+await triggerEvent(); // ...and handling promise from it is correct also
+
+// using `Promise.all` or `Promise.allSettled` with an array of promises is valid
+await Promise.all([
+  fireEvent.focus(getByLabelText('username')),
+  fireEvent.blur(getByLabelText('username')),
+]);
 ```
 
 ## When Not To Use It
 
-`fireEvent` methods are only async in Vue Testing Library so if you are using another Testing Library module, you shouldn't use this rule.
+`fireEvent` methods are not async on all Testing Library packages. If you are not using Testing Library package with async fire event, you shouldn't use this rule.
 
 ## Further Reading
 
