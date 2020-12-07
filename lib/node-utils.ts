@@ -83,12 +83,6 @@ export function isBlockStatement(
   return node?.type === AST_NODE_TYPES.BlockStatement;
 }
 
-export function isVariableDeclarator(
-  node: TSESTree.Node
-): node is TSESTree.VariableDeclarator {
-  return node?.type === AST_NODE_TYPES.VariableDeclarator;
-}
-
 export function isObjectPattern(
   node: TSESTree.Node
 ): node is TSESTree.ObjectPattern {
@@ -191,14 +185,6 @@ export function isImportDeclaration(
   return node?.type === AST_NODE_TYPES.ImportDeclaration;
 }
 
-export function isAwaited(node: TSESTree.Node): boolean {
-  return (
-    ASTUtils.isAwaitExpression(node) ||
-    isArrowFunctionExpression(node) ||
-    isReturnStatement(node)
-  );
-}
-
 export function hasChainedThen(node: TSESTree.Node): boolean {
   const parent = node.parent;
 
@@ -211,11 +197,16 @@ export function hasChainedThen(node: TSESTree.Node): boolean {
   return hasThenProperty(parent);
 }
 
+export function isPromiseIdentifier(
+  node: TSESTree.Node
+): node is TSESTree.Identifier & { name: 'Promise' } {
+  return ASTUtils.isIdentifier(node) && node.name === 'Promise';
+}
+
 export function isPromiseAll(node: TSESTree.CallExpression): boolean {
   return (
     isMemberExpression(node.callee) &&
-    ASTUtils.isIdentifier(node.callee.object) &&
-    node.callee.object.name === 'Promise' &&
+    isPromiseIdentifier(node.callee.object) &&
     ASTUtils.isIdentifier(node.callee.property) &&
     node.callee.property.name === 'all'
   );
@@ -224,8 +215,7 @@ export function isPromiseAll(node: TSESTree.CallExpression): boolean {
 export function isPromiseAllSettled(node: TSESTree.CallExpression): boolean {
   return (
     isMemberExpression(node.callee) &&
-    ASTUtils.isIdentifier(node.callee.object) &&
-    node.callee.object.name === 'Promise' &&
+    isPromiseIdentifier(node.callee.object) &&
     ASTUtils.isIdentifier(node.callee.property) &&
     node.callee.property.name === 'allSettled'
   );
@@ -304,7 +294,7 @@ export function getVariableReferences(
   node: TSESTree.Node
 ): TSESLint.Scope.Reference[] {
   return (
-    (isVariableDeclarator(node) &&
+    (ASTUtils.isVariableDeclarator(node) &&
       context.getDeclaredVariables(node)[0]?.references?.slice(1)) ||
     []
   );

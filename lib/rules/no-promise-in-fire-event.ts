@@ -1,20 +1,18 @@
+import { ASTUtils, TSESTree } from '@typescript-eslint/experimental-utils';
+import { createTestingLibraryRule } from '../create-testing-library-rule';
 import {
-  TSESTree,
-  ESLintUtils,
-  ASTUtils,
-} from '@typescript-eslint/experimental-utils';
-import { getDocsUrl, ASYNC_QUERIES_VARIANTS } from '../utils';
-import {
-  isNewExpression,
-  isImportSpecifier,
+  findClosestCallExpressionNode,
+  getIdentifierNode,
   isCallExpression,
+  isNewExpression,
+  isPromiseIdentifier,
 } from '../node-utils';
 
 export const RULE_NAME = 'no-promise-in-fire-event';
 export type MessageIds = 'noPromiseInFireEvent';
 type Options = [];
 
-export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
+export default createTestingLibraryRule<Options, MessageIds>({
   name: RULE_NAME,
   meta: {
     type: 'problem',
@@ -28,49 +26,74 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
       noPromiseInFireEvent:
         "A promise shouldn't be passed to a `fireEvent` method, instead pass the DOM element",
     },
-    fixable: 'code',
+    fixable: null,
     schema: [],
   },
   defaultOptions: [],
 
-  create(context) {
-    return {
-      'ImportDeclaration[source.value=/testing-library/]'(
-        node: TSESTree.ImportDeclaration
-      ) {
-        const fireEventImportNode = node.specifiers.find(
-          (specifier) =>
-            isImportSpecifier(specifier) &&
-            specifier.imported &&
-            'fireEvent' === specifier.imported.name
-        ) as TSESTree.ImportSpecifier;
+  create(context, _, helpers) {
+    function checkSuspiciousNode(
+      node: TSESTree.Node,
+      originalNode?: TSESTree.Node
+    ): void {
+      if (ASTUtils.isAwaitExpression(node)) {
+        return;
+      }
 
-        const { references } = context.getDeclaredVariables(
-          fireEventImportNode
-        )[0];
-
-        for (const reference of references) {
-          const referenceNode = reference.identifier;
-          const callExpression = referenceNode.parent
-            .parent as TSESTree.CallExpression;
-          const [element] = callExpression.arguments as TSESTree.Node[];
-          if (isCallExpression(element) || isNewExpression(element)) {
-            const methodName = ASTUtils.isIdentifier(element.callee)
-              ? element.callee.name
-              : ((element.callee as TSESTree.MemberExpression)
-                  .property as TSESTree.Identifier).name;
-
-            if (
-              ASYNC_QUERIES_VARIANTS.some((q) => methodName.startsWith(q)) ||
-              methodName === 'Promise'
-            ) {
-              context.report({
-                node: element,
-                messageId: 'noPromiseInFireEvent',
-              });
-            }
-          }
+      if (isNewExpression(node)) {
+        if (isPromiseIdentifier(node.callee)) {
+          return context.report({
+            node: originalNode ?? node,
+            messageId: 'noPromiseInFireEvent',
+          });
         }
+      }
+
+      if (isCallExpression(node)) {
+        const domElementIdentifier = getIdentifierNode(node);
+
+        if (
+          helpers.isAsyncQuery(domElementIdentifier) ||
+          isPromiseIdentifier(domElementIdentifier)
+        ) {
+          return context.report({
+            node: originalNode ?? node,
+            messageId: 'noPromiseInFireEvent',
+          });
+        }
+      }
+
+      if (ASTUtils.isIdentifier(node)) {
+        const nodeVariable = ASTUtils.findVariable(
+          context.getScope(),
+          node.name
+        );
+        if (!nodeVariable || !nodeVariable.defs) {
+          return;
+        }
+
+        for (const definition of nodeVariable.defs) {
+          const variableDeclarator = definition.node as TSESTree.VariableDeclarator;
+          checkSuspiciousNode(variableDeclarator.init, node);
+        }
+      }
+    }
+
+    return {
+      'CallExpression Identifier'(node: TSESTree.Identifier) {
+        if (!helpers.isFireEventMethod(node)) {
+          return;
+        }
+
+        const closestCallExpression = findClosestCallExpressionNode(node, true);
+
+        if (!closestCallExpression) {
+          return;
+        }
+
+        const domElementArgument = closestCallExpression.arguments[0];
+
+        checkSuspiciousNode(domElementArgument);
       },
     };
   },

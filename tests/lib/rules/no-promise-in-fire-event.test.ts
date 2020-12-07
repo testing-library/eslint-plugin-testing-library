@@ -25,16 +25,6 @@ ruleTester.run(RULE_NAME, rule, {
         fireEvent.click(someRef)`,
     },
     {
-      code: `fireEvent.click(findByText('submit'))`,
-    },
-    {
-      code: `
-        import {fireEvent} from '@testing-library/foo';
-
-        const promise = new Promise();
-        fireEvent.click(promise)`,
-    },
-    {
       code: `
         import {fireEvent} from '@testing-library/foo';
         
@@ -42,10 +32,89 @@ ruleTester.run(RULE_NAME, rule, {
       `,
     },
     {
-      code: `fireEvent.click(Promise())`,
+      code: `
+        import {fireEvent} from '@testing-library/foo'
+
+        const elementPromise = screen.findByRole('button')
+        const button = await elementPromise
+        fireEvent.click(button)`,
     },
+    {
+      settings: {
+        'testing-library/module': 'test-utils',
+      },
+      code: `// invalid usage but aggressive reporting opted-out
+        import { fireEvent } from 'somewhere-else'
+        fireEvent.click(findByText('submit'))
+    `,
+    },
+    `// edge case for coverage:
+     // valid use case without call expression
+     // so there is no innermost function scope found
+     test('edge case for no innermost function scope', () => {
+      const click = fireEvent.click
+    })
+    `,
+    `// edge case for coverage:
+     // new expression of something else than Promise
+     fireEvent.click(new SomeElement())
+    `,
   ],
   invalid: [
+    {
+      // aggressive reporting opted-in
+      code: `fireEvent.click(findByText('submit'))`,
+      errors: [
+        {
+          messageId: 'noPromiseInFireEvent',
+          line: 1,
+          column: 17,
+          endColumn: 37,
+        },
+      ],
+    },
+    {
+      // aggressive reporting opted-in
+      code: `fireEvent.click(Promise())`,
+      errors: [
+        {
+          messageId: 'noPromiseInFireEvent',
+          line: 1,
+          column: 17,
+          endColumn: 26,
+        },
+      ],
+    },
+    {
+      code: `
+        import {fireEvent} from '@testing-library/foo';
+
+        const promise = new Promise();
+        fireEvent.click(promise)`,
+      errors: [
+        {
+          messageId: 'noPromiseInFireEvent',
+          line: 5,
+          column: 25,
+          endColumn: 32,
+        },
+      ],
+    },
+    {
+      code: `
+        import {fireEvent} from '@testing-library/foo'
+
+        const elementPromise = screen.findByRole('button')
+        fireEvent.click(elementPromise)`,
+      errors: [
+        {
+          messageId: 'noPromiseInFireEvent',
+          line: 5,
+          column: 25,
+          endColumn: 39,
+        },
+      ],
+    },
     {
       code: `
         import {fireEvent} from '@testing-library/foo';
@@ -54,6 +123,9 @@ ruleTester.run(RULE_NAME, rule, {
       errors: [
         {
           messageId: 'noPromiseInFireEvent',
+          line: 4,
+          column: 25,
+          endColumn: 52,
         },
       ],
     },
@@ -65,6 +137,9 @@ ruleTester.run(RULE_NAME, rule, {
       errors: [
         {
           messageId: 'noPromiseInFireEvent',
+          line: 4,
+          column: 25,
+          endColumn: 45,
         },
       ],
     },
@@ -76,6 +151,9 @@ ruleTester.run(RULE_NAME, rule, {
       errors: [
         {
           messageId: 'noPromiseInFireEvent',
+          line: 4,
+          column: 25,
+          endColumn: 39,
         },
       ],
     },
@@ -87,6 +165,9 @@ ruleTester.run(RULE_NAME, rule, {
       errors: [
         {
           messageId: 'noPromiseInFireEvent',
+          line: 4,
+          column: 25,
+          endColumn: 43,
         },
       ],
     },
