@@ -1,8 +1,4 @@
-import {
-  ESLintUtils,
-  TSESTree,
-  ASTUtils,
-} from '@typescript-eslint/experimental-utils';
+import { TSESTree, ASTUtils } from '@typescript-eslint/experimental-utils';
 import {
   ReportFixFunction,
   RuleFix,
@@ -15,7 +11,8 @@ import {
   isObjectPattern,
   isProperty,
 } from '../node-utils';
-import { getDocsUrl, SYNC_QUERIES_COMBINATIONS } from '../utils';
+import { createTestingLibraryRule } from '../create-testing-library-rule';
+import { SYNC_QUERIES_COMBINATIONS } from '../utils';
 
 export const RULE_NAME = 'prefer-find-by';
 export type MessageIds = 'preferFindBy';
@@ -51,7 +48,7 @@ function findRenderDefinitionDeclaration(
   return findRenderDefinitionDeclaration(scope.upper, query);
 }
 
-export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
+export default createTestingLibraryRule<Options, MessageIds>({
   name: RULE_NAME,
   meta: {
     type: 'suggestion',
