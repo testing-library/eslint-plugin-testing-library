@@ -279,5 +279,59 @@ ruleTester.run(RULE_NAME, rule, {
         const submitButton = await findByRole('baz', { name: 'button' })
       `,
     },
+    // custom query triggers the error but there is no fix - so output is the same
+    ...WAIT_METHODS.map((waitMethod: string) => ({
+      code: `
+        import {${waitMethod},render} from '@testing-library/foo';
+        it('tests', async () => {
+          const { getByCustomQuery } = render()
+          const submitButton = await ${waitMethod}(() => getByCustomQuery('baz'))
+        })
+      `,
+      errors: [
+        {
+          messageId: 'preferFindBy',
+          data: {
+            queryVariant: 'findBy',
+            queryMethod: 'CustomQuery',
+            fullQuery: `${waitMethod}(() => getByCustomQuery('baz'))`,
+          },
+        },
+      ],
+      output: `
+        import {${waitMethod},render} from '@testing-library/foo';
+        it('tests', async () => {
+          const { getByCustomQuery } = render()
+          const submitButton = await ${waitMethod}(() => getByCustomQuery('baz'))
+        })
+      `,
+    })),
+    // custom query triggers the error but there is no fix - so output is the same
+    ...WAIT_METHODS.map((waitMethod: string) => ({
+      code: `
+        import {${waitMethod},render,screen} from '@testing-library/foo';
+        it('tests', async () => {
+          const { getByCustomQuery } = render()
+          const submitButton = await ${waitMethod}(() => screen.getByCustomQuery('baz'))
+        })
+      `,
+      errors: [
+        {
+          messageId: 'preferFindBy',
+          data: {
+            queryVariant: 'findBy',
+            queryMethod: 'CustomQuery',
+            fullQuery: `${waitMethod}(() => screen.getByCustomQuery('baz'))`,
+          },
+        },
+      ],
+      output: `
+        import {${waitMethod},render,screen} from '@testing-library/foo';
+        it('tests', async () => {
+          const { getByCustomQuery } = render()
+          const submitButton = await ${waitMethod}(() => screen.getByCustomQuery('baz'))
+        })
+      `,
+    })),
   ],
 });

@@ -14,7 +14,12 @@ import {
   isMemberExpression,
   isProperty,
 } from './node-utils';
-import { ABSENCE_MATCHERS, ASYNC_UTILS, PRESENCE_MATCHERS } from './utils';
+import {
+  ABSENCE_MATCHERS,
+  ASYNC_UTILS,
+  PRESENCE_MATCHERS,
+  ALL_QUERIES_COMBINATIONS,
+} from './utils';
 
 export type TestingLibrarySettings = {
   'testing-library/module'?: string;
@@ -52,6 +57,7 @@ export type DetectionHelpers = {
   isFindByQuery: (node: TSESTree.Identifier) => boolean;
   isSyncQuery: (node: TSESTree.Identifier) => boolean;
   isAsyncQuery: (node: TSESTree.Identifier) => boolean;
+  isCustomQuery: (node: TSESTree.Identifier) => boolean;
   isAsyncUtil: (node: TSESTree.Identifier) => boolean;
   isFireEventMethod: (node: TSESTree.Identifier) => boolean;
   isPresenceAssert: (node: TSESTree.MemberExpression) => boolean;
@@ -178,6 +184,13 @@ export function detectTestingLibraryUtils<
      */
     const isAsyncQuery: DetectionHelpers['isAsyncQuery'] = (node) => {
       return isFindByQuery(node);
+    };
+
+    const isCustomQuery: DetectionHelpers['isCustomQuery'] = (node) => {
+      return (
+        (isSyncQuery(node) || isAsyncQuery(node)) &&
+        !ALL_QUERIES_COMBINATIONS.includes(node.name)
+      );
     };
 
     /**
@@ -356,6 +369,7 @@ export function detectTestingLibraryUtils<
       isFindByQuery,
       isSyncQuery,
       isAsyncQuery,
+      isCustomQuery,
       isAsyncUtil,
       isFireEventMethod,
       isPresenceAssert,

@@ -468,21 +468,21 @@ ruleTester.run(RULE_NAME, rule, {
       // case: custom "getBy*" query reported without import (aggressive reporting)
       getByIcon('search')
     `,
-      errors: [{ line: 3, column: 7, messageId: 'getByError' }],
+      errors: [{ line: 3, column: 7, messageId: 'customQueryError' }],
     },
     {
       code: `
       // case: custom "queryBy*" query reported without import (aggressive reporting)
       queryByIcon('search')
     `,
-      errors: [{ line: 3, column: 7, messageId: 'queryByError' }],
+      errors: [{ line: 3, column: 7, messageId: 'customQueryError' }],
     },
     {
       code: `
       // case: custom "findBy*" query reported without import (aggressive reporting)
       findByIcon('search')
     `,
-      errors: [{ line: 3, column: 7, messageId: 'findByError' }],
+      errors: [{ line: 3, column: 7, messageId: 'customQueryError' }],
     },
     {
       settings: {
@@ -564,7 +564,7 @@ ruleTester.run(RULE_NAME, rule, {
       import { render } from '@testing-library/react'
       getByIcon('search')
     `,
-      errors: [{ line: 4, column: 7, messageId: 'getByError' }],
+      errors: [{ line: 4, column: 7, messageId: 'customQueryError' }],
     },
     {
       filename: 'MyComponent.spec.js',
@@ -576,7 +576,7 @@ ruleTester.run(RULE_NAME, rule, {
       import { render } from '@testing-library/framework'
       queryByIcon('search')
     `,
-      errors: [{ line: 4, column: 7, messageId: 'queryByError' }],
+      errors: [{ line: 4, column: 7, messageId: 'customQueryError' }],
     },
     {
       filename: 'MyComponent.spec.js',
@@ -588,7 +588,7 @@ ruleTester.run(RULE_NAME, rule, {
       import { render } from '@testing-library/framework'
       findByIcon('search')
     `,
-      errors: [{ line: 4, column: 7, messageId: 'findByError' }],
+      errors: [{ line: 4, column: 7, messageId: 'customQueryError' }],
     },
     {
       settings: {
@@ -599,7 +599,7 @@ ruleTester.run(RULE_NAME, rule, {
       import { render } from 'test-utils'
       getByIcon('search')
     `,
-      errors: [{ line: 4, column: 7, messageId: 'getByError' }],
+      errors: [{ line: 4, column: 7, messageId: 'customQueryError' }],
     },
     {
       filename: 'MyComponent.spec.js',
@@ -611,7 +611,7 @@ ruleTester.run(RULE_NAME, rule, {
       import { render } from 'test-utils'
       queryByIcon('search')
     `,
-      errors: [{ line: 4, column: 7, messageId: 'queryByError' }],
+      errors: [{ line: 4, column: 7, messageId: 'customQueryError' }],
     },
     {
       filename: 'MyComponent.spec.js',
@@ -623,7 +623,7 @@ ruleTester.run(RULE_NAME, rule, {
       import { render } from 'test-utils'
       findByIcon('search')
     `,
-      errors: [{ line: 4, column: 7, messageId: 'findByError' }],
+      errors: [{ line: 4, column: 7, messageId: 'customQueryError' }],
     },
     {
       settings: {

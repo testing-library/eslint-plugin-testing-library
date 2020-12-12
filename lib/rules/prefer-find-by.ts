@@ -12,7 +12,6 @@ import {
   isProperty,
 } from '../node-utils';
 import { createTestingLibraryRule } from '../create-testing-library-rule';
-import { SYNC_QUERIES_COMBINATIONS } from '../utils';
 
 export const RULE_NAME = 'prefer-find-by';
 export type MessageIds = 'preferFindBy';
@@ -67,7 +66,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
   },
   defaultOptions: [],
 
-  create(context) {
+  create(context, _, helpers) {
     const sourceCode = context.getSourceCode();
 
     /**
@@ -123,7 +122,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
           isMemberExpression(argument.body.callee) &&
           ASTUtils.isIdentifier(argument.body.callee.property) &&
           ASTUtils.isIdentifier(argument.body.callee.object) &&
-          SYNC_QUERIES_COMBINATIONS.includes(argument.body.callee.property.name)
+          helpers.isSyncQuery(argument.body.callee.property)
         ) {
           // shape of () => screen.getByText
           const fullQueryMethod = argument.body.callee.property.name;
@@ -136,6 +135,11 @@ export default createTestingLibraryRule<Options, MessageIds>({
             queryMethod,
             queryVariant,
             fix(fixer) {
+              const property = ((argument.body as TSESTree.CallExpression)
+                .callee as TSESTree.MemberExpression).property;
+              if (helpers.isCustomQuery(property as TSESTree.Identifier)) {
+                return;
+              }
               const newCode = `${caller}.${queryVariant}${queryMethod}(${callArguments
                 .map((node) => sourceCode.getText(node))
                 .join(', ')})`;
@@ -145,65 +149,74 @@ export default createTestingLibraryRule<Options, MessageIds>({
           return;
         }
         if (
-          ASTUtils.isIdentifier(argument.body.callee) &&
-          SYNC_QUERIES_COMBINATIONS.includes(argument.body.callee.name)
+          !ASTUtils.isIdentifier(argument.body.callee) ||
+          !helpers.isSyncQuery(argument.body.callee)
         ) {
-          // shape of () => getByText
-          const fullQueryMethod = argument.body.callee.name;
-          const queryMethod = fullQueryMethod.split('By')[1];
-          const queryVariant = getFindByQueryVariant(fullQueryMethod);
-          const callArguments = argument.body.arguments;
-
-          reportInvalidUsage(node, {
-            queryMethod,
-            queryVariant,
-            fix(fixer) {
-              const findByMethod = `${queryVariant}${queryMethod}`;
-              const allFixes: RuleFix[] = [];
-              // this updates waitFor with findBy*
-              const newCode = `${findByMethod}(${callArguments
-                .map((node) => sourceCode.getText(node))
-                .join(', ')})`;
-              allFixes.push(fixer.replaceText(node, newCode));
-
-              // this adds the findBy* declaration - adding it to the list of destructured variables { findBy* } = render()
-              const definition = findRenderDefinitionDeclaration(
-                context.getScope(),
-                fullQueryMethod
-              );
-              // I think it should always find it, otherwise code should not be valid (it'd be using undeclared variables)
-              if (!definition) {
-                return allFixes;
-              }
-              // check the declaration is part of a destructuring
-              if (isObjectPattern(definition.parent.parent)) {
-                const allVariableDeclarations = definition.parent.parent;
-                // verify if the findBy* method was already declared
-                if (
-                  allVariableDeclarations.properties.some(
-                    (p) =>
-                      isProperty(p) &&
-                      ASTUtils.isIdentifier(p.key) &&
-                      p.key.name === findByMethod
-                  )
-                ) {
-                  return allFixes;
-                }
-                // the last character of a destructuring is always a  "}", so we should replace it with the findBy* declaration
-                const textDestructuring = sourceCode.getText(
-                  allVariableDeclarations
-                );
-                const text =
-                  textDestructuring.substring(0, textDestructuring.length - 2) +
-                  `, ${findByMethod} }`;
-                allFixes.push(fixer.replaceText(allVariableDeclarations, text));
-              }
-
-              return allFixes;
-            },
-          });
           return;
         }
+        // shape of () => getByText
+        const fullQueryMethod = argument.body.callee.name;
+        const queryMethod = fullQueryMethod.split('By')[1];
+        const queryVariant = getFindByQueryVariant(fullQueryMethod);
+        const callArguments = argument.body.arguments;
+
+        reportInvalidUsage(node, {
+          queryMethod,
+          queryVariant,
+          fix(fixer) {
+            // we know from above callee is an Identifier
+            if (
+              helpers.isCustomQuery(
+                (argument.body as TSESTree.CallExpression)
+                  .callee as TSESTree.Identifier
+              )
+            ) {
+              return;
+            }
+            const findByMethod = `${queryVariant}${queryMethod}`;
+            const allFixes: RuleFix[] = [];
+            // this updates waitFor with findBy*
+            const newCode = `${findByMethod}(${callArguments
+              .map((node) => sourceCode.getText(node))
+              .join(', ')})`;
+            allFixes.push(fixer.replaceText(node, newCode));
+
+            // this adds the findBy* declaration - adding it to the list of destructured variables { findBy* } = render()
+            const definition = findRenderDefinitionDeclaration(
+              context.getScope(),
+              fullQueryMethod
+            );
+            // I think it should always find it, otherwise code should not be valid (it'd be using undeclared variables)
+            if (!definition) {
+              return allFixes;
+            }
+            // check the declaration is part of a destructuring
+            if (isObjectPattern(definition.parent.parent)) {
+              const allVariableDeclarations = definition.parent.parent;
+              // verify if the findBy* method was already declared
+              if (
+                allVariableDeclarations.properties.some(
+                  (p) =>
+                    isProperty(p) &&
+                    ASTUtils.isIdentifier(p.key) &&
+                    p.key.name === findByMethod
+                )
+              ) {
+                return allFixes;
+              }
+              // the last character of a destructuring is always a  "}", so we should replace it with the findBy* declaration
+              const textDestructuring = sourceCode.getText(
+                allVariableDeclarations
+              );
+              const text =
+                textDestructuring.substring(0, textDestructuring.length - 2) +
+                `, ${findByMethod} }`;
+              allFixes.push(fixer.replaceText(allVariableDeclarations, text));
+            }
+
+            return allFixes;
+          },
+        });
       },
     };
   },
