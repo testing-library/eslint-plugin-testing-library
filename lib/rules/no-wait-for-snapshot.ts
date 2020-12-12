@@ -1,6 +1,5 @@
 import { ASTUtils, TSESTree } from '@typescript-eslint/experimental-utils';
 import { createTestingLibraryRule } from '../create-testing-library-rule';
-import { ASYNC_UTILS } from '../utils';
 import {
   findClosestCallExpressionNode,
   isMemberExpression,
@@ -39,7 +38,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
         if (
           ASTUtils.isIdentifier(callExpression.callee) &&
           helpers.isNodeComingFromTestingLibrary(callExpression.callee) &&
-          ASYNC_UTILS.includes(callExpression.callee.name)
+          helpers.isAsyncUtil(callExpression.callee)
         ) {
           return callExpression.callee;
         }
