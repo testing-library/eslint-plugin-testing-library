@@ -131,7 +131,14 @@ ruleTester.run(RULE_NAME, rule, {
           await ${asyncUtil}(() => expect(foo).toMatchSnapshot());
         });
       `,
-      errors: [{ line: 4, messageId: 'noWaitForSnapshot' }],
+      errors: [
+        {
+          line: 4,
+          messageId: 'noWaitForSnapshot',
+          data: { name: asyncUtil },
+          column: 36 + asyncUtil.length,
+        },
+      ],
     })),
     ...ASYNC_UTILS.map((asyncUtil) => ({
       code: `
@@ -142,7 +149,14 @@ ruleTester.run(RULE_NAME, rule, {
           });
         });
       `,
-      errors: [{ line: 5, messageId: 'noWaitForSnapshot' }],
+      errors: [
+        {
+          line: 5,
+          messageId: 'noWaitForSnapshot',
+          data: { name: asyncUtil },
+          column: 27,
+        },
+      ],
     })),
     ...ASYNC_UTILS.map((asyncUtil) => ({
       code: `
@@ -151,7 +165,14 @@ ruleTester.run(RULE_NAME, rule, {
           await asyncUtils.${asyncUtil}(() => expect(foo).toMatchSnapshot());
         });
       `,
-      errors: [{ line: 4, messageId: 'noWaitForSnapshot' }],
+      errors: [
+        {
+          line: 4,
+          messageId: 'noWaitForSnapshot',
+          data: { name: asyncUtil },
+          column: 47 + asyncUtil.length,
+        },
+      ],
     })),
     ...ASYNC_UTILS.map((asyncUtil) => ({
       code: `
@@ -162,7 +183,14 @@ ruleTester.run(RULE_NAME, rule, {
           });
         });
       `,
-      errors: [{ line: 5, messageId: 'noWaitForSnapshot' }],
+      errors: [
+        {
+          line: 5,
+          messageId: 'noWaitForSnapshot',
+          data: { name: asyncUtil },
+          column: 27,
+        },
+      ],
     })),
     ...ASYNC_UTILS.map((asyncUtil) => ({
       code: `
@@ -171,7 +199,14 @@ ruleTester.run(RULE_NAME, rule, {
           await ${asyncUtil}(() => expect(foo).toMatchInlineSnapshot());
         });
       `,
-      errors: [{ line: 4, messageId: 'noWaitForSnapshot' }],
+      errors: [
+        {
+          line: 4,
+          messageId: 'noWaitForSnapshot',
+          data: { name: asyncUtil },
+          column: 36 + asyncUtil.length,
+        },
+      ],
     })),
     ...ASYNC_UTILS.map((asyncUtil) => ({
       code: `
@@ -182,7 +217,14 @@ ruleTester.run(RULE_NAME, rule, {
           });
         });
       `,
-      errors: [{ line: 5, messageId: 'noWaitForSnapshot' }],
+      errors: [
+        {
+          line: 5,
+          messageId: 'noWaitForSnapshot',
+          data: { name: asyncUtil },
+          column: 27,
+        },
+      ],
     })),
     ...ASYNC_UTILS.map((asyncUtil) => ({
       code: `
@@ -191,7 +233,14 @@ ruleTester.run(RULE_NAME, rule, {
           await asyncUtils.${asyncUtil}(() => expect(foo).toMatchInlineSnapshot());
         });
       `,
-      errors: [{ line: 4, messageId: 'noWaitForSnapshot' }],
+      errors: [
+        {
+          line: 4,
+          messageId: 'noWaitForSnapshot',
+          data: { name: asyncUtil },
+          column: 47 + asyncUtil.length,
+        },
+      ],
     })),
     ...ASYNC_UTILS.map((asyncUtil) => ({
       code: `
@@ -202,7 +251,14 @@ ruleTester.run(RULE_NAME, rule, {
           });
         });
       `,
-      errors: [{ line: 5, messageId: 'noWaitForSnapshot' }],
+      errors: [
+        {
+          line: 5,
+          messageId: 'noWaitForSnapshot',
+          data: { name: asyncUtil },
+          column: 27,
+        },
+      ],
     })),
   ],
 });
