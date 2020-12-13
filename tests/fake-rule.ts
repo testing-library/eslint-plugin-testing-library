@@ -12,6 +12,7 @@ type MessageIds =
   | 'getByError'
   | 'queryByError'
   | 'findByError'
+  | 'customQueryError'
   | 'presenceAssertError'
   | 'absenceAssertError';
 
@@ -29,6 +30,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
       getByError: 'some error related to getBy reported',
       queryByError: 'some error related to queryBy reported',
       findByError: 'some error related to findBy reported',
+      customQueryError: 'some error related to a customQuery reported',
       presenceAssertError: 'some error related to presence assert reported',
       absenceAssertError: 'some error related to absence assert reported',
     },
@@ -41,6 +43,10 @@ export default createTestingLibraryRule<Options, MessageIds>({
       // force "render" to be reported
       if (node.name === 'render') {
         return context.report({ node, messageId: 'fakeError' });
+      }
+
+      if (helpers.isCustomQuery(node)) {
+        return context.report({ node, messageId: 'customQueryError' });
       }
 
       // force queries to be reported
