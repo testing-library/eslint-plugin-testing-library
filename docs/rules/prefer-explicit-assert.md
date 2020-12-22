@@ -43,14 +43,11 @@ expect(queryByText('foo')).toBeInTheDocument();
 await waitForElement(() => getByText('foo'));
 fireEvent.click(getByText('bar'));
 const quxElement = getByText('qux');
-
-// call directly something different than Testing Library query
-getByNonTestingLibraryVariant('foo');
 ```
 
 ## Options
 
-This rule has a few options:
+This rule has one option:
 
 - `assertion`: this string allows defining the preferred assertion to use
   with `getBy*` queries. By default, any assertion is valid (`toBeTruthy`,
@@ -66,18 +63,9 @@ This rule has a few options:
   "testing-library/prefer-explicit-assert": ["error", {"assertion": "toBeInTheDocument"}],
   ```
 
-- `customQueryNames`: this array option allows to extend default Testing
-  Library queries with custom ones for including them into rule
-  inspection.
-
-  ```js
-  "testing-library/prefer-explicit-assert": ["error", {"customQueryNames": ["getByIcon", "getBySomethingElse"]}],
-  ```
-
 ## When Not To Use It
 
-If you prefer to use `getBy*` queries implicitly as an assert-like
-method itself, then this rule is not recommended.
+If you prefer to use `getBy*` queries implicitly as an assert-like method itself, then this rule is not recommended.
 
 ## Further Reading
 
