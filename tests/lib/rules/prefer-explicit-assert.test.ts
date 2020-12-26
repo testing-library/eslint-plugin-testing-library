@@ -4,79 +4,81 @@ import { ALL_QUERIES_METHODS } from '../../../lib/utils';
 
 const ruleTester = createRuleTester();
 
+const COMBINED_QUERIES_METHODS = [...ALL_QUERIES_METHODS, 'ByIcon'];
+
 ruleTester.run(RULE_NAME, rule, {
   valid: [
-    ...ALL_QUERIES_METHODS.map((queryMethod) => ({
+    ...COMBINED_QUERIES_METHODS.map((queryMethod) => ({
       code: `get${queryMethod}('Hello')`,
       settings: {
         'testing-library/module': 'test-utils',
       },
     })),
-    ...ALL_QUERIES_METHODS.map((queryMethod) => ({
+    ...COMBINED_QUERIES_METHODS.map((queryMethod) => ({
       code: `get${queryMethod}`,
     })),
-    ...ALL_QUERIES_METHODS.map((queryMethod) => ({
+    ...COMBINED_QUERIES_METHODS.map((queryMethod) => ({
       code: `
         const utils = render()
         utils.get${queryMethod}
       `,
     })),
-    ...ALL_QUERIES_METHODS.map((queryMethod) => ({
+    ...COMBINED_QUERIES_METHODS.map((queryMethod) => ({
       code: `screen.get${queryMethod}`,
     })),
-    ...ALL_QUERIES_METHODS.map((queryMethod) => ({
+    ...COMBINED_QUERIES_METHODS.map((queryMethod) => ({
       code: `expect(get${queryMethod}('foo')).toBeDefined()`,
     })),
-    ...ALL_QUERIES_METHODS.map((queryMethod) => ({
+    ...COMBINED_QUERIES_METHODS.map((queryMethod) => ({
       code: `
         const utils = render()
         expect(utils.get${queryMethod}('foo')).toBeDefined()
       `,
     })),
-    ...ALL_QUERIES_METHODS.map((queryMethod) => ({
+    ...COMBINED_QUERIES_METHODS.map((queryMethod) => ({
       code: `expect(screen.get${queryMethod}('foo')).toBeDefined()`,
     })),
-    ...ALL_QUERIES_METHODS.map((queryMethod) => ({
+    ...COMBINED_QUERIES_METHODS.map((queryMethod) => ({
       code: `expect(getBy${queryMethod}('foo').bar).toBeInTheDocument()`,
     })),
-    ...ALL_QUERIES_METHODS.map((queryMethod) => ({
+    ...COMBINED_QUERIES_METHODS.map((queryMethod) => ({
       code: `
         async () => { 
           await waitForElement(() => get${queryMethod}('foo')) 
         }
       `,
     })),
-    ...ALL_QUERIES_METHODS.map((queryMethod) => ({
+    ...COMBINED_QUERIES_METHODS.map((queryMethod) => ({
       code: `fireEvent.click(get${queryMethod}('bar'));`,
     })),
-    ...ALL_QUERIES_METHODS.map((queryMethod) => ({
+    ...COMBINED_QUERIES_METHODS.map((queryMethod) => ({
       code: `const quxElement = get${queryMethod}('qux')`,
     })),
-    ...ALL_QUERIES_METHODS.map((queryMethod) => ({
+    ...COMBINED_QUERIES_METHODS.map((queryMethod) => ({
       code: `() => { return get${queryMethod}('foo') }`,
     })),
-    ...ALL_QUERIES_METHODS.map((queryMethod) => ({
+    ...COMBINED_QUERIES_METHODS.map((queryMethod) => ({
       code: `function bar() { return get${queryMethod}('foo') }`,
     })),
-    ...ALL_QUERIES_METHODS.map((queryMethod) => ({
+    ...COMBINED_QUERIES_METHODS.map((queryMethod) => ({
       code: `const { get${queryMethod} } = render()`,
     })),
-    ...ALL_QUERIES_METHODS.map((queryMethod) => ({
+    ...COMBINED_QUERIES_METHODS.map((queryMethod) => ({
       code: `it('test', () => { const { get${queryMethod} } = render() })`,
     })),
-    ...ALL_QUERIES_METHODS.map((queryMethod) => ({
+    ...COMBINED_QUERIES_METHODS.map((queryMethod) => ({
       code: `it('test', () => { const [ get${queryMethod} ] = render() })`,
     })),
-    ...ALL_QUERIES_METHODS.map((queryMethod) => ({
+    ...COMBINED_QUERIES_METHODS.map((queryMethod) => ({
       code: `const a = [ get${queryMethod}('foo') ]`,
     })),
-    ...ALL_QUERIES_METHODS.map((queryMethod) => ({
+    ...COMBINED_QUERIES_METHODS.map((queryMethod) => ({
       code: `const a = { foo: get${queryMethod}('bar') }`,
     })),
-    ...ALL_QUERIES_METHODS.map((queryMethod) => ({
+    ...COMBINED_QUERIES_METHODS.map((queryMethod) => ({
       code: `query${queryMethod}("foo")`,
     })),
-    ...ALL_QUERIES_METHODS.map((queryMethod) => ({
+    ...COMBINED_QUERIES_METHODS.map((queryMethod) => ({
       code: `
         expect(get${queryMethod}('foo')).toBeTruthy()
         fireEvent.click(get${queryMethod}('bar'));
@@ -87,7 +89,7 @@ ruleTester.run(RULE_NAME, rule, {
         },
       ],
     })),
-    ...ALL_QUERIES_METHODS.map((queryMethod) => ({
+    ...COMBINED_QUERIES_METHODS.map((queryMethod) => ({
       code: `expect(get${queryMethod}('foo')).toBeEnabled()`,
       options: [
         {
@@ -97,7 +99,7 @@ ruleTester.run(RULE_NAME, rule, {
     })),
   ],
   invalid: [
-    ...ALL_QUERIES_METHODS.map((queryMethod) => ({
+    ...COMBINED_QUERIES_METHODS.map((queryMethod) => ({
       code: `get${queryMethod}('foo')`,
       errors: [
         {
@@ -105,7 +107,7 @@ ruleTester.run(RULE_NAME, rule, {
         },
       ],
     })),
-    ...ALL_QUERIES_METHODS.map((queryMethod) => ({
+    ...COMBINED_QUERIES_METHODS.map((queryMethod) => ({
       code: `
         const utils = render()
         utils.get${queryMethod}('foo')
@@ -118,7 +120,7 @@ ruleTester.run(RULE_NAME, rule, {
         },
       ],
     })),
-    ...ALL_QUERIES_METHODS.map((queryMethod) => ({
+    ...COMBINED_QUERIES_METHODS.map((queryMethod) => ({
       code: `screen.get${queryMethod}('foo')`,
       errors: [
         {
@@ -128,7 +130,7 @@ ruleTester.run(RULE_NAME, rule, {
         },
       ],
     })),
-    ...ALL_QUERIES_METHODS.map((queryMethod) => ({
+    ...COMBINED_QUERIES_METHODS.map((queryMethod) => ({
       code: `
         () => {
           get${queryMethod}('foo')
@@ -149,7 +151,7 @@ ruleTester.run(RULE_NAME, rule, {
         },
       ],
     })),
-    ...ALL_QUERIES_METHODS.map((queryMethod) => ({
+    ...COMBINED_QUERIES_METHODS.map((queryMethod) => ({
       settings: {
         'testing-library/module': 'test-utils',
       },
@@ -171,7 +173,7 @@ ruleTester.run(RULE_NAME, rule, {
         },
       ],
     },
-    ...ALL_QUERIES_METHODS.map((queryMethod) => ({
+    ...COMBINED_QUERIES_METHODS.map((queryMethod) => ({
       code: `expect(get${queryMethod}('foo')).toBeDefined()`,
       options: [
         {
@@ -185,7 +187,7 @@ ruleTester.run(RULE_NAME, rule, {
         },
       ],
     })),
-    ...ALL_QUERIES_METHODS.map((queryMethod) => ({
+    ...COMBINED_QUERIES_METHODS.map((queryMethod) => ({
       code: `expect(get${queryMethod}('foo')).not.toBeNull()`,
       options: [
         {
@@ -199,7 +201,7 @@ ruleTester.run(RULE_NAME, rule, {
         },
       ],
     })),
-    ...ALL_QUERIES_METHODS.map((queryMethod) => ({
+    ...COMBINED_QUERIES_METHODS.map((queryMethod) => ({
       code: `expect(get${queryMethod}('foo')).not.toBeFalsy()`,
       options: [
         {
