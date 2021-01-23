@@ -14,6 +14,8 @@ import {
 
 export const RULE_NAME = 'render-result-naming-convention';
 export type MessageIds = 'renderResultNamingConvention';
+
+// TODO: remove renderFunctions option first, and then move it to ESLint settings
 type Options = [{ renderFunctions?: string[] }];
 
 const ALLOWED_VAR_NAMES = ['view', 'utils'];
@@ -57,6 +59,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
     let wildcardImportName: string | undefined;
 
     return {
+      // TODO: this can be removed
       // check named imports
       ImportDeclaration(node: TSESTree.ImportDeclaration) {
         if (!hasTestingLibraryImportModule(node)) {
@@ -72,6 +75,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
 
         renderAlias = renderImport.local.name;
       },
+      // TODO: this can be removed
       // check wildcard imports
       'ImportDeclaration ImportNamespaceSpecifier'(
         node: TSESTree.ImportNamespaceSpecifier
@@ -92,10 +96,14 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
           return;
         }
 
+        // TODO: call `helpers.isRender` with the node.init
+        //  this ini could be Identifier (render) or MemberExpression (rtl.render)
         const isValidRenderDeclarator = isRenderVariableDeclarator(node, [
           ...renderFunctions,
           renderAlias,
         ]);
+
+        // TODO: After this point, most of the checks should be removed
         const isValidWildcardImport = !!wildcardImportName;
 
         // check if is a Testing Library related import
