@@ -10,8 +10,8 @@ const combineQueries = (variants: string[], methods: string[]) => {
   return combinedQueries;
 };
 
-const getDocsUrl = (ruleName: string) =>
-  `https://github.com/testing-library/eslint-plugin-testing-library/tree/master/docs/rules/${ruleName}.md`;
+const getDocsUrl = (ruleName: string): string =>
+  `https://github.com/testing-library/eslint-plugin-testing-library/tree/main/docs/rules/${ruleName}.md`;
 
 const LIBRARY_MODULES = [
   '@testing-library/dom',

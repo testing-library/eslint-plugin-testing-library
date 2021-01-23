@@ -21,7 +21,7 @@ before_script:
 jobs:
   include:
     - stage: release
-      if: branch = master AND type != pull_request AND fork = false
+      if: branch = main AND type != pull_request AND fork = false
       node_js: 14
       env: ESLINT=7
       script: npm run build

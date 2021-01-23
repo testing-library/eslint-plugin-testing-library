@@ -12,20 +12,20 @@ Working on your first Pull Request? You can learn how from this free series
 3. Run `npm install` to install corresponding dependencies
 4. Create a branch for your PR named like `pr/your-branch-name` (you can do this through git CLI with `git checkout -b pr/your-branch-name`)
 
-> Tip: Keep your `master` branch pointing at the original repository and make
+> Tip: Keep your `main` branch pointing at the original repository and make
 > pull requests from branches on your fork. To do this, run:
 >
 > ```
 > git remote add upstream https://github.com/testing-library/eslint-plugin-testing-library.git
 > git fetch upstream
-> git branch --set-upstream-to=upstream/master master
+> git branch --set-upstream-to=upstream/main main
 > ```
 >
 > This will add the original repository as a "remote" called "upstream," Then
-> fetch the git information from that remote, then set your local `master`
-> branch to use the upstream master branch whenever you run `git pull`. Then you
-> can make all of your pull request branches based on this `master` branch.
-> Whenever you want to update your version of `master`, do a regular `git pull`.
+> fetch the git information from that remote, then set your local `main`
+> branch to use the upstream main branch whenever you run `git pull`. Then you
+> can make all of your pull request branches based on this `main` branch.
+> Whenever you want to update your version of `main`, do a regular `git pull`.
 
 ## Committing and Pushing changes
 
@@ -65,7 +65,7 @@ Additionally, you need to do a couple of extra things:
 
 - Import the new rule in `lib/index.ts` and include it
   in `rules` constant (there is a test which will make sure you did
- this). Remember to include your rule under corresponding `config` if necessary
+  this). Remember to include your rule under corresponding `config` if necessary
   (a snapshot test will check this too, but you can update it just running
   `npm run test:update`).
 - Include your rule in the "Supported Rules" table within the [README.md](./README.md).
