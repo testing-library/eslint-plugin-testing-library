@@ -158,7 +158,7 @@ To enable this configuration use the `extends` property in your
 [version-badge]: https://img.shields.io/npm/v/eslint-plugin-testing-library?style=flat-square
 [version-url]: https://www.npmjs.com/package/eslint-plugin-testing-library
 [license-badge]: https://img.shields.io/npm/l/eslint-plugin-testing-library?style=flat-square
-[license-url]: https://github.com/belco90/eslint-plugin-testing-library/blob/master/license
+[license-url]: https://github.com/belco90/eslint-plugin-testing-library/blob/main/license
 [pr-badge]: https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square
 [pr-url]: http://makeapullrequest.com
 [gh-watchers-badge]: https://img.shields.io/github/watchers/Belco90/eslint-plugin-testing-library?style=social

@@ -26,12 +26,14 @@ jobs:
         - npm run format:check
         - npm run lint -- --max-warnings 0
     - stage: release
-      if: branch = master AND type != pull_request AND fork = false
+      if: branch = main AND type != pull_request AND fork = false
       node_js: 14
       env: ESLINT=7
       script: npm run build
       deploy:
         provider: script
         skip_cleanup: true
+        on:
+          branch: main
         script:
           - npx semantic-release
