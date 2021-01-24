@@ -23,7 +23,9 @@
 [![Tweet][tweet-badge]][tweet-url]
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+
 [![All Contributors](https://img.shields.io/badge/all_contributors-35-orange.svg?style=flat-square)](#contributors-)
+
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 ## Installation
@@ -156,7 +158,7 @@ To enable this configuration use the `extends` property in your
 [version-badge]: https://img.shields.io/npm/v/eslint-plugin-testing-library?style=flat-square
 [version-url]: https://www.npmjs.com/package/eslint-plugin-testing-library
 [license-badge]: https://img.shields.io/npm/l/eslint-plugin-testing-library?style=flat-square
-[license-url]: https://github.com/belco90/eslint-plugin-testing-library/blob/master/license
+[license-url]: https://github.com/belco90/eslint-plugin-testing-library/blob/main/license
 [pr-badge]: https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square
 [pr-url]: http://makeapullrequest.com
 [gh-watchers-badge]: https://img.shields.io/github/watchers/Belco90/eslint-plugin-testing-library?style=social
@@ -228,6 +230,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 
 <!-- markdownlint-enable -->
 <!-- prettier-ignore-end -->
+
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
