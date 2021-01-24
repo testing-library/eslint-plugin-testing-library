@@ -76,6 +76,26 @@ ruleTester.run(RULE_NAME, rule, {
       }
       `,
     },
+
+    // https://github.com/testing-library/eslint-plugin-testing-library/issues/276
+    `
+    // sync query within call expression but not part of the callee
+    const chooseElementFromSomewhere = async (text, getAllByLabelText) => {
+      const someElement = getAllByLabelText(text)[0].parentElement;
+      // ...
+      await someOtherAsyncFunction();
+    };
+     
+    await chooseElementFromSomewhere('someTextToUseInAQuery', getAllByLabelText);
+    `,
+
+    `// edge case for coverage:
+     // valid use case without call expression
+     // so there is no innermost function scope found
+     await test('edge case for no innermost function scope', () => {
+      const foo = getAllByLabelText
+    })
+    `,
   ],
 
   invalid: [

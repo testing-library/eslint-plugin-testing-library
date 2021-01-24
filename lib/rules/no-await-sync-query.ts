@@ -1,5 +1,9 @@
 import { TSESTree } from '@typescript-eslint/experimental-utils';
 import { createTestingLibraryRule } from '../create-testing-library-rule';
+import {
+  findClosestCallExpressionNode,
+  isCallExpressionCallee,
+} from '../node-utils';
 
 export const RULE_NAME = 'no-await-sync-query';
 export type MessageIds = 'noAwaitSyncQuery';
@@ -26,6 +30,15 @@ export default createTestingLibraryRule<Options, MessageIds>({
   create(context, _, helpers) {
     return {
       'AwaitExpression > CallExpression Identifier'(node: TSESTree.Identifier) {
+        const closestCallExpression = findClosestCallExpressionNode(node, true);
+        if (!closestCallExpression) {
+          return;
+        }
+
+        if (!isCallExpressionCallee(closestCallExpression, node)) {
+          return;
+        }
+
         if (helpers.isSyncQuery(node)) {
           context.report({
             node,
