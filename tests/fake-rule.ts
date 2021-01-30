@@ -50,15 +50,15 @@ export default createTestingLibraryRule<Options, MessageIds>({
       }
 
       // force queries to be reported
-      if (helpers.isGetByQuery(node)) {
+      if (helpers.isGetQueryVariant(node)) {
         return context.report({ node, messageId: 'getByError' });
       }
 
-      if (helpers.isQueryByQuery(node)) {
+      if (helpers.isQueryQueryVariant(node)) {
         return context.report({ node, messageId: 'queryByError' });
       }
 
-      if (helpers.isFindByQuery(node)) {
+      if (helpers.isFindQueryVariant(node)) {
         return context.report({ node, messageId: 'findByError' });
       }
     };

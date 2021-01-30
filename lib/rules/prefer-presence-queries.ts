@@ -42,7 +42,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
           return;
         }
 
-        const isPresenceQuery = helpers.isGetByQuery(node);
+        const isPresenceQuery = helpers.isGetQueryVariant(node);
         const expectStatement = expectCallNode.parent;
         const isPresenceAssert = helpers.isPresenceAssert(expectStatement);
         const isAbsenceAssert = helpers.isAbsenceAssert(expectStatement);

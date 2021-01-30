@@ -54,7 +54,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
     return {
       'CallExpression Identifier'(node: TSESTree.Identifier) {
-        if (helpers.isGetByQuery(node)) {
+        if (helpers.isGetQueryVariant(node)) {
           getQueryCalls.push(node);
         }
       },

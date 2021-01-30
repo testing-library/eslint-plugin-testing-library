@@ -52,9 +52,9 @@ export type DetectionHelpers = {
   getCustomModuleImportName: () => string | undefined;
   isTestingLibraryImported: () => boolean;
   isValidFilename: () => boolean;
-  isGetByQuery: (node: TSESTree.Identifier) => boolean;
-  isQueryByQuery: (node: TSESTree.Identifier) => boolean;
-  isFindByQuery: (node: TSESTree.Identifier) => boolean;
+  isGetQueryVariant: (node: TSESTree.Identifier) => boolean;
+  isQueryQueryVariant: (node: TSESTree.Identifier) => boolean;
+  isFindQueryVariant: (node: TSESTree.Identifier) => boolean;
   isSyncQuery: (node: TSESTree.Identifier) => boolean;
   isAsyncQuery: (node: TSESTree.Identifier) => boolean;
   isCustomQuery: (node: TSESTree.Identifier) => boolean;
@@ -152,23 +152,27 @@ export function detectTestingLibraryUtils<
     };
 
     /**
-     * Determines whether a given node is `getBy*` or `getAllBy*` query variant or not.
+     * Determines whether a given node is `get*` query variant or not.
      */
-    const isGetByQuery: DetectionHelpers['isGetByQuery'] = (node) => {
+    const isGetQueryVariant: DetectionHelpers['isGetQueryVariant'] = (node) => {
       return /^get(All)?By.+$/.test(node.name);
     };
 
     /**
-     * Determines whether a given node is `queryBy*` or `queryAllBy*` query variant or not.
+     * Determines whether a given node is `query*` query variant or not.
      */
-    const isQueryByQuery: DetectionHelpers['isQueryByQuery'] = (node) => {
+    const isQueryQueryVariant: DetectionHelpers['isQueryQueryVariant'] = (
+      node
+    ) => {
       return /^query(All)?By.+$/.test(node.name);
     };
 
     /**
-     * Determines whether a given node is `findBy*` or `findAllBy*` query variant or not.
+     * Determines whether a given node is `find*` query variant or not.
      */
-    const isFindByQuery: DetectionHelpers['isFindByQuery'] = (node) => {
+    const isFindQueryVariant: DetectionHelpers['isFindQueryVariant'] = (
+      node
+    ) => {
       return /^find(All)?By.+$/.test(node.name);
     };
 
@@ -176,14 +180,14 @@ export function detectTestingLibraryUtils<
      * Determines whether a given node is sync query or not.
      */
     const isSyncQuery: DetectionHelpers['isSyncQuery'] = (node) => {
-      return isGetByQuery(node) || isQueryByQuery(node);
+      return isGetQueryVariant(node) || isQueryQueryVariant(node);
     };
 
     /**
      * Determines whether a given node is async query or not.
      */
     const isAsyncQuery: DetectionHelpers['isAsyncQuery'] = (node) => {
-      return isFindByQuery(node);
+      return isFindQueryVariant(node);
     };
 
     const isCustomQuery: DetectionHelpers['isCustomQuery'] = (node) => {
@@ -364,9 +368,9 @@ export function detectTestingLibraryUtils<
       getCustomModuleImportName,
       isTestingLibraryImported,
       isValidFilename,
-      isGetByQuery,
-      isQueryByQuery,
-      isFindByQuery,
+      isGetQueryVariant,
+      isQueryQueryVariant,
+      isFindQueryVariant,
       isSyncQuery,
       isAsyncQuery,
       isCustomQuery,
