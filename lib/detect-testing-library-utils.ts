@@ -340,7 +340,7 @@ export function detectTestingLibraryUtils<
      * @param node a MemberExpression (in "foo.property" it would be property) or an Identifier
      */
     const isNodeComingFromTestingLibrary: DetectionHelpers['isNodeComingFromTestingLibrary'] = (
-      node: TSESTree.MemberExpression | TSESTree.Identifier
+      node
     ) => {
       let identifierName: string | undefined;
 
