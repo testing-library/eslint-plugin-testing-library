@@ -93,11 +93,7 @@ ruleTester.run(RULE_NAME, rule, {
           const button = screen.getByText('some button');
         });
       `,
-      options: [
-        {
-          renderFunctions: ['customRender'],
-        },
-      ],
+      settings: { 'testing-library/custom-renders': ['customRender'] },
     },
     {
       code: `
@@ -108,11 +104,7 @@ ruleTester.run(RULE_NAME, rule, {
           await view.findByRole('button');
         });
       `,
-      options: [
-        {
-          renderFunctions: ['customRender'],
-        },
-      ],
+      settings: { 'testing-library/custom-renders': ['customRender'] },
     },
     {
       code: `
@@ -123,11 +115,7 @@ ruleTester.run(RULE_NAME, rule, {
           await utils.findByRole('button');
         });
       `,
-      options: [
-        {
-          renderFunctions: ['customRender'],
-        },
-      ],
+      settings: { 'testing-library/custom-renders': ['customRender'] },
     },
     {
       code: `
@@ -203,7 +191,7 @@ ruleTester.run(RULE_NAME, rule, {
         {
           messageId: 'renderResultNamingConvention',
           data: {
-            varName: 'wrapper',
+            renderResultName: 'wrapper',
           },
           line: 5,
           column: 17,
@@ -223,7 +211,7 @@ ruleTester.run(RULE_NAME, rule, {
         {
           messageId: 'renderResultNamingConvention',
           data: {
-            varName: 'wrapper',
+            renderResultName: 'wrapper',
           },
           line: 5,
           column: 17,
@@ -243,7 +231,7 @@ ruleTester.run(RULE_NAME, rule, {
         {
           messageId: 'renderResultNamingConvention',
           data: {
-            varName: 'component',
+            renderResultName: 'component',
           },
           line: 5,
           column: 17,
@@ -280,7 +268,7 @@ ruleTester.run(RULE_NAME, rule, {
         {
           messageId: 'renderResultNamingConvention',
           data: {
-            varName: 'wrapper',
+            renderResultName: 'wrapper',
           },
           line: 5,
           column: 17,
@@ -307,7 +295,7 @@ ruleTester.run(RULE_NAME, rule, {
         {
           messageId: 'renderResultNamingConvention',
           data: {
-            varName: 'wrapper',
+            renderResultName: 'wrapper',
           },
           line: 6,
           column: 17,
@@ -323,16 +311,12 @@ ruleTester.run(RULE_NAME, rule, {
           const button = wrapper.getByText('some button');
         });
       `,
-      options: [
-        {
-          renderFunctions: ['customRender'],
-        },
-      ],
+      settings: { 'testing-library/custom-renders': ['customRender'] },
       errors: [
         {
           messageId: 'renderResultNamingConvention',
           data: {
-            varName: 'wrapper',
+            renderResultName: 'wrapper',
           },
           line: 5,
           column: 17,

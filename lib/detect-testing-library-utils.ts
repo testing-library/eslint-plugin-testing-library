@@ -5,6 +5,7 @@ import {
 } from '@typescript-eslint/experimental-utils';
 import {
   getAssertNodeInfo,
+  getIdentifierNode,
   getImportModuleName,
   ImportModuleNode,
   isImportDeclaration,
@@ -24,6 +25,7 @@ import {
 export type TestingLibrarySettings = {
   'testing-library/module'?: string;
   'testing-library/filename-pattern'?: string;
+  'testing-library/custom-renders'?: string[];
 };
 
 export type TestingLibraryContext<
@@ -60,6 +62,7 @@ export type DetectionHelpers = {
   isCustomQuery: (node: TSESTree.Identifier) => boolean;
   isAsyncUtil: (node: TSESTree.Identifier) => boolean;
   isFireEventMethod: (node: TSESTree.Identifier) => boolean;
+  isRenderUtil: (node: TSESTree.Node) => boolean;
   isPresenceAssert: (node: TSESTree.MemberExpression) => boolean;
   isAbsenceAssert: (node: TSESTree.MemberExpression) => boolean;
   canReportErrors: () => boolean;
@@ -95,6 +98,7 @@ export function detectTestingLibraryUtils<
     const filenamePattern =
       context.settings['testing-library/filename-pattern'] ??
       DEFAULT_FILENAME_PATTERN;
+    const customRenders = context.settings['testing-library/custom-renders'];
 
     /**
      * Determines whether aggressive reporting is enabled or not.
@@ -104,6 +108,12 @@ export function detectTestingLibraryUtils<
      *    matching TL utils is related to TL no matter where it was imported from)
      */
     const isAggressiveReportingEnabled = () => !customModule;
+
+    /**
+     * TODO
+     */
+    const isAggressiveRenderEnabled = () =>
+      !Array.isArray(customRenders) || customRenders.length === 0;
 
     // Helpers for Testing Library detection.
     const getTestingLibraryImportNode: DetectionHelpers['getTestingLibraryImportNode'] = () => {
@@ -257,6 +267,24 @@ export function detectTestingLibraryUtils<
     };
 
     /**
+     * TODO
+     */
+    const isRenderUtil: DetectionHelpers['isRenderUtil'] = (node) => {
+      const identifier = getIdentifierNode(node);
+
+      if (!identifier) {
+        return false;
+      }
+
+      if (isAggressiveRenderEnabled()) {
+        // TODO: should this be always true?
+        return identifier.name.toLowerCase().startsWith('render');
+      }
+
+      return ['render', ...customRenders].includes(identifier.name);
+    };
+
+    /**
      * Determines whether a given MemberExpression node is a presence assert
      *
      * Presence asserts could have shape of:
@@ -376,6 +404,7 @@ export function detectTestingLibraryUtils<
       isCustomQuery,
       isAsyncUtil,
       isFireEventMethod,
+      isRenderUtil,
       isPresenceAssert,
       isAbsenceAssert,
       canReportErrors,
