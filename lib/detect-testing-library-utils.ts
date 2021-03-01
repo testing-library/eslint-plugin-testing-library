@@ -276,12 +276,20 @@ export function detectTestingLibraryUtils<
         return false;
       }
 
-      if (isAggressiveRenderEnabled()) {
-        // TODO: should this be always true?
-        return identifier.name.toLowerCase().startsWith('render');
+      const isNameMatching = (function () {
+        if (isAggressiveRenderEnabled()) {
+          return identifier.name.toLowerCase().includes('render');
+        }
+
+        return ['render', ...customRenders].includes(identifier.name);
+      })();
+
+      if (!isNameMatching) {
+        return false;
       }
 
-      return ['render', ...customRenders].includes(identifier.name);
+      // TODO: check if node comes from testing library if based on aggressive reporting
+      return true;
     };
 
     /**
