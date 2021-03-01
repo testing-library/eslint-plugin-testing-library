@@ -77,6 +77,7 @@ export type DetectionHelpers = {
 const DEFAULT_FILENAME_PATTERN = '^.*\\.(test|spec)\\.[jt]sx?$';
 
 const FIRE_EVENT_NAME = 'fireEvent';
+const RENDER_NAME = 'render';
 
 /**
  * Enhances a given rule `create` with helpers to detect Testing Library utils.
@@ -101,18 +102,18 @@ export function detectTestingLibraryUtils<
     const customRenders = context.settings['testing-library/custom-renders'];
 
     /**
-     * Determines whether aggressive reporting is enabled or not.
+     * Determines whether aggressive module  reporting is enabled or not.
      *
-     * Aggressive reporting is considered as enabled when:
-     * - custom module is not set (so we need to assume everything
-     *    matching TL utils is related to TL no matter where it was imported from)
+     * Aggressive module reporting is considered as enabled when custom module
+     * is not set (so we need to assume everything matching TL utils is related
+     * to TL no matter from where module they are coming from)
      */
-    const isAggressiveReportingEnabled = () => !customModule;
+    const isAggressiveModuleReportingEnabled = () => !customModule;
 
     /**
      * TODO
      */
-    const isAggressiveRenderEnabled = () =>
+    const isAggressiveRenderReportingEnabled = () =>
       !Array.isArray(customRenders) || customRenders.length === 0;
 
     // Helpers for Testing Library detection.
@@ -145,7 +146,7 @@ export function detectTestingLibraryUtils<
      * or custom module are imported.
      */
     const isTestingLibraryImported: DetectionHelpers['isTestingLibraryImported'] = () => {
-      if (isAggressiveReportingEnabled()) {
+      if (isAggressiveModuleReportingEnabled()) {
         return true;
       }
 
@@ -225,7 +226,7 @@ export function detectTestingLibraryUtils<
         fireEventUtilName = ASTUtils.isIdentifier(fireEventUtil)
           ? fireEventUtil.name
           : fireEventUtil.local.name;
-      } else if (isAggressiveReportingEnabled()) {
+      } else if (isAggressiveModuleReportingEnabled()) {
         fireEventUtilName = FIRE_EVENT_NAME;
       }
 
@@ -277,19 +278,21 @@ export function detectTestingLibraryUtils<
       }
 
       const isNameMatching = (function () {
-        if (isAggressiveRenderEnabled()) {
-          return identifier.name.toLowerCase().includes('render');
+        if (isAggressiveRenderReportingEnabled()) {
+          return identifier.name.toLowerCase().includes(RENDER_NAME);
         }
 
-        return ['render', ...customRenders].includes(identifier.name);
+        return [RENDER_NAME, ...customRenders].includes(identifier.name);
       })();
 
       if (!isNameMatching) {
         return false;
       }
 
-      // TODO: check if node comes from testing library if based on aggressive reporting
-      return true;
+      return (
+        isAggressiveModuleReportingEnabled() ||
+        isNodeComingFromTestingLibrary(identifier)
+      );
     };
 
     /**
