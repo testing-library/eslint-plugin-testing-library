@@ -102,16 +102,25 @@ export function detectTestingLibraryUtils<
     const customRenders = context.settings['testing-library/custom-renders'];
 
     /**
-     * Determines whether aggressive module  reporting is enabled or not.
+     * Determines whether aggressive module reporting is enabled or not.
      *
-     * Aggressive module reporting is considered as enabled when custom module
-     * is not set (so we need to assume everything matching TL utils is related
-     * to TL no matter from where module they are coming from)
+     * This aggressive reporting mechanism is considered as enabled when custom
+     * module is not set, so we need to assume everything matching Testing
+     * Library utils is related to Testing Library no matter from where module
+     * they are coming from. Otherwise, this aggressive reporting mechanism is
+     * opted-out in favour to report only those utils coming from Testing
+     * Library package or custom module set up on settings.
      */
     const isAggressiveModuleReportingEnabled = () => !customModule;
 
     /**
-     * TODO
+     * Determines whether aggressive render reporting is enabled or not.
+     *
+     * This aggressive reporting mechanism is considered as enabled when custom
+     * renders are not set, so we need to assume every method containing
+     * "render" is a valid Testing Library `render`. Otherwise, this aggressive
+     * reporting mechanism is opted-out in favour to report only `render` or
+     * names set up on custom renders setting.
      */
     const isAggressiveRenderReportingEnabled = () =>
       !Array.isArray(customRenders) || customRenders.length === 0;
@@ -268,7 +277,21 @@ export function detectTestingLibraryUtils<
     };
 
     /**
-     * TODO
+     * Determines whether a given node is a valid render util or not.
+     *
+     * A node will be interpreted as a valid render based on two conditions:
+     * the name matches with a valid "render" option, and the node is coming
+     * from Testing Library module. This depends on:
+     *
+     * - Aggressive render reporting: if enabled, then every node name
+     * containing "render" will be assumed as Testing Library render util.
+     * Otherwise, it means `custom-modules` has been set up, so only those nodes
+     * named as "render" or some of the `custom-modules` options will be
+     * considered as Testing Library render util.
+     * - Aggressive module reporting: if enabled, then it doesn't matter from
+     * where the given node was imported from as it will be considered part of
+     * Testing Library. Otherwise, it means `custom-module` has been set up, so
+     * only those nodes coming from Testing Library will be considered as valid.
      */
     const isRenderUtil: DetectionHelpers['isRenderUtil'] = (node) => {
       const identifier = getIdentifierNode(node);
