@@ -47,32 +47,54 @@ export type EnhancedRuleCreate<
   detectionHelpers: Readonly<DetectionHelpers>
 ) => TRuleListener;
 
-export type DetectionHelpers = {
-  getTestingLibraryImportNode: () => ImportModuleNode | null;
-  getCustomModuleImportNode: () => ImportModuleNode | null;
-  getTestingLibraryImportName: () => string | undefined;
-  getCustomModuleImportName: () => string | undefined;
-  isTestingLibraryImported: () => boolean;
-  isValidFilename: () => boolean;
-  isGetQueryVariant: (node: TSESTree.Identifier) => boolean;
-  isQueryQueryVariant: (node: TSESTree.Identifier) => boolean;
-  isFindQueryVariant: (node: TSESTree.Identifier) => boolean;
-  isSyncQuery: (node: TSESTree.Identifier) => boolean;
-  isAsyncQuery: (node: TSESTree.Identifier) => boolean;
-  isCustomQuery: (node: TSESTree.Identifier) => boolean;
-  isAsyncUtil: (node: TSESTree.Identifier) => boolean;
-  isFireEventMethod: (node: TSESTree.Identifier) => boolean;
-  isRenderUtil: (node: TSESTree.Node) => boolean;
-  isPresenceAssert: (node: TSESTree.MemberExpression) => boolean;
-  isAbsenceAssert: (node: TSESTree.MemberExpression) => boolean;
-  canReportErrors: () => boolean;
-  findImportedUtilSpecifier: (
-    specifierName: string
-  ) => TSESTree.ImportClause | TSESTree.Identifier | undefined;
-  isNodeComingFromTestingLibrary: (
-    node: TSESTree.MemberExpression | TSESTree.Identifier
-  ) => boolean;
-};
+// Helpers methods
+type GetTestingLibraryImportNodeFn = () => ImportModuleNode | null;
+type GetCustomModuleImportNodeFn = () => ImportModuleNode | null;
+type GetTestingLibraryImportNameFn = () => string | undefined;
+type GetCustomModuleImportNameFn = () => string | undefined;
+type IsTestingLibraryImportedFn = () => boolean;
+type IsValidFilenameFn = () => boolean;
+type IsGetQueryVariantFn = (node: TSESTree.Identifier) => boolean;
+type IsQueryQueryVariantFn = (node: TSESTree.Identifier) => boolean;
+type IsFindQueryVariantFn = (node: TSESTree.Identifier) => boolean;
+type IsSyncQueryFn = (node: TSESTree.Identifier) => boolean;
+type IsAsyncQueryFn = (node: TSESTree.Identifier) => boolean;
+type IsCustomQueryFn = (node: TSESTree.Identifier) => boolean;
+type IsAsyncUtilFn = (node: TSESTree.Identifier) => boolean;
+type IsFireEventMethodFn = (node: TSESTree.Identifier) => boolean;
+type IsRenderUtilFn = (node: TSESTree.Node) => boolean;
+type IsPresenceAssertFn = (node: TSESTree.MemberExpression) => boolean;
+type IsAbsenceAssertFn = (node: TSESTree.MemberExpression) => boolean;
+type CanReportErrorsFn = () => boolean;
+type FindImportedUtilSpecifierFn = (
+  specifierName: string
+) => TSESTree.ImportClause | TSESTree.Identifier | undefined;
+type IsNodeComingFromTestingLibraryFn = (
+  node: TSESTree.MemberExpression | TSESTree.Identifier
+) => boolean;
+
+export interface DetectionHelpers {
+  getTestingLibraryImportNode: GetTestingLibraryImportNodeFn;
+  getCustomModuleImportNode: GetCustomModuleImportNodeFn;
+  getTestingLibraryImportName: GetTestingLibraryImportNameFn;
+  getCustomModuleImportName: GetCustomModuleImportNameFn;
+  isTestingLibraryImported: IsTestingLibraryImportedFn;
+  isValidFilename: IsValidFilenameFn;
+  isGetQueryVariant: IsGetQueryVariantFn;
+  isQueryQueryVariant: IsQueryQueryVariantFn;
+  isFindQueryVariant: IsFindQueryVariantFn;
+  isSyncQuery: IsSyncQueryFn;
+  isAsyncQuery: IsAsyncQueryFn;
+  isCustomQuery: IsCustomQueryFn;
+  isAsyncUtil: IsAsyncUtilFn;
+  isFireEventMethod: IsFireEventMethodFn;
+  isRenderUtil: IsRenderUtilFn;
+  isPresenceAssert: IsPresenceAssertFn;
+  isAbsenceAssert: IsAbsenceAssertFn;
+  canReportErrors: CanReportErrorsFn;
+  findImportedUtilSpecifier: FindImportedUtilSpecifierFn;
+  isNodeComingFromTestingLibrary: IsNodeComingFromTestingLibraryFn;
+}
 
 const DEFAULT_FILENAME_PATTERN = '^.*\\.(test|spec)\\.[jt]sx?$';
 
@@ -126,21 +148,22 @@ export function detectTestingLibraryUtils<
       !Array.isArray(customRenders) || customRenders.length === 0;
 
     // Helpers for Testing Library detection.
-    const getTestingLibraryImportNode: DetectionHelpers['getTestingLibraryImportNode'] = () => {
+    const getTestingLibraryImportNode: GetTestingLibraryImportNodeFn = () => {
       return importedTestingLibraryNode;
     };
 
-    const getCustomModuleImportNode: DetectionHelpers['getCustomModuleImportNode'] = () => {
+    const getCustomModuleImportNode: GetCustomModuleImportNodeFn = () => {
       return importedCustomModuleNode;
     };
 
-    const getTestingLibraryImportName: DetectionHelpers['getTestingLibraryImportName'] = () => {
+    const getTestingLibraryImportName: GetTestingLibraryImportNameFn = () => {
       return getImportModuleName(importedTestingLibraryNode);
     };
 
-    const getCustomModuleImportName: DetectionHelpers['getCustomModuleImportName'] = () => {
+    const getCustomModuleImportName: GetCustomModuleImportNameFn = () => {
       return getImportModuleName(importedCustomModuleNode);
     };
+
     /**
      * Determines whether Testing Library utils are imported or not for
      * current file being analyzed.
@@ -154,19 +177,19 @@ export function detectTestingLibraryUtils<
      * then this method will return `true` ONLY IF a testing-library package
      * or custom module are imported.
      */
-    const isTestingLibraryImported: DetectionHelpers['isTestingLibraryImported'] = () => {
-      if (isAggressiveModuleReportingEnabled()) {
-        return true;
-      }
-
-      return !!importedTestingLibraryNode || !!importedCustomModuleNode;
+    const isTestingLibraryImported: IsTestingLibraryImportedFn = () => {
+      return (
+        isAggressiveModuleReportingEnabled() ||
+        !!importedTestingLibraryNode ||
+        !!importedCustomModuleNode
+      );
     };
 
     /**
      * Determines whether filename is valid or not for current file
      * being analyzed based on "testing-library/filename-pattern" setting.
      */
-    const isValidFilename: DetectionHelpers['isValidFilename'] = () => {
+    const isValidFilename: IsValidFilenameFn = () => {
       const fileName = context.getFilename();
       return !!fileName.match(filenamePattern);
     };
@@ -174,43 +197,39 @@ export function detectTestingLibraryUtils<
     /**
      * Determines whether a given node is `get*` query variant or not.
      */
-    const isGetQueryVariant: DetectionHelpers['isGetQueryVariant'] = (node) => {
+    const isGetQueryVariant: IsGetQueryVariantFn = (node) => {
       return /^get(All)?By.+$/.test(node.name);
     };
 
     /**
      * Determines whether a given node is `query*` query variant or not.
      */
-    const isQueryQueryVariant: DetectionHelpers['isQueryQueryVariant'] = (
-      node
-    ) => {
+    const isQueryQueryVariant: IsQueryQueryVariantFn = (node) => {
       return /^query(All)?By.+$/.test(node.name);
     };
 
     /**
      * Determines whether a given node is `find*` query variant or not.
      */
-    const isFindQueryVariant: DetectionHelpers['isFindQueryVariant'] = (
-      node
-    ) => {
+    const isFindQueryVariant: IsFindQueryVariantFn = (node) => {
       return /^find(All)?By.+$/.test(node.name);
     };
 
     /**
      * Determines whether a given node is sync query or not.
      */
-    const isSyncQuery: DetectionHelpers['isSyncQuery'] = (node) => {
+    const isSyncQuery: IsSyncQueryFn = (node) => {
       return isGetQueryVariant(node) || isQueryQueryVariant(node);
     };
 
     /**
      * Determines whether a given node is async query or not.
      */
-    const isAsyncQuery: DetectionHelpers['isAsyncQuery'] = (node) => {
+    const isAsyncQuery: IsAsyncQueryFn = (node) => {
       return isFindQueryVariant(node);
     };
 
-    const isCustomQuery: DetectionHelpers['isCustomQuery'] = (node) => {
+    const isCustomQuery: IsCustomQueryFn = (node) => {
       return (
         (isSyncQuery(node) || isAsyncQuery(node)) &&
         !ALL_QUERIES_COMBINATIONS.includes(node.name)
@@ -220,14 +239,14 @@ export function detectTestingLibraryUtils<
     /**
      * Determines whether a given node is async util or not.
      */
-    const isAsyncUtil: DetectionHelpers['isAsyncUtil'] = (node) => {
+    const isAsyncUtil: IsAsyncUtilFn = (node) => {
       return ASYNC_UTILS.includes(node.name);
     };
 
     /**
      * Determines whether a given node is fireEvent method or not
      */
-    const isFireEventMethod: DetectionHelpers['isFireEventMethod'] = (node) => {
+    const isFireEventMethod: IsFireEventMethodFn = (node) => {
       const fireEventUtil = findImportedUtilSpecifier(FIRE_EVENT_NAME);
       let fireEventUtilName: string | undefined;
 
@@ -293,7 +312,7 @@ export function detectTestingLibraryUtils<
      * Testing Library. Otherwise, it means `custom-module` has been set up, so
      * only those nodes coming from Testing Library will be considered as valid.
      */
-    const isRenderUtil: DetectionHelpers['isRenderUtil'] = (node) => {
+    const isRenderUtil: IsRenderUtilFn = (node) => {
       const identifier = getIdentifierNode(node);
 
       if (!identifier) {
@@ -325,7 +344,7 @@ export function detectTestingLibraryUtils<
      *  - expect(element).toBeInTheDocument()
      *  - expect(element).not.toBeNull()
      */
-    const isPresenceAssert: DetectionHelpers['isPresenceAssert'] = (node) => {
+    const isPresenceAssert: IsPresenceAssertFn = (node) => {
       const { matcher, isNegated } = getAssertNodeInfo(node);
 
       if (!matcher) {
@@ -344,7 +363,7 @@ export function detectTestingLibraryUtils<
      *  - expect(element).toBeNull()
      *  - expect(element).not.toBeInTheDocument()
      */
-    const isAbsenceAssert: DetectionHelpers['isAbsenceAssert'] = (node) => {
+    const isAbsenceAssert: IsAbsenceAssertFn = (node) => {
       const { matcher, isNegated } = getAssertNodeInfo(node);
 
       if (!matcher) {
@@ -360,7 +379,7 @@ export function detectTestingLibraryUtils<
      * Gets a string and verifies if it was imported/required by Testing Library
      * related module.
      */
-    const findImportedUtilSpecifier: DetectionHelpers['findImportedUtilSpecifier'] = (
+    const findImportedUtilSpecifier: FindImportedUtilSpecifierFn = (
       specifierName
     ) => {
       const node = getCustomModuleImportNode() ?? getTestingLibraryImportNode();
@@ -398,14 +417,14 @@ export function detectTestingLibraryUtils<
     /**
      * Determines if file inspected meets all conditions to be reported by rules or not.
      */
-    const canReportErrors: DetectionHelpers['canReportErrors'] = () => {
+    const canReportErrors: CanReportErrorsFn = () => {
       return isTestingLibraryImported() && isValidFilename();
     };
     /**
      * Takes a MemberExpression or an Identifier and verifies if its name comes from the import in TL
      * @param node a MemberExpression (in "foo.property" it would be property) or an Identifier
      */
-    const isNodeComingFromTestingLibrary: DetectionHelpers['isNodeComingFromTestingLibrary'] = (
+    const isNodeComingFromTestingLibrary: IsNodeComingFromTestingLibraryFn = (
       node
     ) => {
       let identifierName: string | undefined;
@@ -423,7 +442,7 @@ export function detectTestingLibraryUtils<
       return !!findImportedUtilSpecifier(identifierName);
     };
 
-    const helpers = {
+    const helpers: DetectionHelpers = {
       getTestingLibraryImportNode,
       getCustomModuleImportNode,
       getTestingLibraryImportName,
