@@ -105,7 +105,7 @@ ruleTester.run(RULE_NAME, rule, {
     })),
     {
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       code: `
         import { screen } from 'test-utils'
@@ -114,7 +114,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       code: `
         import { render } from 'test-utils'
@@ -124,7 +124,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     ...UserEventMethods.map((userEventMethod) => ({
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       code: `
         import userEvent from 'test-utils'
@@ -134,7 +134,7 @@ ruleTester.run(RULE_NAME, rule, {
     })),
     ...Object.keys(MappingToUserEvent).map((fireEventMethod: string) => ({
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       code: `
         // fireEvent method used but not imported from TL related module
@@ -145,7 +145,7 @@ ruleTester.run(RULE_NAME, rule, {
     })),
     ...Object.keys(MappingToUserEvent).map((fireEventMethod: string) => ({
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       code: `
       import { fireEvent } from 'test-utils'
@@ -156,7 +156,7 @@ ruleTester.run(RULE_NAME, rule, {
     })),
     ...Object.keys(MappingToUserEvent).map((fireEventMethod: string) => ({
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       code: `
       import { fireEvent as fireEventAliased } from 'test-utils'
@@ -167,7 +167,7 @@ ruleTester.run(RULE_NAME, rule, {
     })),
     ...Object.keys(MappingToUserEvent).map((fireEventMethod: string) => ({
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       code: `
       import * as dom from 'test-utils'
@@ -231,7 +231,7 @@ ruleTester.run(RULE_NAME, rule, {
     ),
     ...Object.keys(MappingToUserEvent).map((fireEventMethod: string) => ({
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       code: `
         import * as dom from 'test-utils'
@@ -241,7 +241,7 @@ ruleTester.run(RULE_NAME, rule, {
     })),
     ...Object.keys(MappingToUserEvent).map((fireEventMethod: string) => ({
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       code: `
         import { fireEvent } from 'test-utils'
@@ -260,7 +260,7 @@ ruleTester.run(RULE_NAME, rule, {
     })),
     ...Object.keys(MappingToUserEvent).map((fireEventMethod: string) => ({
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       code: `
         import { fireEvent as fireEventAliased } from 'test-utils'

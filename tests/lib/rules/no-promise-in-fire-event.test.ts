@@ -41,7 +41,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       code: `// invalid usage but aggressive reporting opted-out
         import { fireEvent } from 'somewhere-else'

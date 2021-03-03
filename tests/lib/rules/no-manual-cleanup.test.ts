@@ -77,7 +77,7 @@ ruleTester.run(RULE_NAME, rule, {
     ...ALL_TESTING_LIBRARIES_WITH_CLEANUP.map((lib) => ({
       // official testing-library packages should be reported with custom module setting
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       code: `import { cleanup, render } from "${lib}"`,
       errors: [
@@ -90,7 +90,7 @@ ruleTester.run(RULE_NAME, rule, {
     })),
     {
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       code: `
         import { render, cleanup } from 'test-utils'
@@ -109,7 +109,7 @@ ruleTester.run(RULE_NAME, rule, {
     })),
     {
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       code: `
         import { cleanup as myCustomCleanup } from 'test-utils'
@@ -128,7 +128,7 @@ ruleTester.run(RULE_NAME, rule, {
     })),
     {
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       code: `
         import utils, { cleanup } from 'test-utils'
@@ -150,7 +150,7 @@ ruleTester.run(RULE_NAME, rule, {
     })),
     {
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       code: `
         import utils from 'test-utils'
@@ -183,7 +183,7 @@ ruleTester.run(RULE_NAME, rule, {
     })),
     {
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       code: `
         const { render, cleanup } = require('test-utils')

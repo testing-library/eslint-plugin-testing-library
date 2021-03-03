@@ -23,7 +23,7 @@ ruleTester.run(RULE_NAME, rule, {
     'require("@testing-library/react")',
     {
       code: 'import { fireEvent } from "test-utils"',
-      settings: { 'testing-library/module': 'test-utils' },
+      settings: { 'testing-library/utils-module': 'test-utils' },
     },
     {
       code: 'import { fireEvent } from "dom-testing-library"',
@@ -70,7 +70,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       code: `
       // case: dom-testing-library imported with custom module setting
@@ -122,7 +122,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       code: `
       // case: dom-testing-library wildcard imported with custom module setting
@@ -144,7 +144,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       code: `
       // case: @testing-library/dom imported with custom module setting
@@ -190,7 +190,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       code: `
       // case: dom-testing-library required with custom module setting
@@ -225,7 +225,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       code: `
       // case: @testing-library/dom required with custom module setting

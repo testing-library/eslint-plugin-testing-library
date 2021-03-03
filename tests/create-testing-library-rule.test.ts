@@ -30,7 +30,7 @@ ruleTester.run(RULE_NAME, rule, {
       const utils = render();
       `,
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
     },
     {
@@ -41,7 +41,7 @@ ruleTester.run(RULE_NAME, rule, {
       const utils = render();
       `,
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
     },
     {
@@ -51,7 +51,7 @@ ruleTester.run(RULE_NAME, rule, {
       import { foo } from 'report-me'
       `,
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
     },
     {
@@ -61,7 +61,7 @@ ruleTester.run(RULE_NAME, rule, {
       const { foo } = require('report-me')
       `,
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
     },
     {
@@ -112,7 +112,7 @@ ruleTester.run(RULE_NAME, rule, {
     // Test Cases for all settings mixed
     {
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
         'testing-library/filename-pattern': 'testing-library\\.js',
       },
       code: `
@@ -126,7 +126,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
         'testing-library/filename-pattern': 'testing-library\\.js',
       },
       filename: 'MyComponent.testing-library.js',
@@ -174,7 +174,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       code: `
       // case: built-in "getBy*" query not reported because custom module not imported
@@ -184,7 +184,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       code: `
       // case: built-in "queryBy*" query not reported because custom module not imported
@@ -194,7 +194,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       code: `
       // case: built-in "findBy*" query not reported because custom module not imported
@@ -231,7 +231,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       code: `
         import * as tl from 'test-utils'
@@ -240,7 +240,7 @@ ruleTester.run(RULE_NAME, rule, {
       `,
     },
     {
-      settings: { 'testing-library/module': 'test-utils' },
+      settings: { 'testing-library/utils-module': 'test-utils' },
       code: `
       // case: aggressive render enabled, but module disabled - not coming from TL
       import { render } from 'somewhere-else'
@@ -346,7 +346,7 @@ ruleTester.run(RULE_NAME, rule, {
       const utils = render();
       `,
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       errors: [
         {
@@ -366,7 +366,7 @@ ruleTester.run(RULE_NAME, rule, {
       const utils = render();
       `,
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       errors: [
         {
@@ -387,7 +387,7 @@ ruleTester.run(RULE_NAME, rule, {
       const utils = render();
       `,
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       errors: [
         {
@@ -408,7 +408,7 @@ ruleTester.run(RULE_NAME, rule, {
       const utils = render();
       `,
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       errors: [
         {
@@ -420,7 +420,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       settings: {
-        'testing-library/module': 'custom-module-forced-report',
+        'testing-library/utils-module': 'custom-module-forced-report',
       },
       code: `
       // case: import custom module forced to be reported with custom module setting
@@ -432,7 +432,7 @@ ruleTester.run(RULE_NAME, rule, {
     // Test Cases for all settings mixed
     {
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
         'testing-library/filename-pattern': 'testing-library\\.js',
       },
       filename: 'MyComponent.testing-library.js',
@@ -589,7 +589,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       code: `
       // case: built-in "getBy*" query reported with custom module + Testing Library package import
@@ -601,7 +601,7 @@ ruleTester.run(RULE_NAME, rule, {
     {
       filename: 'MyComponent.spec.js',
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       code: `
       // case: built-in "queryBy*" query reported with custom module + Testing Library package import
@@ -613,7 +613,7 @@ ruleTester.run(RULE_NAME, rule, {
     {
       filename: 'MyComponent.spec.js',
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       code: `
       // case: built-in "findBy*" query reported with custom module + Testing Library package import
@@ -624,7 +624,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       code: `
       // case: built-in "getBy*" query reported with custom module + custom module import
@@ -636,7 +636,7 @@ ruleTester.run(RULE_NAME, rule, {
     {
       filename: 'MyComponent.spec.js',
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       code: `
       // case: built-in "queryBy*" query reported with custom module + custom module import
@@ -648,7 +648,7 @@ ruleTester.run(RULE_NAME, rule, {
     {
       filename: 'MyComponent.spec.js',
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       code: `
       // case: built-in "queryBy*" query reported with custom module + custom module import
@@ -660,7 +660,7 @@ ruleTester.run(RULE_NAME, rule, {
 
     {
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       code: `
       // case: custom "getBy*" query reported with custom module + Testing Library package import
@@ -672,7 +672,7 @@ ruleTester.run(RULE_NAME, rule, {
     {
       filename: 'MyComponent.spec.js',
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       code: `
       // case: custom "queryBy*" query reported with custom module + Testing Library package import
@@ -684,7 +684,7 @@ ruleTester.run(RULE_NAME, rule, {
     {
       filename: 'MyComponent.spec.js',
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       code: `
       // case: custom "findBy*" query reported with custom module + Testing Library package import
@@ -695,7 +695,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       code: `
       // case: custom "getBy*" query reported with custom module + custom module import
@@ -707,7 +707,7 @@ ruleTester.run(RULE_NAME, rule, {
     {
       filename: 'MyComponent.spec.js',
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       code: `
       // case: custom "queryBy*" query reported with custom module + custom module import
@@ -719,7 +719,7 @@ ruleTester.run(RULE_NAME, rule, {
     {
       filename: 'MyComponent.spec.js',
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       code: `
       // case: custom "findBy*" query reported with custom module + custom module import
@@ -730,7 +730,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       code: `
         import * as tl from 'test-utils'
@@ -744,7 +744,7 @@ ruleTester.run(RULE_NAME, rule, {
       filename: 'MyComponent.custom-suffix.js',
       settings: {
         'testing-library/custom-renders': ['customRender', 'renderWithRedux'],
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
         'testing-library/filename-pattern': 'custom-suffix\\.js',
       },
       code: `

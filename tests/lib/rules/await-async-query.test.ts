@@ -207,7 +207,7 @@ ruleTester.run(RULE_NAME, rule, {
 
     // unresolved async queries with aggressive reporting opted-out are valid
     ...ALL_ASYNC_COMBINATIONS_TO_TEST.map((query) => ({
-      settings: { 'testing-library/module': 'test-utils' },
+      settings: { 'testing-library/utils-module': 'test-utils' },
       code: `
         import { render } from "another-library"
 

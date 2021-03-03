@@ -23,7 +23,7 @@ import {
 } from './utils';
 
 export type TestingLibrarySettings = {
-  'testing-library/module'?: string;
+  'testing-library/utils-module'?: string;
   'testing-library/filename-pattern'?: string;
   'testing-library/custom-renders'?: string[];
 };
@@ -95,7 +95,7 @@ export function detectTestingLibraryUtils<
     let importedCustomModuleNode: ImportModuleNode | null = null;
 
     // Init options based on shared ESLint settings
-    const customModule = context.settings['testing-library/module'];
+    const customModule = context.settings['testing-library/utils-module'];
     const filenamePattern =
       context.settings['testing-library/filename-pattern'] ??
       DEFAULT_FILENAME_PATTERN;
@@ -150,7 +150,7 @@ export function detectTestingLibraryUtils<
      * custom modules.
      *
      * However, there is a setting to customize the module where TL utils can
-     * be imported from: "testing-library/module". If this setting is enabled,
+     * be imported from: "testing-library/utils-module". If this setting is enabled,
      * then this method will return `true` ONLY IF a testing-library package
      * or custom module are imported.
      */

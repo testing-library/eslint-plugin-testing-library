@@ -11,7 +11,7 @@ ruleTester.run(RULE_NAME, rule, {
     ...COMBINED_QUERIES_METHODS.map((queryMethod) => ({
       code: `get${queryMethod}('Hello')`,
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
     })),
     ...COMBINED_QUERIES_METHODS.map((queryMethod) => ({
@@ -153,7 +153,7 @@ ruleTester.run(RULE_NAME, rule, {
     })),
     ...COMBINED_QUERIES_METHODS.map((queryMethod) => ({
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       code: `
         import "test-utils"
