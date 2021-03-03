@@ -90,6 +90,25 @@ ruleTester.run(RULE_NAME, rule, {
     `,
     },
 
+    // Test Cases for renders
+    {
+      code: `
+      // case: aggressive render enabled - method not containing "render"
+      import { somethingElse } from '@somewhere/else'
+      
+      const utils = somethingElse()
+      `,
+    },
+    {
+      settings: { 'testing-library/custom-renders': ['renderWithRedux'] },
+      code: `
+      // case: aggressive render disabled - method not matching valid render
+      import { customRender } from '@somewhere/else'
+      
+      const utils = customRender()
+      `,
+    },
+
     // Test Cases for all settings mixed
     {
       settings: {
@@ -220,6 +239,24 @@ ruleTester.run(RULE_NAME, rule, {
         obj.tl.waitFor(() => {})
       `,
     },
+    {
+      settings: { 'testing-library/module': 'test-utils' },
+      code: `
+      // case: aggressive render enabled, but module disabled - not coming from TL
+      import { render } from 'somewhere-else'
+      
+      const utils = render()
+      `,
+    },
+    {
+      filename: 'file.not.matching.js',
+      code: `
+      // case: aggressive render and module enabled, but file name not matching
+      import { render } from '@testing-library/react'
+      
+      const utils = render()
+      `,
+    },
   ],
   invalid: [
     // Test Cases for Imports & Filename
@@ -261,7 +298,7 @@ ruleTester.run(RULE_NAME, rule, {
         {
           line: 6,
           column: 21,
-          messageId: 'fakeError',
+          messageId: 'renderError',
         },
       ],
     },
@@ -278,7 +315,7 @@ ruleTester.run(RULE_NAME, rule, {
         {
           line: 7,
           column: 21,
-          messageId: 'fakeError',
+          messageId: 'renderError',
         },
       ],
     },
@@ -295,7 +332,7 @@ ruleTester.run(RULE_NAME, rule, {
         {
           line: 7,
           column: 21,
-          messageId: 'fakeError',
+          messageId: 'renderError',
         },
       ],
     },
@@ -315,7 +352,7 @@ ruleTester.run(RULE_NAME, rule, {
         {
           line: 7,
           column: 21,
-          messageId: 'fakeError',
+          messageId: 'renderError',
         },
       ],
     },
@@ -335,7 +372,7 @@ ruleTester.run(RULE_NAME, rule, {
         {
           line: 7,
           column: 21,
-          messageId: 'fakeError',
+          messageId: 'renderError',
         },
       ],
     },
@@ -356,7 +393,7 @@ ruleTester.run(RULE_NAME, rule, {
         {
           line: 8,
           column: 21,
-          messageId: 'fakeError',
+          messageId: 'renderError',
         },
       ],
     },
@@ -377,7 +414,7 @@ ruleTester.run(RULE_NAME, rule, {
         {
           line: 8,
           column: 21,
-          messageId: 'fakeError',
+          messageId: 'renderError',
         },
       ],
     },
@@ -407,7 +444,73 @@ ruleTester.run(RULE_NAME, rule, {
       
       const utils = render();
       `,
-      errors: [{ line: 7, column: 21, messageId: 'fakeError' }],
+      errors: [{ line: 7, column: 21, messageId: 'renderError' }],
+    },
+
+    // Test Cases for renders
+    {
+      code: `
+      // case: aggressive render enabled - Testing Library render
+      import { render } from '@testing-library/react'
+      
+      const utils = render()
+      `,
+      errors: [{ line: 5, column: 21, messageId: 'renderError' }],
+    },
+    {
+      code: `
+      // case: aggressive render enabled - Testing Library render wildcard imported
+      import * as rtl from '@testing-library/react'
+      
+      const utils = rtl.render()
+      `,
+      errors: [
+        { line: 5, column: 21, messageId: 'fakeError' },
+        { line: 5, column: 25, messageId: 'renderError' },
+      ],
+    },
+    {
+      code: `
+      // case: aggressive render enabled - any method containing "render"
+      import { someRender } from '@somewhere/else'
+      
+      const utils = someRender()
+      `,
+      errors: [{ line: 5, column: 21, messageId: 'renderError' }],
+    },
+    {
+      settings: { 'testing-library/custom-renders': ['customRender'] },
+      code: `
+      // case: aggressive render disabled - Testing Library render
+      import { render } from '@testing-library/react'
+      
+      const utils = render()
+      `,
+      errors: [{ line: 5, column: 21, messageId: 'renderError' }],
+    },
+    {
+      settings: {
+        'testing-library/custom-renders': ['customRender', 'renderWithRedux'],
+      },
+      code: `
+      // case: aggressive render disabled - valid custom render
+      import { customRender } from 'test-utils'
+      
+      const utils = customRender()
+      `,
+      errors: [{ line: 5, column: 21, messageId: 'renderError' }],
+    },
+    {
+      settings: {
+        'testing-library/custom-renders': ['customRender', 'renderWithRedux'],
+      },
+      code: `
+      // case: aggressive render disabled - default render from custom module
+      import { render } from 'test-utils'
+      
+      const utils = render()
+      `,
+      errors: [{ line: 5, column: 21, messageId: 'renderError' }],
     },
 
     // Test Cases for presence/absence assertions
@@ -634,6 +737,27 @@ ruleTester.run(RULE_NAME, rule, {
         tl.waitFor(() => {})
       `,
       errors: [{ line: 3, column: 9, messageId: 'fakeError' }],
+    },
+
+    // Test Cases for all settings mixed
+    {
+      filename: 'MyComponent.custom-suffix.js',
+      settings: {
+        'testing-library/custom-renders': ['customRender', 'renderWithRedux'],
+        'testing-library/module': 'test-utils',
+        'testing-library/filename-pattern': 'custom-suffix\\.js',
+      },
+      code: `
+      // case: all aggressive reporting disabled and filename setup - matching all custom settings
+      import { renderWithRedux, waitFor, screen } from 'test-utils'
+      
+      const { getByRole } = renderWithRedux()
+      const el = getByRole('button')
+      `,
+      errors: [
+        { line: 5, column: 29, messageId: 'renderError' },
+        { line: 6, column: 18, messageId: 'getByError' },
+      ],
     },
   ],
 });

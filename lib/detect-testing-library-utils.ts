@@ -5,6 +5,7 @@ import {
 } from '@typescript-eslint/experimental-utils';
 import {
   getAssertNodeInfo,
+  getIdentifierNode,
   getImportModuleName,
   ImportModuleNode,
   isImportDeclaration,
@@ -24,6 +25,7 @@ import {
 export type TestingLibrarySettings = {
   'testing-library/module'?: string;
   'testing-library/filename-pattern'?: string;
+  'testing-library/custom-renders'?: string[];
 };
 
 export type TestingLibraryContext<
@@ -60,6 +62,7 @@ export type DetectionHelpers = {
   isCustomQuery: (node: TSESTree.Identifier) => boolean;
   isAsyncUtil: (node: TSESTree.Identifier) => boolean;
   isFireEventMethod: (node: TSESTree.Identifier) => boolean;
+  isRenderUtil: (node: TSESTree.Node) => boolean;
   isPresenceAssert: (node: TSESTree.MemberExpression) => boolean;
   isAbsenceAssert: (node: TSESTree.MemberExpression) => boolean;
   canReportErrors: () => boolean;
@@ -74,6 +77,7 @@ export type DetectionHelpers = {
 const DEFAULT_FILENAME_PATTERN = '^.*\\.(test|spec)\\.[jt]sx?$';
 
 const FIRE_EVENT_NAME = 'fireEvent';
+const RENDER_NAME = 'render';
 
 /**
  * Enhances a given rule `create` with helpers to detect Testing Library utils.
@@ -95,15 +99,31 @@ export function detectTestingLibraryUtils<
     const filenamePattern =
       context.settings['testing-library/filename-pattern'] ??
       DEFAULT_FILENAME_PATTERN;
+    const customRenders = context.settings['testing-library/custom-renders'];
 
     /**
-     * Determines whether aggressive reporting is enabled or not.
+     * Determines whether aggressive module reporting is enabled or not.
      *
-     * Aggressive reporting is considered as enabled when:
-     * - custom module is not set (so we need to assume everything
-     *    matching TL utils is related to TL no matter where it was imported from)
+     * This aggressive reporting mechanism is considered as enabled when custom
+     * module is not set, so we need to assume everything matching Testing
+     * Library utils is related to Testing Library no matter from where module
+     * they are coming from. Otherwise, this aggressive reporting mechanism is
+     * opted-out in favour to report only those utils coming from Testing
+     * Library package or custom module set up on settings.
      */
-    const isAggressiveReportingEnabled = () => !customModule;
+    const isAggressiveModuleReportingEnabled = () => !customModule;
+
+    /**
+     * Determines whether aggressive render reporting is enabled or not.
+     *
+     * This aggressive reporting mechanism is considered as enabled when custom
+     * renders are not set, so we need to assume every method containing
+     * "render" is a valid Testing Library `render`. Otherwise, this aggressive
+     * reporting mechanism is opted-out in favour to report only `render` or
+     * names set up on custom renders setting.
+     */
+    const isAggressiveRenderReportingEnabled = () =>
+      !Array.isArray(customRenders) || customRenders.length === 0;
 
     // Helpers for Testing Library detection.
     const getTestingLibraryImportNode: DetectionHelpers['getTestingLibraryImportNode'] = () => {
@@ -135,7 +155,7 @@ export function detectTestingLibraryUtils<
      * or custom module are imported.
      */
     const isTestingLibraryImported: DetectionHelpers['isTestingLibraryImported'] = () => {
-      if (isAggressiveReportingEnabled()) {
+      if (isAggressiveModuleReportingEnabled()) {
         return true;
       }
 
@@ -215,7 +235,7 @@ export function detectTestingLibraryUtils<
         fireEventUtilName = ASTUtils.isIdentifier(fireEventUtil)
           ? fireEventUtil.name
           : fireEventUtil.local.name;
-      } else if (isAggressiveReportingEnabled()) {
+      } else if (isAggressiveModuleReportingEnabled()) {
         fireEventUtilName = FIRE_EVENT_NAME;
       }
 
@@ -254,6 +274,48 @@ export function detectTestingLibraryUtils<
         parentMemberExpression.object.property.name === FIRE_EVENT_NAME;
 
       return regularCall || wildcardCall;
+    };
+
+    /**
+     * Determines whether a given node is a valid render util or not.
+     *
+     * A node will be interpreted as a valid render based on two conditions:
+     * the name matches with a valid "render" option, and the node is coming
+     * from Testing Library module. This depends on:
+     *
+     * - Aggressive render reporting: if enabled, then every node name
+     * containing "render" will be assumed as Testing Library render util.
+     * Otherwise, it means `custom-modules` has been set up, so only those nodes
+     * named as "render" or some of the `custom-modules` options will be
+     * considered as Testing Library render util.
+     * - Aggressive module reporting: if enabled, then it doesn't matter from
+     * where the given node was imported from as it will be considered part of
+     * Testing Library. Otherwise, it means `custom-module` has been set up, so
+     * only those nodes coming from Testing Library will be considered as valid.
+     */
+    const isRenderUtil: DetectionHelpers['isRenderUtil'] = (node) => {
+      const identifier = getIdentifierNode(node);
+
+      if (!identifier) {
+        return false;
+      }
+
+      const isNameMatching = (function () {
+        if (isAggressiveRenderReportingEnabled()) {
+          return identifier.name.toLowerCase().includes(RENDER_NAME);
+        }
+
+        return [RENDER_NAME, ...customRenders].includes(identifier.name);
+      })();
+
+      if (!isNameMatching) {
+        return false;
+      }
+
+      return (
+        isAggressiveModuleReportingEnabled() ||
+        isNodeComingFromTestingLibrary(identifier)
+      );
     };
 
     /**
@@ -376,6 +438,7 @@ export function detectTestingLibraryUtils<
       isCustomQuery,
       isAsyncUtil,
       isFireEventMethod,
+      isRenderUtil,
       isPresenceAssert,
       isAbsenceAssert,
       canReportErrors,

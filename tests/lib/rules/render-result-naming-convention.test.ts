@@ -93,11 +93,7 @@ ruleTester.run(RULE_NAME, rule, {
           const button = screen.getByText('some button');
         });
       `,
-      options: [
-        {
-          renderFunctions: ['customRender'],
-        },
-      ],
+      settings: { 'testing-library/custom-renders': ['customRender'] },
     },
     {
       code: `
@@ -108,11 +104,7 @@ ruleTester.run(RULE_NAME, rule, {
           await view.findByRole('button');
         });
       `,
-      options: [
-        {
-          renderFunctions: ['customRender'],
-        },
-      ],
+      settings: { 'testing-library/custom-renders': ['customRender'] },
     },
     {
       code: `
@@ -123,53 +115,7 @@ ruleTester.run(RULE_NAME, rule, {
           await utils.findByRole('button');
         });
       `,
-      options: [
-        {
-          renderFunctions: ['customRender'],
-        },
-      ],
-    },
-    {
-      code: `
-        import { render } from '@foo/bar';
-        
-        test('should not report from render not related to testing library', () => {
-          const wrapper = render(<SomeComponent />);
-          const button = wrapper.getByText('some button');
-        });
-      `,
-    },
-    {
-      code: `
-        import { render } from '@foo/bar';
-        
-        test('should not report from render not imported from testing library', () => {
-          const wrapper = render(<SomeComponent />);
-          const button = wrapper.getByText('some button');
-        });
-      `,
-    },
-    {
-      code: `
-        import * as RTL from '@foo/bar';
-        
-        test('should not report from wildcard render not imported from testing library', () => {
-          const wrapper = RTL.render(<SomeComponent />);
-          const button = wrapper.getByText('some button');
-        });
-      `,
-    },
-    {
-      code: `
-        function render() {
-          return 'whatever';
-        }
-        
-        test('should not report from custom render not related to testing library', () => {
-          const wrapper = render(<SomeComponent />);
-          const button = wrapper.getByText('some button');
-        });
-      `,
+      settings: { 'testing-library/custom-renders': ['customRender'] },
     },
     {
       code: `
@@ -203,7 +149,7 @@ ruleTester.run(RULE_NAME, rule, {
         {
           messageId: 'renderResultNamingConvention',
           data: {
-            varName: 'wrapper',
+            renderResultName: 'wrapper',
           },
           line: 5,
           column: 17,
@@ -223,7 +169,7 @@ ruleTester.run(RULE_NAME, rule, {
         {
           messageId: 'renderResultNamingConvention',
           data: {
-            varName: 'wrapper',
+            renderResultName: 'wrapper',
           },
           line: 5,
           column: 17,
@@ -243,7 +189,7 @@ ruleTester.run(RULE_NAME, rule, {
         {
           messageId: 'renderResultNamingConvention',
           data: {
-            varName: 'component',
+            renderResultName: 'component',
           },
           line: 5,
           column: 17,
@@ -280,7 +226,7 @@ ruleTester.run(RULE_NAME, rule, {
         {
           messageId: 'renderResultNamingConvention',
           data: {
-            varName: 'wrapper',
+            renderResultName: 'wrapper',
           },
           line: 5,
           column: 17,
@@ -307,7 +253,7 @@ ruleTester.run(RULE_NAME, rule, {
         {
           messageId: 'renderResultNamingConvention',
           data: {
-            varName: 'wrapper',
+            renderResultName: 'wrapper',
           },
           line: 6,
           column: 17,
@@ -323,18 +269,76 @@ ruleTester.run(RULE_NAME, rule, {
           const button = wrapper.getByText('some button');
         });
       `,
-      options: [
-        {
-          renderFunctions: ['customRender'],
-        },
-      ],
+      settings: { 'testing-library/custom-renders': ['customRender'] },
       errors: [
         {
           messageId: 'renderResultNamingConvention',
           data: {
-            varName: 'wrapper',
+            renderResultName: 'wrapper',
           },
           line: 5,
+          column: 17,
+        },
+      ],
+    },
+    {
+      code: `
+        import { render } from '@foo/bar';
+
+        test('aggressive reporting - should report from render not related to testing library', () => {
+          const wrapper = render(<SomeComponent />);
+          const button = wrapper.getByText('some button');
+        });
+      `,
+      errors: [
+        {
+          messageId: 'renderResultNamingConvention',
+          data: {
+            renderResultName: 'wrapper',
+          },
+          line: 5,
+          column: 17,
+        },
+      ],
+    },
+    {
+      code: `
+        import * as RTL from '@foo/bar';
+
+        test('aggressive reporting - should report from wildcard render not imported from testing library', () => {
+          const wrapper = RTL.render(<SomeComponent />);
+          const button = wrapper.getByText('some button');
+        });
+      `,
+      errors: [
+        {
+          messageId: 'renderResultNamingConvention',
+          data: {
+            renderResultName: 'wrapper',
+          },
+          line: 5,
+          column: 17,
+        },
+      ],
+    },
+    {
+      code: `
+        function render() {
+          return 'whatever';
+        }
+
+        test('aggressive reporting - should report from custom render not related to testing library', () => {
+          const wrapper = render(<SomeComponent />);
+          const button = wrapper.getByText('some button');
+        });
+      `,
+      errors: [
+        {
+          messageId: 'renderResultNamingConvention',
+          data: {
+            renderResultName: 'wrapper',
+          },
+          line: 7,
           column: 17,
         },
       ],

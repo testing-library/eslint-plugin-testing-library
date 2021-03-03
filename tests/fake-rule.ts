@@ -9,6 +9,7 @@ export const RULE_NAME = 'fake-rule';
 type Options = [];
 type MessageIds =
   | 'fakeError'
+  | 'renderError'
   | 'getByError'
   | 'queryByError'
   | 'findByError'
@@ -27,6 +28,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
     },
     messages: {
       fakeError: 'fake error reported',
+      renderError: 'some error related to render util reported',
       getByError: 'some error related to getBy reported',
       queryByError: 'some error related to queryBy reported',
       findByError: 'some error related to findBy reported',
@@ -41,8 +43,8 @@ export default createTestingLibraryRule<Options, MessageIds>({
   create(context, _, helpers) {
     const reportCallExpressionIdentifier = (node: TSESTree.Identifier) => {
       // force "render" to be reported
-      if (node.name === 'render') {
-        return context.report({ node, messageId: 'fakeError' });
+      if (helpers.isRenderUtil(node)) {
+        return context.report({ node, messageId: 'renderError' });
       }
 
       if (helpers.isCustomQuery(node)) {
