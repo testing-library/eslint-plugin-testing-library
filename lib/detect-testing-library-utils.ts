@@ -331,9 +331,20 @@ export function detectTestingLibraryUtils<
         return false;
       }
 
+      const referenceNode = (function () {
+        if (isMemberExpression(node)) {
+          return node;
+        }
+
+        if (node.parent && isMemberExpression(node.parent)) {
+          return node.parent;
+        }
+        return identifier;
+      })();
+
       return (
         isAggressiveModuleReportingEnabled() ||
-        isNodeComingFromTestingLibrary(identifier)
+        isNodeComingFromTestingLibrary(referenceNode)
       );
     };
 

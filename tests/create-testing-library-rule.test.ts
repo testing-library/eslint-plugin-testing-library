@@ -257,6 +257,19 @@ ruleTester.run(RULE_NAME, rule, {
       const utils = render()
       `,
     },
+
+    // Test Cases for all settings mixed
+    {
+      settings: { 'testing-library/utils-module': 'test-utils' },
+      code: `
+      // case: aggressive module disabled and render coming from non-related module
+      import * as somethingElse from '@somewhere/else'
+      import { render } from '@testing-library/react'
+      
+      // somethingElse.render is not coming from any module related to TL
+      const utils = somethingElse.render()
+      `,
+    },
   ],
   invalid: [
     // Test Cases for Imports & Filename
@@ -512,6 +525,19 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [{ line: 5, column: 21, messageId: 'renderError' }],
     },
+    {
+      settings: { 'testing-library/utils-module': 'test-utils' },
+      code: `
+      // case: aggressive module disabled and render wildcard-imported from related module
+      import * as rtl from '@testing-library/react'
+      
+      const utils = rtl.render()
+      `,
+      errors: [
+        { line: 5, column: 21, messageId: 'fakeError' },
+        { line: 5, column: 25, messageId: 'renderError' },
+      ],
+    },
 
     // Test Cases for presence/absence assertions
     {
@@ -740,6 +766,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
 
     // Test Cases for all settings mixed
+
     {
       filename: 'MyComponent.custom-suffix.js',
       settings: {
