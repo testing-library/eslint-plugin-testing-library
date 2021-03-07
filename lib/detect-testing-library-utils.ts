@@ -124,6 +124,41 @@ export function detectTestingLibraryUtils<
     const customRenders = context.settings['testing-library/custom-renders'];
 
     /**
+     * Small method to extract common checks to determine whether a node is
+     * related to Testing Library or not.
+     */
+    function isTestingLibraryUtil(
+      node: TSESTree.Node,
+      isUtilCallback: (identifierNode: TSESTree.Identifier) => boolean
+    ): boolean {
+      const identifierNode = getIdentifierNode(node);
+
+      if (!identifierNode) {
+        return false;
+      }
+
+      if (!isUtilCallback(identifierNode)) {
+        return false;
+      }
+
+      const referenceNode = (function () {
+        if (isMemberExpression(node)) {
+          return node;
+        }
+
+        if (node.parent && isMemberExpression(node.parent)) {
+          return node.parent;
+        }
+        return identifierNode;
+      })();
+
+      return (
+        isAggressiveModuleReportingEnabled() ||
+        isNodeComingFromTestingLibrary(referenceNode)
+      );
+    }
+
+    /**
      * Determines whether aggressive module reporting is enabled or not.
      *
      * This aggressive reporting mechanism is considered as enabled when custom
@@ -250,30 +285,8 @@ export function detectTestingLibraryUtils<
      * only those nodes coming from Testing Library will be considered as valid.
      */
     const isAsyncUtil: IsAsyncUtilFn = (node) => {
-      const identifierNode = getIdentifierNode(node);
-
-      if (!identifierNode) {
-        return false;
-      }
-
-      if (!ASYNC_UTILS.includes(identifierNode.name)) {
-        return false;
-      }
-
-      const referenceNode = (function () {
-        if (isMemberExpression(node)) {
-          return node;
-        }
-
-        if (node.parent && isMemberExpression(node.parent)) {
-          return node.parent;
-        }
-        return identifierNode;
-      })();
-
-      return (
-        isAggressiveModuleReportingEnabled() ||
-        isNodeComingFromTestingLibrary(referenceNode)
+      return isTestingLibraryUtil(node, (identifierNode) =>
+        ASYNC_UTILS.includes(identifierNode.name)
       );
     };
 
@@ -347,39 +360,13 @@ export function detectTestingLibraryUtils<
      * only those nodes coming from Testing Library will be considered as valid.
      */
     const isRenderUtil: IsRenderUtilFn = (node) => {
-      const identifierNode = getIdentifierNode(node);
-
-      if (!identifierNode) {
-        return false;
-      }
-
-      const isNameMatching = (function () {
+      return isTestingLibraryUtil(node, (identifierNode) => {
         if (isAggressiveRenderReportingEnabled()) {
           return identifierNode.name.toLowerCase().includes(RENDER_NAME);
         }
 
         return [RENDER_NAME, ...customRenders].includes(identifierNode.name);
-      })();
-
-      if (!isNameMatching) {
-        return false;
-      }
-
-      const referenceNode = (function () {
-        if (isMemberExpression(node)) {
-          return node;
-        }
-
-        if (node.parent && isMemberExpression(node.parent)) {
-          return node.parent;
-        }
-        return identifierNode;
-      })();
-
-      return (
-        isAggressiveModuleReportingEnabled() ||
-        isNodeComingFromTestingLibrary(referenceNode)
-      );
+      });
     };
 
     /**
