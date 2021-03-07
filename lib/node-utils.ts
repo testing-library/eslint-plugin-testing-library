@@ -363,6 +363,45 @@ export function getFunctionReturnStatementNode(
   return null;
 }
 
+/**
+ * Gets the property identifier node of a given property node.
+ *
+ * Not to be confused with {@link getIdentifierNode}
+ *
+ * An example:
+ * Having `const a = rtl.within('foo').getByRole('button')`:
+ *  if we call `getPropertyIdentifierNode` with `rtl` property node,
+ *  it will return `rtl` identifier node
+ */
+export function getPropertyIdentifierNode(
+  node: TSESTree.Node
+): TSESTree.Identifier | null {
+  if (ASTUtils.isIdentifier(node)) {
+    return node;
+  }
+
+  if (isMemberExpression(node)) {
+    return getPropertyIdentifierNode(node.object);
+  }
+
+  if (isCallExpression(node)) {
+    return getPropertyIdentifierNode(node.callee);
+  }
+
+  return null;
+}
+
+/**
+ * Gets the deepest identifier node from a given node.
+ *
+ * Opposite of {@link getReferenceNode}
+ *
+ * An example:
+ * Having `const a = rtl.within('foo').getByRole('button')`:
+ *  if we call `getIdentifierNode` with `rtl` node,
+ *  it will return `getByRole` identifier
+ */
+// TODO: rename to getDeepestIdentifierNode
 export function getIdentifierNode(
   node: TSESTree.Node
 ): TSESTree.Identifier | null {
@@ -379,6 +418,29 @@ export function getIdentifierNode(
   }
 
   return null;
+}
+
+/**
+ * Gets the farthest node from a given node.
+ *
+ * Opposite of {@link getIdentifierNode}
+
+ * An example:
+ * Having `const a = rtl.within('foo').getByRole('button')`:
+ *  if we call `getReferenceNode` with `getByRole` identifier,
+ *  it will return `rtl` node
+ */
+export function getReferenceNode(
+  node:
+    | TSESTree.CallExpression
+    | TSESTree.MemberExpression
+    | TSESTree.Identifier
+): TSESTree.CallExpression | TSESTree.MemberExpression | TSESTree.Identifier {
+  if (isMemberExpression(node.parent) || isCallExpression(node.parent)) {
+    return getReferenceNode(node.parent);
+  }
+
+  return node;
 }
 
 export function getFunctionName(

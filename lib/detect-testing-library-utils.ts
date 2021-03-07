@@ -5,8 +5,9 @@ import {
 } from '@typescript-eslint/experimental-utils';
 import {
   getAssertNodeInfo,
-  getIdentifierNode,
   getImportModuleName,
+  getPropertyIdentifierNode,
+  getReferenceNode,
   ImportModuleNode,
   isImportDeclaration,
   isImportNamespaceSpecifier,
@@ -60,9 +61,9 @@ type IsFindQueryVariantFn = (node: TSESTree.Identifier) => boolean;
 type IsSyncQueryFn = (node: TSESTree.Identifier) => boolean;
 type IsAsyncQueryFn = (node: TSESTree.Identifier) => boolean;
 type IsCustomQueryFn = (node: TSESTree.Identifier) => boolean;
-type IsAsyncUtilFn = (node: TSESTree.Node) => boolean;
+type IsAsyncUtilFn = (node: TSESTree.Identifier) => boolean;
 type IsFireEventMethodFn = (node: TSESTree.Identifier) => boolean;
-type IsRenderUtilFn = (node: TSESTree.Node) => boolean;
+type IsRenderUtilFn = (node: TSESTree.Identifier) => boolean;
 type IsPresenceAssertFn = (node: TSESTree.MemberExpression) => boolean;
 type IsAbsenceAssertFn = (node: TSESTree.MemberExpression) => boolean;
 type CanReportErrorsFn = () => boolean;
@@ -128,33 +129,19 @@ export function detectTestingLibraryUtils<
      * related to Testing Library or not.
      */
     function isTestingLibraryUtil(
-      node: TSESTree.Node,
+      node: TSESTree.Identifier,
       isUtilCallback: (identifierNode: TSESTree.Identifier) => boolean
     ): boolean {
-      const identifierNode = getIdentifierNode(node);
-
-      if (!identifierNode) {
+      if (!isUtilCallback(node)) {
         return false;
       }
 
-      if (!isUtilCallback(identifierNode)) {
-        return false;
-      }
-
-      const referenceNode = (function () {
-        if (isMemberExpression(node)) {
-          return node;
-        }
-
-        if (node.parent && isMemberExpression(node.parent)) {
-          return node.parent;
-        }
-        return identifierNode;
-      })();
+      const referenceNode = getReferenceNode(node);
+      const referenceNodeIdentifier = getPropertyIdentifierNode(referenceNode);
 
       return (
         isAggressiveModuleReportingEnabled() ||
-        isNodeComingFromTestingLibrary(referenceNode)
+        isNodeComingFromTestingLibrary(referenceNodeIdentifier)
       );
     }
 
@@ -468,7 +455,7 @@ export function detectTestingLibraryUtils<
       }
 
       if (!identifierName) {
-        return;
+        return false;
       }
 
       return !!findImportedUtilSpecifier(identifierName);
