@@ -2,7 +2,7 @@ import { ASTUtils, TSESTree } from '@typescript-eslint/experimental-utils';
 import { createTestingLibraryRule } from '../create-testing-library-rule';
 import {
   findClosestCallExpressionNode,
-  getIdentifierNode,
+  getDeepestIdentifierNode,
   isCallExpression,
   isNewExpression,
   isPromiseIdentifier,
@@ -50,7 +50,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
       }
 
       if (isCallExpression(node)) {
-        const domElementIdentifier = getIdentifierNode(node);
+        const domElementIdentifier = getDeepestIdentifierNode(node);
 
         if (
           helpers.isAsyncQuery(domElementIdentifier) ||

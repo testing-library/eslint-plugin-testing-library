@@ -151,7 +151,7 @@ export function isCallExpressionCallee(
   node: TSESTree.CallExpression,
   identifier: TSESTree.Identifier
 ): boolean {
-  const nodeInnerIdentifier = getIdentifierNode(node);
+  const nodeInnerIdentifier = getDeepestIdentifierNode(node);
 
   if (nodeInnerIdentifier) {
     return nodeInnerIdentifier.name === identifier.name;
@@ -366,7 +366,7 @@ export function getFunctionReturnStatementNode(
 /**
  * Gets the property identifier node of a given property node.
  *
- * Not to be confused with {@link getIdentifierNode}
+ * Not to be confused with {@link getDeepestIdentifierNode}
  *
  * An example:
  * Having `const a = rtl.within('foo').getByRole('button')`:
@@ -398,11 +398,10 @@ export function getPropertyIdentifierNode(
  *
  * An example:
  * Having `const a = rtl.within('foo').getByRole('button')`:
- *  if we call `getIdentifierNode` with `rtl` node,
+ *  if we call `getDeepestIdentifierNode` with `rtl` node,
  *  it will return `getByRole` identifier
  */
-// TODO: rename to getDeepestIdentifierNode
-export function getIdentifierNode(
+export function getDeepestIdentifierNode(
   node: TSESTree.Node
 ): TSESTree.Identifier | null {
   if (ASTUtils.isIdentifier(node)) {
@@ -414,7 +413,7 @@ export function getIdentifierNode(
   }
 
   if (isCallExpression(node)) {
-    return getIdentifierNode(node.callee);
+    return getDeepestIdentifierNode(node.callee);
   }
 
   return null;
@@ -423,7 +422,7 @@ export function getIdentifierNode(
 /**
  * Gets the farthest node from a given node.
  *
- * Opposite of {@link getIdentifierNode}
+ * Opposite of {@link getDeepestIdentifierNode}
 
  * An example:
  * Having `const a = rtl.within('foo').getByRole('button')`:
@@ -611,7 +610,9 @@ export function getInnermostReturningFunction(
     return;
   }
 
-  const returnStatementIdentifier = getIdentifierNode(returnStatementNode);
+  const returnStatementIdentifier = getDeepestIdentifierNode(
+    returnStatementNode
+  );
 
   if (returnStatementIdentifier?.name !== node.name) {
     return;
