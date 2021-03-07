@@ -103,18 +103,28 @@ ruleTester.run(RULE_NAME, rule, {
       `,
     })),
     ...ASYNC_UTILS.map((asyncUtil) => ({
+      settings: {
+        'testing-library/utils-module': 'test-utils',
+      },
       code: `
         import { ${asyncUtil} } from 'some-other-library';
-        test('util "${asyncUtil}" which is not related to testing library is valid', async () => {
+        test(
+        'aggressive reporting disabled - util "${asyncUtil}" which is not related to testing library is valid',
+        async () => {
           doSomethingElse();
           ${asyncUtil}();
         });
       `,
     })),
     ...ASYNC_UTILS.map((asyncUtil) => ({
+      settings: {
+        'testing-library/utils-module': 'test-utils',
+      },
       code: `
         import * as asyncUtils from 'some-other-library';
-        test('util "asyncUtils.${asyncUtil}" which is not related to testing library is valid', async () => {
+        test(
+        'aggressive reporting disabled - util "asyncUtils.${asyncUtil}" which is not related to testing library is valid',
+        async () => {
           doSomethingElse();
           asyncUtils.${asyncUtil}();
         });
@@ -174,16 +184,6 @@ ruleTester.run(RULE_NAME, rule, {
         });
       `,
     },
-    ...ASYNC_UTILS.map((asyncUtil) => ({
-      code: `
-        import { ${asyncUtil} } from '@somewhere/else';
-        test('util unhandled but not related to testing library is valid', async () => {
-          doSomethingElse();
-          ${asyncUtil}('not related to testing library')
-          waitForNotRelatedToTestingLibrary()
-        });
-      `,
-    })),
     ...ASYNC_UTILS.map((asyncUtil) => ({
       code: `
         import { ${asyncUtil} } from '@testing-library/dom';
@@ -300,6 +300,30 @@ ruleTester.run(RULE_NAME, rule, {
         });
       `,
       errors: [{ messageId: 'asyncUtilWrapper', line: 10, column: 11 }],
+    })),
+    ...ASYNC_UTILS.map((asyncUtil) => ({
+      code: `
+        import { ${asyncUtil} } from 'some-other-library';
+        test(
+        'aggressive reporting - util "${asyncUtil}" which is not related to testing library is invalid',
+        async () => {
+          doSomethingElse();
+          ${asyncUtil}();
+        });
+      `,
+      errors: [{ line: 7, column: 11, messageId: 'awaitAsyncUtil' }],
+    })),
+    ...ASYNC_UTILS.map((asyncUtil) => ({
+      code: `
+        import * as asyncUtils from 'some-other-library';
+        test(
+        'aggressive reporting - util "asyncUtils.${asyncUtil}" which is not related to testing library is invalid',
+        async () => {
+          doSomethingElse();
+          asyncUtils.${asyncUtil}();
+        });
+      `,
+      errors: [{ line: 7, column: 22, messageId: 'awaitAsyncUtil' }],
     })),
   ],
 });

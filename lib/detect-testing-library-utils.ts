@@ -60,7 +60,7 @@ type IsFindQueryVariantFn = (node: TSESTree.Identifier) => boolean;
 type IsSyncQueryFn = (node: TSESTree.Identifier) => boolean;
 type IsAsyncQueryFn = (node: TSESTree.Identifier) => boolean;
 type IsCustomQueryFn = (node: TSESTree.Identifier) => boolean;
-type IsAsyncUtilFn = (node: TSESTree.Identifier) => boolean;
+type IsAsyncUtilFn = (node: TSESTree.Node) => boolean;
 type IsFireEventMethodFn = (node: TSESTree.Identifier) => boolean;
 type IsRenderUtilFn = (node: TSESTree.Node) => boolean;
 type IsPresenceAssertFn = (node: TSESTree.MemberExpression) => boolean;
@@ -237,10 +237,44 @@ export function detectTestingLibraryUtils<
     };
 
     /**
-     * Determines whether a given node is async util or not.
+     * Determines whether a given node is a valid async util or not.
+     *
+     * A node will be interpreted as a valid async util based on two conditions:
+     * the name matches with some Testing Library async util, and the node is
+     * coming from Testing Library module.
+     *
+     * The latter depends on Aggressive
+     * module reporting: if enabled, then it doesn't matter from
+     * where the given node was imported from as it will be considered part of
+     * Testing Library. Otherwise, it means `custom-module` has been set up, so
+     * only those nodes coming from Testing Library will be considered as valid.
      */
     const isAsyncUtil: IsAsyncUtilFn = (node) => {
-      return ASYNC_UTILS.includes(node.name);
+      const identifierNode = getIdentifierNode(node);
+
+      if (!identifierNode) {
+        return false;
+      }
+
+      if (!ASYNC_UTILS.includes(identifierNode.name)) {
+        return false;
+      }
+
+      const referenceNode = (function () {
+        if (isMemberExpression(node)) {
+          return node;
+        }
+
+        if (node.parent && isMemberExpression(node.parent)) {
+          return node.parent;
+        }
+        return identifierNode;
+      })();
+
+      return (
+        isAggressiveModuleReportingEnabled() ||
+        isNodeComingFromTestingLibrary(referenceNode)
+      );
     };
 
     /**
@@ -313,18 +347,18 @@ export function detectTestingLibraryUtils<
      * only those nodes coming from Testing Library will be considered as valid.
      */
     const isRenderUtil: IsRenderUtilFn = (node) => {
-      const identifier = getIdentifierNode(node);
+      const identifierNode = getIdentifierNode(node);
 
-      if (!identifier) {
+      if (!identifierNode) {
         return false;
       }
 
       const isNameMatching = (function () {
         if (isAggressiveRenderReportingEnabled()) {
-          return identifier.name.toLowerCase().includes(RENDER_NAME);
+          return identifierNode.name.toLowerCase().includes(RENDER_NAME);
         }
 
-        return [RENDER_NAME, ...customRenders].includes(identifier.name);
+        return [RENDER_NAME, ...customRenders].includes(identifierNode.name);
       })();
 
       if (!isNameMatching) {
@@ -339,7 +373,7 @@ export function detectTestingLibraryUtils<
         if (node.parent && isMemberExpression(node.parent)) {
           return node.parent;
         }
-        return identifier;
+        return identifierNode;
       })();
 
       return (
