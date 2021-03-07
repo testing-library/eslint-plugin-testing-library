@@ -10,6 +10,7 @@ type Options = [];
 type MessageIds =
   | 'fakeError'
   | 'renderError'
+  | 'asyncUtilError'
   | 'getByError'
   | 'queryByError'
   | 'findByError'
@@ -29,6 +30,8 @@ export default createTestingLibraryRule<Options, MessageIds>({
     messages: {
       fakeError: 'fake error reported',
       renderError: 'some error related to render util reported',
+      asyncUtilError:
+        'some error related to {{ utilName }} async util reported',
       getByError: 'some error related to getBy reported',
       queryByError: 'some error related to queryBy reported',
       findByError: 'some error related to findBy reported',
@@ -47,11 +50,20 @@ export default createTestingLibraryRule<Options, MessageIds>({
         return context.report({ node, messageId: 'renderError' });
       }
 
+      // force async utils to be reported
+      if (helpers.isAsyncUtil(node)) {
+        return context.report({
+          node,
+          messageId: 'asyncUtilError',
+          data: { utilName: node.name },
+        });
+      }
+
+      // force queries to be reported
       if (helpers.isCustomQuery(node)) {
         return context.report({ node, messageId: 'customQueryError' });
       }
 
-      // force queries to be reported
       if (helpers.isGetQueryVariant(node)) {
         return context.report({ node, messageId: 'getByError' });
       }
@@ -87,12 +99,6 @@ export default createTestingLibraryRule<Options, MessageIds>({
     return {
       'CallExpression Identifier': reportCallExpressionIdentifier,
       MemberExpression: reportMemberExpression,
-      'CallExpression > MemberExpression'(node: TSESTree.MemberExpression) {
-        if (!helpers.isNodeComingFromTestingLibrary(node)) {
-          return;
-        }
-        context.report({ node, messageId: 'fakeError' });
-      },
       ImportDeclaration: reportImportDeclaration,
       'Program:exit'() {
         const importNode = helpers.getCustomModuleImportNode();

@@ -447,11 +447,7 @@ export function detectTestingLibraryUtils<
       node
     ) => {
       const identifierName: string | undefined = getPropertyIdentifierNode(node)
-        ?.name;
-
-      if (!identifierName) {
-        return false;
-      }
+        .name;
 
       return !!findImportedUtilSpecifier(identifierName);
     };

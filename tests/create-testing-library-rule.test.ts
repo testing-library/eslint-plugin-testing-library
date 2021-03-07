@@ -265,7 +265,28 @@ ruleTester.run(RULE_NAME, rule, {
     `,
     },
 
-    // TODO: Test Cases for async utils
+    // Test Cases for async utils
+    {
+      settings: {
+        'testing-library/utils-module': 'test-utils',
+      },
+      code: `
+        import { waitFor } from 'some-other-library';
+        test(
+          'aggressive reporting disabled - util waitFor not related to testing library is valid',
+          () => { waitFor() }
+        );
+      `,
+    },
+    {
+      filename: 'file.not.matching.js',
+      code: `
+      // case: waitFor util found, but file name not matching
+      import { waitFor } from '@testing-library/react'
+      
+      waitFor()
+      `,
+    },
 
     // Test Cases for all settings mixed
     {
@@ -497,10 +518,7 @@ ruleTester.run(RULE_NAME, rule, {
       
       const utils = rtl.render()
       `,
-      errors: [
-        { line: 5, column: 21, messageId: 'fakeError' },
-        { line: 5, column: 25, messageId: 'renderError' },
-      ],
+      errors: [{ line: 5, column: 25, messageId: 'renderError' }],
     },
     {
       code: `
@@ -553,10 +571,7 @@ ruleTester.run(RULE_NAME, rule, {
       
       const utils = rtl.render()
       `,
-      errors: [
-        { line: 5, column: 21, messageId: 'fakeError' },
-        { line: 5, column: 25, messageId: 'renderError' },
-      ],
+      errors: [{ line: 5, column: 25, messageId: 'renderError' }],
     },
 
     // Test Cases for presence/absence assertions
@@ -591,18 +606,79 @@ ruleTester.run(RULE_NAME, rule, {
 
     // Test Cases for async utils
     {
+      code: `
+        import { waitFor } from 'test-utils';
+        test(
+          'aggressive reporting enabled - util waitFor reported no matter where is coming from',
+          () => { waitFor() }
+        );
+      `,
+      errors: [
+        {
+          line: 5,
+          column: 19,
+          messageId: 'asyncUtilError',
+          data: { utilName: 'waitFor' },
+        },
+      ],
+    },
+    {
       settings: {
         'testing-library/utils-module': 'test-utils',
       },
       code: `
-        // case: object property shadowed name is checked correctly
+        import { waitFor } from 'test-utils';
+        test(
+          'aggressive reporting disabled - util waitFor related to testing library',
+          () => { waitFor() }
+        );
+      `,
+      errors: [
+        {
+          line: 5,
+          column: 19,
+          messageId: 'asyncUtilError',
+          data: { utilName: 'waitFor' },
+        },
+      ],
+    },
+    {
+      settings: {
+        'testing-library/utils-module': 'test-utils',
+      },
+      code: `
+        // case: waitFor from object property shadowed name is checked correctly
         import * as tl from 'test-utils'
         const obj = { tl }
         
         obj.module.waitFor(() => {})
       `,
-      // TODO: column will be different when async utils errors are implemented properly
-      errors: [{ line: 6, column: 9, messageId: 'fakeError' }],
+      errors: [
+        {
+          line: 6,
+          column: 20,
+          messageId: 'asyncUtilError',
+          data: { utilName: 'waitFor' },
+        },
+      ],
+    },
+    {
+      settings: {
+        'testing-library/utils-module': 'test-utils',
+      },
+      code: `
+        // case: aggressive reporting disabled - waitFor from wildcard import related to TL 
+        import * as tl from 'test-utils'
+        tl.waitFor(() => {})
+      `,
+      errors: [
+        {
+          line: 4,
+          column: 12,
+          messageId: 'asyncUtilError',
+          data: { utilName: 'waitFor' },
+        },
+      ],
     },
 
     // Test Cases for Queries and Aggressive Queries Reporting
@@ -833,16 +909,6 @@ ruleTester.run(RULE_NAME, rule, {
     `,
       errors: [{ line: 4, column: 7, messageId: 'customQueryError' }],
     },
-    {
-      settings: {
-        'testing-library/utils-module': 'test-utils',
-      },
-      code: `
-        import * as tl from 'test-utils'
-        tl.waitFor(() => {})
-      `,
-      errors: [{ line: 3, column: 9, messageId: 'fakeError' }],
-    },
 
     // Test Cases for all settings mixed
     {
@@ -858,10 +924,17 @@ ruleTester.run(RULE_NAME, rule, {
       
       const { getByRole } = renderWithRedux()
       const el = getByRole('button')
+      waitFor(() => {})
       `,
       errors: [
         { line: 5, column: 29, messageId: 'renderError' },
         { line: 6, column: 18, messageId: 'getByError' },
+        {
+          line: 7,
+          column: 7,
+          messageId: 'asyncUtilError',
+          data: { utilName: 'waitFor' },
+        },
       ],
     },
     {
