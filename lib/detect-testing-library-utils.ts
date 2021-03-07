@@ -446,13 +446,8 @@ export function detectTestingLibraryUtils<
     const isNodeComingFromTestingLibrary: IsNodeComingFromTestingLibraryFn = (
       node
     ) => {
-      let identifierName: string | undefined;
-
-      if (ASTUtils.isIdentifier(node)) {
-        identifierName = node.name;
-      } else if (ASTUtils.isIdentifier(node.object)) {
-        identifierName = node.object.name;
-      }
+      const identifierName: string | undefined = getPropertyIdentifierNode(node)
+        ?.name;
 
       if (!identifierName) {
         return false;

@@ -265,17 +265,7 @@ ruleTester.run(RULE_NAME, rule, {
     `,
     },
 
-    // Test Cases for async utils
-    {
-      settings: {
-        'testing-library/utils-module': 'test-utils',
-      },
-      code: `
-        import * as tl from 'test-utils'
-        const obj = { tl }
-        obj.tl.waitFor(() => {})
-      `,
-    },
+    // TODO: Test Cases for async utils
 
     // Test Cases for all settings mixed
     {
@@ -597,6 +587,22 @@ ruleTester.run(RULE_NAME, rule, {
       expect(element).toBeNull()
       `,
       errors: [{ line: 3, column: 7, messageId: 'absenceAssertError' }],
+    },
+
+    // Test Cases for async utils
+    {
+      settings: {
+        'testing-library/utils-module': 'test-utils',
+      },
+      code: `
+        // case: object property shadowed name is checked correctly
+        import * as tl from 'test-utils'
+        const obj = { tl }
+        
+        obj.module.waitFor(() => {})
+      `,
+      // TODO: column will be different when async utils errors are implemented properly
+      errors: [{ line: 6, column: 9, messageId: 'fakeError' }],
     },
 
     // Test Cases for Queries and Aggressive Queries Reporting
