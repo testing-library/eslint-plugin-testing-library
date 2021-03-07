@@ -108,6 +108,174 @@ ruleTester.run(RULE_NAME, rule, {
       const utils = customRender()
       `,
     },
+    {
+      settings: { 'testing-library/utils-module': 'test-utils' },
+      code: `
+      // case: aggressive render enabled, but module disabled - not coming from TL
+      import { render } from 'somewhere-else'
+      
+      const utils = render()
+      `,
+    },
+    {
+      filename: 'file.not.matching.js',
+      code: `
+      // case: aggressive render and module enabled, but file name not matching
+      import { render } from '@testing-library/react'
+      
+      const utils = render()
+      `,
+    },
+
+    // Test Cases for presence/absence assertions
+    // cases: asserts not related to presence/absence
+    'expect(element).toBeDisabled()',
+    'expect(element).toBeEnabled()',
+
+    // cases: presence/absence matcher not related to assert
+    'element.toBeInTheDocument()',
+    'element.not.toBeInTheDocument()',
+
+    // cases: weird scenarios to check guard against parent nodes
+    'expect(element).not()',
+    'expect(element).not()',
+
+    // Test Cases for Queries and Aggressive Queries Reporting
+    {
+      code: `
+      // case: custom method not matching "getBy*" variant pattern
+      getSomeElement('button')
+    `,
+    },
+    {
+      code: `
+      // case: custom method not matching "getBy*" variant pattern using within
+      within(container).getSomeElement('button')
+    `,
+    },
+    {
+      code: `
+      // case: custom method not matching "queryBy*" variant pattern
+      querySomeElement('button')
+    `,
+    },
+    {
+      code: `
+      // case: custom method not matching "queryBy*" variant pattern using within
+      within(container).querySomeElement('button')
+    `,
+    },
+    {
+      code: `
+      // case: custom method not matching "findBy*" variant pattern
+      findSomeElement('button')
+    `,
+    },
+    {
+      code: `
+      // case: custom method not matching "findBy*" variant pattern using within
+      within(container).findSomeElement('button')
+    `,
+    },
+    {
+      settings: {
+        'testing-library/utils-module': 'test-utils',
+      },
+      code: `
+      // case: built-in "getBy*" query not reported because custom module not imported
+      import { render } from 'other-module'
+      getByRole('button')
+    `,
+    },
+    {
+      settings: {
+        'testing-library/utils-module': 'test-utils',
+      },
+      code: `
+      // case: built-in "getBy*" query not reported because custom module not imported  using within
+      import { render } from 'other-module'
+      within(container).getByRole('button')
+    `,
+    },
+    {
+      settings: {
+        'testing-library/utils-module': 'test-utils',
+      },
+      code: `
+      // case: built-in "queryBy*" query not reported because custom module not imported
+      import { render } from 'other-module'
+      queryByRole('button')
+    `,
+    },
+    {
+      settings: {
+        'testing-library/utils-module': 'test-utils',
+      },
+      code: `
+      // case: built-in "queryBy*" query not reported because custom module not imported using within
+      import { render } from 'other-module'
+      within(container).queryByRole('button')
+    `,
+    },
+    {
+      settings: {
+        'testing-library/utils-module': 'test-utils',
+      },
+      code: `
+      // case: built-in "findBy*" query not reported because custom module not imported
+      import { render } from 'other-module'
+      findByRole('button')
+    `,
+    },
+    {
+      settings: {
+        'testing-library/utils-module': 'test-utils',
+      },
+      code: `
+      // case: built-in "findBy*" query not reported because custom module not imported using within
+      import { render } from 'other-module'
+      within(container).findByRole('button')
+    `,
+    },
+    {
+      settings: {
+        'testing-library/filename-pattern': 'testing-library\\.js',
+      },
+      code: `
+      // case: built-in "getBy*" query not reported because custom filename doesn't match
+      getByRole('button')
+    `,
+    },
+    {
+      settings: {
+        'testing-library/filename-pattern': 'testing-library\\.js',
+      },
+      code: `
+      // case: built-in "queryBy*" query not reported because custom filename doesn't match
+      queryByRole('button')
+    `,
+    },
+    {
+      settings: {
+        'testing-library/filename-pattern': 'testing-library\\.js',
+      },
+      code: `
+      // case: built-in "findBy*" query not reported because custom filename doesn't match
+      findByRole('button')
+    `,
+    },
+
+    // Test Cases for async utils
+    {
+      settings: {
+        'testing-library/utils-module': 'test-utils',
+      },
+      code: `
+        import * as tl from 'test-utils'
+        const obj = { tl }
+        obj.tl.waitFor(() => {})
+      `,
+    },
 
     // Test Cases for all settings mixed
     {
@@ -139,126 +307,6 @@ ruleTester.run(RULE_NAME, rule, {
       const utils = render();
       `,
     },
-
-    // Test Cases for presence/absence assertions
-    // cases: asserts not related to presence/absence
-    'expect(element).toBeDisabled()',
-    'expect(element).toBeEnabled()',
-
-    // cases: presence/absence matcher not related to assert
-    'element.toBeInTheDocument()',
-    'element.not.toBeInTheDocument()',
-
-    // cases: weird scenarios to check guard against parent nodes
-    'expect(element).not()',
-    'expect(element).not()',
-
-    // Test Cases for Queries and Aggressive Queries Reporting
-    {
-      code: `
-      // case: custom method not matching "getBy*" variant pattern
-      getSomeElement('button')
-    `,
-    },
-    {
-      code: `
-      // case: custom method not matching "queryBy*" variant pattern
-      querySomeElement('button')
-    `,
-    },
-    {
-      code: `
-      // case: custom method not matching "findBy*" variant pattern
-      findSomeElement('button')
-    `,
-    },
-    {
-      settings: {
-        'testing-library/utils-module': 'test-utils',
-      },
-      code: `
-      // case: built-in "getBy*" query not reported because custom module not imported
-      import { render } from 'other-module'
-      getByRole('button')
-    `,
-    },
-    {
-      settings: {
-        'testing-library/utils-module': 'test-utils',
-      },
-      code: `
-      // case: built-in "queryBy*" query not reported because custom module not imported
-      import { render } from 'other-module'
-      queryByRole('button')
-    `,
-    },
-    {
-      settings: {
-        'testing-library/utils-module': 'test-utils',
-      },
-      code: `
-      // case: built-in "findBy*" query not reported because custom module not imported
-      import { render } from 'other-module'
-      findByRole('button')
-    `,
-    },
-    {
-      settings: {
-        'testing-library/filename-pattern': 'testing-library\\.js',
-      },
-      code: `
-      // case: built-in "getBy*" query not reported because custom filename doesn't match
-      getByRole('button')
-    `,
-    },
-    {
-      settings: {
-        'testing-library/filename-pattern': 'testing-library\\.js',
-      },
-      code: `
-      // case: built-in "queryBy*" query not reported because custom filename doesn't match
-      queryByRole('button')
-    `,
-    },
-    {
-      settings: {
-        'testing-library/filename-pattern': 'testing-library\\.js',
-      },
-      code: `
-      // case: built-in "findBy*" query not reported because custom filename doesn't match
-      findByRole('button')
-    `,
-    },
-    {
-      settings: {
-        'testing-library/utils-module': 'test-utils',
-      },
-      code: `
-        import * as tl from 'test-utils'
-        const obj = { tl }
-        obj.tl.waitFor(() => {})
-      `,
-    },
-    {
-      settings: { 'testing-library/utils-module': 'test-utils' },
-      code: `
-      // case: aggressive render enabled, but module disabled - not coming from TL
-      import { render } from 'somewhere-else'
-      
-      const utils = render()
-      `,
-    },
-    {
-      filename: 'file.not.matching.js',
-      code: `
-      // case: aggressive render and module enabled, but file name not matching
-      import { render } from '@testing-library/react'
-      
-      const utils = render()
-      `,
-    },
-
-    // Test Cases for all settings mixed
     {
       settings: { 'testing-library/utils-module': 'test-utils' },
       code: `
@@ -442,24 +490,6 @@ ruleTester.run(RULE_NAME, rule, {
       errors: [{ line: 3, column: 7, messageId: 'fakeError' }],
     },
 
-    // Test Cases for all settings mixed
-    {
-      settings: {
-        'testing-library/utils-module': 'test-utils',
-        'testing-library/filename-pattern': 'testing-library\\.js',
-      },
-      filename: 'MyComponent.testing-library.js',
-      code: `
-      // case: matching all custom settings
-      import { render } from 'test-utils'
-      import { somethingElse } from 'another-module'
-      const foo = require('bar')
-      
-      const utils = render();
-      `,
-      errors: [{ line: 7, column: 21, messageId: 'renderError' }],
-    },
-
     // Test Cases for renders
     {
       code: `
@@ -579,6 +609,13 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
+      // case: built-in "getBy*" query reported without import using within (aggressive reporting)
+      within(container).getByRole('button')
+    `,
+      errors: [{ line: 3, column: 25, messageId: 'getByError' }],
+    },
+    {
+      code: `
       // case: built-in "queryBy*" query reported without import (aggressive reporting)
       queryByRole('button')
     `,
@@ -586,10 +623,24 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
+      // case: built-in "queryBy*" query reported without import using within (aggressive reporting)
+      within(container).queryByRole('button')
+    `,
+      errors: [{ line: 3, column: 25, messageId: 'queryByError' }],
+    },
+    {
+      code: `
       // case: built-in "findBy*" query reported without import (aggressive reporting)
       findByRole('button')
     `,
       errors: [{ line: 3, column: 7, messageId: 'findByError' }],
+    },
+    {
+      code: `
+      // case: built-in "findBy*" query reported without import using within (aggressive reporting)
+      within(container).findByRole('button')
+    `,
+      errors: [{ line: 3, column: 25, messageId: 'findByError' }],
     },
     {
       filename: 'MyComponent.spec.js',
@@ -600,6 +651,14 @@ ruleTester.run(RULE_NAME, rule, {
       errors: [{ line: 3, column: 7, messageId: 'customQueryError' }],
     },
     {
+      filename: 'MyComponent.spec.js',
+      code: `
+      // case: custom "getBy*" query reported without import using within (aggressive reporting)
+      within(container).getByIcon('search')
+    `,
+      errors: [{ line: 3, column: 25, messageId: 'customQueryError' }],
+    },
+    {
       code: `
       // case: custom "queryBy*" query reported without import (aggressive reporting)
       queryByIcon('search')
@@ -608,10 +667,24 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
+      // case: custom "queryBy*" query reported without import using within (aggressive reporting)
+      within(container).queryByIcon('search')
+    `,
+      errors: [{ line: 3, column: 25, messageId: 'customQueryError' }],
+    },
+    {
+      code: `
       // case: custom "findBy*" query reported without import (aggressive reporting)
       findByIcon('search')
     `,
       errors: [{ line: 3, column: 7, messageId: 'customQueryError' }],
+    },
+    {
+      code: `
+      // case: custom "findBy*" query reported without import using within (aggressive reporting)
+      within(container).findByIcon('search')
+    `,
+      errors: [{ line: 3, column: 25, messageId: 'customQueryError' }],
     },
     {
       settings: {
@@ -766,7 +839,6 @@ ruleTester.run(RULE_NAME, rule, {
     },
 
     // Test Cases for all settings mixed
-
     {
       filename: 'MyComponent.custom-suffix.js',
       settings: {
@@ -785,6 +857,22 @@ ruleTester.run(RULE_NAME, rule, {
         { line: 5, column: 29, messageId: 'renderError' },
         { line: 6, column: 18, messageId: 'getByError' },
       ],
+    },
+    {
+      settings: {
+        'testing-library/utils-module': 'test-utils',
+        'testing-library/filename-pattern': 'testing-library\\.js',
+      },
+      filename: 'MyComponent.testing-library.js',
+      code: `
+      // case: matching all custom settings
+      import { render } from 'test-utils'
+      import { somethingElse } from 'another-module'
+      const foo = require('bar')
+      
+      const utils = render();
+      `,
+      errors: [{ line: 7, column: 21, messageId: 'renderError' }],
     },
   ],
 });
