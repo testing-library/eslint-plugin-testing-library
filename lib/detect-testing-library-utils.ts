@@ -265,11 +265,11 @@ export function detectTestingLibraryUtils<
      * the name matches with some Testing Library async util, and the node is
      * coming from Testing Library module.
      *
-     * The latter depends on Aggressive
-     * module reporting: if enabled, then it doesn't matter from
-     * where the given node was imported from as it will be considered part of
-     * Testing Library. Otherwise, it means `custom-module` has been set up, so
-     * only those nodes coming from Testing Library will be considered as valid.
+     * The latter depends on Aggressive module reporting:
+     * if enabled, then it doesn't matter from where the given node was imported
+     * from as it will be considered part of Testing Library.
+     * Otherwise, it means `custom-module` has been set up, so only those nodes
+     * coming from Testing Library will be considered as valid.
      */
     const isAsyncUtil: IsAsyncUtilFn = (node) => {
       return isTestingLibraryUtil(node, (identifierNode) =>
