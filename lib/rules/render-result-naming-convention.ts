@@ -1,5 +1,5 @@
 import { createTestingLibraryRule } from '../create-testing-library-rule';
-import { isObjectPattern } from '../node-utils';
+import { getDeepestIdentifierNode, isObjectPattern } from '../node-utils';
 import { ASTUtils } from '@typescript-eslint/experimental-utils';
 
 export const RULE_NAME = 'render-result-naming-convention';
@@ -32,7 +32,13 @@ export default createTestingLibraryRule<Options, MessageIds>({
   create(context, _, helpers) {
     return {
       VariableDeclarator(node) {
-        if (!helpers.isRenderUtil(node.init)) {
+        const initIdentifierNode = getDeepestIdentifierNode(node.init);
+
+        if (!initIdentifierNode) {
+          return;
+        }
+
+        if (!helpers.isRenderUtil(initIdentifierNode)) {
           return;
         }
 

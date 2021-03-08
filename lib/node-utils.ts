@@ -151,7 +151,7 @@ export function isCallExpressionCallee(
   node: TSESTree.CallExpression,
   identifier: TSESTree.Identifier
 ): boolean {
-  const nodeInnerIdentifier = getIdentifierNode(node);
+  const nodeInnerIdentifier = getDeepestIdentifierNode(node);
 
   if (nodeInnerIdentifier) {
     return nodeInnerIdentifier.name === identifier.name;
@@ -363,7 +363,45 @@ export function getFunctionReturnStatementNode(
   return null;
 }
 
-export function getIdentifierNode(
+/**
+ * Gets the property identifier node of a given property node.
+ *
+ * Not to be confused with {@link getDeepestIdentifierNode}
+ *
+ * An example:
+ * Having `const a = rtl.within('foo').getByRole('button')`:
+ *  if we call `getPropertyIdentifierNode` with `rtl` property node,
+ *  it will return `rtl` identifier node
+ */
+export function getPropertyIdentifierNode(
+  node: TSESTree.Node
+): TSESTree.Identifier | null {
+  if (ASTUtils.isIdentifier(node)) {
+    return node;
+  }
+
+  if (isMemberExpression(node)) {
+    return getPropertyIdentifierNode(node.object);
+  }
+
+  if (isCallExpression(node)) {
+    return getPropertyIdentifierNode(node.callee);
+  }
+
+  return null;
+}
+
+/**
+ * Gets the deepest identifier node from a given node.
+ *
+ * Opposite of {@link getReferenceNode}
+ *
+ * An example:
+ * Having `const a = rtl.within('foo').getByRole('button')`:
+ *  if we call `getDeepestIdentifierNode` with `rtl` node,
+ *  it will return `getByRole` identifier
+ */
+export function getDeepestIdentifierNode(
   node: TSESTree.Node
 ): TSESTree.Identifier | null {
   if (ASTUtils.isIdentifier(node)) {
@@ -375,10 +413,33 @@ export function getIdentifierNode(
   }
 
   if (isCallExpression(node)) {
-    return getIdentifierNode(node.callee);
+    return getDeepestIdentifierNode(node.callee);
   }
 
   return null;
+}
+
+/**
+ * Gets the farthest node from a given node.
+ *
+ * Opposite of {@link getDeepestIdentifierNode}
+
+ * An example:
+ * Having `const a = rtl.within('foo').getByRole('button')`:
+ *  if we call `getReferenceNode` with `getByRole` identifier,
+ *  it will return `rtl` node
+ */
+export function getReferenceNode(
+  node:
+    | TSESTree.CallExpression
+    | TSESTree.MemberExpression
+    | TSESTree.Identifier
+): TSESTree.CallExpression | TSESTree.MemberExpression | TSESTree.Identifier {
+  if (isMemberExpression(node.parent) || isCallExpression(node.parent)) {
+    return getReferenceNode(node.parent);
+  }
+
+  return node;
 }
 
 export function getFunctionName(
@@ -549,7 +610,9 @@ export function getInnermostReturningFunction(
     return;
   }
 
-  const returnStatementIdentifier = getIdentifierNode(returnStatementNode);
+  const returnStatementIdentifier = getDeepestIdentifierNode(
+    returnStatementNode
+  );
 
   if (returnStatementIdentifier?.name !== node.name) {
     return;

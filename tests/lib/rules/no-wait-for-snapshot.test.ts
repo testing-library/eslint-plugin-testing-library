@@ -51,73 +51,101 @@ ruleTester.run(RULE_NAME, rule, {
       `,
     })),
     ...ASYNC_UTILS.map((asyncUtil) => ({
+      settings: {
+        'testing-library/utils-module': 'test-utils',
+      },
       code: `
         import { ${asyncUtil} } from 'some-other-library';
-        test('snapshot calls within ${asyncUtil} are not valid', async () => {
+        test('aggressive reporting disabled - snapshot calls within ${asyncUtil} not related to Testing Library are valid', async () => {
           await ${asyncUtil}(() => expect(foo).toMatchSnapshot());
         });
       `,
     })),
     ...ASYNC_UTILS.map((asyncUtil) => ({
+      settings: {
+        'testing-library/utils-module': 'test-utils',
+      },
       code: `
         import { ${asyncUtil} } from 'some-other-library';
-        test('snapshot calls within ${asyncUtil} are not valid', async () => {
+        test('(alt) aggressive reporting disabled - snapshot calls within ${asyncUtil} not related to Testing Library are valid', async () => {
           await ${asyncUtil}(() => {
-              expect(foo).toMatchSnapshot()
+            // this alt version doesn't return from callback passed to async util
+            expect(foo).toMatchSnapshot()
           });
         });
       `,
     })),
     ...ASYNC_UTILS.map((asyncUtil) => ({
+      settings: {
+        'testing-library/utils-module': 'test-utils',
+      },
       code: `
         import * as asyncUtils from 'some-other-library';
-        test('snapshot calls within ${asyncUtil} are not valid', async () => {
+        test('aggressive reporting disabled - snapshot calls within ${asyncUtil} from wildcard import not related to Testing Library are valid', async () => {
           await asyncUtils.${asyncUtil}(() => expect(foo).toMatchSnapshot());
         });
       `,
     })),
     ...ASYNC_UTILS.map((asyncUtil) => ({
+      settings: {
+        'testing-library/utils-module': 'test-utils',
+      },
       code: `
         import * as asyncUtils from 'some-other-library';
-        test('snapshot calls within ${asyncUtil} are not valid', async () => {
+        test('(alt) aggressive reporting disabled - snapshot calls within ${asyncUtil} from wildcard import not related to Testing Library are valid', async () => {
           await asyncUtils.${asyncUtil}(() => {
-              expect(foo).toMatchSnapshot()
+            // this alt version doesn't return from callback passed to async util
+            expect(foo).toMatchSnapshot()
           });
         });
       `,
     })),
     ...ASYNC_UTILS.map((asyncUtil) => ({
+      settings: {
+        'testing-library/utils-module': 'test-utils',
+      },
       code: `
         import { ${asyncUtil} } from 'some-other-library';
-        test('snapshot calls within ${asyncUtil} are not valid', async () => {
+        test('aggressive reporting disabled - inline snapshot calls within ${asyncUtil} import not related to Testing Library are valid', async () => {
           await ${asyncUtil}(() => expect(foo).toMatchInlineSnapshot());
         });
       `,
     })),
     ...ASYNC_UTILS.map((asyncUtil) => ({
+      settings: {
+        'testing-library/utils-module': 'test-utils',
+      },
       code: `
         import { ${asyncUtil} } from 'some-other-library';
-        test('snapshot calls within ${asyncUtil} are not valid', async () => {
+        test('(alt) aggressive reporting disabled - inline snapshot calls within ${asyncUtil} import not related to Testing Library are valid', async () => {
           await ${asyncUtil}(() => {
-              expect(foo).toMatchInlineSnapshot()
+            // this alt version doesn't return from callback passed to async util
+            expect(foo).toMatchInlineSnapshot()
           });
         });
       `,
     })),
     ...ASYNC_UTILS.map((asyncUtil) => ({
+      settings: {
+        'testing-library/utils-module': 'test-utils',
+      },
       code: `
         import * as asyncUtils from 'some-other-library';
-        test('snapshot calls within ${asyncUtil} are not valid', async () => {
+        test('aggressive reporting disabled - inline snapshot calls within ${asyncUtil} from wildcard import not related to Testing Library are valid', async () => {
           await asyncUtils.${asyncUtil}(() => expect(foo).toMatchInlineSnapshot());
         });
       `,
     })),
     ...ASYNC_UTILS.map((asyncUtil) => ({
+      settings: {
+        'testing-library/utils-module': 'test-utils',
+      },
       code: `
         import * as asyncUtils from 'some-other-library';
-        test('snapshot calls within ${asyncUtil} are not valid', async () => {
+        test('(alt) aggressive reporting disabled - inline snapshot calls within ${asyncUtil} from wildcard import not related to Testing Library are valid', async () => {
           await asyncUtils.${asyncUtil}(() => {
-              expect(foo).toMatchInlineSnapshot()
+            // this alt version doesn't return from callback passed to async util
+            expect(foo).toMatchInlineSnapshot()
           });
         });
       `,

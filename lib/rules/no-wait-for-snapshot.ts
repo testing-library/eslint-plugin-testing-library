@@ -37,7 +37,6 @@ export default createTestingLibraryRule<Options, MessageIds>({
         const callExpression = findClosestCallExpressionNode(n);
         if (
           ASTUtils.isIdentifier(callExpression.callee) &&
-          helpers.isNodeComingFromTestingLibrary(callExpression.callee) &&
           helpers.isAsyncUtil(callExpression.callee)
         ) {
           return callExpression.callee;
@@ -45,7 +44,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
         if (
           isMemberExpression(callExpression.callee) &&
           ASTUtils.isIdentifier(callExpression.callee.property) &&
-          helpers.isNodeComingFromTestingLibrary(callExpression.callee)
+          helpers.isAsyncUtil(callExpression.callee.property)
         ) {
           return callExpression.callee.property;
         }

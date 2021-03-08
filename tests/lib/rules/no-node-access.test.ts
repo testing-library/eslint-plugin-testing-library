@@ -64,7 +64,7 @@ ruleTester.run(RULE_NAME, rule, {
       expect(closestButton).toBeInTheDocument();
       `,
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
     },
   ],

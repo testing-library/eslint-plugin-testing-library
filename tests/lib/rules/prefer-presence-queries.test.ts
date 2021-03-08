@@ -52,7 +52,7 @@ ruleTester.run(RULE_NAME, rule, {
     `expect(getElement('foo')).not.toBeInTheDocument()`,
     {
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       code: `
         // case: invalid presence assert but not reported because custom module is not imported
@@ -61,7 +61,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       code: `
         // case: invalid absence assert but not reported because custom module is not imported
@@ -664,7 +664,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       code: `
       // case: asserting presence incorrectly importing custom module
@@ -675,7 +675,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       code: `
       // case: asserting absence incorrectly importing custom module

@@ -101,7 +101,7 @@ ruleTester.run(RULE_NAME, rule, {
     })),
     ...COMMON_FIRE_EVENT_METHODS.map((fireEventMethod) => ({
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       code: `
       import { fireEvent } from 'somewhere-else'
@@ -112,7 +112,7 @@ ruleTester.run(RULE_NAME, rule, {
     })),
     ...COMMON_FIRE_EVENT_METHODS.map((fireEventMethod) => ({
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       code: `
       import { fireEvent } from 'test-utils'
@@ -215,7 +215,7 @@ ruleTester.run(RULE_NAME, rule, {
     })),
     ...COMMON_FIRE_EVENT_METHODS.map((fireEventMethod) => ({
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       code: `
       import { fireEvent } from '@testing-library/vue'
@@ -234,7 +234,7 @@ ruleTester.run(RULE_NAME, rule, {
     })),
     ...COMMON_FIRE_EVENT_METHODS.map((fireEventMethod) => ({
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       code: `
       import { fireEvent } from 'test-utils'
@@ -255,7 +255,7 @@ ruleTester.run(RULE_NAME, rule, {
     })),
     ...COMMON_FIRE_EVENT_METHODS.map((fireEventMethod) => ({
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       code: `
       import { fireEvent } from '@testing-library/vue'

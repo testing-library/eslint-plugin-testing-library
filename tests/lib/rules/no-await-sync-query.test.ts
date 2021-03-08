@@ -59,7 +59,7 @@ ruleTester.run(RULE_NAME, rule, {
 
     // sync query awaited but not related to custom module is invalid but not reported
     {
-      settings: { 'testing-library/module': 'test-utils' },
+      settings: { 'testing-library/utils-module': 'test-utils' },
       code: `
       import { screen } from 'somewhere-else'
       () => {
@@ -69,7 +69,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     // sync query awaited but not matching filename pattern is invalid but not reported
     {
-      settings: { 'testing-library/filename-pattern': '^.*\\.(nope)\\.js$' },
+      settings: { 'testing-library/filename-pattern': 'nope\\.js' },
       code: `
       () => {
         const element = await getByRole('button')
@@ -194,7 +194,7 @@ ruleTester.run(RULE_NAME, rule, {
     // sync query awaited and related to testing library module
     // with custom module setting is not valid
     {
-      settings: { 'testing-library/module': 'test-utils' },
+      settings: { 'testing-library/utils-module': 'test-utils' },
       code: `
       import { screen } from '@testing-library/react'
       () => {
@@ -205,7 +205,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     // sync query awaited and related to custom module is not valid
     {
-      settings: { 'testing-library/module': 'test-utils' },
+      settings: { 'testing-library/utils-module': 'test-utils' },
       code: `
       import { screen } from 'test-utils'
       () => {

@@ -23,7 +23,7 @@ ruleTester.run(RULE_NAME, rule, {
     'require("@testing-library/react")',
     {
       code: 'import { fireEvent } from "test-utils"',
-      settings: { 'testing-library/module': 'test-utils' },
+      settings: { 'testing-library/utils-module': 'test-utils' },
     },
     {
       code: 'import { fireEvent } from "dom-testing-library"',
@@ -31,7 +31,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: 'import { fireEvent } from "dom-testing-library"',
-      settings: { 'testing-library/filename-pattern': '^.*\\.(nope)\\.js$' },
+      settings: { 'testing-library/filename-pattern': 'nope\\.js' },
     },
     {
       code: 'const { fireEvent } = require("dom-testing-library")',
@@ -39,7 +39,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: 'const { fireEvent } = require("dom-testing-library")',
-      settings: { 'testing-library/filename-pattern': '^.*\\.(nope)\\.js$' },
+      settings: { 'testing-library/filename-pattern': 'nope\\.js' },
     },
     {
       code: 'import { fireEvent } from "@testing-library/dom"',
@@ -47,7 +47,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: 'import { fireEvent } from "@testing-library/dom"',
-      settings: { 'testing-library/filename-pattern': '^.*\\.(nope)\\.js$' },
+      settings: { 'testing-library/filename-pattern': 'nope\\.js' },
     },
     {
       code: 'const { fireEvent } = require("@testing-library/dom")',
@@ -55,7 +55,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: 'const { fireEvent } = require("@testing-library/dom")',
-      settings: { 'testing-library/filename-pattern': '^.*\\.(nope)\\.js$' },
+      settings: { 'testing-library/filename-pattern': 'nope\\.js' },
     },
   ],
   invalid: [
@@ -70,7 +70,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       code: `
       // case: dom-testing-library imported with custom module setting
@@ -122,7 +122,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       code: `
       // case: dom-testing-library wildcard imported with custom module setting
@@ -144,7 +144,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       code: `
       // case: @testing-library/dom imported with custom module setting
@@ -190,7 +190,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       code: `
       // case: dom-testing-library required with custom module setting
@@ -225,7 +225,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       code: `
       // case: @testing-library/dom required with custom module setting

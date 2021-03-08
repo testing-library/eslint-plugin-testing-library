@@ -22,7 +22,7 @@ ruleTester.run(RULE_NAME, rule, {
     })),
     {
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       code: `import { waitFor, render } from 'test-utils';
       
@@ -32,7 +32,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       code: `const { waitFor, render } = require('test-utils');
       
@@ -56,7 +56,7 @@ ruleTester.run(RULE_NAME, rule, {
     })),
     {
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       code: `import { waitForElementToBeRemoved, render } from 'test-utils';
       
@@ -66,7 +66,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       code: `const { waitForElementToBeRemoved, render } = require('test-utils');
       
@@ -90,7 +90,7 @@ ruleTester.run(RULE_NAME, rule, {
     })),
     {
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       code: `import * as testingLibrary from 'test-utils';
       
@@ -100,7 +100,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       code: `const testingLibrary = require('test-utils');
       
@@ -126,7 +126,7 @@ ruleTester.run(RULE_NAME, rule, {
     })),
     {
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       code: `import { render } from 'test-utils';
       import { waitForSomethingElse } from 'other-module';
@@ -137,7 +137,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       code: `const { render } = require('test-utils');
       const { waitForSomethingElse } = require('other-module');
@@ -162,7 +162,7 @@ ruleTester.run(RULE_NAME, rule, {
     })),
     {
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       code: `import * as testingLibrary from 'test-utils';
   
@@ -172,7 +172,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       code: `const testingLibrary = require('test-utils');
   
@@ -295,7 +295,7 @@ ruleTester.run(RULE_NAME, rule, {
     })),
     {
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       code: `import { wait, render } from 'test-utils';
   
@@ -322,7 +322,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       code: `const { wait, render } = require('test-utils');
   
@@ -389,7 +389,7 @@ ruleTester.run(RULE_NAME, rule, {
     })),
     {
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       code: `import * as testingLibrary from 'test-utils';
   
@@ -411,7 +411,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       code: `const testingLibrary = require('test-utils');
   
@@ -473,7 +473,7 @@ ruleTester.run(RULE_NAME, rule, {
     })),
     {
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       code: `import * as testingLibrary from 'test-utils';
   
@@ -495,7 +495,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       code: `const testingLibrary = require('test-utils');
   
@@ -565,7 +565,7 @@ ruleTester.run(RULE_NAME, rule, {
     })),
     {
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       code: `import { render, wait } from 'test-utils'
   
@@ -592,7 +592,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       code: `const { render, wait } = require('test-utils');
   
@@ -677,7 +677,7 @@ ruleTester.run(RULE_NAME, rule, {
     })),
     {
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       code: `import { render, wait, screen } from "test-utils";
   
@@ -708,7 +708,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       code: `const { render, wait, screen } = require('test-utils');
   
@@ -787,7 +787,7 @@ ruleTester.run(RULE_NAME, rule, {
     })),
     {
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       code: `import { render, waitForElement, screen } from 'test-utils'
   
@@ -814,7 +814,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       code: `const { render, waitForElement, screen } = require('test-utils');
   
@@ -897,7 +897,7 @@ ruleTester.run(RULE_NAME, rule, {
     })),
     {
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       code: `import { waitForElement } from 'test-utils';
 
@@ -928,7 +928,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       code: `const { waitForElement } = require('test-utils');
 
@@ -1007,7 +1007,7 @@ ruleTester.run(RULE_NAME, rule, {
     })),
     {
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       code: `import { waitForDomChange } from 'test-utils';
 
@@ -1034,7 +1034,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       code: `const { waitForDomChange } = require('test-utils');
 
@@ -1109,7 +1109,7 @@ ruleTester.run(RULE_NAME, rule, {
     })),
     {
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       code: `import { waitForDomChange } from 'test-utils';
 
@@ -1136,7 +1136,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       code: `const { waitForDomChange } = require('test-utils');
 
@@ -1211,7 +1211,7 @@ ruleTester.run(RULE_NAME, rule, {
     })),
     {
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       code: `import { waitForDomChange } from 'test-utils';
 
@@ -1238,7 +1238,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       code: `const { waitForDomChange } = require('test-utils');
 
@@ -1359,7 +1359,7 @@ ruleTester.run(RULE_NAME, rule, {
     })),
     {
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       code: `import { waitForDomChange, wait, waitForElement } from 'test-utils';
       import userEvent from '@testing-library/user-event';
@@ -1409,7 +1409,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       code: `const { waitForDomChange, wait, waitForElement } = require('test-utils');
       const userEvent = require('@testing-library/user-event');
@@ -1549,7 +1549,7 @@ ruleTester.run(RULE_NAME, rule, {
     })),
     {
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       code: `import { render, waitForDomChange, wait, waitForElement } from 'test-utils';
 
@@ -1597,7 +1597,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       code: `const { render, waitForDomChange, wait, waitForElement } = require('test-utils');
 
@@ -1735,7 +1735,7 @@ ruleTester.run(RULE_NAME, rule, {
     })),
     {
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       code: `import { waitForDomChange, wait, render, waitForElement } from 'test-utils';
 
@@ -1783,7 +1783,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       code: `const { waitForDomChange, wait, render, waitForElement } = require('test-utils');
 
@@ -1931,7 +1931,7 @@ ruleTester.run(RULE_NAME, rule, {
     })),
     {
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       code: `import {
         waitForDomChange,
@@ -1984,7 +1984,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       code: `const {
         waitForDomChange,
@@ -2091,7 +2091,7 @@ ruleTester.run(RULE_NAME, rule, {
     })),
     {
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       // if already importing waitFor then it's not imported twice
       code: `import { wait, waitFor, render } from 'test-utils';
@@ -2121,7 +2121,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       settings: {
-        'testing-library/module': 'test-utils',
+        'testing-library/utils-module': 'test-utils',
       },
       // if already importing waitFor then it's not imported twice
       code: `const { wait, waitFor, render } = require('test-utils');

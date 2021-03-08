@@ -4,7 +4,6 @@ import {
   getFunctionName,
   getInnermostReturningFunction,
   getVariableReferences,
-  isMemberExpression,
   isPromiseHandled,
 } from '../node-utils';
 import { createTestingLibraryRule } from '../create-testing-library-rule';
@@ -46,16 +45,6 @@ export default createTestingLibraryRule<Options, MessageIds>({
     return {
       'CallExpression Identifier'(node: TSESTree.Identifier) {
         if (helpers.isAsyncUtil(node)) {
-          if (
-            !helpers.isNodeComingFromTestingLibrary(node) &&
-            !(
-              isMemberExpression(node.parent) &&
-              helpers.isNodeComingFromTestingLibrary(node.parent)
-            )
-          ) {
-            return;
-          }
-
           // detect async query used within wrapper function for later analysis
           detectAsyncUtilWrapper(node);
 
