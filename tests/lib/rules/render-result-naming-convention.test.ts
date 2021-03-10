@@ -261,6 +261,55 @@ ruleTester.run(RULE_NAME, rule, {
       ],
     },
     {
+      settings: { 'testing-library/utils-module': 'test-utils' },
+      code: `
+        import { render } from '@testing-library/react';
+        
+        const setup = () => render(<SomeComponent />);
+
+        test('aggressive reporting disabled - should report nested render from TL package', () => {
+          const wrapper = setup();
+          const button = wrapper.getByText('some button');
+        });
+      `,
+      errors: [
+        {
+          messageId: 'renderResultNamingConvention',
+          data: {
+            renderResultName: 'wrapper',
+          },
+          line: 7,
+          column: 17,
+        },
+      ],
+    },
+    {
+      settings: { 'testing-library/utils-module': 'test-utils' },
+      code: `
+        import { render } from 'test-utils';
+        
+        function setup() {
+          doSomethingElse();
+          return render(<SomeComponent />)
+        }
+
+        test('aggressive reporting disabled - should report nested render from custom utils module', () => {
+          const wrapper = setup();
+          const button = wrapper.getByText('some button');
+        });
+      `,
+      errors: [
+        {
+          messageId: 'renderResultNamingConvention',
+          data: {
+            renderResultName: 'wrapper',
+          },
+          line: 10,
+          column: 17,
+        },
+      ],
+    },
+    {
       code: `
         import { customRender } from 'test-utils';
 

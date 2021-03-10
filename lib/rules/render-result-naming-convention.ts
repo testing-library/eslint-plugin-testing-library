@@ -1,6 +1,11 @@
 import { createTestingLibraryRule } from '../create-testing-library-rule';
-import { getDeepestIdentifierNode, isObjectPattern } from '../node-utils';
-import { ASTUtils } from '@typescript-eslint/experimental-utils';
+import {
+  getDeepestIdentifierNode,
+  getFunctionName,
+  getInnermostReturningFunction,
+  isObjectPattern,
+} from '../node-utils';
+import { ASTUtils, TSESTree } from '@typescript-eslint/experimental-utils';
 
 export const RULE_NAME = 'render-result-naming-convention';
 export type MessageIds = 'renderResultNamingConvention';
@@ -30,7 +35,22 @@ export default createTestingLibraryRule<Options, MessageIds>({
   defaultOptions: [],
 
   create(context, _, helpers) {
+    const renderWrapperNames: string[] = [];
+
+    function detectRenderWrapper(node: TSESTree.Identifier): void {
+      const innerFunction = getInnermostReturningFunction(context, node);
+
+      if (innerFunction) {
+        renderWrapperNames.push(getFunctionName(innerFunction));
+      }
+    }
+
     return {
+      'CallExpression Identifier'(node: TSESTree.Identifier) {
+        if (helpers.isRenderUtil(node)) {
+          detectRenderWrapper(node);
+        }
+      },
       VariableDeclarator(node) {
         const initIdentifierNode = getDeepestIdentifierNode(node.init);
 
@@ -38,7 +58,10 @@ export default createTestingLibraryRule<Options, MessageIds>({
           return;
         }
 
-        if (!helpers.isRenderUtil(initIdentifierNode)) {
+        if (
+          !helpers.isRenderUtil(initIdentifierNode) &&
+          !renderWrapperNames.includes(initIdentifierNode.name)
+        ) {
           return;
         }
 
