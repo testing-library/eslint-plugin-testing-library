@@ -647,26 +647,6 @@ ruleTester.run(RULE_NAME, rule, {
         'testing-library/utils-module': 'test-utils',
       },
       code: `
-        // case: waitFor from object property shadowed name is checked correctly
-        import * as tl from 'test-utils'
-        const obj = { tl }
-        
-        obj.module.waitFor(() => {})
-      `,
-      errors: [
-        {
-          line: 6,
-          column: 20,
-          messageId: 'asyncUtilError',
-          data: { utilName: 'waitFor' },
-        },
-      ],
-    },
-    {
-      settings: {
-        'testing-library/utils-module': 'test-utils',
-      },
-      code: `
         // case: aggressive reporting disabled - waitFor from wildcard import related to TL 
         import * as tl from 'test-utils'
         tl.waitFor(() => {})

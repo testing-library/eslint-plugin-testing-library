@@ -134,6 +134,20 @@ ruleTester.run(RULE_NAME, rule, {
         });
       `,
     },
+    {
+      settings: { 'testing-library/utils-module': 'test-utils' },
+      code: `
+        import { render as testingLibraryRender } from '@testing-library/react';
+        import { render } from '@somewhere/else'
+        
+        const setup = () => render(<SomeComponent />);
+
+        test('aggressive reporting disabled - should not report nested render not related to TL', () => {
+          const wrapper = setup();
+          const button = wrapper.getByText('some button');
+        });
+      `,
+    },
   ],
   invalid: [
     {

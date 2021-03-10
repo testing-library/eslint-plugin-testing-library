@@ -139,10 +139,25 @@ export function detectTestingLibraryUtils<
       const referenceNode = getReferenceNode(node);
       const referenceNodeIdentifier = getPropertyIdentifierNode(referenceNode);
 
-      return (
-        isAggressiveModuleReportingEnabled() ||
-        isNodeComingFromTestingLibrary(referenceNodeIdentifier)
+      if (isAggressiveModuleReportingEnabled()) {
+        return true;
+      }
+
+      // TODO: extract this into function, combined with logic from isFireEventMethod
+      // TODO: include some tests create-testing-library-rule
+      const importNode = findImportedUtilSpecifier(
+        referenceNodeIdentifier.name
       );
+
+      if (!importNode) {
+        return false;
+      }
+
+      if (ASTUtils.isIdentifier(importNode)) {
+        return importNode.name === referenceNodeIdentifier.name;
+      }
+
+      return importNode.local.name === referenceNodeIdentifier.name;
     }
 
     /**
