@@ -406,5 +406,29 @@ ruleTester.run(RULE_NAME, rule, {
         },
       ],
     },
+    {
+      code: `
+        import { render as testingLibraryRender } from '@testing-library/react';
+        
+        const setup = () => {
+          return testingLibraryRender(<SomeComponent />);
+        };
+
+        test('should report render result called "wrapper" from renamed render wrapped in a function', async () => {
+          const wrapper = setup();
+          await wrapper.findByRole('button');
+        });
+      `,
+      errors: [
+        {
+          messageId: 'renderResultNamingConvention',
+          data: {
+            renderResultName: 'wrapper',
+          },
+          line: 9,
+          column: 17,
+        },
+      ],
+    },
   ],
 });
