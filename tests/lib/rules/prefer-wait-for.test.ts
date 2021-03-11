@@ -219,6 +219,21 @@ ruleTester.run(RULE_NAME, rule, {
       `,
     },
     {
+      settings: {
+        'testing-library/utils-module': 'test-utils',
+      },
+      code: `
+      // case: aggressive reporting disabled - method named same as invalid method
+      // but not coming from Testing Library is valid
+      import { wait as testingLibraryWait } from 'test-utils'
+      import { wait } from 'somewhere-else'
+      
+      async () => {
+        await wait();
+      }
+      `,
+    },
+    {
       // https://github.com/testing-library/eslint-plugin-testing-library/issues/145
       code: `import * as foo from 'imNoTestingLibrary';
         async function wait(): Promise<any> {

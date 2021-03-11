@@ -8,6 +8,7 @@ import {
   getImportModuleName,
   getPropertyIdentifierNode,
   getReferenceNode,
+  hasImportMatch,
   ImportModuleNode,
   isImportDeclaration,
   isImportNamespaceSpecifier,
@@ -127,6 +128,12 @@ export function detectTestingLibraryUtils<
     /**
      * Small method to extract common checks to determine whether a node is
      * related to Testing Library or not.
+     *
+     * To determine whether a node is a valid Testing Library util, there are
+     * two conditions to match:
+     * - it's named in a particular way (decided by given callback)
+     * - it's imported from valid Testing Library module (depends on aggressive
+     *    reporting)
      */
     function isTestingLibraryUtil(
       node: TSESTree.Identifier,
@@ -136,28 +143,14 @@ export function detectTestingLibraryUtils<
         return false;
       }
 
-      const referenceNode = getReferenceNode(node);
-      const referenceNodeIdentifier = getPropertyIdentifierNode(referenceNode);
-
       if (isAggressiveModuleReportingEnabled()) {
         return true;
       }
 
-      // TODO: extract this into function, combined with logic from isFireEventMethod
-      // TODO: include some tests create-testing-library-rule
-      const importNode = findImportedUtilSpecifier(
-        referenceNodeIdentifier.name
-      );
+      const referenceNode = getReferenceNode(node);
+      const referenceNodeIdentifier = getPropertyIdentifierNode(referenceNode);
 
-      if (!importNode) {
-        return false;
-      }
-
-      if (ASTUtils.isIdentifier(importNode)) {
-        return importNode.name === referenceNodeIdentifier.name;
-      }
-
-      return importNode.local.name === referenceNodeIdentifier.name;
+      return isNodeComingFromTestingLibrary(referenceNodeIdentifier);
     }
 
     /**
@@ -454,9 +447,12 @@ export function detectTestingLibraryUtils<
     const canReportErrors: CanReportErrorsFn = () => {
       return isTestingLibraryImported() && isValidFilename();
     };
+
     /**
-     * Takes a MemberExpression or an Identifier and verifies if its name comes from the import in TL
-     * @param node a MemberExpression (in "foo.property" it would be property) or an Identifier
+     * Determines whether a node is imported from a valid Testing Library module
+     *
+     * This method will try to find any import matching the given node name,
+     * and also make sure the name is a valid match in case it's been renamed.
      */
     const isNodeComingFromTestingLibrary: IsNodeComingFromTestingLibraryFn = (
       node
@@ -464,7 +460,13 @@ export function detectTestingLibraryUtils<
       const identifierName: string | undefined = getPropertyIdentifierNode(node)
         .name;
 
-      return !!findImportedUtilSpecifier(identifierName);
+      const importNode = findImportedUtilSpecifier(identifierName);
+
+      if (!importNode) {
+        return false;
+      }
+
+      return hasImportMatch(importNode, identifierName);
     };
 
     const helpers: DetectionHelpers = {
