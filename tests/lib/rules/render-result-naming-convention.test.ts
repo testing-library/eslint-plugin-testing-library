@@ -148,6 +148,27 @@ ruleTester.run(RULE_NAME, rule, {
         });
       `,
     },
+    {
+      settings: {
+        'testing-library/utils-module': 'test-utils',
+        'testing-library/custom-renders': ['customRender'],
+      },
+      code: `
+        import { customRender as myRender } from 'test-utils';
+        import { customRender } from 'non-related'
+        
+        const setup = () => {
+          return customRender(<SomeComponent />);
+        };
+
+        test(
+        'both render and module aggressive reporting disabled - should not report render result called "wrapper" from nont-related renamed custom render wrapped in a function',
+        async () => {
+          const wrapper = setup();
+          await wrapper.findByRole('button');
+        });
+      `,
+    },
   ],
   invalid: [
     {
@@ -426,6 +447,63 @@ ruleTester.run(RULE_NAME, rule, {
             renderResultName: 'wrapper',
           },
           line: 9,
+          column: 17,
+        },
+      ],
+    },
+    {
+      settings: { 'testing-library/utils-module': 'test-utils' },
+      code: `
+        import { render as testingLibraryRender } from '@testing-library/react';
+        
+        const setup = () => {
+          return testingLibraryRender(<SomeComponent />);
+        };
+
+        test(
+        'aggressive reporting disabled - should report render result called "wrapper" from renamed render wrapped in a function',
+        async () => {
+          const wrapper = setup();
+          await wrapper.findByRole('button');
+        });
+      `,
+      errors: [
+        {
+          messageId: 'renderResultNamingConvention',
+          data: {
+            renderResultName: 'wrapper',
+          },
+          line: 11,
+          column: 17,
+        },
+      ],
+    },
+    {
+      settings: {
+        'testing-library/utils-module': 'test-utils',
+        'testing-library/custom-renders': ['customRender'],
+      },
+      code: `
+        import { customRender as myRender } from 'test-utils';
+        
+        const setup = () => {
+          return myRender(<SomeComponent />);
+        };
+
+        test(
+        'both render and module aggressive reporting disabled - should report render result called "wrapper" from renamed custom render wrapped in a function',
+        async () => {
+          const wrapper = setup();
+          await wrapper.findByRole('button');
+        });
+      `,
+      errors: [
+        {
+          messageId: 'renderResultNamingConvention',
+          data: {
+            renderResultName: 'wrapper',
+          },
+          line: 11,
           column: 17,
         },
       ],

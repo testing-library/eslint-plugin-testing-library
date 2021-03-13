@@ -137,18 +137,30 @@ export function detectTestingLibraryUtils<
      */
     function isTestingLibraryUtil(
       node: TSESTree.Identifier,
-      isUtilCallback: (identifierNode: TSESTree.Identifier) => boolean
+      isUtilCallback: (
+        identifierNodeName: string,
+        originalNodeName?: string
+      ) => boolean
     ): boolean {
-      if (!isUtilCallback(node)) {
+      const referenceNode = getReferenceNode(node);
+      const referenceNodeIdentifier = getPropertyIdentifierNode(referenceNode);
+      const importedUtilSpecifier = getImportedUtilSpecifier(
+        referenceNodeIdentifier
+      );
+
+      const originalNodeName =
+        isImportSpecifier(importedUtilSpecifier) &&
+        importedUtilSpecifier.local.name !== importedUtilSpecifier.imported.name
+          ? importedUtilSpecifier.imported.name
+          : undefined;
+
+      if (!isUtilCallback(node.name, originalNodeName)) {
         return false;
       }
 
       if (isAggressiveModuleReportingEnabled()) {
         return true;
       }
-
-      const referenceNode = getReferenceNode(node);
-      const referenceNodeIdentifier = getPropertyIdentifierNode(referenceNode);
 
       return isNodeComingFromTestingLibrary(referenceNodeIdentifier);
     }
@@ -280,8 +292,8 @@ export function detectTestingLibraryUtils<
      * coming from Testing Library will be considered as valid.
      */
     const isAsyncUtil: IsAsyncUtilFn = (node) => {
-      return isTestingLibraryUtil(node, (identifierNode) =>
-        ASYNC_UTILS.includes(identifierNode.name)
+      return isTestingLibraryUtil(node, (identifierNodeName) =>
+        ASYNC_UTILS.includes(identifierNodeName)
       );
     };
 
@@ -355,13 +367,27 @@ export function detectTestingLibraryUtils<
      * only those nodes coming from Testing Library will be considered as valid.
      */
     const isRenderUtil: IsRenderUtilFn = (node) => {
-      return isTestingLibraryUtil(node, (identifierNode) => {
-        if (isAggressiveRenderReportingEnabled()) {
-          return identifierNode.name.toLowerCase().includes(RENDER_NAME);
-        }
+      return isTestingLibraryUtil(
+        node,
+        (identifierNodeName, originalNodeName) => {
+          if (isAggressiveRenderReportingEnabled()) {
+            return identifierNodeName.toLowerCase().includes(RENDER_NAME);
+          }
 
-        return [RENDER_NAME, ...customRenders].includes(identifierNode.name);
-      });
+          return [RENDER_NAME, ...customRenders].some((validRenderName) => {
+            let isMatch = false;
+
+            if (validRenderName === identifierNodeName) {
+              isMatch = true;
+            }
+
+            if (!!originalNodeName && validRenderName === originalNodeName) {
+              isMatch = true;
+            }
+            return isMatch;
+          });
+        }
+      );
     };
 
     /**
@@ -410,25 +436,34 @@ export function detectTestingLibraryUtils<
       specifierName
     ) => {
       const node = getCustomModuleImportNode() ?? getTestingLibraryImportNode();
+
       if (!node) {
         return null;
       }
+
       if (isImportDeclaration(node)) {
-        const namedExport = node.specifiers.find(
-          (n) => isImportSpecifier(n) && n.imported.name === specifierName
-        );
+        const namedExport = node.specifiers.find((n) => {
+          return (
+            isImportSpecifier(n) &&
+            [n.imported.name, n.local.name].includes(specifierName)
+          );
+        });
+
         // it is "import { foo [as alias] } from 'baz'""
         if (namedExport) {
           return namedExport;
         }
+
         // it could be "import * as rtl from 'baz'"
         return node.specifiers.find((n) => isImportNamespaceSpecifier(n));
       } else {
         const requireNode = node.parent as TSESTree.VariableDeclarator;
+
         if (ASTUtils.isIdentifier(requireNode.id)) {
           // this is const rtl = require('foo')
           return requireNode.id;
         }
+
         // this should be const { something } = require('foo')
         const destructuring = requireNode.id as TSESTree.ObjectPattern;
         const property = destructuring.properties.find(
@@ -437,8 +472,20 @@ export function detectTestingLibraryUtils<
             ASTUtils.isIdentifier(n.key) &&
             n.key.name === specifierName
         );
+        if (!property) {
+          return undefined;
+        }
         return (property as TSESTree.Property).key as TSESTree.Identifier;
       }
+    };
+
+    const getImportedUtilSpecifier = (
+      node: TSESTree.MemberExpression | TSESTree.Identifier
+    ): TSESTree.ImportClause | TSESTree.Identifier | undefined => {
+      const identifierName: string | undefined = getPropertyIdentifierNode(node)
+        .name;
+
+      return findImportedUtilSpecifier(identifierName);
     };
 
     /**
@@ -457,14 +504,14 @@ export function detectTestingLibraryUtils<
     const isNodeComingFromTestingLibrary: IsNodeComingFromTestingLibraryFn = (
       node
     ) => {
-      const identifierName: string | undefined = getPropertyIdentifierNode(node)
-        .name;
-
-      const importNode = findImportedUtilSpecifier(identifierName);
+      const importNode = getImportedUtilSpecifier(node);
 
       if (!importNode) {
         return false;
       }
+
+      const identifierName: string | undefined = getPropertyIdentifierNode(node)
+        .name;
 
       return hasImportMatch(importNode, identifierName);
     };
