@@ -58,7 +58,7 @@ jobs:
           node-version: ${{ matrix.node }}
 
       - name: Install dependencies (no cache)
-        run: npm install --no-save
+        run: npm install --no-save --legacy-peer-deps
         env:
           CI: true
 
