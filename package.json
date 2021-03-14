@@ -44,11 +44,10 @@
     "lint": "eslint . --ext .js,.ts",
     "lint:fix": "npm run lint -- --fix",
     "format": "prettier --write README.md {lib,docs,tests}/**/*.{js,md}",
-    "test:local": "jest",
+    "test": "jest",
     "test:ci": "jest --coverage",
     "test:update": "npm run test:local -- --u",
     "test:watch": "npm run test:local -- --watch",
-    "test": "is-ci test:ci test:local",
     "semantic-release": "semantic-release"
   },
   "dependencies": {
@@ -72,7 +71,6 @@
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1",
     "husky": "^4.3.0",
-    "is-ci-cli": "^2.1.2",
     "jest": "^25.5.4",
     "lint-staged": "^9.5.0",
     "prettier": "1.19.1",
