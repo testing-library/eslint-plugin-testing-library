@@ -29,6 +29,24 @@ ruleTester.run(RULE_NAME, rule, {
     {
       code: `wait(() => {})`,
     },
+    {
+      code: `wait(noop)`,
+    },
+    {
+      settings: { 'testing-library/utils-module': 'test-utils' },
+      code: `
+        import { waitFor } from 'somewhere-else'
+        waitFor(() => {})
+      `,
+    },
+    {
+      settings: { 'testing-library/utils-module': 'test-utils' },
+      code: `
+        import { waitFor as renamedWaitFor } from '@testing-library/react'
+        import { waitFor } from 'somewhere-else'
+        waitFor(() => {})
+      `,
+    },
   ],
 
   invalid: [
@@ -41,6 +59,40 @@ ruleTester.run(RULE_NAME, rule, {
           messageId: 'noWaitForEmptyCallback',
           data: {
             methodName: m,
+          },
+        },
+      ],
+    })),
+    ...ALL_WAIT_METHODS.map((m) => ({
+      settings: { 'testing-library/utils-module': 'test-utils' },
+      code: `
+        import { ${m} } from 'test-utils';
+        ${m}(() => {});
+      `,
+      errors: [
+        {
+          line: 3,
+          column: 16 + m.length,
+          messageId: 'noWaitForEmptyCallback',
+          data: {
+            methodName: m,
+          },
+        },
+      ],
+    })),
+    ...ALL_WAIT_METHODS.map((m) => ({
+      settings: { 'testing-library/utils-module': 'test-utils' },
+      code: `
+        import { ${m} as renamedAsyncUtil } from 'test-utils';
+        renamedAsyncUtil(() => {});
+      `,
+      errors: [
+        {
+          line: 3,
+          column: 32,
+          messageId: 'noWaitForEmptyCallback',
+          data: {
+            methodName: 'renamedAsyncUtil',
           },
         },
       ],

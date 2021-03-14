@@ -303,12 +303,21 @@ export function detectTestingLibraryUtils<
      * coming from Testing Library will be considered as valid.
      */
     const isAsyncUtil: IsAsyncUtilFn = (node, validNames) => {
-      return isTestingLibraryUtil(node, (identifierNodeName) => {
-        if (validNames && validNames.length > 0) {
-          return (validNames as string[]).includes(identifierNodeName);
+      return isTestingLibraryUtil(
+        node,
+        (identifierNodeName, originalNodeName) => {
+          if (validNames && validNames.length > 0) {
+            return (
+              (validNames as string[]).includes(identifierNodeName) ||
+              (validNames as string[]).includes(originalNodeName)
+            );
+          }
+          return (
+            ASYNC_UTILS.includes(identifierNodeName) ||
+            ASYNC_UTILS.includes(originalNodeName)
+          );
         }
-        return ASYNC_UTILS.includes(identifierNodeName);
-      });
+      );
     };
 
     /**
