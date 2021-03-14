@@ -36,7 +36,12 @@ ruleTester.run(RULE_NAME, rule, {
       code: `${m}(() => {})`,
       errors: [
         {
+          line: 1,
+          column: 8 + m.length,
           messageId: 'noWaitForEmptyCallback',
+          data: {
+            methodName: m,
+          },
         },
       ],
     })),
@@ -44,7 +49,12 @@ ruleTester.run(RULE_NAME, rule, {
       code: `${m}((a, b) => {})`,
       errors: [
         {
+          line: 1,
+          column: 12 + m.length,
           messageId: 'noWaitForEmptyCallback',
+          data: {
+            methodName: m,
+          },
         },
       ],
     })),
@@ -52,7 +62,12 @@ ruleTester.run(RULE_NAME, rule, {
       code: `${m}(() => { /* I'm empty anyway */ })`,
       errors: [
         {
+          line: 1,
+          column: 8 + m.length,
           messageId: 'noWaitForEmptyCallback',
+          data: {
+            methodName: m,
+          },
         },
       ],
     })),
@@ -63,7 +78,12 @@ ruleTester.run(RULE_NAME, rule, {
       })`,
       errors: [
         {
+          line: 1,
+          column: 13 + m.length,
           messageId: 'noWaitForEmptyCallback',
+          data: {
+            methodName: m,
+          },
         },
       ],
     })),
@@ -73,7 +93,12 @@ ruleTester.run(RULE_NAME, rule, {
       })`,
       errors: [
         {
+          line: 1,
+          column: 14 + m.length,
           messageId: 'noWaitForEmptyCallback',
+          data: {
+            methodName: m,
+          },
         },
       ],
     })),
@@ -83,7 +108,12 @@ ruleTester.run(RULE_NAME, rule, {
       })`,
       errors: [
         {
+          line: 1,
+          column: 13 + m.length,
           messageId: 'noWaitForEmptyCallback',
+          data: {
+            methodName: m,
+          },
         },
       ],
     })),
@@ -92,7 +122,12 @@ ruleTester.run(RULE_NAME, rule, {
       code: `${m}(noop)`,
       errors: [
         {
+          line: 1,
+          column: 2 + m.length,
           messageId: 'noWaitForEmptyCallback',
+          data: {
+            methodName: m,
+          },
         },
       ],
     })),
