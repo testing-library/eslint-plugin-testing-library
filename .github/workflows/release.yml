@@ -1,0 +1,49 @@
+name: Release
+
+on:
+  push:
+    branches:
+      # semantic-release valid branches
+      - '+([0-9])?(.{+([0-9]),x}).x'
+      - 'main'
+      - 'next'
+      - 'next-major'
+      - 'beta'
+      - 'alpha'
+
+jobs:
+  main:
+    name: NPM Release
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node: [10.12, 10, 12.0, 12, 14, 15]
+        eslint: [5, 6, 7]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+
+      - name: Use Node
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node }}
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install specific ESLint
+        run: npm install --no-save eslint@${{ matrix.eslint }}
+
+      - name: Run tests
+        run: npm run test:ci
+
+      - name: Build package
+        run: npm run build
+
+      - name: Release new version to NPM
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npx semantic-release
