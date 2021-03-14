@@ -127,6 +127,15 @@ ruleTester.run(RULE_NAME, rule, {
         render(foo, { baseElement: treeA }).${queryMethod}()
       `,
     })),
+    // ...ALL_QUERIES_COMBINATIONS.map((queryMethod) => ({
+    //   settings: {
+    //     'testing-library/custom-renders': ['customRender'],
+    //   },
+    //   code: `
+    //     import { anotherRender } from 'whatever'
+    //     const { ${queryMethod} } = anotherRender(foo)
+    //     ${queryMethod}()`,
+    // })),
   ],
 
   invalid: [
@@ -136,6 +145,77 @@ ruleTester.run(RULE_NAME, rule, {
         ${queryMethod}()`,
       errors: [
         {
+          messageId: 'preferScreenQueries',
+          data: {
+            name: queryMethod,
+          },
+        },
+      ],
+    })),
+    ...ALL_QUERIES_COMBINATIONS.map((queryMethod) => ({
+      settings: { 'testing-library/utils-module': 'test-utils' },
+      code: `
+        import { render } from 'test-utils'
+        const { ${queryMethod} } = render(foo)
+        ${queryMethod}()`,
+      errors: [
+        {
+          line: 4,
+          column: 9,
+          messageId: 'preferScreenQueries',
+          data: {
+            name: queryMethod,
+          },
+        },
+      ],
+    })),
+
+    ...ALL_QUERIES_COMBINATIONS.map((queryMethod) => ({
+      settings: {
+        'testing-library/custom-renders': ['customRender'],
+      },
+      code: `
+        import { customRender } from 'whatever'
+        const { ${queryMethod} } = customRender(foo)
+        ${queryMethod}()`,
+      errors: [
+        {
+          line: 4,
+          column: 9,
+          messageId: 'preferScreenQueries',
+          data: {
+            name: queryMethod,
+          },
+        },
+      ],
+    })),
+    ...ALL_QUERIES_COMBINATIONS.map((queryMethod) => ({
+      settings: { 'testing-library/utils-module': 'test-utils' },
+      code: `
+        import { render as testingLibraryRender} from '@testing-library/react'
+        const { ${queryMethod} } = testingLibraryRender(foo)
+        ${queryMethod}()`,
+      errors: [
+        {
+          line: 4,
+          column: 9,
+          messageId: 'preferScreenQueries',
+          data: {
+            name: queryMethod,
+          },
+        },
+      ],
+    })),
+    ...ALL_QUERIES_COMBINATIONS.map((queryMethod) => ({
+      settings: { 'testing-library/utils-module': 'test-utils' },
+      code: `
+        import { render } from 'test-utils'
+        const { ${queryMethod} } = render(foo)
+        ${queryMethod}()`,
+      errors: [
+        {
+          line: 4,
+          column: 9,
           messageId: 'preferScreenQueries',
           data: {
             name: queryMethod,

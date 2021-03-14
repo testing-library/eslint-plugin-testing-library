@@ -50,7 +50,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
   },
   defaultOptions: [],
 
-  create(context) {
+  create(context, _, helpers) {
     function reportInvalidUsage(node: TSESTree.Identifier) {
       context.report({
         node,
@@ -75,9 +75,8 @@ export default createTestingLibraryRule<Options, MessageIds>({
           return;
         }
         const isWithinFunction = node.init.callee.name === 'within';
-        // TODO add the custom render option #198
         const usesRenderOptions =
-          node.init.callee.name === 'render' &&
+          helpers.isRenderUtil(node.init.callee) &&
           usesContainerOrBaseElement(node.init);
 
         if (!isWithinFunction && !usesRenderOptions) {
@@ -130,7 +129,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
           isCallExpression(node.parent.object) &&
           ASTUtils.isIdentifier(node.parent.object.callee) &&
           node.parent.object.callee.name !== 'within' &&
-          node.parent.object.callee.name === 'render' &&
+          helpers.isRenderUtil(node.parent.object.callee) &&
           !usesContainerOrBaseElement(node.parent.object)
         ) {
           reportInvalidUsage(node);
