@@ -1,5 +1,4 @@
 import { ASTUtils, TSESTree } from '@typescript-eslint/experimental-utils';
-import { ALL_QUERIES_COMBINATIONS } from '../utils';
 import {
   isCallExpression,
   isMemberExpression,
@@ -17,7 +16,6 @@ const ALLOWED_RENDER_PROPERTIES_FOR_DESTRUCTURING = [
   'container',
   'baseElement',
 ];
-const ALL_QUERIES_COMBINATIONS_REGEXP = ALL_QUERIES_COMBINATIONS.join('|');
 
 function usesContainerOrBaseElement(node: TSESTree.CallExpression) {
   const secondArgument = node.arguments[1];
@@ -61,7 +59,6 @@ export default createTestingLibraryRule<Options, MessageIds>({
       });
     }
 
-    const queriesRegex = new RegExp(ALL_QUERIES_COMBINATIONS_REGEXP);
     const queriesDestructuredInWithinDeclaration: string[] = [];
     // use an array as within might be used more than once in a test
     const withinDeclaredVariables: string[] = [];
@@ -90,7 +87,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
               (property) =>
                 isProperty(property) &&
                 ASTUtils.isIdentifier(property.key) &&
-                queriesRegex.test(property.key.name)
+                helpers.isQuery(property.key)
             )
             .map(
               (property: TSESTree.Property) =>
@@ -105,9 +102,11 @@ export default createTestingLibraryRule<Options, MessageIds>({
           withinDeclaredVariables.push(node.id.name);
         }
       },
-      [`CallExpression > Identifier[name=/^${ALL_QUERIES_COMBINATIONS_REGEXP}$/]`](
-        node: TSESTree.Identifier
-      ) {
+      'CallExpression > Identifier'(node: TSESTree.Identifier) {
+        if (!helpers.isQuery(node)) {
+          return;
+        }
+
         if (
           !queriesDestructuredInWithinDeclaration.some(
             (queryName) => queryName === node.name
@@ -116,11 +115,13 @@ export default createTestingLibraryRule<Options, MessageIds>({
           reportInvalidUsage(node);
         }
       },
-      [`MemberExpression > Identifier[name=/^${ALL_QUERIES_COMBINATIONS_REGEXP}$/]`](
-        node: TSESTree.Identifier
-      ) {
+      'MemberExpression > Identifier'(node: TSESTree.Identifier) {
         function isIdentifierAllowed(name: string) {
           return ['screen', ...withinDeclaredVariables].includes(name);
+        }
+
+        if (!helpers.isQuery(node)) {
+          return;
         }
 
         if (
