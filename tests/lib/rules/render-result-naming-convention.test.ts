@@ -134,6 +134,41 @@ ruleTester.run(RULE_NAME, rule, {
         });
       `,
     },
+    {
+      settings: { 'testing-library/utils-module': 'test-utils' },
+      code: `
+        import { render as testingLibraryRender } from '@testing-library/react';
+        import { render } from '@somewhere/else'
+        
+        const setup = () => render(<SomeComponent />);
+
+        test('aggressive reporting disabled - should not report nested render not related to TL', () => {
+          const wrapper = setup();
+          const button = wrapper.getByText('some button');
+        });
+      `,
+    },
+    {
+      settings: {
+        'testing-library/utils-module': 'test-utils',
+        'testing-library/custom-renders': ['customRender'],
+      },
+      code: `
+        import { customRender as myRender } from 'test-utils';
+        import { customRender } from 'non-related'
+        
+        const setup = () => {
+          return customRender(<SomeComponent />);
+        };
+
+        test(
+        'both render and module aggressive reporting disabled - should not report render result called "wrapper" from nont-related renamed custom render wrapped in a function',
+        async () => {
+          const wrapper = setup();
+          await wrapper.findByRole('button');
+        });
+      `,
+    },
   ],
   invalid: [
     {
@@ -261,6 +296,55 @@ ruleTester.run(RULE_NAME, rule, {
       ],
     },
     {
+      settings: { 'testing-library/utils-module': 'test-utils' },
+      code: `
+        import { render } from '@testing-library/react';
+        
+        const setup = () => render(<SomeComponent />);
+
+        test('aggressive reporting disabled - should report nested render from TL package', () => {
+          const wrapper = setup();
+          const button = wrapper.getByText('some button');
+        });
+      `,
+      errors: [
+        {
+          messageId: 'renderResultNamingConvention',
+          data: {
+            renderResultName: 'wrapper',
+          },
+          line: 7,
+          column: 17,
+        },
+      ],
+    },
+    {
+      settings: { 'testing-library/utils-module': 'test-utils' },
+      code: `
+        import { render } from 'test-utils';
+        
+        function setup() {
+          doSomethingElse();
+          return render(<SomeComponent />)
+        }
+
+        test('aggressive reporting disabled - should report nested render from custom utils module', () => {
+          const wrapper = setup();
+          const button = wrapper.getByText('some button');
+        });
+      `,
+      errors: [
+        {
+          messageId: 'renderResultNamingConvention',
+          data: {
+            renderResultName: 'wrapper',
+          },
+          line: 10,
+          column: 17,
+        },
+      ],
+    },
+    {
       code: `
         import { customRender } from 'test-utils';
 
@@ -339,6 +423,87 @@ ruleTester.run(RULE_NAME, rule, {
             renderResultName: 'wrapper',
           },
           line: 7,
+          column: 17,
+        },
+      ],
+    },
+    {
+      code: `
+        import { render as testingLibraryRender } from '@testing-library/react';
+        
+        const setup = () => {
+          return testingLibraryRender(<SomeComponent />);
+        };
+
+        test('should report render result called "wrapper" from renamed render wrapped in a function', async () => {
+          const wrapper = setup();
+          await wrapper.findByRole('button');
+        });
+      `,
+      errors: [
+        {
+          messageId: 'renderResultNamingConvention',
+          data: {
+            renderResultName: 'wrapper',
+          },
+          line: 9,
+          column: 17,
+        },
+      ],
+    },
+    {
+      settings: { 'testing-library/utils-module': 'test-utils' },
+      code: `
+        import { render as testingLibraryRender } from '@testing-library/react';
+        
+        const setup = () => {
+          return testingLibraryRender(<SomeComponent />);
+        };
+
+        test(
+        'aggressive reporting disabled - should report render result called "wrapper" from renamed render wrapped in a function',
+        async () => {
+          const wrapper = setup();
+          await wrapper.findByRole('button');
+        });
+      `,
+      errors: [
+        {
+          messageId: 'renderResultNamingConvention',
+          data: {
+            renderResultName: 'wrapper',
+          },
+          line: 11,
+          column: 17,
+        },
+      ],
+    },
+    {
+      settings: {
+        'testing-library/utils-module': 'test-utils',
+        'testing-library/custom-renders': ['customRender'],
+      },
+      code: `
+        import { customRender as myRender } from 'test-utils';
+        
+        const setup = () => {
+          return myRender(<SomeComponent />);
+        };
+
+        test(
+        'both render and module aggressive reporting disabled - should report render result called "wrapper" from renamed custom render wrapped in a function',
+        async () => {
+          const wrapper = setup();
+          await wrapper.findByRole('button');
+        });
+      `,
+      errors: [
+        {
+          messageId: 'renderResultNamingConvention',
+          data: {
+            renderResultName: 'wrapper',
+          },
+          line: 11,
           column: 17,
         },
       ],

@@ -620,3 +620,14 @@ export function getInnermostReturningFunction(
 
   return functionScope.block;
 }
+
+export function hasImportMatch(
+  importNode: TSESTree.ImportClause | TSESTree.Identifier,
+  identifierName: string
+): boolean {
+  if (ASTUtils.isIdentifier(importNode)) {
+    return importNode.name === identifierName;
+  }
+
+  return importNode.local.name === identifierName;
+}

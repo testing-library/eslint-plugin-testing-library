@@ -8,6 +8,7 @@ import {
   getImportModuleName,
   getPropertyIdentifierNode,
   getReferenceNode,
+  hasImportMatch,
   ImportModuleNode,
   isImportDeclaration,
   isImportNamespaceSpecifier,
@@ -127,22 +128,41 @@ export function detectTestingLibraryUtils<
     /**
      * Small method to extract common checks to determine whether a node is
      * related to Testing Library or not.
+     *
+     * To determine whether a node is a valid Testing Library util, there are
+     * two conditions to match:
+     * - it's named in a particular way (decided by given callback)
+     * - it's imported from valid Testing Library module (depends on aggressive
+     *    reporting)
      */
     function isTestingLibraryUtil(
       node: TSESTree.Identifier,
-      isUtilCallback: (identifierNode: TSESTree.Identifier) => boolean
+      isUtilCallback: (
+        identifierNodeName: string,
+        originalNodeName?: string
+      ) => boolean
     ): boolean {
-      if (!isUtilCallback(node)) {
+      const referenceNode = getReferenceNode(node);
+      const referenceNodeIdentifier = getPropertyIdentifierNode(referenceNode);
+      const importedUtilSpecifier = getImportedUtilSpecifier(
+        referenceNodeIdentifier
+      );
+
+      const originalNodeName =
+        isImportSpecifier(importedUtilSpecifier) &&
+        importedUtilSpecifier.local.name !== importedUtilSpecifier.imported.name
+          ? importedUtilSpecifier.imported.name
+          : undefined;
+
+      if (!isUtilCallback(node.name, originalNodeName)) {
         return false;
       }
 
-      const referenceNode = getReferenceNode(node);
-      const referenceNodeIdentifier = getPropertyIdentifierNode(referenceNode);
+      if (isAggressiveModuleReportingEnabled()) {
+        return true;
+      }
 
-      return (
-        isAggressiveModuleReportingEnabled() ||
-        isNodeComingFromTestingLibrary(referenceNodeIdentifier)
-      );
+      return isNodeComingFromTestingLibrary(referenceNodeIdentifier);
     }
 
     /**
@@ -272,8 +292,8 @@ export function detectTestingLibraryUtils<
      * coming from Testing Library will be considered as valid.
      */
     const isAsyncUtil: IsAsyncUtilFn = (node) => {
-      return isTestingLibraryUtil(node, (identifierNode) =>
-        ASYNC_UTILS.includes(identifierNode.name)
+      return isTestingLibraryUtil(node, (identifierNodeName) =>
+        ASYNC_UTILS.includes(identifierNodeName)
       );
     };
 
@@ -347,13 +367,27 @@ export function detectTestingLibraryUtils<
      * only those nodes coming from Testing Library will be considered as valid.
      */
     const isRenderUtil: IsRenderUtilFn = (node) => {
-      return isTestingLibraryUtil(node, (identifierNode) => {
-        if (isAggressiveRenderReportingEnabled()) {
-          return identifierNode.name.toLowerCase().includes(RENDER_NAME);
-        }
+      return isTestingLibraryUtil(
+        node,
+        (identifierNodeName, originalNodeName) => {
+          if (isAggressiveRenderReportingEnabled()) {
+            return identifierNodeName.toLowerCase().includes(RENDER_NAME);
+          }
 
-        return [RENDER_NAME, ...customRenders].includes(identifierNode.name);
-      });
+          return [RENDER_NAME, ...customRenders].some((validRenderName) => {
+            let isMatch = false;
+
+            if (validRenderName === identifierNodeName) {
+              isMatch = true;
+            }
+
+            if (!!originalNodeName && validRenderName === originalNodeName) {
+              isMatch = true;
+            }
+            return isMatch;
+          });
+        }
+      );
     };
 
     /**
@@ -402,25 +436,34 @@ export function detectTestingLibraryUtils<
       specifierName
     ) => {
       const node = getCustomModuleImportNode() ?? getTestingLibraryImportNode();
+
       if (!node) {
         return null;
       }
+
       if (isImportDeclaration(node)) {
-        const namedExport = node.specifiers.find(
-          (n) => isImportSpecifier(n) && n.imported.name === specifierName
-        );
+        const namedExport = node.specifiers.find((n) => {
+          return (
+            isImportSpecifier(n) &&
+            [n.imported.name, n.local.name].includes(specifierName)
+          );
+        });
+
         // it is "import { foo [as alias] } from 'baz'""
         if (namedExport) {
           return namedExport;
         }
+
         // it could be "import * as rtl from 'baz'"
         return node.specifiers.find((n) => isImportNamespaceSpecifier(n));
       } else {
         const requireNode = node.parent as TSESTree.VariableDeclarator;
+
         if (ASTUtils.isIdentifier(requireNode.id)) {
           // this is const rtl = require('foo')
           return requireNode.id;
         }
+
         // this should be const { something } = require('foo')
         const destructuring = requireNode.id as TSESTree.ObjectPattern;
         const property = destructuring.properties.find(
@@ -429,8 +472,20 @@ export function detectTestingLibraryUtils<
             ASTUtils.isIdentifier(n.key) &&
             n.key.name === specifierName
         );
+        if (!property) {
+          return undefined;
+        }
         return (property as TSESTree.Property).key as TSESTree.Identifier;
       }
+    };
+
+    const getImportedUtilSpecifier = (
+      node: TSESTree.MemberExpression | TSESTree.Identifier
+    ): TSESTree.ImportClause | TSESTree.Identifier | undefined => {
+      const identifierName: string | undefined = getPropertyIdentifierNode(node)
+        .name;
+
+      return findImportedUtilSpecifier(identifierName);
     };
 
     /**
@@ -439,17 +494,26 @@ export function detectTestingLibraryUtils<
     const canReportErrors: CanReportErrorsFn = () => {
       return isTestingLibraryImported() && isValidFilename();
     };
+
     /**
-     * Takes a MemberExpression or an Identifier and verifies if its name comes from the import in TL
-     * @param node a MemberExpression (in "foo.property" it would be property) or an Identifier
+     * Determines whether a node is imported from a valid Testing Library module
+     *
+     * This method will try to find any import matching the given node name,
+     * and also make sure the name is a valid match in case it's been renamed.
      */
     const isNodeComingFromTestingLibrary: IsNodeComingFromTestingLibraryFn = (
       node
     ) => {
+      const importNode = getImportedUtilSpecifier(node);
+
+      if (!importNode) {
+        return false;
+      }
+
       const identifierName: string | undefined = getPropertyIdentifierNode(node)
         .name;
 
-      return !!findImportedUtilSpecifier(identifierName);
+      return hasImportMatch(importNode, identifierName);
     };
 
     const helpers: DetectionHelpers = {

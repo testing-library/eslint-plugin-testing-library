@@ -126,6 +126,19 @@ ruleTester.run(RULE_NAME, rule, {
       const utils = render()
       `,
     },
+    {
+      settings: {
+        'testing-library/utils-module': 'test-utils',
+      },
+      code: `
+      // case (render util): aggressive reporting disabled - method with same name
+      // as TL method but not coming from TL module is valid
+      import { render as testingLibraryRender } from 'test-utils'
+      import { render } from 'somewhere-else'
+
+      const utils = render()
+      `,
+    },
 
     // Test Cases for presence/absence assertions
     // cases: asserts not related to presence/absence
@@ -285,6 +298,21 @@ ruleTester.run(RULE_NAME, rule, {
       import { waitFor } from '@testing-library/react'
       
       waitFor()
+      `,
+    },
+    {
+      settings: {
+        'testing-library/utils-module': 'test-utils',
+      },
+      code: `
+      // case (async util): aggressive reporting disabled - method with same name
+      // as TL method but not coming from TL module is valid
+      import { waitFor as testingLibraryWaitFor } from 'test-utils'
+      import { waitFor } from 'somewhere-else'
+
+        test('this should not be reported', () => {
+        waitFor()
+      });
       `,
     },
 
@@ -637,26 +665,6 @@ ruleTester.run(RULE_NAME, rule, {
         {
           line: 5,
           column: 19,
-          messageId: 'asyncUtilError',
-          data: { utilName: 'waitFor' },
-        },
-      ],
-    },
-    {
-      settings: {
-        'testing-library/utils-module': 'test-utils',
-      },
-      code: `
-        // case: waitFor from object property shadowed name is checked correctly
-        import * as tl from 'test-utils'
-        const obj = { tl }
-        
-        obj.module.waitFor(() => {})
-      `,
-      errors: [
-        {
-          line: 6,
-          column: 20,
           messageId: 'asyncUtilError',
           data: { utilName: 'waitFor' },
         },
