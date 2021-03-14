@@ -22,6 +22,7 @@ import {
   ASYNC_UTILS,
   PRESENCE_MATCHERS,
   ALL_QUERIES_COMBINATIONS,
+  VALID_ASYNC_UTILS,
 } from './utils';
 
 export type TestingLibrarySettings = {
@@ -63,7 +64,10 @@ type IsSyncQueryFn = (node: TSESTree.Identifier) => boolean;
 type IsAsyncQueryFn = (node: TSESTree.Identifier) => boolean;
 type IsQueryFn = (node: TSESTree.Identifier) => boolean;
 type IsCustomQueryFn = (node: TSESTree.Identifier) => boolean;
-type IsAsyncUtilFn = (node: TSESTree.Identifier) => boolean;
+type IsAsyncUtilFn = (
+  node: TSESTree.Identifier,
+  validNames?: VALID_ASYNC_UTILS[]
+) => boolean;
 type IsFireEventMethodFn = (node: TSESTree.Identifier) => boolean;
 type IsRenderUtilFn = (node: TSESTree.Identifier) => boolean;
 type IsPresenceAssertFn = (node: TSESTree.MemberExpression) => boolean;
@@ -298,10 +302,13 @@ export function detectTestingLibraryUtils<
      * Otherwise, it means `custom-module` has been set up, so only those nodes
      * coming from Testing Library will be considered as valid.
      */
-    const isAsyncUtil: IsAsyncUtilFn = (node) => {
-      return isTestingLibraryUtil(node, (identifierNodeName) =>
-        ASYNC_UTILS.includes(identifierNodeName)
-      );
+    const isAsyncUtil: IsAsyncUtilFn = (node, validNames) => {
+      return isTestingLibraryUtil(node, (identifierNodeName) => {
+        if (validNames && validNames.length > 0) {
+          return (validNames as string[]).includes(identifierNodeName);
+        }
+        return ASYNC_UTILS.includes(identifierNodeName);
+      });
     };
 
     /**

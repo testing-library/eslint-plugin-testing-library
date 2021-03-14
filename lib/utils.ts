@@ -114,6 +114,13 @@ const ALL_RETURNING_NODES = [
 const PRESENCE_MATCHERS = ['toBeInTheDocument', 'toBeTruthy', 'toBeDefined'];
 const ABSENCE_MATCHERS = ['toBeNull', 'toBeFalsy'];
 
+export type VALID_ASYNC_UTILS =
+  | 'waitFor'
+  | 'waitForElementToBeRemoved'
+  | 'wait'
+  | 'waitForElement'
+  | 'waitForDomChange';
+
 export {
   combineQueries,
   getDocsUrl,
