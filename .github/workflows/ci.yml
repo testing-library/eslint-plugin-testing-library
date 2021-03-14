@@ -59,6 +59,8 @@ jobs:
 
       - name: Install dependencies (no cache)
         run: npm install --no-save
+        env:
+          CI: true
 
       - name: Install ESLint v${{ matrix.eslint }}
         run: npm install --no-save eslint@${{ matrix.eslint }}
