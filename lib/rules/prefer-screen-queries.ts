@@ -59,7 +59,26 @@ export default createTestingLibraryRule<Options, MessageIds>({
       });
     }
 
-    const queriesDestructuredInWithinDeclaration: string[] = [];
+    function saveSafeDestructuredQueries(node: TSESTree.VariableDeclarator) {
+      if (isObjectPattern(node.id)) {
+        const identifiers = node.id.properties
+          .filter(
+            (property) =>
+              isProperty(property) &&
+              ASTUtils.isIdentifier(property.key) &&
+              helpers.isQuery(property.key)
+          )
+          .map(
+            (property: TSESTree.Property) =>
+              (property.key as TSESTree.Identifier).name
+          );
+        safeDestructuredQueries.push(...identifiers);
+      }
+    }
+
+    // keep here those queries which are safe and shouldn't be reported
+    // (from within, from render + container/base element, not related to TL, etc)
+    const safeDestructuredQueries: string[] = [];
     // use an array as within might be used more than once in a test
     const withinDeclaredVariables: string[] = [];
 
@@ -71,30 +90,27 @@ export default createTestingLibraryRule<Options, MessageIds>({
         ) {
           return;
         }
+
+        const isComingFromValidRender = helpers.isRenderUtil(node.init.callee);
+
+        if (!isComingFromValidRender) {
+          // save the destructured query methods as safe since they are coming
+          // from render not related to TL
+          saveSafeDestructuredQueries(node);
+        }
+
         const isWithinFunction = node.init.callee.name === 'within';
         const usesRenderOptions =
-          helpers.isRenderUtil(node.init.callee) &&
-          usesContainerOrBaseElement(node.init);
+          isComingFromValidRender && usesContainerOrBaseElement(node.init);
 
         if (!isWithinFunction && !usesRenderOptions) {
           return;
         }
 
         if (isObjectPattern(node.id)) {
-          // save the destructured query methods
-          const identifiers = node.id.properties
-            .filter(
-              (property) =>
-                isProperty(property) &&
-                ASTUtils.isIdentifier(property.key) &&
-                helpers.isQuery(property.key)
-            )
-            .map(
-              (property: TSESTree.Property) =>
-                (property.key as TSESTree.Identifier).name
-            );
-
-          queriesDestructuredInWithinDeclaration.push(...identifiers);
+          // save the destructured query methods as safe since they are coming
+          // from within or render + base/container options
+          saveSafeDestructuredQueries(node);
           return;
         }
 
@@ -108,9 +124,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
         }
 
         if (
-          !queriesDestructuredInWithinDeclaration.some(
-            (queryName) => queryName === node.name
-          )
+          !safeDestructuredQueries.some((queryName) => queryName === node.name)
         ) {
           reportInvalidUsage(node);
         }

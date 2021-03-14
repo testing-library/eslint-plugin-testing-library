@@ -151,15 +151,23 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       })
     ),
-    // ...ALL_BUILTIN_AND_CUSTOM_QUERIES_COMBINATIONS.map((queryMethod) => ({
-    //   settings: {
-    //     'testing-library/custom-renders': ['customRender'],
-    //   },
-    //   code: `
-    //     import { anotherRender } from 'whatever'
-    //     const { ${queryMethod} } = anotherRender(foo)
-    //     ${queryMethod}()`,
-    // })),
+    ...ALL_BUILTIN_AND_CUSTOM_QUERIES_COMBINATIONS.map((queryMethod) => ({
+      settings: { 'testing-library/utils-module': 'test-utils' },
+      code: `
+        import { render as testUtilRender } from 'test-utils'
+        import { render } from 'somewhere-else'
+        const { ${queryMethod} } = render(foo)
+        ${queryMethod}()`,
+    })),
+    ...ALL_BUILTIN_AND_CUSTOM_QUERIES_COMBINATIONS.map((queryMethod) => ({
+      settings: {
+        'testing-library/custom-renders': ['customRender'],
+      },
+      code: `
+        import { anotherRender } from 'whatever'
+        const { ${queryMethod} } = anotherRender(foo)
+        ${queryMethod}()`,
+    })),
   ],
 
   invalid: [
