@@ -44,7 +44,6 @@
     "lint": "eslint . --ext .js,.ts",
     "lint:fix": "npm run lint -- --fix",
     "format": "prettier --write README.md {lib,docs,tests}/**/*.{js,md}",
-    "format:check": "prettier --check README.md \"{lib,docs,tests}/**/*.{js,json,yml,ts,md}\"",
     "test": "jest",
     "test:ci": "jest --ci --coverage",
     "test:update": "npm run test:local -- --u",

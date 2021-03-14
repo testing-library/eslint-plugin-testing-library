@@ -35,8 +35,9 @@ jobs:
       - name: Lint code
         run: npm run lint
 
-      - name: Check format
-        run: npm run format:check
+      # TODO: reenable on v4
+#      - name: Check format
+#        run: npm run format:check
 
   test:
     name: Tests (Node v${{ matrix.node }} - ESLint v${{ matrix.eslint }})
