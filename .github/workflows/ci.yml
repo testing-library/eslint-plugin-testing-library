@@ -57,10 +57,10 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
 
-      - name: Install dependencies (no cache)
-        run: npm install --no-save --legacy-peer-deps
-        env:
-          CI: true
+      - name: Install dependencies
+        uses: bahmutov/npm-install@v1
+        with:
+          useLockFile: false
 
       - name: Install ESLint v${{ matrix.eslint }}
         run: npm install --no-save eslint@${{ matrix.eslint }}
