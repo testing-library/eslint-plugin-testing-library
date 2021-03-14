@@ -1,6 +1,10 @@
 name: Release
 
 on:
+  workflow_run:
+    workflows: ['CI']
+    types:
+      - completed
   push:
     branches:
       # semantic-release valid branches
@@ -16,11 +20,6 @@ jobs:
     name: NPM Release
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        node: [10.12, 10, 12.0, 12, 14, 15]
-        eslint: [5, 6, 7]
-
     steps:
       - name: Checkout
         uses: actions/checkout@v1
@@ -28,16 +27,10 @@ jobs:
       - name: Use Node
         uses: actions/setup-node@v1
         with:
-          node-version: ${{ matrix.node }}
+          node-version: 14
 
       - name: Install dependencies
         run: npm ci
-
-      - name: Install specific ESLint
-        run: npm install --no-save eslint@${{ matrix.eslint }}
-
-      - name: Run tests
-        run: npm run test:ci
 
       - name: Build package
         run: npm run build
