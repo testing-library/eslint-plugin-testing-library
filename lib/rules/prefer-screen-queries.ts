@@ -1,16 +1,13 @@
+import { ASTUtils, TSESTree } from '@typescript-eslint/experimental-utils';
+import { ALL_QUERIES_COMBINATIONS } from '../utils';
 import {
-  ESLintUtils,
-  TSESTree,
-  ASTUtils,
-} from '@typescript-eslint/experimental-utils';
-import { getDocsUrl, ALL_QUERIES_COMBINATIONS } from '../utils';
-import {
-  isMemberExpression,
-  isObjectPattern,
   isCallExpression,
-  isProperty,
+  isMemberExpression,
   isObjectExpression,
+  isObjectPattern,
+  isProperty,
 } from '../node-utils';
+import { createTestingLibraryRule } from '../create-testing-library-rule';
 
 export const RULE_NAME = 'prefer-screen-queries';
 export type MessageIds = 'preferScreenQueries';
@@ -35,7 +32,7 @@ function usesContainerOrBaseElement(node: TSESTree.CallExpression) {
   );
 }
 
-export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
+export default createTestingLibraryRule<Options, MessageIds>({
   name: RULE_NAME,
   meta: {
     type: 'suggestion',

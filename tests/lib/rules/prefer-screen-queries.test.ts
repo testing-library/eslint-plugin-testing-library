@@ -4,6 +4,8 @@ import { ALL_QUERIES_COMBINATIONS } from '../../../lib/utils';
 
 const ruleTester = createRuleTester();
 
+// TODO: include custom queries in test cases
+
 ruleTester.run(RULE_NAME, rule, {
   valid: [
     {
