@@ -11,6 +11,7 @@ import noManualCleanup from './rules/no-manual-cleanup';
 import noNodeAccess from './rules/no-node-access';
 import noPromiseInFireEvent from './rules/no-promise-in-fire-event';
 import noRenderInSetup from './rules/no-render-in-setup';
+import noUnnecessaryAct from './rules/no-unnecessary-act';
 import noWaitForEmptyCallback from './rules/no-wait-for-empty-callback';
 import noWaitForSnapshot from './rules/no-wait-for-snapshot';
 import preferExplicitAssert from './rules/prefer-explicit-assert';
@@ -39,6 +40,7 @@ const rules = {
   'no-promise-in-fire-event': noPromiseInFireEvent,
   'no-render-in-setup': noRenderInSetup,
   'no-side-effects-wait-for': noSideEffectsWaitFor,
+  'no-unnecessary-act': noUnnecessaryAct,
   'no-wait-for-empty-callback': noWaitForEmptyCallback,
   'no-wait-for-snapshot': noWaitForSnapshot,
   'prefer-explicit-assert': preferExplicitAssert,
