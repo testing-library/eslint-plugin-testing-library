@@ -1,28 +1,21 @@
+import { ASTUtils, TSESTree } from '@typescript-eslint/experimental-utils';
+import { hasTestingLibraryImportModule, LIBRARY_MODULES } from '../utils';
 import {
-  ESLintUtils,
-  TSESTree,
-  ASTUtils,
-} from '@typescript-eslint/experimental-utils';
-import {
-  getDocsUrl,
-  LIBRARY_MODULES,
-  hasTestingLibraryImportModule,
-} from '../utils';
-import {
-  isObjectPattern,
-  isProperty,
   isCallExpression,
+  isImportSpecifier,
   isLiteral,
   isMemberExpression,
-  isImportSpecifier,
+  isObjectPattern,
+  isProperty,
   isRenderVariableDeclarator,
 } from '../node-utils';
+import { createTestingLibraryRule } from '../create-testing-library-rule';
 
 export const RULE_NAME = 'no-debug';
 export type MessageIds = 'noDebug';
 type Options = [{ renderFunctions?: string[] }];
 
-export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
+export default createTestingLibraryRule<Options, MessageIds>({
   name: RULE_NAME,
   meta: {
     type: 'problem',
