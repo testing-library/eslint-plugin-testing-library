@@ -153,8 +153,8 @@ To enable this configuration use the `extends` property in your
 | [prefer-wait-for](docs/rules/prefer-wait-for.md)                                 | Use `waitFor` instead of deprecated wait methods                                         |                                                                   | ![fixable-badge][] |
 | [render-result-naming-convention](docs/rules/render-result-naming-convention.md) | Enforce a valid naming for return value from `render`                                    | ![angular-badge][] ![react-badge][] ![vue-badge][]                |                    |
 
-[build-badge]: https://img.shields.io/travis/testing-library/eslint-plugin-testing-library?style=flat-square
-[build-url]: https://travis-ci.org/testing-library/eslint-plugin-testing-library
+[build-badge]: https://github.com/testing-library/eslint-plugin-testing-library/actions/workflows/ci.yml/badge.svg
+[build-url]: https://github.com/testing-library/eslint-plugin-testing-library/actions/workflows/ci.yml
 [version-badge]: https://img.shields.io/npm/v/eslint-plugin-testing-library?style=flat-square
 [version-url]: https://www.npmjs.com/package/eslint-plugin-testing-library
 [license-badge]: https://img.shields.io/npm/l/eslint-plugin-testing-library?style=flat-square
