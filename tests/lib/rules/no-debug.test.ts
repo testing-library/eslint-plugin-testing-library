@@ -101,6 +101,8 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [
         {
+          line: 3,
+          column: 9,
           messageId: 'noDebug',
         },
       ],
@@ -117,6 +119,8 @@ ruleTester.run(RULE_NAME, rule, {
       ],
       errors: [
         {
+          line: 3,
+          column: 9,
           messageId: 'noDebug',
         },
       ],
@@ -128,6 +132,8 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [
         {
+          line: 3,
+          column: 15,
           messageId: 'noDebug',
         },
       ],
@@ -141,9 +147,13 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [
         {
+          line: 3,
+          column: 15,
           messageId: 'noDebug',
         },
         {
+          line: 5,
+          column: 15,
           messageId: 'noDebug',
         },
       ],
@@ -158,6 +168,8 @@ ruleTester.run(RULE_NAME, rule, {
       })`,
       errors: [
         {
+          line: 5,
+          column: 11,
           messageId: 'noDebug',
         },
       ],
@@ -172,6 +184,8 @@ ruleTester.run(RULE_NAME, rule, {
       })`,
       errors: [
         {
+          line: 5,
+          column: 17,
           messageId: 'noDebug',
         },
       ],
@@ -183,6 +197,8 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [
         {
+          line: 3,
+          column: 16,
           messageId: 'noDebug',
         },
       ],
@@ -194,6 +210,8 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [
         {
+          line: 3,
+          column: 16,
           messageId: 'noDebug',
         },
       ],
@@ -206,6 +224,8 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [
         {
+          line: 3,
+          column: 16,
           messageId: 'noDebug',
         },
       ],
