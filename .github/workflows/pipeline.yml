@@ -1,0 +1,114 @@
+name: Pipeline
+
+on:
+  push:
+    branches:
+      # semantic-release valid branches, excluding all-contributors
+      - '+([0-9])?(.{+([0-9]),x}).x'
+      - 'main'
+      - 'next'
+      - 'next-major'
+      - 'beta'
+      - 'alpha'
+      - '!all-contributors/**'
+  pull_request:
+    types: [ opened, synchronize ]
+
+jobs:
+  code_validation:
+    name: Code Validation
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.6.0
+        with:
+          access_token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Use Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: Install dependencies
+        uses: bahmutov/npm-install@v1
+        with:
+          useLockFile: false
+
+      - name: Lint code
+        run: npm run lint
+
+      # TODO: reenable on v4 + run tsc
+    #      - name: Check format
+    #        run: npm run format:check
+
+  tests:
+    name: Tests (Node v${{ matrix.node }} - ESLint v${{ matrix.eslint }})
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node: [ '10.12', '10', '12.0', '12', '14' ]
+        eslint: [ '5', '6', '7' ]
+
+    steps:
+      - name: Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.6.0
+        with:
+          access_token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Use Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node }}
+
+      - name: Install dependencies
+        uses: bahmutov/npm-install@v1
+        with:
+          useLockFile: false
+
+      - name: Install ESLint v${{ matrix.eslint }}
+        run: npm install --no-save eslint@${{ matrix.eslint }}
+
+      - name: Run tests
+        run: npm run test:ci
+
+  release:
+    name: NPM Release
+    needs: [code_validation, tests]
+    runs-on: ubuntu-latest
+    if:
+      ${{ github.repository == 'testing-library/eslint-plugin-testing-library' &&
+      contains('refs/heads/main,refs/heads/beta,refs/heads/next,refs/heads/alpha',
+      github.ref) && github.event_name == 'push' }}
+
+    steps:
+      - name: Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.6.0
+        with:
+          access_token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Use Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: Install dependencies
+        uses: bahmutov/npm-install@v1
+        with:
+          useLockFile: false
+
+      - name: Build package
+        run: npm run build
+
+      - name: Release new version to NPM
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npx semantic-release
