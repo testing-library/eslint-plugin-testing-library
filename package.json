@@ -46,8 +46,8 @@
     "format": "prettier --write README.md {lib,docs,tests}/**/*.{js,md}",
     "test": "jest",
     "test:ci": "jest --ci --coverage",
-    "test:update": "npm run test:local -- --u",
-    "test:watch": "npm run test:local -- --watch",
+    "test:update": "npm run test -- --u",
+    "test:watch": "npm run test -- --watch",
     "semantic-release": "semantic-release"
   },
   "dependencies": {
