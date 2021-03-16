@@ -153,8 +153,8 @@ To enable this configuration use the `extends` property in your
 | [prefer-screen-queries](docs/rules/prefer-screen-queries.md)           | Suggest using screen while using queries                                   |                                                                           |                    |
 | [prefer-wait-for](docs/rules/prefer-wait-for.md)                       | Use `waitFor` instead of deprecated wait methods                           |                                                                           | ![fixable-badge][] |
 
-[build-badge]: https://github.com/testing-library/eslint-plugin-testing-library/actions/workflows/ci.yml/badge.svg
-[build-url]: https://github.com/testing-library/eslint-plugin-testing-library/actions/workflows/ci.yml
+[build-badge]: https://github.com/testing-library/eslint-plugin-testing-library/actions/workflows/pipeline.yml/badge.svg
+[build-url]: https://github.com/testing-library/eslint-plugin-testing-library/actions/workflows/pipeline.yml
 [version-badge]: https://img.shields.io/npm/v/eslint-plugin-testing-library?style=flat-square
 [version-url]: https://www.npmjs.com/package/eslint-plugin-testing-library
 [license-badge]: https://img.shields.io/npm/l/eslint-plugin-testing-library?style=flat-square
