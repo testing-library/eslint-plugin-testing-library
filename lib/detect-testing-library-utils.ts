@@ -61,6 +61,7 @@ type IsQueryQueryVariantFn = (node: TSESTree.Identifier) => boolean;
 type IsFindQueryVariantFn = (node: TSESTree.Identifier) => boolean;
 type IsSyncQueryFn = (node: TSESTree.Identifier) => boolean;
 type IsAsyncQueryFn = (node: TSESTree.Identifier) => boolean;
+type IsQueryFn = (node: TSESTree.Identifier) => boolean;
 type IsCustomQueryFn = (node: TSESTree.Identifier) => boolean;
 type IsAsyncUtilFn = (node: TSESTree.Identifier) => boolean;
 type IsFireEventMethodFn = (node: TSESTree.Identifier) => boolean;
@@ -87,6 +88,7 @@ export interface DetectionHelpers {
   isFindQueryVariant: IsFindQueryVariantFn;
   isSyncQuery: IsSyncQueryFn;
   isAsyncQuery: IsAsyncQueryFn;
+  isQuery: IsQueryFn;
   isCustomQuery: IsCustomQueryFn;
   isAsyncUtil: IsAsyncUtilFn;
   isFireEventMethod: IsFireEventMethodFn;
@@ -271,11 +273,16 @@ export function detectTestingLibraryUtils<
       return isFindQueryVariant(node);
     };
 
+    /**
+     * Determines whether a given node is a valid query,
+     * either built-in or custom
+     */
+    const isQuery: IsQueryFn = (node) => {
+      return isSyncQuery(node) || isAsyncQuery(node);
+    };
+
     const isCustomQuery: IsCustomQueryFn = (node) => {
-      return (
-        (isSyncQuery(node) || isAsyncQuery(node)) &&
-        !ALL_QUERIES_COMBINATIONS.includes(node.name)
-      );
+      return isQuery(node) && !ALL_QUERIES_COMBINATIONS.includes(node.name);
     };
 
     /**
@@ -528,6 +535,7 @@ export function detectTestingLibraryUtils<
       isFindQueryVariant,
       isSyncQuery,
       isAsyncQuery,
+      isQuery,
       isCustomQuery,
       isAsyncUtil,
       isFireEventMethod,
