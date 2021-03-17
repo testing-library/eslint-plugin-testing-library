@@ -1,8 +1,8 @@
 import { TSESTree, ASTUtils } from '@typescript-eslint/experimental-utils';
 import {
   isBlockStatement,
-  isCallExpression
-  // isMemberExpression
+  isCallExpression,
+  isMemberExpression
 } from '../node-utils';
 import { createTestingLibraryRule } from '../create-testing-library-rule';
 
@@ -32,15 +32,23 @@ export default createTestingLibraryRule<Options, MessageIds>({
   defaultOptions: [],
 
   create(context, _, helpers) {
-    // need to find all instances of `act` and check whether:
-    //   1. callback body is empty = act unnecessary ✅
-    //   2. callback contains a non-RTL function call = act is permitted
-    //   3. import ReactTestUtils from 'react-dom/test-utils' // ReactTestUtils should be treated the same as act ✅
-
     function reportIfUnnecessary(
       node: TSESTree.ArrowFunctionExpression | TSESTree.FunctionExpression
     ) {
       let isEmpty = false;
+      let callsTL = false;
+      const callsOnlyTLFns = (body: Array<TSESTree.Node>): boolean =>
+        body.every((node: TSESTree.ExpressionStatement) => {
+          if (
+            isCallExpression(node.expression) &&
+            isMemberExpression(node.expression.callee) &&
+            isCallExpression(node.expression.callee.object) &&
+            helpers.isNodeComingFromTestingLibrary(node.expression.callee)
+          ) {
+            return true;
+          }
+          return false;
+        });
       if (
         isBlockStatement(node.body) &&
         node.body.body.length === 0 &&
@@ -49,8 +57,18 @@ export default createTestingLibraryRule<Options, MessageIds>({
       ) {
         isEmpty = true;
       }
-      // console.log(node);
-      if (isEmpty) {
+      if (
+        isCallExpression(node.body) &&
+        isMemberExpression(node.body.callee) &&
+        helpers.isNodeComingFromTestingLibrary(node.body.callee)
+      ) {
+        callsTL = true;
+      }
+      if (
+        isEmpty ||
+        callsTL ||
+        (isBlockStatement(node.body) && callsOnlyTLFns(node.body.body))
+      ) {
         context.report({
           node,
           loc: node.body.loc.start,
@@ -59,48 +77,9 @@ export default createTestingLibraryRule<Options, MessageIds>({
       }
     }
 
-    function reportTLNode(node: TSESTree.MemberExpression) {
-      // console.log(node, helpers.isNodeComingFromTestingLibrary(node));
-      if (
-        !isBlockStatement(node.parent) ||
-        helpers.isNodeComingFromTestingLibrary(node)
-      ) {
-        context.report({
-          node,
-          messageId: 'noUnnecessaryAct'
-        });
-      }
-    }
-
-    // function reportTLNodeBlockStatement(node: TSESTree.BlockStatement) {
-    //   const callsTLFunction = (body: Array<TSESTree.Node>): boolean =>
-    //     body.some((node: TSESTree.ExpressionStatement) => {
-    //       if (
-    //         isCallExpression(node.expression) &&
-    //         isMemberExpression(node.expression.callee) &&
-    //         isCallExpression(node.expression.callee.object) &&
-    //         helpers.isNodeComingFromTestingLibrary(node.expression.callee)
-    //       ) {
-    //         return true;
-    //       } else {
-    //         return false;
-    //       }
-    //     });
-    //   if (callsTLFunction) {
-    //     context.report({
-    //       node,
-    //       messageId: 'noUnnecessaryAct'
-    //     });
-    //   }
-    // }
-
     return {
       [`${ACT_EXPRESSION_QUERY} > ArrowFunctionExpression`]: reportIfUnnecessary,
-      [`${ACT_EXPRESSION_QUERY} > FunctionExpression`]: reportIfUnnecessary,
-      [`${ACT_EXPRESSION_QUERY} > ArrowFunctionExpression > CallExpression > MemberExpression`]: reportTLNode,
-      [`${ACT_EXPRESSION_QUERY} > FunctionExpression > CallExpression > MemberExpression`]: reportTLNode
-      // [`${ACT_EXPRESSION_QUERY} > ArrowFunctionExpression > BlockStatement`]: reportTLNodeBlockStatement,
-      // [`${ACT_EXPRESSION_QUERY} > FunctionExpression > BlockStatement`]: reportTLNodeBlockStatement
+      [`${ACT_EXPRESSION_QUERY} > FunctionExpression`]: reportIfUnnecessary
     };
   }
 });

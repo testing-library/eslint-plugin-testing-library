@@ -35,9 +35,9 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import { act, fireEvent } from '@testing-library/react';
+        import { act, screen } from '@testing-library/react';
         act(() => {
-          fireEvent.click(el);
+          screen.getByText('hello');
           stuffThatDoesNotUseRTL();
         });
       `
@@ -56,7 +56,6 @@ ruleTester.run(RULE_NAME, rule, {
     {
       code: `
         import { act } from '@testing-library/react';
-
         await act(async () => {});
       `,
       errors: [
@@ -68,8 +67,18 @@ ruleTester.run(RULE_NAME, rule, {
     {
       code: `
         import { act } from '@testing-library/react';
+        act(() => {});
+      `,
+      errors: [
+        {
+          messageId: 'noUnnecessaryAct'
+        }
+      ]
+    },
+    {
+      code: `
+        import { act } from '@testing-library/react';
         import userEvent from '@testing-library/user-event';
-
         await act(async () => userEvent.type('hi', el));
       `,
       errors: [
@@ -81,7 +90,6 @@ ruleTester.run(RULE_NAME, rule, {
     {
       code: `
         import { screen, act } from '@testing-library/react';
-
         act(() => screen.getByText('blah'));
       `,
       errors: [
@@ -92,20 +100,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import { act } from '@testing-library/react';
-
-        act(() => {});
-      `,
-      errors: [
-        {
-          messageId: 'noUnnecessaryAct'
-        }
-      ]
-    },
-    {
-      code: `
         import { fireEvent, act } from '@testing-library/react';
-
         act(() => fireEvent.click(el));
       `,
       errors: [
@@ -117,7 +112,6 @@ ruleTester.run(RULE_NAME, rule, {
     {
       code: `
         import { fireEvent, act } from '@testing-library/react';
-
         act(() => {
           fireEvent.click(el)
         });
@@ -132,7 +126,6 @@ ruleTester.run(RULE_NAME, rule, {
       code: `
         import { act } from '@testing-library/react';
         import userEvent from '@testing-library/user-event';
-
         act(() => userEvent.click(el));
       `,
       errors: [
@@ -145,8 +138,9 @@ ruleTester.run(RULE_NAME, rule, {
       code: `
         import * as rtl from '@testing-library/react';
         import userEvent from '@testing-library/user-event';
-
-        rtl.act(() => userEvent.click(el));
+        rtl.act(() => {
+          userEvent.click(el)
+        });
       `,
       errors: [
         {
@@ -157,7 +151,6 @@ ruleTester.run(RULE_NAME, rule, {
     {
       code: `
         import { act, render } from '@testing-library/react';
-
         act(() => render(<div />));
       `,
       errors: [
@@ -169,7 +162,6 @@ ruleTester.run(RULE_NAME, rule, {
     {
       code: `
         import { act, render } from '@testing-library/react';
-
         await act(async () => render(<div />));
       `,
       errors: [
@@ -181,7 +173,6 @@ ruleTester.run(RULE_NAME, rule, {
     {
       code: `
         import * as rtl from '@testing-library/react';
-
         rtl.act(() => rtl.screen.getByText('blah'));
       `,
       errors: [
