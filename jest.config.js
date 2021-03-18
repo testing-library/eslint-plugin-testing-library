@@ -1,4 +1,5 @@
 module.exports = {
+  testEnvironment: 'jest-environment-jsdom',
   testMatch: ['**/tests/**/*.test.ts'],
   transform: {
     '^.+\\.tsx?$': 'ts-jest',
@@ -10,7 +11,7 @@ module.exports = {
       lines: 100,
       statements: 100,
     },
-    // TODO drop this custom threshold in v4
+    // TODO drop this custom threshold after v4
     './lib/node-utils.ts': {
       branches: 85,
       functions: 90,

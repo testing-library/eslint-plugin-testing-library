@@ -70,7 +70,7 @@ const ASYNC_UTILS = [
   'wait',
   'waitForElement',
   'waitForDomChange',
-];
+] as const;
 
 const SYNC_EVENTS = ['fireEvent', 'userEvent'];
 

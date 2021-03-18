@@ -1,16 +1,12 @@
+import { ASTUtils, TSESTree } from '@typescript-eslint/experimental-utils';
 import {
-  ESLintUtils,
-  TSESTree,
-  ASTUtils,
-} from '@typescript-eslint/experimental-utils';
-import { getDocsUrl, ALL_QUERIES_COMBINATIONS } from '../utils';
-import {
-  isMemberExpression,
-  isObjectPattern,
   isCallExpression,
-  isProperty,
+  isMemberExpression,
   isObjectExpression,
+  isObjectPattern,
+  isProperty,
 } from '../node-utils';
+import { createTestingLibraryRule } from '../create-testing-library-rule';
 
 export const RULE_NAME = 'prefer-screen-queries';
 export type MessageIds = 'preferScreenQueries';
@@ -20,7 +16,6 @@ const ALLOWED_RENDER_PROPERTIES_FOR_DESTRUCTURING = [
   'container',
   'baseElement',
 ];
-const ALL_QUERIES_COMBINATIONS_REGEXP = ALL_QUERIES_COMBINATIONS.join('|');
 
 function usesContainerOrBaseElement(node: TSESTree.CallExpression) {
   const secondArgument = node.arguments[1];
@@ -35,7 +30,7 @@ function usesContainerOrBaseElement(node: TSESTree.CallExpression) {
   );
 }
 
-export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
+export default createTestingLibraryRule<Options, MessageIds>({
   name: RULE_NAME,
   meta: {
     type: 'suggestion',
@@ -53,7 +48,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
   },
   defaultOptions: [],
 
-  create(context) {
+  create(context, _, helpers) {
     function reportInvalidUsage(node: TSESTree.Identifier) {
       context.report({
         node,
@@ -64,8 +59,26 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
       });
     }
 
-    const queriesRegex = new RegExp(ALL_QUERIES_COMBINATIONS_REGEXP);
-    const queriesDestructuredInWithinDeclaration: string[] = [];
+    function saveSafeDestructuredQueries(node: TSESTree.VariableDeclarator) {
+      if (isObjectPattern(node.id)) {
+        const identifiers = node.id.properties
+          .filter(
+            (property) =>
+              isProperty(property) &&
+              ASTUtils.isIdentifier(property.key) &&
+              helpers.isQuery(property.key)
+          )
+          .map(
+            (property: TSESTree.Property) =>
+              (property.key as TSESTree.Identifier).name
+          );
+        safeDestructuredQueries.push(...identifiers);
+      }
+    }
+
+    // keep here those queries which are safe and shouldn't be reported
+    // (from within, from render + container/base element, not related to TL, etc)
+    const safeDestructuredQueries: string[] = [];
     // use an array as within might be used more than once in a test
     const withinDeclaredVariables: string[] = [];
 
@@ -77,31 +90,27 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
         ) {
           return;
         }
+
+        const isComingFromValidRender = helpers.isRenderUtil(node.init.callee);
+
+        if (!isComingFromValidRender) {
+          // save the destructured query methods as safe since they are coming
+          // from render not related to TL
+          saveSafeDestructuredQueries(node);
+        }
+
         const isWithinFunction = node.init.callee.name === 'within';
-        // TODO add the custom render option #198
         const usesRenderOptions =
-          node.init.callee.name === 'render' &&
-          usesContainerOrBaseElement(node.init);
+          isComingFromValidRender && usesContainerOrBaseElement(node.init);
 
         if (!isWithinFunction && !usesRenderOptions) {
           return;
         }
 
         if (isObjectPattern(node.id)) {
-          // save the destructured query methods
-          const identifiers = node.id.properties
-            .filter(
-              (property) =>
-                isProperty(property) &&
-                ASTUtils.isIdentifier(property.key) &&
-                queriesRegex.test(property.key.name)
-            )
-            .map(
-              (property: TSESTree.Property) =>
-                (property.key as TSESTree.Identifier).name
-            );
-
-          queriesDestructuredInWithinDeclaration.push(...identifiers);
+          // save the destructured query methods as safe since they are coming
+          // from within or render + base/container options
+          saveSafeDestructuredQueries(node);
           return;
         }
 
@@ -109,22 +118,24 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
           withinDeclaredVariables.push(node.id.name);
         }
       },
-      [`CallExpression > Identifier[name=/^${ALL_QUERIES_COMBINATIONS_REGEXP}$/]`](
-        node: TSESTree.Identifier
-      ) {
+      'CallExpression > Identifier'(node: TSESTree.Identifier) {
+        if (!helpers.isQuery(node)) {
+          return;
+        }
+
         if (
-          !queriesDestructuredInWithinDeclaration.some(
-            (queryName) => queryName === node.name
-          )
+          !safeDestructuredQueries.some((queryName) => queryName === node.name)
         ) {
           reportInvalidUsage(node);
         }
       },
-      [`MemberExpression > Identifier[name=/^${ALL_QUERIES_COMBINATIONS_REGEXP}$/]`](
-        node: TSESTree.Identifier
-      ) {
+      'MemberExpression > Identifier'(node: TSESTree.Identifier) {
         function isIdentifierAllowed(name: string) {
           return ['screen', ...withinDeclaredVariables].includes(name);
+        }
+
+        if (!helpers.isQuery(node)) {
+          return;
         }
 
         if (
@@ -133,7 +144,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
           isCallExpression(node.parent.object) &&
           ASTUtils.isIdentifier(node.parent.object.callee) &&
           node.parent.object.callee.name !== 'within' &&
-          node.parent.object.callee.name === 'render' &&
+          helpers.isRenderUtil(node.parent.object.callee) &&
           !usesContainerOrBaseElement(node.parent.object)
         ) {
           reportInvalidUsage(node);
