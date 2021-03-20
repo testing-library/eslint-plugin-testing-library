@@ -35,9 +35,9 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
         const memberExpression = node.parent as TSESTree.MemberExpression;
         const methodNode = memberExpression.property as TSESTree.Identifier;
         const callExpression = memberExpression.parent as TSESTree.CallExpression;
-        const withDelay = callExpression.arguments.length >= 3 &&
-          isObjectExpression(callExpression.arguments[2]) &&
-          callExpression.arguments[2].properties.some(
+        const lastArg = callExpression.arguments[callExpression.arguments.length - 1]
+        const withDelay = isObjectExpression(lastArg) &&
+          lastArg.properties.some(
             property =>
               isProperty(property) &&
               isIdentifier(property.key) &&
