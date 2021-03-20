@@ -46,10 +46,6 @@ export default createTestingLibraryRule<Options, MessageIds>({
       VariableDeclarator(node) {
         const initIdentifierNode = getDeepestIdentifierNode(node.init);
 
-        if (!initIdentifierNode) {
-          return;
-        }
-
         if (!helpers.isRenderUtil(initIdentifierNode)) {
           return;
         }
@@ -68,12 +64,12 @@ export default createTestingLibraryRule<Options, MessageIds>({
               );
             }
           }
-        } else {
-          // find utils kept from render and save their node, like:
-          // const utils = render();
-          if (ASTUtils.isIdentifier(node.id)) {
-            suspiciousReferenceNodes.push(node.id);
-          }
+        }
+
+        // find utils kept from render and save their node, like:
+        // const utils = render();
+        if (ASTUtils.isIdentifier(node.id)) {
+          suspiciousReferenceNodes.push(node.id);
         }
       },
       CallExpression(node) {
