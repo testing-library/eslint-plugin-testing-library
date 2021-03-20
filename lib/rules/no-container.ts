@@ -1,5 +1,12 @@
 import { ASTUtils, TSESTree } from '@typescript-eslint/experimental-utils';
-import { isMemberExpression, isObjectPattern, isProperty } from '../node-utils';
+import {
+  getDeepestIdentifierNode,
+  getFunctionName,
+  getInnermostReturningFunction,
+  isMemberExpression,
+  isObjectPattern,
+  isProperty,
+} from '../node-utils';
 import { createTestingLibraryRule } from '../create-testing-library-rule';
 
 export const RULE_NAME = 'no-container';
@@ -26,9 +33,18 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
   create(context, [], helpers) {
     const destructuredContainerPropNames: string[] = [];
-    let renderWrapperName: string = null;
+    const renderWrapperNames: string[] = [];
+    let renderResultVarName: string = null;
     let containerName: string = null;
     let containerCallsMethod = false;
+
+    function detectRenderWrapper(node: TSESTree.Identifier): void {
+      const innerFunction = getInnermostReturningFunction(context, node);
+
+      if (innerFunction) {
+        renderWrapperNames.push(getFunctionName(innerFunction));
+      }
+    }
 
     function showErrorIfChainedContainerMethod(
       innerNode: TSESTree.MemberExpression
@@ -45,7 +61,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
             return;
           }
 
-          const isRenderWrapper = innerNode.object.name === renderWrapperName;
+          const isRenderWrapper = innerNode.object.name === renderResultVarName;
           containerCallsMethod =
             ASTUtils.isIdentifier(innerNode.property) &&
             innerNode.property.name === 'container' &&
@@ -66,8 +82,35 @@ export default createTestingLibraryRule<Options, MessageIds>({
     }
 
     return {
+      CallExpression(node) {
+        const callExpressionIdentifier = getDeepestIdentifierNode(node);
+        if (helpers.isRenderUtil(callExpressionIdentifier)) {
+          detectRenderWrapper(callExpressionIdentifier);
+        }
+
+        if (isMemberExpression(node.callee)) {
+          showErrorIfChainedContainerMethod(node.callee);
+        } else {
+          ASTUtils.isIdentifier(node.callee) &&
+            destructuredContainerPropNames.includes(node.callee.name) &&
+            context.report({
+              node,
+              messageId: 'noContainer',
+            });
+        }
+      },
+
       VariableDeclarator(node) {
-        if (!helpers.isRenderVariableDeclarator(node)) {
+        const initIdentifierNode = getDeepestIdentifierNode(node.init);
+
+        const isRenderWrapperVariableDeclarator = initIdentifierNode
+          ? renderWrapperNames.includes(initIdentifierNode.name)
+          : false;
+
+        if (
+          !helpers.isRenderVariableDeclarator(node) &&
+          !isRenderWrapperVariableDeclarator
+        ) {
           return;
         }
 
@@ -94,20 +137,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
               );
           }
         } else {
-          renderWrapperName = ASTUtils.isIdentifier(node.id) && node.id.name;
-        }
-      },
-
-      CallExpression(node) {
-        if (isMemberExpression(node.callee)) {
-          showErrorIfChainedContainerMethod(node.callee);
-        } else {
-          ASTUtils.isIdentifier(node.callee) &&
-            destructuredContainerPropNames.includes(node.callee.name) &&
-            context.report({
-              node,
-              messageId: 'noContainer',
-            });
+          renderResultVarName = ASTUtils.isIdentifier(node.id) && node.id.name;
         }
       },
     };

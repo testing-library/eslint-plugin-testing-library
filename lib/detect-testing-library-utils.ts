@@ -154,6 +154,10 @@ export function detectTestingLibraryUtils<
         originalNodeName?: string
       ) => boolean
     ): boolean {
+      if (!node) {
+        return false;
+      }
+
       const referenceNode = getReferenceNode(node);
       const referenceNodeIdentifier = getPropertyIdentifierNode(referenceNode);
       const importedUtilSpecifier = getImportedUtilSpecifier(
