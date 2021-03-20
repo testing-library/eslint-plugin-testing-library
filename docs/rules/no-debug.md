@@ -1,6 +1,6 @@
 # Disallow the use of `debug` (no-debug)
 
-Just like `console.log` statements pollutes the browser's output, debug statements also pollutes the tests if one of your team mates forgot to remove it. `debug` statements should be used when you actually want to debug your tests but should not be pushed to the codebase.
+Just like `console.log` statements pollutes the browser's output, debug statements also pollutes the tests if one of your teammates forgot to remove it. `debug` statements should be used when you actually want to debug your tests but should not be pushed to the codebase.
 
 ## Rule Details
 
@@ -26,12 +26,6 @@ screen.debug();
 ```js
 const { screen } = require('@testing-library/react');
 screen.debug();
-```
-
-If you use [custom render functions](https://testing-library.com/docs/example-react-redux) then you can set a config option in your `.eslintrc` to look for these.
-
-```
-   "testing-library/no-debug": ["error", {"renderFunctions":["renderWithRedux", "renderWithRouter"]}],
 ```
 
 ## Further Reading
