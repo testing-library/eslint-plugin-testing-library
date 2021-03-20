@@ -1,5 +1,7 @@
 import {
   getDeepestIdentifierNode,
+  getFunctionName,
+  getInnermostReturningFunction,
   getPropertyIdentifierNode,
   getReferenceNode,
   isObjectPattern,
@@ -41,10 +43,28 @@ export default createTestingLibraryRule<Options, MessageIds>({
   create(context, [], helpers) {
     const suspiciousDebugVariableNames: string[] = [];
     const suspiciousReferenceNodes: TSESTree.Identifier[] = [];
+    const renderWrapperNames: string[] = [];
+
+    function detectRenderWrapper(node: TSESTree.Identifier): void {
+      const innerFunction = getInnermostReturningFunction(context, node);
+
+      if (innerFunction) {
+        renderWrapperNames.push(getFunctionName(innerFunction));
+      }
+    }
 
     return {
       VariableDeclarator(node) {
-        if (!helpers.isRenderVariableDeclarator(node)) {
+        const initIdentifierNode = getDeepestIdentifierNode(node.init);
+
+        const isRenderWrapperVariableDeclarator = initIdentifierNode
+          ? renderWrapperNames.includes(initIdentifierNode.name)
+          : false;
+
+        if (
+          !helpers.isRenderVariableDeclarator(node) &&
+          !isRenderWrapperVariableDeclarator
+        ) {
           return;
         }
 
@@ -72,6 +92,10 @@ export default createTestingLibraryRule<Options, MessageIds>({
       },
       CallExpression(node) {
         const callExpressionIdentifier = getDeepestIdentifierNode(node);
+        if (helpers.isRenderUtil(callExpressionIdentifier)) {
+          detectRenderWrapper(callExpressionIdentifier);
+        }
+
         const referenceNode = getReferenceNode(node);
         const referenceIdentifier = getPropertyIdentifierNode(referenceNode);
 
