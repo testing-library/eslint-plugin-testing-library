@@ -36,18 +36,27 @@ export default createTestingLibraryRule<Options, MessageIds>({
       if (isMemberExpression(innerNode)) {
         if (ASTUtils.isIdentifier(innerNode.object)) {
           const isContainerName = innerNode.object.name === containerName;
-          const isRenderWrapper = innerNode.object.name === renderWrapperName;
 
+          if (isContainerName) {
+            context.report({
+              node: innerNode,
+              messageId: 'noContainer',
+            });
+            return;
+          }
+
+          const isRenderWrapper = innerNode.object.name === renderWrapperName;
           containerCallsMethod =
             ASTUtils.isIdentifier(innerNode.property) &&
             innerNode.property.name === 'container' &&
             isRenderWrapper;
 
-          if (isContainerName || containerCallsMethod) {
+          if (containerCallsMethod) {
             context.report({
-              node: innerNode,
+              node: innerNode.property,
               messageId: 'noContainer',
             });
+            return;
           }
         }
         showErrorIfChainedContainerMethod(

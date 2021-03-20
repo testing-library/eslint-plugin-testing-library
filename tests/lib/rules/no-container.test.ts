@@ -97,7 +97,7 @@ ruleTester.run(RULE_NAME, rule, {
       errors: [
         {
           line: 3,
-          column: 24,
+          column: 29,
           messageId: 'noContainer',
         },
       ],
