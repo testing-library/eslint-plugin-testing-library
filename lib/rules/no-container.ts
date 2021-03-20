@@ -1,10 +1,5 @@
 import { ASTUtils, TSESTree } from '@typescript-eslint/experimental-utils';
-import {
-  getDeepestIdentifierNode,
-  isMemberExpression,
-  isObjectPattern,
-  isProperty,
-} from '../node-utils';
+import { isMemberExpression, isObjectPattern, isProperty } from '../node-utils';
 import { createTestingLibraryRule } from '../create-testing-library-rule';
 
 export const RULE_NAME = 'no-container';
@@ -63,9 +58,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
     return {
       VariableDeclarator(node) {
-        const initIdentifierNode = getDeepestIdentifierNode(node.init);
-
-        if (!helpers.isRenderUtil(initIdentifierNode)) {
+        if (!helpers.isRenderVariableDeclarator(node)) {
           return;
         }
 
@@ -76,8 +69,10 @@ export default createTestingLibraryRule<Options, MessageIds>({
               ASTUtils.isIdentifier(property.key) &&
               property.key.name === 'container'
           );
+
           const nodeValue =
             containerIndex !== -1 && node.id.properties[containerIndex].value;
+
           if (ASTUtils.isIdentifier(nodeValue)) {
             containerName = nodeValue.name;
           } else {

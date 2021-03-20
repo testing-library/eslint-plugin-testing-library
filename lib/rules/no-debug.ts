@@ -44,9 +44,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
     return {
       VariableDeclarator(node) {
-        const initIdentifierNode = getDeepestIdentifierNode(node.init);
-
-        if (!helpers.isRenderUtil(initIdentifierNode)) {
+        if (!helpers.isRenderVariableDeclarator(node)) {
           return;
         }
 
