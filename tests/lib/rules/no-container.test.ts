@@ -57,6 +57,8 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [
         {
+          line: 3,
+          column: 24,
           messageId: 'noContainer',
         },
       ],
@@ -68,6 +70,8 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [
         {
+          line: 3,
+          column: 9,
           messageId: 'noContainer',
         },
       ],
@@ -79,6 +83,8 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [
         {
+          line: 3,
+          column: 9,
           messageId: 'noContainer',
         },
       ],
@@ -90,6 +96,8 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [
         {
+          line: 3,
+          column: 24,
           messageId: 'noContainer',
         },
       ],
@@ -101,6 +109,8 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [
         {
+          line: 3,
+          column: 9,
           messageId: 'noContainer',
         },
       ],
@@ -117,6 +127,8 @@ ruleTester.run(RULE_NAME, rule, {
       ],
       errors: [
         {
+          line: 3,
+          column: 9,
           messageId: 'noContainer',
         },
       ],
