@@ -44,7 +44,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
               property.key.name === 'delay'
           );
 
-        if (!(node.name === 'userEvent' && (methodNode.name === 'type' || methodNode.name === 'keyboard') && withDelay)) {
+        if (!(node.name === 'userEvent' && ['type', 'keyboard'].includes(methodNode.name) && withDelay)) {
           context.report({
             node: methodNode,
             messageId: 'noAwaitSyncEvents',
