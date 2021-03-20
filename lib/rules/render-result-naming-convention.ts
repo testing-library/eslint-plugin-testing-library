@@ -59,7 +59,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
         }
 
         if (
-          !helpers.isRenderUtil(initIdentifierNode) &&
+          !helpers.isRenderVariableDeclarator(node) &&
           !renderWrapperNames.includes(initIdentifierNode.name)
         ) {
           return;

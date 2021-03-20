@@ -1,21 +1,19 @@
+import { ASTUtils, TSESTree } from '@typescript-eslint/experimental-utils';
 import {
-  ESLintUtils,
-  TSESTree,
-  ASTUtils,
-} from '@typescript-eslint/experimental-utils';
-import { getDocsUrl } from '../utils';
-import {
+  getDeepestIdentifierNode,
+  getFunctionName,
+  getInnermostReturningFunction,
   isMemberExpression,
   isObjectPattern,
   isProperty,
-  isRenderVariableDeclarator,
 } from '../node-utils';
+import { createTestingLibraryRule } from '../create-testing-library-rule';
 
 export const RULE_NAME = 'no-container';
 export type MessageIds = 'noContainer';
-type Options = [{ renderFunctions?: string[] }];
+type Options = [];
 
-export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
+export default createTestingLibraryRule<Options, MessageIds>({
   name: RULE_NAME,
   meta: {
     type: 'problem',
@@ -29,29 +27,24 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
         'Avoid using container methods. Prefer using the methods from Testing Library, such as "getByRole()"',
     },
     fixable: null,
-    schema: [
-      {
-        type: 'object',
-        properties: {
-          renderFunctions: {
-            type: 'array',
-          },
-        },
-      },
-    ],
+    schema: [],
   },
-  defaultOptions: [
-    {
-      renderFunctions: [],
-    },
-  ],
+  defaultOptions: [],
 
-  create(context, [options]) {
-    const { renderFunctions } = options;
+  create(context, [], helpers) {
     const destructuredContainerPropNames: string[] = [];
-    let renderWrapperName: string = null;
+    const renderWrapperNames: string[] = [];
+    let renderResultVarName: string = null;
     let containerName: string = null;
     let containerCallsMethod = false;
+
+    function detectRenderWrapper(node: TSESTree.Identifier): void {
+      const innerFunction = getInnermostReturningFunction(context, node);
+
+      if (innerFunction) {
+        renderWrapperNames.push(getFunctionName(innerFunction));
+      }
+    }
 
     function showErrorIfChainedContainerMethod(
       innerNode: TSESTree.MemberExpression
@@ -59,18 +52,27 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
       if (isMemberExpression(innerNode)) {
         if (ASTUtils.isIdentifier(innerNode.object)) {
           const isContainerName = innerNode.object.name === containerName;
-          const isRenderWrapper = innerNode.object.name === renderWrapperName;
 
+          if (isContainerName) {
+            context.report({
+              node: innerNode,
+              messageId: 'noContainer',
+            });
+            return;
+          }
+
+          const isRenderWrapper = innerNode.object.name === renderResultVarName;
           containerCallsMethod =
             ASTUtils.isIdentifier(innerNode.property) &&
             innerNode.property.name === 'container' &&
             isRenderWrapper;
 
-          if (isContainerName || containerCallsMethod) {
+          if (containerCallsMethod) {
             context.report({
-              node: innerNode,
+              node: innerNode.property,
               messageId: 'noContainer',
             });
+            return;
           }
         }
         showErrorIfChainedContainerMethod(
@@ -80,35 +82,12 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
     }
 
     return {
-      VariableDeclarator(node) {
-        if (isRenderVariableDeclarator(node, ['render', ...renderFunctions])) {
-          if (isObjectPattern(node.id)) {
-            const containerIndex = node.id.properties.findIndex(
-              (property) =>
-                isProperty(property) &&
-                ASTUtils.isIdentifier(property.key) &&
-                property.key.name === 'container'
-            );
-            const nodeValue =
-              containerIndex !== -1 && node.id.properties[containerIndex].value;
-            if (ASTUtils.isIdentifier(nodeValue)) {
-              containerName = nodeValue.name;
-            } else {
-              isObjectPattern(nodeValue) &&
-                nodeValue.properties.forEach(
-                  (property) =>
-                    isProperty(property) &&
-                    ASTUtils.isIdentifier(property.key) &&
-                    destructuredContainerPropNames.push(property.key.name)
-                );
-            }
-          } else {
-            renderWrapperName = ASTUtils.isIdentifier(node.id) && node.id.name;
-          }
-        }
-      },
-
       CallExpression(node) {
+        const callExpressionIdentifier = getDeepestIdentifierNode(node);
+        if (helpers.isRenderUtil(callExpressionIdentifier)) {
+          detectRenderWrapper(callExpressionIdentifier);
+        }
+
         if (isMemberExpression(node.callee)) {
           showErrorIfChainedContainerMethod(node.callee);
         } else {
@@ -118,6 +97,47 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
               node,
               messageId: 'noContainer',
             });
+        }
+      },
+
+      VariableDeclarator(node) {
+        const initIdentifierNode = getDeepestIdentifierNode(node.init);
+
+        const isRenderWrapperVariableDeclarator = initIdentifierNode
+          ? renderWrapperNames.includes(initIdentifierNode.name)
+          : false;
+
+        if (
+          !helpers.isRenderVariableDeclarator(node) &&
+          !isRenderWrapperVariableDeclarator
+        ) {
+          return;
+        }
+
+        if (isObjectPattern(node.id)) {
+          const containerIndex = node.id.properties.findIndex(
+            (property) =>
+              isProperty(property) &&
+              ASTUtils.isIdentifier(property.key) &&
+              property.key.name === 'container'
+          );
+
+          const nodeValue =
+            containerIndex !== -1 && node.id.properties[containerIndex].value;
+
+          if (ASTUtils.isIdentifier(nodeValue)) {
+            containerName = nodeValue.name;
+          } else {
+            isObjectPattern(nodeValue) &&
+              nodeValue.properties.forEach(
+                (property) =>
+                  isProperty(property) &&
+                  ASTUtils.isIdentifier(property.key) &&
+                  destructuredContainerPropNames.push(property.key.name)
+              );
+          }
+        } else {
+          renderResultVarName = ASTUtils.isIdentifier(node.id) && node.id.name;
         }
       },
     };

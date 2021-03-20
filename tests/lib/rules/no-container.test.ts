@@ -48,6 +48,25 @@ ruleTester.run(RULE_NAME, rule, {
         expect(firstChild).toBeDefined();
       `,
     },
+    {
+      settings: { 'testing-library/utils-module': 'test-utils' },
+      code: `
+        import { render as renamed } from '@testing-library/react'
+        import { render } from 'somewhere-else'
+        const { container } = render(<Example />);
+        const button = container.querySelector('.btn-primary');
+      `,
+    },
+    {
+      settings: {
+        'testing-library/custom-renders': ['customRender', 'renderWithRedux'],
+      },
+      code: `
+        import { otherRender } from 'somewhere-else'
+        const { container } = otherRender(<Example />);
+        const button = container.querySelector('.btn-primary');
+      `,
+    },
   ],
   invalid: [
     {
@@ -57,6 +76,56 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [
         {
+          line: 3,
+          column: 24,
+          messageId: 'noContainer',
+        },
+      ],
+    },
+    {
+      settings: { 'testing-library/utils-module': 'test-utils' },
+      code: `
+        import { render } from 'test-utils'
+        const { container } = render(<Example />);
+        const button = container.querySelector('.btn-primary');
+      `,
+      errors: [
+        {
+          line: 4,
+          column: 24,
+          messageId: 'noContainer',
+        },
+      ],
+    },
+    {
+      settings: { 'testing-library/utils-module': 'test-utils' },
+      code: `
+        import { render as testingRender } from '@testing-library/react'
+        const { container: renamed } = testingRender(<Example />);
+        const button = renamed.querySelector('.btn-primary');
+      `,
+      errors: [
+        {
+          line: 4,
+          column: 24,
+          messageId: 'noContainer',
+        },
+      ],
+    },
+    {
+      settings: { 'testing-library/utils-module': 'test-utils' },
+      code: `
+        import { render } from '@testing-library/react'
+        
+        const setup = () => render(<Example />)
+
+        const { container } = setup()
+        const button = container.querySelector('.btn-primary');
+      `,
+      errors: [
+        {
+          line: 7,
+          column: 24,
           messageId: 'noContainer',
         },
       ],
@@ -68,6 +137,8 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [
         {
+          line: 3,
+          column: 9,
           messageId: 'noContainer',
         },
       ],
@@ -79,6 +150,8 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [
         {
+          line: 3,
+          column: 9,
           messageId: 'noContainer',
         },
       ],
@@ -90,6 +163,8 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [
         {
+          line: 3,
+          column: 29,
           messageId: 'noContainer',
         },
       ],
@@ -101,22 +176,39 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [
         {
+          line: 3,
+          column: 9,
           messageId: 'noContainer',
         },
       ],
     },
     {
+      settings: { 'testing-library/utils-module': 'test-utils' },
+      code: `
+        import { render } from '@testing-library/react'
+        const { container: { querySelector } } = render(<Example />);
+        querySelector('foo');
+      `,
+      errors: [
+        {
+          line: 4,
+          column: 9,
+          messageId: 'noContainer',
+        },
+      ],
+    },
+    {
+      settings: {
+        'testing-library/custom-renders': ['customRender', 'renderWithRedux'],
+      },
       code: `
         const { container } = renderWithRedux(<Example />);
         container.querySelector();
       `,
-      options: [
-        {
-          renderFunctions: ['renderWithRedux'],
-        },
-      ],
       errors: [
         {
+          line: 3,
+          column: 9,
           messageId: 'noContainer',
         },
       ],
