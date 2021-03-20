@@ -116,15 +116,13 @@ ruleTester.run(RULE_NAME, rule, {
       ],
     },
     {
+      settings: {
+        'testing-library/custom-renders': ['customRender', 'renderWithRedux'],
+      },
       code: `
         const { container } = renderWithRedux(<Example />);
         container.querySelector();
       `,
-      options: [
-        {
-          renderFunctions: ['renderWithRedux'],
-        },
-      ],
       errors: [
         {
           line: 3,

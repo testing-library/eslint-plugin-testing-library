@@ -1,21 +1,17 @@
+import { ASTUtils, TSESTree } from '@typescript-eslint/experimental-utils';
 import {
-  ESLintUtils,
-  TSESTree,
-  ASTUtils,
-} from '@typescript-eslint/experimental-utils';
-import { getDocsUrl } from '../utils';
-import {
+  getDeepestIdentifierNode,
   isMemberExpression,
   isObjectPattern,
   isProperty,
-  isRenderVariableDeclarator,
 } from '../node-utils';
+import { createTestingLibraryRule } from '../create-testing-library-rule';
 
 export const RULE_NAME = 'no-container';
 export type MessageIds = 'noContainer';
-type Options = [{ renderFunctions?: string[] }];
+type Options = [];
 
-export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
+export default createTestingLibraryRule<Options, MessageIds>({
   name: RULE_NAME,
   meta: {
     type: 'problem',
@@ -29,25 +25,11 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
         'Avoid using container methods. Prefer using the methods from Testing Library, such as "getByRole()"',
     },
     fixable: null,
-    schema: [
-      {
-        type: 'object',
-        properties: {
-          renderFunctions: {
-            type: 'array',
-          },
-        },
-      },
-    ],
+    schema: [],
   },
-  defaultOptions: [
-    {
-      renderFunctions: [],
-    },
-  ],
+  defaultOptions: [],
 
-  create(context, [options]) {
-    const { renderFunctions } = options;
+  create(context, [], helpers) {
     const destructuredContainerPropNames: string[] = [];
     let renderWrapperName: string = null;
     let containerName: string = null;
@@ -81,30 +63,34 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
 
     return {
       VariableDeclarator(node) {
-        if (isRenderVariableDeclarator(node, ['render', ...renderFunctions])) {
-          if (isObjectPattern(node.id)) {
-            const containerIndex = node.id.properties.findIndex(
-              (property) =>
-                isProperty(property) &&
-                ASTUtils.isIdentifier(property.key) &&
-                property.key.name === 'container'
-            );
-            const nodeValue =
-              containerIndex !== -1 && node.id.properties[containerIndex].value;
-            if (ASTUtils.isIdentifier(nodeValue)) {
-              containerName = nodeValue.name;
-            } else {
-              isObjectPattern(nodeValue) &&
-                nodeValue.properties.forEach(
-                  (property) =>
-                    isProperty(property) &&
-                    ASTUtils.isIdentifier(property.key) &&
-                    destructuredContainerPropNames.push(property.key.name)
-                );
-            }
+        const initIdentifierNode = getDeepestIdentifierNode(node.init);
+
+        if (!helpers.isRenderUtil(initIdentifierNode)) {
+          return;
+        }
+
+        if (isObjectPattern(node.id)) {
+          const containerIndex = node.id.properties.findIndex(
+            (property) =>
+              isProperty(property) &&
+              ASTUtils.isIdentifier(property.key) &&
+              property.key.name === 'container'
+          );
+          const nodeValue =
+            containerIndex !== -1 && node.id.properties[containerIndex].value;
+          if (ASTUtils.isIdentifier(nodeValue)) {
+            containerName = nodeValue.name;
           } else {
-            renderWrapperName = ASTUtils.isIdentifier(node.id) && node.id.name;
+            isObjectPattern(nodeValue) &&
+              nodeValue.properties.forEach(
+                (property) =>
+                  isProperty(property) &&
+                  ASTUtils.isIdentifier(property.key) &&
+                  destructuredContainerPropNames.push(property.key.name)
+              );
           }
+        } else {
+          renderWrapperName = ASTUtils.isIdentifier(node.id) && node.id.name;
         }
       },
 
