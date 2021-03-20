@@ -69,6 +69,7 @@ type IsAsyncUtilFn = (
 ) => boolean;
 type IsFireEventMethodFn = (node: TSESTree.Identifier) => boolean;
 type IsRenderUtilFn = (node: TSESTree.Identifier) => boolean;
+type IsDebugUtilFn = (node: TSESTree.Identifier) => boolean;
 type IsPresenceAssertFn = (node: TSESTree.MemberExpression) => boolean;
 type IsAbsenceAssertFn = (node: TSESTree.MemberExpression) => boolean;
 type CanReportErrorsFn = () => boolean;
@@ -96,6 +97,7 @@ export interface DetectionHelpers {
   isAsyncUtil: IsAsyncUtilFn;
   isFireEventMethod: IsFireEventMethodFn;
   isRenderUtil: IsRenderUtilFn;
+  isDebugUtil: IsDebugUtilFn;
   isPresenceAssert: IsPresenceAssertFn;
   isAbsenceAssert: IsAbsenceAssertFn;
   canReportErrors: CanReportErrorsFn;
@@ -406,6 +408,17 @@ export function detectTestingLibraryUtils<
       );
     };
 
+    const isDebugUtil: IsDebugUtilFn = (node) => {
+      return isTestingLibraryUtil(
+        node,
+        (identifierNodeName, originalNodeName) => {
+          return [identifierNodeName, originalNodeName]
+            .filter(Boolean)
+            .includes('debug');
+        }
+      );
+    };
+
     /**
      * Determines whether a given MemberExpression node is a presence assert
      *
@@ -549,6 +562,7 @@ export function detectTestingLibraryUtils<
       isAsyncUtil,
       isFireEventMethod,
       isRenderUtil,
+      isDebugUtil,
       isPresenceAssert,
       isAbsenceAssert,
       canReportErrors,

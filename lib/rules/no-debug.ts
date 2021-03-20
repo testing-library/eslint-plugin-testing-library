@@ -1,28 +1,18 @@
 import {
-  ESLintUtils,
-  TSESTree,
-  ASTUtils,
-} from '@typescript-eslint/experimental-utils';
-import {
-  getDocsUrl,
-  LIBRARY_MODULES,
-  hasTestingLibraryImportModule,
-} from '../utils';
-import {
+  getDeepestIdentifierNode,
+  getPropertyIdentifierNode,
+  getReferenceNode,
   isObjectPattern,
   isProperty,
-  isCallExpression,
-  isLiteral,
-  isMemberExpression,
-  isImportSpecifier,
-  isRenderVariableDeclarator,
 } from '../node-utils';
+import { createTestingLibraryRule } from '../create-testing-library-rule';
+import { ASTUtils, TSESTree } from '@typescript-eslint/experimental-utils';
 
 export const RULE_NAME = 'no-debug';
 export type MessageIds = 'noDebug';
-type Options = [{ renderFunctions?: string[] }];
+type Options = [];
 
-export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
+export default createTestingLibraryRule<Options, MessageIds>({
   name: RULE_NAME,
   meta: {
     type: 'problem',
@@ -46,153 +36,66 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
       },
     ],
   },
-  defaultOptions: [
-    {
-      renderFunctions: [],
-    },
-  ],
+  defaultOptions: [],
 
-  create(context, [options]) {
-    let hasDestructuredDebugStatement = false;
-    const renderVariableDeclarators: TSESTree.VariableDeclarator[] = [];
-
-    const { renderFunctions } = options;
-
-    let hasImportedScreen = false;
-    let wildcardImportName: string = null;
+  create(context, [], helpers) {
+    const suspiciousDebugVariableNames: string[] = [];
+    const suspiciousReferenceNodes: TSESTree.Identifier[] = [];
 
     return {
       VariableDeclarator(node) {
-        if (isRenderVariableDeclarator(node, ['render', ...renderFunctions])) {
-          if (
-            isObjectPattern(node.id) &&
-            node.id.properties.some(
-              (property) =>
-                isProperty(property) &&
-                ASTUtils.isIdentifier(property.key) &&
-                property.key.name === 'debug'
-            )
-          ) {
-            hasDestructuredDebugStatement = true;
-          }
+        const initIdentifierNode = getDeepestIdentifierNode(node.init);
 
-          if (node.id.type === 'Identifier') {
-            renderVariableDeclarators.push(node);
-          }
-        }
-      },
-      [`VariableDeclarator > CallExpression > Identifier[name="require"]`](
-        node: TSESTree.Identifier
-      ) {
-        const { arguments: args } = node.parent as TSESTree.CallExpression;
-
-        const literalNodeScreenModuleName = args.find(
-          (args) =>
-            isLiteral(args) &&
-            typeof args.value === 'string' &&
-            LIBRARY_MODULES.includes(args.value)
-        );
-
-        if (!literalNodeScreenModuleName) {
+        if (!helpers.isRenderUtil(initIdentifierNode)) {
           return;
         }
 
-        const declaratorNode = node.parent
-          .parent as TSESTree.VariableDeclarator;
-
-        hasImportedScreen =
-          isObjectPattern(declaratorNode.id) &&
-          declaratorNode.id.properties.some(
-            (property) =>
+        // find debug obtained from render and save their name, like:
+        // const { debug } = render();
+        if (isObjectPattern(node.id)) {
+          for (const property of node.id.properties) {
+            if (
               isProperty(property) &&
               ASTUtils.isIdentifier(property.key) &&
-              property.key.name === 'screen'
-          );
-      },
-      // checks if import has shape:
-      // import { screen } from '@testing-library/dom';
-      ImportDeclaration(node: TSESTree.ImportDeclaration) {
-        if (!hasTestingLibraryImportModule(node)) {
-          return;
-        }
-
-        hasImportedScreen = node.specifiers.some(
-          (s) => isImportSpecifier(s) && s.imported.name === 'screen'
-        );
-      },
-      // checks if import has shape:
-      // import * as dtl from '@testing-library/dom';
-      'ImportDeclaration ImportNamespaceSpecifier'(
-        node: TSESTree.ImportNamespaceSpecifier
-      ) {
-        const importDeclarationNode = node.parent as TSESTree.ImportDeclaration;
-        if (!hasTestingLibraryImportModule(importDeclarationNode)) {
-          return;
-        }
-
-        wildcardImportName = node.local && node.local.name;
-      },
-      [`CallExpression > Identifier[name="debug"]`](node: TSESTree.Identifier) {
-        if (hasDestructuredDebugStatement) {
-          context.report({
-            node,
-            messageId: 'noDebug',
-          });
-        }
-      },
-      [`CallExpression > MemberExpression > Identifier[name="debug"]`](
-        node: TSESTree.Identifier
-      ) {
-        const memberExpression = node.parent as TSESTree.MemberExpression;
-        const identifier = memberExpression.object as TSESTree.Identifier;
-        const memberExpressionName = identifier.name;
-        /*
-         check if `debug` used following the pattern:
-
-            import { screen } from '@testing-library/dom';
-            ...
-            screen.debug();
-        */
-        const isScreenDebugUsed =
-          hasImportedScreen && memberExpressionName === 'screen';
-
-        /*
-         check if `debug` used following the pattern:
-
-            import * as dtl from '@testing-library/dom';
-            ...
-            dtl.debug();
-        */
-        const isNamespaceDebugUsed =
-          wildcardImportName && memberExpressionName === wildcardImportName;
-
-        if (isScreenDebugUsed || isNamespaceDebugUsed) {
-          context.report({
-            node,
-            messageId: 'noDebug',
-          });
-        }
-      },
-      'Program:exit'() {
-        renderVariableDeclarators.forEach((renderVar) => {
-          const renderVarReferences = context
-            .getDeclaredVariables(renderVar)[0]
-            .references.slice(1);
-          renderVarReferences.forEach((ref) => {
-            const parent = ref.identifier.parent;
-            if (
-              isMemberExpression(parent) &&
-              ASTUtils.isIdentifier(parent.property) &&
-              parent.property.name === 'debug' &&
-              isCallExpression(parent.parent)
+              property.key.name === 'debug'
             ) {
-              context.report({
-                node: parent.property,
-                messageId: 'noDebug',
-              });
+              suspiciousDebugVariableNames.push(
+                getDeepestIdentifierNode(property.value).name
+              );
             }
+          }
+        }
+
+        // find utils kept from render and save their node, like:
+        // const utils = render();
+        if (ASTUtils.isIdentifier(node.id)) {
+          suspiciousReferenceNodes.push(node.id);
+        }
+      },
+      CallExpression(node) {
+        const callExpressionIdentifier = getDeepestIdentifierNode(node);
+        const referenceNode = getReferenceNode(node);
+        const referenceIdentifier = getPropertyIdentifierNode(referenceNode);
+
+        const isDebugUtil = helpers.isDebugUtil(callExpressionIdentifier);
+        const isDeclaredDebugVariable = suspiciousDebugVariableNames.includes(
+          callExpressionIdentifier.name
+        );
+        const isChainedReferenceDebug = suspiciousReferenceNodes.some(
+          (suspiciousReferenceIdentifier) => {
+            return (
+              callExpressionIdentifier.name === 'debug' &&
+              suspiciousReferenceIdentifier.name === referenceIdentifier.name
+            );
+          }
+        );
+
+        if (isDebugUtil || isDeclaredDebugVariable || isChainedReferenceDebug) {
+          context.report({
+            node: callExpressionIdentifier,
+            messageId: 'noDebug',
           });
-        });
+        }
       },
     };
   },
