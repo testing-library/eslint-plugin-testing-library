@@ -392,7 +392,7 @@ export function getPropertyIdentifierNode(
 }
 
 /**
- * Gets the deepest identifier node from a given node.
+ * Gets the deepest identifier node in the expression from a given node.
  *
  * Opposite of {@link getReferenceNode}
  *
@@ -416,11 +416,15 @@ export function getDeepestIdentifierNode(
     return getDeepestIdentifierNode(node.callee);
   }
 
+  if (ASTUtils.isAwaitExpression(node)) {
+    return getDeepestIdentifierNode(node.argument);
+  }
+
   return null;
 }
 
 /**
- * Gets the farthest node from a given node.
+ * Gets the farthest node in the expression from a given node.
  *
  * Opposite of {@link getDeepestIdentifierNode}
 
