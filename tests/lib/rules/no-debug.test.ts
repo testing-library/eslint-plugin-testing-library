@@ -6,9 +6,18 @@ const ruleTester = createRuleTester();
 ruleTester.run(RULE_NAME, rule, {
   valid: [
     {
+      settings: { 'testing-library/utils-module': 'test-utils' },
       code: `debug()`,
     },
     {
+      settings: { 'testing-library/utils-module': 'test-utils' },
+      code: `
+      import { screen } from 'somewhere-else'
+      screen.debug()
+      `,
+    },
+    {
+      settings: { 'testing-library/utils-module': 'test-utils' },
       code: `() => {
         const somethingElse = {}
         const { debug } = foo()
@@ -16,6 +25,7 @@ ruleTester.run(RULE_NAME, rule, {
       }`,
     },
     {
+      settings: { 'testing-library/utils-module': 'test-utils' },
       code: `
         let foo
         const debug = require('debug')
@@ -41,6 +51,7 @@ ruleTester.run(RULE_NAME, rule, {
       `,
     },
     {
+      settings: { 'testing-library/utils-module': 'test-utils' },
       code: `screen.debug()`,
     },
     {
@@ -64,6 +75,7 @@ ruleTester.run(RULE_NAME, rule, {
       `,
     },
     {
+      settings: { 'testing-library/utils-module': 'test-utils' },
       code: `
         import * as foo from '@somewhere/else';
         foo.debug();
@@ -73,12 +85,14 @@ ruleTester.run(RULE_NAME, rule, {
       code: `import { queries } from '@testing-library/dom'`,
     },
     {
+      settings: { 'testing-library/utils-module': 'test-utils' },
       code: `
         const { screen } = require('something-else')
         screen.debug()
       `,
     },
     {
+      settings: { 'testing-library/utils-module': 'test-utils' },
       code: `
         import { screen } from 'something-else'
         screen.debug()
@@ -95,6 +109,25 @@ ruleTester.run(RULE_NAME, rule, {
 
   invalid: [
     {
+      code: `debug()`,
+      errors: [{ line: 1, column: 1, messageId: 'noDebug' }],
+    },
+    {
+      code: `
+      import { screen } from 'aggressive-reporting'
+      screen.debug()
+      `,
+      errors: [{ line: 3, column: 14, messageId: 'noDebug' }],
+    },
+    {
+      settings: { 'testing-library/utils-module': 'test-utils' },
+      code: `
+      import { screen } from 'test-utils'
+      screen.debug()
+      `,
+      errors: [{ line: 3, column: 14, messageId: 'noDebug' }],
+    },
+    {
       code: `
         const { debug } = render(<Component/>)
         debug()
@@ -108,15 +141,13 @@ ruleTester.run(RULE_NAME, rule, {
       ],
     },
     {
+      settings: {
+        'testing-library/custom-renders': ['customRender', 'renderWithRedux'],
+      },
       code: `
         const { debug } = renderWithRedux(<Component/>)
         debug()
       `,
-      options: [
-        {
-          renderFunctions: ['renderWithRedux'],
-        },
-      ],
       errors: [
         {
           line: 3,

@@ -1,19 +1,9 @@
-import { ASTUtils, TSESTree } from '@typescript-eslint/experimental-utils';
-import { hasTestingLibraryImportModule, LIBRARY_MODULES } from '../utils';
-import {
-  isCallExpression,
-  isImportSpecifier,
-  isLiteral,
-  isMemberExpression,
-  isObjectPattern,
-  isProperty,
-  isRenderVariableDeclarator,
-} from '../node-utils';
+import { getDeepestIdentifierNode } from '../node-utils';
 import { createTestingLibraryRule } from '../create-testing-library-rule';
 
 export const RULE_NAME = 'no-debug';
 export type MessageIds = 'noDebug';
-type Options = [{ renderFunctions?: string[] }];
+type Options = [];
 
 export default createTestingLibraryRule<Options, MessageIds>({
   name: RULE_NAME,
@@ -39,152 +29,30 @@ export default createTestingLibraryRule<Options, MessageIds>({
       },
     ],
   },
-  defaultOptions: [
-    {
-      renderFunctions: [],
-    },
-  ],
+  defaultOptions: [],
 
-  create(context, [options]) {
-    let hasDestructuredDebugStatement = false;
-    const renderVariableDeclarators: TSESTree.VariableDeclarator[] = [];
-
-    const { renderFunctions } = options;
-
-    let hasImportedScreen = false;
-    let wildcardImportName: string = null;
-
+  create(context, [], helpers) {
     return {
       VariableDeclarator(node) {
-        if (isRenderVariableDeclarator(node, ['render', ...renderFunctions])) {
-          if (
-            isObjectPattern(node.id) &&
-            node.id.properties.some(
-              (property) =>
-                isProperty(property) &&
-                ASTUtils.isIdentifier(property.key) &&
-                property.key.name === 'debug'
-            )
-          ) {
-            hasDestructuredDebugStatement = true;
-          }
+        const initIdentifierNode = getDeepestIdentifierNode(node.init);
 
-          if (node.id.type === 'Identifier') {
-            renderVariableDeclarators.push(node);
-          }
-        }
-      },
-      [`VariableDeclarator > CallExpression > Identifier[name="require"]`](
-        node: TSESTree.Identifier
-      ) {
-        const { arguments: args } = node.parent as TSESTree.CallExpression;
-
-        const literalNodeScreenModuleName = args.find(
-          (args) =>
-            isLiteral(args) &&
-            typeof args.value === 'string' &&
-            LIBRARY_MODULES.includes(args.value)
-        );
-
-        if (!literalNodeScreenModuleName) {
+        if (!initIdentifierNode) {
           return;
         }
 
-        const declaratorNode = node.parent
-          .parent as TSESTree.VariableDeclarator;
-
-        hasImportedScreen =
-          isObjectPattern(declaratorNode.id) &&
-          declaratorNode.id.properties.some(
-            (property) =>
-              isProperty(property) &&
-              ASTUtils.isIdentifier(property.key) &&
-              property.key.name === 'screen'
-          );
+        // TODO: check if named 'debug' and coming from render,
+        //  and add it to suspicious list if so.
       },
-      // checks if import has shape:
-      // import { screen } from '@testing-library/dom';
-      ImportDeclaration(node: TSESTree.ImportDeclaration) {
-        if (!hasTestingLibraryImportModule(node)) {
+      CallExpression(node) {
+        const callExpressionIdentifier = getDeepestIdentifierNode(node);
+
+        if (!helpers.isDebugUtil(callExpressionIdentifier)) {
           return;
         }
 
-        hasImportedScreen = node.specifiers.some(
-          (s) => isImportSpecifier(s) && s.imported.name === 'screen'
-        );
-      },
-      // checks if import has shape:
-      // import * as dtl from '@testing-library/dom';
-      'ImportDeclaration ImportNamespaceSpecifier'(
-        node: TSESTree.ImportNamespaceSpecifier
-      ) {
-        const importDeclarationNode = node.parent as TSESTree.ImportDeclaration;
-        if (!hasTestingLibraryImportModule(importDeclarationNode)) {
-          return;
-        }
-
-        wildcardImportName = node.local && node.local.name;
-      },
-      [`CallExpression > Identifier[name="debug"]`](node: TSESTree.Identifier) {
-        if (hasDestructuredDebugStatement) {
-          context.report({
-            node,
-            messageId: 'noDebug',
-          });
-        }
-      },
-      [`CallExpression > MemberExpression > Identifier[name="debug"]`](
-        node: TSESTree.Identifier
-      ) {
-        const memberExpression = node.parent as TSESTree.MemberExpression;
-        const identifier = memberExpression.object as TSESTree.Identifier;
-        const memberExpressionName = identifier.name;
-        /*
-         check if `debug` used following the pattern:
-
-            import { screen } from '@testing-library/dom';
-            ...
-            screen.debug();
-        */
-        const isScreenDebugUsed =
-          hasImportedScreen && memberExpressionName === 'screen';
-
-        /*
-         check if `debug` used following the pattern:
-
-            import * as dtl from '@testing-library/dom';
-            ...
-            dtl.debug();
-        */
-        const isNamespaceDebugUsed =
-          wildcardImportName && memberExpressionName === wildcardImportName;
-
-        if (isScreenDebugUsed || isNamespaceDebugUsed) {
-          context.report({
-            node,
-            messageId: 'noDebug',
-          });
-        }
-      },
-      'Program:exit'() {
-        renderVariableDeclarators.forEach((renderVar) => {
-          const renderVarReferences = context
-            .getDeclaredVariables(renderVar)[0]
-            .references.slice(1);
-          renderVarReferences.forEach((ref) => {
-            const parent = ref.identifier.parent;
-            if (
-              isMemberExpression(parent) &&
-              ASTUtils.isIdentifier(parent.property) &&
-              parent.property.name === 'debug' &&
-              isCallExpression(parent.parent)
-            ) {
-              context.report({
-                node: parent.property,
-                messageId: 'noDebug',
-              });
-            }
-          });
+        context.report({
+          node: callExpressionIdentifier,
+          messageId: 'noDebug',
         });
       },
     };
