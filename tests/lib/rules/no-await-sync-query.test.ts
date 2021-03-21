@@ -69,7 +69,9 @@ ruleTester.run(RULE_NAME, rule, {
     },
     // sync query awaited but not matching filename pattern is invalid but not reported
     {
-      settings: { 'testing-library/file-patterns': ['nope\\.js'] },
+      settings: {
+        'testing-library/file-patterns': ['**/?(*.)+(nope).[jt]s?(x)'],
+      },
       code: `
       () => {
         const element = await getByRole('button')

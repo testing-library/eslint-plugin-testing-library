@@ -56,7 +56,9 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       settings: {
-        'testing-library/file-patterns': ['testing-library\\.js'],
+        'testing-library/file-patterns': [
+          '**/?(*.)+(testing-library).[jt]s?(x)',
+        ],
       },
       code: `
       import { render, cleanup } from "${ALL_TESTING_LIBRARIES_WITH_CLEANUP[0]}"

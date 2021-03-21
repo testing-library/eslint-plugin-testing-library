@@ -70,7 +70,7 @@ ruleTester.run(RULE_NAME, rule, {
       import { foo } from 'report-me'
     `,
       settings: {
-        'testing-library/file-patterns': ['testing-library\\.js'],
+        'testing-library/file-patterns': ['**/?(*.)+(not-matching).[jt]s?(x)'],
       },
     },
     {
@@ -80,7 +80,7 @@ ruleTester.run(RULE_NAME, rule, {
       const { foo } = require('report-me')
     `,
       settings: {
-        'testing-library/file-patterns': ['testing-library\\.js'],
+        'testing-library/file-patterns': ['**/?(*.)+(not-matching).[jt]s?(x)'],
       },
     },
     {
@@ -252,7 +252,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       settings: {
-        'testing-library/file-patterns': ['testing-library\\.js'],
+        'testing-library/file-patterns': ['**/?(*.)+(not-matching).[jt]s?(x)'],
       },
       code: `
       // case: built-in "getBy*" query not reported because custom filename doesn't match
@@ -261,7 +261,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       settings: {
-        'testing-library/file-patterns': ['testing-library\\.js'],
+        'testing-library/file-patterns': ['**/?(*.)+(not-matching).[jt]s?(x)'],
       },
       code: `
       // case: built-in "queryBy*" query not reported because custom filename doesn't match
@@ -270,7 +270,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       settings: {
-        'testing-library/file-patterns': ['testing-library\\.js'],
+        'testing-library/file-patterns': ['**/?(*.)+(not-matching).[jt]s?(x)'],
       },
       code: `
       // case: built-in "findBy*" query not reported because custom filename doesn't match
@@ -320,7 +320,7 @@ ruleTester.run(RULE_NAME, rule, {
     {
       settings: {
         'testing-library/utils-module': 'test-utils',
-        'testing-library/file-patterns': ['testing-library\\.js'],
+        'testing-library/file-patterns': ['**/?(*.)+(not-matching).[jt]s?(x)'],
       },
       code: `
       // case: matching custom settings partially - module but not filename
@@ -334,7 +334,7 @@ ruleTester.run(RULE_NAME, rule, {
     {
       settings: {
         'testing-library/utils-module': 'test-utils',
-        'testing-library/file-patterns': ['testing-library\\.js'],
+        'testing-library/file-patterns': ['**/?(*.)+(not-matching).[jt]s?(x)'],
       },
       filename: 'project/src/MyComponent.testing-library.js',
       code: `
@@ -382,7 +382,9 @@ ruleTester.run(RULE_NAME, rule, {
       import { foo } from 'report-me'
     `,
       settings: {
-        'testing-library/file-patterns': ['testing-library\\.js'],
+        'testing-library/file-patterns': [
+          '**/?(*.)+(testing-library).[jt]s?(x)',
+        ],
       },
       errors: [{ line: 3, column: 7, messageId: 'fakeError' }],
     },
@@ -924,7 +926,7 @@ ruleTester.run(RULE_NAME, rule, {
       settings: {
         'testing-library/custom-renders': ['customRender', 'renderWithRedux'],
         'testing-library/utils-module': 'test-utils',
-        'testing-library/file-patterns': ['custom-suffix\\.js'],
+        'testing-library/file-patterns': ['**/?(*.)+(custom-suffix).[jt]s?(x)'],
       },
       code: `
       // case: all aggressive reporting disabled and filename setup - matching all custom settings
@@ -948,7 +950,9 @@ ruleTester.run(RULE_NAME, rule, {
     {
       settings: {
         'testing-library/utils-module': 'test-utils',
-        'testing-library/file-patterns': ['testing-library\\.js'],
+        'testing-library/file-patterns': [
+          '**/?(*.)+(testing-library|custom-suffix).[jt]s?(x)',
+        ],
       },
       filename: 'project/src/MyComponent.testing-library.js',
       code: `

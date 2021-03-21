@@ -3,6 +3,8 @@ import {
   TSESLint,
   TSESTree,
 } from '@typescript-eslint/experimental-utils';
+import micromatch from 'micromatch';
+
 import {
   getAssertNodeInfo,
   getDeepestIdentifierNode,
@@ -110,7 +112,10 @@ export interface DetectionHelpers {
   isNodeComingFromTestingLibrary: IsNodeComingFromTestingLibraryFn;
 }
 
-const DEFAULT_FILENAME_PATTERN = ['^.*\\.(test|spec)\\.[jt]sx?$'];
+const DEFAULT_FILE_PATTERNS = [
+  '**/__tests__/**/*.[jt]s?(x)',
+  '**/?(*.)+(spec|test).[jt]s?(x)',
+];
 
 const FIRE_EVENT_NAME = 'fireEvent';
 const RENDER_NAME = 'render';
@@ -134,7 +139,7 @@ export function detectTestingLibraryUtils<
     const customModule = context.settings['testing-library/utils-module'];
     const filePatterns =
       context.settings['testing-library/file-patterns'] ??
-      DEFAULT_FILENAME_PATTERN;
+      DEFAULT_FILE_PATTERNS;
     const customRenders = context.settings['testing-library/custom-renders'];
 
     /**
@@ -244,12 +249,12 @@ export function detectTestingLibraryUtils<
     };
 
     /**
-     * Determines whether filename is valid or not for current file
-     * being analyzed based on "testing-library/file-patterns" setting.
+     * Determines whether file matches given patterns for being analyzed or not
+     * based on "testing-library/file-patterns" setting.
      */
     const isMatchingFilename: IsMatchingFilenameFn = () => {
       const fileName = context.getFilename();
-      return filePatterns.some((pattern) => fileName.match(pattern));
+      return micromatch.isMatch(fileName, filePatterns);
     };
 
     /**
