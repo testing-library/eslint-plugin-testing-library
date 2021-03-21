@@ -31,7 +31,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: 'import { fireEvent } from "dom-testing-library"',
-      settings: { 'testing-library/filename-pattern': 'nope\\.js' },
+      settings: { 'testing-library/file-patterns': 'nope\\.js' },
     },
     {
       code: 'const { fireEvent } = require("dom-testing-library")',
@@ -39,7 +39,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: 'const { fireEvent } = require("dom-testing-library")',
-      settings: { 'testing-library/filename-pattern': 'nope\\.js' },
+      settings: { 'testing-library/file-patterns': 'nope\\.js' },
     },
     {
       code: 'import { fireEvent } from "@testing-library/dom"',
@@ -47,7 +47,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: 'import { fireEvent } from "@testing-library/dom"',
-      settings: { 'testing-library/filename-pattern': 'nope\\.js' },
+      settings: { 'testing-library/file-patterns': 'nope\\.js' },
     },
     {
       code: 'const { fireEvent } = require("@testing-library/dom")',
@@ -55,7 +55,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: 'const { fireEvent } = require("@testing-library/dom")',
-      settings: { 'testing-library/filename-pattern': 'nope\\.js' },
+      settings: { 'testing-library/file-patterns': 'nope\\.js' },
     },
   ],
   invalid: [

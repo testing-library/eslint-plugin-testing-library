@@ -27,7 +27,7 @@ import {
 
 export type TestingLibrarySettings = {
   'testing-library/utils-module'?: string;
-  'testing-library/filename-pattern'?: string;
+  'testing-library/file-patterns'?: string;
   'testing-library/custom-renders'?: string[];
 };
 
@@ -133,7 +133,7 @@ export function detectTestingLibraryUtils<
     // Init options based on shared ESLint settings
     const customModule = context.settings['testing-library/utils-module'];
     const filenamePattern =
-      context.settings['testing-library/filename-pattern'] ??
+      context.settings['testing-library/file-patterns'] ??
       DEFAULT_FILENAME_PATTERN;
     const customRenders = context.settings['testing-library/custom-renders'];
 
@@ -245,7 +245,7 @@ export function detectTestingLibraryUtils<
 
     /**
      * Determines whether filename is valid or not for current file
-     * being analyzed based on "testing-library/filename-pattern" setting.
+     * being analyzed based on "testing-library/file-patterns" setting.
      */
     const isValidFilename: IsValidFilenameFn = () => {
       const fileName = context.getFilename();
