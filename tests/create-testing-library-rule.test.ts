@@ -376,6 +376,14 @@ ruleTester.run(RULE_NAME, rule, {
       errors: [{ line: 3, column: 7, messageId: 'fakeError' }],
     },
     {
+      filename: 'project/src/__tests__/MyComponent.tsx',
+      code: `
+      // case: import module forced to be reported from __tests__ folder without .spec or .test suffix
+      import { foo } from 'report-me'
+    `,
+      errors: [{ line: 3, column: 7, messageId: 'fakeError' }],
+    },
+    {
       filename: 'project/src/MyComponent.testing-library.js',
       code: `
       // case: import module forced to be reported with custom file name
