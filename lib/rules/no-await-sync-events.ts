@@ -39,10 +39,11 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
         const memberExpression = node.parent as TSESTree.MemberExpression;
         const methodNode = memberExpression.property as TSESTree.Identifier;
         const callExpression = memberExpression.parent as TSESTree.CallExpression;
+        const lastArg =
+          callExpression.arguments[callExpression.arguments.length - 1];
         const withDelay =
-          callExpression.arguments.length >= 3 &&
-          isObjectExpression(callExpression.arguments[2]) &&
-          callExpression.arguments[2].properties.some(
+          isObjectExpression(lastArg) &&
+          lastArg.properties.some(
             (property) =>
               isProperty(property) &&
               ASTUtils.isIdentifier(property.key) &&
@@ -52,7 +53,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
         if (
           !(
             node.name === 'userEvent' &&
-            methodNode.name === 'type' &&
+            ['type', 'keyboard'].includes(methodNode.name) &&
             withDelay
           )
         ) {
