@@ -56,7 +56,7 @@ type GetCustomModuleImportNodeFn = () => ImportModuleNode | null;
 type GetTestingLibraryImportNameFn = () => string | undefined;
 type GetCustomModuleImportNameFn = () => string | undefined;
 type IsTestingLibraryImportedFn = () => boolean;
-type IsValidFilenameFn = () => boolean;
+type IsMatchingFilenameFn = () => boolean;
 type IsGetQueryVariantFn = (node: TSESTree.Identifier) => boolean;
 type IsQueryQueryVariantFn = (node: TSESTree.Identifier) => boolean;
 type IsFindQueryVariantFn = (node: TSESTree.Identifier) => boolean;
@@ -90,7 +90,7 @@ export interface DetectionHelpers {
   getTestingLibraryImportName: GetTestingLibraryImportNameFn;
   getCustomModuleImportName: GetCustomModuleImportNameFn;
   isTestingLibraryImported: IsTestingLibraryImportedFn;
-  isValidFilename: IsValidFilenameFn;
+  isMatchingFilename: IsMatchingFilenameFn;
   isGetQueryVariant: IsGetQueryVariantFn;
   isQueryQueryVariant: IsQueryQueryVariantFn;
   isFindQueryVariant: IsFindQueryVariantFn;
@@ -247,7 +247,7 @@ export function detectTestingLibraryUtils<
      * Determines whether filename is valid or not for current file
      * being analyzed based on "testing-library/file-patterns" setting.
      */
-    const isValidFilename: IsValidFilenameFn = () => {
+    const isMatchingFilename: IsMatchingFilenameFn = () => {
       const fileName = context.getFilename();
       return filePatterns.some((pattern) => fileName.match(pattern));
     };
@@ -536,7 +536,7 @@ export function detectTestingLibraryUtils<
      * Determines if file inspected meets all conditions to be reported by rules or not.
      */
     const canReportErrors: CanReportErrorsFn = () => {
-      return isTestingLibraryImported() && isValidFilename();
+      return isTestingLibraryImported() && isMatchingFilename();
     };
 
     /**
@@ -566,7 +566,7 @@ export function detectTestingLibraryUtils<
       getTestingLibraryImportName,
       getCustomModuleImportName,
       isTestingLibraryImported,
-      isValidFilename,
+      isMatchingFilename,
       isGetQueryVariant,
       isQueryQueryVariant,
       isFindQueryVariant,
