@@ -27,7 +27,7 @@ import {
 
 export type TestingLibrarySettings = {
   'testing-library/utils-module'?: string;
-  'testing-library/file-patterns'?: string;
+  'testing-library/file-patterns'?: string[];
   'testing-library/custom-renders'?: string[];
 };
 
@@ -110,7 +110,7 @@ export interface DetectionHelpers {
   isNodeComingFromTestingLibrary: IsNodeComingFromTestingLibraryFn;
 }
 
-const DEFAULT_FILENAME_PATTERN = '^.*\\.(test|spec)\\.[jt]sx?$';
+const DEFAULT_FILENAME_PATTERN = ['^.*\\.(test|spec)\\.[jt]sx?$'];
 
 const FIRE_EVENT_NAME = 'fireEvent';
 const RENDER_NAME = 'render';
@@ -132,7 +132,7 @@ export function detectTestingLibraryUtils<
 
     // Init options based on shared ESLint settings
     const customModule = context.settings['testing-library/utils-module'];
-    const filenamePattern =
+    const filePatterns =
       context.settings['testing-library/file-patterns'] ??
       DEFAULT_FILENAME_PATTERN;
     const customRenders = context.settings['testing-library/custom-renders'];
@@ -249,7 +249,7 @@ export function detectTestingLibraryUtils<
      */
     const isValidFilename: IsValidFilenameFn = () => {
       const fileName = context.getFilename();
-      return !!fileName.match(filenamePattern);
+      return filePatterns.some((pattern) => fileName.match(pattern));
     };
 
     /**
