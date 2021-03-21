@@ -336,7 +336,7 @@ ruleTester.run(RULE_NAME, rule, {
         'testing-library/utils-module': 'test-utils',
         'testing-library/file-patterns': ['testing-library\\.js'],
       },
-      filename: 'MyComponent.testing-library.js',
+      filename: 'project/src/MyComponent.testing-library.js',
       code: `
       // case: matching custom settings partially - filename but not module
       import { render } from 'other-utils'
@@ -368,7 +368,7 @@ ruleTester.run(RULE_NAME, rule, {
       errors: [{ line: 3, column: 7, messageId: 'fakeError' }],
     },
     {
-      filename: 'MyComponent.spec.js',
+      filename: 'project/src/MyComponent.spec.js',
       code: `
       // case: import module forced to be reported but from .spec.js named file
       import { foo } from 'report-me'
@@ -376,7 +376,7 @@ ruleTester.run(RULE_NAME, rule, {
       errors: [{ line: 3, column: 7, messageId: 'fakeError' }],
     },
     {
-      filename: 'MyComponent.testing-library.js',
+      filename: 'project/src/MyComponent.testing-library.js',
       code: `
       // case: import module forced to be reported with custom file name
       import { foo } from 'report-me'
@@ -733,7 +733,7 @@ ruleTester.run(RULE_NAME, rule, {
       errors: [{ line: 3, column: 25, messageId: 'findByError' }],
     },
     {
-      filename: 'MyComponent.spec.js',
+      filename: 'project/src/MyComponent.spec.js',
       code: `
       // case: custom "getBy*" query reported without import (aggressive reporting)
       getByIcon('search')
@@ -741,7 +741,7 @@ ruleTester.run(RULE_NAME, rule, {
       errors: [{ line: 3, column: 7, messageId: 'customQueryError' }],
     },
     {
-      filename: 'MyComponent.spec.js',
+      filename: 'project/src/MyComponent.spec.js',
       code: `
       // case: custom "getBy*" query reported without import using within (aggressive reporting)
       within(container).getByIcon('search')
@@ -788,7 +788,7 @@ ruleTester.run(RULE_NAME, rule, {
       errors: [{ line: 4, column: 7, messageId: 'getByError' }],
     },
     {
-      filename: 'MyComponent.spec.js',
+      filename: 'project/src/MyComponent.spec.js',
       settings: {
         'testing-library/utils-module': 'test-utils',
       },
@@ -800,7 +800,7 @@ ruleTester.run(RULE_NAME, rule, {
       errors: [{ line: 4, column: 7, messageId: 'queryByError' }],
     },
     {
-      filename: 'MyComponent.spec.js',
+      filename: 'project/src/MyComponent.spec.js',
       settings: {
         'testing-library/utils-module': 'test-utils',
       },
@@ -823,7 +823,7 @@ ruleTester.run(RULE_NAME, rule, {
       errors: [{ line: 4, column: 7, messageId: 'getByError' }],
     },
     {
-      filename: 'MyComponent.spec.js',
+      filename: 'project/src/MyComponent.spec.js',
       settings: {
         'testing-library/utils-module': 'test-utils',
       },
@@ -835,7 +835,7 @@ ruleTester.run(RULE_NAME, rule, {
       errors: [{ line: 4, column: 7, messageId: 'queryByError' }],
     },
     {
-      filename: 'MyComponent.spec.js',
+      filename: 'project/src/MyComponent.spec.js',
       settings: {
         'testing-library/utils-module': 'test-utils',
       },
@@ -859,7 +859,7 @@ ruleTester.run(RULE_NAME, rule, {
       errors: [{ line: 4, column: 7, messageId: 'customQueryError' }],
     },
     {
-      filename: 'MyComponent.spec.js',
+      filename: 'project/src/MyComponent.spec.js',
       settings: {
         'testing-library/utils-module': 'test-utils',
       },
@@ -871,7 +871,7 @@ ruleTester.run(RULE_NAME, rule, {
       errors: [{ line: 4, column: 7, messageId: 'customQueryError' }],
     },
     {
-      filename: 'MyComponent.spec.js',
+      filename: 'project/src/MyComponent.spec.js',
       settings: {
         'testing-library/utils-module': 'test-utils',
       },
@@ -894,7 +894,7 @@ ruleTester.run(RULE_NAME, rule, {
       errors: [{ line: 4, column: 7, messageId: 'customQueryError' }],
     },
     {
-      filename: 'MyComponent.spec.js',
+      filename: 'project/src/MyComponent.spec.js',
       settings: {
         'testing-library/utils-module': 'test-utils',
       },
@@ -906,7 +906,7 @@ ruleTester.run(RULE_NAME, rule, {
       errors: [{ line: 4, column: 7, messageId: 'customQueryError' }],
     },
     {
-      filename: 'MyComponent.spec.js',
+      filename: 'project/src/MyComponent.spec.js',
       settings: {
         'testing-library/utils-module': 'test-utils',
       },
@@ -920,7 +920,7 @@ ruleTester.run(RULE_NAME, rule, {
 
     // Test Cases for all settings mixed
     {
-      filename: 'MyComponent.custom-suffix.js',
+      filename: 'project/src/MyComponent.custom-suffix.js',
       settings: {
         'testing-library/custom-renders': ['customRender', 'renderWithRedux'],
         'testing-library/utils-module': 'test-utils',
@@ -950,7 +950,7 @@ ruleTester.run(RULE_NAME, rule, {
         'testing-library/utils-module': 'test-utils',
         'testing-library/file-patterns': ['testing-library\\.js'],
       },
-      filename: 'MyComponent.testing-library.js',
+      filename: 'project/src/MyComponent.testing-library.js',
       code: `
       // case: matching all custom settings
       import { render } from 'test-utils'

@@ -2,7 +2,8 @@ import { resolve } from 'path';
 import { TSESLint } from '@typescript-eslint/experimental-utils';
 
 const DEFAULT_TEST_CASE_CONFIG = {
-  filename: 'MyComponent.test.js',
+  filename:
+    '/Users/whoever/project/src/components/MyComponent/MyComponent.test.js',
 };
 
 class TestingLibraryRuleTester extends TSESLint.RuleTester {

@@ -27,7 +27,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: 'import { fireEvent } from "dom-testing-library"',
-      filename: 'filename.not-matching.js',
+      filename: 'project/src/filename.not-matching.js',
     },
     {
       code: 'import { fireEvent } from "dom-testing-library"',
@@ -35,7 +35,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: 'const { fireEvent } = require("dom-testing-library")',
-      filename: 'filename.not-matching.js',
+      filename: 'project/src/filename.not-matching.js',
     },
     {
       code: 'const { fireEvent } = require("dom-testing-library")',
@@ -43,7 +43,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: 'import { fireEvent } from "@testing-library/dom"',
-      filename: 'filename.not-matching.js',
+      filename: 'project/src/filename.not-matching.js',
     },
     {
       code: 'import { fireEvent } from "@testing-library/dom"',
@@ -51,7 +51,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: 'const { fireEvent } = require("@testing-library/dom")',
-      filename: 'filename.not-matching.js',
+      filename: 'project/src/filename.not-matching.js',
     },
     {
       code: 'const { fireEvent } = require("@testing-library/dom")',
