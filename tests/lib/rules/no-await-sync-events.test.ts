@@ -138,6 +138,12 @@ ruleTester.run(RULE_NAME, rule, {
       }
       `,
     },
+    {
+      code: `() => {
+        await userEvent.keyboard('foo', {delay: 1234})
+      }
+      `,
+    },
   ],
 
   invalid: [
@@ -157,9 +163,13 @@ ruleTester.run(RULE_NAME, rule, {
         import userEvent from '@testing-library/user-event';
         test('should report sync event awaited', async() => {
           await userEvent.type('foo', 'bar', {hello: 1234});
+          await userEvent.keyboard('foo', {hello: 1234});
         });
       `,
-      errors: [{ line: 4, messageId: 'noAwaitSyncEvents' },],
+      errors: [
+        { line: 4, messageId: 'noAwaitSyncEvents' },
+        { line: 5, messageId: 'noAwaitSyncEvents' },
+      ],
     }
   ],
 });
