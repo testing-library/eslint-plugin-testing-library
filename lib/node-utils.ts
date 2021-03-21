@@ -477,31 +477,6 @@ export function isRenderFunction(
   });
 }
 
-// TODO: should be removed after v4 is finished
-export function isRenderVariableDeclarator(
-  node: TSESTree.VariableDeclarator,
-  renderFunctions: string[]
-): boolean {
-  if (node.init) {
-    if (ASTUtils.isAwaitExpression(node.init)) {
-      return (
-        node.init.argument &&
-        isRenderFunction(
-          node.init.argument as TSESTree.CallExpression,
-          renderFunctions
-        )
-      );
-    } else {
-      return (
-        isCallExpression(node.init) &&
-        isRenderFunction(node.init, renderFunctions)
-      );
-    }
-  }
-
-  return false;
-}
-
 // TODO: extract into types file?
 export type ImportModuleNode =
   | TSESTree.ImportDeclaration

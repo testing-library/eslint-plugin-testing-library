@@ -32,12 +32,6 @@ render(<Example />);
 screen.getByRole('button', { name: /click me/i });
 ```
 
-If you use [custom render functions](https://testing-library.com/docs/example-react-redux) then you can set a config option in your `.eslintrc` to look for these.
-
-```
-"testing-library/no-container": ["error", {"renderFunctions":["renderWithRedux", "renderWithRouter"]}],
-```
-
 ## Further Reading
 
 - [about the `container` element](https://testing-library.com/docs/react-testing-library/api#container-1)

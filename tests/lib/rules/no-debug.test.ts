@@ -213,6 +213,24 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       settings: { 'testing-library/utils-module': 'test-utils' },
+      code: `
+        import { render } from 'test-utils'
+
+        const setup = () => render(<Component/>)
+
+        const utils = setup()
+        utils.debug()
+      `,
+      errors: [
+        {
+          line: 7,
+          column: 15,
+          messageId: 'noDebug',
+        },
+      ],
+    },
+    {
+      settings: { 'testing-library/utils-module': 'test-utils' },
       code: `// aggressive reporting disabled
         import { render } from 'test-utils'
         const utils = render(<Component/>)

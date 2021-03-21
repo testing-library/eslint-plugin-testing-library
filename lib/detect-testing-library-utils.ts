@@ -5,6 +5,7 @@ import {
 } from '@typescript-eslint/experimental-utils';
 import {
   getAssertNodeInfo,
+  getDeepestIdentifierNode,
   getImportModuleName,
   getPropertyIdentifierNode,
   getReferenceNode,
@@ -69,6 +70,9 @@ type IsAsyncUtilFn = (
 ) => boolean;
 type IsFireEventMethodFn = (node: TSESTree.Identifier) => boolean;
 type IsRenderUtilFn = (node: TSESTree.Identifier) => boolean;
+type IsRenderVariableDeclaratorFn = (
+  node: TSESTree.VariableDeclarator
+) => boolean;
 type IsDebugUtilFn = (node: TSESTree.Identifier) => boolean;
 type IsPresenceAssertFn = (node: TSESTree.MemberExpression) => boolean;
 type IsAbsenceAssertFn = (node: TSESTree.MemberExpression) => boolean;
@@ -97,6 +101,7 @@ export interface DetectionHelpers {
   isAsyncUtil: IsAsyncUtilFn;
   isFireEventMethod: IsFireEventMethodFn;
   isRenderUtil: IsRenderUtilFn;
+  isRenderVariableDeclarator: IsRenderVariableDeclaratorFn;
   isDebugUtil: IsDebugUtilFn;
   isPresenceAssert: IsPresenceAssertFn;
   isAbsenceAssert: IsAbsenceAssertFn;
@@ -149,6 +154,10 @@ export function detectTestingLibraryUtils<
         originalNodeName?: string
       ) => boolean
     ): boolean {
+      if (!node) {
+        return false;
+      }
+
       const referenceNode = getReferenceNode(node);
       const referenceNodeIdentifier = getPropertyIdentifierNode(referenceNode);
       const importedUtilSpecifier = getImportedUtilSpecifier(
@@ -408,6 +417,12 @@ export function detectTestingLibraryUtils<
       );
     };
 
+    const isRenderVariableDeclarator: IsRenderVariableDeclaratorFn = (node) => {
+      const initIdentifierNode = getDeepestIdentifierNode(node.init);
+
+      return isRenderUtil(initIdentifierNode);
+    };
+
     const isDebugUtil: IsDebugUtilFn = (node) => {
       return isTestingLibraryUtil(
         node,
@@ -562,6 +577,7 @@ export function detectTestingLibraryUtils<
       isAsyncUtil,
       isFireEventMethod,
       isRenderUtil,
+      isRenderVariableDeclarator,
       isDebugUtil,
       isPresenceAssert,
       isAbsenceAssert,
