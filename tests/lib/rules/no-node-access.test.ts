@@ -49,16 +49,6 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        const Component = props => {
-          return <div>{props.children}</div>
-        }
-      `,
-      settings: {
-        'testing-library/filename-pattern': 'testing-library\\.js',
-      },
-    },
-    {
-      code: `
       // case: importing custom module
       const closestButton = document.getElementById('submit-btn').closest('button');
       expect(closestButton).toBeInTheDocument();

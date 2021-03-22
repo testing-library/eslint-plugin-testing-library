@@ -54,14 +54,6 @@ ruleTester.run(RULE_NAME, rule, {
     {
       code: `const utils = require(moduleName)`,
     },
-    {
-      settings: {
-        'testing-library/filename-pattern': 'testing-library\\.js',
-      },
-      code: `
-      import { render, cleanup } from "${ALL_TESTING_LIBRARIES_WITH_CLEANUP[0]}"
-      `,
-    },
   ],
   invalid: [
     ...ALL_TESTING_LIBRARIES_WITH_CLEANUP.map((lib) => ({

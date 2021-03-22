@@ -67,15 +67,6 @@ ruleTester.run(RULE_NAME, rule, {
       }
       `,
     },
-    // sync query awaited but not matching filename pattern is invalid but not reported
-    {
-      settings: { 'testing-library/filename-pattern': 'nope\\.js' },
-      code: `
-      () => {
-        const element = await getByRole('button')
-      }
-      `,
-    },
 
     // https://github.com/testing-library/eslint-plugin-testing-library/issues/276
     `
