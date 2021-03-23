@@ -25,38 +25,6 @@ ruleTester.run(RULE_NAME, rule, {
       code: 'import { fireEvent } from "test-utils"',
       settings: { 'testing-library/utils-module': 'test-utils' },
     },
-    {
-      code: 'import { fireEvent } from "dom-testing-library"',
-      filename: 'filename.not-matching.js',
-    },
-    {
-      code: 'import { fireEvent } from "dom-testing-library"',
-      settings: { 'testing-library/filename-pattern': 'nope\\.js' },
-    },
-    {
-      code: 'const { fireEvent } = require("dom-testing-library")',
-      filename: 'filename.not-matching.js',
-    },
-    {
-      code: 'const { fireEvent } = require("dom-testing-library")',
-      settings: { 'testing-library/filename-pattern': 'nope\\.js' },
-    },
-    {
-      code: 'import { fireEvent } from "@testing-library/dom"',
-      filename: 'filename.not-matching.js',
-    },
-    {
-      code: 'import { fireEvent } from "@testing-library/dom"',
-      settings: { 'testing-library/filename-pattern': 'nope\\.js' },
-    },
-    {
-      code: 'const { fireEvent } = require("@testing-library/dom")',
-      filename: 'filename.not-matching.js',
-    },
-    {
-      code: 'const { fireEvent } = require("@testing-library/dom")',
-      settings: { 'testing-library/filename-pattern': 'nope\\.js' },
-    },
   ],
   invalid: [
     {

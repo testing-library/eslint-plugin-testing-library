@@ -27,7 +27,6 @@ import {
 
 export type TestingLibrarySettings = {
   'testing-library/utils-module'?: string;
-  'testing-library/filename-pattern'?: string;
   'testing-library/custom-renders'?: string[];
 };
 
@@ -56,7 +55,6 @@ type GetCustomModuleImportNodeFn = () => ImportModuleNode | null;
 type GetTestingLibraryImportNameFn = () => string | undefined;
 type GetCustomModuleImportNameFn = () => string | undefined;
 type IsTestingLibraryImportedFn = () => boolean;
-type IsValidFilenameFn = () => boolean;
 type IsGetQueryVariantFn = (node: TSESTree.Identifier) => boolean;
 type IsQueryQueryVariantFn = (node: TSESTree.Identifier) => boolean;
 type IsFindQueryVariantFn = (node: TSESTree.Identifier) => boolean;
@@ -90,7 +88,6 @@ export interface DetectionHelpers {
   getTestingLibraryImportName: GetTestingLibraryImportNameFn;
   getCustomModuleImportName: GetCustomModuleImportNameFn;
   isTestingLibraryImported: IsTestingLibraryImportedFn;
-  isValidFilename: IsValidFilenameFn;
   isGetQueryVariant: IsGetQueryVariantFn;
   isQueryQueryVariant: IsQueryQueryVariantFn;
   isFindQueryVariant: IsFindQueryVariantFn;
@@ -109,8 +106,6 @@ export interface DetectionHelpers {
   findImportedUtilSpecifier: FindImportedUtilSpecifierFn;
   isNodeComingFromTestingLibrary: IsNodeComingFromTestingLibraryFn;
 }
-
-const DEFAULT_FILENAME_PATTERN = '^.*\\.(test|spec)\\.[jt]sx?$';
 
 const FIRE_EVENT_NAME = 'fireEvent';
 const RENDER_NAME = 'render';
@@ -132,9 +127,6 @@ export function detectTestingLibraryUtils<
 
     // Init options based on shared ESLint settings
     const customModule = context.settings['testing-library/utils-module'];
-    const filenamePattern =
-      context.settings['testing-library/filename-pattern'] ??
-      DEFAULT_FILENAME_PATTERN;
     const customRenders = context.settings['testing-library/custom-renders'];
 
     /**
@@ -241,15 +233,6 @@ export function detectTestingLibraryUtils<
         !!importedTestingLibraryNode ||
         !!importedCustomModuleNode
       );
-    };
-
-    /**
-     * Determines whether filename is valid or not for current file
-     * being analyzed based on "testing-library/filename-pattern" setting.
-     */
-    const isValidFilename: IsValidFilenameFn = () => {
-      const fileName = context.getFilename();
-      return !!fileName.match(filenamePattern);
     };
 
     /**
@@ -536,7 +519,7 @@ export function detectTestingLibraryUtils<
      * Determines if file inspected meets all conditions to be reported by rules or not.
      */
     const canReportErrors: CanReportErrorsFn = () => {
-      return isTestingLibraryImported() && isValidFilename();
+      return isTestingLibraryImported();
     };
 
     /**
@@ -566,7 +549,6 @@ export function detectTestingLibraryUtils<
       getTestingLibraryImportName,
       getCustomModuleImportName,
       isTestingLibraryImported,
-      isValidFilename,
       isGetQueryVariant,
       isQueryQueryVariant,
       isFindQueryVariant,

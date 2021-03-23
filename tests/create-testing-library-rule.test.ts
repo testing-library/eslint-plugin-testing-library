@@ -5,7 +5,7 @@ const ruleTester = createRuleTester();
 
 ruleTester.run(RULE_NAME, rule, {
   valid: [
-    // Test Cases for Imports & Filename
+    // Test Cases for Imports
     {
       code: `
       // case: nothing related to Testing Library at all
@@ -66,25 +66,6 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-      // case: import module forced to be reported but not matching settings filename
-      import { foo } from 'report-me'
-    `,
-      settings: {
-        'testing-library/filename-pattern': 'testing-library\\.js',
-      },
-    },
-    {
-      code: `
-      // case: import module forced to be reported but not matching settings filename
-      // (require version)
-      const { foo } = require('report-me')
-    `,
-      settings: {
-        'testing-library/filename-pattern': 'testing-library\\.js',
-      },
-    },
-    {
-      code: `
       // case: import custom module forced to be reported without custom module setting
       import { foo } from 'custom-module-forced-report'
     `,
@@ -113,15 +94,6 @@ ruleTester.run(RULE_NAME, rule, {
       code: `
       // case: aggressive render enabled, but module disabled - not coming from TL
       import { render } from 'somewhere-else'
-      
-      const utils = render()
-      `,
-    },
-    {
-      filename: 'file.not.matching.js',
-      code: `
-      // case: aggressive render and module enabled, but file name not matching
-      import { render } from '@testing-library/react'
       
       const utils = render()
       `,
@@ -250,33 +222,6 @@ ruleTester.run(RULE_NAME, rule, {
       within(container).findByRole('button')
     `,
     },
-    {
-      settings: {
-        'testing-library/filename-pattern': 'testing-library\\.js',
-      },
-      code: `
-      // case: built-in "getBy*" query not reported because custom filename doesn't match
-      getByRole('button')
-    `,
-    },
-    {
-      settings: {
-        'testing-library/filename-pattern': 'testing-library\\.js',
-      },
-      code: `
-      // case: built-in "queryBy*" query not reported because custom filename doesn't match
-      queryByRole('button')
-    `,
-    },
-    {
-      settings: {
-        'testing-library/filename-pattern': 'testing-library\\.js',
-      },
-      code: `
-      // case: built-in "findBy*" query not reported because custom filename doesn't match
-      findByRole('button')
-    `,
-    },
 
     // Test Cases for async utils
     {
@@ -289,15 +234,6 @@ ruleTester.run(RULE_NAME, rule, {
           'aggressive reporting disabled - util waitFor not related to testing library is valid',
           () => { waitFor() }
         );
-      `,
-    },
-    {
-      filename: 'file.not.matching.js',
-      code: `
-      // case: waitFor util found, but file name not matching
-      import { waitFor } from '@testing-library/react'
-      
-      waitFor()
       `,
     },
     {
@@ -320,25 +256,9 @@ ruleTester.run(RULE_NAME, rule, {
     {
       settings: {
         'testing-library/utils-module': 'test-utils',
-        'testing-library/filename-pattern': 'testing-library\\.js',
       },
       code: `
-      // case: matching custom settings partially - module but not filename
-      import { render } from 'test-utils'
-      import { somethingElse } from 'another-module'
-      const foo = require('bar')
-      
-      const utils = render();
-      `,
-    },
-    {
-      settings: {
-        'testing-library/utils-module': 'test-utils',
-        'testing-library/filename-pattern': 'testing-library\\.js',
-      },
-      filename: 'MyComponent.testing-library.js',
-      code: `
-      // case: matching custom settings partially - filename but not module
+      // case: matching custom settings
       import { render } from 'other-utils'
       import { somethingElse } from 'another-module'
       const foo = require('bar')
@@ -359,31 +279,12 @@ ruleTester.run(RULE_NAME, rule, {
     },
   ],
   invalid: [
-    // Test Cases for Imports & Filename
+    // Test Cases for Imports
     {
       code: `
       // case: import module forced to be reported
       import { foo } from 'report-me'
     `,
-      errors: [{ line: 3, column: 7, messageId: 'fakeError' }],
-    },
-    {
-      filename: 'MyComponent.spec.js',
-      code: `
-      // case: import module forced to be reported but from .spec.js named file
-      import { foo } from 'report-me'
-    `,
-      errors: [{ line: 3, column: 7, messageId: 'fakeError' }],
-    },
-    {
-      filename: 'MyComponent.testing-library.js',
-      code: `
-      // case: import module forced to be reported with custom file name
-      import { foo } from 'report-me'
-    `,
-      settings: {
-        'testing-library/filename-pattern': 'testing-library\\.js',
-      },
       errors: [{ line: 3, column: 7, messageId: 'fakeError' }],
     },
     {
@@ -733,22 +634,6 @@ ruleTester.run(RULE_NAME, rule, {
       errors: [{ line: 3, column: 25, messageId: 'findByError' }],
     },
     {
-      filename: 'MyComponent.spec.js',
-      code: `
-      // case: custom "getBy*" query reported without import (aggressive reporting)
-      getByIcon('search')
-    `,
-      errors: [{ line: 3, column: 7, messageId: 'customQueryError' }],
-    },
-    {
-      filename: 'MyComponent.spec.js',
-      code: `
-      // case: custom "getBy*" query reported without import using within (aggressive reporting)
-      within(container).getByIcon('search')
-    `,
-      errors: [{ line: 3, column: 25, messageId: 'customQueryError' }],
-    },
-    {
       code: `
       // case: custom "queryBy*" query reported without import (aggressive reporting)
       queryByIcon('search')
@@ -788,30 +673,6 @@ ruleTester.run(RULE_NAME, rule, {
       errors: [{ line: 4, column: 7, messageId: 'getByError' }],
     },
     {
-      filename: 'MyComponent.spec.js',
-      settings: {
-        'testing-library/utils-module': 'test-utils',
-      },
-      code: `
-      // case: built-in "queryBy*" query reported with custom module + Testing Library package import
-      import { render } from '@testing-library/react'
-      queryByRole('button')
-    `,
-      errors: [{ line: 4, column: 7, messageId: 'queryByError' }],
-    },
-    {
-      filename: 'MyComponent.spec.js',
-      settings: {
-        'testing-library/utils-module': 'test-utils',
-      },
-      code: `
-      // case: built-in "findBy*" query reported with custom module + Testing Library package import
-      import { render } from '@testing-library/react'
-      findByRole('button')
-    `,
-      errors: [{ line: 4, column: 7, messageId: 'findByError' }],
-    },
-    {
       settings: {
         'testing-library/utils-module': 'test-utils',
       },
@@ -821,30 +682,6 @@ ruleTester.run(RULE_NAME, rule, {
       getByRole('button')
     `,
       errors: [{ line: 4, column: 7, messageId: 'getByError' }],
-    },
-    {
-      filename: 'MyComponent.spec.js',
-      settings: {
-        'testing-library/utils-module': 'test-utils',
-      },
-      code: `
-      // case: built-in "queryBy*" query reported with custom module + custom module import
-      import { render } from 'test-utils'
-      queryByRole('button')
-    `,
-      errors: [{ line: 4, column: 7, messageId: 'queryByError' }],
-    },
-    {
-      filename: 'MyComponent.spec.js',
-      settings: {
-        'testing-library/utils-module': 'test-utils',
-      },
-      code: `
-      // case: built-in "queryBy*" query reported with custom module + custom module import
-      import { render } from 'test-utils'
-      findByRole('button')
-    `,
-      errors: [{ line: 4, column: 7, messageId: 'findByError' }],
     },
 
     {
@@ -859,30 +696,6 @@ ruleTester.run(RULE_NAME, rule, {
       errors: [{ line: 4, column: 7, messageId: 'customQueryError' }],
     },
     {
-      filename: 'MyComponent.spec.js',
-      settings: {
-        'testing-library/utils-module': 'test-utils',
-      },
-      code: `
-      // case: custom "queryBy*" query reported with custom module + Testing Library package import
-      import { render } from '@testing-library/framework'
-      queryByIcon('search')
-    `,
-      errors: [{ line: 4, column: 7, messageId: 'customQueryError' }],
-    },
-    {
-      filename: 'MyComponent.spec.js',
-      settings: {
-        'testing-library/utils-module': 'test-utils',
-      },
-      code: `
-      // case: custom "findBy*" query reported with custom module + Testing Library package import
-      import { render } from '@testing-library/framework'
-      findByIcon('search')
-    `,
-      errors: [{ line: 4, column: 7, messageId: 'customQueryError' }],
-    },
-    {
       settings: {
         'testing-library/utils-module': 'test-utils',
       },
@@ -893,41 +706,15 @@ ruleTester.run(RULE_NAME, rule, {
     `,
       errors: [{ line: 4, column: 7, messageId: 'customQueryError' }],
     },
-    {
-      filename: 'MyComponent.spec.js',
-      settings: {
-        'testing-library/utils-module': 'test-utils',
-      },
-      code: `
-      // case: custom "queryBy*" query reported with custom module + custom module import
-      import { render } from 'test-utils'
-      queryByIcon('search')
-    `,
-      errors: [{ line: 4, column: 7, messageId: 'customQueryError' }],
-    },
-    {
-      filename: 'MyComponent.spec.js',
-      settings: {
-        'testing-library/utils-module': 'test-utils',
-      },
-      code: `
-      // case: custom "findBy*" query reported with custom module + custom module import
-      import { render } from 'test-utils'
-      findByIcon('search')
-    `,
-      errors: [{ line: 4, column: 7, messageId: 'customQueryError' }],
-    },
 
     // Test Cases for all settings mixed
     {
-      filename: 'MyComponent.custom-suffix.js',
       settings: {
         'testing-library/custom-renders': ['customRender', 'renderWithRedux'],
         'testing-library/utils-module': 'test-utils',
-        'testing-library/filename-pattern': 'custom-suffix\\.js',
       },
       code: `
-      // case: all aggressive reporting disabled and filename setup - matching all custom settings
+      // case: aggressive reporting disabled - matching all custom settings
       import { renderWithRedux, waitFor, screen } from 'test-utils'
       
       const { getByRole } = renderWithRedux()
@@ -948,9 +735,7 @@ ruleTester.run(RULE_NAME, rule, {
     {
       settings: {
         'testing-library/utils-module': 'test-utils',
-        'testing-library/filename-pattern': 'testing-library\\.js',
       },
-      filename: 'MyComponent.testing-library.js',
       code: `
       // case: matching all custom settings
       import { render } from 'test-utils'
