@@ -27,16 +27,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
       noDebug: 'Unexpected debug statement',
     },
     fixable: null,
-    schema: [
-      {
-        type: 'object',
-        properties: {
-          renderFunctions: {
-            type: 'array',
-          },
-        },
-      },
-    ],
+    schema: [],
   },
   defaultOptions: [],
 
