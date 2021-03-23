@@ -1,17 +1,14 @@
+import { ASTUtils, TSESTree } from '@typescript-eslint/experimental-utils';
+import { TESTING_FRAMEWORK_SETUP_HOOKS } from '../utils';
 import {
-  ESLintUtils,
-  TSESTree,
-  ASTUtils,
-} from '@typescript-eslint/experimental-utils';
-import { getDocsUrl, TESTING_FRAMEWORK_SETUP_HOOKS } from '../utils';
-import {
-  isLiteral,
-  isProperty,
-  isObjectPattern,
   isCallExpression,
-  isRenderFunction,
   isImportSpecifier,
+  isLiteral,
+  isObjectPattern,
+  isProperty,
+  isRenderFunction,
 } from '../node-utils';
+import { createTestingLibraryRule } from '../create-testing-library-rule';
 
 export const RULE_NAME = 'no-render-in-setup';
 export type MessageIds = 'noRenderInSetup';
@@ -41,12 +38,13 @@ export function findClosestBeforeHook(
   return findClosestBeforeHook(node.parent, testingFrameworkSetupHooksToFilter);
 }
 
-export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
+export default createTestingLibraryRule<Options, MessageIds>({
   name: RULE_NAME,
   meta: {
     type: 'problem',
     docs: {
-      description: 'Disallow the use of `render` in setup functions',
+      description:
+        'Disallow the use of `render` in testing frameworks setup functions',
       category: 'Best Practices',
       recommended: false,
     },
