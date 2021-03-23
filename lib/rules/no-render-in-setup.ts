@@ -1,7 +1,13 @@
 import { ASTUtils, TSESTree } from '@typescript-eslint/experimental-utils';
 import { TESTING_FRAMEWORK_SETUP_HOOKS } from '../utils';
-import { getDeepestIdentifierNode, isCallExpression } from '../node-utils';
+import {
+  getDeepestIdentifierNode,
+  getFunctionName,
+  getInnermostReturningFunction,
+  isCallExpression,
+} from '../node-utils';
 import { createTestingLibraryRule } from '../create-testing-library-rule';
+import { RuleContext } from '@typescript-eslint/experimental-utils/dist/ts-eslint';
 
 export const RULE_NAME = 'no-render-in-setup';
 export type MessageIds = 'noRenderInSetup';
@@ -63,14 +69,37 @@ export default createTestingLibraryRule<Options, MessageIds>({
   ],
 
   create(context, [{ allowTestingFrameworkSetupHook }], helpers) {
+    const renderWrapperNames: string[] = [];
+
+    function detectRenderWrapper(node: TSESTree.Identifier): void {
+      const innerFunction = getInnermostReturningFunction(
+        (context as unknown) as RuleContext<string, []>,
+        node
+      );
+
+      if (innerFunction) {
+        renderWrapperNames.push(getFunctionName(innerFunction));
+      }
+    }
+
     return {
       CallExpression(node) {
         const testingFrameworkSetupHooksToFilter = TESTING_FRAMEWORK_SETUP_HOOKS.filter(
           (hook) => hook !== allowTestingFrameworkSetupHook
         );
         const callExpressionIdentifier = getDeepestIdentifierNode(node);
+        const isRenderIdentifier = helpers.isRenderUtil(
+          callExpressionIdentifier
+        );
 
-        if (!helpers.isRenderUtil(callExpressionIdentifier)) {
+        if (isRenderIdentifier) {
+          detectRenderWrapper(callExpressionIdentifier);
+        }
+
+        if (
+          !isRenderIdentifier &&
+          !renderWrapperNames.includes(callExpressionIdentifier.name)
+        ) {
           return;
         }
 

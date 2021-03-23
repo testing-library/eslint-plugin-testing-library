@@ -136,24 +136,20 @@ ruleTester.run(RULE_NAME, rule, {
         },
       ],
     })),
-    // call render within a wrapper function
-    // TODO: update this test so:
-    //  - the wrapper is outside the hook
-    //  - the error is located in `wrapper()` call
     ...TESTING_FRAMEWORK_SETUP_HOOKS.map((setupHook) => ({
-      code: `
+      code: `// call render within a wrapper function
       import { render } from '@testing-library/foo';
-        ${setupHook}(() => {
-          const wrapper = () => {
-            render(<Component/>)
-          }
-          wrapper()
-        })
+
+      const wrapper = () => render(<Component/>)
+
+      ${setupHook}(() => {
+        wrapper()
+      })
       `,
       errors: [
         {
-          line: 5,
-          column: 13,
+          line: 7,
+          column: 9,
           messageId: 'noRenderInSetup',
         },
       ],
