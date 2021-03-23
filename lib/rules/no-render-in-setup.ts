@@ -50,7 +50,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
     },
     messages: {
       noRenderInSetup:
-        'Move `render` out of `{{name}}` and into individual tests.',
+        'Forbidden usage of `render` within testing framework `{{ name }}` setup',
     },
     fixable: null,
     schema: [

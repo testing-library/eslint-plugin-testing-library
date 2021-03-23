@@ -2,7 +2,7 @@
 
 ## Rule Details
 
-This rule disallows the usage of `render` (or a custom render function) in setup functions (`beforeEach` and `beforeAll`) in favor of moving `render` closer to test assertions.
+This rule disallows the usage of `render` (or a custom render function) in testing framework setup functions (`beforeEach` and `beforeAll`) in favor of moving `render` closer to test assertions.
 
 Examples of **incorrect** code for this rule:
 
