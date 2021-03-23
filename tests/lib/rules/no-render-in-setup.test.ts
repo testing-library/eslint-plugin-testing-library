@@ -15,22 +15,26 @@ ruleTester.run(RULE_NAME, rule, {
       `,
     },
     // test config options
-    ...TESTING_FRAMEWORK_SETUP_HOOKS.map((setupHook) => ({
+    {
       code: `
-        import { renderWithRedux } from '../test-utils';
-        ${setupHook}(() => {
-          renderWithRedux(<Component/>)
-        })
-      `,
-      options: [
-        {
-          allowTestingFrameworkSetupHook: setupHook,
-          renderFunctions: ['renderWithRedux'],
-        },
-      ],
-    })),
-    // test usage of a non-Testing Library render fn
+      import { render } from '@testing-library/foo';
+      beforeAll(() => {
+        render(<Component />);
+      });
+    `,
+      options: [{ allowTestingFrameworkSetupHook: 'beforeAll' }],
+    },
+    {
+      code: `
+      import { render } from '@testing-library/foo';
+      beforeEach(() => {
+        render(<Component />);
+      });
+    `,
+      options: [{ allowTestingFrameworkSetupHook: 'beforeEach' }],
+    },
     ...TESTING_FRAMEWORK_SETUP_HOOKS.map((setupHook) => ({
+      settings: { 'testing-library/utils-module': 'test-utils' },
       code: `
         import { render } from 'imNoTestingLibrary';
         ${setupHook}(() => {
@@ -43,11 +47,15 @@ ruleTester.run(RULE_NAME, rule, {
         (setupHook) => setupHook !== allowedSetupHook
       );
       return {
+        settings: {
+          'testing-library/utils-module': 'test-utils',
+          'testing-library/custom-renders': ['show', 'renderWithRedux'],
+        },
         code: `
           import utils from 'imNoTestingLibrary';
-          import { renderWithRedux } from '../test-utils';
+          import { show } from '../test-utils';
           ${allowedSetupHook}(() => {
-            renderWithRedux(<Component/>)
+            show(<Component/>)
           })
           ${disallowedHook}(() => {
             utils.render(<Component/>)
@@ -56,12 +64,12 @@ ruleTester.run(RULE_NAME, rule, {
         options: [
           {
             allowTestingFrameworkSetupHook: allowedSetupHook,
-            renderFunctions: ['renderWithRedux'],
           },
         ],
       };
     }),
     ...TESTING_FRAMEWORK_SETUP_HOOKS.map((setupHook) => ({
+      settings: { 'testing-library/utils-module': 'test-utils' },
       code: `
         const { render } = require('imNoTestingLibrary')
 
@@ -110,17 +118,16 @@ ruleTester.run(RULE_NAME, rule, {
     })),
     // custom render function
     ...TESTING_FRAMEWORK_SETUP_HOOKS.map((setupHook) => ({
+      settings: {
+        'testing-library/utils-module': 'test-utils',
+        'testing-library/custom-renders': ['customRender', 'renderWithRedux'],
+      },
       code: `
         import { renderWithRedux } from '../test-utils';
         ${setupHook}(() => {
           renderWithRedux(<Component/>)
         })
       `,
-      options: [
-        {
-          renderFunctions: ['renderWithRedux'],
-        },
-      ],
       errors: [
         {
           line: 4,
@@ -192,6 +199,7 @@ ruleTester.run(RULE_NAME, rule, {
       ],
     })),
     ...TESTING_FRAMEWORK_SETUP_HOOKS.map((setupHook) => ({
+      settings: { 'testing-library/utils-module': 'test-utils' },
       code: `
         import { render } from 'imNoTestingLibrary';
         import * as testUtils from '../test-utils';
@@ -202,11 +210,6 @@ ruleTester.run(RULE_NAME, rule, {
           render(<Component/>)
         })
       `,
-      options: [
-        {
-          renderFunctions: ['renderWithRedux'],
-        },
-      ],
       errors: [
         {
           line: 5,

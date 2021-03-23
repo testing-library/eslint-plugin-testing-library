@@ -1,13 +1,6 @@
 import { ASTUtils, TSESTree } from '@typescript-eslint/experimental-utils';
 import { TESTING_FRAMEWORK_SETUP_HOOKS } from '../utils';
-import {
-  isCallExpression,
-  isImportSpecifier,
-  isLiteral,
-  isObjectPattern,
-  isProperty,
-  isRenderFunction,
-} from '../node-utils';
+import { getDeepestIdentifierNode, isCallExpression } from '../node-utils';
 import { createTestingLibraryRule } from '../create-testing-library-rule';
 
 export const RULE_NAME = 'no-render-in-setup';
@@ -15,7 +8,6 @@ export type MessageIds = 'noRenderInSetup';
 type Options = [
   {
     allowTestingFrameworkSetupHook?: string;
-    renderFunctions?: string[];
   }
 ];
 
@@ -56,81 +48,23 @@ export default createTestingLibraryRule<Options, MessageIds>({
     schema: [
       {
         type: 'object',
+        default: {},
         properties: {
-          renderFunctions: {
-            type: 'array',
-          },
           allowTestingFrameworkSetupHook: {
             enum: TESTING_FRAMEWORK_SETUP_HOOKS,
           },
         },
-        anyOf: [
-          {
-            required: ['renderFunctions'],
-          },
-          {
-            required: ['allowTestingFrameworkSetupHook'],
-          },
-        ],
       },
     ],
   },
   defaultOptions: [
     {
-      renderFunctions: [],
       allowTestingFrameworkSetupHook: '',
     },
   ],
 
-  create(context, [{ renderFunctions, allowTestingFrameworkSetupHook }]) {
-    let renderImportedFromTestingLib = false;
-    let wildcardImportName: string | null = null;
-
+  create(context, [{ allowTestingFrameworkSetupHook }], helpers) {
     return {
-      // checks if import has shape:
-      // import * as dtl from '@testing-library/dom';
-      'ImportDeclaration[source.value=/testing-library/] ImportNamespaceSpecifier'(
-        node: TSESTree.ImportNamespaceSpecifier
-      ) {
-        wildcardImportName = node.local && node.local.name;
-      },
-      // checks if `render` is imported from a '@testing-library/foo'
-      'ImportDeclaration[source.value=/testing-library/]'(
-        node: TSESTree.ImportDeclaration
-      ) {
-        renderImportedFromTestingLib = node.specifiers.some((specifier) => {
-          return (
-            isImportSpecifier(specifier) && specifier.local.name === 'render'
-          );
-        });
-      },
-      [`VariableDeclarator > CallExpression > Identifier[name="require"]`](
-        node: TSESTree.Identifier
-      ) {
-        const {
-          arguments: callExpressionArgs,
-        } = node.parent as TSESTree.CallExpression;
-        const testingLibImport = callExpressionArgs.find(
-          (args) =>
-            isLiteral(args) &&
-            typeof args.value === 'string' &&
-            RegExp(/testing-library/, 'g').test(args.value)
-        );
-        if (!testingLibImport) {
-          return;
-        }
-        const declaratorNode = node.parent
-          .parent as TSESTree.VariableDeclarator;
-
-        renderImportedFromTestingLib =
-          isObjectPattern(declaratorNode.id) &&
-          declaratorNode.id.properties.some(
-            (property) =>
-              isProperty(property) &&
-              ASTUtils.isIdentifier(property.key) &&
-              property.key.name === 'render'
-          );
-      },
       CallExpression(node) {
         let testingFrameworkSetupHooksToFilter = TESTING_FRAMEWORK_SETUP_HOOKS;
         if (allowTestingFrameworkSetupHook.length !== 0) {
@@ -138,28 +72,28 @@ export default createTestingLibraryRule<Options, MessageIds>({
             (hook) => hook !== allowTestingFrameworkSetupHook
           );
         }
+        const callExpressionIdentifier = getDeepestIdentifierNode(node);
+
+        if (!helpers.isRenderUtil(callExpressionIdentifier)) {
+          return;
+        }
+
         const beforeHook = findClosestBeforeHook(
           node,
           testingFrameworkSetupHooksToFilter
         );
 
-        // if `render` is imported from a @testing-library/foo or
-        // imported with a wildcard, add `render` to the list of
-        // disallowed render functions
-        const disallowedRenderFns =
-          renderImportedFromTestingLib || wildcardImportName
-            ? ['render', ...renderFunctions]
-            : renderFunctions;
-
-        if (isRenderFunction(node, disallowedRenderFns) && beforeHook) {
-          context.report({
-            node,
-            messageId: 'noRenderInSetup',
-            data: {
-              name: beforeHook.name,
-            },
-          });
+        if (!beforeHook) {
+          return;
         }
+
+        context.report({
+          node,
+          messageId: 'noRenderInSetup',
+          data: {
+            name: beforeHook.name,
+          },
+        });
       },
     };
   },
