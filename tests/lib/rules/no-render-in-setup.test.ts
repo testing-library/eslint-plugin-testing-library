@@ -87,6 +87,8 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [
         {
+          line: 4,
+          column: 11,
           messageId: 'noRenderInSetup',
         },
       ],
@@ -100,6 +102,8 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [
         {
+          line: 4,
+          column: 11,
           messageId: 'noRenderInSetup',
         },
       ],
@@ -119,11 +123,16 @@ ruleTester.run(RULE_NAME, rule, {
       ],
       errors: [
         {
+          line: 4,
+          column: 11,
           messageId: 'noRenderInSetup',
         },
       ],
     })),
     // call render within a wrapper function
+    // TODO: update this test so:
+    //  - the wrapper is outside the hook
+    //  - the error is located in `wrapper()` call
     ...TESTING_FRAMEWORK_SETUP_HOOKS.map((setupHook) => ({
       code: `
       import { render } from '@testing-library/foo';
@@ -136,6 +145,8 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [
         {
+          line: 5,
+          column: 13,
           messageId: 'noRenderInSetup',
         },
       ],
@@ -158,6 +169,8 @@ ruleTester.run(RULE_NAME, rule, {
         ],
         errors: [
           {
+            line: 4,
+            column: 13,
             messageId: 'noRenderInSetup',
           },
         ],
@@ -172,6 +185,8 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [
         {
+          line: 4,
+          column: 11,
           messageId: 'noRenderInSetup',
         },
       ],
@@ -194,6 +209,8 @@ ruleTester.run(RULE_NAME, rule, {
       ],
       errors: [
         {
+          line: 5,
+          column: 11,
           messageId: 'noRenderInSetup',
         },
       ],
@@ -208,6 +225,8 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [
         {
+          line: 5,
+          column: 11,
           messageId: 'noRenderInSetup',
         },
       ],
