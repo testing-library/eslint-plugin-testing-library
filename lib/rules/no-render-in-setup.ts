@@ -48,7 +48,6 @@ export default createTestingLibraryRule<Options, MessageIds>({
     schema: [
       {
         type: 'object',
-        default: {},
         properties: {
           allowTestingFrameworkSetupHook: {
             enum: TESTING_FRAMEWORK_SETUP_HOOKS,
@@ -66,12 +65,9 @@ export default createTestingLibraryRule<Options, MessageIds>({
   create(context, [{ allowTestingFrameworkSetupHook }], helpers) {
     return {
       CallExpression(node) {
-        let testingFrameworkSetupHooksToFilter = TESTING_FRAMEWORK_SETUP_HOOKS;
-        if (allowTestingFrameworkSetupHook.length !== 0) {
-          testingFrameworkSetupHooksToFilter = TESTING_FRAMEWORK_SETUP_HOOKS.filter(
-            (hook) => hook !== allowTestingFrameworkSetupHook
-          );
-        }
+        const testingFrameworkSetupHooksToFilter = TESTING_FRAMEWORK_SETUP_HOOKS.filter(
+          (hook) => hook !== allowTestingFrameworkSetupHook
+        );
         const callExpressionIdentifier = getDeepestIdentifierNode(node);
 
         if (!helpers.isRenderUtil(callExpressionIdentifier)) {
@@ -88,7 +84,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
         }
 
         context.report({
-          node,
+          node: callExpressionIdentifier,
           messageId: 'noRenderInSetup',
           data: {
             name: beforeHook.name,

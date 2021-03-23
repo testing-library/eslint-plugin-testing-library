@@ -193,7 +193,7 @@ ruleTester.run(RULE_NAME, rule, {
       errors: [
         {
           line: 4,
-          column: 11,
+          column: 26,
           messageId: 'noRenderInSetup',
         },
       ],
@@ -213,7 +213,7 @@ ruleTester.run(RULE_NAME, rule, {
       errors: [
         {
           line: 5,
-          column: 11,
+          column: 21,
           messageId: 'noRenderInSetup',
         },
       ],
