@@ -7,7 +7,6 @@ import {
   isCallExpression,
 } from '../node-utils';
 import { createTestingLibraryRule } from '../create-testing-library-rule';
-import { RuleContext } from '@typescript-eslint/experimental-utils/dist/ts-eslint';
 
 export const RULE_NAME = 'no-render-in-setup';
 export type MessageIds = 'noRenderInSetup';
@@ -72,10 +71,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
     const renderWrapperNames: string[] = [];
 
     function detectRenderWrapper(node: TSESTree.Identifier): void {
-      const innerFunction = getInnermostReturningFunction(
-        (context as unknown) as RuleContext<string, []>,
-        node
-      );
+      const innerFunction = getInnermostReturningFunction(context, node);
 
       if (innerFunction) {
         renderWrapperNames.push(getFunctionName(innerFunction));

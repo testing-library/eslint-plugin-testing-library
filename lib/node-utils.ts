@@ -321,7 +321,7 @@ interface InnermostFunctionScope extends TSESLintScope.FunctionScope {
 }
 
 export function getInnermostFunctionScope(
-  context: RuleContext<string, []>,
+  context: RuleContext<string, unknown[]>,
   asyncQueryNode: TSESTree.Identifier
 ): InnermostFunctionScope | null {
   const innermostScope = ASTUtils.getInnermostScope(
@@ -568,7 +568,7 @@ export function hasClosestExpectResolvesRejects(node: TSESTree.Node): boolean {
  * Gets the Function node which returns the given Identifier.
  */
 export function getInnermostReturningFunction(
-  context: RuleContext<string, []>,
+  context: RuleContext<string, unknown[]>,
   node: TSESTree.Identifier
 ):
   | TSESTree.FunctionDeclaration
