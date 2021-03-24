@@ -1,14 +1,11 @@
-import {
-  ESLintUtils,
-  TSESTree,
-  ASTUtils,
-} from '@typescript-eslint/experimental-utils';
-import { getDocsUrl, hasTestingLibraryImportModule } from '../utils';
+import { ASTUtils, TSESTree } from '@typescript-eslint/experimental-utils';
+import { hasTestingLibraryImportModule } from '../utils';
 import {
   isBlockStatement,
-  isMemberExpression,
   isCallExpression,
+  isMemberExpression,
 } from '../node-utils';
+import { createTestingLibraryRule } from '../create-testing-library-rule';
 
 export const RULE_NAME = 'no-side-effects-wait-for';
 export type MessageIds = 'noSideEffectsWaitFor';
@@ -18,7 +15,7 @@ const WAIT_EXPRESSION_QUERY = 'CallExpression[callee.name=/^(waitFor)$/]';
 
 const SIDE_EFFECTS: Array<string> = ['fireEvent', 'userEvent'];
 
-export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
+export default createTestingLibraryRule<Options, MessageIds>({
   name: RULE_NAME,
   meta: {
     type: 'suggestion',
