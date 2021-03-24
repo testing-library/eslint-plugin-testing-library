@@ -35,21 +35,24 @@ export default createTestingLibraryRule<Options, MessageIds>({
   create: function (context) {
     let isImportingTestingLibrary = false;
 
+    function hasSideEffects(body: Array<TSESTree.Node>): boolean {
+      return body.some((node: TSESTree.ExpressionStatement) => {
+        if (
+          isCallExpression(node.expression) &&
+          isMemberExpression(node.expression.callee) &&
+          ASTUtils.isIdentifier(node.expression.callee.object)
+        ) {
+          const object: TSESTree.Identifier = node.expression.callee.object;
+          const identifierName: string = object.name;
+          return SIDE_EFFECTS.includes(identifierName);
+        } else {
+          return false;
+        }
+      });
+    }
+
     function reportSideEffects(node: TSESTree.BlockStatement) {
-      const hasSideEffects = (body: Array<TSESTree.Node>): boolean =>
-        body.some((node: TSESTree.ExpressionStatement) => {
-          if (
-            isCallExpression(node.expression) &&
-            isMemberExpression(node.expression.callee) &&
-            ASTUtils.isIdentifier(node.expression.callee.object)
-          ) {
-            const object: TSESTree.Identifier = node.expression.callee.object;
-            const identifierName: string = object.name;
-            return SIDE_EFFECTS.includes(identifierName);
-          } else {
-            return false;
-          }
-        });
+      const callExpressionNode = node.parent.parent as TSESTree.CallExpression;
 
       if (
         isImportingTestingLibrary &&
@@ -57,8 +60,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
         hasSideEffects(node.body)
       ) {
         context.report({
-          node,
-          loc: node.loc.start,
+          node: callExpressionNode,
           messageId: 'noSideEffectsWaitFor',
         });
       }
