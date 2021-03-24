@@ -459,24 +459,6 @@ export function getFunctionName(
   );
 }
 
-// TODO: should be removed after v4 is finished
-export function isRenderFunction(
-  callNode: TSESTree.CallExpression,
-  renderFunctions: string[]
-): boolean {
-  // returns true for `render` and e.g. `customRenderFn`
-  // as well as `someLib.render` and `someUtils.customRenderFn`
-  return renderFunctions.some((name) => {
-    return (
-      (ASTUtils.isIdentifier(callNode.callee) &&
-        name === callNode.callee.name) ||
-      (isMemberExpression(callNode.callee) &&
-        ASTUtils.isIdentifier(callNode.callee.property) &&
-        name === callNode.callee.property.name)
-    );
-  });
-}
-
 // TODO: extract into types file?
 export type ImportModuleNode =
   | TSESTree.ImportDeclaration
