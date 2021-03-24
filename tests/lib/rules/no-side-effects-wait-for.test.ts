@@ -111,7 +111,7 @@ ruleTester.run(RULE_NAME, rule, {
           fireEvent.keyDown(input, {key: 'ArrowDown'})
         })
       `,
-      errors: [{ messageId: 'noSideEffectsWaitFor' }],
+      errors: [{ line: 3, column: 29, messageId: 'noSideEffectsWaitFor' }],
     },
     {
       code: `
@@ -121,7 +121,7 @@ ruleTester.run(RULE_NAME, rule, {
           fireEvent.keyDown(input, {key: 'ArrowDown'})
         })
       `,
-      errors: [{ messageId: 'noSideEffectsWaitFor' }],
+      errors: [{ line: 3, column: 29, messageId: 'noSideEffectsWaitFor' }],
     },
     {
       code: `
@@ -131,7 +131,7 @@ ruleTester.run(RULE_NAME, rule, {
           expect(b).toEqual('b')
         })
       `,
-      errors: [{ messageId: 'noSideEffectsWaitFor' }],
+      errors: [{ line: 3, column: 29, messageId: 'noSideEffectsWaitFor' }],
     },
     {
       code: `
@@ -140,7 +140,7 @@ ruleTester.run(RULE_NAME, rule, {
           fireEvent.keyDown(input, {key: 'ArrowDown'})
         })
       `,
-      errors: [{ messageId: 'noSideEffectsWaitFor' }],
+      errors: [{ line: 3, column: 34, messageId: 'noSideEffectsWaitFor' }],
     },
     {
       code: `
@@ -150,7 +150,7 @@ ruleTester.run(RULE_NAME, rule, {
           fireEvent.keyDown(input, {key: 'ArrowDown'})
         })
       `,
-      errors: [{ messageId: 'noSideEffectsWaitFor' }],
+      errors: [{ line: 3, column: 34, messageId: 'noSideEffectsWaitFor' }],
     },
     {
       code: `
@@ -160,7 +160,7 @@ ruleTester.run(RULE_NAME, rule, {
           expect(b).toEqual('b')
         })
       `,
-      errors: [{ messageId: 'noSideEffectsWaitFor' }],
+      errors: [{ line: 3, column: 34, messageId: 'noSideEffectsWaitFor' }],
     },
     // userEvent
     {
@@ -170,7 +170,7 @@ ruleTester.run(RULE_NAME, rule, {
           userEvent.click(button)
         })
       `,
-      errors: [{ messageId: 'noSideEffectsWaitFor' }],
+      errors: [{ line: 3, column: 29, messageId: 'noSideEffectsWaitFor' }],
     },
     {
       code: `
@@ -180,7 +180,7 @@ ruleTester.run(RULE_NAME, rule, {
           userEvent.click(button)
         })
       `,
-      errors: [{ messageId: 'noSideEffectsWaitFor' }],
+      errors: [{ line: 3, column: 29, messageId: 'noSideEffectsWaitFor' }],
     },
     {
       code: `
@@ -190,7 +190,7 @@ ruleTester.run(RULE_NAME, rule, {
           expect(b).toEqual('b')
         })
       `,
-      errors: [{ messageId: 'noSideEffectsWaitFor' }],
+      errors: [{ line: 3, column: 29, messageId: 'noSideEffectsWaitFor' }],
     },
     {
       code: `
@@ -199,7 +199,7 @@ ruleTester.run(RULE_NAME, rule, {
           userEvent.click(button)
         })
       `,
-      errors: [{ messageId: 'noSideEffectsWaitFor' }],
+      errors: [{ line: 3, column: 34, messageId: 'noSideEffectsWaitFor' }],
     },
     {
       code: `
@@ -209,7 +209,7 @@ ruleTester.run(RULE_NAME, rule, {
           userEvent.click(button)
         })
       `,
-      errors: [{ messageId: 'noSideEffectsWaitFor' }],
+      errors: [{ line: 3, column: 34, messageId: 'noSideEffectsWaitFor' }],
     },
     {
       code: `
@@ -219,7 +219,7 @@ ruleTester.run(RULE_NAME, rule, {
           expect(b).toEqual('b')
         })
       `,
-      errors: [{ messageId: 'noSideEffectsWaitFor' }],
+      errors: [{ line: 3, column: 34, messageId: 'noSideEffectsWaitFor' }],
     },
   ],
 });
