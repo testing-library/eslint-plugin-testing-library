@@ -9,6 +9,15 @@ ruleTester.run(RULE_NAME, rule, {
     {
       code: `
         import { render } from '@testing-library/foo';
+        
+        beforeAll(() => {
+          doOtherStuff();
+        });
+
+        beforeEach(() => {
+          doSomethingElse();
+        });
+        
         it('Test', () => {
           render(<Component/>)
         })
@@ -120,17 +129,18 @@ ruleTester.run(RULE_NAME, rule, {
     ...TESTING_FRAMEWORK_SETUP_HOOKS.map((setupHook) => ({
       settings: {
         'testing-library/utils-module': 'test-utils',
-        'testing-library/custom-renders': ['customRender', 'renderWithRedux'],
+        'testing-library/custom-renders': ['show', 'renderWithRedux'],
       },
       code: `
-        import { renderWithRedux } from '../test-utils';
+        import { show } from '../test-utils';
+  
         ${setupHook}(() => {
-          renderWithRedux(<Component/>)
+          show(<Component/>)
         })
       `,
       errors: [
         {
-          line: 4,
+          line: 5,
           column: 11,
           messageId: 'noRenderInSetup',
         },
