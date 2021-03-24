@@ -93,12 +93,23 @@ ruleTester.run(RULE_NAME, rule, {
       `,
     },
     {
+      settings: { 'testing-library/utils-module': 'test-utils' },
       code: `
-        import { waitFor } from 'react';  
+        import { waitFor } from 'somewhere-else';  
         await waitFor(function() {
           fireEvent.keyDown(input, {key: 'ArrowDown'})
           expect(b).toEqual('b')
         })
+      `,
+    },
+    {
+      code: `
+        import { waitFor } from '@testing-library/react';
+        test('side effects in functions other than waitFor are valid', () => {
+          fireEvent.keyDown(input, {key: 'ArrowDown'})
+          userEvent.click(button)
+          expect(b).toEqual('b')
+        });
       `,
     },
   ],

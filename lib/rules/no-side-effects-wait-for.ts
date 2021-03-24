@@ -1,7 +1,6 @@
 import { ASTUtils, TSESTree } from '@typescript-eslint/experimental-utils';
-import { hasTestingLibraryImportModule } from '../utils';
 import {
-  isBlockStatement,
+  getDeepestIdentifierNode,
   isCallExpression,
   isMemberExpression,
 } from '../node-utils';
@@ -10,8 +9,6 @@ import { createTestingLibraryRule } from '../create-testing-library-rule';
 export const RULE_NAME = 'no-side-effects-wait-for';
 export type MessageIds = 'noSideEffectsWaitFor';
 type Options = [];
-
-const WAIT_EXPRESSION_QUERY = 'CallExpression[callee.name=/^(waitFor)$/]';
 
 const SIDE_EFFECTS: Array<string> = ['fireEvent', 'userEvent'];
 
@@ -32,9 +29,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
     schema: [],
   },
   defaultOptions: [],
-  create: function (context) {
-    let isImportingTestingLibrary = false;
-
+  create: function (context, _, helpers) {
     function hasSideEffects(body: Array<TSESTree.Node>): boolean {
       return body.some((node: TSESTree.ExpressionStatement) => {
         if (
@@ -53,25 +48,27 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
     function reportSideEffects(node: TSESTree.BlockStatement) {
       const callExpressionNode = node.parent.parent as TSESTree.CallExpression;
+      const callExpressionIdentifier = getDeepestIdentifierNode(
+        callExpressionNode
+      );
 
-      if (
-        isImportingTestingLibrary &&
-        isBlockStatement(node) &&
-        hasSideEffects(node.body)
-      ) {
-        context.report({
-          node: callExpressionNode,
-          messageId: 'noSideEffectsWaitFor',
-        });
+      if (!helpers.isAsyncUtil(callExpressionIdentifier, ['waitFor'])) {
+        return;
       }
+
+      if (!hasSideEffects(node.body)) {
+        return;
+      }
+
+      context.report({
+        node: callExpressionNode,
+        messageId: 'noSideEffectsWaitFor',
+      });
     }
 
     return {
-      [`${WAIT_EXPRESSION_QUERY} > ArrowFunctionExpression > BlockStatement`]: reportSideEffects,
-      [`${WAIT_EXPRESSION_QUERY} > FunctionExpression > BlockStatement`]: reportSideEffects,
-      ImportDeclaration(node: TSESTree.ImportDeclaration) {
-        isImportingTestingLibrary = hasTestingLibraryImportModule(node);
-      },
+      'CallExpression > ArrowFunctionExpression > BlockStatement': reportSideEffects,
+      'CallExpression > FunctionExpression > BlockStatement': reportSideEffects,
     };
   },
 });

@@ -1,5 +1,3 @@
-import { TSESTree } from '@typescript-eslint/experimental-utils';
-
 const combineQueries = (variants: string[], methods: string[]): string[] => {
   const combinedQueries: string[] = [];
   variants.forEach((variant) => {
@@ -23,13 +21,6 @@ const LIBRARY_MODULES = [
   '@testing-library/vue',
   '@testing-library/svelte',
 ];
-
-// TODO: should be deleted after all rules are migrated to v4
-const hasTestingLibraryImportModule = (
-  node: TSESTree.ImportDeclaration
-): boolean => {
-  return LIBRARY_MODULES.includes(node.source.value.toString());
-};
 
 const SYNC_QUERIES_VARIANTS = ['getBy', 'getAllBy', 'queryBy', 'queryAllBy'];
 const ASYNC_QUERIES_VARIANTS = ['findBy', 'findAllBy'];
@@ -117,7 +108,6 @@ const ABSENCE_MATCHERS = ['toBeNull', 'toBeFalsy'];
 export {
   combineQueries,
   getDocsUrl,
-  hasTestingLibraryImportModule,
   SYNC_QUERIES_VARIANTS,
   ASYNC_QUERIES_VARIANTS,
   ALL_QUERIES_VARIANTS,
