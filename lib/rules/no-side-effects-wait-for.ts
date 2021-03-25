@@ -38,6 +38,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
           ASTUtils.isIdentifier(node.expression.callee.object)
         ) {
           const object: TSESTree.Identifier = node.expression.callee.object;
+          // TODO: check here if `object` is fireEvent or userEvent using helpers
           const identifierName: string = object.name;
           return SIDE_EFFECTS.includes(identifierName);
         } else {
