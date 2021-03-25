@@ -151,8 +151,13 @@ ruleTester.run(RULE_NAME, rule, {
         })
       `,
     },
-
-    // TODO: duplicate prev test but renaming fireEvent and userEvent
+    {
+      code: `// weird case to cover 100% coverage
+      await waitFor(() => {
+        const click = firEvent['click']
+      })
+      `,
+    },
   ],
   invalid: [
     // fireEvent

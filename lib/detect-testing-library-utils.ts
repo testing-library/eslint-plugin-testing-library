@@ -67,7 +67,6 @@ type IsAsyncUtilFn = (
   validNames?: readonly typeof ASYNC_UTILS[number][]
 ) => boolean;
 type IsFireEventMethodFn = (node: TSESTree.Identifier) => boolean;
-type IsUserEventMethodFn = (node: TSESTree.Identifier) => boolean;
 type IsRenderUtilFn = (node: TSESTree.Identifier) => boolean;
 type IsRenderVariableDeclaratorFn = (
   node: TSESTree.VariableDeclarator
@@ -100,7 +99,6 @@ export interface DetectionHelpers {
   isFireEventUtil: (node: TSESTree.Identifier) => boolean;
   isUserEventUtil: (node: TSESTree.Identifier) => boolean;
   isFireEventMethod: IsFireEventMethodFn;
-  isUserEventMethod: IsUserEventMethodFn;
   isRenderUtil: IsRenderUtilFn;
   isRenderVariableDeclarator: IsRenderVariableDeclaratorFn;
   isDebugUtil: IsDebugUtilFn;
@@ -409,13 +407,6 @@ export function detectTestingLibraryUtils<
     };
 
     /**
-     * Determines whether a given node is userEvent method or not
-     */
-    const isUserEventMethod: IsUserEventMethodFn = (node) => {
-      return isTestingLibrarySimulateEventUtil(node, 'userEvent');
-    };
-
-    /**
      * Determines whether a given node is a valid render util or not.
      *
      * A node will be interpreted as a valid render based on two conditions:
@@ -616,7 +607,6 @@ export function detectTestingLibraryUtils<
       isFireEventUtil,
       isUserEventUtil,
       isFireEventMethod,
-      isUserEventMethod,
       isRenderUtil,
       isRenderVariableDeclarator,
       isDebugUtil,
