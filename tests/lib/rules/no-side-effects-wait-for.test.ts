@@ -139,6 +139,18 @@ ruleTester.run(RULE_NAME, rule, {
         })
       `,
     },
+    {
+      settings: { 'testing-library/utils-module': 'test-utils' },
+      code: `
+        import { waitFor, fireEvent as renamedFireEvent, userEvent as renamedUserEvent } from 'test-utils';
+        import { fireEvent, userEvent } from 'somewhere-else';
+
+        await waitFor(() => {
+          fireEvent.keyDown(input, {key: 'ArrowDown'})
+          userEvent.click(button)
+        })
+      `,
+    },
 
     // TODO: duplicate prev test but renaming fireEvent and userEvent
   ],
@@ -154,9 +166,18 @@ ruleTester.run(RULE_NAME, rule, {
       errors: [{ line: 3, column: 15, messageId: 'noSideEffectsWaitFor' }],
     },
     {
+      code: `
+        import { waitFor, fireEvent as renamedFireEvent } from '@testing-library/react';  
+        await waitFor(() => {
+          renamedFireEvent.keyDown(input, {key: 'ArrowDown'})
+        })
+      `,
+      errors: [{ line: 3, column: 15, messageId: 'noSideEffectsWaitFor' }],
+    },
+    {
       settings: { 'testing-library/utils-module': '~/test-utils' },
       code: `
-        import { waitFor } from '~/test-utils';  
+        import { waitFor, fireEvent } from '~/test-utils';  
         await waitFor(() => {
           fireEvent.keyDown(input, {key: 'ArrowDown'})
         })
@@ -218,6 +239,25 @@ ruleTester.run(RULE_NAME, rule, {
         import { waitFor } from '@testing-library/react';  
         await waitFor(() => {
           userEvent.click(button)
+        })
+      `,
+      errors: [{ line: 3, column: 15, messageId: 'noSideEffectsWaitFor' }],
+    },
+    {
+      code: `
+        import { waitFor, userEvent as renamedUserEvent } from '@testing-library/react';  
+        await waitFor(() => {
+          renamedUserEvent.click(button)
+        })
+      `,
+      errors: [{ line: 3, column: 15, messageId: 'noSideEffectsWaitFor' }],
+    },
+    {
+      settings: { 'testing-library/utils-module': '~/test-utils' },
+      code: `
+        import { waitFor, userEvent } from '~/test-utils';  
+        await waitFor(() => {
+          userEvent.click();
         })
       `,
       errors: [{ line: 3, column: 15, messageId: 'noSideEffectsWaitFor' }],

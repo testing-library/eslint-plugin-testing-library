@@ -101,6 +101,12 @@ export function isJSXAttribute(
   return node?.type === AST_NODE_TYPES.JSXAttribute;
 }
 
+export function isExpressionStatement(
+  node: TSESTree.Node
+): node is TSESTree.ExpressionStatement {
+  return node?.type === AST_NODE_TYPES.ExpressionStatement;
+}
+
 /**
  * Finds the closest CallExpression node for a given node.
  * @param node
@@ -386,6 +392,10 @@ export function getPropertyIdentifierNode(
 
   if (isCallExpression(node)) {
     return getPropertyIdentifierNode(node.callee);
+  }
+
+  if (isExpressionStatement(node)) {
+    return getPropertyIdentifierNode(node.expression);
   }
 
   return null;
