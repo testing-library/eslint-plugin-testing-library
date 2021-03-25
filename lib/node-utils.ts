@@ -321,7 +321,7 @@ interface InnermostFunctionScope extends TSESLintScope.FunctionScope {
 }
 
 export function getInnermostFunctionScope(
-  context: RuleContext<string, []>,
+  context: RuleContext<string, unknown[]>,
   asyncQueryNode: TSESTree.Identifier
 ): InnermostFunctionScope | null {
   const innermostScope = ASTUtils.getInnermostScope(
@@ -459,24 +459,6 @@ export function getFunctionName(
   );
 }
 
-// TODO: should be removed after v4 is finished
-export function isRenderFunction(
-  callNode: TSESTree.CallExpression,
-  renderFunctions: string[]
-): boolean {
-  // returns true for `render` and e.g. `customRenderFn`
-  // as well as `someLib.render` and `someUtils.customRenderFn`
-  return renderFunctions.some((name) => {
-    return (
-      (ASTUtils.isIdentifier(callNode.callee) &&
-        name === callNode.callee.name) ||
-      (isMemberExpression(callNode.callee) &&
-        ASTUtils.isIdentifier(callNode.callee.property) &&
-        name === callNode.callee.property.name)
-    );
-  });
-}
-
 // TODO: extract into types file?
 export type ImportModuleNode =
   | TSESTree.ImportDeclaration
@@ -568,7 +550,7 @@ export function hasClosestExpectResolvesRejects(node: TSESTree.Node): boolean {
  * Gets the Function node which returns the given Identifier.
  */
 export function getInnermostReturningFunction(
-  context: RuleContext<string, []>,
+  context: RuleContext<string, unknown[]>,
   node: TSESTree.Identifier
 ):
   | TSESTree.FunctionDeclaration

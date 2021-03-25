@@ -46,9 +46,10 @@ export default createTestingLibraryRule<Options, MessageIds>({
     }
 
     return {
-      'CallExpression Identifier'(node: TSESTree.Identifier) {
-        if (helpers.isRenderUtil(node)) {
-          detectRenderWrapper(node);
+      CallExpression(node) {
+        const callExpressionIdentifier = getDeepestIdentifierNode(node);
+        if (helpers.isRenderUtil(callExpressionIdentifier)) {
+          detectRenderWrapper(callExpressionIdentifier);
         }
       },
       VariableDeclarator(node) {
