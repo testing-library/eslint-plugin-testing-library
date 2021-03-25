@@ -23,7 +23,9 @@
 [![Tweet][tweet-badge]][tweet-url]
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+
 [![All Contributors](https://img.shields.io/badge/all_contributors-36-orange.svg?style=flat-square)](#contributors-)
+
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 ## Installation
@@ -139,8 +141,8 @@ To enable this configuration use the `extends` property in your
 | [no-node-access](docs/rules/no-node-access.md)                                   | Disallow direct Node access                                                              | ![angular-badge][] ![react-badge][] ![vue-badge][]                |                    |
 | [no-promise-in-fire-event](docs/rules/no-promise-in-fire-event.md)               | Disallow the use of promises passed to a `fireEvent` method                              |                                                                   |                    |
 | [no-render-in-setup](docs/rules/no-render-in-setup.md)                           | Disallow the use of `render` in setup functions                                          |                                                                   |                    |
-| [no-side-effects-wait-for](docs/rules/no-side-effects-wait-for.md)               | Disallow the use of side effects inside `waitFor`                                        |                                                                   |                    |
 | [no-wait-for-empty-callback](docs/rules/no-wait-for-empty-callback.md)           | Disallow empty callbacks for `waitFor` and `waitForElementToBeRemoved`                   | ![dom-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] |                    |
+| [no-wait-for-side-effects](docs/rules/no-wait-for-side-effects.md)               | Disallow the use of side effects inside `waitFor`                                        |                                                                   |                    |
 | [no-wait-for-snapshot](docs/rules/no-wait-for-snapshot.md)                       | Ensures no snapshot is generated inside of a `waitFor` call                              |                                                                   |                    |
 | [no-wait-for-snapshot](docs/rules/no-wait-for-snapshot.md)                       | Ensures no snapshot is generated inside of a `waitFor` call                              |                                                                   |                    |
 | [prefer-explicit-assert](docs/rules/prefer-explicit-assert.md)                   | Suggest using explicit assertions rather than just `getBy*` queries                      |                                                                   |                    |

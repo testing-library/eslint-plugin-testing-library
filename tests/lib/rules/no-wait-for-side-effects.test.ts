@@ -1,5 +1,5 @@
 import { createRuleTester } from '../test-utils';
-import rule, { RULE_NAME } from '../../../lib/rules/no-side-effects-wait-for';
+import rule, { RULE_NAME } from '../../../lib/rules/no-wait-for-side-effects';
 
 const ruleTester = createRuleTester();
 

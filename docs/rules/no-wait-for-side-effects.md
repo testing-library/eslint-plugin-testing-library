@@ -1,4 +1,4 @@
-# Side effects inside `waitFor` are not preferred (no-side-effects-wait-for)
+# Side effects inside `waitFor` are not preferred (no-wait-for-side-effects)
 
 ## Rule Details
 

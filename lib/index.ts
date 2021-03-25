@@ -20,7 +20,7 @@ import preferUserEvent from './rules/prefer-user-event';
 import preferWaitFor from './rules/prefer-wait-for';
 import noMultipleAssertionsWaitFor from './rules/no-multiple-assertions-wait-for';
 import preferFindBy from './rules/prefer-find-by';
-import noSideEffectsWaitFor from './rules/no-side-effects-wait-for';
+import noWaitForSideEffects from './rules/no-wait-for-side-effects';
 import renderResultNamingConvention from './rules/render-result-naming-convention';
 
 const rules = {
@@ -38,8 +38,8 @@ const rules = {
   'no-node-access': noNodeAccess,
   'no-promise-in-fire-event': noPromiseInFireEvent,
   'no-render-in-setup': noRenderInSetup,
-  'no-side-effects-wait-for': noSideEffectsWaitFor,
   'no-wait-for-empty-callback': noWaitForEmptyCallback,
+  'no-wait-for-side-effects': noWaitForSideEffects,
   'no-wait-for-snapshot': noWaitForSnapshot,
   'prefer-explicit-assert': preferExplicitAssert,
   'prefer-find-by': preferFindBy,
