@@ -51,8 +51,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
       }
 
       context.report({
-        node,
-        loc: node.loc.start,
+        node: callExpressionNode,
         messageId: 'noWaitForMultipleAssertion',
       });
     }

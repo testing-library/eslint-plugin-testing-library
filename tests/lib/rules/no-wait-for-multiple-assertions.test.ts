@@ -79,7 +79,7 @@ ruleTester.run(RULE_NAME, rule, {
         })
       `,
       errors: [
-        { line: 2, column: 29, messageId: 'noWaitForMultipleAssertion' },
+        { line: 2, column: 15, messageId: 'noWaitForMultipleAssertion' },
       ],
     },
     {
@@ -91,7 +91,7 @@ ruleTester.run(RULE_NAME, rule, {
         })
       `,
       errors: [
-        { line: 2, column: 29, messageId: 'noWaitForMultipleAssertion' },
+        { line: 2, column: 15, messageId: 'noWaitForMultipleAssertion' },
       ],
     },
     {
@@ -102,7 +102,7 @@ ruleTester.run(RULE_NAME, rule, {
         })
       `,
       errors: [
-        { line: 2, column: 34, messageId: 'noWaitForMultipleAssertion' },
+        { line: 2, column: 15, messageId: 'noWaitForMultipleAssertion' },
       ],
     },
     {
@@ -114,7 +114,7 @@ ruleTester.run(RULE_NAME, rule, {
         })
       `,
       errors: [
-        { line: 2, column: 34, messageId: 'noWaitForMultipleAssertion' },
+        { line: 2, column: 15, messageId: 'noWaitForMultipleAssertion' },
       ],
     },
   ],
