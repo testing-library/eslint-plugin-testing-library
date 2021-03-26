@@ -10,8 +10,8 @@ import {
   isCallExpression,
 } from '../node-utils';
 
-export const RULE_NAME = 'no-multiple-assertions-wait-for';
-export type MessageIds = 'noMultipleAssertionWaitFor';
+export const RULE_NAME = 'no-wait-for-multiple-assertions';
+export type MessageIds = 'noWaitForMultipleAssertion';
 type Options = [];
 
 const WAIT_EXPRESSION_QUERY = 'CallExpression[callee.name=/^(waitFor)$/]';
@@ -26,7 +26,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
       recommended: false,
     },
     messages: {
-      noMultipleAssertionWaitFor:
+      noWaitForMultipleAssertion:
         'Avoid using multiple assertions within `waitFor` callback',
     },
     fixable: null,
@@ -56,7 +56,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
         context.report({
           node,
           loc: node.loc.start,
-          messageId: 'noMultipleAssertionWaitFor',
+          messageId: 'noWaitForMultipleAssertion',
         });
       }
     }

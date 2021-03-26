@@ -1,7 +1,7 @@
 import { createRuleTester } from '../test-utils';
 import rule, {
   RULE_NAME,
-} from '../../../lib/rules/no-multiple-assertions-wait-for';
+} from '../../../lib/rules/no-wait-for-multiple-assertions';
 
 const ruleTester = createRuleTester();
 
@@ -78,7 +78,7 @@ ruleTester.run(RULE_NAME, rule, {
           expect(b).toEqual('b')
         })
       `,
-      errors: [{ messageId: 'noMultipleAssertionWaitFor' }],
+      errors: [{ messageId: 'noWaitForMultipleAssertion' }],
     },
     {
       code: `
@@ -88,7 +88,7 @@ ruleTester.run(RULE_NAME, rule, {
           expect(b).toEqual('b')
         })
       `,
-      errors: [{ messageId: 'noMultipleAssertionWaitFor' }],
+      errors: [{ messageId: 'noWaitForMultipleAssertion' }],
     },
     {
       code: `
@@ -97,7 +97,7 @@ ruleTester.run(RULE_NAME, rule, {
           expect(b).toEqual('b')
         })
       `,
-      errors: [{ messageId: 'noMultipleAssertionWaitFor' }],
+      errors: [{ messageId: 'noWaitForMultipleAssertion' }],
     },
     {
       code: `
@@ -107,7 +107,7 @@ ruleTester.run(RULE_NAME, rule, {
           expect(b).toEqual('b')
         })
       `,
-      errors: [{ messageId: 'noMultipleAssertionWaitFor' }],
+      errors: [{ messageId: 'noWaitForMultipleAssertion' }],
     },
   ],
 });
