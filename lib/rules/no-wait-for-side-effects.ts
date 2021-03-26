@@ -1,8 +1,5 @@
 import { TSESTree } from '@typescript-eslint/experimental-utils';
-import {
-  getDeepestIdentifierNode,
-  getPropertyIdentifierNode,
-} from '../node-utils';
+import { getPropertyIdentifierNode } from '../node-utils';
 import { createTestingLibraryRule } from '../create-testing-library-rule';
 
 export const RULE_NAME = 'no-wait-for-side-effects';
@@ -44,7 +41,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
     function reportSideEffects(node: TSESTree.BlockStatement) {
       const callExpressionNode = node.parent.parent as TSESTree.CallExpression;
-      const callExpressionIdentifier = getDeepestIdentifierNode(
+      const callExpressionIdentifier = getPropertyIdentifierNode(
         callExpressionNode
       );
 
