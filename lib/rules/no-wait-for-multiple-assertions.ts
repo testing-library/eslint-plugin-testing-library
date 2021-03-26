@@ -1,14 +1,10 @@
-import {
-  ESLintUtils,
-  TSESTree,
-  ASTUtils,
-} from '@typescript-eslint/experimental-utils';
-import { getDocsUrl } from '../utils';
+import { ASTUtils, TSESTree } from '@typescript-eslint/experimental-utils';
 import {
   isBlockStatement,
-  isMemberExpression,
   isCallExpression,
+  isMemberExpression,
 } from '../node-utils';
+import { createTestingLibraryRule } from '../create-testing-library-rule';
 
 export const RULE_NAME = 'no-wait-for-multiple-assertions';
 export type MessageIds = 'noWaitForMultipleAssertion';
@@ -16,7 +12,7 @@ type Options = [];
 
 const WAIT_EXPRESSION_QUERY = 'CallExpression[callee.name=/^(waitFor)$/]';
 
-export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
+export default createTestingLibraryRule<Options, MessageIds>({
   name: RULE_NAME,
   meta: {
     type: 'suggestion',
