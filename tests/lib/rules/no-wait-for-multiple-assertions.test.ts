@@ -78,7 +78,9 @@ ruleTester.run(RULE_NAME, rule, {
           expect(b).toEqual('b')
         })
       `,
-      errors: [{ messageId: 'noWaitForMultipleAssertion' }],
+      errors: [
+        { line: 2, column: 29, messageId: 'noWaitForMultipleAssertion' },
+      ],
     },
     {
       code: `
@@ -88,7 +90,9 @@ ruleTester.run(RULE_NAME, rule, {
           expect(b).toEqual('b')
         })
       `,
-      errors: [{ messageId: 'noWaitForMultipleAssertion' }],
+      errors: [
+        { line: 2, column: 29, messageId: 'noWaitForMultipleAssertion' },
+      ],
     },
     {
       code: `
@@ -97,7 +101,9 @@ ruleTester.run(RULE_NAME, rule, {
           expect(b).toEqual('b')
         })
       `,
-      errors: [{ messageId: 'noWaitForMultipleAssertion' }],
+      errors: [
+        { line: 2, column: 34, messageId: 'noWaitForMultipleAssertion' },
+      ],
     },
     {
       code: `
@@ -107,7 +113,9 @@ ruleTester.run(RULE_NAME, rule, {
           expect(b).toEqual('b')
         })
       `,
-      errors: [{ messageId: 'noWaitForMultipleAssertion' }],
+      errors: [
+        { line: 2, column: 34, messageId: 'noWaitForMultipleAssertion' },
+      ],
     },
   ],
 });
