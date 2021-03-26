@@ -1,16 +1,10 @@
-import { ASTUtils, TSESTree } from '@typescript-eslint/experimental-utils';
-import {
-  isBlockStatement,
-  isCallExpression,
-  isMemberExpression,
-} from '../node-utils';
+import { TSESTree } from '@typescript-eslint/experimental-utils';
+import { getPropertyIdentifierNode } from '../node-utils';
 import { createTestingLibraryRule } from '../create-testing-library-rule';
 
 export const RULE_NAME = 'no-wait-for-multiple-assertions';
 export type MessageIds = 'noWaitForMultipleAssertion';
 type Options = [];
-
-const WAIT_EXPRESSION_QUERY = 'CallExpression[callee.name=/^(waitFor)$/]';
 
 export default createTestingLibraryRule<Options, MessageIds>({
   name: RULE_NAME,
@@ -29,37 +23,43 @@ export default createTestingLibraryRule<Options, MessageIds>({
     schema: [],
   },
   defaultOptions: [],
-  create: function (context) {
-    function reportMultipleAssertion(node: TSESTree.BlockStatement) {
-      const totalExpect = (body: Array<TSESTree.Node>): Array<TSESTree.Node> =>
-        body.filter((node: TSESTree.ExpressionStatement) => {
-          if (
-            isCallExpression(node.expression) &&
-            isMemberExpression(node.expression.callee) &&
-            isCallExpression(node.expression.callee.object)
-          ) {
-            const object: TSESTree.CallExpression =
-              node.expression.callee.object;
-            const expressionName: string =
-              ASTUtils.isIdentifier(object.callee) && object.callee.name;
-            return expressionName === 'expect';
-          } else {
-            return false;
-          }
-        });
+  create: function (context, _, helpers) {
+    function totalExpect(body: Array<TSESTree.Node>): Array<TSESTree.Node> {
+      return body.filter((node: TSESTree.ExpressionStatement) => {
+        const expressionIdentifier = getPropertyIdentifierNode(node);
 
-      if (isBlockStatement(node) && totalExpect(node.body).length > 1) {
-        context.report({
-          node,
-          loc: node.loc.start,
-          messageId: 'noWaitForMultipleAssertion',
-        });
+        if (!expressionIdentifier) {
+          return false;
+        }
+
+        return expressionIdentifier.name === 'expect';
+      });
+    }
+
+    function reportMultipleAssertion(node: TSESTree.BlockStatement) {
+      const callExpressionNode = node.parent.parent as TSESTree.CallExpression;
+      const callExpressionIdentifier = getPropertyIdentifierNode(
+        callExpressionNode
+      );
+
+      if (!helpers.isAsyncUtil(callExpressionIdentifier, ['waitFor'])) {
+        return;
       }
+
+      if (totalExpect(node.body).length <= 1) {
+        return;
+      }
+
+      context.report({
+        node,
+        loc: node.loc.start,
+        messageId: 'noWaitForMultipleAssertion',
+      });
     }
 
     return {
-      [`${WAIT_EXPRESSION_QUERY} > ArrowFunctionExpression > BlockStatement`]: reportMultipleAssertion,
-      [`${WAIT_EXPRESSION_QUERY} > FunctionExpression > BlockStatement`]: reportMultipleAssertion,
+      'CallExpression > ArrowFunctionExpression > BlockStatement': reportMultipleAssertion,
+      'CallExpression > FunctionExpression > BlockStatement': reportMultipleAssertion,
     };
   },
 });
