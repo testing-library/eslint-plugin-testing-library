@@ -154,7 +154,7 @@ ruleTester.run(RULE_NAME, rule, {
           await fireEvent.${func}('foo');
         });
       `,
-      errors: [{ line: 4, messageId: 'noAwaitSyncEvents' }],
+      errors: [{ line: 4, column: 17, messageId: 'noAwaitSyncEvents' }],
     })),
     // sync userEvent sync methods with await operator are not valid
     ...USER_EVENT_SYNC_FUNCTIONS.map((func) => ({
@@ -164,7 +164,7 @@ ruleTester.run(RULE_NAME, rule, {
           await userEvent.${func}('foo');
         });
       `,
-      errors: [{ line: 4, messageId: 'noAwaitSyncEvents' }],
+      errors: [{ line: 4, column: 17, messageId: 'noAwaitSyncEvents' }],
     })),
     {
       code: `
@@ -175,8 +175,8 @@ ruleTester.run(RULE_NAME, rule, {
         });
       `,
       errors: [
-        { line: 4, messageId: 'noAwaitSyncEvents' },
-        { line: 5, messageId: 'noAwaitSyncEvents' },
+        { line: 4, column: 17, messageId: 'noAwaitSyncEvents' },
+        { line: 5, column: 17, messageId: 'noAwaitSyncEvents' },
       ],
     },
     {
@@ -188,8 +188,8 @@ ruleTester.run(RULE_NAME, rule, {
         });
       `,
       errors: [
-        { line: 4, messageId: 'noAwaitSyncEvents' },
-        { line: 5, messageId: 'noAwaitSyncEvents' },
+        { line: 4, column: 17, messageId: 'noAwaitSyncEvents' },
+        { line: 5, column: 17, messageId: 'noAwaitSyncEvents' },
       ],
     },
   ],
