@@ -158,7 +158,7 @@ ruleTester.run(RULE_NAME, rule, {
       code: `
         import { fireEvent } from '@testing-library/framework';
         import userEvent from '@testing-library/user-event';
-        test('should report sync event awaited', async() => {
+        test('should report ${func} sync event awaited', async() => {
           await ${func}('foo');
         });
       `,

@@ -1,13 +1,16 @@
 import { ASTUtils, TSESTree } from '@typescript-eslint/experimental-utils';
-import { EVENTS_SIMULATORS } from '../utils';
-import { isLiteral, isObjectExpression, isProperty } from '../node-utils';
+import {
+  getDeepestIdentifierNode,
+  getPropertyIdentifierNode,
+  isLiteral,
+  isObjectExpression,
+  isProperty,
+} from '../node-utils';
 import { createTestingLibraryRule } from '../create-testing-library-rule';
 
 export const RULE_NAME = 'no-await-sync-events';
 export type MessageIds = 'noAwaitSyncEvents';
 type Options = [];
-
-const SYNC_EVENTS_REGEXP = new RegExp(`^(${EVENTS_SIMULATORS.join('|')})$`);
 
 const USER_EVENT_ASYNC_EXCEPTIONS: string[] = ['type', 'keyboard'];
 
@@ -29,24 +32,27 @@ export default createTestingLibraryRule<Options, MessageIds>({
   },
   defaultOptions: [],
 
-  create(context) {
+  create(context, _, helpers) {
     // userEvent.type() and userEvent.keyboard() are exceptions, which returns a
     // Promise. But it is only necessary to wait when delay option other than 0
-    // is specified. So this rule has a special exception
-    // for the case await:
+    // is specified. So this rule has a special exception for the case await:
     //  - userEvent.type(element, 'abc', {delay: 1234})
     //  - userEvent.keyboard('abc', {delay: 1234})
     return {
-      [`AwaitExpression > CallExpression > MemberExpression > Identifier[name=${SYNC_EVENTS_REGEXP}]`](
-        node: TSESTree.Identifier
-      ) {
-        const memberExpression = node.parent as TSESTree.MemberExpression;
-        const methodNode = memberExpression.property as TSESTree.Identifier;
-        const callExpression = memberExpression.parent as TSESTree.CallExpression;
-        const lastArg =
-          callExpression.arguments[callExpression.arguments.length - 1];
+      'AwaitExpression > CallExpression'(node: TSESTree.CallExpression) {
+        const simulateEventFunctionIdentifier = getDeepestIdentifierNode(node);
 
-        const withDelay =
+        const isSimulateEventMethod =
+          helpers.isUserEventMethod(simulateEventFunctionIdentifier) ||
+          helpers.isFireEventMethod(simulateEventFunctionIdentifier);
+
+        if (!isSimulateEventMethod) {
+          return;
+        }
+
+        const lastArg = node.arguments[node.arguments.length - 1];
+
+        const hasDelay =
           isObjectExpression(lastArg) &&
           lastArg.properties.some(
             (property) =>
@@ -57,19 +63,22 @@ export default createTestingLibraryRule<Options, MessageIds>({
               property.value.value > 0
           );
 
+        const simulateEventFunctionName = simulateEventFunctionIdentifier.name;
+
         if (
-          node.name === 'userEvent' &&
-          USER_EVENT_ASYNC_EXCEPTIONS.includes(methodNode.name) &&
-          withDelay
+          USER_EVENT_ASYNC_EXCEPTIONS.includes(simulateEventFunctionName) &&
+          hasDelay
         ) {
           return;
         }
 
         context.report({
-          node: methodNode,
+          node,
           messageId: 'noAwaitSyncEvents',
           data: {
-            name: `${node.name}.${methodNode.name}`,
+            name: `${
+              getPropertyIdentifierNode(node).name
+            }.${simulateEventFunctionName}`,
           },
         });
       },
