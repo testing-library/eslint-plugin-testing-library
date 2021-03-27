@@ -177,7 +177,14 @@ ruleTester.run(RULE_NAME, rule, {
           await fireEvent.${func}('foo');
         });
       `,
-      errors: [{ line: 4, column: 17, messageId: 'noAwaitSyncEvents' }],
+      errors: [
+        {
+          line: 4,
+          column: 17,
+          messageId: 'noAwaitSyncEvents',
+          data: { name: `fireEvent.${func}` },
+        },
+      ],
     })),
     // sync userEvent sync methods with await operator are not valid
     ...USER_EVENT_SYNC_FUNCTIONS.map((func) => ({
@@ -187,7 +194,14 @@ ruleTester.run(RULE_NAME, rule, {
           await userEvent.${func}('foo');
         });
       `,
-      errors: [{ line: 4, column: 17, messageId: 'noAwaitSyncEvents' }],
+      errors: [
+        {
+          line: 4,
+          column: 17,
+          messageId: 'noAwaitSyncEvents',
+          data: { name: `userEvent.${func}` },
+        },
+      ],
     })),
     {
       code: `
@@ -198,8 +212,18 @@ ruleTester.run(RULE_NAME, rule, {
         });
       `,
       errors: [
-        { line: 4, column: 17, messageId: 'noAwaitSyncEvents' },
-        { line: 5, column: 17, messageId: 'noAwaitSyncEvents' },
+        {
+          line: 4,
+          column: 17,
+          messageId: 'noAwaitSyncEvents',
+          data: { name: 'userEvent.type' },
+        },
+        {
+          line: 5,
+          column: 17,
+          messageId: 'noAwaitSyncEvents',
+          data: { name: 'userEvent.keyboard' },
+        },
       ],
     },
     {
@@ -211,8 +235,18 @@ ruleTester.run(RULE_NAME, rule, {
         });
       `,
       errors: [
-        { line: 4, column: 17, messageId: 'noAwaitSyncEvents' },
-        { line: 5, column: 17, messageId: 'noAwaitSyncEvents' },
+        {
+          line: 4,
+          column: 17,
+          messageId: 'noAwaitSyncEvents',
+          data: { name: 'userEvent.type' },
+        },
+        {
+          line: 5,
+          column: 17,
+          messageId: 'noAwaitSyncEvents',
+          data: { name: 'userEvent.keyboard' },
+        },
       ],
     },
     {
@@ -228,9 +262,24 @@ ruleTester.run(RULE_NAME, rule, {
         });
       `,
       errors: [
-        { line: 6, column: 17, messageId: 'noAwaitSyncEvents' },
-        { line: 7, column: 17, messageId: 'noAwaitSyncEvents' },
-        { line: 8, column: 17, messageId: 'noAwaitSyncEvents' },
+        {
+          line: 6,
+          column: 17,
+          messageId: 'noAwaitSyncEvents',
+          data: { name: 'renamedFireEvent.click' },
+        },
+        {
+          line: 7,
+          column: 17,
+          messageId: 'noAwaitSyncEvents',
+          data: { name: 'renamedUserEvent.type' },
+        },
+        {
+          line: 8,
+          column: 17,
+          messageId: 'noAwaitSyncEvents',
+          data: { name: 'renamedUserEvent.keyboard' },
+        },
       ],
     },
   ],
