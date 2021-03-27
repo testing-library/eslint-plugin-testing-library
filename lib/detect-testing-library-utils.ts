@@ -595,9 +595,7 @@ export function detectTestingLibraryUtils<
         }
       } else {
         const requireNode = importedUserEventLibraryNode.parent as TSESTree.VariableDeclarator;
-        if (ASTUtils.isIdentifier(requireNode.id)) {
-          return requireNode.id;
-        }
+        return requireNode.id as TSESTree.Identifier;
       }
 
       return null;

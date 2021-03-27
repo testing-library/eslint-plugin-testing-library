@@ -71,6 +71,36 @@ ruleTester.run(RULE_NAME, rule, {
     `,
     },
 
+    // Test Cases for user-event imports
+    {
+      settings: { 'testing-library/utils-module': 'test-utils' },
+      code: `
+      import userEvent from 'somewhere-else'
+      userEvent.click(element)
+      `,
+    },
+    {
+      settings: { 'testing-library/utils-module': 'test-utils' },
+      code: `
+      import '@testing-library/user-event'
+      userEvent.click()
+      `,
+    },
+    {
+      settings: { 'testing-library/utils-module': 'test-utils' },
+      code: `
+      import { click } from '@testing-library/user-event'
+      userEvent.click()
+      `,
+    },
+    {
+      settings: { 'testing-library/utils-module': 'test-utils' },
+      code: `
+      import * as incorrect from '@testing-library/user-event'
+      userEvent.click()
+      `,
+    },
+
     // Test Cases for renders
     {
       code: `
@@ -428,6 +458,54 @@ ruleTester.run(RULE_NAME, rule, {
       import { foo } from 'custom-module-forced-report'
     `,
       errors: [{ line: 3, column: 7, messageId: 'fakeError' }],
+    },
+
+    // Test Cases for user-event imports
+    {
+      code: `
+      import userEvent from 'somewhere-else'
+      userEvent.click(element)
+      `,
+      errors: [{ line: 3, column: 17, messageId: 'userEventError' }],
+    },
+    {
+      settings: { 'testing-library/utils-module': 'test-utils' },
+      code: `
+      import userEvent from '@testing-library/user-event'
+      userEvent.click(element)
+      `,
+      errors: [{ line: 3, column: 17, messageId: 'userEventError' }],
+    },
+    {
+      settings: { 'testing-library/utils-module': 'test-utils' },
+      code: `
+      import renamed from '@testing-library/user-event'
+      renamed.click(element)
+      `,
+      errors: [{ line: 3, column: 15, messageId: 'userEventError' }],
+    },
+    {
+      code: `
+      const userEvent = require('somewhere-else')
+      userEvent.click(element)
+      `,
+      errors: [{ line: 3, column: 17, messageId: 'userEventError' }],
+    },
+    {
+      settings: { 'testing-library/utils-module': 'test-utils' },
+      code: `
+      const userEvent = require('@testing-library/user-event')
+      userEvent.click(element)
+      `,
+      errors: [{ line: 3, column: 17, messageId: 'userEventError' }],
+    },
+    {
+      settings: { 'testing-library/utils-module': 'test-utils' },
+      code: `
+      const renamed = require('@testing-library/user-event')
+      renamed.click(element)
+      `,
+      errors: [{ line: 3, column: 15, messageId: 'userEventError' }],
     },
 
     // Test Cases for renders

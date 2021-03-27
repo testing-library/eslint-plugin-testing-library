@@ -15,6 +15,7 @@ type MessageIds =
   | 'queryByError'
   | 'findByError'
   | 'customQueryError'
+  | 'userEventError'
   | 'presenceAssertError'
   | 'absenceAssertError';
 
@@ -36,6 +37,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
       queryByError: 'some error related to queryBy reported',
       findByError: 'some error related to findBy reported',
       customQueryError: 'some error related to a customQuery reported',
+      userEventError: 'some error related to userEvent reported',
       presenceAssertError: 'some error related to presence assert reported',
       absenceAssertError: 'some error related to absence assert reported',
     },
@@ -57,6 +59,10 @@ export default createTestingLibraryRule<Options, MessageIds>({
           messageId: 'asyncUtilError',
           data: { utilName: node.name },
         });
+      }
+
+      if (helpers.isUserEventMethod(node)) {
+        return context.report({ node, messageId: 'userEventError' });
       }
 
       // force queries to be reported
@@ -90,7 +96,6 @@ export default createTestingLibraryRule<Options, MessageIds>({
     const reportImportDeclaration = (node: TSESTree.ImportDeclaration) => {
       // This is just to check that defining an `ImportDeclaration` doesn't
       // override `ImportDeclaration` from `detectTestingLibraryUtils`
-
       if (node.source.value === 'report-me') {
         context.report({ node, messageId: 'fakeError' });
       }
