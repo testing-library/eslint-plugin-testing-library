@@ -3,13 +3,13 @@ import {
   ESLintUtils,
   TSESTree,
 } from '@typescript-eslint/experimental-utils';
-import { getDocsUrl, SYNC_EVENTS } from '../utils';
+import { getDocsUrl, EVENTS_SIMULATORS } from '../utils';
 import { isObjectExpression, isProperty } from '../node-utils';
 export const RULE_NAME = 'no-await-sync-events';
 export type MessageIds = 'noAwaitSyncEvents';
 type Options = [];
 
-const SYNC_EVENTS_REGEXP = new RegExp(`^(${SYNC_EVENTS.join('|')})$`);
+const SYNC_EVENTS_REGEXP = new RegExp(`^(${EVENTS_SIMULATORS.join('|')})$`);
 export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
   name: RULE_NAME,
   meta: {

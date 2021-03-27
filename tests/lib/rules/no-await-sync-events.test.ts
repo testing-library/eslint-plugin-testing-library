@@ -1,6 +1,6 @@
 import { createRuleTester } from '../test-utils';
 import rule, { RULE_NAME } from '../../../lib/rules/no-await-sync-events';
-import { SYNC_EVENTS } from '../../../lib/utils';
+import { EVENTS_SIMULATORS } from '../../../lib/utils';
 
 const ruleTester = createRuleTester();
 
@@ -97,34 +97,36 @@ const userEventFunctions = [
   'deselectOptions',
   'upload',
   // 'type',
+  // 'keyboard',
   'tab',
   'paste',
   'hover',
   'unhover',
 ];
-let eventFunctions: string[] = [];
-SYNC_EVENTS.forEach((event) => {
-  switch (event) {
+
+let syncEventFunctions: string[] = [];
+for (const simulatorObj of EVENTS_SIMULATORS) {
+  switch (simulatorObj) {
     case 'fireEvent':
-      eventFunctions = eventFunctions.concat(
-        fireEventFunctions.map((f: string): string => `${event}.${f}`)
+      syncEventFunctions = syncEventFunctions.concat(
+        fireEventFunctions.map((f: string): string => `${simulatorObj}.${f}`)
       );
       break;
     case 'userEvent':
-      eventFunctions = eventFunctions.concat(
-        userEventFunctions.map((f: string): string => `${event}.${f}`)
+      syncEventFunctions = syncEventFunctions.concat(
+        userEventFunctions.map((f: string): string => `${simulatorObj}.${f}`)
       );
       break;
     default:
-      eventFunctions.push(`${event}.anyFunc`);
+      syncEventFunctions.push(`${simulatorObj}.anyFunc`);
   }
-});
+}
 
 ruleTester.run(RULE_NAME, rule, {
   valid: [
     // sync events without await are valid
-    // userEvent.type() is an exception
-    ...eventFunctions.map((func) => ({
+    // userEvent.type() and userEvent.keyboard() are exceptions
+    ...syncEventFunctions.map((func) => ({
       code: `() => {
         ${func}('foo')
       }
@@ -152,7 +154,7 @@ ruleTester.run(RULE_NAME, rule, {
 
   invalid: [
     // sync events with await operator are not valid
-    ...eventFunctions.map((func) => ({
+    ...syncEventFunctions.map((func) => ({
       code: `
         import { fireEvent } from '@testing-library/framework';
         import userEvent from '@testing-library/user-event';
@@ -165,9 +167,9 @@ ruleTester.run(RULE_NAME, rule, {
     {
       code: `
         import userEvent from '@testing-library/user-event';
-        test('should report sync event awaited', async() => {
-          await userEvent.type('foo', 'bar', {hello: 1234});
-          await userEvent.keyboard('foo', {hello: 1234});
+        test('should report async events without delay awaited', async() => {
+          await userEvent.type('foo', 'bar');
+          await userEvent.keyboard('foo');
         });
       `,
       errors: [
@@ -175,5 +177,20 @@ ruleTester.run(RULE_NAME, rule, {
         { line: 5, messageId: 'noAwaitSyncEvents' },
       ],
     },
+    // TODO: make sure this case is covered
+    /* eslint-disable jest/no-commented-out-tests */
+    // {
+    //   code: `
+    //     import userEvent from '@testing-library/user-event';
+    //     test('should report async events with 0 delay awaited', async() => {
+    //       await userEvent.type('foo', 'bar', { delay: 0 });
+    //       await userEvent.keyboard('foo', { delay: 0 });
+    //     });
+    //   `,
+    //   errors: [
+    //     { line: 4, messageId: 'noAwaitSyncEvents' },
+    //     { line: 5, messageId: 'noAwaitSyncEvents' },
+    //   ],
+    // },
   ],
 });
