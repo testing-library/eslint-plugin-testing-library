@@ -143,6 +143,29 @@ ruleTester.run(RULE_NAME, rule, {
       }
       `,
     },
+    {
+      settings: { 'testing-library/utils-module': 'test-utils' },
+      code: `
+        import { fireEvent } from 'somewhere-else';
+        test('should not report fireEvent.click() not related to Testing Library', async() => {
+          await fireEvent.click('foo');
+        });
+      `,
+    },
+    {
+      settings: { 'testing-library/utils-module': 'test-utils' },
+      code: `
+        import { fireEvent as renamedFireEvent } from 'somewhere-else';
+        import renamedUserEvent from '@testing-library/user-event';
+        import { fireEvent, userEvent } from 'somewhere-else'
+        
+        test('should not report unused renamed methods', async() => {
+          await fireEvent.click('foo');
+          await userEvent.type('foo', 'bar', { delay: 5 });
+          await userEvent.keyboard('foo', { delay: 5 });
+        });
+      `,
+    },
   ],
 
   invalid: [
@@ -190,6 +213,24 @@ ruleTester.run(RULE_NAME, rule, {
       errors: [
         { line: 4, column: 17, messageId: 'noAwaitSyncEvents' },
         { line: 5, column: 17, messageId: 'noAwaitSyncEvents' },
+      ],
+    },
+    {
+      settings: { 'testing-library/utils-module': 'test-utils' },
+      code: `
+        import { fireEvent as renamedFireEvent } from 'test-utils';
+        import renamedUserEvent from '@testing-library/user-event';
+        
+        test('should report renamed invalid cases with Aggressive Reporting disabled', async() => {
+          await renamedFireEvent.click('foo');
+          await renamedUserEvent.type('foo', 'bar', { delay: 0 });
+          await renamedUserEvent.keyboard('foo', { delay: 0 });
+        });
+      `,
+      errors: [
+        { line: 6, column: 17, messageId: 'noAwaitSyncEvents' },
+        { line: 7, column: 17, messageId: 'noAwaitSyncEvents' },
+        { line: 8, column: 17, messageId: 'noAwaitSyncEvents' },
       ],
     },
   ],
