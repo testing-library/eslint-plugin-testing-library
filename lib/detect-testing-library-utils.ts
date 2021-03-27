@@ -96,6 +96,8 @@ export interface DetectionHelpers {
   isQuery: IsQueryFn;
   isCustomQuery: IsCustomQueryFn;
   isAsyncUtil: IsAsyncUtilFn;
+  isFireEventUtil: (node: TSESTree.Identifier) => boolean;
+  isUserEventUtil: (node: TSESTree.Identifier) => boolean;
   isFireEventMethod: IsFireEventMethodFn;
   isRenderUtil: IsRenderUtilFn;
   isRenderVariableDeclarator: IsRenderVariableDeclaratorFn;
@@ -107,7 +109,6 @@ export interface DetectionHelpers {
   isNodeComingFromTestingLibrary: IsNodeComingFromTestingLibraryFn;
 }
 
-const FIRE_EVENT_NAME = 'fireEvent';
 const RENDER_NAME = 'render';
 
 /**
@@ -171,6 +172,69 @@ export function detectTestingLibraryUtils<
       }
 
       return isNodeComingFromTestingLibrary(referenceNodeIdentifier);
+    }
+
+    /**
+     * Determines whether a given node is a simulate event util related to
+     * Testing Library or not.
+     *
+     * In order to determine this, the node must match:
+     * - indicated simulate event name: fireEvent or userEvent
+     * - imported from valid Testing Library module (depends on Aggressive
+     * Reporting)
+     *
+     */
+    function isTestingLibrarySimulateEventUtil(
+      node: TSESTree.Identifier,
+      utilName: 'fireEvent' | 'userEvent'
+    ): boolean {
+      const simulateEventUtil = findImportedUtilSpecifier(utilName);
+      let simulateEventUtilName: string | undefined;
+
+      if (simulateEventUtil) {
+        simulateEventUtilName = ASTUtils.isIdentifier(simulateEventUtil)
+          ? simulateEventUtil.name
+          : simulateEventUtil.local.name;
+      } else if (isAggressiveModuleReportingEnabled()) {
+        simulateEventUtilName = utilName;
+      }
+
+      if (!simulateEventUtilName) {
+        return false;
+      }
+
+      const parentMemberExpression:
+        | TSESTree.MemberExpression
+        | undefined = isMemberExpression(node.parent) ? node.parent : undefined;
+
+      if (!parentMemberExpression) {
+        return false;
+      }
+
+      // make sure that given node it's not fireEvent/userEvent object itself
+      if (
+        [simulateEventUtilName, utilName].includes(node.name) ||
+        (ASTUtils.isIdentifier(parentMemberExpression.object) &&
+          parentMemberExpression.object.name === node.name)
+      ) {
+        return false;
+      }
+
+      // check fireEvent.click()/userEvent.click() usage
+      const regularCall =
+        ASTUtils.isIdentifier(parentMemberExpression.object) &&
+        parentMemberExpression.object.name === simulateEventUtilName;
+
+      // check testingLibraryUtils.fireEvent.click() or
+      // testingLibraryUtils.userEvent.click() usage
+      const wildcardCall =
+        isMemberExpression(parentMemberExpression.object) &&
+        ASTUtils.isIdentifier(parentMemberExpression.object.object) &&
+        parentMemberExpression.object.object.name === simulateEventUtilName &&
+        ASTUtils.isIdentifier(parentMemberExpression.object.property) &&
+        parentMemberExpression.object.property.name === utilName;
+
+      return regularCall || wildcardCall;
     }
 
     /**
@@ -308,55 +372,38 @@ export function detectTestingLibraryUtils<
     };
 
     /**
+     * Determines whether a given node is fireEvent util itself or not.
+     *
+     * Not to be confused with {@link isFireEventMethod}
+     */
+    const isFireEventUtil = (node: TSESTree.Identifier): boolean => {
+      return isTestingLibraryUtil(
+        node,
+        (identifierNodeName, originalNodeName) => {
+          return [identifierNodeName, originalNodeName].includes('fireEvent');
+        }
+      );
+    };
+
+    /**
+     * Determines whether a given node is userEvent util itself or not.
+     *
+     * Not to be confused with {@link isUserEventMethod}
+     */
+    const isUserEventUtil = (node: TSESTree.Identifier): boolean => {
+      return isTestingLibraryUtil(
+        node,
+        (identifierNodeName, originalNodeName) => {
+          return [identifierNodeName, originalNodeName].includes('userEvent');
+        }
+      );
+    };
+
+    /**
      * Determines whether a given node is fireEvent method or not
      */
     const isFireEventMethod: IsFireEventMethodFn = (node) => {
-      const fireEventUtil = findImportedUtilSpecifier(FIRE_EVENT_NAME);
-      let fireEventUtilName: string | undefined;
-
-      if (fireEventUtil) {
-        fireEventUtilName = ASTUtils.isIdentifier(fireEventUtil)
-          ? fireEventUtil.name
-          : fireEventUtil.local.name;
-      } else if (isAggressiveModuleReportingEnabled()) {
-        fireEventUtilName = FIRE_EVENT_NAME;
-      }
-
-      if (!fireEventUtilName) {
-        return false;
-      }
-
-      const parentMemberExpression:
-        | TSESTree.MemberExpression
-        | undefined = isMemberExpression(node.parent) ? node.parent : undefined;
-
-      if (!parentMemberExpression) {
-        return false;
-      }
-
-      // make sure that given node it's not fireEvent object itself
-      if (
-        [fireEventUtilName, FIRE_EVENT_NAME].includes(node.name) ||
-        (ASTUtils.isIdentifier(parentMemberExpression.object) &&
-          parentMemberExpression.object.name === node.name)
-      ) {
-        return false;
-      }
-
-      // check fireEvent.click() usage
-      const regularCall =
-        ASTUtils.isIdentifier(parentMemberExpression.object) &&
-        parentMemberExpression.object.name === fireEventUtilName;
-
-      // check testingLibraryUtils.fireEvent.click() usage
-      const wildcardCall =
-        isMemberExpression(parentMemberExpression.object) &&
-        ASTUtils.isIdentifier(parentMemberExpression.object.object) &&
-        parentMemberExpression.object.object.name === fireEventUtilName &&
-        ASTUtils.isIdentifier(parentMemberExpression.object.property) &&
-        parentMemberExpression.object.property.name === FIRE_EVENT_NAME;
-
-      return regularCall || wildcardCall;
+      return isTestingLibrarySimulateEventUtil(node, 'fireEvent');
     };
 
     /**
@@ -557,6 +604,8 @@ export function detectTestingLibraryUtils<
       isQuery,
       isCustomQuery,
       isAsyncUtil,
+      isFireEventUtil,
+      isUserEventUtil,
       isFireEventMethod,
       isRenderUtil,
       isRenderVariableDeclarator,
