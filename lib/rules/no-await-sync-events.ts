@@ -1,6 +1,6 @@
 import { ASTUtils, TSESTree } from '@typescript-eslint/experimental-utils';
 import { EVENTS_SIMULATORS } from '../utils';
-import { isObjectExpression, isProperty } from '../node-utils';
+import { isLiteral, isObjectExpression, isProperty } from '../node-utils';
 import { createTestingLibraryRule } from '../create-testing-library-rule';
 
 export const RULE_NAME = 'no-await-sync-events';
@@ -8,6 +8,8 @@ export type MessageIds = 'noAwaitSyncEvents';
 type Options = [];
 
 const SYNC_EVENTS_REGEXP = new RegExp(`^(${EVENTS_SIMULATORS.join('|')})$`);
+
+const USER_EVENT_ASYNC_EXCEPTIONS: string[] = ['type', 'keyboard'];
 
 export default createTestingLibraryRule<Options, MessageIds>({
   name: RULE_NAME,
@@ -43,30 +45,33 @@ export default createTestingLibraryRule<Options, MessageIds>({
         const callExpression = memberExpression.parent as TSESTree.CallExpression;
         const lastArg =
           callExpression.arguments[callExpression.arguments.length - 1];
+
         const withDelay =
           isObjectExpression(lastArg) &&
           lastArg.properties.some(
             (property) =>
               isProperty(property) &&
               ASTUtils.isIdentifier(property.key) &&
-              property.key.name === 'delay'
+              property.key.name === 'delay' &&
+              isLiteral(property.value) &&
+              property.value.value > 0
           );
 
         if (
-          !(
-            node.name === 'userEvent' &&
-            ['type', 'keyboard'].includes(methodNode.name) &&
-            withDelay
-          )
+          node.name === 'userEvent' &&
+          USER_EVENT_ASYNC_EXCEPTIONS.includes(methodNode.name) &&
+          withDelay
         ) {
-          context.report({
-            node: methodNode,
-            messageId: 'noAwaitSyncEvents',
-            data: {
-              name: `${node.name}.${methodNode.name}`,
-            },
-          });
+          return;
         }
+
+        context.report({
+          node: methodNode,
+          messageId: 'noAwaitSyncEvents',
+          data: {
+            name: `${node.name}.${methodNode.name}`,
+          },
+        });
       },
     };
   },

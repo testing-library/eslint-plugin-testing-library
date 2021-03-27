@@ -177,20 +177,18 @@ ruleTester.run(RULE_NAME, rule, {
         { line: 5, messageId: 'noAwaitSyncEvents' },
       ],
     },
-    // TODO: make sure this case is covered
-    /* eslint-disable jest/no-commented-out-tests */
-    // {
-    //   code: `
-    //     import userEvent from '@testing-library/user-event';
-    //     test('should report async events with 0 delay awaited', async() => {
-    //       await userEvent.type('foo', 'bar', { delay: 0 });
-    //       await userEvent.keyboard('foo', { delay: 0 });
-    //     });
-    //   `,
-    //   errors: [
-    //     { line: 4, messageId: 'noAwaitSyncEvents' },
-    //     { line: 5, messageId: 'noAwaitSyncEvents' },
-    //   ],
-    // },
+    {
+      code: `
+        import userEvent from '@testing-library/user-event';
+        test('should report async events with 0 delay awaited', async() => {
+          await userEvent.type('foo', 'bar', { delay: 0 });
+          await userEvent.keyboard('foo', { delay: 0 });
+        });
+      `,
+      errors: [
+        { line: 4, messageId: 'noAwaitSyncEvents' },
+        { line: 5, messageId: 'noAwaitSyncEvents' },
+      ],
+    },
   ],
 });
