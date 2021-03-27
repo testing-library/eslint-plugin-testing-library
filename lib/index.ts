@@ -18,7 +18,7 @@ import preferPresenceQueries from './rules/prefer-presence-queries';
 import preferScreenQueries from './rules/prefer-screen-queries';
 import preferUserEvent from './rules/prefer-user-event';
 import preferWaitFor from './rules/prefer-wait-for';
-import noMultipleAssertionsWaitFor from './rules/no-multiple-assertions-wait-for';
+import noWaitForMultipleAssertions from './rules/no-wait-for-multiple-assertions';
 import preferFindBy from './rules/prefer-find-by';
 import noWaitForSideEffects from './rules/no-wait-for-side-effects';
 import renderResultNamingConvention from './rules/render-result-naming-convention';
@@ -34,11 +34,11 @@ const rules = {
   'no-debug': noDebug,
   'no-dom-import': noDomImport,
   'no-manual-cleanup': noManualCleanup,
-  'no-multiple-assertions-wait-for': noMultipleAssertionsWaitFor,
   'no-node-access': noNodeAccess,
   'no-promise-in-fire-event': noPromiseInFireEvent,
   'no-render-in-setup': noRenderInSetup,
   'no-wait-for-empty-callback': noWaitForEmptyCallback,
+  'no-wait-for-multiple-assertions': noWaitForMultipleAssertions,
   'no-wait-for-side-effects': noWaitForSideEffects,
   'no-wait-for-snapshot': noWaitForSnapshot,
   'prefer-explicit-assert': preferExplicitAssert,

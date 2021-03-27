@@ -1,4 +1,4 @@
-# Multiple assertions inside `waitFor` are not preferred (no-multiple-assertions-wait-for)
+# Multiple assertions inside `waitFor` are not preferred (no-wait-for-multiple-assertions)
 
 ## Rule Details
 
