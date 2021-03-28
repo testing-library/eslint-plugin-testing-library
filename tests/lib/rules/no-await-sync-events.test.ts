@@ -1,10 +1,9 @@
 import { createRuleTester } from '../test-utils';
 import rule, { RULE_NAME } from '../../../lib/rules/no-await-sync-events';
-import { SYNC_EVENTS } from '../../../lib/utils';
 
 const ruleTester = createRuleTester();
 
-const fireEventFunctions = [
+const FIRE_EVENT_FUNCTIONS = [
   'copy',
   'cut',
   'paste',
@@ -89,7 +88,7 @@ const fireEventFunctions = [
   'gotPointerCapture',
   'lostPointerCapture',
 ];
-const userEventFunctions = [
+const USER_EVENT_SYNC_FUNCTIONS = [
   'clear',
   'click',
   'dblClick',
@@ -97,48 +96,44 @@ const userEventFunctions = [
   'deselectOptions',
   'upload',
   // 'type',
+  // 'keyboard',
   'tab',
   'paste',
   'hover',
   'unhover',
 ];
-let eventFunctions: string[] = [];
-SYNC_EVENTS.forEach((event) => {
-  switch (event) {
-    case 'fireEvent':
-      eventFunctions = eventFunctions.concat(
-        fireEventFunctions.map((f: string): string => `${event}.${f}`)
-      );
-      break;
-    case 'userEvent':
-      eventFunctions = eventFunctions.concat(
-        userEventFunctions.map((f: string): string => `${event}.${f}`)
-      );
-      break;
-    default:
-      eventFunctions.push(`${event}.anyFunc`);
-  }
-});
 
 ruleTester.run(RULE_NAME, rule, {
   valid: [
-    // sync events without await are valid
-    // userEvent.type() is an exception
-    ...eventFunctions.map((func) => ({
+    // sync fireEvents methods without await are valid
+    ...FIRE_EVENT_FUNCTIONS.map((func) => ({
       code: `() => {
-        ${func}('foo')
+        fireEvent.${func}('foo')
+      }
+      `,
+    })),
+    // sync userEvent methods without await are valid
+    ...USER_EVENT_SYNC_FUNCTIONS.map((func) => ({
+      code: `() => {
+        userEvent.${func}('foo')
       }
       `,
     })),
     {
       code: `() => {
-        userEvent.type('foo')
+        userEvent.type(element, 'foo')
       }
       `,
     },
     {
       code: `() => {
-        await userEvent.type('foo', 'bar', {delay: 1234})
+        userEvent.keyboard('foo')
+      }
+      `,
+    },
+    {
+      code: `() => {
+        await userEvent.type(element, 'bar', {delay: 1234})
       }
       `,
     },
@@ -148,31 +143,143 @@ ruleTester.run(RULE_NAME, rule, {
       }
       `,
     },
+    {
+      settings: { 'testing-library/utils-module': 'test-utils' },
+      code: `
+        import { fireEvent } from 'somewhere-else';
+        test('should not report fireEvent.click() not related to Testing Library', async() => {
+          await fireEvent.click('foo');
+        });
+      `,
+    },
+    {
+      settings: { 'testing-library/utils-module': 'test-utils' },
+      code: `
+        import { fireEvent as renamedFireEvent } from 'somewhere-else';
+        import renamedUserEvent from '@testing-library/user-event';
+        import { fireEvent, userEvent } from 'somewhere-else'
+        
+        test('should not report unused renamed methods', async() => {
+          await fireEvent.click('foo');
+          await userEvent.type('foo', 'bar', { delay: 5 });
+          await userEvent.keyboard('foo', { delay: 5 });
+        });
+      `,
+    },
   ],
 
   invalid: [
-    // sync events with await operator are not valid
-    ...eventFunctions.map((func) => ({
+    // sync fireEvent methods with await operator are not valid
+    ...FIRE_EVENT_FUNCTIONS.map((func) => ({
       code: `
         import { fireEvent } from '@testing-library/framework';
-        import userEvent from '@testing-library/user-event';
-        test('should report sync event awaited', async() => {
-          await ${func}('foo');
+        test('should report fireEvent.${func} sync event awaited', async() => {
+          await fireEvent.${func}('foo');
         });
       `,
-      errors: [{ line: 5, messageId: 'noAwaitSyncEvents' }],
+      errors: [
+        {
+          line: 4,
+          column: 17,
+          messageId: 'noAwaitSyncEvents',
+          data: { name: `fireEvent.${func}` },
+        },
+      ],
+    })),
+    // sync userEvent sync methods with await operator are not valid
+    ...USER_EVENT_SYNC_FUNCTIONS.map((func) => ({
+      code: `
+        import userEvent from '@testing-library/user-event';
+        test('should report userEvent.${func} sync event awaited', async() => {
+          await userEvent.${func}('foo');
+        });
+      `,
+      errors: [
+        {
+          line: 4,
+          column: 17,
+          messageId: 'noAwaitSyncEvents',
+          data: { name: `userEvent.${func}` },
+        },
+      ],
     })),
     {
       code: `
         import userEvent from '@testing-library/user-event';
-        test('should report sync event awaited', async() => {
-          await userEvent.type('foo', 'bar', {hello: 1234});
-          await userEvent.keyboard('foo', {hello: 1234});
+        test('should report async events without delay awaited', async() => {
+          await userEvent.type('foo', 'bar');
+          await userEvent.keyboard('foo');
         });
       `,
       errors: [
-        { line: 4, messageId: 'noAwaitSyncEvents' },
-        { line: 5, messageId: 'noAwaitSyncEvents' },
+        {
+          line: 4,
+          column: 17,
+          messageId: 'noAwaitSyncEvents',
+          data: { name: 'userEvent.type' },
+        },
+        {
+          line: 5,
+          column: 17,
+          messageId: 'noAwaitSyncEvents',
+          data: { name: 'userEvent.keyboard' },
+        },
+      ],
+    },
+    {
+      code: `
+        import userEvent from '@testing-library/user-event';
+        test('should report async events with 0 delay awaited', async() => {
+          await userEvent.type('foo', 'bar', { delay: 0 });
+          await userEvent.keyboard('foo', { delay: 0 });
+        });
+      `,
+      errors: [
+        {
+          line: 4,
+          column: 17,
+          messageId: 'noAwaitSyncEvents',
+          data: { name: 'userEvent.type' },
+        },
+        {
+          line: 5,
+          column: 17,
+          messageId: 'noAwaitSyncEvents',
+          data: { name: 'userEvent.keyboard' },
+        },
+      ],
+    },
+    {
+      settings: { 'testing-library/utils-module': 'test-utils' },
+      code: `
+        import { fireEvent as renamedFireEvent } from 'test-utils';
+        import renamedUserEvent from '@testing-library/user-event';
+        
+        test('should report renamed invalid cases with Aggressive Reporting disabled', async() => {
+          await renamedFireEvent.click('foo');
+          await renamedUserEvent.type('foo', 'bar', { delay: 0 });
+          await renamedUserEvent.keyboard('foo', { delay: 0 });
+        });
+      `,
+      errors: [
+        {
+          line: 6,
+          column: 17,
+          messageId: 'noAwaitSyncEvents',
+          data: { name: 'renamedFireEvent.click' },
+        },
+        {
+          line: 7,
+          column: 17,
+          messageId: 'noAwaitSyncEvents',
+          data: { name: 'renamedUserEvent.type' },
+        },
+        {
+          line: 8,
+          column: 17,
+          messageId: 'noAwaitSyncEvents',
+          data: { name: 'renamedUserEvent.keyboard' },
+        },
       ],
     },
   ],

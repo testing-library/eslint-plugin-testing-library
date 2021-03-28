@@ -1,14 +1,15 @@
 # Disallow unnecessary `await` for sync events (no-await-sync-events)
 
-Ensure that sync events are not awaited unnecessarily.
+Ensure that sync simulated events are not awaited unnecessarily.
 
 ## Rule Details
 
-Functions in the event object provided by Testing Library, including
-fireEvent and userEvent, do NOT return Promise, with an exception of
-`userEvent.type`, which delays the promise resolve only if [`delay`
+Methods for simulating events in Testing Library ecosystem -`fireEvent` and `userEvent`-
+do NOT return any Promise, with an exception of
+`userEvent.type` and `userEvent.keyboard`, which delays the promise resolve only if [`delay`
 option](https://github.com/testing-library/user-event#typeelement-text-options) is specified.
-Some examples are:
+
+Some examples of simulating events not returning any Promise are:
 
 - `fireEvent.click`
 - `fireEvent.select`
@@ -26,15 +27,16 @@ const foo = async () => {
   // ...
 };
 
-const bar = () => {
+const bar = async () => {
   // ...
   await userEvent.tab();
   // ...
 };
 
-const baz = () => {
+const baz = async () => {
   // ...
   await userEvent.type(textInput, 'abc');
+  await userEvent.keyboard('abc');
   // ...
 };
 ```
@@ -54,10 +56,14 @@ const bar = () => {
   // ...
 };
 
-const baz = () => {
+const baz = async () => {
   // await userEvent.type only with delay option
-  await userEvent.type(textInput, 'abc', {delay: 1000});
+  await userEvent.type(textInput, 'abc', { delay: 1000 });
   userEvent.type(textInput, '123');
+
+  // same for userEvent.keyboard
+  await userEvent.keyboard(textInput, 'abc', { delay: 1000 });
+  userEvent.keyboard('123');
   // ...
 };
 ```

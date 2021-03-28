@@ -12,6 +12,7 @@ import {
   hasImportMatch,
   ImportModuleNode,
   isImportDeclaration,
+  isImportDefaultSpecifier,
   isImportNamespaceSpecifier,
   isImportSpecifier,
   isLiteral,
@@ -20,9 +21,9 @@ import {
 } from './node-utils';
 import {
   ABSENCE_MATCHERS,
+  ALL_QUERIES_COMBINATIONS,
   ASYNC_UTILS,
   PRESENCE_MATCHERS,
-  ALL_QUERIES_COMBINATIONS,
 } from './utils';
 
 export type TestingLibrarySettings = {
@@ -67,6 +68,7 @@ type IsAsyncUtilFn = (
   validNames?: readonly typeof ASYNC_UTILS[number][]
 ) => boolean;
 type IsFireEventMethodFn = (node: TSESTree.Identifier) => boolean;
+type IsUserEventMethodFn = (node: TSESTree.Identifier) => boolean;
 type IsRenderUtilFn = (node: TSESTree.Identifier) => boolean;
 type IsRenderVariableDeclaratorFn = (
   node: TSESTree.VariableDeclarator
@@ -99,6 +101,7 @@ export interface DetectionHelpers {
   isFireEventUtil: (node: TSESTree.Identifier) => boolean;
   isUserEventUtil: (node: TSESTree.Identifier) => boolean;
   isFireEventMethod: IsFireEventMethodFn;
+  isUserEventMethod: IsUserEventMethodFn;
   isRenderUtil: IsRenderUtilFn;
   isRenderVariableDeclarator: IsRenderVariableDeclaratorFn;
   isDebugUtil: IsDebugUtilFn;
@@ -109,6 +112,9 @@ export interface DetectionHelpers {
   isNodeComingFromTestingLibrary: IsNodeComingFromTestingLibraryFn;
 }
 
+const USER_EVENT_PACKAGE = '@testing-library/user-event';
+const FIRE_EVENT_NAME = 'fireEvent';
+const USER_EVENT_NAME = 'userEvent';
 const RENDER_NAME = 'render';
 
 /**
@@ -125,6 +131,7 @@ export function detectTestingLibraryUtils<
   ): TSESLint.RuleListener => {
     let importedTestingLibraryNode: ImportModuleNode | null = null;
     let importedCustomModuleNode: ImportModuleNode | null = null;
+    let importedUserEventLibraryNode: ImportModuleNode | null = null;
 
     // Init options based on shared ESLint settings
     const customModule = context.settings['testing-library/utils-module'];
@@ -172,69 +179,6 @@ export function detectTestingLibraryUtils<
       }
 
       return isNodeComingFromTestingLibrary(referenceNodeIdentifier);
-    }
-
-    /**
-     * Determines whether a given node is a simulate event util related to
-     * Testing Library or not.
-     *
-     * In order to determine this, the node must match:
-     * - indicated simulate event name: fireEvent or userEvent
-     * - imported from valid Testing Library module (depends on Aggressive
-     * Reporting)
-     *
-     */
-    function isTestingLibrarySimulateEventUtil(
-      node: TSESTree.Identifier,
-      utilName: 'fireEvent' | 'userEvent'
-    ): boolean {
-      const simulateEventUtil = findImportedUtilSpecifier(utilName);
-      let simulateEventUtilName: string | undefined;
-
-      if (simulateEventUtil) {
-        simulateEventUtilName = ASTUtils.isIdentifier(simulateEventUtil)
-          ? simulateEventUtil.name
-          : simulateEventUtil.local.name;
-      } else if (isAggressiveModuleReportingEnabled()) {
-        simulateEventUtilName = utilName;
-      }
-
-      if (!simulateEventUtilName) {
-        return false;
-      }
-
-      const parentMemberExpression:
-        | TSESTree.MemberExpression
-        | undefined = isMemberExpression(node.parent) ? node.parent : undefined;
-
-      if (!parentMemberExpression) {
-        return false;
-      }
-
-      // make sure that given node it's not fireEvent/userEvent object itself
-      if (
-        [simulateEventUtilName, utilName].includes(node.name) ||
-        (ASTUtils.isIdentifier(parentMemberExpression.object) &&
-          parentMemberExpression.object.name === node.name)
-      ) {
-        return false;
-      }
-
-      // check fireEvent.click()/userEvent.click() usage
-      const regularCall =
-        ASTUtils.isIdentifier(parentMemberExpression.object) &&
-        parentMemberExpression.object.name === simulateEventUtilName;
-
-      // check testingLibraryUtils.fireEvent.click() or
-      // testingLibraryUtils.userEvent.click() usage
-      const wildcardCall =
-        isMemberExpression(parentMemberExpression.object) &&
-        ASTUtils.isIdentifier(parentMemberExpression.object.object) &&
-        parentMemberExpression.object.object.name === simulateEventUtilName &&
-        ASTUtils.isIdentifier(parentMemberExpression.object.property) &&
-        parentMemberExpression.object.property.name === utilName;
-
-      return regularCall || wildcardCall;
     }
 
     /**
@@ -403,7 +347,90 @@ export function detectTestingLibraryUtils<
      * Determines whether a given node is fireEvent method or not
      */
     const isFireEventMethod: IsFireEventMethodFn = (node) => {
-      return isTestingLibrarySimulateEventUtil(node, 'fireEvent');
+      const fireEventUtil = findImportedUtilSpecifier(FIRE_EVENT_NAME);
+      let fireEventUtilName: string | undefined;
+
+      if (fireEventUtil) {
+        fireEventUtilName = ASTUtils.isIdentifier(fireEventUtil)
+          ? fireEventUtil.name
+          : fireEventUtil.local.name;
+      } else if (isAggressiveModuleReportingEnabled()) {
+        fireEventUtilName = FIRE_EVENT_NAME;
+      }
+
+      if (!fireEventUtilName) {
+        return false;
+      }
+
+      const parentMemberExpression:
+        | TSESTree.MemberExpression
+        | undefined = isMemberExpression(node.parent) ? node.parent : undefined;
+
+      if (!parentMemberExpression) {
+        return false;
+      }
+
+      // make sure that given node it's not fireEvent object itself
+      if (
+        [fireEventUtilName, FIRE_EVENT_NAME].includes(node.name) ||
+        (ASTUtils.isIdentifier(parentMemberExpression.object) &&
+          parentMemberExpression.object.name === node.name)
+      ) {
+        return false;
+      }
+
+      // check fireEvent.click() usage
+      const regularCall =
+        ASTUtils.isIdentifier(parentMemberExpression.object) &&
+        parentMemberExpression.object.name === fireEventUtilName;
+
+      // check testingLibraryUtils.fireEvent.click() usage
+      const wildcardCall =
+        isMemberExpression(parentMemberExpression.object) &&
+        ASTUtils.isIdentifier(parentMemberExpression.object.object) &&
+        parentMemberExpression.object.object.name === fireEventUtilName &&
+        ASTUtils.isIdentifier(parentMemberExpression.object.property) &&
+        parentMemberExpression.object.property.name === FIRE_EVENT_NAME;
+
+      return regularCall || wildcardCall;
+    };
+
+    const isUserEventMethod: IsUserEventMethodFn = (node) => {
+      const userEvent = findImportedUserEventSpecifier();
+      let userEventName: string | undefined;
+
+      if (userEvent) {
+        userEventName = userEvent.name;
+      } else if (isAggressiveModuleReportingEnabled()) {
+        userEventName = USER_EVENT_NAME;
+      }
+
+      if (!userEventName) {
+        return false;
+      }
+
+      const parentMemberExpression:
+        | TSESTree.MemberExpression
+        | undefined = isMemberExpression(node.parent) ? node.parent : undefined;
+
+      if (!parentMemberExpression) {
+        return false;
+      }
+
+      // make sure that given node it's not userEvent object itself
+      if (
+        [userEventName, USER_EVENT_NAME].includes(node.name) ||
+        (ASTUtils.isIdentifier(parentMemberExpression.object) &&
+          parentMemberExpression.object.name === node.name)
+      ) {
+        return false;
+      }
+
+      // check userEvent.click() usage
+      return (
+        ASTUtils.isIdentifier(parentMemberExpression.object) &&
+        parentMemberExpression.object.name === userEventName
+      );
     };
 
     /**
@@ -553,6 +580,27 @@ export function detectTestingLibraryUtils<
       }
     };
 
+    const findImportedUserEventSpecifier: () => TSESTree.Identifier | null = () => {
+      if (!importedUserEventLibraryNode) {
+        return null;
+      }
+
+      if (isImportDeclaration(importedUserEventLibraryNode)) {
+        const userEventIdentifier = importedUserEventLibraryNode.specifiers.find(
+          (specifier) => isImportDefaultSpecifier(specifier)
+        );
+
+        if (userEventIdentifier) {
+          return userEventIdentifier.local;
+        }
+      } else {
+        const requireNode = importedUserEventLibraryNode.parent as TSESTree.VariableDeclarator;
+        return requireNode.id as TSESTree.Identifier;
+      }
+
+      return null;
+    };
+
     const getImportedUtilSpecifier = (
       node: TSESTree.MemberExpression | TSESTree.Identifier
     ): TSESTree.ImportClause | TSESTree.Identifier | undefined => {
@@ -607,6 +655,7 @@ export function detectTestingLibraryUtils<
       isFireEventUtil,
       isUserEventUtil,
       isFireEventMethod,
+      isUserEventMethod,
       isRenderUtil,
       isRenderVariableDeclarator,
       isDebugUtil,
@@ -644,6 +693,15 @@ export function detectTestingLibraryUtils<
         ) {
           importedCustomModuleNode = node;
         }
+
+        // check only if user-event import not found yet so we avoid
+        // to override importedUserEventLibraryNode after it's found
+        if (
+          !importedUserEventLibraryNode &&
+          String(node.source.value) === USER_EVENT_PACKAGE
+        ) {
+          importedUserEventLibraryNode = node;
+        }
       },
 
       // Check if Testing Library related modules are loaded with required.
@@ -675,6 +733,18 @@ export function detectTestingLibraryUtils<
           )
         ) {
           importedCustomModuleNode = callExpression;
+        }
+
+        if (
+          !importedCustomModuleNode &&
+          args.some(
+            (arg) =>
+              isLiteral(arg) &&
+              typeof arg.value === 'string' &&
+              arg.value === USER_EVENT_PACKAGE
+          )
+        ) {
+          importedUserEventLibraryNode = callExpression;
         }
       },
     };
