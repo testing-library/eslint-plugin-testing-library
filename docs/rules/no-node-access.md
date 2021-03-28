@@ -1,4 +1,4 @@
-# Disallow direct Node access (no-node-access)
+# Disallow direct Node access (`testing-library/no-node-access`)
 
 The Testing Library already provides methods for querying DOM elements.
 

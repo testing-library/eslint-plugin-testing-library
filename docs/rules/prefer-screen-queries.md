@@ -1,4 +1,4 @@
-# Suggest using screen while using queries (prefer-screen-queries)
+# Suggest using `screen` while using queries (`testing-library/prefer-screen-queries`)
 
 ## Rule Details
 

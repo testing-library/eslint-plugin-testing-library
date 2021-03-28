@@ -1,4 +1,4 @@
-# Empty callbacks inside `waitFor` and `waitForElementToBeRemoved` are not preferred (no-wait-for-empty-callback)
+# Empty callbacks inside `waitFor` and `waitForElementToBeRemoved` are not preferred (`testing-library/no-wait-for-empty-callback`)
 
 ## Rule Details
 

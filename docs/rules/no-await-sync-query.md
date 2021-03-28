@@ -1,4 +1,4 @@
-# Disallow unnecessary `await` for sync queries (no-await-sync-query)
+# Disallow unnecessary `await` for sync queries (`testing-library/no-await-sync-query`)
 
 Ensure that sync queries are not awaited unnecessarily.
 

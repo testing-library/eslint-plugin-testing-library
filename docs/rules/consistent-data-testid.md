@@ -1,4 +1,4 @@
-# Enforces consistent naming for the data-testid attribute (consistent-data-testid)
+# Enforces consistent naming for the data-testid attribute (`testing-library/consistent-data-testid`)
 
 Ensure `data-testid` values match a provided regex. This rule is un-opinionated, and requires configuration.
 

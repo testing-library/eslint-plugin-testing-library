@@ -1,4 +1,4 @@
-# Disallow the use of `debug` (no-debug)
+# Disallow the use of `debug` (`testing-library/no-debug`)
 
 Just like `console.log` statements pollutes the browser's output, debug statements also pollutes the tests if one of your teammates forgot to remove it. `debug` statements should be used when you actually want to debug your tests but should not be pushed to the codebase.
 

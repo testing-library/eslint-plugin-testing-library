@@ -1,4 +1,4 @@
-# Disallow the use of `container` methods (no-container)
+# Disallow the use of `container` methods (`testing-library/no-container`)
 
 By using `container` methods like `.querySelector` you may lose a lot of the confidence that the user can really interact with your UI. Also, the test becomes harder to read, and it will break more frequently.
 
