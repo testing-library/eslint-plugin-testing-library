@@ -1,4 +1,4 @@
-# Disallow the use of promises passed to a `fireEvent` method (no-promise-in-fire-event)
+# Disallow the use of promises passed to a `fireEvent` method (`testing-library/no-promise-in-fire-event`)
 
 Methods from `fireEvent` expect to receive a DOM element. Passing a promise will end up in an error, so it must be prevented.
 

@@ -1,4 +1,4 @@
-# Multiple assertions inside `waitFor` are not preferred (no-wait-for-multiple-assertions)
+# Disallow the use of multiple expect inside `waitFor` (`testing-library/no-wait-for-multiple-assertions`)
 
 ## Rule Details
 

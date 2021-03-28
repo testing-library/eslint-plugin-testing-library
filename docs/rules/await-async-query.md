@@ -1,4 +1,4 @@
-# Enforce promises from async queries to be handled (await-async-query)
+# Enforce promises from async queries to be handled (`testing-library/await-async-query`)
 
 Ensure that promises returned by async queries are handled properly.
 

@@ -1,4 +1,4 @@
-# Disallow the use of `render` in setup functions (no-render-in-setup)
+# Disallow the use of `render` in setup functions (`testing-library/no-render-in-setup`)
 
 ## Rule Details
 

@@ -1,4 +1,4 @@
-# Enforce promises from fire event methods to be handled (await-fire-event)
+# Enforce promises from fire event methods to be handled (`testing-library/await-fire-event`)
 
 Ensure that promises returned by `fireEvent` methods are handled
 properly.

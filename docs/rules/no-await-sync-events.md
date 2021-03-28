@@ -1,4 +1,4 @@
-# Disallow unnecessary `await` for sync events (no-await-sync-events)
+# Disallow unnecessary `await` for sync events (`testing-library/no-await-sync-events`)
 
 Ensure that sync simulated events are not awaited unnecessarily.
 

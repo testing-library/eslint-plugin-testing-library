@@ -1,4 +1,4 @@
-# Use [userEvent](https://github.com/testing-library/user-event) over using `fireEvent` for user interactions (prefer-user-event)
+# Suggest using `userEvent` library instead of `fireEvent` for simulating user interaction (`testing-library/prefer-user-event`)
 
 From
 [testing-library/dom-testing-library#107](https://github.com/testing-library/dom-testing-library/issues/107):
@@ -97,8 +97,8 @@ When you don't want to use `userEvent`, such as if a legacy codebase is still us
 
 ## Further Reading
 
-- [userEvent repository](https://github.com/testing-library/user-event)
-- [userEvent in the react-testing-library docs](https://testing-library.com/docs/ecosystem-user-event)
+- [`user-event` repository](https://github.com/testing-library/user-event)
+- [`userEvent` in the Testing Library docs](https://testing-library.com/docs/ecosystem-user-event)
 
 ## Appendix
 

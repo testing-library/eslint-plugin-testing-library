@@ -1,4 +1,4 @@
-# Enforce promises from async utils to be handled (await-async-utils)
+# Enforce promises from async utils to be handled (`testing-library/await-async-utils`)
 
 Ensure that promises returned by async utils are handled properly.
 
