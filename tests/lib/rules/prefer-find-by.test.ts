@@ -149,7 +149,8 @@ ruleTester.run(RULE_NAME, rule, {
           data: {
             queryVariant: getFindByQueryVariant(queryMethod),
             queryMethod: queryMethod.split('By')[1],
-            fullQuery: `${waitMethod}(() => ${queryMethod}('foo', { name: 'baz' }))`,
+            prevQuery: queryMethod,
+            waitForMethodName: waitMethod,
           },
         },
       ],
@@ -176,7 +177,8 @@ ruleTester.run(RULE_NAME, rule, {
           data: {
             queryVariant: getFindByQueryVariant(queryMethod),
             queryMethod: queryMethod.split('By')[1],
-            fullQuery: `${waitMethod}(() => screen.${queryMethod}('foo', { name: 'baz' }))`,
+            prevQuery: queryMethod,
+            waitForMethodName: waitMethod,
           },
         },
       ],
@@ -204,7 +206,8 @@ ruleTester.run(RULE_NAME, rule, {
           data: {
             queryVariant: 'findBy',
             queryMethod: 'Text',
-            fullQuery: `${waitMethod}(() => getByText('baz', { name: 'button' }))`,
+            prevQuery: 'getByText',
+            waitForMethodName: waitMethod,
           },
         },
       ],
@@ -231,7 +234,8 @@ ruleTester.run(RULE_NAME, rule, {
           data: {
             queryVariant: 'findAllBy',
             queryMethod: 'Role',
-            fullQuery: `${waitMethod}(() => getAllByRole('baz', { name: 'button' }))`,
+            prevQuery: 'getAllByRole',
+            waitForMethodName: waitMethod,
           },
         },
       ],
@@ -252,7 +256,8 @@ ruleTester.run(RULE_NAME, rule, {
           data: {
             queryVariant: 'findBy',
             queryMethod: 'Text',
-            fullQuery: `waitFor(() => getByText('baz', { name: 'button' }))`,
+            prevQuery: 'getByText',
+            waitForMethodName: 'waitFor',
           },
         },
       ],
@@ -270,7 +275,8 @@ ruleTester.run(RULE_NAME, rule, {
           data: {
             queryVariant: 'findBy',
             queryMethod: 'Role',
-            fullQuery: `waitFor(() => getByRole('baz', { name: 'button' }))`,
+            prevQuery: 'getByRole',
+            waitForMethodName: 'waitFor',
           },
         },
       ],
@@ -294,7 +300,8 @@ ruleTester.run(RULE_NAME, rule, {
           data: {
             queryVariant: 'findBy',
             queryMethod: 'CustomQuery',
-            fullQuery: `${waitMethod}(() => getByCustomQuery('baz'))`,
+            prevQuery: 'getByCustomQuery',
+            waitForMethodName: waitMethod,
           },
         },
       ],
@@ -321,7 +328,8 @@ ruleTester.run(RULE_NAME, rule, {
           data: {
             queryVariant: 'findBy',
             queryMethod: 'CustomQuery',
-            fullQuery: `${waitMethod}(() => screen.getByCustomQuery('baz'))`,
+            prevQuery: 'getByCustomQuery',
+            waitForMethodName: waitMethod,
           },
         },
       ],
