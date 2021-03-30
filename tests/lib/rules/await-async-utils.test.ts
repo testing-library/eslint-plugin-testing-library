@@ -250,7 +250,31 @@ ruleTester.run(RULE_NAME, rule, {
           ${asyncUtil}(() => getByLabelText('email'));
         });
       `,
-      errors: [{ line: 5, column: 11, messageId: 'awaitAsyncUtil' }],
+      errors: [
+        {
+          line: 5,
+          column: 11,
+          messageId: 'awaitAsyncUtil',
+          data: { name: asyncUtil },
+        },
+      ],
+    })),
+    ...ASYNC_UTILS.map((asyncUtil) => ({
+      code: `
+        import { ${asyncUtil} } from '@testing-library/dom';
+        test('${asyncUtil} util not waited is invalid', () => {
+          doSomethingElse();
+          const el = ${asyncUtil}(() => getByLabelText('email'));
+        });
+      `,
+      errors: [
+        {
+          line: 5,
+          column: 22,
+          messageId: 'awaitAsyncUtil',
+          data: { name: asyncUtil },
+        },
+      ],
     })),
     ...ASYNC_UTILS.map((asyncUtil) => ({
       code: `
@@ -260,7 +284,14 @@ ruleTester.run(RULE_NAME, rule, {
           asyncUtil.${asyncUtil}(() => getByLabelText('email'));
         });
       `,
-      errors: [{ line: 5, column: 21, messageId: 'awaitAsyncUtil' }],
+      errors: [
+        {
+          line: 5,
+          column: 21,
+          messageId: 'awaitAsyncUtil',
+          data: { name: asyncUtil },
+        },
+      ],
     })),
     ...ASYNC_UTILS.map((asyncUtil) => ({
       code: `
@@ -270,7 +301,14 @@ ruleTester.run(RULE_NAME, rule, {
           const aPromise = ${asyncUtil}(() => getByLabelText('email'));
         });
       `,
-      errors: [{ line: 5, column: 28, messageId: 'awaitAsyncUtil' }],
+      errors: [
+        {
+          line: 5,
+          column: 28,
+          messageId: 'awaitAsyncUtil',
+          data: { name: asyncUtil },
+        },
+      ],
     })),
     ...ASYNC_UTILS.map((asyncUtil) => ({
       code: `
@@ -282,8 +320,18 @@ ruleTester.run(RULE_NAME, rule, {
         });
       `,
       errors: [
-        { line: 4, column: 28, messageId: 'awaitAsyncUtil' },
-        { line: 6, column: 11, messageId: 'awaitAsyncUtil' },
+        {
+          line: 4,
+          column: 28,
+          messageId: 'awaitAsyncUtil',
+          data: { name: asyncUtil },
+        },
+        {
+          line: 6,
+          column: 11,
+          messageId: 'awaitAsyncUtil',
+          data: { name: asyncUtil },
+        },
       ],
     })),
     ...ASYNC_UTILS.map((asyncUtil) => ({
@@ -299,7 +347,14 @@ ruleTester.run(RULE_NAME, rule, {
           waitForSomethingAsync()
         });
       `,
-      errors: [{ messageId: 'asyncUtilWrapper', line: 10, column: 11 }],
+      errors: [
+        {
+          messageId: 'asyncUtilWrapper',
+          line: 10,
+          column: 11,
+          data: { name: 'waitForSomethingAsync' },
+        },
+      ],
     })),
     ...ASYNC_UTILS.map((asyncUtil) => ({
       code: `
@@ -311,7 +366,36 @@ ruleTester.run(RULE_NAME, rule, {
           ${asyncUtil}();
         });
       `,
-      errors: [{ line: 7, column: 11, messageId: 'awaitAsyncUtil' }],
+      errors: [
+        {
+          line: 7,
+          column: 11,
+          messageId: 'awaitAsyncUtil',
+          data: { name: asyncUtil },
+        },
+      ],
+    })),
+    ...ASYNC_UTILS.map((asyncUtil) => ({
+      code: `
+        import { ${asyncUtil}, render } from '@testing-library/dom';
+        
+        function waitForSomethingAsync() {
+          return ${asyncUtil}(() => somethingAsync())
+        }
+
+        test('unhandled promise from function wrapping ${asyncUtil} util is invalid', async () => {
+          render()
+          const el = waitForSomethingAsync()
+        });
+      `,
+      errors: [
+        {
+          messageId: 'asyncUtilWrapper',
+          line: 10,
+          column: 22,
+          data: { name: 'waitForSomethingAsync' },
+        },
+      ],
     })),
     ...ASYNC_UTILS.map((asyncUtil) => ({
       code: `
@@ -323,7 +407,14 @@ ruleTester.run(RULE_NAME, rule, {
           asyncUtils.${asyncUtil}();
         });
       `,
-      errors: [{ line: 7, column: 22, messageId: 'awaitAsyncUtil' }],
+      errors: [
+        {
+          line: 7,
+          column: 22,
+          messageId: 'awaitAsyncUtil',
+          data: { name: asyncUtil },
+        },
+      ],
     })),
   ],
 });

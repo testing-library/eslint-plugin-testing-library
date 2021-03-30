@@ -80,7 +80,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
                   node,
                   messageId: 'awaitAsyncUtil',
                   data: {
-                    name: referenceNode.name,
+                    name: node.name,
                   },
                 });
               }
