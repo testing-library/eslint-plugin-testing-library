@@ -33,6 +33,12 @@ ruleTester.run(RULE_NAME, rule, {
       const element = queryAllByIcon('search')
     }
     `,
+    `async () => {
+      await waitFor(() => {
+        getByText('search');
+      });
+    }
+    `,
     // sync queries without await inside assert are valid
     ...SYNC_QUERIES_COMBINATIONS.map((query) => ({
       code: `() => {
