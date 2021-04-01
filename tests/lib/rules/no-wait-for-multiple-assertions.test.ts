@@ -198,7 +198,7 @@ ruleTester.run(RULE_NAME, rule, {
       code: `
         await waitFor(async function() {
           expect(a).toEqual('a')
-          await somethingAsync()
+          const el = await somethingAsync()
           expect(b).toEqual('b')
         })
       `,
