@@ -93,6 +93,10 @@ ruleTester.run(RULE_NAME, rule, {
       const foo = getAllByLabelText
     })
     `,
+
+    `// edge case for coverage: CallExpression without deepest Identifier
+     await someList[0]();
+    `,
   ],
 
   invalid: [
