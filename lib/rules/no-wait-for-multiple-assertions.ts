@@ -30,7 +30,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
     function getExpectNodes(
       body: Array<TSESTree.Node>
     ): Array<TSESTree.ExpressionStatement> {
-      return body.filter((node: TSESTree.Node) => {
+      return body.filter((node) => {
         if (!isExpressionStatement(node)) {
           return false;
         }
