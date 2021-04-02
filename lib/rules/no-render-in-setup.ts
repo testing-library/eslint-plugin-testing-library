@@ -84,6 +84,11 @@ export default createTestingLibraryRule<Options, MessageIds>({
           (hook) => hook !== allowTestingFrameworkSetupHook
         );
         const callExpressionIdentifier = getDeepestIdentifierNode(node);
+
+        if (!callExpressionIdentifier) {
+          return;
+        }
+
         const isRenderIdentifier = helpers.isRenderUtil(
           callExpressionIdentifier
         );

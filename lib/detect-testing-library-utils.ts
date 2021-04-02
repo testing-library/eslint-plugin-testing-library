@@ -477,6 +477,10 @@ export function detectTestingLibraryUtils<
     const isRenderVariableDeclarator: IsRenderVariableDeclaratorFn = (node) => {
       const initIdentifierNode = getDeepestIdentifierNode(node.init);
 
+      if (!initIdentifierNode) {
+        return false;
+      }
+
       return isRenderUtil(initIdentifierNode);
     };
 

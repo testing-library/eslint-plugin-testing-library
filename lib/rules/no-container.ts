@@ -84,6 +84,11 @@ export default createTestingLibraryRule<Options, MessageIds>({
     return {
       CallExpression(node) {
         const callExpressionIdentifier = getDeepestIdentifierNode(node);
+
+        if (!callExpressionIdentifier) {
+          return;
+        }
+
         if (helpers.isRenderUtil(callExpressionIdentifier)) {
           detectRenderWrapper(callExpressionIdentifier);
         }
@@ -102,6 +107,10 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
       VariableDeclarator(node) {
         const initIdentifierNode = getDeepestIdentifierNode(node.init);
+
+        if (!initIdentifierNode) {
+          return;
+        }
 
         const isRenderWrapperVariableDeclarator = initIdentifierNode
           ? renderWrapperNames.includes(initIdentifierNode.name)

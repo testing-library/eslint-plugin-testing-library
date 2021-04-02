@@ -42,6 +42,10 @@ export default createTestingLibraryRule<Options, MessageIds>({
       'AwaitExpression > CallExpression'(node: TSESTree.CallExpression) {
         const simulateEventFunctionIdentifier = getDeepestIdentifierNode(node);
 
+        if (!simulateEventFunctionIdentifier) {
+          return;
+        }
+
         const isSimulateEventMethod =
           helpers.isUserEventMethod(simulateEventFunctionIdentifier) ||
           helpers.isFireEventMethod(simulateEventFunctionIdentifier);

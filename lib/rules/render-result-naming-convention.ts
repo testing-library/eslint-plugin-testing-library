@@ -48,6 +48,11 @@ export default createTestingLibraryRule<Options, MessageIds>({
     return {
       CallExpression(node) {
         const callExpressionIdentifier = getDeepestIdentifierNode(node);
+
+        if (!callExpressionIdentifier) {
+          return;
+        }
+
         if (helpers.isRenderUtil(callExpressionIdentifier)) {
           detectRenderWrapper(callExpressionIdentifier);
         }

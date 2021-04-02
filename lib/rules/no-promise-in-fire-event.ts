@@ -52,6 +52,10 @@ export default createTestingLibraryRule<Options, MessageIds>({
       if (isCallExpression(node)) {
         const domElementIdentifier = getDeepestIdentifierNode(node);
 
+        if (!domElementIdentifier) {
+          return;
+        }
+
         if (
           helpers.isAsyncQuery(domElementIdentifier) ||
           isPromiseIdentifier(domElementIdentifier)

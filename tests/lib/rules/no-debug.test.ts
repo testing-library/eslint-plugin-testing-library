@@ -139,6 +139,10 @@ ruleTester.run(RULE_NAME, rule, {
       debug()
       `,
     },
+
+    `// cover edge case for https://github.com/testing-library/eslint-plugin-testing-library/issues/306
+    thing.method.lastCall.args[0]();
+    `,
   ],
 
   invalid: [
