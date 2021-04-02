@@ -97,6 +97,12 @@ ruleTester.run(RULE_NAME, rule, {
     `// edge case for coverage: CallExpression without deepest Identifier
      await someList[0]();
     `,
+
+    `// element is removed
+    test('movie title no longer present in DOM', async () => {
+      await waitForElementToBeRemoved(() => queryByText('the mummy'))
+    })
+    `,
   ],
 
   invalid: [
