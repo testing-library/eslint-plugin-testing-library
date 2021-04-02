@@ -160,6 +160,11 @@ export function detectTestingLibraryUtils<
 
       const referenceNode = getReferenceNode(node);
       const referenceNodeIdentifier = getPropertyIdentifierNode(referenceNode);
+
+      if (!referenceNodeIdentifier) {
+        return false;
+      }
+
       const importedUtilSpecifier = getImportedUtilSpecifier(
         referenceNodeIdentifier
       );
@@ -609,7 +614,11 @@ export function detectTestingLibraryUtils<
       node: TSESTree.MemberExpression | TSESTree.Identifier
     ): TSESTree.ImportClause | TSESTree.Identifier | undefined => {
       const identifierName: string | undefined = getPropertyIdentifierNode(node)
-        .name;
+        ?.name;
+
+      if (!identifierName) {
+        return undefined;
+      }
 
       return findImportedUtilSpecifier(identifierName);
     };
@@ -637,7 +646,11 @@ export function detectTestingLibraryUtils<
       }
 
       const identifierName: string | undefined = getPropertyIdentifierNode(node)
-        .name;
+        ?.name;
+
+      if (!identifierName) {
+        return false;
+      }
 
       return hasImportMatch(importNode, identifierName);
     };

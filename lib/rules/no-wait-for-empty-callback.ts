@@ -35,6 +35,10 @@ export default createTestingLibraryRule<Options, MessageIds>({
       const parentCallExpression = node.parent as TSESTree.CallExpression;
       const parentIdentifier = getPropertyIdentifierNode(parentCallExpression);
 
+      if (!parentIdentifier) {
+        return false;
+      }
+
       return helpers.isAsyncUtil(parentIdentifier, [
         'waitFor',
         'waitForElementToBeRemoved',

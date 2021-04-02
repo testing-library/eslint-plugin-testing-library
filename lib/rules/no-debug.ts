@@ -101,6 +101,10 @@ export default createTestingLibraryRule<Options, MessageIds>({
         const referenceNode = getReferenceNode(node);
         const referenceIdentifier = getPropertyIdentifierNode(referenceNode);
 
+        if (!referenceIdentifier) {
+          return;
+        }
+
         const isDebugUtil = helpers.isDebugUtil(callExpressionIdentifier);
         const isDeclaredDebugVariable = suspiciousDebugVariableNames.includes(
           callExpressionIdentifier.name

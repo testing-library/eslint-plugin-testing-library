@@ -307,6 +307,10 @@ ruleTester.run(RULE_NAME, rule, {
       const utils = somethingElse.render()
       `,
     },
+
+    // Weird edge cases
+    `(window as any).__THING = false;`,
+    `thing.method.lastCall.args[0]();`,
   ],
   invalid: [
     // Test Cases for Imports

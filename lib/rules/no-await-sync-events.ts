@@ -81,7 +81,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
           messageId: 'noAwaitSyncEvents',
           data: {
             name: `${
-              getPropertyIdentifierNode(node).name
+              getPropertyIdentifierNode(node)?.name
             }.${simulateEventFunctionName}`,
           },
         });

@@ -42,6 +42,10 @@ export default createTestingLibraryRule<Options, MessageIds>({
         callExpressionNode
       );
 
+      if (!callExpressionIdentifier) {
+        return;
+      }
+
       if (!helpers.isAsyncUtil(callExpressionIdentifier, ['waitFor'])) {
         return;
       }
