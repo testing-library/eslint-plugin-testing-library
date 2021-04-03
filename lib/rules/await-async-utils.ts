@@ -26,7 +26,6 @@ export default createTestingLibraryRule<Options, MessageIds>({
       asyncUtilWrapper:
         'Promise returned from {{ name }} wrapper over async util must be handled',
     },
-    fixable: null,
     schema: [],
   },
   defaultOptions: [],
@@ -53,7 +52,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
             true
           );
 
-          if (!closestCallExpression) {
+          if (!closestCallExpression || !closestCallExpression.parent) {
             return;
           }
 

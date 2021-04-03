@@ -34,16 +34,17 @@ export default createTestingLibraryRule<Options, MessageIds>({
       noManualCleanup:
         "`cleanup` is performed automatically by your test runner, you don't need manual cleanups.",
     },
-    fixable: null,
     schema: [],
   },
   defaultOptions: [],
 
   create(context, _, helpers) {
     function reportImportReferences(references: TSESLint.Scope.Reference[]) {
-      references.forEach((reference) => {
+      for (const reference of references) {
         const utilsUsage = reference.identifier.parent;
+
         if (
+          utilsUsage &&
           isMemberExpression(utilsUsage) &&
           ASTUtils.isIdentifier(utilsUsage.property) &&
           utilsUsage.property.name === 'cleanup'
@@ -53,7 +54,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
             messageId: 'noManualCleanup',
           });
         }
-      });
+      }
     }
 
     function reportCandidateModule(moduleNode: ImportModuleNode) {

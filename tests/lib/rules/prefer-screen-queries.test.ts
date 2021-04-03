@@ -171,192 +171,231 @@ ruleTester.run(RULE_NAME, rule, {
   ],
 
   invalid: [
-    ...ALL_BUILTIN_AND_CUSTOM_QUERIES_COMBINATIONS.map((queryMethod) => ({
-      code: `
+    ...ALL_BUILTIN_AND_CUSTOM_QUERIES_COMBINATIONS.map(
+      (queryMethod) =>
+        ({
+          code: `
         const { ${queryMethod} } = render(foo)
         ${queryMethod}()`,
-      errors: [
-        {
-          messageId: 'preferScreenQueries',
-          data: {
-            name: queryMethod,
-          },
-        },
-      ],
-    })),
-    ...ALL_BUILTIN_AND_CUSTOM_QUERIES_COMBINATIONS.map((queryMethod) => ({
-      settings: { 'testing-library/utils-module': 'test-utils' },
-      code: `
+          errors: [
+            {
+              messageId: 'preferScreenQueries',
+              data: {
+                name: queryMethod,
+              },
+            },
+          ],
+        } as const)
+    ),
+    ...ALL_BUILTIN_AND_CUSTOM_QUERIES_COMBINATIONS.map(
+      (queryMethod) =>
+        ({
+          settings: { 'testing-library/utils-module': 'test-utils' },
+          code: `
         import { render } from 'test-utils'
         const { ${queryMethod} } = render(foo)
         ${queryMethod}()`,
-      errors: [
-        {
-          line: 4,
-          column: 9,
-          messageId: 'preferScreenQueries',
-          data: {
-            name: queryMethod,
-          },
-        },
-      ],
-    })),
+          errors: [
+            {
+              line: 4,
+              column: 9,
+              messageId: 'preferScreenQueries',
+              data: {
+                name: queryMethod,
+              },
+            },
+          ],
+        } as const)
+    ),
 
-    ...ALL_BUILTIN_AND_CUSTOM_QUERIES_COMBINATIONS.map((queryMethod) => ({
-      settings: {
-        'testing-library/custom-renders': ['customRender'],
-      },
-      code: `
+    ...ALL_BUILTIN_AND_CUSTOM_QUERIES_COMBINATIONS.map(
+      (queryMethod) =>
+        ({
+          settings: {
+            'testing-library/custom-renders': ['customRender'],
+          },
+          code: `
         import { customRender } from 'whatever'
         const { ${queryMethod} } = customRender(foo)
         ${queryMethod}()`,
-      errors: [
-        {
-          line: 4,
-          column: 9,
-          messageId: 'preferScreenQueries',
-          data: {
-            name: queryMethod,
-          },
-        },
-      ],
-    })),
-    ...ALL_BUILTIN_AND_CUSTOM_QUERIES_COMBINATIONS.map((queryMethod) => ({
-      settings: { 'testing-library/utils-module': 'test-utils' },
-      code: `
+          errors: [
+            {
+              line: 4,
+              column: 9,
+              messageId: 'preferScreenQueries',
+              data: {
+                name: queryMethod,
+              },
+            },
+          ],
+        } as const)
+    ),
+    ...ALL_BUILTIN_AND_CUSTOM_QUERIES_COMBINATIONS.map(
+      (queryMethod) =>
+        ({
+          settings: { 'testing-library/utils-module': 'test-utils' },
+          code: `
         import { render as testingLibraryRender} from '@testing-library/react'
         const { ${queryMethod} } = testingLibraryRender(foo)
         ${queryMethod}()`,
-      errors: [
-        {
-          line: 4,
-          column: 9,
-          messageId: 'preferScreenQueries',
-          data: {
-            name: queryMethod,
-          },
-        },
-      ],
-    })),
-    ...ALL_BUILTIN_AND_CUSTOM_QUERIES_COMBINATIONS.map((queryMethod) => ({
-      settings: { 'testing-library/utils-module': 'test-utils' },
-      code: `
+          errors: [
+            {
+              line: 4,
+              column: 9,
+              messageId: 'preferScreenQueries',
+              data: {
+                name: queryMethod,
+              },
+            },
+          ],
+        } as const)
+    ),
+    ...ALL_BUILTIN_AND_CUSTOM_QUERIES_COMBINATIONS.map(
+      (queryMethod) =>
+        ({
+          settings: { 'testing-library/utils-module': 'test-utils' },
+          code: `
         import { render } from 'test-utils'
         const { ${queryMethod} } = render(foo)
         ${queryMethod}()`,
-      errors: [
-        {
-          line: 4,
-          column: 9,
-          messageId: 'preferScreenQueries',
-          data: {
-            name: queryMethod,
-          },
-        },
-      ],
-    })),
-    ...ALL_BUILTIN_AND_CUSTOM_QUERIES_COMBINATIONS.map((queryMethod) => ({
-      code: `render().${queryMethod}()`,
-      errors: [
-        {
-          messageId: 'preferScreenQueries',
-          data: {
-            name: queryMethod,
-          },
-        },
-      ],
-    })),
-    ...ALL_BUILTIN_AND_CUSTOM_QUERIES_COMBINATIONS.map((queryMethod) => ({
-      code: `render(foo, { hydrate: true }).${queryMethod}()`,
-      errors: [
-        {
-          messageId: 'preferScreenQueries',
-          data: {
-            name: queryMethod,
-          },
-        },
-      ],
-    })),
-    ...ALL_BUILTIN_AND_CUSTOM_QUERIES_COMBINATIONS.map((queryMethod) => ({
-      code: `component.${queryMethod}()`,
-      errors: [
-        {
-          messageId: 'preferScreenQueries',
-          data: {
-            name: queryMethod,
-          },
-        },
-      ],
-    })),
-    ...ALL_BUILTIN_AND_CUSTOM_QUERIES_COMBINATIONS.map((queryMethod) => ({
-      code: `
+          errors: [
+            {
+              line: 4,
+              column: 9,
+              messageId: 'preferScreenQueries',
+              data: {
+                name: queryMethod,
+              },
+            },
+          ],
+        } as const)
+    ),
+    ...ALL_BUILTIN_AND_CUSTOM_QUERIES_COMBINATIONS.map(
+      (queryMethod) =>
+        ({
+          code: `render().${queryMethod}()`,
+          errors: [
+            {
+              messageId: 'preferScreenQueries',
+              data: {
+                name: queryMethod,
+              },
+            },
+          ],
+        } as const)
+    ),
+    ...ALL_BUILTIN_AND_CUSTOM_QUERIES_COMBINATIONS.map(
+      (queryMethod) =>
+        ({
+          code: `render(foo, { hydrate: true }).${queryMethod}()`,
+          errors: [
+            {
+              messageId: 'preferScreenQueries',
+              data: {
+                name: queryMethod,
+              },
+            },
+          ],
+        } as const)
+    ),
+    ...ALL_BUILTIN_AND_CUSTOM_QUERIES_COMBINATIONS.map(
+      (queryMethod) =>
+        ({
+          code: `component.${queryMethod}()`,
+          errors: [
+            {
+              messageId: 'preferScreenQueries',
+              data: {
+                name: queryMethod,
+              },
+            },
+          ],
+        } as const)
+    ),
+    ...ALL_BUILTIN_AND_CUSTOM_QUERIES_COMBINATIONS.map(
+      (queryMethod) =>
+        ({
+          code: `
         const { ${queryMethod} } = render()
         ${queryMethod}(baz)
       `,
-      errors: [
-        {
-          messageId: 'preferScreenQueries',
-          data: {
-            name: queryMethod,
-          },
-        },
-      ],
-    })),
-    ...ALL_BUILTIN_AND_CUSTOM_QUERIES_COMBINATIONS.map((queryMethod) => ({
-      code: `
+          errors: [
+            {
+              messageId: 'preferScreenQueries',
+              data: {
+                name: queryMethod,
+              },
+            },
+          ],
+        } as const)
+    ),
+    ...ALL_BUILTIN_AND_CUSTOM_QUERIES_COMBINATIONS.map(
+      (queryMethod) =>
+        ({
+          code: `
         const myRenderVariable = render()
         myRenderVariable.${queryMethod}(baz)
       `,
-      errors: [
-        {
-          messageId: 'preferScreenQueries',
-          data: {
-            name: queryMethod,
-          },
-        },
-      ],
-    })),
-    ...ALL_BUILTIN_AND_CUSTOM_QUERIES_COMBINATIONS.map((queryMethod) => ({
-      code: `
+          errors: [
+            {
+              messageId: 'preferScreenQueries',
+              data: {
+                name: queryMethod,
+              },
+            },
+          ],
+        } as const)
+    ),
+    ...ALL_BUILTIN_AND_CUSTOM_QUERIES_COMBINATIONS.map(
+      (queryMethod) =>
+        ({
+          code: `
         const [myVariable] = render()
         myVariable.${queryMethod}(baz)
       `,
-      errors: [
-        {
-          messageId: 'preferScreenQueries',
-          data: {
-            name: queryMethod,
-          },
-        },
-      ],
-    })),
-    ...ALL_BUILTIN_AND_CUSTOM_QUERIES_COMBINATIONS.map((queryMethod) => ({
-      code: `
+          errors: [
+            {
+              messageId: 'preferScreenQueries',
+              data: {
+                name: queryMethod,
+              },
+            },
+          ],
+        } as const)
+    ),
+    ...ALL_BUILTIN_AND_CUSTOM_QUERIES_COMBINATIONS.map(
+      (queryMethod) =>
+        ({
+          code: `
         const { ${queryMethod} } = render(baz, { hydrate: true })
         ${queryMethod}(baz)
       `,
-      errors: [
-        {
-          messageId: 'preferScreenQueries',
-          data: {
-            name: queryMethod,
-          },
-        },
-      ],
-    })),
-    ...ALL_BUILTIN_AND_CUSTOM_QUERIES_COMBINATIONS.map((queryMethod) => ({
-      code: `
+          errors: [
+            {
+              messageId: 'preferScreenQueries',
+              data: {
+                name: queryMethod,
+              },
+            },
+          ],
+        } as const)
+    ),
+    ...ALL_BUILTIN_AND_CUSTOM_QUERIES_COMBINATIONS.map(
+      (queryMethod) =>
+        ({
+          code: `
         const [myVariable] = within()
         myVariable.${queryMethod}(baz)
       `,
-      errors: [
-        {
-          messageId: 'preferScreenQueries',
-          data: {
-            name: queryMethod,
-          },
-        },
-      ],
-    })),
+          errors: [
+            {
+              messageId: 'preferScreenQueries',
+              data: {
+                name: queryMethod,
+              },
+            },
+          ],
+        } as const)
+    ),
   ],
 });

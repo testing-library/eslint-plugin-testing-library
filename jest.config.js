@@ -6,12 +6,6 @@ module.exports = {
   },
   coverageThreshold: {
     global: {
-      branches: 100,
-      functions: 100,
-      lines: 100,
-      statements: 100,
-    },
-    './lib/node-utils.ts': {
       branches: 90,
       functions: 90,
       lines: 90,

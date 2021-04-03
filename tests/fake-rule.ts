@@ -41,7 +41,6 @@ export default createTestingLibraryRule<Options, MessageIds>({
       presenceAssertError: 'some error related to presence assert reported',
       absenceAssertError: 'some error related to absence assert reported',
     },
-    fixable: null,
     schema: [],
   },
   defaultOptions: [],

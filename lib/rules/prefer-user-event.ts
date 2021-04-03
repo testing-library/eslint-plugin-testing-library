@@ -82,7 +82,6 @@ export default createTestingLibraryRule<Options, MessageIds>({
         },
       },
     ],
-    fixable: null,
   },
   defaultOptions: [{ allowedMethods: [] }],
 

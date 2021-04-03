@@ -30,7 +30,6 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
     messages: {
       consistentDataTestId: '`{{attr}}` "{{value}}" should match `{{regex}}`',
     },
-    fixable: null,
     schema: [
       {
         type: 'object',
@@ -72,7 +71,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
 
     function getFileNameData() {
       const splitPath = getFilename().split('/');
-      const fileNameWithExtension = splitPath.pop();
+      const fileNameWithExtension = splitPath.pop() ?? '';
       const parent = splitPath.pop();
       const fileName = fileNameWithExtension.split('.').shift();
 
@@ -85,17 +84,18 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
       return new RegExp(testIdPattern.replace(FILENAME_PLACEHOLDER, fileName));
     }
 
-    function isTestIdAttribute(name: string) {
+    function isTestIdAttribute(name: string): boolean {
       if (typeof attr === 'string') {
         return attr === name;
       } else {
-        return attr.includes(name);
+        return attr?.includes(name) ?? false;
       }
     }
 
     return {
       JSXIdentifier: (node) => {
         if (
+          !node.parent ||
           !isJSXAttribute(node.parent) ||
           !isLiteral(node.parent.value) ||
           !isTestIdAttribute(node.name)
@@ -105,7 +105,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
 
         const value = node.parent.value.value;
         const { fileName } = getFileNameData();
-        const regex = getTestIdValidator(fileName);
+        const regex = getTestIdValidator(fileName ?? '');
 
         if (value && typeof value === 'string' && !regex.test(value)) {
           context.report({

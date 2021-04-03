@@ -42,13 +42,13 @@ export function isCallExpression(
 }
 
 export function isNewExpression(
-  node: TSESTree.Node
+  node: TSESTree.Node | null | undefined
 ): node is TSESTree.NewExpression {
   return node?.type === 'NewExpression';
 }
 
 export function isMemberExpression(
-  node: TSESTree.Node
+  node: TSESTree.Node | null | undefined
 ): node is TSESTree.MemberExpression {
   return node?.type === AST_NODE_TYPES.MemberExpression;
 }
@@ -60,31 +60,31 @@ export function isLiteral(
 }
 
 export function isImportSpecifier(
-  node: TSESTree.Node
+  node: TSESTree.Node | null | undefined
 ): node is TSESTree.ImportSpecifier {
   return node?.type === AST_NODE_TYPES.ImportSpecifier;
 }
 
 export function isImportNamespaceSpecifier(
-  node: TSESTree.Node
+  node: TSESTree.Node | null | undefined
 ): node is TSESTree.ImportNamespaceSpecifier {
   return node?.type === AST_NODE_TYPES.ImportNamespaceSpecifier;
 }
 
 export function isImportDefaultSpecifier(
-  node: TSESTree.Node
+  node: TSESTree.Node | null | undefined
 ): node is TSESTree.ImportDefaultSpecifier {
   return node?.type === AST_NODE_TYPES.ImportDefaultSpecifier;
 }
 
 export function isBlockStatement(
-  node: TSESTree.Node
+  node: TSESTree.Node | null | undefined
 ): node is TSESTree.BlockStatement {
   return node?.type === AST_NODE_TYPES.BlockStatement;
 }
 
 export function isObjectPattern(
-  node: TSESTree.Node
+  node: TSESTree.Node | null | undefined
 ): node is TSESTree.ObjectPattern {
   return node?.type === AST_NODE_TYPES.ObjectPattern;
 }
@@ -96,13 +96,13 @@ export function isProperty(
 }
 
 export function isJSXAttribute(
-  node: TSESTree.Node
+  node: TSESTree.Node | null | undefined
 ): node is TSESTree.JSXAttribute {
   return node?.type === AST_NODE_TYPES.JSXAttribute;
 }
 
 export function isExpressionStatement(
-  node: TSESTree.Node
+  node: TSESTree.Node | null | undefined
 ): node is TSESTree.ExpressionStatement {
   return node?.type === AST_NODE_TYPES.ExpressionStatement;
 }
@@ -137,7 +137,7 @@ export function findClosestCallExpressionNode(
 export function findClosestCallNode(
   node: TSESTree.Node,
   name: string
-): TSESTree.CallExpression {
+): TSESTree.CallExpression | null {
   if (!node.parent) {
     return null;
   }
@@ -195,12 +195,12 @@ export function hasChainedThen(node: TSESTree.Node): boolean {
   const parent = node.parent;
 
   // wait(...).then(...)
-  if (isCallExpression(parent)) {
+  if (isCallExpression(parent) && parent.parent) {
     return hasThenProperty(parent.parent);
   }
 
   // promise.then(...)
-  return hasThenProperty(parent);
+  return !!parent && hasThenProperty(parent);
 }
 
 export function isPromiseIdentifier(
@@ -239,6 +239,7 @@ export function isPromisesArrayResolved(node: TSESTree.Node): boolean {
   }
 
   return (
+    !!closestCallExpression.parent &&
     isArrayExpression(closestCallExpression.parent) &&
     isCallExpression(closestCallExpression.parent.parent) &&
     (isPromiseAll(closestCallExpression.parent.parent) ||
@@ -268,6 +269,9 @@ export function isPromiseHandled(nodeIdentifier: TSESTree.Identifier): boolean {
   );
 
   for (const node of suspiciousNodes) {
+    if (!node || !node.parent) {
+      continue;
+    }
     if (ASTUtils.isAwaitExpression(node.parent)) {
       return true;
     }
@@ -436,7 +440,10 @@ export function getReferenceNode(
     | TSESTree.MemberExpression
     | TSESTree.Identifier
 ): TSESTree.CallExpression | TSESTree.MemberExpression | TSESTree.Identifier {
-  if (isMemberExpression(node.parent) || isCallExpression(node.parent)) {
+  if (
+    node.parent &&
+    (isMemberExpression(node.parent) || isCallExpression(node.parent))
+  ) {
     return getReferenceNode(node.parent);
   }
 
@@ -505,9 +512,10 @@ export function getAssertNodeInfo(
   let matcher = ASTUtils.getPropertyName(node);
   const isNegated = matcher === 'not';
   if (isNegated) {
-    matcher = isMemberExpression(node.parent)
-      ? ASTUtils.getPropertyName(node.parent)
-      : null;
+    matcher =
+      node.parent && isMemberExpression(node.parent)
+        ? ASTUtils.getPropertyName(node.parent)
+        : null;
   }
 
   if (!matcher) {
@@ -526,6 +534,7 @@ export function hasClosestExpectResolvesRejects(node: TSESTree.Node): boolean {
   if (
     isCallExpression(node) &&
     ASTUtils.isIdentifier(node.callee) &&
+    node.parent &&
     isMemberExpression(node.parent) &&
     node.callee.name === 'expect'
   ) {

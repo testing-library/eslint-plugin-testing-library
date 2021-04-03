@@ -1,9 +1,8 @@
-import { TSESTree, ASTUtils } from '@typescript-eslint/experimental-utils';
 import {
-  ReportFixFunction,
-  RuleFix,
-  Scope,
-} from '@typescript-eslint/experimental-utils/dist/ts-eslint';
+  TSESTree,
+  ASTUtils,
+  TSESLint,
+} from '@typescript-eslint/experimental-utils';
 import {
   isArrowFunctionExpression,
   isCallExpression,
@@ -26,7 +25,7 @@ export function getFindByQueryVariant(
 }
 
 function findRenderDefinitionDeclaration(
-  scope: Scope.Scope | null,
+  scope: TSESLint.Scope.Scope | null,
   query: string
 ): TSESTree.Identifier | null {
   if (!scope) {
@@ -34,14 +33,16 @@ function findRenderDefinitionDeclaration(
   }
 
   const variable = scope.variables.find(
-    (v: Scope.Variable) => v.name === query
+    (v: TSESLint.Scope.Variable) => v.name === query
   );
 
   if (variable) {
-    return variable.defs
-      .map(({ name }) => name)
-      .filter(ASTUtils.isIdentifier)
-      .find(({ name }) => name === query);
+    return (
+      variable.defs
+        .map(({ name }) => name)
+        .filter(ASTUtils.isIdentifier)
+        .find(({ name }) => name === query) ?? null
+    );
   }
 
   return findRenderDefinitionDeclaration(scope.upper, query);
@@ -86,7 +87,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
         queryMethod: string;
         prevQuery: string;
         waitForMethodName: string;
-        fix: ReportFixFunction;
+        fix: TSESLint.ReportFixFunction;
       }
     ) {
       const {
@@ -152,7 +153,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
               const property = ((argument.body as TSESTree.CallExpression)
                 .callee as TSESTree.MemberExpression).property;
               if (helpers.isCustomQuery(property as TSESTree.Identifier)) {
-                return;
+                return null;
               }
               const newCode = `${caller}.${queryVariant}${queryMethod}(${callArguments
                 .map((node) => sourceCode.getText(node))
@@ -187,10 +188,10 @@ export default createTestingLibraryRule<Options, MessageIds>({
                   .callee as TSESTree.Identifier
               )
             ) {
-              return;
+              return null;
             }
             const findByMethod = `${queryVariant}${queryMethod}`;
-            const allFixes: RuleFix[] = [];
+            const allFixes: TSESLint.RuleFix[] = [];
             // this updates waitFor with findBy*
             const newCode = `${findByMethod}(${callArguments
               .map((node) => sourceCode.getText(node))
@@ -207,7 +208,10 @@ export default createTestingLibraryRule<Options, MessageIds>({
               return allFixes;
             }
             // check the declaration is part of a destructuring
-            if (isObjectPattern(definition.parent.parent)) {
+            if (
+              definition.parent &&
+              isObjectPattern(definition.parent.parent)
+            ) {
               const allVariableDeclarations = definition.parent.parent;
               // verify if the findBy* method was already declared
               if (

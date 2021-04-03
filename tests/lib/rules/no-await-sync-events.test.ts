@@ -170,39 +170,46 @@ ruleTester.run(RULE_NAME, rule, {
 
   invalid: [
     // sync fireEvent methods with await operator are not valid
-    ...FIRE_EVENT_FUNCTIONS.map((func) => ({
-      code: `
+    ...FIRE_EVENT_FUNCTIONS.map(
+      (func) =>
+        ({
+          code: `
         import { fireEvent } from '@testing-library/framework';
         test('should report fireEvent.${func} sync event awaited', async() => {
           await fireEvent.${func}('foo');
         });
       `,
-      errors: [
-        {
-          line: 4,
-          column: 17,
-          messageId: 'noAwaitSyncEvents',
-          data: { name: `fireEvent.${func}` },
-        },
-      ],
-    })),
+          errors: [
+            {
+              line: 4,
+              column: 17,
+              messageId: 'noAwaitSyncEvents',
+              data: { name: `fireEvent.${func}` },
+            },
+          ],
+        } as const)
+    ),
     // sync userEvent sync methods with await operator are not valid
-    ...USER_EVENT_SYNC_FUNCTIONS.map((func) => ({
-      code: `
+    ...USER_EVENT_SYNC_FUNCTIONS.map(
+      (func) =>
+        ({
+          code: `
         import userEvent from '@testing-library/user-event';
         test('should report userEvent.${func} sync event awaited', async() => {
           await userEvent.${func}('foo');
         });
       `,
-      errors: [
-        {
-          line: 4,
-          column: 17,
-          messageId: 'noAwaitSyncEvents',
-          data: { name: `userEvent.${func}` },
-        },
-      ],
-    })),
+          errors: [
+            {
+              line: 4,
+              column: 17,
+              messageId: 'noAwaitSyncEvents',
+              data: { name: `userEvent.${func}` },
+            },
+          ],
+        } as const)
+    ),
+
     {
       code: `
         import userEvent from '@testing-library/user-event';

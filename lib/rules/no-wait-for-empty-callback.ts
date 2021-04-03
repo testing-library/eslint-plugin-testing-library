@@ -24,7 +24,6 @@ export default createTestingLibraryRule<Options, MessageIds>({
       noWaitForEmptyCallback:
         'Avoid passing empty callback to `{{ methodName }}`. Insert an assertion instead.',
     },
-    fixable: null,
     schema: [],
   },
   defaultOptions: [],
@@ -34,6 +33,10 @@ export default createTestingLibraryRule<Options, MessageIds>({
     function isValidWaitFor(node: TSESTree.Node): boolean {
       const parentCallExpression = node.parent as TSESTree.CallExpression;
       const parentIdentifier = getPropertyIdentifierNode(parentCallExpression);
+
+      if (!parentIdentifier) {
+        return false;
+      }
 
       return helpers.isAsyncUtil(parentIdentifier, [
         'waitFor',

@@ -27,7 +27,6 @@ export default createTestingLibraryRule<Options, MessageIds>({
       fireEventWrapper:
         'Promise returned from `fireEvent.{{ wrapperName }}` wrapper over fire event method must be handled',
     },
-    fixable: null,
     schema: [],
   },
   defaultOptions: [],
@@ -67,7 +66,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
             true
           );
 
-          if (!closestCallExpression) {
+          if (!closestCallExpression || !closestCallExpression.parent) {
             return;
           }
 

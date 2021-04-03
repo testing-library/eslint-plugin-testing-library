@@ -19,7 +19,6 @@ export default createTestingLibraryRule<Options, MessageIds>({
       noNodeAccess:
         'Avoid direct Node access. Prefer using the methods from Testing Library.',
     },
-    fixable: null,
     schema: [],
   },
   defaultOptions: [],

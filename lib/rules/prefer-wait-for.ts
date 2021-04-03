@@ -78,14 +78,13 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
           // get all import names excluding all testing library `wait*` utils...
           const newImports = node.specifiers
-            .filter(
+            .map(
               (specifier) =>
                 isImportSpecifier(specifier) &&
-                !excludedImports.includes(specifier.imported.name)
+                !excludedImports.includes(specifier.imported.name) &&
+                specifier.imported.name
             )
-            .map(
-              (specifier: TSESTree.ImportSpecifier) => specifier.imported.name
-            );
+            .filter(Boolean) as string[];
 
           // ... and append `waitFor`
           newImports.push('waitFor');
@@ -109,6 +108,9 @@ export default createTestingLibraryRule<Options, MessageIds>({
         },
         fix(fixer) {
           const callExpressionNode = findClosestCallExpressionNode(node);
+          if (!callExpressionNode) {
+            return null;
+          }
           const [arg] = callExpressionNode.arguments;
           const fixers = [];
 
@@ -188,7 +190,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
             return;
           }
           reportRequire(parent.id);
-        } else {
+        } else if (testingLibraryNode) {
           if (
             testingLibraryNode.specifiers.length === 1 &&
             isImportNamespaceSpecifier(testingLibraryNode.specifiers[0])

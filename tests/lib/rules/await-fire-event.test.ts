@@ -139,104 +139,121 @@ ruleTester.run(RULE_NAME, rule, {
   ],
 
   invalid: [
-    ...COMMON_FIRE_EVENT_METHODS.map((fireEventMethod) => ({
-      code: `
+    ...COMMON_FIRE_EVENT_METHODS.map(
+      (fireEventMethod) =>
+        ({
+          code: `
       import { fireEvent } from '@testing-library/vue'
       test('unhandled promise from fire event method is invalid', async () => {
         fireEvent.${fireEventMethod}(getByLabelText('username'))
       })
       `,
-      errors: [
-        {
-          line: 4,
-          column: 9,
-          endColumn: 19 + fireEventMethod.length,
-          messageId: 'awaitFireEvent',
-          data: { name: fireEventMethod },
-        },
-      ],
-    })),
-    ...COMMON_FIRE_EVENT_METHODS.map((fireEventMethod) => ({
-      code: `
+          errors: [
+            {
+              line: 4,
+              column: 9,
+              endColumn: 19 + fireEventMethod.length,
+              messageId: 'awaitFireEvent',
+              data: { name: fireEventMethod },
+            },
+          ],
+        } as const)
+    ),
+    ...COMMON_FIRE_EVENT_METHODS.map(
+      (fireEventMethod) =>
+        ({
+          code: `
       import { fireEvent as testingLibraryFireEvent } from '@testing-library/vue'
       test('unhandled promise from aliased fire event method is invalid', async () => {
         testingLibraryFireEvent.${fireEventMethod}(getByLabelText('username'))
       })
       `,
-      errors: [
-        {
-          line: 4,
-          column: 9,
-          endColumn: 33 + fireEventMethod.length,
-          messageId: 'awaitFireEvent',
-          data: { name: fireEventMethod },
-        },
-      ],
-    })),
-    ...COMMON_FIRE_EVENT_METHODS.map((fireEventMethod) => ({
-      code: `
+          errors: [
+            {
+              line: 4,
+              column: 9,
+              endColumn: 33 + fireEventMethod.length,
+              messageId: 'awaitFireEvent',
+              data: { name: fireEventMethod },
+            },
+          ],
+        } as const)
+    ),
+    ...COMMON_FIRE_EVENT_METHODS.map(
+      (fireEventMethod) =>
+        ({
+          code: `
       import * as testingLibrary from '@testing-library/vue'
       test('unhandled promise from wildcard imported fire event method is invalid', async () => {
         testingLibrary.fireEvent.${fireEventMethod}(getByLabelText('username'))
       })
       `,
-      errors: [
-        {
-          line: 4,
-          column: 9,
-          endColumn: 34 + fireEventMethod.length,
-          messageId: 'awaitFireEvent',
-          data: { name: fireEventMethod },
-        },
-      ],
-    })),
-    ...COMMON_FIRE_EVENT_METHODS.map((fireEventMethod) => ({
-      code: `
+          errors: [
+            {
+              line: 4,
+              column: 9,
+              endColumn: 34 + fireEventMethod.length,
+              messageId: 'awaitFireEvent',
+              data: { name: fireEventMethod },
+            },
+          ],
+        } as const)
+    ),
+    ...COMMON_FIRE_EVENT_METHODS.map(
+      (fireEventMethod) =>
+        ({
+          code: `
       import { fireEvent } from '@testing-library/vue'
       test('several unhandled promises from fire event methods is invalid', async () => {
         fireEvent.${fireEventMethod}(getByLabelText('username'))
         fireEvent.${fireEventMethod}(getByLabelText('username'))
       })
       `,
-      errors: [
-        {
-          line: 4,
-          column: 9,
-          messageId: 'awaitFireEvent',
-          data: { name: fireEventMethod },
-        },
-        {
-          line: 5,
-          column: 9,
-          messageId: 'awaitFireEvent',
-          data: { name: fireEventMethod },
-        },
-      ],
-    })),
-    ...COMMON_FIRE_EVENT_METHODS.map((fireEventMethod) => ({
-      settings: {
-        'testing-library/utils-module': 'test-utils',
-      },
-      code: `
+          errors: [
+            {
+              line: 4,
+              column: 9,
+              messageId: 'awaitFireEvent',
+              data: { name: fireEventMethod },
+            },
+            {
+              line: 5,
+              column: 9,
+              messageId: 'awaitFireEvent',
+              data: { name: fireEventMethod },
+            },
+          ],
+        } as const)
+    ),
+    ...COMMON_FIRE_EVENT_METHODS.map(
+      (fireEventMethod) =>
+        ({
+          settings: {
+            'testing-library/utils-module': 'test-utils',
+          },
+          code: `
       import { fireEvent } from '@testing-library/vue'
       test('unhandled promise from fire event method with aggressive reporting opted-out is invalid', async () => {
         fireEvent.${fireEventMethod}(getByLabelText('username'))
       })
       `,
-      errors: [
-        {
-          line: 4,
-          column: 9,
-          messageId: 'awaitFireEvent',
-          data: { name: fireEventMethod },
-        },
-      ],
-    })),
-    ...COMMON_FIRE_EVENT_METHODS.map((fireEventMethod) => ({
-      settings: {
-        'testing-library/utils-module': 'test-utils',
-      },
-      code: `
+          errors: [
+            {
+              line: 4,
+              column: 9,
+              messageId: 'awaitFireEvent',
+              data: { name: fireEventMethod },
+            },
+          ],
+        } as const)
+    ),
+    ...COMMON_FIRE_EVENT_METHODS.map(
+      (fireEventMethod) =>
+        ({
+          settings: {
+            'testing-library/utils-module': 'test-utils',
+          },
+          code: `
       import { fireEvent } from 'test-utils'
       test(
       'unhandled promise from fire event method imported from custom module with aggressive reporting opted-out is invalid',
@@ -244,20 +261,23 @@ ruleTester.run(RULE_NAME, rule, {
         fireEvent.${fireEventMethod}(getByLabelText('username'))
       })
       `,
-      errors: [
-        {
-          line: 6,
-          column: 9,
-          messageId: 'awaitFireEvent',
-          data: { name: fireEventMethod },
-        },
-      ],
-    })),
-    ...COMMON_FIRE_EVENT_METHODS.map((fireEventMethod) => ({
-      settings: {
-        'testing-library/utils-module': 'test-utils',
-      },
-      code: `
+          errors: [
+            {
+              line: 6,
+              column: 9,
+              messageId: 'awaitFireEvent',
+              data: { name: fireEventMethod },
+            },
+          ],
+        } as const)
+    ),
+    ...COMMON_FIRE_EVENT_METHODS.map(
+      (fireEventMethod) =>
+        ({
+          settings: {
+            'testing-library/utils-module': 'test-utils',
+          },
+          code: `
       import { fireEvent } from '@testing-library/vue'
       test(
       'unhandled promise from fire event method imported from default module with aggressive reporting opted-out is invalid',
@@ -265,18 +285,21 @@ ruleTester.run(RULE_NAME, rule, {
         fireEvent.${fireEventMethod}(getByLabelText('username'))
       })
       `,
-      errors: [
-        {
-          line: 6,
-          column: 9,
-          messageId: 'awaitFireEvent',
-          data: { name: fireEventMethod },
-        },
-      ],
-    })),
+          errors: [
+            {
+              line: 6,
+              column: 9,
+              messageId: 'awaitFireEvent',
+              data: { name: fireEventMethod },
+            },
+          ],
+        } as const)
+    ),
 
-    ...COMMON_FIRE_EVENT_METHODS.map((fireEventMethod) => ({
-      code: `
+    ...COMMON_FIRE_EVENT_METHODS.map(
+      (fireEventMethod) =>
+        ({
+          code: `
       import { fireEvent } from '@testing-library/vue'
       test(
       'unhandled promise from fire event method kept in a var is invalid',
@@ -284,17 +307,20 @@ ruleTester.run(RULE_NAME, rule, {
         const promise = fireEvent.${fireEventMethod}(getByLabelText('username'))
       })
       `,
-      errors: [
-        {
-          line: 6,
-          column: 25,
-          messageId: 'awaitFireEvent',
-          data: { name: fireEventMethod },
-        },
-      ],
-    })),
-    ...COMMON_FIRE_EVENT_METHODS.map((fireEventMethod) => ({
-      code: `
+          errors: [
+            {
+              line: 6,
+              column: 25,
+              messageId: 'awaitFireEvent',
+              data: { name: fireEventMethod },
+            },
+          ],
+        } as const)
+    ),
+    ...COMMON_FIRE_EVENT_METHODS.map(
+      (fireEventMethod) =>
+        ({
+          code: `
       import { fireEvent } from '@testing-library/vue'
       test('unhandled promise returned from function wrapping fire event method is invalid', () => {
         function triggerEvent() {
@@ -305,14 +331,15 @@ ruleTester.run(RULE_NAME, rule, {
         triggerEvent()
       })
       `,
-      errors: [
-        {
-          line: 9,
-          column: 9,
-          messageId: 'fireEventWrapper',
-          data: { name: fireEventMethod },
-        },
-      ],
-    })),
+          errors: [
+            {
+              line: 9,
+              column: 9,
+              messageId: 'fireEventWrapper',
+              data: { name: fireEventMethod },
+            },
+          ],
+        } as const)
+    ),
   ],
 });

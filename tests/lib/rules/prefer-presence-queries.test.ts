@@ -4,6 +4,7 @@ import rule, {
   MessageIds,
 } from '../../../lib/rules/prefer-presence-queries';
 import { ALL_QUERIES_METHODS } from '../../../lib/utils';
+import { TSESLint } from '@typescript-eslint/experimental-utils';
 
 const ruleTester = createRuleTester();
 
@@ -13,6 +14,9 @@ const queryByQueries = ALL_QUERIES_METHODS.map((method) => `query${method}`);
 const queryAllByQueries = ALL_QUERIES_METHODS.map(
   (method) => `queryAll${method}`
 );
+
+type RuleValidTestCase = TSESLint.ValidTestCase<[]>;
+type RuleInvalidTestCase = TSESLint.InvalidTestCase<MessageIds, []>;
 
 type AssertionFnParams = {
   query: string;
@@ -25,11 +29,11 @@ const getValidAssertion = ({
   query,
   matcher,
   shouldUseScreen = false,
-}: Omit<AssertionFnParams, 'messageId'>) => {
+}: Omit<AssertionFnParams, 'messageId'>): RuleValidTestCase => {
   const finalQuery = shouldUseScreen ? `screen.${query}` : query;
   return {
     code: `expect(${finalQuery}('Hello'))${matcher}`,
-  };
+  } as const;
 };
 
 const getInvalidAssertion = ({
@@ -37,7 +41,7 @@ const getInvalidAssertion = ({
   matcher,
   messageId,
   shouldUseScreen = false,
-}: AssertionFnParams) => {
+}: AssertionFnParams): RuleInvalidTestCase => {
   const finalQuery = shouldUseScreen ? `screen.${query}` : query;
   return {
     code: `expect(${finalQuery}('Hello'))${matcher}`,
@@ -69,7 +73,7 @@ ruleTester.run(RULE_NAME, rule, {
       `,
     },
     // cases: asserting presence correctly with `getBy*` queries
-    ...getByQueries.reduce(
+    ...getByQueries.reduce<RuleValidTestCase[]>(
       (validRules, queryName) => [
         ...validRules,
         getValidAssertion({
@@ -91,7 +95,7 @@ ruleTester.run(RULE_NAME, rule, {
       []
     ),
     // cases: asserting presence correctly with `screen.getBy*` queries
-    ...getByQueries.reduce(
+    ...getByQueries.reduce<RuleValidTestCase[]>(
       (validRules, queryName) => [
         ...validRules,
         getValidAssertion({
@@ -143,7 +147,7 @@ ruleTester.run(RULE_NAME, rule, {
       []
     ),
     // cases: asserting presence correctly with `getAllBy*` queries
-    ...getAllByQueries.reduce(
+    ...getAllByQueries.reduce<RuleValidTestCase[]>(
       (validRules, queryName) => [
         ...validRules,
         getValidAssertion({
@@ -165,7 +169,7 @@ ruleTester.run(RULE_NAME, rule, {
       []
     ),
     // cases: asserting presence correctly with `screen.getAllBy*` queries
-    ...getAllByQueries.reduce(
+    ...getAllByQueries.reduce<RuleValidTestCase[]>(
       (validRules, queryName) => [
         ...validRules,
         getValidAssertion({
@@ -217,7 +221,7 @@ ruleTester.run(RULE_NAME, rule, {
       []
     ),
     // cases: asserting absence correctly with `queryBy*` queries
-    ...queryByQueries.reduce(
+    ...queryByQueries.reduce<RuleValidTestCase[]>(
       (validRules, queryName) => [
         ...validRules,
         getValidAssertion({ query: queryName, matcher: '.toBeNull()' }),
@@ -237,7 +241,7 @@ ruleTester.run(RULE_NAME, rule, {
       []
     ),
     // cases: asserting absence correctly with `screen.queryBy*` queries
-    ...queryByQueries.reduce(
+    ...queryByQueries.reduce<RuleValidTestCase[]>(
       (validRules, queryName) => [
         ...validRules,
         getValidAssertion({
@@ -279,7 +283,7 @@ ruleTester.run(RULE_NAME, rule, {
       []
     ),
     // cases: asserting absence correctly with `queryAllBy*` queries
-    ...queryAllByQueries.reduce(
+    ...queryAllByQueries.reduce<RuleValidTestCase[]>(
       (validRules, queryName) => [
         ...validRules,
         getValidAssertion({ query: queryName, matcher: '.toBeNull()' }),
@@ -299,7 +303,7 @@ ruleTester.run(RULE_NAME, rule, {
       []
     ),
     // cases: asserting absence correctly with `screen.queryAllBy*` queries
-    ...queryAllByQueries.reduce(
+    ...queryAllByQueries.reduce<RuleValidTestCase[]>(
       (validRules, queryName) => [
         ...validRules,
         getValidAssertion({
@@ -365,7 +369,7 @@ ruleTester.run(RULE_NAME, rule, {
   ],
   invalid: [
     // cases: asserting absence incorrectly with `getBy*` queries
-    ...getByQueries.reduce(
+    ...getByQueries.reduce<RuleInvalidTestCase[]>(
       (invalidRules, queryName) => [
         ...invalidRules,
         getInvalidAssertion({
@@ -397,7 +401,7 @@ ruleTester.run(RULE_NAME, rule, {
       []
     ),
     // cases: asserting absence incorrectly with `screen.getBy*` queries
-    ...getByQueries.reduce(
+    ...getByQueries.reduce<RuleInvalidTestCase[]>(
       (invalidRules, queryName) => [
         ...invalidRules,
         getInvalidAssertion({
@@ -434,7 +438,7 @@ ruleTester.run(RULE_NAME, rule, {
       []
     ),
     // cases: asserting absence incorrectly with `getAllBy*` queries
-    ...getAllByQueries.reduce(
+    ...getAllByQueries.reduce<RuleInvalidTestCase[]>(
       (invalidRules, queryName) => [
         ...invalidRules,
         getInvalidAssertion({
@@ -466,7 +470,7 @@ ruleTester.run(RULE_NAME, rule, {
       []
     ),
     // cases: asserting absence incorrectly with `screen.getAllBy*` queries
-    ...getAllByQueries.reduce(
+    ...getAllByQueries.reduce<RuleInvalidTestCase[]>(
       (invalidRules, queryName) => [
         ...invalidRules,
         getInvalidAssertion({
@@ -503,7 +507,7 @@ ruleTester.run(RULE_NAME, rule, {
       []
     ),
     // cases: asserting presence incorrectly with `queryBy*` queries
-    ...queryByQueries.reduce(
+    ...queryByQueries.reduce<RuleInvalidTestCase[]>(
       (validRules, queryName) => [
         ...validRules,
         getInvalidAssertion({
@@ -535,7 +539,7 @@ ruleTester.run(RULE_NAME, rule, {
       []
     ),
     // cases: asserting presence incorrectly with `screen.queryBy*` queries
-    ...queryByQueries.reduce(
+    ...queryByQueries.reduce<RuleInvalidTestCase[]>(
       (validRules, queryName) => [
         ...validRules,
         getInvalidAssertion({
@@ -572,7 +576,7 @@ ruleTester.run(RULE_NAME, rule, {
       []
     ),
     // cases: asserting presence incorrectly with `queryAllBy*` queries
-    ...queryAllByQueries.reduce(
+    ...queryAllByQueries.reduce<RuleInvalidTestCase[]>(
       (validRules, queryName) => [
         ...validRules,
         getInvalidAssertion({
@@ -604,7 +608,7 @@ ruleTester.run(RULE_NAME, rule, {
       []
     ),
     // cases: asserting presence incorrectly with `screen.queryAllBy*` queries
-    ...queryAllByQueries.reduce(
+    ...queryAllByQueries.reduce<RuleInvalidTestCase[]>(
       (validRules, queryName) => [
         ...validRules,
         getInvalidAssertion({

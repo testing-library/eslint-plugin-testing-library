@@ -27,7 +27,6 @@ export default createTestingLibraryRule<Options, MessageIds>({
       noAwaitSyncEvents:
         '`{{ name }}` is sync and does not need `await` operator',
     },
-    fixable: null,
     schema: [],
   },
   defaultOptions: [],
@@ -41,6 +40,10 @@ export default createTestingLibraryRule<Options, MessageIds>({
     return {
       'AwaitExpression > CallExpression'(node: TSESTree.CallExpression) {
         const simulateEventFunctionIdentifier = getDeepestIdentifierNode(node);
+
+        if (!simulateEventFunctionIdentifier) {
+          return;
+        }
 
         const isSimulateEventMethod =
           helpers.isUserEventMethod(simulateEventFunctionIdentifier) ||
@@ -56,11 +59,12 @@ export default createTestingLibraryRule<Options, MessageIds>({
           isObjectExpression(lastArg) &&
           lastArg.properties.some(
             (property) =>
-              isProperty(property) &&
-              ASTUtils.isIdentifier(property.key) &&
-              property.key.name === 'delay' &&
-              isLiteral(property.value) &&
-              property.value.value > 0
+              (isProperty(property) &&
+                ASTUtils.isIdentifier(property.key) &&
+                property.key.name === 'delay' &&
+                isLiteral(property.value) &&
+                property.value.value) ??
+              0 > 0
           );
 
         const simulateEventFunctionName = simulateEventFunctionIdentifier.name;
@@ -77,7 +81,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
           messageId: 'noAwaitSyncEvents',
           data: {
             name: `${
-              getPropertyIdentifierNode(node).name
+              getPropertyIdentifierNode(node)?.name
             }.${simulateEventFunctionName}`,
           },
         });

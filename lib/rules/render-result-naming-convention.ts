@@ -29,7 +29,6 @@ export default createTestingLibraryRule<Options, MessageIds>({
     messages: {
       renderResultNamingConvention: `\`{{ renderResultName }}\` is not a recommended name for \`render\` returned value. Instead, you should destructure it, or name it using one of: ${ALLOWED_VAR_NAMES_TEXT}`,
     },
-    fixable: null,
     schema: [],
   },
   defaultOptions: [],
@@ -48,11 +47,19 @@ export default createTestingLibraryRule<Options, MessageIds>({
     return {
       CallExpression(node) {
         const callExpressionIdentifier = getDeepestIdentifierNode(node);
+
+        if (!callExpressionIdentifier) {
+          return;
+        }
+
         if (helpers.isRenderUtil(callExpressionIdentifier)) {
           detectRenderWrapper(callExpressionIdentifier);
         }
       },
       VariableDeclarator(node) {
+        if (!node.init) {
+          return;
+        }
         const initIdentifierNode = getDeepestIdentifierNode(node.init);
 
         if (!initIdentifierNode) {
@@ -72,6 +79,10 @@ export default createTestingLibraryRule<Options, MessageIds>({
         }
 
         const renderResultName = ASTUtils.isIdentifier(node.id) && node.id.name;
+
+        if (!renderResultName) {
+          return;
+        }
 
         const isAllowedRenderResultName = ALLOWED_VAR_NAMES.includes(
           renderResultName

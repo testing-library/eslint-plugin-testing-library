@@ -95,59 +95,70 @@ ruleTester.run(RULE_NAME, rule, {
   ],
 
   invalid: [
-    ...TESTING_FRAMEWORK_SETUP_HOOKS.map((setupHook) => ({
-      code: `
+    ...TESTING_FRAMEWORK_SETUP_HOOKS.map(
+      (setupHook) =>
+        ({
+          code: `
         import { render } from '@testing-library/foo';
         ${setupHook}(() => {
           render(<Component/>)
         })
       `,
-      errors: [
-        {
-          line: 4,
-          column: 11,
-          messageId: 'noRenderInSetup',
-        },
-      ],
-    })),
-    ...TESTING_FRAMEWORK_SETUP_HOOKS.map((setupHook) => ({
-      code: `
+          errors: [
+            {
+              line: 4,
+              column: 11,
+              messageId: 'noRenderInSetup',
+            },
+          ],
+        } as const)
+    ),
+    ...TESTING_FRAMEWORK_SETUP_HOOKS.map(
+      (setupHook) =>
+        ({
+          code: `
         import { render } from '@testing-library/foo';
         ${setupHook}(function() {
           render(<Component/>)
         })
       `,
-      errors: [
-        {
-          line: 4,
-          column: 11,
-          messageId: 'noRenderInSetup',
-        },
-      ],
-    })),
+          errors: [
+            {
+              line: 4,
+              column: 11,
+              messageId: 'noRenderInSetup',
+            },
+          ],
+        } as const)
+    ),
     // custom render function
-    ...TESTING_FRAMEWORK_SETUP_HOOKS.map((setupHook) => ({
-      settings: {
-        'testing-library/utils-module': 'test-utils',
-        'testing-library/custom-renders': ['show', 'renderWithRedux'],
-      },
-      code: `
+    ...TESTING_FRAMEWORK_SETUP_HOOKS.map(
+      (setupHook) =>
+        ({
+          settings: {
+            'testing-library/utils-module': 'test-utils',
+            'testing-library/custom-renders': ['show', 'renderWithRedux'],
+          },
+          code: `
         import { show } from '../test-utils';
   
         ${setupHook}(() => {
           show(<Component/>)
         })
       `,
-      errors: [
-        {
-          line: 5,
-          column: 11,
-          messageId: 'noRenderInSetup',
-        },
-      ],
-    })),
-    ...TESTING_FRAMEWORK_SETUP_HOOKS.map((setupHook) => ({
-      code: `// call render within a wrapper function
+          errors: [
+            {
+              line: 5,
+              column: 11,
+              messageId: 'noRenderInSetup',
+            },
+          ],
+        } as const)
+    ),
+    ...TESTING_FRAMEWORK_SETUP_HOOKS.map(
+      (setupHook) =>
+        ({
+          code: `// call render within a wrapper function
       import { render } from '@testing-library/foo';
 
       const wrapper = () => render(<Component/>)
@@ -156,14 +167,15 @@ ruleTester.run(RULE_NAME, rule, {
         wrapper()
       })
       `,
-      errors: [
-        {
-          line: 7,
-          column: 9,
-          messageId: 'noRenderInSetup',
-        },
-      ],
-    })),
+          errors: [
+            {
+              line: 7,
+              column: 9,
+              messageId: 'noRenderInSetup',
+            },
+          ],
+        } as const)
+    ),
     ...TESTING_FRAMEWORK_SETUP_HOOKS.map((allowedSetupHook) => {
       const [disallowedHook] = TESTING_FRAMEWORK_SETUP_HOOKS.filter(
         (setupHook) => setupHook !== allowedSetupHook
@@ -187,26 +199,31 @@ ruleTester.run(RULE_NAME, rule, {
             messageId: 'noRenderInSetup',
           },
         ],
-      };
+      } as const;
     }),
-    ...TESTING_FRAMEWORK_SETUP_HOOKS.map((setupHook) => ({
-      code: `
+    ...TESTING_FRAMEWORK_SETUP_HOOKS.map(
+      (setupHook) =>
+        ({
+          code: `
         import * as testingLibrary from '@testing-library/foo';
         ${setupHook}(() => {
           testingLibrary.render(<Component/>)
         })
       `,
-      errors: [
-        {
-          line: 4,
-          column: 26,
-          messageId: 'noRenderInSetup',
-        },
-      ],
-    })),
-    ...TESTING_FRAMEWORK_SETUP_HOOKS.map((setupHook) => ({
-      settings: { 'testing-library/utils-module': 'test-utils' },
-      code: `
+          errors: [
+            {
+              line: 4,
+              column: 26,
+              messageId: 'noRenderInSetup',
+            },
+          ],
+        } as const)
+    ),
+    ...TESTING_FRAMEWORK_SETUP_HOOKS.map(
+      (setupHook) =>
+        ({
+          settings: { 'testing-library/utils-module': 'test-utils' },
+          code: `
         import { render } from 'imNoTestingLibrary';
         import * as testUtils from '../test-utils';
         ${setupHook}(() => {
@@ -216,29 +233,33 @@ ruleTester.run(RULE_NAME, rule, {
           render(<Component/>)
         })
       `,
-      errors: [
-        {
-          line: 5,
-          column: 21,
-          messageId: 'noRenderInSetup',
-        },
-      ],
-    })),
-    ...TESTING_FRAMEWORK_SETUP_HOOKS.map((setupHook) => ({
-      code: `
+          errors: [
+            {
+              line: 5,
+              column: 21,
+              messageId: 'noRenderInSetup',
+            },
+          ],
+        } as const)
+    ),
+    ...TESTING_FRAMEWORK_SETUP_HOOKS.map(
+      (setupHook) =>
+        ({
+          code: `
         const { render } = require('@testing-library/foo')
 
         ${setupHook}(() => {
           render(<Component/>)
         })
       `,
-      errors: [
-        {
-          line: 5,
-          column: 11,
-          messageId: 'noRenderInSetup',
-        },
-      ],
-    })),
+          errors: [
+            {
+              line: 5,
+              column: 11,
+              messageId: 'noRenderInSetup',
+            },
+          ],
+        } as const)
+    ),
   ],
 });

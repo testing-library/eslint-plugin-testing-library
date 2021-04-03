@@ -25,16 +25,22 @@ export default createTestingLibraryRule<Options, MessageIds>({
       noWaitForSnapshot:
         "A snapshot can't be generated inside of a `{{ name }}` call",
     },
-    fixable: null,
     schema: [],
   },
   defaultOptions: [],
 
   create(context, _, helpers) {
-    function getClosestAsyncUtil(node: TSESTree.Node) {
-      let n = node;
+    function getClosestAsyncUtil(
+      node: TSESTree.Node
+    ): TSESTree.Identifier | null {
+      let n: TSESTree.Node | null = node;
       do {
         const callExpression = findClosestCallExpressionNode(n);
+
+        if (!callExpression) {
+          return null;
+        }
+
         if (
           ASTUtils.isIdentifier(callExpression.callee) &&
           helpers.isAsyncUtil(callExpression.callee)
@@ -48,7 +54,9 @@ export default createTestingLibraryRule<Options, MessageIds>({
         ) {
           return callExpression.callee.property;
         }
-        n = findClosestCallExpressionNode(callExpression.parent);
+        if (callExpression.parent) {
+          n = findClosestCallExpressionNode(callExpression.parent);
+        }
       } while (n !== null);
       return null;
     }

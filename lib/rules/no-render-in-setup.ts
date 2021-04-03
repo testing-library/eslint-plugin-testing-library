@@ -32,7 +32,14 @@ export function findClosestBeforeHook(
     return node.callee;
   }
 
-  return findClosestBeforeHook(node.parent, testingFrameworkSetupHooksToFilter);
+  if (node.parent) {
+    return findClosestBeforeHook(
+      node.parent,
+      testingFrameworkSetupHooksToFilter
+    );
+  }
+
+  return null;
 }
 
 export default createTestingLibraryRule<Options, MessageIds>({
@@ -49,7 +56,6 @@ export default createTestingLibraryRule<Options, MessageIds>({
       noRenderInSetup:
         'Forbidden usage of `render` within testing framework `{{ name }}` setup',
     },
-    fixable: null,
     schema: [
       {
         type: 'object',
@@ -84,6 +90,11 @@ export default createTestingLibraryRule<Options, MessageIds>({
           (hook) => hook !== allowTestingFrameworkSetupHook
         );
         const callExpressionIdentifier = getDeepestIdentifierNode(node);
+
+        if (!callExpressionIdentifier) {
+          return;
+        }
+
         const isRenderIdentifier = helpers.isRenderUtil(
           callExpressionIdentifier
         );

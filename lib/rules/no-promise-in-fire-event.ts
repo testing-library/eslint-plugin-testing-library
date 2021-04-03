@@ -26,7 +26,6 @@ export default createTestingLibraryRule<Options, MessageIds>({
       noPromiseInFireEvent:
         "A promise shouldn't be passed to a `fireEvent` method, instead pass the DOM element",
     },
-    fixable: null,
     schema: [],
   },
   defaultOptions: [],
@@ -52,6 +51,10 @@ export default createTestingLibraryRule<Options, MessageIds>({
       if (isCallExpression(node)) {
         const domElementIdentifier = getDeepestIdentifierNode(node);
 
+        if (!domElementIdentifier) {
+          return;
+        }
+
         if (
           helpers.isAsyncQuery(domElementIdentifier) ||
           isPromiseIdentifier(domElementIdentifier)
@@ -74,7 +77,9 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
         for (const definition of nodeVariable.defs) {
           const variableDeclarator = definition.node as TSESTree.VariableDeclarator;
-          checkSuspiciousNode(variableDeclarator.init, node);
+          if (variableDeclarator.init) {
+            checkSuspiciousNode(variableDeclarator.init, node);
+          }
         }
       }
     }

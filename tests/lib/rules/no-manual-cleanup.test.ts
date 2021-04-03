@@ -56,30 +56,36 @@ ruleTester.run(RULE_NAME, rule, {
     },
   ],
   invalid: [
-    ...ALL_TESTING_LIBRARIES_WITH_CLEANUP.map((lib) => ({
-      code: `import { render, cleanup } from "${lib}"`,
-      errors: [
-        {
-          line: 1,
-          column: 18, // error points to `cleanup`
-          messageId: 'noManualCleanup',
-        },
-      ],
-    })),
-    ...ALL_TESTING_LIBRARIES_WITH_CLEANUP.map((lib) => ({
-      // official testing-library packages should be reported with custom module setting
-      settings: {
-        'testing-library/utils-module': 'test-utils',
-      },
-      code: `import { cleanup, render } from "${lib}"`,
-      errors: [
-        {
-          line: 1,
-          column: 10, // error points to `cleanup`
-          messageId: 'noManualCleanup',
-        },
-      ],
-    })),
+    ...ALL_TESTING_LIBRARIES_WITH_CLEANUP.map(
+      (lib) =>
+        ({
+          code: `import { render, cleanup } from "${lib}"`,
+          errors: [
+            {
+              line: 1,
+              column: 18, // error points to `cleanup`
+              messageId: 'noManualCleanup',
+            },
+          ],
+        } as const)
+    ),
+    ...ALL_TESTING_LIBRARIES_WITH_CLEANUP.map(
+      (lib) =>
+        ({
+          // official testing-library packages should be reported with custom module setting
+          settings: {
+            'testing-library/utils-module': 'test-utils',
+          },
+          code: `import { cleanup, render } from "${lib}"`,
+          errors: [
+            {
+              line: 1,
+              column: 10, // error points to `cleanup`
+              messageId: 'noManualCleanup',
+            },
+          ],
+        } as const)
+    ),
     {
       settings: {
         'testing-library/utils-module': 'test-utils',
@@ -89,16 +95,19 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [{ line: 2, column: 26, messageId: 'noManualCleanup' }],
     },
-    ...ALL_TESTING_LIBRARIES_WITH_CLEANUP.map((lib) => ({
-      code: `import { cleanup as myCustomCleanup } from "${lib}"`,
-      errors: [
-        {
-          line: 1,
-          column: 10, // error points to `cleanup`
-          messageId: 'noManualCleanup',
-        },
-      ],
-    })),
+    ...ALL_TESTING_LIBRARIES_WITH_CLEANUP.map(
+      (lib) =>
+        ({
+          code: `import { cleanup as myCustomCleanup } from "${lib}"`,
+          errors: [
+            {
+              line: 1,
+              column: 10, // error points to `cleanup`
+              messageId: 'noManualCleanup',
+            },
+          ],
+        } as const)
+    ),
     {
       settings: {
         'testing-library/utils-module': 'test-utils',
@@ -108,16 +117,19 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [{ line: 2, column: 18, messageId: 'noManualCleanup' }],
     },
-    ...ALL_TESTING_LIBRARIES_WITH_CLEANUP.map((lib) => ({
-      code: `import utils, { cleanup } from "${lib}"`,
-      errors: [
-        {
-          line: 1,
-          column: 17, // error points to `cleanup`
-          messageId: 'noManualCleanup',
-        },
-      ],
-    })),
+    ...ALL_TESTING_LIBRARIES_WITH_CLEANUP.map(
+      (lib) =>
+        ({
+          code: `import utils, { cleanup } from "${lib}"`,
+          errors: [
+            {
+              line: 1,
+              column: 17, // error points to `cleanup`
+              messageId: 'noManualCleanup',
+            },
+          ],
+        } as const)
+    ),
     {
       settings: {
         'testing-library/utils-module': 'test-utils',
@@ -127,19 +139,22 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [{ line: 2, column: 25, messageId: 'noManualCleanup' }],
     },
-    ...ALL_TESTING_LIBRARIES_WITH_CLEANUP.map((lib) => ({
-      code: `
+    ...ALL_TESTING_LIBRARIES_WITH_CLEANUP.map(
+      (lib) =>
+        ({
+          code: `
         import utils from "${lib}"
         afterEach(() => utils.cleanup())
       `,
-      errors: [
-        {
-          line: 3,
-          column: 31,
-          messageId: 'noManualCleanup',
-        },
-      ],
-    })),
+          errors: [
+            {
+              line: 3,
+              column: 31,
+              messageId: 'noManualCleanup',
+            },
+          ],
+        } as const)
+    ),
     {
       settings: {
         'testing-library/utils-module': 'test-utils',
@@ -150,29 +165,35 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [{ line: 3, column: 31, messageId: 'noManualCleanup' }],
     },
-    ...ALL_TESTING_LIBRARIES_WITH_CLEANUP.map((lib) => ({
-      code: `
+    ...ALL_TESTING_LIBRARIES_WITH_CLEANUP.map(
+      (lib) =>
+        ({
+          code: `
         import utils from "${lib}"
         afterEach(utils.cleanup)
       `,
-      errors: [
-        {
-          line: 3,
-          column: 25,
-          messageId: 'noManualCleanup',
-        },
-      ],
-    })),
-    ...ALL_TESTING_LIBRARIES_WITH_CLEANUP.map((lib) => ({
-      code: `const { cleanup } = require("${lib}")`,
-      errors: [
-        {
-          line: 1,
-          column: 9, // error points to `cleanup`
-          messageId: 'noManualCleanup',
-        },
-      ],
-    })),
+          errors: [
+            {
+              line: 3,
+              column: 25,
+              messageId: 'noManualCleanup',
+            },
+          ],
+        } as const)
+    ),
+    ...ALL_TESTING_LIBRARIES_WITH_CLEANUP.map(
+      (lib) =>
+        ({
+          code: `const { cleanup } = require("${lib}")`,
+          errors: [
+            {
+              line: 1,
+              column: 9, // error points to `cleanup`
+              messageId: 'noManualCleanup',
+            },
+          ],
+        } as const)
+    ),
     {
       settings: {
         'testing-library/utils-module': 'test-utils',
@@ -182,31 +203,37 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [{ line: 2, column: 25, messageId: 'noManualCleanup' }],
     },
-    ...ALL_TESTING_LIBRARIES_WITH_CLEANUP.map((lib) => ({
-      code: `
+    ...ALL_TESTING_LIBRARIES_WITH_CLEANUP.map(
+      (lib) =>
+        ({
+          code: `
         const utils = require("${lib}")
         afterEach(() => utils.cleanup())
       `,
-      errors: [
-        {
-          line: 3,
-          column: 31,
-          messageId: 'noManualCleanup',
-        },
-      ],
-    })),
-    ...ALL_TESTING_LIBRARIES_WITH_CLEANUP.map((lib) => ({
-      code: `
+          errors: [
+            {
+              line: 3,
+              column: 31,
+              messageId: 'noManualCleanup',
+            },
+          ],
+        } as const)
+    ),
+    ...ALL_TESTING_LIBRARIES_WITH_CLEANUP.map(
+      (lib) =>
+        ({
+          code: `
         const utils = require("${lib}")
         afterEach(utils.cleanup)
       `,
-      errors: [
-        {
-          line: 3,
-          column: 25,
-          messageId: 'noManualCleanup',
-        },
-      ],
-    })),
+          errors: [
+            {
+              line: 3,
+              column: 25,
+              messageId: 'noManualCleanup',
+            },
+          ],
+        } as const)
+    ),
   ],
 });

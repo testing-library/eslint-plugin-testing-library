@@ -26,7 +26,6 @@ export default createTestingLibraryRule<Options, MessageIds>({
     messages: {
       noDebug: 'Unexpected debug statement',
     },
-    fixable: null,
     schema: [],
   },
   defaultOptions: [],
@@ -46,7 +45,14 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
     return {
       VariableDeclarator(node) {
+        if (!node.init) {
+          return;
+        }
         const initIdentifierNode = getDeepestIdentifierNode(node.init);
+
+        if (!initIdentifierNode) {
+          return;
+        }
 
         const isRenderWrapperVariableDeclarator = initIdentifierNode
           ? renderWrapperNames.includes(initIdentifierNode.name)
@@ -68,9 +74,11 @@ export default createTestingLibraryRule<Options, MessageIds>({
               ASTUtils.isIdentifier(property.key) &&
               property.key.name === 'debug'
             ) {
-              suspiciousDebugVariableNames.push(
-                getDeepestIdentifierNode(property.value).name
-              );
+              const identifierNode = getDeepestIdentifierNode(property.value);
+
+              if (identifierNode) {
+                suspiciousDebugVariableNames.push(identifierNode.name);
+              }
             }
           }
         }
@@ -83,12 +91,21 @@ export default createTestingLibraryRule<Options, MessageIds>({
       },
       CallExpression(node) {
         const callExpressionIdentifier = getDeepestIdentifierNode(node);
+
+        if (!callExpressionIdentifier) {
+          return;
+        }
+
         if (helpers.isRenderUtil(callExpressionIdentifier)) {
           detectRenderWrapper(callExpressionIdentifier);
         }
 
         const referenceNode = getReferenceNode(node);
         const referenceIdentifier = getPropertyIdentifierNode(referenceNode);
+
+        if (!referenceIdentifier) {
+          return;
+        }
 
         const isDebugUtil = helpers.isDebugUtil(callExpressionIdentifier);
         const isDeclaredDebugVariable = suspiciousDebugVariableNames.includes(
