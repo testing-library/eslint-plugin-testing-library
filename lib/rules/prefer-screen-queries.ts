@@ -43,7 +43,6 @@ export default createTestingLibraryRule<Options, MessageIds>({
       preferScreenQueries:
         'Use screen to query DOM elements, `screen.{{ name }}`',
     },
-    fixable: null,
     schema: [],
   },
   defaultOptions: [],
@@ -61,18 +60,15 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
     function saveSafeDestructuredQueries(node: TSESTree.VariableDeclarator) {
       if (isObjectPattern(node.id)) {
-        const identifiers = node.id.properties
-          .filter(
-            (property) =>
-              isProperty(property) &&
-              ASTUtils.isIdentifier(property.key) &&
-              helpers.isQuery(property.key)
-          )
-          .map(
-            (property: TSESTree.Property) =>
-              (property.key as TSESTree.Identifier).name
-          );
-        safeDestructuredQueries.push(...identifiers);
+        for (const property of node.id.properties) {
+          if (
+            isProperty(property) &&
+            ASTUtils.isIdentifier(property.key) &&
+            helpers.isQuery(property.key)
+          ) {
+            safeDestructuredQueries.push(property.key.name);
+          }
+        }
       }
     }
 

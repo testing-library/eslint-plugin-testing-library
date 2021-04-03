@@ -26,7 +26,6 @@ export default createTestingLibraryRule<Options, MessageIds>({
       noContainer:
         'Avoid using container methods. Prefer using the methods from Testing Library, such as "getByRole()"',
     },
-    fixable: null,
     schema: [],
   },
   defaultOptions: [],
@@ -34,8 +33,8 @@ export default createTestingLibraryRule<Options, MessageIds>({
   create(context, [], helpers) {
     const destructuredContainerPropNames: string[] = [];
     const renderWrapperNames: string[] = [];
-    let renderResultVarName: string = null;
-    let containerName: string = null;
+    let renderResultVarName: string | null = null;
+    let containerName: string | null = null;
     let containerCallsMethod = false;
 
     function detectRenderWrapper(node: TSESTree.Identifier): void {
@@ -105,7 +104,10 @@ export default createTestingLibraryRule<Options, MessageIds>({
         }
       },
 
-      VariableDeclarator(node) {
+      VariableDeclarator: function (node) {
+        if (!node.init) {
+          return;
+        }
         const initIdentifierNode = getDeepestIdentifierNode(node.init);
 
         if (!initIdentifierNode) {
@@ -134,6 +136,10 @@ export default createTestingLibraryRule<Options, MessageIds>({
           const nodeValue =
             containerIndex !== -1 && node.id.properties[containerIndex].value;
 
+          if (!nodeValue) {
+            return;
+          }
+
           if (ASTUtils.isIdentifier(nodeValue)) {
             containerName = nodeValue.name;
           } else {
@@ -145,8 +151,8 @@ export default createTestingLibraryRule<Options, MessageIds>({
                   destructuredContainerPropNames.push(property.key.name)
               );
           }
-        } else {
-          renderResultVarName = ASTUtils.isIdentifier(node.id) && node.id.name;
+        } else if (ASTUtils.isIdentifier(node.id)) {
+          renderResultVarName = node.id.name;
         }
       },
     };

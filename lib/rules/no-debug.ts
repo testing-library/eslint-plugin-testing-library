@@ -26,7 +26,6 @@ export default createTestingLibraryRule<Options, MessageIds>({
     messages: {
       noDebug: 'Unexpected debug statement',
     },
-    fixable: null,
     schema: [],
   },
   defaultOptions: [],
@@ -46,6 +45,9 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
     return {
       VariableDeclarator(node) {
+        if (!node.init) {
+          return;
+        }
         const initIdentifierNode = getDeepestIdentifierNode(node.init);
 
         if (!initIdentifierNode) {

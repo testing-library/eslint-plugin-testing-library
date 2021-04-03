@@ -19,13 +19,12 @@ export default createTestingLibraryRule<Options, MessageIds>({
       noSideEffectsWaitFor:
         'Avoid using side effects within `waitFor` callback',
     },
-    fixable: null,
     schema: [],
   },
   defaultOptions: [],
   create: function (context, _, helpers) {
     function hasSideEffects(body: Array<TSESTree.Node>): boolean {
-      return body.some((node: TSESTree.ExpressionStatement) => {
+      return body.some((node) => {
         const expressionIdentifier = getPropertyIdentifierNode(node);
 
         if (!expressionIdentifier) {
@@ -40,6 +39,9 @@ export default createTestingLibraryRule<Options, MessageIds>({
     }
 
     function reportSideEffects(node: TSESTree.BlockStatement) {
+      if (!node.parent) {
+        return;
+      }
       const callExpressionNode = node.parent.parent as TSESTree.CallExpression;
       const callExpressionIdentifier = getPropertyIdentifierNode(
         callExpressionNode

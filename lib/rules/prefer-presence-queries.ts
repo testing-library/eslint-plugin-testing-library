@@ -23,7 +23,6 @@ export default createTestingLibraryRule<Options, MessageIds>({
     },
     schema: [],
     type: 'suggestion',
-    fixable: null,
   },
   defaultOptions: [],
 

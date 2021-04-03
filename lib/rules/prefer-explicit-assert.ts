@@ -15,7 +15,7 @@ type Options = [
 ];
 
 const isAtTopLevel = (node: TSESTree.Node) =>
-  node.parent.parent.type === 'ExpressionStatement';
+  !!node?.parent?.parent && node.parent.parent.type === 'ExpressionStatement';
 
 export default createTestingLibraryRule<Options, MessageIds>({
   name: RULE_NAME,
@@ -33,7 +33,6 @@ export default createTestingLibraryRule<Options, MessageIds>({
       preferExplicitAssertAssertion:
         '`getBy*` queries must be asserted with `{{assertion}}`',
     },
-    fixable: null,
     schema: [
       {
         type: 'object',

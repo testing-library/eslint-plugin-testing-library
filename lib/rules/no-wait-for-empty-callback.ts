@@ -24,7 +24,6 @@ export default createTestingLibraryRule<Options, MessageIds>({
       noWaitForEmptyCallback:
         'Avoid passing empty callback to `{{ methodName }}`. Insert an assertion instead.',
     },
-    fixable: null,
     schema: [],
   },
   defaultOptions: [],

@@ -135,7 +135,8 @@ export function detectTestingLibraryUtils<
 
     // Init options based on shared ESLint settings
     const customModule = context.settings['testing-library/utils-module'];
-    const customRenders = context.settings['testing-library/custom-renders'];
+    const customRenders =
+      context.settings['testing-library/custom-renders'] ?? [];
 
     /**
      * Small method to extract common checks to determine whether a node is
@@ -168,6 +169,10 @@ export function detectTestingLibraryUtils<
       const importedUtilSpecifier = getImportedUtilSpecifier(
         referenceNodeIdentifier
       );
+
+      if (!importedUtilSpecifier) {
+        return false;
+      }
 
       const originalNodeName =
         isImportSpecifier(importedUtilSpecifier) &&
@@ -314,7 +319,8 @@ export function detectTestingLibraryUtils<
         (identifierNodeName, originalNodeName) => {
           return (
             (validNames as string[]).includes(identifierNodeName) ||
-            (validNames as string[]).includes(originalNodeName)
+            (!!originalNodeName &&
+              (validNames as string[]).includes(originalNodeName))
           );
         }
       );
@@ -367,9 +373,10 @@ export function detectTestingLibraryUtils<
         return false;
       }
 
-      const parentMemberExpression:
-        | TSESTree.MemberExpression
-        | undefined = isMemberExpression(node.parent) ? node.parent : undefined;
+      const parentMemberExpression: TSESTree.MemberExpression | undefined =
+        node.parent && isMemberExpression(node.parent)
+          ? node.parent
+          : undefined;
 
       if (!parentMemberExpression) {
         return false;
@@ -414,9 +421,10 @@ export function detectTestingLibraryUtils<
         return false;
       }
 
-      const parentMemberExpression:
-        | TSESTree.MemberExpression
-        | undefined = isMemberExpression(node.parent) ? node.parent : undefined;
+      const parentMemberExpression: TSESTree.MemberExpression | undefined =
+        node.parent && isMemberExpression(node.parent)
+          ? node.parent
+          : undefined;
 
       if (!parentMemberExpression) {
         return false;
@@ -480,6 +488,9 @@ export function detectTestingLibraryUtils<
     };
 
     const isRenderVariableDeclarator: IsRenderVariableDeclaratorFn = (node) => {
+      if (!node.init) {
+        return false;
+      }
       const initIdentifierNode = getDeepestIdentifierNode(node.init);
 
       if (!initIdentifierNode) {
@@ -548,7 +559,7 @@ export function detectTestingLibraryUtils<
       const node = getCustomModuleImportNode() ?? getTestingLibraryImportNode();
 
       if (!node) {
-        return null;
+        return undefined;
       }
 
       if (isImportDeclaration(node)) {
@@ -705,6 +716,7 @@ export function detectTestingLibraryUtils<
         // check only if custom module import not found yet so we avoid
         // to override importedCustomModuleNode after it's found
         if (
+          customModule &&
           !importedCustomModuleNode &&
           String(node.source.value).endsWith(customModule)
         ) {
@@ -744,6 +756,7 @@ export function detectTestingLibraryUtils<
           !importedCustomModuleNode &&
           args.some(
             (arg) =>
+              customModule &&
               isLiteral(arg) &&
               typeof arg.value === 'string' &&
               arg.value.endsWith(customModule)
@@ -779,11 +792,11 @@ export function detectTestingLibraryUtils<
     allKeys.forEach((instruction) => {
       enhancedRuleInstructions[instruction] = (node) => {
         if (instruction in detectionInstructions) {
-          detectionInstructions[instruction](node);
+          detectionInstructions[instruction]?.(node);
         }
 
         if (canReportErrors() && ruleInstructions[instruction]) {
-          return ruleInstructions[instruction](node);
+          return ruleInstructions[instruction]?.(node);
         }
       };
     });

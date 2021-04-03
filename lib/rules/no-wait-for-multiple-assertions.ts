@@ -19,13 +19,12 @@ export default createTestingLibraryRule<Options, MessageIds>({
       noWaitForMultipleAssertion:
         'Avoid using multiple assertions within `waitFor` callback',
     },
-    fixable: null,
     schema: [],
   },
   defaultOptions: [],
   create: function (context, _, helpers) {
     function totalExpect(body: Array<TSESTree.Node>): Array<TSESTree.Node> {
-      return body.filter((node: TSESTree.ExpressionStatement) => {
+      return body.filter((node) => {
         const expressionIdentifier = getPropertyIdentifierNode(node);
 
         if (!expressionIdentifier) {
@@ -37,6 +36,9 @@ export default createTestingLibraryRule<Options, MessageIds>({
     }
 
     function reportMultipleAssertion(node: TSESTree.BlockStatement) {
+      if (!node.parent) {
+        return;
+      }
       const callExpressionNode = node.parent.parent as TSESTree.CallExpression;
       const callExpressionIdentifier = getPropertyIdentifierNode(
         callExpressionNode

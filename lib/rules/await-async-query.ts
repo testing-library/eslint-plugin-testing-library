@@ -26,7 +26,6 @@ export default createTestingLibraryRule<Options, MessageIds>({
       asyncQueryWrapper:
         'promise returned from {{ name }} wrapper over async query must be handled',
     },
-    fixable: null,
     schema: [],
   },
   defaultOptions: [],
@@ -52,7 +51,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
             true
           );
 
-          if (!closestCallExpressionNode) {
+          if (!closestCallExpressionNode || !closestCallExpressionNode.parent) {
             return;
           }
 

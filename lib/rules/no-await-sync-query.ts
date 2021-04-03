@@ -22,7 +22,6 @@ export default createTestingLibraryRule<Options, MessageIds>({
       noAwaitSyncQuery:
         '`{{ name }}` query is sync so it does not need to be awaited',
     },
-    fixable: null,
     schema: [],
   },
   defaultOptions: [],
