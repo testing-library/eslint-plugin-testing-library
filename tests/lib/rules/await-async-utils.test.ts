@@ -242,38 +242,49 @@ ruleTester.run(RULE_NAME, rule, {
     `,
   ],
   invalid: [
-    ...ASYNC_UTILS.map((asyncUtil) => ({
-      code: `
+    ...ASYNC_UTILS.map(
+      (asyncUtil) =>
+        ({
+          code: `
         import { ${asyncUtil} } from '@testing-library/dom';
         test('${asyncUtil} util not waited is invalid', () => {
           doSomethingElse();
           ${asyncUtil}(() => getByLabelText('email'));
         });
       `,
-      errors: [{ line: 5, column: 11, messageId: 'awaitAsyncUtil' }],
-    })),
-    ...ASYNC_UTILS.map((asyncUtil) => ({
-      code: `
+          errors: [{ line: 5, column: 11, messageId: 'awaitAsyncUtil' }],
+        } as const)
+    ),
+    ...ASYNC_UTILS.map(
+      (asyncUtil) =>
+        ({
+          code: `
         import * as asyncUtil from '@testing-library/dom';
         test('asyncUtil.${asyncUtil} util not handled is invalid', () => {
           doSomethingElse();
           asyncUtil.${asyncUtil}(() => getByLabelText('email'));
         });
       `,
-      errors: [{ line: 5, column: 21, messageId: 'awaitAsyncUtil' }],
-    })),
-    ...ASYNC_UTILS.map((asyncUtil) => ({
-      code: `
+          errors: [{ line: 5, column: 21, messageId: 'awaitAsyncUtil' }],
+        } as const)
+    ),
+    ...ASYNC_UTILS.map(
+      (asyncUtil) =>
+        ({
+          code: `
         import { ${asyncUtil} } from '@testing-library/dom';
         test('${asyncUtil} util promise saved not handled is invalid', () => {
           doSomethingElse();
           const aPromise = ${asyncUtil}(() => getByLabelText('email'));
         });
       `,
-      errors: [{ line: 5, column: 28, messageId: 'awaitAsyncUtil' }],
-    })),
-    ...ASYNC_UTILS.map((asyncUtil) => ({
-      code: `
+          errors: [{ line: 5, column: 28, messageId: 'awaitAsyncUtil' }],
+        } as const)
+    ),
+    ...ASYNC_UTILS.map(
+      (asyncUtil) =>
+        ({
+          code: `
         import { ${asyncUtil} } from '@testing-library/dom';
         test('several ${asyncUtil} utils not handled are invalid', () => {
           const aPromise = ${asyncUtil}(() => getByLabelText('username'));
@@ -281,13 +292,16 @@ ruleTester.run(RULE_NAME, rule, {
           ${asyncUtil}(() => getByLabelText('email'));
         });
       `,
-      errors: [
-        { line: 4, column: 28, messageId: 'awaitAsyncUtil' },
-        { line: 6, column: 11, messageId: 'awaitAsyncUtil' },
-      ],
-    })),
-    ...ASYNC_UTILS.map((asyncUtil) => ({
-      code: `
+          errors: [
+            { line: 4, column: 28, messageId: 'awaitAsyncUtil' },
+            { line: 6, column: 11, messageId: 'awaitAsyncUtil' },
+          ],
+        } as const)
+    ),
+    ...ASYNC_UTILS.map(
+      (asyncUtil) =>
+        ({
+          code: `
         import { ${asyncUtil}, render } from '@testing-library/dom';
         
         function waitForSomethingAsync() {
@@ -299,10 +313,13 @@ ruleTester.run(RULE_NAME, rule, {
           waitForSomethingAsync()
         });
       `,
-      errors: [{ messageId: 'asyncUtilWrapper', line: 10, column: 11 }],
-    })),
-    ...ASYNC_UTILS.map((asyncUtil) => ({
-      code: `
+          errors: [{ messageId: 'asyncUtilWrapper', line: 10, column: 11 }],
+        } as const)
+    ),
+    ...ASYNC_UTILS.map(
+      (asyncUtil) =>
+        ({
+          code: `
         import { ${asyncUtil} } from 'some-other-library';
         test(
         'aggressive reporting - util "${asyncUtil}" which is not related to testing library is invalid',
@@ -311,10 +328,13 @@ ruleTester.run(RULE_NAME, rule, {
           ${asyncUtil}();
         });
       `,
-      errors: [{ line: 7, column: 11, messageId: 'awaitAsyncUtil' }],
-    })),
-    ...ASYNC_UTILS.map((asyncUtil) => ({
-      code: `
+          errors: [{ line: 7, column: 11, messageId: 'awaitAsyncUtil' }],
+        } as const)
+    ),
+    ...ASYNC_UTILS.map(
+      (asyncUtil) =>
+        ({
+          code: `
         import * as asyncUtils from 'some-other-library';
         test(
         'aggressive reporting - util "asyncUtils.${asyncUtil}" which is not related to testing library is invalid',
@@ -323,7 +343,8 @@ ruleTester.run(RULE_NAME, rule, {
           asyncUtils.${asyncUtil}();
         });
       `,
-      errors: [{ line: 7, column: 22, messageId: 'awaitAsyncUtil' }],
-    })),
+          errors: [{ line: 7, column: 22, messageId: 'awaitAsyncUtil' }],
+        } as const)
+    ),
   ],
 });

@@ -152,24 +152,29 @@ ruleTester.run(RULE_NAME, rule, {
     })),
   ],
   invalid: [
-    ...ASYNC_UTILS.map((asyncUtil) => ({
-      code: `
+    ...ASYNC_UTILS.map(
+      (asyncUtil) =>
+        ({
+          code: `
         import { ${asyncUtil} } from '@testing-library/dom';
         test('snapshot calls within ${asyncUtil} are not valid', async () => {
           await ${asyncUtil}(() => expect(foo).toMatchSnapshot());
         });
       `,
-      errors: [
-        {
-          line: 4,
-          messageId: 'noWaitForSnapshot',
-          data: { name: asyncUtil },
-          column: 36 + asyncUtil.length,
-        },
-      ],
-    })),
-    ...ASYNC_UTILS.map((asyncUtil) => ({
-      code: `
+          errors: [
+            {
+              line: 4,
+              messageId: 'noWaitForSnapshot',
+              data: { name: asyncUtil },
+              column: 36 + asyncUtil.length,
+            },
+          ],
+        } as const)
+    ),
+    ...ASYNC_UTILS.map(
+      (asyncUtil) =>
+        ({
+          code: `
         import { ${asyncUtil} } from '@testing-library/dom';
         test('snapshot calls within ${asyncUtil} are not valid', async () => {
           await ${asyncUtil}(() => {
@@ -177,33 +182,39 @@ ruleTester.run(RULE_NAME, rule, {
           });
         });
       `,
-      errors: [
-        {
-          line: 5,
-          messageId: 'noWaitForSnapshot',
-          data: { name: asyncUtil },
-          column: 27,
-        },
-      ],
-    })),
-    ...ASYNC_UTILS.map((asyncUtil) => ({
-      code: `
+          errors: [
+            {
+              line: 5,
+              messageId: 'noWaitForSnapshot',
+              data: { name: asyncUtil },
+              column: 27,
+            },
+          ],
+        } as const)
+    ),
+    ...ASYNC_UTILS.map(
+      (asyncUtil) =>
+        ({
+          code: `
         import * as asyncUtils from '@testing-library/dom';
         test('snapshot calls within ${asyncUtil} are not valid', async () => {
           await asyncUtils.${asyncUtil}(() => expect(foo).toMatchSnapshot());
         });
       `,
-      errors: [
-        {
-          line: 4,
-          messageId: 'noWaitForSnapshot',
-          data: { name: asyncUtil },
-          column: 47 + asyncUtil.length,
-        },
-      ],
-    })),
-    ...ASYNC_UTILS.map((asyncUtil) => ({
-      code: `
+          errors: [
+            {
+              line: 4,
+              messageId: 'noWaitForSnapshot',
+              data: { name: asyncUtil },
+              column: 47 + asyncUtil.length,
+            },
+          ],
+        } as const)
+    ),
+    ...ASYNC_UTILS.map(
+      (asyncUtil) =>
+        ({
+          code: `
         import * as asyncUtils from '@testing-library/dom';
         test('snapshot calls within ${asyncUtil} are not valid', async () => {
           await asyncUtils.${asyncUtil}(() => {
@@ -211,33 +222,39 @@ ruleTester.run(RULE_NAME, rule, {
           });
         });
       `,
-      errors: [
-        {
-          line: 5,
-          messageId: 'noWaitForSnapshot',
-          data: { name: asyncUtil },
-          column: 27,
-        },
-      ],
-    })),
-    ...ASYNC_UTILS.map((asyncUtil) => ({
-      code: `
+          errors: [
+            {
+              line: 5,
+              messageId: 'noWaitForSnapshot',
+              data: { name: asyncUtil },
+              column: 27,
+            },
+          ],
+        } as const)
+    ),
+    ...ASYNC_UTILS.map(
+      (asyncUtil) =>
+        ({
+          code: `
         import { ${asyncUtil} } from '@testing-library/dom';
         test('snapshot calls within ${asyncUtil} are not valid', async () => {
           await ${asyncUtil}(() => expect(foo).toMatchInlineSnapshot());
         });
       `,
-      errors: [
-        {
-          line: 4,
-          messageId: 'noWaitForSnapshot',
-          data: { name: asyncUtil },
-          column: 36 + asyncUtil.length,
-        },
-      ],
-    })),
-    ...ASYNC_UTILS.map((asyncUtil) => ({
-      code: `
+          errors: [
+            {
+              line: 4,
+              messageId: 'noWaitForSnapshot',
+              data: { name: asyncUtil },
+              column: 36 + asyncUtil.length,
+            },
+          ],
+        } as const)
+    ),
+    ...ASYNC_UTILS.map(
+      (asyncUtil) =>
+        ({
+          code: `
         import { ${asyncUtil} } from '@testing-library/dom';
         test('snapshot calls within ${asyncUtil} are not valid', async () => {
           await ${asyncUtil}(() => {
@@ -245,33 +262,39 @@ ruleTester.run(RULE_NAME, rule, {
           });
         });
       `,
-      errors: [
-        {
-          line: 5,
-          messageId: 'noWaitForSnapshot',
-          data: { name: asyncUtil },
-          column: 27,
-        },
-      ],
-    })),
-    ...ASYNC_UTILS.map((asyncUtil) => ({
-      code: `
+          errors: [
+            {
+              line: 5,
+              messageId: 'noWaitForSnapshot',
+              data: { name: asyncUtil },
+              column: 27,
+            },
+          ],
+        } as const)
+    ),
+    ...ASYNC_UTILS.map(
+      (asyncUtil) =>
+        ({
+          code: `
         import * as asyncUtils from '@testing-library/dom';
         test('snapshot calls within ${asyncUtil} are not valid', async () => {
           await asyncUtils.${asyncUtil}(() => expect(foo).toMatchInlineSnapshot());
         });
       `,
-      errors: [
-        {
-          line: 4,
-          messageId: 'noWaitForSnapshot',
-          data: { name: asyncUtil },
-          column: 47 + asyncUtil.length,
-        },
-      ],
-    })),
-    ...ASYNC_UTILS.map((asyncUtil) => ({
-      code: `
+          errors: [
+            {
+              line: 4,
+              messageId: 'noWaitForSnapshot',
+              data: { name: asyncUtil },
+              column: 47 + asyncUtil.length,
+            },
+          ],
+        } as const)
+    ),
+    ...ASYNC_UTILS.map(
+      (asyncUtil) =>
+        ({
+          code: `
         import * as asyncUtils from '@testing-library/dom';
         test('snapshot calls within ${asyncUtil} are not valid', async () => {
           await asyncUtils.${asyncUtil}(() => {
@@ -279,14 +302,15 @@ ruleTester.run(RULE_NAME, rule, {
           });
         });
       `,
-      errors: [
-        {
-          line: 5,
-          messageId: 'noWaitForSnapshot',
-          data: { name: asyncUtil },
-          column: 27,
-        },
-      ],
-    })),
+          errors: [
+            {
+              line: 5,
+              messageId: 'noWaitForSnapshot',
+              data: { name: asyncUtil },
+              column: 27,
+            },
+          ],
+        } as const)
+    ),
   ],
 });

@@ -99,39 +99,50 @@ ruleTester.run(RULE_NAME, rule, {
     })),
   ],
   invalid: [
-    ...COMBINED_QUERIES_METHODS.map((queryMethod) => ({
-      code: `get${queryMethod}('foo')`,
-      errors: [
-        {
-          messageId: 'preferExplicitAssert',
-        },
-      ],
-    })),
-    ...COMBINED_QUERIES_METHODS.map((queryMethod) => ({
-      code: `
+    ...COMBINED_QUERIES_METHODS.map(
+      (queryMethod) =>
+        ({
+          code: `get${queryMethod}('foo')`,
+          errors: [
+            {
+              messageId: 'preferExplicitAssert',
+            },
+          ],
+        } as const)
+    ),
+    ...COMBINED_QUERIES_METHODS.map(
+      (queryMethod) =>
+        ({
+          code: `
         const utils = render()
         utils.get${queryMethod}('foo')
       `,
-      errors: [
-        {
-          messageId: 'preferExplicitAssert',
-          line: 3,
-          column: 15,
-        },
-      ],
-    })),
-    ...COMBINED_QUERIES_METHODS.map((queryMethod) => ({
-      code: `screen.get${queryMethod}('foo')`,
-      errors: [
-        {
-          messageId: 'preferExplicitAssert',
-          line: 1,
-          column: 8,
-        },
-      ],
-    })),
-    ...COMBINED_QUERIES_METHODS.map((queryMethod) => ({
-      code: `
+          errors: [
+            {
+              messageId: 'preferExplicitAssert',
+              line: 3,
+              column: 15,
+            },
+          ],
+        } as const)
+    ),
+    ...COMBINED_QUERIES_METHODS.map(
+      (queryMethod) =>
+        ({
+          code: `screen.get${queryMethod}('foo')`,
+          errors: [
+            {
+              messageId: 'preferExplicitAssert',
+              line: 1,
+              column: 8,
+            },
+          ],
+        } as const)
+    ),
+    ...COMBINED_QUERIES_METHODS.map(
+      (queryMethod) =>
+        ({
+          code: `
         () => {
           get${queryMethod}('foo')
           doSomething()
@@ -140,31 +151,35 @@ ruleTester.run(RULE_NAME, rule, {
           const quxElement = get${queryMethod}('qux')
         }
       `,
-      errors: [
-        {
-          messageId: 'preferExplicitAssert',
-          line: 3,
-        },
-        {
-          messageId: 'preferExplicitAssert',
-          line: 6,
-        },
-      ],
-    })),
-    ...COMBINED_QUERIES_METHODS.map((queryMethod) => ({
-      settings: {
-        'testing-library/utils-module': 'test-utils',
-      },
-      code: `
+          errors: [
+            {
+              messageId: 'preferExplicitAssert',
+              line: 3,
+            },
+            {
+              messageId: 'preferExplicitAssert',
+              line: 6,
+            },
+          ],
+        } as const)
+    ),
+    ...COMBINED_QUERIES_METHODS.map(
+      (queryMethod) =>
+        ({
+          settings: {
+            'testing-library/utils-module': 'test-utils',
+          },
+          code: `
         import "test-utils"
         getBy${queryMethod}("Hello")
       `,
-      errors: [
-        {
-          messageId: 'preferExplicitAssert',
-        },
-      ],
-    })),
+          errors: [
+            {
+              messageId: 'preferExplicitAssert',
+            },
+          ],
+        } as const)
+    ),
     {
       code: `getByIcon('foo')`, // custom `getBy` query extended through options
       errors: [
@@ -173,47 +188,56 @@ ruleTester.run(RULE_NAME, rule, {
         },
       ],
     },
-    ...COMBINED_QUERIES_METHODS.map((queryMethod) => ({
-      code: `expect(get${queryMethod}('foo')).toBeDefined()`,
-      options: [
-        {
-          assertion: 'toBeInTheDocument',
-        },
-      ],
-      errors: [
-        {
-          messageId: 'preferExplicitAssertAssertion',
-          data: { assertion: 'toBeInTheDocument' },
-        },
-      ],
-    })),
-    ...COMBINED_QUERIES_METHODS.map((queryMethod) => ({
-      code: `expect(get${queryMethod}('foo')).not.toBeNull()`,
-      options: [
-        {
-          assertion: 'toBeInTheDocument',
-        },
-      ],
-      errors: [
-        {
-          messageId: 'preferExplicitAssertAssertion',
-          data: { assertion: 'toBeInTheDocument' },
-        },
-      ],
-    })),
-    ...COMBINED_QUERIES_METHODS.map((queryMethod) => ({
-      code: `expect(get${queryMethod}('foo')).not.toBeFalsy()`,
-      options: [
-        {
-          assertion: 'toBeInTheDocument',
-        },
-      ],
-      errors: [
-        {
-          messageId: 'preferExplicitAssertAssertion',
-          data: { assertion: 'toBeInTheDocument' },
-        },
-      ],
-    })),
+    ...COMBINED_QUERIES_METHODS.map(
+      (queryMethod) =>
+        ({
+          code: `expect(get${queryMethod}('foo')).toBeDefined()`,
+          options: [
+            {
+              assertion: 'toBeInTheDocument',
+            },
+          ],
+          errors: [
+            {
+              messageId: 'preferExplicitAssertAssertion',
+              data: { assertion: 'toBeInTheDocument' },
+            },
+          ],
+        } as const)
+    ),
+    ...COMBINED_QUERIES_METHODS.map(
+      (queryMethod) =>
+        ({
+          code: `expect(get${queryMethod}('foo')).not.toBeNull()`,
+          options: [
+            {
+              assertion: 'toBeInTheDocument',
+            },
+          ],
+          errors: [
+            {
+              messageId: 'preferExplicitAssertAssertion',
+              data: { assertion: 'toBeInTheDocument' },
+            },
+          ],
+        } as const)
+    ),
+    ...COMBINED_QUERIES_METHODS.map(
+      (queryMethod) =>
+        ({
+          code: `expect(get${queryMethod}('foo')).not.toBeFalsy()`,
+          options: [
+            {
+              assertion: 'toBeInTheDocument',
+            },
+          ],
+          errors: [
+            {
+              messageId: 'preferExplicitAssertAssertion',
+              data: { assertion: 'toBeInTheDocument' },
+            },
+          ],
+        } as const)
+    ),
   ],
 });

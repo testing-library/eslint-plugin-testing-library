@@ -229,49 +229,61 @@ ruleTester.run(RULE_NAME, rule, {
         errors: [{ messageId: 'preferUserEvent', line: 3, column: 9 }],
       })
     ),
-    ...Object.keys(MappingToUserEvent).map((fireEventMethod: string) => ({
-      settings: {
-        'testing-library/utils-module': 'test-utils',
-      },
-      code: `
+    ...Object.keys(MappingToUserEvent).map(
+      (fireEventMethod: string) =>
+        ({
+          settings: {
+            'testing-library/utils-module': 'test-utils',
+          },
+          code: `
         import * as dom from 'test-utils'
         dom.fireEvent.${fireEventMethod}(foo)
       `,
-      errors: [{ messageId: 'preferUserEvent', line: 3, column: 9 }],
-    })),
-    ...Object.keys(MappingToUserEvent).map((fireEventMethod: string) => ({
-      settings: {
-        'testing-library/utils-module': 'test-utils',
-      },
-      code: `
+          errors: [{ messageId: 'preferUserEvent', line: 3, column: 9 }],
+        } as const)
+    ),
+    ...Object.keys(MappingToUserEvent).map(
+      (fireEventMethod: string) =>
+        ({
+          settings: {
+            'testing-library/utils-module': 'test-utils',
+          },
+          code: `
         import { fireEvent } from 'test-utils'
         fireEvent.${fireEventMethod}(foo)
       `,
-      errors: [{ messageId: 'preferUserEvent', line: 3, column: 9 }],
-    })),
-    ...Object.keys(MappingToUserEvent).map((fireEventMethod: string) => ({
-      code: `
+          errors: [{ messageId: 'preferUserEvent', line: 3, column: 9 }],
+        } as const)
+    ),
+    ...Object.keys(MappingToUserEvent).map(
+      (fireEventMethod: string) =>
+        ({
+          code: `
         // same as previous group of test cases but without custom module set
         // (aggressive reporting)
         import { fireEvent } from 'test-utils'
         fireEvent.${fireEventMethod}(foo)
       `,
-      errors: [{ messageId: 'preferUserEvent', line: 5, column: 9 }],
-    })),
-    ...Object.keys(MappingToUserEvent).map((fireEventMethod: string) => ({
-      settings: {
-        'testing-library/utils-module': 'test-utils',
-      },
-      code: `
+          errors: [{ messageId: 'preferUserEvent', line: 5, column: 9 }],
+        } as const)
+    ),
+    ...Object.keys(MappingToUserEvent).map(
+      (fireEventMethod: string) =>
+        ({
+          settings: {
+            'testing-library/utils-module': 'test-utils',
+          },
+          code: `
         import { fireEvent as fireEventAliased } from 'test-utils'
         fireEventAliased.${fireEventMethod}(foo)
       `,
-      errors: [{ messageId: 'preferUserEvent', line: 3, column: 9 }],
-    })),
+          errors: [{ messageId: 'preferUserEvent', line: 3, column: 9 }],
+        } as const)
+    ),
     {
       code: ` // simple test to check error in detail
       import { fireEvent } from '@testing-library/react'
-      
+
       fireEvent.click(element)
       `,
       errors: [

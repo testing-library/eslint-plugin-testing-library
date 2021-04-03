@@ -50,138 +50,165 @@ ruleTester.run(RULE_NAME, rule, {
   ],
 
   invalid: [
-    ...ALL_WAIT_METHODS.map((m) => ({
-      code: `${m}(() => {})`,
-      errors: [
-        {
-          line: 1,
-          column: 8 + m.length,
-          messageId: 'noWaitForEmptyCallback',
-          data: {
-            methodName: m,
-          },
-        },
-      ],
-    })),
-    ...ALL_WAIT_METHODS.map((m) => ({
-      settings: { 'testing-library/utils-module': 'test-utils' },
-      code: `
+    ...ALL_WAIT_METHODS.map(
+      (m) =>
+        ({
+          code: `${m}(() => {})`,
+          errors: [
+            {
+              line: 1,
+              column: 8 + m.length,
+              messageId: 'noWaitForEmptyCallback',
+              data: {
+                methodName: m,
+              },
+            },
+          ],
+        } as const)
+    ),
+    ...ALL_WAIT_METHODS.map(
+      (m) =>
+        ({
+          settings: { 'testing-library/utils-module': 'test-utils' },
+          code: `
         import { ${m} } from 'test-utils';
         ${m}(() => {});
       `,
-      errors: [
-        {
-          line: 3,
-          column: 16 + m.length,
-          messageId: 'noWaitForEmptyCallback',
-          data: {
-            methodName: m,
-          },
-        },
-      ],
-    })),
-    ...ALL_WAIT_METHODS.map((m) => ({
-      settings: { 'testing-library/utils-module': 'test-utils' },
-      code: `
+          errors: [
+            {
+              line: 3,
+              column: 16 + m.length,
+              messageId: 'noWaitForEmptyCallback',
+              data: {
+                methodName: m,
+              },
+            },
+          ],
+        } as const)
+    ),
+    ...ALL_WAIT_METHODS.map(
+      (m) =>
+        ({
+          settings: { 'testing-library/utils-module': 'test-utils' },
+          code: `
         import { ${m} as renamedAsyncUtil } from 'test-utils';
         renamedAsyncUtil(() => {});
       `,
-      errors: [
-        {
-          line: 3,
-          column: 32,
-          messageId: 'noWaitForEmptyCallback',
-          data: {
-            methodName: 'renamedAsyncUtil',
-          },
-        },
-      ],
-    })),
-    ...ALL_WAIT_METHODS.map((m) => ({
-      code: `${m}((a, b) => {})`,
-      errors: [
-        {
-          line: 1,
-          column: 12 + m.length,
-          messageId: 'noWaitForEmptyCallback',
-          data: {
-            methodName: m,
-          },
-        },
-      ],
-    })),
-    ...ALL_WAIT_METHODS.map((m) => ({
-      code: `${m}(() => { /* I'm empty anyway */ })`,
-      errors: [
-        {
-          line: 1,
-          column: 8 + m.length,
-          messageId: 'noWaitForEmptyCallback',
-          data: {
-            methodName: m,
-          },
-        },
-      ],
-    })),
+          errors: [
+            {
+              line: 3,
+              column: 32,
+              messageId: 'noWaitForEmptyCallback',
+              data: {
+                methodName: 'renamedAsyncUtil',
+              },
+            },
+          ],
+        } as const)
+    ),
+    ...ALL_WAIT_METHODS.map(
+      (m) =>
+        ({
+          code: `${m}((a, b) => {})`,
+          errors: [
+            {
+              line: 1,
+              column: 12 + m.length,
+              messageId: 'noWaitForEmptyCallback',
+              data: {
+                methodName: m,
+              },
+            },
+          ],
+        } as const)
+    ),
+    ...ALL_WAIT_METHODS.map(
+      (m) =>
+        ({
+          code: `${m}(() => { /* I'm empty anyway */ })`,
+          errors: [
+            {
+              line: 1,
+              column: 8 + m.length,
+              messageId: 'noWaitForEmptyCallback',
+              data: {
+                methodName: m,
+              },
+            },
+          ],
+        } as const)
+    ),
 
-    ...ALL_WAIT_METHODS.map((m) => ({
-      code: `${m}(function() {
-
-      })`,
-      errors: [
-        {
-          line: 1,
-          column: 13 + m.length,
-          messageId: 'noWaitForEmptyCallback',
-          data: {
-            methodName: m,
-          },
-        },
-      ],
-    })),
-    ...ALL_WAIT_METHODS.map((m) => ({
-      code: `${m}(function(a) {
+    ...ALL_WAIT_METHODS.map(
+      (m) =>
+        ({
+          code: `${m}(function() {
 
       })`,
-      errors: [
-        {
-          line: 1,
-          column: 14 + m.length,
-          messageId: 'noWaitForEmptyCallback',
-          data: {
-            methodName: m,
-          },
-        },
-      ],
-    })),
-    ...ALL_WAIT_METHODS.map((m) => ({
-      code: `${m}(function() {
+          errors: [
+            {
+              line: 1,
+              column: 13 + m.length,
+              messageId: 'noWaitForEmptyCallback',
+              data: {
+                methodName: m,
+              },
+            },
+          ],
+        } as const)
+    ),
+    ...ALL_WAIT_METHODS.map(
+      (m) =>
+        ({
+          code: `${m}(function(a) {
+
+      })`,
+          errors: [
+            {
+              line: 1,
+              column: 14 + m.length,
+              messageId: 'noWaitForEmptyCallback',
+              data: {
+                methodName: m,
+              },
+            },
+          ],
+        } as const)
+    ),
+    ...ALL_WAIT_METHODS.map(
+      (m) =>
+        ({
+          code: `${m}(function() {
         // another empty callback
       })`,
-      errors: [
-        {
-          line: 1,
-          column: 13 + m.length,
-          messageId: 'noWaitForEmptyCallback',
-          data: {
-            methodName: m,
-          },
-        },
-      ],
-    })),
+          errors: [
+            {
+              line: 1,
+              column: 13 + m.length,
+              messageId: 'noWaitForEmptyCallback',
+              data: {
+                methodName: m,
+              },
+            },
+          ],
+        } as const)
+    ),
 
-    ...ALL_WAIT_METHODS.map((m) => ({
-      code: `${m}(noop)`,
-      errors: [
-        {
-          line: 1,
-          column: 2 + m.length,
-          messageId: 'noWaitForEmptyCallback',
-          data: {
-            methodName: m,
-          },
-        },
-      ],
-    })),
+    ...ALL_WAIT_METHODS.map(
+      (m) =>
+        ({
+          code: `${m}(noop)`,
+          errors: [
+            {
+              line: 1,
+              column: 2 + m.length,
+              messageId: 'noWaitForEmptyCallback',
+              data: {
+                methodName: m,
+              },
+            },
+          ],
+        } as const)
+    ),
   ],
 });

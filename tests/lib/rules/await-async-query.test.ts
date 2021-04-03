@@ -257,73 +257,126 @@ ruleTester.run(RULE_NAME, rule, {
   ],
 
   invalid: [
-    // async queries without await operator or then method are not valid
-    ...createTestCase((query) => ({
-      code: `
+    ...ALL_ASYNC_COMBINATIONS_TO_TEST.map(
+      (query) =>
+        ({
+          code: `// async queries without await operator or then method are not valid
+      import { render } from '@testing-library/react'
+
+      test("An example test", async () => {
         doSomething()
         const foo = ${query}('foo')
+      });
       `,
-      errors: [{ messageId: 'awaitAsyncQuery', line: 6, column: 21 }],
-    })),
+          errors: [{ messageId: 'awaitAsyncQuery', line: 6, column: 21 }],
+        } as const)
+    ),
+    ...ALL_ASYNC_COMBINATIONS_TO_TEST.map(
+      (query) =>
+        ({
+          code: `// async screen queries without await operator or then method are not valid
+      import { render } from '@testing-library/react'
 
-    // async screen queries without await operator or then method are not valid
-    ...createTestCase((query) => ({
-      code: `screen.${query}('foo')`,
-      errors: [{ messageId: 'awaitAsyncQuery', line: 4, column: 14 }],
-    })),
+      test("An example test", async () => {
+        screen.${query}('foo')
+      });
+      `,
+          errors: [
+            {
+              messageId: 'awaitAsyncQuery',
+              line: 5,
+              column: 16,
+              data: { name: query },
+            },
+          ],
+        } as const)
+    ),
+    ...ALL_ASYNC_COMBINATIONS_TO_TEST.map(
+      (query) =>
+        ({
+          code: `
+      import { render } from '@testing-library/react'
 
-    ...createTestCase((query) => ({
-      code: `
+      test("An example test", async () => {
+        doSomething()
+        const foo = ${query}('foo')
+      });
+      `,
+          errors: [
+            {
+              messageId: 'awaitAsyncQuery',
+              line: 6,
+              column: 21,
+              data: { name: query },
+            },
+          ],
+        } as const)
+    ),
+    ...ALL_ASYNC_COMBINATIONS_TO_TEST.map(
+      (query) =>
+        ({
+          code: `
+      import { render } from '@testing-library/react'
+
+      test("An example test", async () => {
         const foo = ${query}('foo')
         expect(foo).toBeInTheDocument()
         expect(foo).toHaveAttribute('src', 'bar');
+      });
       `,
-      errors: [
-        {
-          line: 5,
-          column: 21,
-          messageId: 'awaitAsyncQuery',
-          data: {
-            name: query,
-          },
-        },
-      ],
-    })),
+          errors: [
+            {
+              messageId: 'awaitAsyncQuery',
+              line: 5,
+              column: 21,
+              data: { name: query },
+            },
+          ],
+        } as const)
+    ),
 
     // unresolved async queries are not valid (aggressive reporting)
-    ...ALL_ASYNC_COMBINATIONS_TO_TEST.map((query) => ({
-      code: `
+    ...ALL_ASYNC_COMBINATIONS_TO_TEST.map(
+      (query) =>
+        ({
+          code: `
         import { render } from "another-library"
 
         test('An example test', async () => {
           const example = ${query}("my example")
         })
       `,
-      errors: [{ messageId: 'awaitAsyncQuery', line: 5, column: 27 }],
-    })),
+          errors: [{ messageId: 'awaitAsyncQuery', line: 5, column: 27 }],
+        } as const)
+    ),
 
     // unhandled promise from async query function wrapper is invalid
-    ...ALL_ASYNC_COMBINATIONS_TO_TEST.map((query) => ({
-      code: `
+    ...ALL_ASYNC_COMBINATIONS_TO_TEST.map(
+      (query) =>
+        ({
+          code: `
         function queryWrapper() {
           doSomethingElse();
-          
+
           return screen.${query}('foo')
         }
-        
+
         test("An invalid example test", () => {
           const element = queryWrapper()
         })
-        
+
         test("An valid example test", async () => {
           const element = await queryWrapper()
         })
       `,
-      errors: [{ messageId: 'asyncQueryWrapper', line: 9, column: 27 }],
-    })),
+          errors: [{ messageId: 'asyncQueryWrapper', line: 9, column: 27 }],
+        } as const)
+    ),
     // unhandled promise from async query arrow function wrapper is invalid
-    ...ALL_ASYNC_COMBINATIONS_TO_TEST.map((query) => ({
-      code: `
+    ...ALL_ASYNC_COMBINATIONS_TO_TEST.map(
+      (query) =>
+        ({
+          code: `
         const queryWrapper = () => {
           doSomethingElse();
 
@@ -338,11 +391,14 @@ ruleTester.run(RULE_NAME, rule, {
           const element = await queryWrapper()
         })
       `,
-      errors: [{ messageId: 'asyncQueryWrapper', line: 9, column: 27 }],
-    })),
+          errors: [{ messageId: 'asyncQueryWrapper', line: 9, column: 27 }],
+        } as const)
+    ),
     // unhandled promise implicitly returned from async query arrow function wrapper is invalid
-    ...ALL_ASYNC_COMBINATIONS_TO_TEST.map((query) => ({
-      code: `
+    ...ALL_ASYNC_COMBINATIONS_TO_TEST.map(
+      (query) =>
+        ({
+          code: `
         const queryWrapper = () => screen.${query}('foo')
 
         test("An invalid example test", () => {
@@ -353,7 +409,8 @@ ruleTester.run(RULE_NAME, rule, {
           const element = await queryWrapper()
         })
       `,
-      errors: [{ messageId: 'asyncQueryWrapper', line: 5, column: 27 }],
-    })),
+          errors: [{ messageId: 'asyncQueryWrapper', line: 5, column: 27 }],
+        } as const)
+    ),
   ],
 });
