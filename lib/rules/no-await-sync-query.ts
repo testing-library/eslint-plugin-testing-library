@@ -1,9 +1,6 @@
 import { TSESTree } from '@typescript-eslint/experimental-utils';
 import { createTestingLibraryRule } from '../create-testing-library-rule';
-import {
-  findClosestCallExpressionNode,
-  isCallExpressionCallee,
-} from '../node-utils';
+import { getDeepestIdentifierNode } from '../node-utils';
 
 export const RULE_NAME = 'no-await-sync-query';
 export type MessageIds = 'noAwaitSyncQuery';
@@ -29,22 +26,19 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
   create(context, _, helpers) {
     return {
-      'AwaitExpression > CallExpression Identifier'(node: TSESTree.Identifier) {
-        const closestCallExpression = findClosestCallExpressionNode(node, true);
-        if (!closestCallExpression) {
+      'AwaitExpression > CallExpression'(node: TSESTree.CallExpression) {
+        const deepestIdentifierNode = getDeepestIdentifierNode(node);
+
+        if (!deepestIdentifierNode) {
           return;
         }
 
-        if (!isCallExpressionCallee(closestCallExpression, node)) {
-          return;
-        }
-
-        if (helpers.isSyncQuery(node)) {
+        if (helpers.isSyncQuery(deepestIdentifierNode)) {
           context.report({
-            node,
+            node: deepestIdentifierNode,
             messageId: 'noAwaitSyncQuery',
             data: {
-              name: node.name,
+              name: deepestIdentifierNode.name,
             },
           });
         }

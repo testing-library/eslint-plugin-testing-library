@@ -33,6 +33,12 @@ ruleTester.run(RULE_NAME, rule, {
       const element = queryAllByIcon('search')
     }
     `,
+    `async () => {
+      await waitFor(() => {
+        getByText('search');
+      });
+    }
+    `,
     // sync queries without await inside assert are valid
     ...SYNC_QUERIES_COMBINATIONS.map((query) => ({
       code: `() => {
@@ -85,6 +91,16 @@ ruleTester.run(RULE_NAME, rule, {
      // so there is no innermost function scope found
      await test('edge case for no innermost function scope', () => {
       const foo = getAllByLabelText
+    })
+    `,
+
+    `// edge case for coverage: CallExpression without deepest Identifier
+     await someList[0]();
+    `,
+
+    `// element is removed
+    test('movie title no longer present in DOM', async () => {
+      await waitForElementToBeRemoved(() => queryByText('the mummy'))
     })
     `,
   ],
