@@ -170,10 +170,6 @@ export function detectTestingLibraryUtils<
         referenceNodeIdentifier
       );
 
-      if (!importedUtilSpecifier) {
-        return false;
-      }
-
       const originalNodeName =
         isImportSpecifier(importedUtilSpecifier) &&
         importedUtilSpecifier.local.name !== importedUtilSpecifier.imported.name
