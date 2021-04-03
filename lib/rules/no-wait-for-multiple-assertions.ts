@@ -1,5 +1,8 @@
 import { TSESTree } from '@typescript-eslint/experimental-utils';
-import { getPropertyIdentifierNode } from '../node-utils';
+import {
+  getPropertyIdentifierNode,
+  isExpressionStatement,
+} from '../node-utils';
 import { createTestingLibraryRule } from '../create-testing-library-rule';
 
 export const RULE_NAME = 'no-wait-for-multiple-assertions';
@@ -23,16 +26,21 @@ export default createTestingLibraryRule<Options, MessageIds>({
   },
   defaultOptions: [],
   create: function (context, _, helpers) {
-    function totalExpect(body: Array<TSESTree.Node>): Array<TSESTree.Node> {
+    function getExpectNodes(
+      body: Array<TSESTree.Node>
+    ): Array<TSESTree.ExpressionStatement> {
       return body.filter((node) => {
-        const expressionIdentifier = getPropertyIdentifierNode(node);
+        if (!isExpressionStatement(node)) {
+          return false;
+        }
 
+        const expressionIdentifier = getPropertyIdentifierNode(node);
         if (!expressionIdentifier) {
           return false;
         }
 
         return expressionIdentifier.name === 'expect';
-      });
+      }) as Array<TSESTree.ExpressionStatement>;
     }
 
     function reportMultipleAssertion(node: TSESTree.BlockStatement) {
@@ -52,14 +60,20 @@ export default createTestingLibraryRule<Options, MessageIds>({
         return;
       }
 
-      if (totalExpect(node.body).length <= 1) {
+      const expectNodes = getExpectNodes(node.body);
+
+      if (expectNodes.length <= 1) {
         return;
       }
 
-      context.report({
-        node: callExpressionNode,
-        messageId: 'noWaitForMultipleAssertion',
-      });
+      for (let i = 0; i < expectNodes.length; i++) {
+        if (i !== 0) {
+          context.report({
+            node: expectNodes[i],
+            messageId: 'noWaitForMultipleAssertion',
+          });
+        }
+      }
     }
 
     return {

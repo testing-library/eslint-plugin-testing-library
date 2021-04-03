@@ -153,19 +153,6 @@ export function findClosestCallNode(
   }
 }
 
-export function isCallExpressionCallee(
-  node: TSESTree.CallExpression,
-  identifier: TSESTree.Identifier
-): boolean {
-  const nodeInnerIdentifier = getDeepestIdentifierNode(node);
-
-  if (nodeInnerIdentifier) {
-    return nodeInnerIdentifier.name === identifier.name;
-  }
-
-  return false;
-}
-
 export function isObjectExpression(
   node: TSESTree.Expression
 ): node is TSESTree.ObjectExpression {

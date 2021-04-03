@@ -342,12 +342,20 @@ export function detectTestingLibraryUtils<
      * Not to be confused with {@link isUserEventMethod}
      */
     const isUserEventUtil = (node: TSESTree.Identifier): boolean => {
-      return isTestingLibraryUtil(
-        node,
-        (identifierNodeName, originalNodeName) => {
-          return [identifierNodeName, originalNodeName].includes('userEvent');
-        }
-      );
+      const userEvent = findImportedUserEventSpecifier();
+      let userEventName: string | undefined;
+
+      if (userEvent) {
+        userEventName = userEvent.name;
+      } else if (isAggressiveModuleReportingEnabled()) {
+        userEventName = USER_EVENT_NAME;
+      }
+
+      if (!userEventName) {
+        return false;
+      }
+
+      return node.name === userEventName;
     };
 
     /**

@@ -1,5 +1,8 @@
 import { TSESTree } from '@typescript-eslint/experimental-utils';
-import { getPropertyIdentifierNode } from '../node-utils';
+import {
+  getPropertyIdentifierNode,
+  isExpressionStatement,
+} from '../node-utils';
 import { createTestingLibraryRule } from '../create-testing-library-rule';
 
 export const RULE_NAME = 'no-wait-for-side-effects';
@@ -23,10 +26,15 @@ export default createTestingLibraryRule<Options, MessageIds>({
   },
   defaultOptions: [],
   create: function (context, _, helpers) {
-    function hasSideEffects(body: Array<TSESTree.Node>): boolean {
-      return body.some((node) => {
-        const expressionIdentifier = getPropertyIdentifierNode(node);
+    function getSideEffectNodes(
+      body: TSESTree.Node[]
+    ): TSESTree.ExpressionStatement[] {
+      return body.filter((node) => {
+        if (!isExpressionStatement(node)) {
+          return false;
+        }
 
+        const expressionIdentifier = getPropertyIdentifierNode(node);
         if (!expressionIdentifier) {
           return false;
         }
@@ -35,7 +43,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
           helpers.isFireEventUtil(expressionIdentifier) ||
           helpers.isUserEventUtil(expressionIdentifier)
         );
-      });
+      }) as TSESTree.ExpressionStatement[];
     }
 
     function reportSideEffects(node: TSESTree.BlockStatement) {
@@ -55,14 +63,17 @@ export default createTestingLibraryRule<Options, MessageIds>({
         return;
       }
 
-      if (!hasSideEffects(node.body)) {
+      const sideEffectNodes = getSideEffectNodes(node.body);
+      if (sideEffectNodes.length === 0) {
         return;
       }
 
-      context.report({
-        node: callExpressionNode,
-        messageId: 'noSideEffectsWaitFor',
-      });
+      for (const sideEffectNode of sideEffectNodes) {
+        context.report({
+          node: sideEffectNode,
+          messageId: 'noSideEffectsWaitFor',
+        });
+      }
     }
 
     return {

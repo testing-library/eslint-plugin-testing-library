@@ -100,7 +100,7 @@ ruleTester.run(RULE_NAME, rule, {
         })
       `,
       errors: [
-        { line: 2, column: 15, messageId: 'noWaitForMultipleAssertion' },
+        { line: 4, column: 11, messageId: 'noWaitForMultipleAssertion' },
       ],
     },
     {
@@ -113,7 +113,7 @@ ruleTester.run(RULE_NAME, rule, {
         })
       `,
       errors: [
-        { line: 3, column: 15, messageId: 'noWaitForMultipleAssertion' },
+        { line: 5, column: 11, messageId: 'noWaitForMultipleAssertion' },
       ],
     },
     {
@@ -126,7 +126,7 @@ ruleTester.run(RULE_NAME, rule, {
         })
       `,
       errors: [
-        { line: 3, column: 15, messageId: 'noWaitForMultipleAssertion' },
+        { line: 5, column: 11, messageId: 'noWaitForMultipleAssertion' },
       ],
     },
     {
@@ -138,7 +138,7 @@ ruleTester.run(RULE_NAME, rule, {
         })
       `,
       errors: [
-        { line: 2, column: 15, messageId: 'noWaitForMultipleAssertion' },
+        { line: 5, column: 11, messageId: 'noWaitForMultipleAssertion' },
       ],
     },
     {
@@ -152,7 +152,7 @@ ruleTester.run(RULE_NAME, rule, {
         })
       `,
       errors: [
-        { line: 3, column: 17, messageId: 'noWaitForMultipleAssertion' },
+        { line: 6, column: 13, messageId: 'noWaitForMultipleAssertion' },
       ],
     },
     {
@@ -164,7 +164,7 @@ ruleTester.run(RULE_NAME, rule, {
         })
       `,
       errors: [
-        { line: 2, column: 15, messageId: 'noWaitForMultipleAssertion' },
+        { line: 5, column: 11, messageId: 'noWaitForMultipleAssertion' },
       ],
     },
     {
@@ -172,10 +172,14 @@ ruleTester.run(RULE_NAME, rule, {
         await waitFor(function() {
           expect(a).toEqual('a')
           expect(b).toEqual('b')
+          expect(c).toEqual('c')
+          expect(d).toEqual('d')
         })
       `,
       errors: [
-        { line: 2, column: 15, messageId: 'noWaitForMultipleAssertion' },
+        { line: 4, column: 11, messageId: 'noWaitForMultipleAssertion' },
+        { line: 5, column: 11, messageId: 'noWaitForMultipleAssertion' },
+        { line: 6, column: 11, messageId: 'noWaitForMultipleAssertion' },
       ],
     },
     {
@@ -187,19 +191,19 @@ ruleTester.run(RULE_NAME, rule, {
         })
       `,
       errors: [
-        { line: 2, column: 15, messageId: 'noWaitForMultipleAssertion' },
+        { line: 5, column: 11, messageId: 'noWaitForMultipleAssertion' },
       ],
     },
     {
       code: `
         await waitFor(async function() {
           expect(a).toEqual('a')
-          await somethingAsync()
+          const el = await somethingAsync()
           expect(b).toEqual('b')
         })
       `,
       errors: [
-        { line: 2, column: 15, messageId: 'noWaitForMultipleAssertion' },
+        { line: 5, column: 11, messageId: 'noWaitForMultipleAssertion' },
       ],
     },
   ],

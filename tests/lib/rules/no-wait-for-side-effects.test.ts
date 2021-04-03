@@ -130,8 +130,8 @@ ruleTester.run(RULE_NAME, rule, {
     {
       settings: { 'testing-library/utils-module': 'test-utils' },
       code: `
-        import { waitFor as renamedWaitFor, fireEvent, userEvent } from 'test-utils';
-        import { waitFor } from 'somewhere-else';
+        import { waitFor as renamedWaitFor, fireEvent } from 'test-utils';
+        import { waitFor, userEvent } from 'somewhere-else';
 
         await waitFor(() => {
           fireEvent.keyDown(input, {key: 'ArrowDown'})
@@ -168,7 +168,7 @@ ruleTester.run(RULE_NAME, rule, {
           fireEvent.keyDown(input, {key: 'ArrowDown'})
         })
       `,
-      errors: [{ line: 3, column: 15, messageId: 'noSideEffectsWaitFor' }],
+      errors: [{ line: 4, column: 11, messageId: 'noSideEffectsWaitFor' }],
     },
     {
       code: `
@@ -177,7 +177,7 @@ ruleTester.run(RULE_NAME, rule, {
           renamedFireEvent.keyDown(input, {key: 'ArrowDown'})
         })
       `,
-      errors: [{ line: 3, column: 15, messageId: 'noSideEffectsWaitFor' }],
+      errors: [{ line: 4, column: 11, messageId: 'noSideEffectsWaitFor' }],
     },
     {
       settings: { 'testing-library/utils-module': '~/test-utils' },
@@ -187,7 +187,7 @@ ruleTester.run(RULE_NAME, rule, {
           fireEvent.keyDown(input, {key: 'ArrowDown'})
         })
       `,
-      errors: [{ line: 3, column: 15, messageId: 'noSideEffectsWaitFor' }],
+      errors: [{ line: 4, column: 11, messageId: 'noSideEffectsWaitFor' }],
     },
     {
       code: `
@@ -197,7 +197,7 @@ ruleTester.run(RULE_NAME, rule, {
           fireEvent.keyDown(input, {key: 'ArrowDown'})
         })
       `,
-      errors: [{ line: 3, column: 15, messageId: 'noSideEffectsWaitFor' }],
+      errors: [{ line: 5, column: 11, messageId: 'noSideEffectsWaitFor' }],
     },
     {
       code: `
@@ -207,7 +207,7 @@ ruleTester.run(RULE_NAME, rule, {
           expect(b).toEqual('b')
         })
       `,
-      errors: [{ line: 3, column: 15, messageId: 'noSideEffectsWaitFor' }],
+      errors: [{ line: 4, column: 11, messageId: 'noSideEffectsWaitFor' }],
     },
     {
       code: `
@@ -216,7 +216,7 @@ ruleTester.run(RULE_NAME, rule, {
           fireEvent.keyDown(input, {key: 'ArrowDown'})
         })
       `,
-      errors: [{ line: 3, column: 15, messageId: 'noSideEffectsWaitFor' }],
+      errors: [{ line: 4, column: 11, messageId: 'noSideEffectsWaitFor' }],
     },
     {
       code: `
@@ -226,7 +226,7 @@ ruleTester.run(RULE_NAME, rule, {
           fireEvent.keyDown(input, {key: 'ArrowDown'})
         })
       `,
-      errors: [{ line: 3, column: 15, messageId: 'noSideEffectsWaitFor' }],
+      errors: [{ line: 5, column: 11, messageId: 'noSideEffectsWaitFor' }],
     },
     {
       code: `
@@ -236,7 +236,7 @@ ruleTester.run(RULE_NAME, rule, {
           expect(b).toEqual('b')
         })
       `,
-      errors: [{ line: 3, column: 15, messageId: 'noSideEffectsWaitFor' }],
+      errors: [{ line: 4, column: 11, messageId: 'noSideEffectsWaitFor' }],
     },
     // userEvent
     {
@@ -246,26 +246,28 @@ ruleTester.run(RULE_NAME, rule, {
           userEvent.click(button)
         })
       `,
-      errors: [{ line: 3, column: 15, messageId: 'noSideEffectsWaitFor' }],
+      errors: [{ line: 4, column: 11, messageId: 'noSideEffectsWaitFor' }],
     },
     {
       code: `
-        import { waitFor, userEvent as renamedUserEvent } from '@testing-library/react';  
+        import { waitFor } from '@testing-library/react';
+        import renamedUserEvent from '@testing-library/user-event'  
         await waitFor(() => {
           renamedUserEvent.click(button)
         })
       `,
-      errors: [{ line: 3, column: 15, messageId: 'noSideEffectsWaitFor' }],
+      errors: [{ line: 5, column: 11, messageId: 'noSideEffectsWaitFor' }],
     },
     {
       settings: { 'testing-library/utils-module': '~/test-utils' },
       code: `
-        import { waitFor, userEvent } from '~/test-utils';  
+        import { waitFor } from '~/test-utils';
+        import userEvent from '@testing-library/user-event'  
         await waitFor(() => {
           userEvent.click();
         })
       `,
-      errors: [{ line: 3, column: 15, messageId: 'noSideEffectsWaitFor' }],
+      errors: [{ line: 5, column: 11, messageId: 'noSideEffectsWaitFor' }],
     },
     {
       code: `
@@ -275,7 +277,7 @@ ruleTester.run(RULE_NAME, rule, {
           userEvent.click(button)
         })
       `,
-      errors: [{ line: 3, column: 15, messageId: 'noSideEffectsWaitFor' }],
+      errors: [{ line: 5, column: 11, messageId: 'noSideEffectsWaitFor' }],
     },
     {
       code: `
@@ -285,7 +287,7 @@ ruleTester.run(RULE_NAME, rule, {
           expect(b).toEqual('b')
         })
       `,
-      errors: [{ line: 3, column: 15, messageId: 'noSideEffectsWaitFor' }],
+      errors: [{ line: 4, column: 11, messageId: 'noSideEffectsWaitFor' }],
     },
     {
       code: `
@@ -294,7 +296,7 @@ ruleTester.run(RULE_NAME, rule, {
           userEvent.click(button)
         })
       `,
-      errors: [{ line: 3, column: 15, messageId: 'noSideEffectsWaitFor' }],
+      errors: [{ line: 4, column: 11, messageId: 'noSideEffectsWaitFor' }],
     },
     {
       code: `
@@ -304,7 +306,7 @@ ruleTester.run(RULE_NAME, rule, {
           userEvent.click(button)
         })
       `,
-      errors: [{ line: 3, column: 15, messageId: 'noSideEffectsWaitFor' }],
+      errors: [{ line: 5, column: 11, messageId: 'noSideEffectsWaitFor' }],
     },
     {
       code: `
@@ -314,7 +316,31 @@ ruleTester.run(RULE_NAME, rule, {
           expect(b).toEqual('b')
         })
       `,
-      errors: [{ line: 3, column: 15, messageId: 'noSideEffectsWaitFor' }],
+      errors: [{ line: 4, column: 11, messageId: 'noSideEffectsWaitFor' }],
+    },
+
+    {
+      settings: { 'testing-library/utils-module': 'test-utils' },
+      code: `// all mixed
+        import { waitFor, fireEvent as renamedFireEvent, screen } from '~/test-utils';
+        import userEvent from '@testing-library/user-event'
+        import { fireEvent } from 'somewhere-else'
+          
+        test('check all mixed', async () => {
+          const button = await screen.findByRole('button')
+          await waitFor(() => {
+            renamedFireEvent.keyDown(input, {key: 'ArrowDown'})
+            expect(b).toEqual('b')
+            fireEvent.keyDown(input, {key: 'ArrowDown'})
+            userEvent.click(button)
+            someBool ? 'a' : 'b' // cover expression statement without identifier for 100% coverage
+          })
+        })
+      `,
+      errors: [
+        { line: 9, column: 13, messageId: 'noSideEffectsWaitFor' },
+        { line: 12, column: 13, messageId: 'noSideEffectsWaitFor' },
+      ],
     },
   ],
 });

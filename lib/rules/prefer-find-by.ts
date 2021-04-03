@@ -16,7 +16,7 @@ export const RULE_NAME = 'prefer-find-by';
 export type MessageIds = 'preferFindBy';
 type Options = [];
 
-export const WAIT_METHODS = ['waitFor', 'waitForElement', 'wait'];
+export const WAIT_METHODS = ['waitFor', 'waitForElement', 'wait'] as const;
 
 export function getFindByQueryVariant(
   queryMethod: string
@@ -54,13 +54,13 @@ export default createTestingLibraryRule<Options, MessageIds>({
     type: 'suggestion',
     docs: {
       description:
-        'Suggest using find* instead of waitFor to wait for elements',
+        'Suggest using `find*` query instead of `waitFor` + `get*` to wait for elements',
       category: 'Best Practices',
       recommended: 'warn',
     },
     messages: {
       preferFindBy:
-        'Prefer {{queryVariant}}{{queryMethod}} method over using await {{fullQuery}}',
+        'Prefer `{{queryVariant}}{{queryMethod}}` query over using `{{waitForMethodName}}` + `{{prevQuery}}`',
     },
     fixable: 'code',
     schema: [],
@@ -72,30 +72,39 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
     /**
      * Reports the invalid usage of wait* plus getBy/QueryBy methods and automatically fixes the scenario
-     * @param {TSESTree.CallExpression} node - The CallExpresion node that contains the wait* method
-     * @param {'findBy' | 'findAllBy'} replacementParams.queryVariant - The variant method used to query: findBy/findByAll.
-     * @param {string} replacementParams.queryMethod - Suffix string to build the query method (the query-part that comes after the "By"): LabelText, Placeholder, Text, Role, Title, etc.
-     * @param {ReportFixFunction} replacementParams.fix - Function that applies the fix to correct the code
+     * @param node - The CallExpresion node that contains the wait* method
+     * @param replacementParams - Object with info for error message and autofix:
+     * @param replacementParams.queryVariant - The variant method used to query: findBy/findAllBy.
+     * @param replacementParams.prevQuery - The query originally used inside `waitFor`
+     * @param replacementParams.queryMethod - Suffix string to build the query method (the query-part that comes after the "By"): LabelText, Placeholder, Text, Role, Title, etc.
+     * @param replacementParams.waitForMethodName - wait for method used: waitFor/wait/waitForElement
+     * @param replacementParams.fix - Function that applies the fix to correct the code
      */
     function reportInvalidUsage(
       node: TSESTree.CallExpression,
-      {
-        queryVariant,
-        queryMethod,
-        fix,
-      }: {
+      replacementParams: {
         queryVariant: 'findBy' | 'findAllBy';
         queryMethod: string;
+        prevQuery: string;
+        waitForMethodName: string;
         fix: TSESLint.ReportFixFunction;
       }
     ) {
+      const {
+        queryMethod,
+        queryVariant,
+        prevQuery,
+        waitForMethodName,
+        fix,
+      } = replacementParams;
       context.report({
         node,
         messageId: 'preferFindBy',
         data: {
           queryVariant,
           queryMethod,
-          fullQuery: sourceCode.getText(node),
+          prevQuery,
+          waitForMethodName,
         },
         fix,
       });
@@ -105,7 +114,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
       'AwaitExpression > CallExpression'(node: TSESTree.CallExpression) {
         if (
           !ASTUtils.isIdentifier(node.callee) ||
-          !WAIT_METHODS.includes(node.callee.name)
+          !helpers.isAsyncUtil(node.callee, WAIT_METHODS)
         ) {
           return;
         }
@@ -118,6 +127,9 @@ export default createTestingLibraryRule<Options, MessageIds>({
         if (!isCallExpression(argument.body)) {
           return;
         }
+
+        const waitForMethodName = node.callee.name;
+
         // ensure here it's one of the sync methods that we are calling
         if (
           isMemberExpression(argument.body.callee) &&
@@ -135,6 +147,8 @@ export default createTestingLibraryRule<Options, MessageIds>({
           reportInvalidUsage(node, {
             queryMethod,
             queryVariant,
+            prevQuery: fullQueryMethod,
+            waitForMethodName,
             fix(fixer) {
               const property = ((argument.body as TSESTree.CallExpression)
                 .callee as TSESTree.MemberExpression).property;
@@ -164,6 +178,8 @@ export default createTestingLibraryRule<Options, MessageIds>({
         reportInvalidUsage(node, {
           queryMethod,
           queryVariant,
+          prevQuery: fullQueryMethod,
+          waitForMethodName,
           fix(fixer) {
             // we know from above callee is an Identifier
             if (
