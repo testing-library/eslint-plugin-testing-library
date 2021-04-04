@@ -625,8 +625,18 @@ export function detectTestingLibraryUtils<
           return userEventIdentifier.local;
         }
       } else {
-        const requireNode = importedUserEventLibraryNode.parent as TSESTree.VariableDeclarator;
-        return requireNode.id as TSESTree.Identifier;
+        if (
+          !ASTUtils.isVariableDeclarator(importedUserEventLibraryNode.parent)
+        ) {
+          return null;
+        }
+
+        const requireNode = importedUserEventLibraryNode.parent;
+        if (!ASTUtils.isIdentifier(requireNode.id)) {
+          return null;
+        }
+
+        return requireNode.id;
       }
 
       return null;
