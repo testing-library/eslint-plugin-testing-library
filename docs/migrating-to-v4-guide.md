@@ -127,7 +127,7 @@ const wrapper = renderWithRedux(<Component />);
 const el = findByIcon('profile');
 ```
 
-How can the `eslint-plugin-testing-library` be aware of this? Until v3, the plugin offered some options to indicate some of these custom things, so the plugin will check them when reporting usages. This can lead to false negatives tho since the users might not be aware of the necessity of indicating such custom utils or just forgot about doing so.
+How can the `eslint-plugin-testing-library` be aware of this? Until v3, the plugin offered some options to indicate some of these custom things, so the plugin would check them when reporting usages. This can lead to false negatives tho since the users might not be aware of the necessity of indicating such custom utils or just forget about doing so.
 
 Instead, in `eslint-plugin-testing-library` v4 we have opted-in a more **aggressive reporting** mechanism which, by default, will assume any method named following the same patterns as Testing Library utils has to be reported too:
 
@@ -145,7 +145,7 @@ const wrapper = renderWithRedux(<Component />);
 const el = findByIcon('profile');
 ```
 
-There are 3 behaviors then that can be aggressively reported: imports, renders, and queries. This new Aggressive Reporting mechanism will just work fine out of the box and won't create false positives. However, it's possible to do some tweaks to disable some of these behaviors using the new [Shared Settings](#shared-settings). We recommend you to keep reading this section to know more about these Aggressive Reporting behaviors and then check the Shared Settings if you think you'd still need it for some particular reason.
+There are 3 behaviors then that can be aggressively reported: imports, renders, and queries. This new Aggressive Reporting mechanism will just work fine out of the box and won't create false positives for most of the users. However, it's possible to do some tweaks to disable some of these behaviors using the new [Shared Settings](#shared-settings). We recommend you to keep reading this section to know more about these Aggressive Reporting behaviors and then check the Shared Settings if you think you'd still need it for some particular reason.
 
 _You can find the motivation behind this behavior on [this issue comment](https://github.com/testing-library/eslint-plugin-testing-library/issues/222#issuecomment-679592434)._
 
