@@ -23,7 +23,7 @@ export const UserEventMethods = [
 type UserEventMethodsType = typeof UserEventMethods[number];
 
 // maps fireEvent methods to userEvent. Those not found here, do not have an equivalent (yet)
-export const MappingToUserEvent: Record<string, UserEventMethodsType[]> = {
+export const MAPPING_TO_USER_EVENT: Record<string, UserEventMethodsType[]> = {
   click: ['click', 'type', 'selectOptions', 'deselectOptions'],
   change: ['upload', 'type', 'clear', 'selectOptions', 'deselectOptions'],
   dblClick: ['dblClick'],
@@ -49,17 +49,14 @@ export const MappingToUserEvent: Record<string, UserEventMethodsType[]> = {
 };
 
 function buildErrorMessage(fireEventMethod: string) {
-  const allMethods = MappingToUserEvent[fireEventMethod].map(
-    (method: string) => `userEvent.${method}()`
+  const userEventMethods = MAPPING_TO_USER_EVENT[fireEventMethod].map(
+    (methodName) => `userEvent.${methodName}`
   );
-  const { length } = allMethods;
 
-  const init = length > 2 ? allMethods.slice(0, length - 2).join(', ') : '';
-  const last = `${length > 1 ? ' or ' : ''}${allMethods[length - 1]}`;
-  return `${init}${last}`;
+  return userEventMethods.join(', ').replace(/, ([a-zA-Z.]+)$/, ', or $1');
 }
 
-const fireEventMappedMethods = Object.keys(MappingToUserEvent);
+const fireEventMappedMethods = Object.keys(MAPPING_TO_USER_EVENT);
 
 export default createTestingLibraryRule<Options, MessageIds>({
   name: RULE_NAME,
@@ -72,7 +69,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
     },
     messages: {
       preferUserEvent:
-        'Prefer using {{userEventMethods}} over fireEvent.{{fireEventMethod}}()',
+        'Prefer using {{userEventMethods}} over fireEvent.{{fireEventMethod}}',
     },
     schema: [
       {
