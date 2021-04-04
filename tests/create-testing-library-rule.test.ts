@@ -311,6 +311,18 @@ ruleTester.run(RULE_NAME, rule, {
     // Weird edge cases
     `(window as any).__THING = false;`,
     `thing.method.lastCall.args[0]();`,
+
+    `// edge case when setting jest-dom up in jest config file - using require
+    require('@testing-library/jest-dom')
+    
+    foo()
+    `,
+
+    `// edge case when setting jest-dom up in jest config file - using import
+    import '@testing-library/jest-dom'
+    
+    foo()
+    `,
   ],
   invalid: [
     // Test Cases for Imports
