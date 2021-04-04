@@ -16,7 +16,7 @@ One of the most important changes of `eslint-plugin-testing-library` v4 is the n
   - `render-result-naming-convention`
 - Shareable Configs updated
   - `recommended` renamed to `dom`
-  - list rules of rules enabled has changed
+  - list of rules enabled has changed
 - Some rules option removed in favor of new Shared Settings + Aggressive Reporting
 - More consistent and flexible core rules detection
 - Tons of errors and small issues fixed
