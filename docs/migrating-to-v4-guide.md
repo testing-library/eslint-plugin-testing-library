@@ -83,7 +83,7 @@ const el = screen.findByRole('button');
 
 ```javascript
 // importing from Custom Module
-import { renderWithRedux, findByIcon } from 'utils';
+import { renderWithRedux, findByIcon } from 'test-utils';
 // ...
 
 // ❓ we don't know if this render has to be reported since it's NOT named `render`
@@ -101,7 +101,7 @@ Instead, in `eslint-plugin-testing-library` v4 we have opted-in a more **aggress
 
 ```javascript
 // importing from Custom Module
-import { renderWithRedux, findByIcon } from 'utils';
+import { renderWithRedux, findByIcon } from 'test-utils';
 // ...
 
 // ✅ this render has to be reported since its name contains "*render*"
@@ -113,25 +113,38 @@ const wrapper = renderWithRedux(<Component />);
 const el = findByIcon('profile');
 ```
 
-There are 3 behaviors then that can be aggressively reported: imports, renders, and queries. This new Aggressive Reporting mechanism will just work fine out of the box and won't create false positives. However, it's possible to do some tweaks to disable some of these behaviors using the new [Shared Settings](#shared-settings). We recommend you keep reading this section to know more about these Aggressive Reporting behaviors, and then check the Shared Settings if you think you'd need them for any particular reason.
+There are 3 behaviors then that can be aggressively reported: imports, renders, and queries. This new Aggressive Reporting mechanism will just work fine out of the box and won't create false positives. However, it's possible to do some tweaks to disable some of these behaviors using the new [Shared Settings](#shared-settings). We recommend you to keep reading this section to know more about these Aggressive Reporting behaviors and then check the Shared Settings if you think you'd still need it for some particular reason.
 
 _You can find the motivation behind this behavior on [this issue comment](https://github.com/testing-library/eslint-plugin-testing-library/issues/222#issuecomment-679592434)._
 
 ### Imports
 
-TODO
+By default, `eslint-plugin-testing-library` v4 won't check from which module are the utils imported. This means it doesn't matter if you are importing the utils from `@testing-library/*`, `test-utils` or `whatever`.
+
+There is a new Shared Setting to restrict this scope tho: [`utils-module`](#utils-module). By using this setting, only utils imported from `@testing-library/*` packages, or the custom one indicated in this setting would be reported.
 
 ### Renders
 
-TODO
+By default, `eslint-plugin-testing-library` v4 will assume that all methods which names contain "render" should be reported. This means it doesn't matter if you are rendering your elements for testing using `render`, `customRender` or `renderWithRedux`.
+
+There is a new Shared Setting to restrict this scope tho: [`custom-renders`](#custom-renders). By using this setting, only methods strictly named `render` or as one of the indicated Custom Renders would be reported.
 
 ### Queries
 
-Testing Library has a set of built-in queries which always follow the pattern `get(All)By*`, `query(All)By*`, or `find(All)By*`. What if we have some custom queries? Before v4, this had to be setup through some options over specific rules. This could lead to silencing errors tho since someone could forget to add a custom query to some custom rule option, so it would never be reported properly.
+`eslint-plugin-testing-library` v4 will assume that all methods named following the pattern `get(All)By*`, `query(All)By*`, or `find(All)By*` are queries to be reported. This means it doesn't matter if you are using a built-in query (`getByText`), or a custom one (`getByIcon`): if it matches this pattern, it will be assumed as a potential query to be reported.
 
-In order to avoid that, since v4, every method found which matches some Testing Library queries patterns will be treated as a valid query to be reported. For instance: `getByText` and `getByIcon` will be assumed as queries to be reported for `no-await-sync-query` rule, no matter if they are built-in (`*ByText`) or custom (`*ByIcon`) ones.
-You don't need to set up anything for this behavior, and there is nothing for now to config it somehow.
+There is no way to restrict this behavior for now.
 
 ## Shared Settings
+
+TODO: link to ESLint shared settings
+
+⚠️ **Please be aware of using these settings will opt-out part of [Aggressive Reporting](#aggressive-reporting).**
+
+### `utils-module`
+
+TODO
+
+### `custom-renders`
 
 TODO
