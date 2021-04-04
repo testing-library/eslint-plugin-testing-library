@@ -50,7 +50,7 @@ This preset has been renamed to clarify there is no "recommended" preset by defa
 
 ### `customQueryNames` rules option has been removed
 
-Until now, those rules reporting errors related to Testing Library queries needed an option called `customQueryNames` so you could specify which extra queries you'd like to report apart from built-in ones. This has been removed in favor of reporting every method matching Testing Library queries pattern. This means every method matching `get(All)By*`, `query(All)By*`, or `find(All)By*` will be reported, so for instance `getByText` and `getByIcon` will be assumed as queries to be reported. The only thing you need to do is removing `customQueryNames` from your rules config if any.
+Until now, those rules reporting errors related to Testing Library queries needed an option called `customQueryNames` so you could specify which extra queries you'd like to report apart from built-in ones. This has been removed in favor of reporting every method matching Testing Library queries pattern. The only thing you need to do is removing `customQueryNames` from your rules config if any. You can read more about it in corresponding [Aggressive Reporting - Queries](#queries) section.
 
 ### `renderFunctions` rules option has been removed
 
@@ -58,7 +58,22 @@ TODO
 
 ## Aggressive Reporting
 
+Motivated by [this issue comment](https://github.com/testing-library/eslint-plugin-testing-library/issues/222#issuecomment-679592434).
+
+### Imports
+
 TODO
+
+### Render
+
+TODO
+
+### Queries
+
+Testing Library has a set of built-in queries which always follow the pattern `get(All)By*`, `query(All)By*`, or `find(All)By*`. What if we have some custom queries? Before v4, this had to be setup through some options over specific rules. This could lead to silencing errors tho since someone could forget to add a custom query to some custom rule option, so it would never be reported properly.
+
+In order to avoid that, since v4, every method found which matches some of Testing Library queries patterns will be treated as a valid query to be reported. For instance: `getByText` and `getByIcon` will be assumed as queries to be reported for `no-await-sync-query` rule, no matter if they are built-in (`*ByText`) or custom (`*ByIcon`) ones.
+You don't need to set up anything for this behavior, and there is nothing for now to config it somehow.
 
 ## Shared Settings
 
