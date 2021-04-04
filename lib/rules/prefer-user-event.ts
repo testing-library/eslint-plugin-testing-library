@@ -53,6 +53,7 @@ function buildErrorMessage(fireEventMethod: string) {
     (methodName) => `userEvent.${methodName}`
   );
 
+  // TODO: when min node version is 13, we can reimplement this using `Intl.ListFormat`
   return userEventMethods.join(', ').replace(/, ([a-zA-Z.]+)$/, ', or $1');
 }
 

@@ -232,7 +232,17 @@ ruleTester.run(RULE_NAME, rule, {
         import * as dom from '${libraryModule}'
         dom.fireEvent.${fireEventMethod}(foo)
       `,
-        errors: [{ messageId: 'preferUserEvent', line: 3, column: 9 }],
+        errors: [
+          {
+            messageId: 'preferUserEvent',
+            line: 3,
+            column: 9,
+            data: {
+              userEventMethods: formatUserEventMethodsMessage(fireEventMethod),
+              fireEventMethod: fireEventMethod,
+            },
+          },
+        ],
       })
     ),
     ...createScenarioWithImport<InvalidTestCase<MessageIds, Options>>(
@@ -241,7 +251,17 @@ ruleTester.run(RULE_NAME, rule, {
         const { fireEvent } = require('${libraryModule}')
         fireEvent.${fireEventMethod}(foo)
       `,
-        errors: [{ messageId: 'preferUserEvent', line: 3, column: 9 }],
+        errors: [
+          {
+            messageId: 'preferUserEvent',
+            line: 3,
+            column: 9,
+            data: {
+              userEventMethods: formatUserEventMethodsMessage(fireEventMethod),
+              fireEventMethod: fireEventMethod,
+            },
+          },
+        ],
       })
     ),
     ...createScenarioWithImport<InvalidTestCase<MessageIds, Options>>(
@@ -250,7 +270,17 @@ ruleTester.run(RULE_NAME, rule, {
         const rtl = require('${libraryModule}')
         rtl.fireEvent.${fireEventMethod}(foo)
       `,
-        errors: [{ messageId: 'preferUserEvent', line: 3, column: 9 }],
+        errors: [
+          {
+            messageId: 'preferUserEvent',
+            line: 3,
+            column: 9,
+            data: {
+              userEventMethods: formatUserEventMethodsMessage(fireEventMethod),
+              fireEventMethod: fireEventMethod,
+            },
+          },
+        ],
       })
     ),
     ...Object.keys(MAPPING_TO_USER_EVENT).map(
@@ -263,7 +293,19 @@ ruleTester.run(RULE_NAME, rule, {
         import * as dom from 'test-utils'
         dom.fireEvent.${fireEventMethod}(foo)
       `,
-          errors: [{ messageId: 'preferUserEvent', line: 3, column: 9 }],
+          errors: [
+            {
+              messageId: 'preferUserEvent',
+              line: 3,
+              column: 9,
+              data: {
+                userEventMethods: formatUserEventMethodsMessage(
+                  fireEventMethod
+                ),
+                fireEventMethod: fireEventMethod,
+              },
+            },
+          ],
         } as const)
     ),
     ...Object.keys(MAPPING_TO_USER_EVENT).map(
@@ -276,7 +318,19 @@ ruleTester.run(RULE_NAME, rule, {
         import { fireEvent } from 'test-utils'
         fireEvent.${fireEventMethod}(foo)
       `,
-          errors: [{ messageId: 'preferUserEvent', line: 3, column: 9 }],
+          errors: [
+            {
+              messageId: 'preferUserEvent',
+              line: 3,
+              column: 9,
+              data: {
+                userEventMethods: formatUserEventMethodsMessage(
+                  fireEventMethod
+                ),
+                fireEventMethod: fireEventMethod,
+              },
+            },
+          ],
         } as const)
     ),
     ...Object.keys(MAPPING_TO_USER_EVENT).map(
@@ -288,7 +342,19 @@ ruleTester.run(RULE_NAME, rule, {
         import { fireEvent } from 'test-utils'
         fireEvent.${fireEventMethod}(foo)
       `,
-          errors: [{ messageId: 'preferUserEvent', line: 5, column: 9 }],
+          errors: [
+            {
+              messageId: 'preferUserEvent',
+              line: 5,
+              column: 9,
+              data: {
+                userEventMethods: formatUserEventMethodsMessage(
+                  fireEventMethod
+                ),
+                fireEventMethod: fireEventMethod,
+              },
+            },
+          ],
         } as const)
     ),
     ...Object.keys(MAPPING_TO_USER_EVENT).map(
@@ -301,7 +367,19 @@ ruleTester.run(RULE_NAME, rule, {
         import { fireEvent as fireEventAliased } from 'test-utils'
         fireEventAliased.${fireEventMethod}(foo)
       `,
-          errors: [{ messageId: 'preferUserEvent', line: 3, column: 9 }],
+          errors: [
+            {
+              messageId: 'preferUserEvent',
+              line: 3,
+              column: 9,
+              data: {
+                userEventMethods: formatUserEventMethodsMessage(
+                  fireEventMethod
+                ),
+                fireEventMethod: fireEventMethod,
+              },
+            },
+          ],
         } as const)
     ),
     {
