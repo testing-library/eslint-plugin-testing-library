@@ -137,14 +137,38 @@ There is no way to restrict this behavior for now.
 
 ## Shared Settings
 
-TODO: link to ESLint shared settings
+ESLint has a setting feature which allows configuring data that must be shared across all its rules: [Shared Settings](https://eslint.org/docs/user-guide/configuring/configuration-files#adding-shared-settings). Since `eslint-plugin-testing-library` v4 we are using this Shared Settings to config global things for the plugin.
 
-⚠️ **Please be aware of using these settings will opt-out part of [Aggressive Reporting](#aggressive-reporting).**
+To avoid collision with settings from other ESLint plugins, all the properties for this one are prefixed with `testing-library/`.
+
+⚠️ **Please be aware of using these settings will disable part of [Aggressive Reporting](#aggressive-reporting).**
 
 ### `utils-module`
 
-TODO
+Relates to [Aggressive Reporting - Imports](#imports). This setting (just a string) allows you to indicate which is the only Custom Module you'd like to be reported by `eslint-plugin-testing-library`.
+
+```json
+// .eslintrc
+{
+  "settings": {
+    "testing-library/utils-module": "my-custom-test-utils"
+  }
+}
+```
+
+The previous setting example would force `eslint-plugin-testing-library` to only report Testing Library utils coming from `@testing-library/*` package or `my-custom-test-utils`, silencing potential errors for utils imported from somewhere else.
 
 ### `custom-renders`
 
-TODO
+Relates to [Aggressive Reporting - Renders](#renders). This setting (array of strings) allows you to indicate which are the only Custom Renders you'd like to be reported by `eslint-plugin-testing-library`.
+
+```json
+// .eslintrc
+{
+  "settings": {
+    "testing-library/custom-renders": ["display", "renderWithProviders"]
+  }
+}
+```
+
+The previous setting example would force `eslint-plugin-testing-library` to only report Testing Library renders named `render` (built-in one is always included), `display` and `renderWithProviders`, silencing potential errors for others custom renders.
