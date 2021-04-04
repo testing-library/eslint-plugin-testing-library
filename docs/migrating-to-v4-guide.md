@@ -14,9 +14,9 @@ One of the most important changes of `eslint-plugin-testing-library` v4 is the n
   - `no-wait-for-side-effects`
   - `prefer-user-event`
   - `render-result-naming-convention`
-- Config presets updated
+- Shareable Configs updated
   - `recommended` renamed to `dom`
-  - `no-wait-for-empty-callback` and `prefer-screen-queries` enabled in presets
+  - list rules of rules enabled has changed
 - Some rules option removed in favor of new Shared Settings + Aggressive Reporting
 - More consistent and flexible core rules detection
 - Tons of errors and small issues fixed
@@ -33,12 +33,11 @@ Make sure you have Node and ESLint installed satisfying these new required versi
 
 ### New errors reported
 
-Since there are two new rules enabled in presets (`no-wait-for-empty-callback` and `prefer-screen-queries`), and v4 also fixes a lot of issues, you might find new errors reported in your codebase.
-Just be aware of this when migrating to v4.
+Since v4 also fixes a lot of issues and detect invalid usages in a more consistent way, you might find new errors reported in your codebase. Just be aware of this when migrating to v4.
 
-### `recommended` preset has been renamed
+### `recommended` Shareable Config has been renamed
 
-If you were using `recommended` preset, it has been renamed to `dom` so you'll need to update it in your ESLint config file:
+If you were using `recommended` Shareable Config, it has been renamed to `dom` so you'll need to update it in your ESLint config file:
 
 ```diff
 {
@@ -48,7 +47,40 @@ If you were using `recommended` preset, it has been renamed to `dom` so you'll n
 }
 ```
 
-This preset has been renamed to clarify there is no _recommended_ preset by default, so it depends on which Testing Library package you are using: DOM, Angular, React, or Vue (for now).
+This Shareable Config has been renamed to clarify there is no _recommended_ config by default, so it depends on which Testing Library package you are using: DOM, Angular, React, or Vue (for now).
+
+### Shareable Configs updated
+
+Shareable Configs have been updated with:
+
+- `dom`
+  - `no-promise-in-fire-event` enabled as "error"
+  - `no-wait-for-empty-callback` enabled as "error"
+  - `prefer-screen-queries` enabled as "error"
+- `angular`
+  - `no-container` enabled as "error"
+  - `no-debug` changed from "warning" to "error"
+  - `no-node-access` enabled as "error"
+  - `no-promise-in-fire-event` enabled as "error"
+  - `no-wait-for-empty-callback` enabled as "error"
+  - `prefer-screen-queries` enabled as "error"
+  - `render-result-naming-convention` enabled as "error"
+- `react`
+  - `no-container` enabled as "error"
+  - `no-debug` changed from "warning" to "error"
+  - `no-node-access` enabled as "error"
+  - `no-promise-in-fire-event` enabled as "error"
+  - `no-wait-for-empty-callback` enabled as "error"
+  - `prefer-screen-queries` enabled as "error"
+  - `render-result-naming-convention` enabled as "error"
+- `vue`
+  - `no-container` enabled as "error"
+  - `no-debug` changed from "warning" to "error"
+  - `no-node-access` enabled as "error"
+  - `no-promise-in-fire-event` enabled as "error"
+  - `no-wait-for-empty-callback` enabled as "error"
+  - `prefer-screen-queries` enabled as "error"
+  - `render-result-naming-convention` enabled as "error"
 
 ### `customQueryNames` rules option has been removed
 
