@@ -5,11 +5,11 @@ import {
 import { createRuleTester } from '../test-utils';
 import { LIBRARY_MODULES } from '../../../lib/utils';
 import rule, {
-  RULE_NAME,
+  MAPPING_TO_USER_EVENT,
   MessageIds,
   Options,
+  RULE_NAME,
   UserEventMethods,
-  MappingToUserEvent,
 } from '../../../lib/rules/prefer-user-event';
 
 function createScenarioWithImport<
@@ -18,7 +18,7 @@ function createScenarioWithImport<
   return LIBRARY_MODULES.reduce(
     (acc: Array<T>, libraryModule) =>
       acc.concat(
-        Object.keys(MappingToUserEvent).map((fireEventMethod) =>
+        Object.keys(MAPPING_TO_USER_EVENT).map((fireEventMethod) =>
           callback(libraryModule, fireEventMethod)
         )
       ),
@@ -27,6 +27,26 @@ function createScenarioWithImport<
 }
 
 const ruleTester = createRuleTester();
+
+function formatUserEventMethodsMessage(fireEventMethod: string): string {
+  const userEventMethods = MAPPING_TO_USER_EVENT[fireEventMethod].map(
+    (methodName) => `userEvent.${methodName}`
+  );
+  let joinedList = '';
+
+  for (let i = 0; i < userEventMethods.length; i++) {
+    const item = userEventMethods[i];
+    if (i === 0) {
+      joinedList += item;
+    } else if (i + 1 === userEventMethods.length) {
+      joinedList += `, or ${item}`;
+    } else {
+      joinedList += `, ${item}`;
+    }
+  }
+
+  return joinedList;
+}
 
 ruleTester.run(RULE_NAME, rule, {
   valid: [
@@ -132,7 +152,7 @@ ruleTester.run(RULE_NAME, rule, {
         userEvent.${userEventMethod}(foo)
       `,
     })),
-    ...Object.keys(MappingToUserEvent).map((fireEventMethod: string) => ({
+    ...Object.keys(MAPPING_TO_USER_EVENT).map((fireEventMethod: string) => ({
       settings: {
         'testing-library/utils-module': 'test-utils',
       },
@@ -143,7 +163,7 @@ ruleTester.run(RULE_NAME, rule, {
         fireEvent.${fireEventMethod}(foo)
       `,
     })),
-    ...Object.keys(MappingToUserEvent).map((fireEventMethod: string) => ({
+    ...Object.keys(MAPPING_TO_USER_EVENT).map((fireEventMethod: string) => ({
       settings: {
         'testing-library/utils-module': 'test-utils',
       },
@@ -154,7 +174,7 @@ ruleTester.run(RULE_NAME, rule, {
     `,
       options: [{ allowedMethods: [fireEventMethod] }],
     })),
-    ...Object.keys(MappingToUserEvent).map((fireEventMethod: string) => ({
+    ...Object.keys(MAPPING_TO_USER_EVENT).map((fireEventMethod: string) => ({
       settings: {
         'testing-library/utils-module': 'test-utils',
       },
@@ -165,7 +185,7 @@ ruleTester.run(RULE_NAME, rule, {
     `,
       options: [{ allowedMethods: [fireEventMethod] }],
     })),
-    ...Object.keys(MappingToUserEvent).map((fireEventMethod: string) => ({
+    ...Object.keys(MAPPING_TO_USER_EVENT).map((fireEventMethod: string) => ({
       settings: {
         'testing-library/utils-module': 'test-utils',
       },
@@ -198,6 +218,10 @@ ruleTester.run(RULE_NAME, rule, {
             messageId: 'preferUserEvent',
             line: 4,
             column: 9,
+            data: {
+              userEventMethods: formatUserEventMethodsMessage(fireEventMethod),
+              fireEventMethod: fireEventMethod,
+            },
           },
         ],
       })
@@ -208,7 +232,17 @@ ruleTester.run(RULE_NAME, rule, {
         import * as dom from '${libraryModule}'
         dom.fireEvent.${fireEventMethod}(foo)
       `,
-        errors: [{ messageId: 'preferUserEvent', line: 3, column: 9 }],
+        errors: [
+          {
+            messageId: 'preferUserEvent',
+            line: 3,
+            column: 9,
+            data: {
+              userEventMethods: formatUserEventMethodsMessage(fireEventMethod),
+              fireEventMethod: fireEventMethod,
+            },
+          },
+        ],
       })
     ),
     ...createScenarioWithImport<InvalidTestCase<MessageIds, Options>>(
@@ -217,7 +251,17 @@ ruleTester.run(RULE_NAME, rule, {
         const { fireEvent } = require('${libraryModule}')
         fireEvent.${fireEventMethod}(foo)
       `,
-        errors: [{ messageId: 'preferUserEvent', line: 3, column: 9 }],
+        errors: [
+          {
+            messageId: 'preferUserEvent',
+            line: 3,
+            column: 9,
+            data: {
+              userEventMethods: formatUserEventMethodsMessage(fireEventMethod),
+              fireEventMethod: fireEventMethod,
+            },
+          },
+        ],
       })
     ),
     ...createScenarioWithImport<InvalidTestCase<MessageIds, Options>>(
@@ -226,10 +270,20 @@ ruleTester.run(RULE_NAME, rule, {
         const rtl = require('${libraryModule}')
         rtl.fireEvent.${fireEventMethod}(foo)
       `,
-        errors: [{ messageId: 'preferUserEvent', line: 3, column: 9 }],
+        errors: [
+          {
+            messageId: 'preferUserEvent',
+            line: 3,
+            column: 9,
+            data: {
+              userEventMethods: formatUserEventMethodsMessage(fireEventMethod),
+              fireEventMethod: fireEventMethod,
+            },
+          },
+        ],
       })
     ),
-    ...Object.keys(MappingToUserEvent).map(
+    ...Object.keys(MAPPING_TO_USER_EVENT).map(
       (fireEventMethod: string) =>
         ({
           settings: {
@@ -239,10 +293,22 @@ ruleTester.run(RULE_NAME, rule, {
         import * as dom from 'test-utils'
         dom.fireEvent.${fireEventMethod}(foo)
       `,
-          errors: [{ messageId: 'preferUserEvent', line: 3, column: 9 }],
+          errors: [
+            {
+              messageId: 'preferUserEvent',
+              line: 3,
+              column: 9,
+              data: {
+                userEventMethods: formatUserEventMethodsMessage(
+                  fireEventMethod
+                ),
+                fireEventMethod: fireEventMethod,
+              },
+            },
+          ],
         } as const)
     ),
-    ...Object.keys(MappingToUserEvent).map(
+    ...Object.keys(MAPPING_TO_USER_EVENT).map(
       (fireEventMethod: string) =>
         ({
           settings: {
@@ -252,10 +318,22 @@ ruleTester.run(RULE_NAME, rule, {
         import { fireEvent } from 'test-utils'
         fireEvent.${fireEventMethod}(foo)
       `,
-          errors: [{ messageId: 'preferUserEvent', line: 3, column: 9 }],
+          errors: [
+            {
+              messageId: 'preferUserEvent',
+              line: 3,
+              column: 9,
+              data: {
+                userEventMethods: formatUserEventMethodsMessage(
+                  fireEventMethod
+                ),
+                fireEventMethod: fireEventMethod,
+              },
+            },
+          ],
         } as const)
     ),
-    ...Object.keys(MappingToUserEvent).map(
+    ...Object.keys(MAPPING_TO_USER_EVENT).map(
       (fireEventMethod: string) =>
         ({
           code: `
@@ -264,10 +342,22 @@ ruleTester.run(RULE_NAME, rule, {
         import { fireEvent } from 'test-utils'
         fireEvent.${fireEventMethod}(foo)
       `,
-          errors: [{ messageId: 'preferUserEvent', line: 5, column: 9 }],
+          errors: [
+            {
+              messageId: 'preferUserEvent',
+              line: 5,
+              column: 9,
+              data: {
+                userEventMethods: formatUserEventMethodsMessage(
+                  fireEventMethod
+                ),
+                fireEventMethod: fireEventMethod,
+              },
+            },
+          ],
         } as const)
     ),
-    ...Object.keys(MappingToUserEvent).map(
+    ...Object.keys(MAPPING_TO_USER_EVENT).map(
       (fireEventMethod: string) =>
         ({
           settings: {
@@ -277,7 +367,19 @@ ruleTester.run(RULE_NAME, rule, {
         import { fireEvent as fireEventAliased } from 'test-utils'
         fireEventAliased.${fireEventMethod}(foo)
       `,
-          errors: [{ messageId: 'preferUserEvent', line: 3, column: 9 }],
+          errors: [
+            {
+              messageId: 'preferUserEvent',
+              line: 3,
+              column: 9,
+              data: {
+                userEventMethods: formatUserEventMethodsMessage(
+                  fireEventMethod
+                ),
+                fireEventMethod: fireEventMethod,
+              },
+            },
+          ],
         } as const)
     ),
     {
@@ -285,6 +387,7 @@ ruleTester.run(RULE_NAME, rule, {
       import { fireEvent } from '@testing-library/react'
 
       fireEvent.click(element)
+      fireEvent.mouseOut(element)
       `,
       errors: [
         {
@@ -295,8 +398,19 @@ ruleTester.run(RULE_NAME, rule, {
           endColumn: 22,
           data: {
             userEventMethods:
-              'userEvent.click(), userEvent.type() or userEvent.deselectOptions()',
+              'userEvent.click, userEvent.type, userEvent.selectOptions, or userEvent.deselectOptions',
             fireEventMethod: 'click',
+          },
+        },
+        {
+          messageId: 'preferUserEvent',
+          line: 5,
+          endLine: 5,
+          column: 7,
+          endColumn: 25,
+          data: {
+            userEventMethods: 'userEvent.unhover',
+            fireEventMethod: 'mouseOut',
           },
         },
       ],
