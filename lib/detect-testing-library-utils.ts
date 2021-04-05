@@ -17,6 +17,7 @@ import {
   isImportSpecifier,
   isLiteral,
   isMemberExpression,
+  isObjectPattern,
   isProperty,
 } from './node-utils';
 import {
@@ -582,7 +583,10 @@ export function detectTestingLibraryUtils<
         // it could be "import * as rtl from 'baz'"
         return node.specifiers.find((n) => isImportNamespaceSpecifier(n));
       } else {
-        const requireNode = node.parent as TSESTree.VariableDeclarator;
+        if (!ASTUtils.isVariableDeclarator(node.parent)) {
+          return undefined;
+        }
+        const requireNode = node.parent;
 
         if (ASTUtils.isIdentifier(requireNode.id)) {
           // this is const rtl = require('foo')
@@ -590,8 +594,11 @@ export function detectTestingLibraryUtils<
         }
 
         // this should be const { something } = require('foo')
-        const destructuring = requireNode.id as TSESTree.ObjectPattern;
-        const property = destructuring.properties.find(
+        if (!isObjectPattern(requireNode.id)) {
+          return undefined;
+        }
+
+        const property = requireNode.id.properties.find(
           (n) =>
             isProperty(n) &&
             ASTUtils.isIdentifier(n.key) &&
@@ -618,8 +625,18 @@ export function detectTestingLibraryUtils<
           return userEventIdentifier.local;
         }
       } else {
-        const requireNode = importedUserEventLibraryNode.parent as TSESTree.VariableDeclarator;
-        return requireNode.id as TSESTree.Identifier;
+        if (
+          !ASTUtils.isVariableDeclarator(importedUserEventLibraryNode.parent)
+        ) {
+          return null;
+        }
+
+        const requireNode = importedUserEventLibraryNode.parent;
+        if (!ASTUtils.isIdentifier(requireNode.id)) {
+          return null;
+        }
+
+        return requireNode.id;
       }
 
       return null;

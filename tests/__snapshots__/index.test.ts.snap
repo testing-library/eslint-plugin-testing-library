@@ -10,7 +10,7 @@ Object {
     "testing-library/await-async-utils": "error",
     "testing-library/no-await-sync-query": "error",
     "testing-library/no-container": "error",
-    "testing-library/no-debug": "warn",
+    "testing-library/no-debug": "error",
     "testing-library/no-dom-import": Array [
       "error",
       "angular",
@@ -20,7 +20,6 @@ Object {
     "testing-library/no-wait-for-empty-callback": "error",
     "testing-library/prefer-find-by": "error",
     "testing-library/prefer-screen-queries": "error",
-    "testing-library/prefer-user-event": "warn",
     "testing-library/render-result-naming-convention": "error",
   },
 }
@@ -39,7 +38,6 @@ Object {
     "testing-library/no-wait-for-empty-callback": "error",
     "testing-library/prefer-find-by": "error",
     "testing-library/prefer-screen-queries": "error",
-    "testing-library/prefer-user-event": "warn",
   },
 }
 `;
@@ -54,7 +52,7 @@ Object {
     "testing-library/await-async-utils": "error",
     "testing-library/no-await-sync-query": "error",
     "testing-library/no-container": "error",
-    "testing-library/no-debug": "warn",
+    "testing-library/no-debug": "error",
     "testing-library/no-dom-import": Array [
       "error",
       "react",
@@ -64,7 +62,6 @@ Object {
     "testing-library/no-wait-for-empty-callback": "error",
     "testing-library/prefer-find-by": "error",
     "testing-library/prefer-screen-queries": "error",
-    "testing-library/prefer-user-event": "warn",
     "testing-library/render-result-naming-convention": "error",
   },
 }
@@ -81,7 +78,7 @@ Object {
     "testing-library/await-fire-event": "error",
     "testing-library/no-await-sync-query": "error",
     "testing-library/no-container": "error",
-    "testing-library/no-debug": "warn",
+    "testing-library/no-debug": "error",
     "testing-library/no-dom-import": Array [
       "error",
       "vue",
@@ -91,7 +88,6 @@ Object {
     "testing-library/no-wait-for-empty-callback": "error",
     "testing-library/prefer-find-by": "error",
     "testing-library/prefer-screen-queries": "error",
-    "testing-library/prefer-user-event": "warn",
     "testing-library/render-result-naming-convention": "error",
   },
 }
