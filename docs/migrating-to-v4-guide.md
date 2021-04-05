@@ -84,9 +84,7 @@ Shareable Configs have been updated with:
 
 ### `customQueryNames` rules option has been removed
 
-Until now, 
-
-se rules reporting errors related to Testing Library queries needed an option called `customQueryNames` so you could specify which extra queries you'd like to report apart from built-in ones. This option has been removed in favor of reporting every method matching Testing Library queries pattern. The only thing you need to do is removing `customQueryNames` from your rules config if any. You can read more about it in corresponding [Aggressive Reporting - Queries](#queries) section.
+Until now, those rules reporting errors related to Testing Library queries needed an option called `customQueryNames` so you could specify which extra queries you'd like to report apart from built-in ones. This option has been removed in favor of reporting every method matching Testing Library queries pattern. The only thing you need to do is removing `customQueryNames` from your rules config if any. You can read more about it in corresponding [Aggressive Reporting - Queries](#queries) section.
 
 ### `renderFunctions` rules option has been removed
 
