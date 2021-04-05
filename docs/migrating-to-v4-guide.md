@@ -84,7 +84,9 @@ Shareable Configs have been updated with:
 
 ### `customQueryNames` rules option has been removed
 
-Until now, those rules reporting errors related to Testing Library queries needed an option called `customQueryNames` so you could specify which extra queries you'd like to report apart from built-in ones. This option has been removed in favor of reporting every method matching Testing Library queries pattern. The only thing you need to do is removing `customQueryNames` from your rules config if any. You can read more about it in corresponding [Aggressive Reporting - Queries](#queries) section.
+Until now, 
+
+se rules reporting errors related to Testing Library queries needed an option called `customQueryNames` so you could specify which extra queries you'd like to report apart from built-in ones. This option has been removed in favor of reporting every method matching Testing Library queries pattern. The only thing you need to do is removing `customQueryNames` from your rules config if any. You can read more about it in corresponding [Aggressive Reporting - Queries](#queries) section.
 
 ### `renderFunctions` rules option has been removed
 
@@ -127,7 +129,7 @@ const wrapper = renderWithRedux(<Component />);
 const el = findByIcon('profile');
 ```
 
-How can the `eslint-plugin-testing-library` be aware of this? Until v3, the plugin offered some options to indicate some of these custom things, so the plugin would check them when reporting usages. This can lead to false negatives tho since the users might not be aware of the necessity of indicating such custom utils or just forget about doing so.
+How can the `eslint-plugin-testing-library` be aware of this? Until v3, the plugin offered some options to indicate some of these custom things, so the plugin would check them when reporting usages. This can lead to false negatives though since the users might not be aware of the necessity of indicating such custom utils or just forget about doing so.
 
 Instead, in `eslint-plugin-testing-library` v4 we have opted-in a more **aggressive reporting** mechanism which, by default, will assume any method named following the same patterns as Testing Library utils has to be reported too:
 
@@ -153,13 +155,13 @@ _You can find the motivation behind this behavior on [this issue comment](https:
 
 By default, `eslint-plugin-testing-library` v4 won't check from which module are the utils imported. This means it doesn't matter if you are importing the utils from `@testing-library/*`, `test-utils` or `whatever`.
 
-There is a new Shared Setting to restrict this scope tho: [`utils-module`](#utils-module). By using this setting, only utils imported from `@testing-library/*` packages, or the custom one indicated in this setting would be reported.
+There is a new Shared Setting to restrict this scope though: [`utils-module`](#utils-module). By using this setting, only utils imported from `@testing-library/*` packages, or the custom one indicated in this setting would be reported.
 
 ### Renders
 
 By default, `eslint-plugin-testing-library` v4 will assume that all methods which names contain "render" should be reported. This means it doesn't matter if you are rendering your elements for testing using `render`, `customRender` or `renderWithRedux`.
 
-There is a new Shared Setting to restrict this scope tho: [`custom-renders`](#custom-renders). By using this setting, only methods strictly named `render` or as one of the indicated Custom Renders would be reported.
+There is a new Shared Setting to restrict this scope though: [`custom-renders`](#custom-renders). By using this setting, only methods strictly named `render` or as one of the indicated Custom Renders would be reported.
 
 ### Queries
 
