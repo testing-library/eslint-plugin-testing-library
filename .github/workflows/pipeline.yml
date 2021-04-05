@@ -45,7 +45,7 @@ jobs:
         run: npm run lint
 
       - name: Check format
-        run: npm run format:check -- --max-warnings 0
+        run: npm run format:check
 
   tests:
     name: Tests (Node v${{ matrix.node }} - ESLint v${{ matrix.eslint }})
