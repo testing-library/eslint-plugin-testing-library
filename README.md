@@ -32,17 +32,25 @@
 
 You'll first need to install [ESLint](http://eslint.org):
 
-```
-$ npm i eslint --save-dev
+```shell
+$ npm install --save-dev eslint
+# or
+$ yarn add --dev eslint
 ```
 
 Next, install `eslint-plugin-testing-library`:
 
-```
-$ npm install eslint-plugin-testing-library --save-dev
+```shell
+$ npm install --save-dev eslint-plugin-testing-library
+# or
+$ yarn add --dev eslint-plugin-testing-library
 ```
 
 **Note:** If you installed ESLint globally (using the `-g` flag) then you must also install `eslint-plugin-testing-library` globally.
+
+## Migrating to v4
+
+You can find [here a detailed guide for migrating `eslint-plugin-testing-library` to v4](docs/migrating-to-v4-guide.md).
 
 ## Usage
 
@@ -54,14 +62,15 @@ Add `testing-library` to the plugins section of your `.eslintrc` configuration f
 }
 ```
 
-Then configure the rules you want to use under the rules section.
+Then configure the rules you want to use within `rules` property of your `.eslintrc`:
 
 ```json
 {
   "rules": {
     "testing-library/await-async-query": "error",
     "testing-library/no-await-sync-query": "error",
-    "testing-library/no-debug": "warn"
+    "testing-library/no-debug": "warn",
+    "testing-library/no-dom-import": "off"
   }
 }
 ```
@@ -69,7 +78,21 @@ Then configure the rules you want to use under the rules section.
 ## Shareable configurations
 
 This plugin exports several recommended configurations that enforce good practices for specific Testing Library packages.
-You can find more info about enabled rules in the [Supported Rules section](#supported-rules) within the `Configurations` column.
+You can find more info about enabled rules in the [Supported Rules section](#supported-rules), under the `Configurations` column.
+
+Since each one of these configurations is aimed at a particular Testing Library package, they are not extendable between them, so you should use only one of them at once per `eslintrc` file. For example, if you want to enable recommended configuration for React, you don't need to combine it somehow with DOM one:
+
+```json
+// ❌ Don't do this
+{
+  "extends": ["plugin:testing-library/dom", "plugin:testing-library/react"]
+}
+
+// ✅ Do just this instead
+{
+  "extends": ["plugin:testing-library/react"]
+}
+```
 
 ### DOM Testing Library
 
@@ -121,6 +144,107 @@ To enable this configuration use the `extends` property in your
 {
   "extends": ["plugin:testing-library/vue"]
 }
+```
+
+## Configuration
+
+There are some configuration options available that will be shared across all the plugin rules. This is achieved using [ESLint Shared Settings](https://eslint.org/docs/user-guide/configuring/configuration-files#adding-shared-settings). These shared settings are meant to be used if you need to restrict the Aggressive Reporting mechanism, **so please before configuring any of these settings**, read more about [`eslint-plugin-testing-library` Aggressive Reporting mechanism](docs/migrating-to-v4-guide.md#aggressive-reporting), and [how it's affected by these settings](docs/migrating-to-v4-guide.md#shared-settings).
+
+If you are sure about configuring the settings, these are the options available:
+
+### `testing-library/utils-module`
+
+The name of your custom utility file from where you re-export everything from Testing Library package. Relates to [Aggressive Reporting - Imports](docs/migrating-to-v4-guide.md#imports).
+
+```json
+// .eslintrc
+{
+  "settings": {
+    "testing-library/utils-module": "my-custom-test-utility-file"
+  }
+}
+```
+
+Enabling this setting, you'll restrict the errors reported by the plugin to only those utils being imported from this custom utility file, or some `@testing-library/*` package. The previous setting example would cause:
+
+```javascript
+import { waitFor } from '@testing-library/react';
+
+test('testing-library/utils-module setting example', () => {
+  // ✅ this would be reported since this invalid usage of an util
+  // is imported from `@testing-library/*` package
+  waitFor(/* some invalid usage to be reported */);
+});
+```
+
+```javascript
+import { waitFor } from '../my-custom-test-utility-file';
+
+test('testing-library/utils-module setting example', () => {
+  // ✅ this would be reported since this invalid usage of an util
+  // is imported from specified custom utility file.
+  waitFor(/* some invalid usage to be reported */);
+});
+```
+
+```javascript
+import { waitFor } from '../somewhere-else';
+
+test('testing-library/utils-module setting example', () => {
+  // ❌ this would NOT be reported since this invalid usage of an util
+  // is NOT imported from either `@testing-library/*` package or specified custom utility file.
+  waitFor(/* some invalid usage to be reported */);
+});
+```
+
+### `testing-library/custom-renders`
+
+A list of function names that are valid as Testing Library custom renders. Relates to [Aggressive Reporting - Renders](docs/migrating-to-v4-guide.md#renders)
+
+```json
+// .eslintrc
+{
+  "settings": {
+    "testing-library/custom-renders": ["display", "renderWithProviders"]
+  }
+}
+```
+
+Enabling this setting, you'll restrict the errors reported by the plugin related to `render` somehow to only those functions sharing a name with one of the elements of that list, or built-in `render`. The previous setting example would cause:
+
+```javascript
+import {
+  render,
+  display,
+  renderWithProviders,
+  renderWithRedux,
+} from 'test-utils';
+import Component from 'somewhere';
+
+const setupA = () => renderWithProviders(<Component />);
+const setupB = () => renderWithRedux(<Component />);
+
+test('testing-library/custom-renders setting example', () => {
+  // ✅ this would be reported since `render` is a built-in Testing Library util
+  const invalidUsage = render(<Component />);
+
+  // ✅ this would be reported since `display` has been set as `custom-render`
+  const invalidUsage = display(<Component />);
+
+  // ✅ this would be reported since `renderWithProviders` has been set as `custom-render`
+  const invalidUsage = renderWithProviders(<Component />);
+
+  // ❌ this would NOT be reported since `renderWithRedux` isn't a `custom-render` or built-in one
+  const invalidUsage = renderWithRedux(<Component />);
+
+  // ✅ this would be reported since it wraps `renderWithProviders`,
+  // which has been set as `custom-render`
+  const invalidUsage = setupA(<Component />);
+
+  // ❌ this would NOT be reported since it wraps `renderWithRedux`,
+  // which isn't a `custom-render` or built-in one
+  const invalidUsage = setupB(<Component />);
+});
 ```
 
 ## Supported Rules

@@ -153,13 +153,13 @@ _You can find the motivation behind this behavior on [this issue comment](https:
 
 By default, `eslint-plugin-testing-library` v4 won't check from which module are the utils imported. This means it doesn't matter if you are importing the utils from `@testing-library/*`, `test-utils` or `whatever`.
 
-There is a new Shared Setting to restrict this scope though: [`utils-module`](#utils-module). By using this setting, only utils imported from `@testing-library/*` packages, or the custom one indicated in this setting would be reported.
+There is a new Shared Setting to restrict this scope though: [`utils-module`](#testing-libraryutils-module). By using this setting, only utils imported from `@testing-library/*` packages, or the custom one indicated in this setting would be reported.
 
 ### Renders
 
 By default, `eslint-plugin-testing-library` v4 will assume that all methods which names contain "render" should be reported. This means it doesn't matter if you are rendering your elements for testing using `render`, `customRender` or `renderWithRedux`.
 
-There is a new Shared Setting to restrict this scope though: [`custom-renders`](#custom-renders). By using this setting, only methods strictly named `render` or as one of the indicated Custom Renders would be reported.
+There is a new Shared Setting to restrict this scope though: [`custom-renders`](#testing-librarycustom-renders). By using this setting, only methods strictly named `render` or as one of the indicated Custom Renders would be reported.
 
 ### Queries
 
@@ -175,7 +175,7 @@ To avoid collision with settings from other ESLint plugins, all the properties f
 
 ⚠️ **Please be aware of using these settings will disable part of [Aggressive Reporting](#aggressive-reporting).**
 
-### `utils-module`
+### `testing-library/utils-module`
 
 Relates to [Aggressive Reporting - Imports](#imports). This setting (just a string) allows you to indicate which is the only Custom Module you'd like to be reported by `eslint-plugin-testing-library`.
 
@@ -183,14 +183,14 @@ Relates to [Aggressive Reporting - Imports](#imports). This setting (just a stri
 // .eslintrc
 {
   "settings": {
-    "testing-library/utils-module": "my-custom-test-utils"
+    "testing-library/utils-module": "my-custom-test-utility-file"
   }
 }
 ```
 
-The previous setting example would force `eslint-plugin-testing-library` to only report Testing Library utils coming from `@testing-library/*` package or `my-custom-test-utils`, silencing potential errors for utils imported from somewhere else.
+The previous setting example would force `eslint-plugin-testing-library` to only report Testing Library utils coming from `@testing-library/*` package or `my-custom-test-utility-file`, silencing potential errors for utils imported from somewhere else.
 
-### `custom-renders`
+### `testing-library/custom-renders`
 
 Relates to [Aggressive Reporting - Renders](#renders). This setting (array of strings) allows you to indicate which are the only Custom Renders you'd like to be reported by `eslint-plugin-testing-library`.
 
