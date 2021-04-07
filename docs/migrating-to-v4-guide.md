@@ -177,7 +177,7 @@ To avoid collision with settings from other ESLint plugins, all the properties f
 
 ### `testing-library/utils-module`
 
-Relates to [Aggressive Reporting - Imports](#imports). This setting (just a string) allows you to indicate which is the only Custom Module you'd like to be reported by `eslint-plugin-testing-library`.
+The name of your custom utility file from where you re-export everything from Testing Library package. Relates to [Aggressive Reporting - Imports](#imports).
 
 ```json
 // .eslintrc
@@ -188,11 +188,41 @@ Relates to [Aggressive Reporting - Imports](#imports). This setting (just a stri
 }
 ```
 
-The previous setting example would force `eslint-plugin-testing-library` to only report Testing Library utils coming from `@testing-library/*` package or `my-custom-test-utility-file`, silencing potential errors for utils imported from somewhere else.
+Enabling this setting, you'll restrict the errors reported by the plugin to only those utils being imported from this custom utility file, or some `@testing-library/*` package. The previous setting example would cause:
+
+```javascript
+import { waitFor } from '@testing-library/react';
+
+test('testing-library/utils-module setting example', () => {
+  // ✅ this would be reported since this invalid usage of an util
+  // is imported from `@testing-library/*` package
+  waitFor(/* some invalid usage to be reported */);
+});
+```
+
+```javascript
+import { waitFor } from '../my-custom-test-utility-file';
+
+test('testing-library/utils-module setting example', () => {
+  // ✅ this would be reported since this invalid usage of an util
+  // is imported from specified custom utility file.
+  waitFor(/* some invalid usage to be reported */);
+});
+```
+
+```javascript
+import { waitFor } from '../somewhere-else';
+
+test('testing-library/utils-module setting example', () => {
+  // ❌ this would NOT be reported since this invalid usage of an util
+  // is NOT imported from either `@testing-library/*` package or specified custom utility file.
+  waitFor(/* some invalid usage to be reported */);
+});
+```
 
 ### `testing-library/custom-renders`
 
-Relates to [Aggressive Reporting - Renders](#renders). This setting (array of strings) allows you to indicate which are the only Custom Renders you'd like to be reported by `eslint-plugin-testing-library`.
+A list of function names that are valid as Testing Library custom renders. Relates to [Aggressive Reporting - Renders](#renders)
 
 ```json
 // .eslintrc
@@ -203,4 +233,39 @@ Relates to [Aggressive Reporting - Renders](#renders). This setting (array of st
 }
 ```
 
-The previous setting example would force `eslint-plugin-testing-library` to only report Testing Library renders named `render` (built-in one is always included), `display` and `renderWithProviders`, silencing potential errors for others custom renders.
+Enabling this setting, you'll restrict the errors reported by the plugin related to `render` somehow to only those functions sharing a name with one of the elements of that list, or built-in `render`. The previous setting example would cause:
+
+```javascript
+import {
+  render,
+  display,
+  renderWithProviders,
+  renderWithRedux,
+} from 'test-utils';
+import Component from 'somewhere';
+
+const setupA = () => renderWithProviders(<Component />);
+const setupB = () => renderWithRedux(<Component />);
+
+test('testing-library/custom-renders setting example', () => {
+  // ✅ this would be reported since `render` is a built-in Testing Library util
+  const invalidUsage = render(<Component />);
+
+  // ✅ this would be reported since `display` has been set as `custom-render`
+  const invalidUsage = display(<Component />);
+
+  // ✅ this would be reported since `renderWithProviders` has been set as `custom-render`
+  const invalidUsage = renderWithProviders(<Component />);
+
+  // ❌ this would NOT be reported since `renderWithRedux` isn't a `custom-render` or built-in one
+  const invalidUsage = renderWithRedux(<Component />);
+
+  // ✅ this would be reported since it wraps `renderWithProviders`,
+  // which has been set as `custom-render`
+  const invalidUsage = setupA(<Component />);
+
+  // ❌ this would NOT be reported since it wraps `renderWithRedux`,
+  // which isn't a `custom-render` or built-in one
+  const invalidUsage = setupB(<Component />);
+});
+```

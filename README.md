@@ -146,107 +146,6 @@ To enable this configuration use the `extends` property in your
 }
 ```
 
-## Configuration
-
-There are some configuration options available that will be shared across all the plugin rules. This is achieved using [ESLint Shared Settings](https://eslint.org/docs/user-guide/configuring/configuration-files#adding-shared-settings). These shared settings are meant to be used if you need to restrict the Aggressive Reporting mechanism, **so please before configuring any of these settings**, read more about [`eslint-plugin-testing-library` Aggressive Reporting mechanism](docs/migrating-to-v4-guide.md#aggressive-reporting), and [how it's affected by these settings](docs/migrating-to-v4-guide.md#shared-settings).
-
-If you are sure about configuring the settings, these are the options available:
-
-### `testing-library/utils-module`
-
-The name of your custom utility file from where you re-export everything from Testing Library package. Relates to [Aggressive Reporting - Imports](docs/migrating-to-v4-guide.md#imports).
-
-```json
-// .eslintrc
-{
-  "settings": {
-    "testing-library/utils-module": "my-custom-test-utility-file"
-  }
-}
-```
-
-Enabling this setting, you'll restrict the errors reported by the plugin to only those utils being imported from this custom utility file, or some `@testing-library/*` package. The previous setting example would cause:
-
-```javascript
-import { waitFor } from '@testing-library/react';
-
-test('testing-library/utils-module setting example', () => {
-  // ✅ this would be reported since this invalid usage of an util
-  // is imported from `@testing-library/*` package
-  waitFor(/* some invalid usage to be reported */);
-});
-```
-
-```javascript
-import { waitFor } from '../my-custom-test-utility-file';
-
-test('testing-library/utils-module setting example', () => {
-  // ✅ this would be reported since this invalid usage of an util
-  // is imported from specified custom utility file.
-  waitFor(/* some invalid usage to be reported */);
-});
-```
-
-```javascript
-import { waitFor } from '../somewhere-else';
-
-test('testing-library/utils-module setting example', () => {
-  // ❌ this would NOT be reported since this invalid usage of an util
-  // is NOT imported from either `@testing-library/*` package or specified custom utility file.
-  waitFor(/* some invalid usage to be reported */);
-});
-```
-
-### `testing-library/custom-renders`
-
-A list of function names that are valid as Testing Library custom renders. Relates to [Aggressive Reporting - Renders](docs/migrating-to-v4-guide.md#renders)
-
-```json
-// .eslintrc
-{
-  "settings": {
-    "testing-library/custom-renders": ["display", "renderWithProviders"]
-  }
-}
-```
-
-Enabling this setting, you'll restrict the errors reported by the plugin related to `render` somehow to only those functions sharing a name with one of the elements of that list, or built-in `render`. The previous setting example would cause:
-
-```javascript
-import {
-  render,
-  display,
-  renderWithProviders,
-  renderWithRedux,
-} from 'test-utils';
-import Component from 'somewhere';
-
-const setupA = () => renderWithProviders(<Component />);
-const setupB = () => renderWithRedux(<Component />);
-
-test('testing-library/custom-renders setting example', () => {
-  // ✅ this would be reported since `render` is a built-in Testing Library util
-  const invalidUsage = render(<Component />);
-
-  // ✅ this would be reported since `display` has been set as `custom-render`
-  const invalidUsage = display(<Component />);
-
-  // ✅ this would be reported since `renderWithProviders` has been set as `custom-render`
-  const invalidUsage = renderWithProviders(<Component />);
-
-  // ❌ this would NOT be reported since `renderWithRedux` isn't a `custom-render` or built-in one
-  const invalidUsage = renderWithRedux(<Component />);
-
-  // ✅ this would be reported since it wraps `renderWithProviders`,
-  // which has been set as `custom-render`
-  const invalidUsage = setupA(<Component />);
-
-  // ❌ this would NOT be reported since it wraps `renderWithRedux`,
-  // which isn't a `custom-render` or built-in one
-  const invalidUsage = setupB(<Component />);
-});
-```
-
 ## Supported Rules
 
 | Rule                                                                                             | Description                                                                              | Configurations                                                    | Fixable            |
@@ -295,6 +194,43 @@ test('testing-library/custom-renders setting example', () => {
 [angular-badge]: https://img.shields.io/badge/-Angular-black?style=flat-square&logo=angular&logoColor=white&labelColor=DD0031&color=black
 [react-badge]: https://img.shields.io/badge/-React-black?style=flat-square&logo=react&logoColor=white&labelColor=61DAFB&color=black
 [vue-badge]: https://img.shields.io/badge/-Vue-black?style=flat-square&logo=vue.js&logoColor=white&labelColor=4FC08D&color=black
+
+
+## Shared Settings
+
+There are some configuration options available that will be shared across all the plugin rules. This is achieved using [ESLint Shared Settings](https://eslint.org/docs/user-guide/configuring/configuration-files#adding-shared-settings). These Shared Settings are meant to be used if you need to restrict the Aggressive Reporting mechanism, which is an out of the box advanced feature to lint Testing Library usages in a simpler way for most of the users. **So please before configuring any of these settings**, read more about [the advantages of `eslint-plugin-testing-library` Aggressive Reporting mechanism](docs/migrating-to-v4-guide.md#aggressive-reporting), and [how it's affected by these settings](docs/migrating-to-v4-guide.md#shared-settings).
+
+If you are sure about configuring the settings, these are the options available:
+
+### `testing-library/utils-module`
+
+The name of your custom utility file from where you re-export everything from Testing Library package. 
+
+```json
+// .eslintrc
+{
+  "settings": {
+    "testing-library/utils-module": "my-custom-test-utility-file"
+  }
+}
+```
+
+[You can find more details here](docs/migrating-to-v4-guide.md#testing-libraryutils-module).
+
+### `testing-library/custom-renders`
+
+A list of function names that are valid as Testing Library custom renders. Relates to [Aggressive Reporting - Renders](docs/migrating-to-v4-guide.md#renders)
+
+```json
+// .eslintrc
+{
+  "settings": {
+    "testing-library/custom-renders": ["display", "renderWithProviders"]
+  }
+}
+```
+
+[You can find more details here](docs/migrating-to-v4-guide.md#testing-librarycustom-renders).
 
 ## Contributors ✨
 
