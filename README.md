@@ -195,7 +195,6 @@ To enable this configuration use the `extends` property in your
 [react-badge]: https://img.shields.io/badge/-React-black?style=flat-square&logo=react&logoColor=white&labelColor=61DAFB&color=black
 [vue-badge]: https://img.shields.io/badge/-Vue-black?style=flat-square&logo=vue.js&logoColor=white&labelColor=4FC08D&color=black
 
-
 ## Shared Settings
 
 There are some configuration options available that will be shared across all the plugin rules. This is achieved using [ESLint Shared Settings](https://eslint.org/docs/user-guide/configuring/configuration-files#adding-shared-settings). These Shared Settings are meant to be used if you need to restrict the Aggressive Reporting mechanism, which is an out of the box advanced feature to lint Testing Library usages in a simpler way for most of the users. **So please before configuring any of these settings**, read more about [the advantages of `eslint-plugin-testing-library` Aggressive Reporting mechanism](docs/migrating-to-v4-guide.md#aggressive-reporting), and [how it's affected by these settings](docs/migrating-to-v4-guide.md#shared-settings).
@@ -204,7 +203,7 @@ If you are sure about configuring the settings, these are the options available:
 
 ### `testing-library/utils-module`
 
-The name of your custom utility file from where you re-export everything from Testing Library package. 
+The name of your custom utility file from where you re-export everything from Testing Library package.
 
 ```json
 // .eslintrc
