@@ -32,17 +32,25 @@
 
 You'll first need to install [ESLint](http://eslint.org):
 
-```
-$ npm i eslint --save-dev
+```shell
+$ npm install --save-dev eslint
+# or
+$ yarn add --dev eslint
 ```
 
 Next, install `eslint-plugin-testing-library`:
 
-```
-$ npm install eslint-plugin-testing-library --save-dev
+```shell
+$ npm install --save-dev eslint-plugin-testing-library
+# or
+$ yarn add --dev eslint-plugin-testing-library
 ```
 
 **Note:** If you installed ESLint globally (using the `-g` flag) then you must also install `eslint-plugin-testing-library` globally.
+
+## Migrating to v4
+
+You can find [here a detailed guide for migrating `eslint-plugin-testing-library` to v4](docs/migrating-to-v4-guide.md).
 
 ## Usage
 
@@ -54,14 +62,15 @@ Add `testing-library` to the plugins section of your `.eslintrc` configuration f
 }
 ```
 
-Then configure the rules you want to use under the rules section.
+Then configure the rules you want to use within `rules` property of your `.eslintrc`:
 
 ```json
 {
   "rules": {
     "testing-library/await-async-query": "error",
     "testing-library/no-await-sync-query": "error",
-    "testing-library/no-debug": "warn"
+    "testing-library/no-debug": "warn",
+    "testing-library/no-dom-import": "off"
   }
 }
 ```
@@ -69,7 +78,21 @@ Then configure the rules you want to use under the rules section.
 ## Shareable configurations
 
 This plugin exports several recommended configurations that enforce good practices for specific Testing Library packages.
-You can find more info about enabled rules in the [Supported Rules section](#supported-rules) within the `Configurations` column.
+You can find more info about enabled rules in the [Supported Rules section](#supported-rules), under the `Configurations` column.
+
+Since each one of these configurations is aimed at a particular Testing Library package, they are not extendable between them, so you should use only one of them at once per `eslintrc` file. For example, if you want to enable recommended configuration for React, you don't need to combine it somehow with DOM one:
+
+```json
+// ❌ Don't do this
+{
+  "extends": ["plugin:testing-library/dom", "plugin:testing-library/react"]
+}
+
+// ✅ Do just this instead
+{
+  "extends": ["plugin:testing-library/react"]
+}
+```
 
 ### DOM Testing Library
 
@@ -171,6 +194,42 @@ To enable this configuration use the `extends` property in your
 [angular-badge]: https://img.shields.io/badge/-Angular-black?style=flat-square&logo=angular&logoColor=white&labelColor=DD0031&color=black
 [react-badge]: https://img.shields.io/badge/-React-black?style=flat-square&logo=react&logoColor=white&labelColor=61DAFB&color=black
 [vue-badge]: https://img.shields.io/badge/-Vue-black?style=flat-square&logo=vue.js&logoColor=white&labelColor=4FC08D&color=black
+
+## Shared Settings
+
+There are some configuration options available that will be shared across all the plugin rules. This is achieved using [ESLint Shared Settings](https://eslint.org/docs/user-guide/configuring/configuration-files#adding-shared-settings). These Shared Settings are meant to be used if you need to restrict the Aggressive Reporting mechanism, which is an out of the box advanced feature to lint Testing Library usages in a simpler way for most of the users. **So please before configuring any of these settings**, read more about [the advantages of `eslint-plugin-testing-library` Aggressive Reporting mechanism](docs/migrating-to-v4-guide.md#aggressive-reporting), and [how it's affected by these settings](docs/migrating-to-v4-guide.md#shared-settings).
+
+If you are sure about configuring the settings, these are the options available:
+
+### `testing-library/utils-module`
+
+The name of your custom utility file from where you re-export everything from Testing Library package.
+
+```json
+// .eslintrc
+{
+  "settings": {
+    "testing-library/utils-module": "my-custom-test-utility-file"
+  }
+}
+```
+
+[You can find more details here](docs/migrating-to-v4-guide.md#testing-libraryutils-module).
+
+### `testing-library/custom-renders`
+
+A list of function names that are valid as Testing Library custom renders. Relates to [Aggressive Reporting - Renders](docs/migrating-to-v4-guide.md#renders)
+
+```json
+// .eslintrc
+{
+  "settings": {
+    "testing-library/custom-renders": ["display", "renderWithProviders"]
+  }
+}
+```
+
+[You can find more details here](docs/migrating-to-v4-guide.md#testing-librarycustom-renders).
 
 ## Contributors ✨
 

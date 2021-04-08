@@ -153,13 +153,13 @@ _You can find the motivation behind this behavior on [this issue comment](https:
 
 By default, `eslint-plugin-testing-library` v4 won't check from which module are the utils imported. This means it doesn't matter if you are importing the utils from `@testing-library/*`, `test-utils` or `whatever`.
 
-There is a new Shared Setting to restrict this scope though: [`utils-module`](#utils-module). By using this setting, only utils imported from `@testing-library/*` packages, or the custom one indicated in this setting would be reported.
+There is a new Shared Setting to restrict this scope though: [`utils-module`](#testing-libraryutils-module). By using this setting, only utils imported from `@testing-library/*` packages, or the custom one indicated in this setting would be reported.
 
 ### Renders
 
 By default, `eslint-plugin-testing-library` v4 will assume that all methods which names contain "render" should be reported. This means it doesn't matter if you are rendering your elements for testing using `render`, `customRender` or `renderWithRedux`.
 
-There is a new Shared Setting to restrict this scope though: [`custom-renders`](#custom-renders). By using this setting, only methods strictly named `render` or as one of the indicated Custom Renders would be reported.
+There is a new Shared Setting to restrict this scope though: [`custom-renders`](#testing-librarycustom-renders). By using this setting, only methods strictly named `render` or as one of the indicated Custom Renders would be reported.
 
 ### Queries
 
@@ -175,24 +175,54 @@ To avoid collision with settings from other ESLint plugins, all the properties f
 
 ⚠️ **Please be aware of using these settings will disable part of [Aggressive Reporting](#aggressive-reporting).**
 
-### `utils-module`
+### `testing-library/utils-module`
 
-Relates to [Aggressive Reporting - Imports](#imports). This setting (just a string) allows you to indicate which is the only Custom Module you'd like to be reported by `eslint-plugin-testing-library`.
+The name of your custom utility file from where you re-export everything from Testing Library package. Relates to [Aggressive Reporting - Imports](#imports).
 
 ```json
 // .eslintrc
 {
   "settings": {
-    "testing-library/utils-module": "my-custom-test-utils"
+    "testing-library/utils-module": "my-custom-test-utility-file"
   }
 }
 ```
 
-The previous setting example would force `eslint-plugin-testing-library` to only report Testing Library utils coming from `@testing-library/*` package or `my-custom-test-utils`, silencing potential errors for utils imported from somewhere else.
+Enabling this setting, you'll restrict the errors reported by the plugin to only those utils being imported from this custom utility file, or some `@testing-library/*` package. The previous setting example would cause:
 
-### `custom-renders`
+```javascript
+import { waitFor } from '@testing-library/react';
 
-Relates to [Aggressive Reporting - Renders](#renders). This setting (array of strings) allows you to indicate which are the only Custom Renders you'd like to be reported by `eslint-plugin-testing-library`.
+test('testing-library/utils-module setting example', () => {
+  // ✅ this would be reported since this invalid usage of an util
+  // is imported from `@testing-library/*` package
+  waitFor(/* some invalid usage to be reported */);
+});
+```
+
+```javascript
+import { waitFor } from '../my-custom-test-utility-file';
+
+test('testing-library/utils-module setting example', () => {
+  // ✅ this would be reported since this invalid usage of an util
+  // is imported from specified custom utility file.
+  waitFor(/* some invalid usage to be reported */);
+});
+```
+
+```javascript
+import { waitFor } from '../somewhere-else';
+
+test('testing-library/utils-module setting example', () => {
+  // ❌ this would NOT be reported since this invalid usage of an util
+  // is NOT imported from either `@testing-library/*` package or specified custom utility file.
+  waitFor(/* some invalid usage to be reported */);
+});
+```
+
+### `testing-library/custom-renders`
+
+A list of function names that are valid as Testing Library custom renders. Relates to [Aggressive Reporting - Renders](#renders)
 
 ```json
 // .eslintrc
@@ -203,4 +233,39 @@ Relates to [Aggressive Reporting - Renders](#renders). This setting (array of st
 }
 ```
 
-The previous setting example would force `eslint-plugin-testing-library` to only report Testing Library renders named `render` (built-in one is always included), `display` and `renderWithProviders`, silencing potential errors for others custom renders.
+Enabling this setting, you'll restrict the errors reported by the plugin related to `render` somehow to only those functions sharing a name with one of the elements of that list, or built-in `render`. The previous setting example would cause:
+
+```javascript
+import {
+  render,
+  display,
+  renderWithProviders,
+  renderWithRedux,
+} from 'test-utils';
+import Component from 'somewhere';
+
+const setupA = () => renderWithProviders(<Component />);
+const setupB = () => renderWithRedux(<Component />);
+
+test('testing-library/custom-renders setting example', () => {
+  // ✅ this would be reported since `render` is a built-in Testing Library util
+  const invalidUsage = render(<Component />);
+
+  // ✅ this would be reported since `display` has been set as `custom-render`
+  const invalidUsage = display(<Component />);
+
+  // ✅ this would be reported since `renderWithProviders` has been set as `custom-render`
+  const invalidUsage = renderWithProviders(<Component />);
+
+  // ❌ this would NOT be reported since `renderWithRedux` isn't a `custom-render` or built-in one
+  const invalidUsage = renderWithRedux(<Component />);
+
+  // ✅ this would be reported since it wraps `renderWithProviders`,
+  // which has been set as `custom-render`
+  const invalidUsage = setupA(<Component />);
+
+  // ❌ this would NOT be reported since it wraps `renderWithRedux`,
+  // which isn't a `custom-render` or built-in one
+  const invalidUsage = setupB(<Component />);
+});
+```
