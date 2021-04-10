@@ -5,7 +5,10 @@
   "keywords": [
     "eslint",
     "eslintplugin",
-    "eslint-plugin"
+    "eslint-plugin",
+    "lint",
+    "testing-library",
+    "testing"
   ],
   "author": {
     "name": "Mario Beltrán Alarcón",

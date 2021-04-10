@@ -35,13 +35,13 @@ export default createTestingLibraryRule<Options, MessageIds>({
   meta: {
     type: 'suggestion',
     docs: {
-      description: 'Suggest using screen while using queries',
+      description: 'Suggest using screen while querying',
       category: 'Best Practices',
       recommended: 'error',
     },
     messages: {
       preferScreenQueries:
-        'Use screen to query DOM elements, `screen.{{ name }}`',
+        'Avoid destructuring queries from `render` result, use `screen.{{ name }}` instead',
     },
     schema: [],
   },
