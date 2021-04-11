@@ -53,8 +53,8 @@ jobs:
 
     strategy:
       matrix:
-        node: [ '10.22.1', '10', '12', '14' ]
-        eslint: [ '7.5', '7', ]
+        node: [ 10.12, 10, 12, 14 ]
+        eslint: [ 7.5, 7 ]
 
     steps:
       - name: Cancel Previous Runs

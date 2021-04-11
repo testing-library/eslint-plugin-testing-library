@@ -26,10 +26,10 @@ One of the most important changes of `eslint-plugin-testing-library` v4 is the n
 
 ### Dependencies
 
-- Min Node version required is `10.22.1`
 - Min ESLint version required is `7.5`
+- Min Node version required didn't change (`10.12`)
 
-Make sure you have Node and ESLint installed satisfying these new required versions.
+Please make sure you have Node and ESLint installed satisfying these required versions.
 
 ### New errors reported
 
