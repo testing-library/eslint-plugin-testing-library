@@ -97,7 +97,7 @@ This new `helpers` available in the `create` of the rule gives you access to a b
 - `isAbsenceAssert`
 - `isNodeComingFromTestingLibrary`
 
-Our custom Rule Creator will take care also of common checks like making sure Testing Library is imported, or verify Shared Settings. You don't need to implement in your rule anything to check if there is some import related to Testing Library or anything similar anymore, just stick to the `helpers` received as a 3rd parameter in your `create` function.
+Our custom Rule Creator will also take care of common checks like making sure Testing Library is imported, or verify Shared Settings. You don't need to implement anything to check if there is some import related to Testing Library or anything similar in your rule anymore, just stick to the `helpers` received as a 3rd parameter in your `create` function.
 
 If you need some check related to Testing Library which is not available in any existing helper, feel free to implement a new one. You need to make sure to:
 
