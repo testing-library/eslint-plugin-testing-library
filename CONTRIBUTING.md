@@ -73,7 +73,7 @@ Additionally, you need to do a couple of extra things:
 
 ### Custom rule creator
 
-In v4 we introduced several improvements not only for the final users but for contributors too. Now there is a custom Rule Creator available called `createTestingLibraryRule` which should be the default Rule Creator used in this plugin. This Testing Library Rule Creator extends TSESLint Rule Creator to enhance rules automatically, so it prevents rules to be reported if nothing related to Testing Library found, and injects a 3rd parameter within `create` function: `helpers`.
+In v4 we introduced several improvements for both the final users as for contributors. Now there is a custom Rule Creator available called `createTestingLibraryRule` which should be the default Rule Creator used in this plugin. This Testing Library Rule Creator extends TSESLint Rule Creator to enhance rules automatically, so it prevents rules to be reported if nothing related to Testing Library found, and injects a 3rd parameter within `create` function: `helpers`.
 
 This new `helpers` available in the `create` of the rule gives you access to a bunch of utils to detect things related to Testing Library. You can find all of them in `detect-testing-library-utils.ts` file, but these are some helpers available:
 
@@ -118,9 +118,9 @@ A couple of things you need to remember when editing already existing rules:
 
 When writing tests for a new or existing rule, please make sure to follow these guidelines:
 
-###Write real-ish scenarios
+### Write real-ish scenarios
 
-Since the plugin will report differently depending on Testing Library package is imported and Shared Settings are enabled, writing more realistic scenarios is pretty important. Ideally, you should:
+Since the plugin will report differently depending on which Testing Library package is imported and what Shared Settings are enabled, writing more realistic scenarios is pretty important. Ideally, you should:
 
 - wrap the code for your rule with a real test file structure, something like
 
