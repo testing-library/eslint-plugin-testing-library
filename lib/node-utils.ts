@@ -1,114 +1,150 @@
 import {
   AST_NODE_TYPES,
+  ASTUtils,
+  TSESLint,
+  TSESLintScope,
   TSESTree,
 } from '@typescript-eslint/experimental-utils';
 import { RuleContext } from '@typescript-eslint/experimental-utils/dist/ts-eslint';
 
+const ValidLeftHandSideExpressions = [
+  AST_NODE_TYPES.CallExpression,
+  AST_NODE_TYPES.ClassExpression,
+  AST_NODE_TYPES.ClassDeclaration,
+  AST_NODE_TYPES.FunctionExpression,
+  AST_NODE_TYPES.Literal,
+  AST_NODE_TYPES.TemplateLiteral,
+  AST_NODE_TYPES.MemberExpression,
+  AST_NODE_TYPES.ArrayExpression,
+  AST_NODE_TYPES.ArrayPattern,
+  AST_NODE_TYPES.ClassExpression,
+  AST_NODE_TYPES.FunctionExpression,
+  AST_NODE_TYPES.Identifier,
+  AST_NODE_TYPES.JSXElement,
+  AST_NODE_TYPES.JSXFragment,
+  AST_NODE_TYPES.JSXOpeningElement,
+  AST_NODE_TYPES.MetaProperty,
+  AST_NODE_TYPES.ObjectExpression,
+  AST_NODE_TYPES.ObjectPattern,
+  AST_NODE_TYPES.Super,
+  AST_NODE_TYPES.ThisExpression,
+  AST_NODE_TYPES.TSNullKeyword,
+  AST_NODE_TYPES.TaggedTemplateExpression,
+  AST_NODE_TYPES.TSNonNullExpression,
+  AST_NODE_TYPES.TSAsExpression,
+  AST_NODE_TYPES.ArrowFunctionExpression,
+];
+
 export function isCallExpression(
-  node: TSESTree.Node
+  node: TSESTree.Node | null | undefined
 ): node is TSESTree.CallExpression {
-  return node && node.type === AST_NODE_TYPES.CallExpression;
+  return node?.type === AST_NODE_TYPES.CallExpression;
 }
 
-export function isIdentifier(node: TSESTree.Node): node is TSESTree.Identifier {
-  return node && node.type === AST_NODE_TYPES.Identifier;
+export function isNewExpression(
+  node: TSESTree.Node | null | undefined
+): node is TSESTree.NewExpression {
+  return node?.type === 'NewExpression';
 }
 
 export function isMemberExpression(
-  node: TSESTree.Node
+  node: TSESTree.Node | null | undefined
 ): node is TSESTree.MemberExpression {
-  return node && node.type === AST_NODE_TYPES.MemberExpression;
+  return node?.type === AST_NODE_TYPES.MemberExpression;
 }
 
-export function isLiteral(node: TSESTree.Node): node is TSESTree.Literal {
-  return node && node.type === AST_NODE_TYPES.Literal;
+export function isLiteral(
+  node: TSESTree.Node | null | undefined
+): node is TSESTree.Literal {
+  return node?.type === AST_NODE_TYPES.Literal;
 }
 
 export function isImportSpecifier(
-  node: TSESTree.Node
+  node: TSESTree.Node | null | undefined
 ): node is TSESTree.ImportSpecifier {
-  return node && node.type === AST_NODE_TYPES.ImportSpecifier;
+  return node?.type === AST_NODE_TYPES.ImportSpecifier;
 }
 
 export function isImportNamespaceSpecifier(
-  node: TSESTree.Node
+  node: TSESTree.Node | null | undefined
 ): node is TSESTree.ImportNamespaceSpecifier {
-  return node?.type === AST_NODE_TYPES.ImportNamespaceSpecifier
+  return node?.type === AST_NODE_TYPES.ImportNamespaceSpecifier;
 }
 
 export function isImportDefaultSpecifier(
-  node: TSESTree.Node
+  node: TSESTree.Node | null | undefined
 ): node is TSESTree.ImportDefaultSpecifier {
-  return node && node.type === AST_NODE_TYPES.ImportDefaultSpecifier;
+  return node?.type === AST_NODE_TYPES.ImportDefaultSpecifier;
 }
 
 export function isBlockStatement(
-  node: TSESTree.Node
+  node: TSESTree.Node | null | undefined
 ): node is TSESTree.BlockStatement {
-  return node && node.type === AST_NODE_TYPES.BlockStatement;
-}
-
-export function isVariableDeclarator(
-  node: TSESTree.Node
-): node is TSESTree.VariableDeclarator {
-  return node && node.type === AST_NODE_TYPES.VariableDeclarator;
-}
-
-export function isRenderFunction(
-  callNode: TSESTree.CallExpression,
-  renderFunctions: string[]
-) {
-  // returns true for `render` and e.g. `customRenderFn`
-  // as well as `someLib.render` and `someUtils.customRenderFn`
-  return renderFunctions.some(name => {
-    return (
-      (isIdentifier(callNode.callee) && name === callNode.callee.name) ||
-      (isMemberExpression(callNode.callee) &&
-        isIdentifier(callNode.callee.property) &&
-        name === callNode.callee.property.name)
-    );
-  });
+  return node?.type === AST_NODE_TYPES.BlockStatement;
 }
 
 export function isObjectPattern(
-  node: TSESTree.Node
+  node: TSESTree.Node | null | undefined
 ): node is TSESTree.ObjectPattern {
-  return node && node.type === AST_NODE_TYPES.ObjectPattern;
+  return node?.type === AST_NODE_TYPES.ObjectPattern;
 }
 
-export function isProperty(node: TSESTree.Node): node is TSESTree.Property {
-  return node && node.type === AST_NODE_TYPES.Property;
+export function isProperty(
+  node: TSESTree.Node | null | undefined
+): node is TSESTree.Property {
+  return node?.type === AST_NODE_TYPES.Property;
 }
 
 export function isJSXAttribute(
-  node: TSESTree.Node
+  node: TSESTree.Node | null | undefined
 ): node is TSESTree.JSXAttribute {
-  return node && node.type === AST_NODE_TYPES.JSXAttribute;
+  return node?.type === AST_NODE_TYPES.JSXAttribute;
 }
 
+export function isExpressionStatement(
+  node: TSESTree.Node | null | undefined
+): node is TSESTree.ExpressionStatement {
+  return node?.type === AST_NODE_TYPES.ExpressionStatement;
+}
+
+/**
+ * Finds the closest CallExpression node for a given node.
+ * @param node
+ * @param shouldRestrictInnerScope - If true, CallExpression must belong to innermost scope of given node
+ */
 export function findClosestCallExpressionNode(
-  node: TSESTree.Node
-): TSESTree.CallExpression {
+  node: TSESTree.Node,
+  shouldRestrictInnerScope = false
+): TSESTree.CallExpression | null {
   if (isCallExpression(node)) {
     return node;
   }
 
-  if (!node.parent) return null;
+  if (!node || !node.parent) {
+    return null;
+  }
 
-  return findClosestCallExpressionNode(node.parent);
+  if (
+    shouldRestrictInnerScope &&
+    !ValidLeftHandSideExpressions.includes(node.parent.type)
+  ) {
+    return null;
+  }
+
+  return findClosestCallExpressionNode(node.parent, shouldRestrictInnerScope);
 }
 
 export function findClosestCallNode(
   node: TSESTree.Node,
   name: string
-): TSESTree.CallExpression {
+): TSESTree.CallExpression | null {
   if (!node.parent) {
     return null;
   }
 
   if (
     isCallExpression(node) &&
-    isIdentifier(node.callee) &&
+    ASTUtils.isIdentifier(node.callee) &&
     node.callee.name === name
   ) {
     return node;
@@ -123,65 +159,442 @@ export function isObjectExpression(
   return node?.type === AST_NODE_TYPES.ObjectExpression;
 }
 
-export function hasThenProperty(node: TSESTree.Node) {
+export function hasThenProperty(node: TSESTree.Node): boolean {
   return (
     isMemberExpression(node) &&
-    isIdentifier(node.property) &&
+    ASTUtils.isIdentifier(node.property) &&
     node.property.name === 'then'
   );
-}
-
-export function isAwaitExpression(
-  node: TSESTree.Node
-): node is TSESTree.AwaitExpression {
-  return node && node.type === AST_NODE_TYPES.AwaitExpression;
 }
 
 export function isArrowFunctionExpression(
   node: TSESTree.Node
 ): node is TSESTree.ArrowFunctionExpression {
-  return node && node.type === AST_NODE_TYPES.ArrowFunctionExpression;
+  return node?.type === AST_NODE_TYPES.ArrowFunctionExpression;
 }
 
 export function isReturnStatement(
   node: TSESTree.Node
 ): node is TSESTree.ReturnStatement {
-  return node && node.type === AST_NODE_TYPES.ReturnStatement;
+  return node?.type === AST_NODE_TYPES.ReturnStatement;
 }
 
 export function isArrayExpression(
   node: TSESTree.Node
 ): node is TSESTree.ArrayExpression {
-  return node?.type === AST_NODE_TYPES.ArrayExpression
+  return node?.type === AST_NODE_TYPES.ArrayExpression;
 }
 
-export function isAwaited(node: TSESTree.Node) {
-  return (
-    isAwaitExpression(node) ||
-    isArrowFunctionExpression(node) ||
-    isReturnStatement(node)
-  );
+export function isImportDeclaration(
+  node: TSESTree.Node | null | undefined
+): node is TSESTree.ImportDeclaration {
+  return node?.type === AST_NODE_TYPES.ImportDeclaration;
 }
 
-export function isPromiseResolved(node: TSESTree.Node) {
+export function hasChainedThen(node: TSESTree.Node): boolean {
   const parent = node.parent;
 
   // wait(...).then(...)
-  if (isCallExpression(parent)) {
+  if (isCallExpression(parent) && parent.parent) {
     return hasThenProperty(parent.parent);
   }
 
   // promise.then(...)
-  return hasThenProperty(parent);
+  return !!parent && hasThenProperty(parent);
+}
+
+export function isPromiseIdentifier(
+  node: TSESTree.Node
+): node is TSESTree.Identifier & { name: 'Promise' } {
+  return ASTUtils.isIdentifier(node) && node.name === 'Promise';
+}
+
+export function isPromiseAll(node: TSESTree.CallExpression): boolean {
+  return (
+    isMemberExpression(node.callee) &&
+    isPromiseIdentifier(node.callee.object) &&
+    ASTUtils.isIdentifier(node.callee.property) &&
+    node.callee.property.name === 'all'
+  );
+}
+
+export function isPromiseAllSettled(node: TSESTree.CallExpression): boolean {
+  return (
+    isMemberExpression(node.callee) &&
+    isPromiseIdentifier(node.callee.object) &&
+    ASTUtils.isIdentifier(node.callee.property) &&
+    node.callee.property.name === 'allSettled'
+  );
+}
+
+/**
+ * Determines whether a given node belongs to handled Promise.all or Promise.allSettled
+ * array expression.
+ */
+export function isPromisesArrayResolved(node: TSESTree.Node): boolean {
+  const closestCallExpression = findClosestCallExpressionNode(node, true);
+
+  if (!closestCallExpression) {
+    return false;
+  }
+
+  return (
+    !!closestCallExpression.parent &&
+    isArrayExpression(closestCallExpression.parent) &&
+    isCallExpression(closestCallExpression.parent.parent) &&
+    (isPromiseAll(closestCallExpression.parent.parent) ||
+      isPromiseAllSettled(closestCallExpression.parent.parent))
+  );
+}
+
+/**
+ * Determines whether an Identifier related to a promise is considered as handled.
+ *
+ * It will be considered as handled if:
+ * - it belongs to the `await` expression
+ * - it belongs to the `Promise.all` method
+ * - it belongs to the `Promise.allSettled` method
+ * - it's chained with the `then` method
+ * - it's returned from a function
+ * - has `resolves` or `rejects` jest methods
+ */
+export function isPromiseHandled(nodeIdentifier: TSESTree.Identifier): boolean {
+  const closestCallExpressionNode = findClosestCallExpressionNode(
+    nodeIdentifier,
+    true
+  );
+
+  const suspiciousNodes = [nodeIdentifier, closestCallExpressionNode].filter(
+    Boolean
+  );
+
+  for (const node of suspiciousNodes) {
+    if (!node || !node.parent) {
+      continue;
+    }
+    if (ASTUtils.isAwaitExpression(node.parent)) {
+      return true;
+    }
+
+    if (
+      isArrowFunctionExpression(node.parent) ||
+      isReturnStatement(node.parent)
+    ) {
+      return true;
+    }
+
+    if (hasClosestExpectResolvesRejects(node.parent)) {
+      return true;
+    }
+
+    if (hasChainedThen(node)) {
+      return true;
+    }
+
+    if (isPromisesArrayResolved(node)) {
+      return true;
+    }
+  }
+
+  return false;
 }
 
 export function getVariableReferences(
   context: RuleContext<string, []>,
   node: TSESTree.Node
-) {
+): TSESLint.Scope.Reference[] {
   return (
-    (isVariableDeclarator(node) &&
-      context.getDeclaredVariables(node)[0].references.slice(1)) ||
+    (ASTUtils.isVariableDeclarator(node) &&
+      context.getDeclaredVariables(node)[0]?.references?.slice(1)) ||
     []
   );
+}
+
+interface InnermostFunctionScope extends TSESLintScope.FunctionScope {
+  block:
+    | TSESTree.FunctionDeclaration
+    | TSESTree.FunctionExpression
+    | TSESTree.ArrowFunctionExpression;
+}
+
+export function getInnermostFunctionScope(
+  context: RuleContext<string, unknown[]>,
+  asyncQueryNode: TSESTree.Identifier
+): InnermostFunctionScope | null {
+  const innermostScope = ASTUtils.getInnermostScope(
+    context.getScope(),
+    asyncQueryNode
+  );
+
+  if (
+    innermostScope?.type === 'function' &&
+    ASTUtils.isFunction(innermostScope.block)
+  ) {
+    return (innermostScope as unknown) as InnermostFunctionScope;
+  }
+
+  return null;
+}
+
+export function getFunctionReturnStatementNode(
+  functionNode:
+    | TSESTree.FunctionDeclaration
+    | TSESTree.FunctionExpression
+    | TSESTree.ArrowFunctionExpression
+): TSESTree.Node | null {
+  if (isBlockStatement(functionNode.body)) {
+    // regular function or arrow function with block
+    const returnStatementNode = functionNode.body.body.find((statement) =>
+      isReturnStatement(statement)
+    ) as TSESTree.ReturnStatement | undefined;
+
+    if (!returnStatementNode) {
+      return null;
+    }
+    return returnStatementNode.argument;
+  } else if (functionNode.expression) {
+    // arrow function with implicit return
+    return functionNode.body;
+  }
+
+  return null;
+}
+
+/**
+ * Gets the property identifier node of a given property node.
+ *
+ * Not to be confused with {@link getDeepestIdentifierNode}
+ *
+ * An example:
+ * Having `const a = rtl.within('foo').getByRole('button')`:
+ *  if we call `getPropertyIdentifierNode` with `rtl` property node,
+ *  it will return `rtl` identifier node
+ */
+export function getPropertyIdentifierNode(
+  node: TSESTree.Node
+): TSESTree.Identifier | null {
+  if (ASTUtils.isIdentifier(node)) {
+    return node;
+  }
+
+  if (isMemberExpression(node)) {
+    return getPropertyIdentifierNode(node.object);
+  }
+
+  if (isCallExpression(node)) {
+    return getPropertyIdentifierNode(node.callee);
+  }
+
+  if (isExpressionStatement(node)) {
+    return getPropertyIdentifierNode(node.expression);
+  }
+
+  return null;
+}
+
+/**
+ * Gets the deepest identifier node in the expression from a given node.
+ *
+ * Opposite of {@link getReferenceNode}
+ *
+ * An example:
+ * Having `const a = rtl.within('foo').getByRole('button')`:
+ *  if we call `getDeepestIdentifierNode` with `rtl` node,
+ *  it will return `getByRole` identifier
+ */
+export function getDeepestIdentifierNode(
+  node: TSESTree.Node
+): TSESTree.Identifier | null {
+  if (ASTUtils.isIdentifier(node)) {
+    return node;
+  }
+
+  if (isMemberExpression(node) && ASTUtils.isIdentifier(node.property)) {
+    return node.property;
+  }
+
+  if (isCallExpression(node)) {
+    return getDeepestIdentifierNode(node.callee);
+  }
+
+  if (ASTUtils.isAwaitExpression(node)) {
+    return getDeepestIdentifierNode(node.argument);
+  }
+
+  return null;
+}
+
+/**
+ * Gets the farthest node in the expression from a given node.
+ *
+ * Opposite of {@link getDeepestIdentifierNode}
+
+ * An example:
+ * Having `const a = rtl.within('foo').getByRole('button')`:
+ *  if we call `getReferenceNode` with `getByRole` identifier,
+ *  it will return `rtl` node
+ */
+export function getReferenceNode(
+  node:
+    | TSESTree.CallExpression
+    | TSESTree.MemberExpression
+    | TSESTree.Identifier
+): TSESTree.CallExpression | TSESTree.MemberExpression | TSESTree.Identifier {
+  if (
+    node.parent &&
+    (isMemberExpression(node.parent) || isCallExpression(node.parent))
+  ) {
+    return getReferenceNode(node.parent);
+  }
+
+  return node;
+}
+
+export function getFunctionName(
+  node:
+    | TSESTree.FunctionDeclaration
+    | TSESTree.FunctionExpression
+    | TSESTree.ArrowFunctionExpression
+): string {
+  return (
+    ASTUtils.getFunctionNameWithKind(node)
+      .match(/('\w+')/g)?.[0]
+      .replace(/'/g, '') ?? ''
+  );
+}
+
+// TODO: extract into types file?
+export type ImportModuleNode =
+  | TSESTree.ImportDeclaration
+  | TSESTree.CallExpression;
+
+export function getImportModuleName(
+  node: ImportModuleNode | undefined | null
+): string | undefined {
+  // import node of shape: import { foo } from 'bar'
+  if (isImportDeclaration(node) && typeof node.source.value === 'string') {
+    return node.source.value;
+  }
+
+  // import node of shape: const { foo } = require('bar')
+  if (
+    isCallExpression(node) &&
+    isLiteral(node.arguments[0]) &&
+    typeof node.arguments[0].value === 'string'
+  ) {
+    return node.arguments[0].value;
+  }
+}
+
+type AssertNodeInfo = {
+  matcher: string | null;
+  isNegated: boolean;
+};
+/**
+ * Extracts matcher info from MemberExpression node representing an assert.
+ */
+export function getAssertNodeInfo(
+  node: TSESTree.MemberExpression
+): AssertNodeInfo {
+  const emptyInfo = { matcher: null, isNegated: false } as AssertNodeInfo;
+
+  if (
+    !isCallExpression(node.object) ||
+    !ASTUtils.isIdentifier(node.object.callee)
+  ) {
+    return emptyInfo;
+  }
+
+  if (node.object.callee.name !== 'expect') {
+    return emptyInfo;
+  }
+
+  let matcher = ASTUtils.getPropertyName(node);
+  const isNegated = matcher === 'not';
+  if (isNegated) {
+    matcher =
+      node.parent && isMemberExpression(node.parent)
+        ? ASTUtils.getPropertyName(node.parent)
+        : null;
+  }
+
+  if (!matcher) {
+    return emptyInfo;
+  }
+
+  return { matcher, isNegated };
+}
+
+/**
+ * Determines whether a node belongs to an async assertion
+ * fulfilled by `resolves` or `rejects` properties.
+ *
+ */
+export function hasClosestExpectResolvesRejects(node: TSESTree.Node): boolean {
+  if (
+    isCallExpression(node) &&
+    ASTUtils.isIdentifier(node.callee) &&
+    node.parent &&
+    isMemberExpression(node.parent) &&
+    node.callee.name === 'expect'
+  ) {
+    const expectMatcher = node.parent.property;
+    return (
+      ASTUtils.isIdentifier(expectMatcher) &&
+      (expectMatcher.name === 'resolves' || expectMatcher.name === 'rejects')
+    );
+  }
+
+  if (!node.parent) {
+    return false;
+  }
+
+  return hasClosestExpectResolvesRejects(node.parent);
+}
+
+/**
+ * Gets the Function node which returns the given Identifier.
+ */
+export function getInnermostReturningFunction(
+  context: RuleContext<string, unknown[]>,
+  node: TSESTree.Identifier
+):
+  | TSESTree.FunctionDeclaration
+  | TSESTree.FunctionExpression
+  | TSESTree.ArrowFunctionExpression
+  | undefined {
+  const functionScope = getInnermostFunctionScope(context, node);
+
+  if (!functionScope) {
+    return;
+  }
+
+  const returnStatementNode = getFunctionReturnStatementNode(
+    functionScope.block
+  );
+
+  if (!returnStatementNode) {
+    return;
+  }
+
+  const returnStatementIdentifier = getDeepestIdentifierNode(
+    returnStatementNode
+  );
+
+  if (returnStatementIdentifier?.name !== node.name) {
+    return;
+  }
+
+  return functionScope.block;
+}
+
+export function hasImportMatch(
+  importNode: TSESTree.ImportClause | TSESTree.Identifier,
+  identifierName: string
+): boolean {
+  if (ASTUtils.isIdentifier(importNode)) {
+    return importNode.name === identifierName;
+  }
+
+  return importNode.local.name === identifierName;
 }

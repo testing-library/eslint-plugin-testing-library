@@ -1,19 +1,25 @@
-import { ESLintUtils, TSESTree } from '@typescript-eslint/experimental-utils';
-import { getDocsUrl } from '../utils';
+import { TSESTree, ASTUtils } from '@typescript-eslint/experimental-utils';
+import { createTestingLibraryRule } from '../create-testing-library-rule';
 import {
   isImportSpecifier,
   isMemberExpression,
-  isIdentifier,
   findClosestCallExpressionNode,
+  isCallExpression,
+  isImportNamespaceSpecifier,
+  isObjectPattern,
+  isProperty,
 } from '../node-utils';
 
 export const RULE_NAME = 'prefer-wait-for';
-export type MessageIds = 'preferWaitForMethod' | 'preferWaitForImport';
+export type MessageIds =
+  | 'preferWaitForMethod'
+  | 'preferWaitForImport'
+  | 'preferWaitForRequire';
 type Options = [];
 
 const DEPRECATED_METHODS = ['wait', 'waitForElement', 'waitForDomChange'];
 
-export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
+export default createTestingLibraryRule<Options, MessageIds>({
   name: RULE_NAME,
   meta: {
     type: 'suggestion',
@@ -26,6 +32,8 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
       preferWaitForMethod:
         '`{{ methodName }}` is deprecated in favour of `waitFor`',
       preferWaitForImport: 'import `waitFor` instead of deprecated async utils',
+      preferWaitForRequire:
+        'require `waitFor` instead of deprecated async utils',
     },
 
     fixable: 'code',
@@ -33,7 +41,34 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
   },
   defaultOptions: [],
 
-  create(context) {
+  create(context, _, helpers) {
+    let addWaitFor = false;
+
+    const reportRequire = (node: TSESTree.ObjectPattern) => {
+      context.report({
+        node: node,
+        messageId: 'preferWaitForRequire',
+        fix(fixer) {
+          const excludedImports = [...DEPRECATED_METHODS, 'waitFor'];
+
+          const newAllRequired = node.properties
+            .filter(
+              (s) =>
+                isProperty(s) &&
+                ASTUtils.isIdentifier(s.key) &&
+                !excludedImports.includes(s.key.name)
+            )
+            .map(
+              (s) => ((s as TSESTree.Property).key as TSESTree.Identifier).name
+            );
+
+          newAllRequired.push('waitFor');
+
+          return fixer.replaceText(node, `{ ${newAllRequired.join(',')} }`);
+        },
+      });
+    };
+
     const reportImport = (node: TSESTree.ImportDeclaration) => {
       context.report({
         node: node,
@@ -43,14 +78,13 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
 
           // get all import names excluding all testing library `wait*` utils...
           const newImports = node.specifiers
-            .filter(
-              specifier =>
-                isImportSpecifier(specifier) &&
-                !excludedImports.includes(specifier.imported.name)
-            )
             .map(
-              (specifier: TSESTree.ImportSpecifier) => specifier.imported.name
-            );
+              (specifier) =>
+                isImportSpecifier(specifier) &&
+                !excludedImports.includes(specifier.imported.name) &&
+                specifier.imported.name
+            )
+            .filter(Boolean) as string[];
 
           // ... and append `waitFor`
           newImports.push('waitFor');
@@ -65,15 +99,18 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
       });
     };
 
-    const reportWait = (node: TSESTree.Identifier) => {
+    const reportWait = (node: TSESTree.Identifier | TSESTree.JSXIdentifier) => {
       context.report({
-        node: node,
+        node,
         messageId: 'preferWaitForMethod',
         data: {
           methodName: node.name,
         },
         fix(fixer) {
           const callExpressionNode = findClosestCallExpressionNode(node);
+          if (!callExpressionNode) {
+            return null;
+          }
           const [arg] = callExpressionNode.arguments;
           const fixers = [];
 
@@ -97,7 +134,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
             // member expression to get `foo.waitFor(() => {})`
             if (
               isMemberExpression(node.parent) &&
-              isIdentifier(node.parent.object)
+              ASTUtils.isIdentifier(node.parent.object)
             ) {
               methodReplacement = `${node.parent.object.name}.${methodReplacement}`;
             }
@@ -112,46 +149,57 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
     };
 
     return {
-      'ImportDeclaration[source.value=/testing-library/]'(
-        node: TSESTree.ImportDeclaration
-      ) {
-        const deprecatedImportSpecifiers = node.specifiers.filter(
-          specifier =>
-            isImportSpecifier(specifier) &&
-            specifier.imported &&
-            DEPRECATED_METHODS.includes(specifier.imported.name)
-        );
-
-        deprecatedImportSpecifiers.forEach((importSpecifier, i) => {
-          if (i === 0) {
-            reportImport(node);
-          }
-
-          context
-            .getDeclaredVariables(importSpecifier)
-            .forEach(variable =>
-              variable.references.forEach(reference =>
-                reportWait(reference.identifier)
-              )
-            );
-        });
+      'CallExpression > MemberExpression'(node: TSESTree.MemberExpression) {
+        const isDeprecatedMethod =
+          ASTUtils.isIdentifier(node.property) &&
+          DEPRECATED_METHODS.includes(node.property.name);
+        if (!isDeprecatedMethod) {
+          // the method does not match a deprecated method
+          return;
+        }
+        if (!helpers.isNodeComingFromTestingLibrary(node)) {
+          // the method does not match from the imported elements from TL (even from custom)
+          return;
+        }
+        addWaitFor = true;
+        reportWait(node.property as TSESTree.Identifier); // compiler is not picking up correctly, it should have inferred it is an identifier
       },
-      'ImportDeclaration[source.value=/testing-library/] > ImportNamespaceSpecifier'(
-        node: TSESTree.ImportNamespaceSpecifier
-      ) {
-        context.getDeclaredVariables(node).forEach(variable =>
-          variable.references.forEach(reference => {
-            if (
-              isMemberExpression(reference.identifier.parent) &&
-              isIdentifier(reference.identifier.parent.property) &&
-              DEPRECATED_METHODS.includes(
-                reference.identifier.parent.property.name
-              )
-            ) {
-              reportWait(reference.identifier.parent.property);
-            }
-          })
-        );
+      'CallExpression > Identifier'(node: TSESTree.Identifier) {
+        if (!DEPRECATED_METHODS.includes(node.name)) {
+          return;
+        }
+
+        if (!helpers.isNodeComingFromTestingLibrary(node)) {
+          return;
+        }
+        addWaitFor = true;
+        reportWait(node);
+      },
+      'Program:exit'() {
+        if (!addWaitFor) {
+          return;
+        }
+        // now that all usages of deprecated methods were replaced, remove the extra imports
+        const testingLibraryNode =
+          helpers.getCustomModuleImportNode() ??
+          helpers.getTestingLibraryImportNode();
+        if (isCallExpression(testingLibraryNode)) {
+          const parent = testingLibraryNode.parent as TSESTree.VariableDeclarator;
+          if (!isObjectPattern(parent.id)) {
+            // if there is no destructuring, there is nothing to replace
+            return;
+          }
+          reportRequire(parent.id);
+        } else if (testingLibraryNode) {
+          if (
+            testingLibraryNode.specifiers.length === 1 &&
+            isImportNamespaceSpecifier(testingLibraryNode.specifiers[0])
+          ) {
+            // if we import everything, there is nothing to replace
+            return;
+          }
+          reportImport(testingLibraryNode);
+        }
       },
     };
   },

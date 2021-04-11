@@ -1,18 +1,23 @@
 import { createRuleTester } from '../test-utils';
 import rule, { RULE_NAME } from '../../../lib/rules/no-debug';
 
-const ruleTester = createRuleTester({
-  ecmaFeatures: {
-    jsx: true,
-  },
-});
+const ruleTester = createRuleTester();
 
 ruleTester.run(RULE_NAME, rule, {
   valid: [
     {
+      settings: { 'testing-library/utils-module': 'test-utils' },
       code: `debug()`,
     },
     {
+      settings: { 'testing-library/utils-module': 'test-utils' },
+      code: `
+      import { screen } from 'somewhere-else'
+      screen.debug()
+      `,
+    },
+    {
+      settings: { 'testing-library/utils-module': 'test-utils' },
       code: `() => {
         const somethingElse = {}
         const { debug } = foo()
@@ -20,6 +25,7 @@ ruleTester.run(RULE_NAME, rule, {
       }`,
     },
     {
+      settings: { 'testing-library/utils-module': 'test-utils' },
       code: `
         let foo
         const debug = require('debug')
@@ -45,6 +51,7 @@ ruleTester.run(RULE_NAME, rule, {
       `,
     },
     {
+      settings: { 'testing-library/utils-module': 'test-utils' },
       code: `screen.debug()`,
     },
     {
@@ -68,6 +75,7 @@ ruleTester.run(RULE_NAME, rule, {
       `,
     },
     {
+      settings: { 'testing-library/utils-module': 'test-utils' },
       code: `
         import * as foo from '@somewhere/else';
         foo.debug();
@@ -77,12 +85,14 @@ ruleTester.run(RULE_NAME, rule, {
       code: `import { queries } from '@testing-library/dom'`,
     },
     {
+      settings: { 'testing-library/utils-module': 'test-utils' },
       code: `
         const { screen } = require('something-else')
         screen.debug()
       `,
     },
     {
+      settings: { 'testing-library/utils-module': 'test-utils' },
       code: `
         import { screen } from 'something-else'
         screen.debug()
@@ -95,9 +105,74 @@ ruleTester.run(RULE_NAME, rule, {
         }
       `,
     },
+    {
+      settings: { 'testing-library/utils-module': 'test-utils' },
+      code: `
+      import { debug as testingDebug } from 'test-utils'
+      import { debug } from 'somewhere-else'
+
+      debug()
+      `,
+    },
+    {
+      settings: { 'testing-library/utils-module': 'test-utils' },
+      code: `
+      import { render as testingRender } from '@testing-library/react'
+      import { render } from 'somewhere-else'
+      
+      const { debug } = render(element)
+      
+      somethingElse()
+      debug()
+      `,
+    },
+    {
+      settings: { 'testing-library/utils-module': 'test-utils' },
+      code: `
+      import { render as testingRender } from '@testing-library/react'
+      import { render } from 'somewhere-else'
+      
+      const { debug } = render(element)
+      const { debug: testingDebug } = testingRender(element)
+      
+      somethingElse()
+      debug()
+      `,
+    },
+
+    `// cover edge case for https://github.com/testing-library/eslint-plugin-testing-library/issues/306
+    thing.method.lastCall.args[0]();
+    `,
   ],
 
   invalid: [
+    {
+      code: `debug()`,
+      errors: [{ line: 1, column: 1, messageId: 'noDebug' }],
+    },
+    {
+      code: `
+      import { screen } from 'aggressive-reporting'
+      screen.debug()
+      `,
+      errors: [{ line: 3, column: 14, messageId: 'noDebug' }],
+    },
+    {
+      settings: { 'testing-library/utils-module': 'test-utils' },
+      code: `
+      import { screen } from 'test-utils'
+      screen.debug()
+      `,
+      errors: [{ line: 3, column: 14, messageId: 'noDebug' }],
+    },
+    {
+      settings: { 'testing-library/utils-module': 'test-utils' },
+      code: `
+      import { debug as testingDebug } from 'test-utils'
+      testingDebug()
+      `,
+      errors: [{ line: 3, column: 7, messageId: 'noDebug' }],
+    },
     {
       code: `
         const { debug } = render(<Component/>)
@@ -105,22 +180,24 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [
         {
+          line: 3,
+          column: 9,
           messageId: 'noDebug',
         },
       ],
     },
     {
+      settings: {
+        'testing-library/custom-renders': ['customRender', 'renderWithRedux'],
+      },
       code: `
         const { debug } = renderWithRedux(<Component/>)
         debug()
       `,
-      options: [
-        {
-          renderFunctions: ['renderWithRedux'],
-        },
-      ],
       errors: [
         {
+          line: 3,
+          column: 9,
           messageId: 'noDebug',
         },
       ],
@@ -132,6 +209,41 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [
         {
+          line: 3,
+          column: 15,
+          messageId: 'noDebug',
+        },
+      ],
+    },
+    {
+      settings: { 'testing-library/utils-module': 'test-utils' },
+      code: `
+        import { render } from 'test-utils'
+
+        const setup = () => render(<Component/>)
+
+        const utils = setup()
+        utils.debug()
+      `,
+      errors: [
+        {
+          line: 7,
+          column: 15,
+          messageId: 'noDebug',
+        },
+      ],
+    },
+    {
+      settings: { 'testing-library/utils-module': 'test-utils' },
+      code: `// aggressive reporting disabled
+        import { render } from 'test-utils'
+        const utils = render(<Component/>)
+        utils.debug()
+      `,
+      errors: [
+        {
+          line: 4,
+          column: 15,
           messageId: 'noDebug',
         },
       ],
@@ -145,9 +257,35 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [
         {
+          line: 3,
+          column: 15,
           messageId: 'noDebug',
         },
         {
+          line: 5,
+          column: 15,
+          messageId: 'noDebug',
+        },
+      ],
+    },
+    {
+      settings: { 'testing-library/utils-module': 'test-utils' },
+      code: `// aggressive reporting disabled
+        import { render } from 'test-utils'
+        const utils = render(<Component/>)
+        utils.debug()
+        utils.foo()
+        utils.debug()
+      `,
+      errors: [
+        {
+          line: 4,
+          column: 15,
+          messageId: 'noDebug',
+        },
+        {
+          line: 6,
+          column: 15,
           messageId: 'noDebug',
         },
       ],
@@ -162,6 +300,26 @@ ruleTester.run(RULE_NAME, rule, {
       })`,
       errors: [
         {
+          line: 5,
+          column: 11,
+          messageId: 'noDebug',
+        },
+      ],
+    },
+    {
+      settings: { 'testing-library/utils-module': 'test-utils' },
+      code: `// aggressive reporting disabled
+      import { render } from 'test-utils'
+      describe(() => {
+        test(async () => {
+          const { debug } = await render("foo")
+          debug()
+        })
+      })`,
+      errors: [
+        {
+          line: 6,
+          column: 11,
           messageId: 'noDebug',
         },
       ],
@@ -176,6 +334,26 @@ ruleTester.run(RULE_NAME, rule, {
       })`,
       errors: [
         {
+          line: 5,
+          column: 17,
+          messageId: 'noDebug',
+        },
+      ],
+    },
+    {
+      settings: { 'testing-library/utils-module': 'test-utils' },
+      code: `// aggressive reporting disabled
+      import { render } from 'test-utils'
+      describe(() => {
+        test(async () => {
+          const utils = await render("foo")
+          utils.debug()
+        })
+      })`,
+      errors: [
+        {
+          line: 6,
+          column: 17,
           messageId: 'noDebug',
         },
       ],
@@ -187,6 +365,22 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [
         {
+          line: 3,
+          column: 16,
+          messageId: 'noDebug',
+        },
+      ],
+    },
+    {
+      settings: { 'testing-library/utils-module': 'test-utils' },
+      code: `// aggressive reporting disabled
+        const { screen } = require('@testing-library/dom')
+        screen.debug()
+      `,
+      errors: [
+        {
+          line: 3,
+          column: 16,
           messageId: 'noDebug',
         },
       ],
@@ -198,6 +392,22 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [
         {
+          line: 3,
+          column: 16,
+          messageId: 'noDebug',
+        },
+      ],
+    },
+    {
+      settings: { 'testing-library/utils-module': 'test-utils' },
+      code: `// aggressive reporting disabled
+        import { screen } from '@testing-library/dom'
+        screen.debug()
+      `,
+      errors: [
+        {
+          line: 3,
+          column: 16,
           messageId: 'noDebug',
         },
       ],
@@ -210,11 +420,28 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [
         {
+          line: 3,
+          column: 16,
           messageId: 'noDebug',
         },
       ],
     },
     {
+      settings: { 'testing-library/utils-module': 'test-utils' },
+      code: `// aggressive reporting disabled
+        import { screen, render } from '@testing-library/dom'
+        screen.debug()
+      `,
+      errors: [
+        {
+          line: 3,
+          column: 16,
+          messageId: 'noDebug',
+        },
+      ],
+    },
+    {
+      settings: { 'testing-library/utils-module': 'test-utils' },
       code: `
         import * as dtl from '@testing-library/dom';
         dtl.debug();
@@ -226,6 +453,68 @@ ruleTester.run(RULE_NAME, rule, {
           column: 13,
         },
       ],
+    },
+    {
+      code: `
+      import { render } from 'aggressive-reporting'
+      
+      const { debug } = render(element)
+      
+      somethingElse()
+      debug()
+      `,
+      errors: [{ line: 7, column: 7, messageId: 'noDebug' }],
+    },
+    {
+      settings: { 'testing-library/utils-module': 'test-utils' },
+      code: `
+      import { render } from '@testing-library/react'
+      
+      const { debug } = render(element)
+      
+      somethingElse()
+      debug()
+      `,
+      errors: [{ line: 7, column: 7, messageId: 'noDebug' }],
+    },
+    {
+      settings: { 'testing-library/utils-module': 'test-utils' },
+      code: `
+      import { render } from 'test-utils'
+      
+      const { debug: renamed } = render(element)
+      
+      somethingElse()
+      renamed()
+      `,
+      errors: [{ line: 7, column: 7, messageId: 'noDebug' }],
+    },
+    {
+      settings: { 'testing-library/utils-module': 'test-utils' },
+      code: `
+      import { render } from '@testing-library/react'
+      
+      const utils = render(element)
+      
+      somethingElse()
+      utils.debug()
+      `,
+      errors: [{ line: 7, column: 13, messageId: 'noDebug' }],
+    },
+    {
+      settings: {
+        'testing-library/utils-module': 'test-utils',
+        'testing-library/custom-renders': ['testingRender'],
+      },
+      code: `// aggressive reporting disabled, custom render set
+      import { testingRender } from 'test-utils'
+      
+      const { debug: renamedDebug } = testingRender(element)
+      
+      somethingElse()
+      renamedDebug()
+      `,
+      errors: [{ line: 7, column: 7, messageId: 'noDebug' }],
     },
   ],
 });

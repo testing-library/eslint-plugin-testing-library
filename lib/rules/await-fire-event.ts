@@ -1,47 +1,105 @@
-import { ESLintUtils, TSESTree } from '@typescript-eslint/experimental-utils';
-import { getDocsUrl } from '../utils';
-import { isIdentifier, isAwaited, isPromiseResolved } from '../node-utils';
+import { TSESTree } from '@typescript-eslint/experimental-utils';
+import {
+  findClosestCallExpressionNode,
+  getFunctionName,
+  getInnermostReturningFunction,
+  getVariableReferences,
+  isPromiseHandled,
+} from '../node-utils';
+import { createTestingLibraryRule } from '../create-testing-library-rule';
 
 export const RULE_NAME = 'await-fire-event';
-export type MessageIds = 'awaitFireEvent';
+export type MessageIds = 'awaitFireEvent' | 'fireEventWrapper';
 type Options = [];
-export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
+
+export default createTestingLibraryRule<Options, MessageIds>({
   name: RULE_NAME,
   meta: {
     type: 'problem',
     docs: {
-      description: 'Enforce async fire event methods to be awaited',
+      description: 'Enforce promises from fire event methods to be handled',
       category: 'Best Practices',
       recommended: false,
     },
     messages: {
-      awaitFireEvent: 'async `fireEvent.{{ methodName }}` must be awaited',
+      awaitFireEvent:
+        'Promise returned from `fireEvent.{{ methodName }}` must be handled',
+      fireEventWrapper:
+        'Promise returned from `fireEvent.{{ wrapperName }}` wrapper over fire event method must be handled',
     },
-    fixable: null,
     schema: [],
   },
   defaultOptions: [],
 
-  create: function(context) {
-    return {
-      'CallExpression > MemberExpression > Identifier[name=fireEvent]'(
-        node: TSESTree.Identifier
-      ) {
-        const memberExpression = node.parent as TSESTree.MemberExpression;
-        const fireEventMethodNode = memberExpression.property;
+  create: function (context, _, helpers) {
+    const functionWrappersNames: string[] = [];
 
-        if (
-          isIdentifier(fireEventMethodNode) &&
-          !isAwaited(node.parent.parent.parent) &&
-          !isPromiseResolved(fireEventMethodNode.parent)
-        ) {
-          context.report({
-            node: fireEventMethodNode,
-            messageId: 'awaitFireEvent',
-            data: {
-              methodName: fireEventMethodNode.name,
-            },
-          });
+    function reportUnhandledNode(
+      node: TSESTree.Identifier,
+      closestCallExpressionNode: TSESTree.CallExpression,
+      messageId: MessageIds = 'awaitFireEvent'
+    ): void {
+      if (!isPromiseHandled(node)) {
+        context.report({
+          node: closestCallExpressionNode.callee,
+          messageId,
+          data: { name: node.name },
+        });
+      }
+    }
+
+    function detectFireEventMethodWrapper(node: TSESTree.Identifier): void {
+      const innerFunction = getInnermostReturningFunction(context, node);
+
+      if (innerFunction) {
+        functionWrappersNames.push(getFunctionName(innerFunction));
+      }
+    }
+
+    return {
+      'CallExpression Identifier'(node: TSESTree.Identifier) {
+        if (helpers.isFireEventMethod(node)) {
+          detectFireEventMethodWrapper(node);
+
+          const closestCallExpression = findClosestCallExpressionNode(
+            node,
+            true
+          );
+
+          if (!closestCallExpression || !closestCallExpression.parent) {
+            return;
+          }
+
+          const references = getVariableReferences(
+            context,
+            closestCallExpression.parent
+          );
+
+          if (references.length === 0) {
+            return reportUnhandledNode(node, closestCallExpression);
+          } else {
+            for (const reference of references) {
+              const referenceNode = reference.identifier as TSESTree.Identifier;
+              return reportUnhandledNode(referenceNode, closestCallExpression);
+            }
+          }
+        } else if (functionWrappersNames.includes(node.name)) {
+          // report promise returned from function wrapping fire event method
+          // previously detected
+          const closestCallExpression = findClosestCallExpressionNode(
+            node,
+            true
+          );
+
+          if (!closestCallExpression) {
+            return;
+          }
+
+          return reportUnhandledNode(
+            node,
+            closestCallExpression,
+            'fireEventWrapper'
+          );
         }
       },
     };

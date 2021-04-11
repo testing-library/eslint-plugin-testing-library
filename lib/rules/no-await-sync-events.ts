@@ -1,12 +1,20 @@
-import { ESLintUtils, TSESTree } from '@typescript-eslint/experimental-utils';
-import { getDocsUrl, SYNC_EVENTS } from '../utils';
-import { isObjectExpression, isProperty, isIdentifier } from '../node-utils';
+import { ASTUtils, TSESTree } from '@typescript-eslint/experimental-utils';
+import {
+  getDeepestIdentifierNode,
+  getPropertyIdentifierNode,
+  isLiteral,
+  isObjectExpression,
+  isProperty,
+} from '../node-utils';
+import { createTestingLibraryRule } from '../create-testing-library-rule';
+
 export const RULE_NAME = 'no-await-sync-events';
 export type MessageIds = 'noAwaitSyncEvents';
 type Options = [];
 
-const SYNC_EVENTS_REGEXP = new RegExp(`^(${SYNC_EVENTS.join('|')})$`);
-export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
+const USER_EVENT_ASYNC_EXCEPTIONS: string[] = ['type', 'keyboard'];
+
+export default createTestingLibraryRule<Options, MessageIds>({
   name: RULE_NAME,
   meta: {
     type: 'problem',
@@ -16,43 +24,67 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
       recommended: 'error',
     },
     messages: {
-      noAwaitSyncEvents: '`{{ name }}` does not need `await` operator',
+      noAwaitSyncEvents:
+        '`{{ name }}` is sync and does not need `await` operator',
     },
-    fixable: null,
     schema: [],
   },
   defaultOptions: [],
 
-  create(context) {
-    // userEvent.type() is an exception, which returns a
-    // Promise. But it is only necessary to wait when delay
-    // option is specified. So this rule has a special exception
-    // for the case await userEvent.type(element, 'abc', {delay: 1234})
+  create(context, _, helpers) {
+    // userEvent.type() and userEvent.keyboard() are exceptions, which returns a
+    // Promise. But it is only necessary to wait when delay option other than 0
+    // is specified. So this rule has a special exception for the case await:
+    //  - userEvent.type(element, 'abc', {delay: 1234})
+    //  - userEvent.keyboard('abc', {delay: 1234})
     return {
-      [`AwaitExpression > CallExpression > MemberExpression > Identifier[name=${SYNC_EVENTS_REGEXP}]`](
-        node: TSESTree.Identifier
-      ) {
-        const memberExpression = node.parent as TSESTree.MemberExpression;
-        const methodNode = memberExpression.property as TSESTree.Identifier;
-        const callExpression = memberExpression.parent as TSESTree.CallExpression;
-        const lastArg = callExpression.arguments[callExpression.arguments.length - 1]
-        const withDelay = isObjectExpression(lastArg) &&
+      'AwaitExpression > CallExpression'(node: TSESTree.CallExpression) {
+        const simulateEventFunctionIdentifier = getDeepestIdentifierNode(node);
+
+        if (!simulateEventFunctionIdentifier) {
+          return;
+        }
+
+        const isSimulateEventMethod =
+          helpers.isUserEventMethod(simulateEventFunctionIdentifier) ||
+          helpers.isFireEventMethod(simulateEventFunctionIdentifier);
+
+        if (!isSimulateEventMethod) {
+          return;
+        }
+
+        const lastArg = node.arguments[node.arguments.length - 1];
+
+        const hasDelay =
+          isObjectExpression(lastArg) &&
           lastArg.properties.some(
-            property =>
-              isProperty(property) &&
-              isIdentifier(property.key) &&
-              property.key.name === 'delay'
+            (property) =>
+              (isProperty(property) &&
+                ASTUtils.isIdentifier(property.key) &&
+                property.key.name === 'delay' &&
+                isLiteral(property.value) &&
+                property.value.value) ??
+              0 > 0
           );
 
-        if (!(node.name === 'userEvent' && ['type', 'keyboard'].includes(methodNode.name) && withDelay)) {
-          context.report({
-            node: methodNode,
-            messageId: 'noAwaitSyncEvents',
-            data: {
-              name: `${node.name}.${methodNode.name}`,
-            },
-          });
+        const simulateEventFunctionName = simulateEventFunctionIdentifier.name;
+
+        if (
+          USER_EVENT_ASYNC_EXCEPTIONS.includes(simulateEventFunctionName) &&
+          hasDelay
+        ) {
+          return;
         }
+
+        context.report({
+          node,
+          messageId: 'noAwaitSyncEvents',
+          data: {
+            name: `${
+              getPropertyIdentifierNode(node)?.name
+            }.${simulateEventFunctionName}`,
+          },
+        });
       },
     };
   },

@@ -1,15 +1,8 @@
-import { ESLintUtils, TSESTree } from '@typescript-eslint/experimental-utils';
-import {
-  getDocsUrl,
-  ALL_QUERIES_METHODS,
-  PRESENCE_MATCHERS,
-  ABSENCE_MATCHERS,
-} from '../utils';
-import {
-  findClosestCallNode,
-  isIdentifier,
-  isMemberExpression,
-} from '../node-utils';
+import { TSESTree, ASTUtils } from '@typescript-eslint/experimental-utils';
+import { PRESENCE_MATCHERS, ABSENCE_MATCHERS } from '../utils';
+import { findClosestCallNode, isMemberExpression } from '../node-utils';
+
+import { createTestingLibraryRule } from '../create-testing-library-rule';
 
 export const RULE_NAME = 'prefer-explicit-assert';
 export type MessageIds =
@@ -18,22 +11,13 @@ export type MessageIds =
 type Options = [
   {
     assertion?: string;
-    customQueryNames?: string[];
   }
 ];
 
-const ALL_GET_BY_QUERIES = ALL_QUERIES_METHODS.map(
-  queryMethod => `get${queryMethod}`
-);
-
-const isValidQuery = (node: TSESTree.Identifier, customQueryNames: string[]) =>
-  ALL_GET_BY_QUERIES.includes(node.name) ||
-  customQueryNames.includes(node.name);
-
 const isAtTopLevel = (node: TSESTree.Node) =>
-  node.parent.parent.type === 'ExpressionStatement';
+  !!node?.parent?.parent && node.parent.parent.type === 'ExpressionStatement';
 
-export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
+export default createTestingLibraryRule<Options, MessageIds>({
   name: RULE_NAME,
   meta: {
     type: 'suggestion',
@@ -49,7 +33,6 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
       preferExplicitAssertAssertion:
         '`getBy*` queries must be asserted with `{{assertion}}`',
     },
-    fixable: null,
     schema: [
       {
         type: 'object',
@@ -59,31 +42,23 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
             type: 'string',
             enum: PRESENCE_MATCHERS,
           },
-          customQueryNames: {
-            type: 'array',
-          },
         },
       },
     ],
   },
-  defaultOptions: [
-    {
-      customQueryNames: [],
-    },
-  ],
-
-  create: function(context, [options]) {
-    const { customQueryNames, assertion } = options;
+  defaultOptions: [{}],
+  create(context, [options], helpers) {
+    const { assertion } = options;
     const getQueryCalls: TSESTree.Identifier[] = [];
 
     return {
       'CallExpression Identifier'(node: TSESTree.Identifier) {
-        if (isValidQuery(node, customQueryNames)) {
+        if (helpers.isGetQueryVariant(node)) {
           getQueryCalls.push(node);
         }
       },
       'Program:exit'() {
-        getQueryCalls.forEach(queryCall => {
+        getQueryCalls.forEach((queryCall) => {
           const node = isMemberExpression(queryCall.parent)
             ? queryCall.parent
             : queryCall;
@@ -93,7 +68,9 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
               node: queryCall,
               messageId: 'preferExplicitAssert',
             });
-          } else if (assertion) {
+          }
+
+          if (assertion) {
             const expectCallNode = findClosestCallNode(node, 'expect');
             if (!expectCallNode) return;
 
@@ -105,7 +82,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
             if (
               matcher === 'not' &&
               isMemberExpression(expectStatement.parent) &&
-              isIdentifier(expectStatement.parent.property)
+              ASTUtils.isIdentifier(expectStatement.parent.property)
             ) {
               isNegatedMatcher = true;
               matcher = expectStatement.parent.property.name;

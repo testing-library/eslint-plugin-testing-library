@@ -1,4 +1,4 @@
-# Enforce specific queries when checking element is present or not (prefer-presence-queries)
+# Enforce specific queries when checking element is present or not (`testing-library/prefer-presence-queries`)
 
 The (DOM) Testing Library allows to query DOM elements using different types of queries such as `get*` and `query*`. Using `get*` throws an error in case the element is not found, while `query*` returns null instead of throwing (or empty array for `queryAllBy*` ones). These differences are useful in some situations:
 

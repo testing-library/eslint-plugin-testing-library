@@ -1,4 +1,4 @@
-# Enforce async utils to be awaited properly (await-async-utils)
+# Enforce promises from async utils to be handled (`testing-library/await-async-utils`)
 
 Ensure that promises returned by async utils are handled properly.
 
@@ -6,13 +6,21 @@ Ensure that promises returned by async utils are handled properly.
 
 Testing library provides several utilities for dealing with asynchronous code. These are useful to wait for an element until certain criteria or situation happens. The available async utils are:
 
-- `waitFor` _(introduced in dom-testing-library v7)_
+- `waitFor` _(introduced since dom-testing-library v7)_
 - `waitForElementToBeRemoved`
-- `wait` _(**deprecated** in dom-testing-library v7)_
-- `waitForElement` _(**deprecated** in dom-testing-library v7)_
-- `waitForDomChange` _(**deprecated** in dom-testing-library v7)_
+- `wait` _(**deprecated** since dom-testing-library v7)_
+- `waitForElement` _(**deprecated** since dom-testing-library v7)_
+- `waitForDomChange` _(**deprecated** since dom-testing-library v7)_
 
-This rule aims to prevent users from forgetting to handle the returned promise from those async utils, which could lead to unexpected errors in the tests execution. The promises can be handled by using either `await` operator or `then` method.
+This rule aims to prevent users from forgetting to handle the returned
+promise from async utils, which could lead to
+problems in the tests. The promise will be considered as handled when:
+
+- using the `await` operator
+- wrapped within `Promise.all` or `Promise.allSettled` methods
+- chaining the `then` method
+- chaining `resolves` or `rejects` from jest
+- it's returned from a function (in this case, that particular function will be analyzed by this rule too)
 
 Examples of **incorrect** code for this rule:
 
@@ -32,6 +40,14 @@ test('something incorrectly', async () => {
   waitFor(() => {}, { timeout: 100 });
 
   waitForElementToBeRemoved(() => document.querySelector('div.getOuttaHere'));
+
+  // wrap an async util within a function...
+  const makeCustomWait = () => {
+    return waitForElementToBeRemoved(() =>
+      document.querySelector('div.getOuttaHere')
+    );
+  };
+  makeCustomWait(); // ...but not handling promise from it is incorrect
 });
 ```
 
@@ -54,11 +70,15 @@ test('something correctly', async () => {
   // `then` chained method is correct
   waitFor(() => {}, { timeout: 100 })
     .then(() => console.log('DOM changed!'))
-    .catch(err => console.log(`Error you need to deal with: ${err}`));
+    .catch((err) => console.log(`Error you need to deal with: ${err}`));
 
-  // return the promise within a function is correct too!
-  const makeCustomWait = () =>
-    waitForElementToBeRemoved(() => document.querySelector('div.getOuttaHere'));
+  // wrap an async util within a function...
+  const makeCustomWait = () => {
+    return waitForElementToBeRemoved(() =>
+      document.querySelector('div.getOuttaHere')
+    );
+  };
+  await makeCustomWait(); // ...and handling promise from it is correct
 
   // using Promise.all combining the methods
   await Promise.all([

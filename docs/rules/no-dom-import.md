@@ -1,4 +1,4 @@
-# Disallow importing from DOM Testing Library
+# Disallow importing from DOM Testing Library (`testing-library/no-dom-import`)
 
 Ensure that there are no direct imports from `@testing-library/dom` or
 `dom-testing-library` when using some testing library framework
@@ -7,18 +7,18 @@ wrapper.
 ## Rule Details
 
 Testing Library framework wrappers as React Testing Library already
-re-exports everything from DOM Testing Library so you always have to
-import DOM Testing Library utils from corresponding framework wrapper
+re-exports everything from DOM Testing Library, so you always have to
+import Testing Library utils from corresponding framework wrapper
 module to:
 
 - use proper extended version of some of those methods containing
   additional functionality related to specific framework (e.g.
   `fireEvent` util)
 - avoid importing from extraneous dependencies (similar to
-  eslint-plugin-import)
+  `eslint-plugin-import`)
 
 This rule aims to prevent users from import anything directly from
-`@testing-library/dom` (or `dom-testing-library`) and it's useful for
+`@testing-library/dom`, which is useful for
 new starters or when IDEs autoimport from wrong module.
 
 Examples of **incorrect** code for this rule:

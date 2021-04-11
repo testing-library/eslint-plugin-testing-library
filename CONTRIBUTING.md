@@ -71,7 +71,41 @@ Additionally, you need to do a couple of extra things:
 - Include your rule in the "Supported Rules" table within the [README.md](./README.md).
   Don't forget to include the proper badges if needed and to sort alphabetically the rules for readability.
 
-## Modifying rules
+### Custom rule creator
+
+In v4 we introduced several improvements for both the final users as for contributors. Now there is a custom Rule Creator available called `createTestingLibraryRule` which should be the default Rule Creator used in this plugin. This Testing Library Rule Creator extends TSESLint Rule Creator to enhance rules automatically, so it prevents rules to be reported if nothing related to Testing Library found, and injects a 3rd parameter within `create` function: `helpers`.
+
+This new `helpers` available in the `create` of the rule gives you access to a bunch of utils to detect things related to Testing Library. You can find all of them in `detect-testing-library-utils.ts` file, but these are some helpers available:
+
+- `isTestingLibraryImported`
+- `isGetQueryVariant`
+- `isQueryQueryVariant`
+- `isFindQueryVariant`
+- `isSyncQuery`
+- `isAsyncQuery`
+- `isQuery`
+- `isCustomQuery`
+- `isAsyncUtil`
+- `isFireEventUtil`
+- `isUserEventUtil`
+- `isFireEventMethod`
+- `isUserEventMethod`
+- `isRenderUtil`
+- `isRenderVariableDeclarator`
+- `isDebugUtil`
+- `isPresenceAssert`
+- `isAbsenceAssert`
+- `isNodeComingFromTestingLibrary`
+
+Our custom Rule Creator will also take care of common checks like making sure Testing Library is imported, or verify Shared Settings. You don't need to implement anything to check if there is some import related to Testing Library or anything similar in your rule anymore, just stick to the `helpers` received as a 3rd parameter in your `create` function.
+
+If you need some check related to Testing Library which is not available in any existing helper, feel free to implement a new one. You need to make sure to:
+
+- add corresponding type
+- pass it through `helpers`
+- write some generic test within `fake-rule.ts`, which is a dumb rule to be able to test all enhanced behavior from our custom Rule Creator.
+
+## Updating existing rules
 
 A couple of things you need to remember when editing already existing rules:
 
@@ -79,6 +113,32 @@ A couple of things you need to remember when editing already existing rules:
   "[Adding new rules"](#adding-new-rules) section.
 - Try to add tests to cover the changes introduced, no matter if that's
   a bug fix or a new feature.
+
+## Writing Tests
+
+When writing tests for a new or existing rule, please make sure to follow these guidelines:
+
+### Write real-ish scenarios
+
+Since the plugin will report differently depending on which Testing Library package is imported and what Shared Settings are enabled, writing more realistic scenarios is pretty important. Ideally, you should:
+
+- wrap the code for your rule with a real test file structure, something like
+
+  ```javascript
+  import { render } from '@testing-library/react';
+
+  test('should report invalid render usage', () => {
+    // the following line is the actual code you needed to test your rule,
+    // but everything else helps finding edge cases and makes it more robust.
+    const wrapper = render(<Component />);
+  });
+  ```
+
+- add some extra valid and invalid cases for checking what's the result when some Shared Settings are enabled (so things may or may not be reported depending on the settings), or something named in the same way as a Testing Library util is found, but it's not coming from any Testing Library package (so it shouldn't be reported).
+
+### Check as much as you can from error reported on invalid test cases
+
+Please make sure you check `line`, `column`, `messageId` and `data` (if some) in your invalid test cases to check errors are reported as expected.
 
 ## Help needed
 

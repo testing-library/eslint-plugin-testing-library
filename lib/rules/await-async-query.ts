@@ -1,139 +1,102 @@
-import { ESLintUtils, TSESTree } from '@typescript-eslint/experimental-utils';
-import { getDocsUrl, LIBRARY_MODULES } from '../utils';
+import { ASTUtils, TSESTree } from '@typescript-eslint/experimental-utils';
 import {
-  isCallExpression,
-  isIdentifier,
-  isMemberExpression,
-  isAwaited,
-  isPromiseResolved,
+  findClosestCallExpressionNode,
+  getFunctionName,
+  getInnermostReturningFunction,
   getVariableReferences,
+  isPromiseHandled,
 } from '../node-utils';
-import { ReportDescriptor } from '@typescript-eslint/experimental-utils/dist/ts-eslint';
+import { createTestingLibraryRule } from '../create-testing-library-rule';
 
 export const RULE_NAME = 'await-async-query';
-export type MessageIds = 'awaitAsyncQuery';
+export type MessageIds = 'awaitAsyncQuery' | 'asyncQueryWrapper';
 type Options = [];
 
-const ASYNC_QUERIES_REGEXP = /^find(All)?By(LabelText|PlaceholderText|Text|AltText|Title|DisplayValue|Role|TestId)$/;
-
-function hasClosestExpectResolvesRejects(node: TSESTree.Node): boolean {
-  if (!node.parent) {
-    return false;
-  }
-
-  if (
-    isCallExpression(node) &&
-    isIdentifier(node.callee) &&
-    isMemberExpression(node.parent) &&
-    node.callee.name === 'expect'
-  ) {
-    const expectMatcher = node.parent.property;
-    return (
-      isIdentifier(expectMatcher) &&
-      (expectMatcher.name === 'resolves' || expectMatcher.name === 'rejects')
-    );
-  } else {
-    return hasClosestExpectResolvesRejects(node.parent);
-  }
-}
-
-export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
+export default createTestingLibraryRule<Options, MessageIds>({
   name: RULE_NAME,
   meta: {
     type: 'problem',
     docs: {
-      description: 'Enforce async queries to have proper `await`',
+      description: 'Enforce promises from async queries to be handled',
       category: 'Best Practices',
       recommended: 'warn',
     },
     messages: {
-      awaitAsyncQuery: '`{{ name }}` must have `await` operator',
+      awaitAsyncQuery: 'promise returned from {{ name }} query must be handled',
+      asyncQueryWrapper:
+        'promise returned from {{ name }} wrapper over async query must be handled',
     },
-    fixable: null,
     schema: [],
   },
   defaultOptions: [],
 
-  create(context) {
-    const testingLibraryQueryUsage: {
-      node: TSESTree.Identifier | TSESTree.MemberExpression;
-      queryName: string;
-    }[] = [];
+  create(context, _, helpers) {
+    const functionWrappersNames: string[] = [];
 
-    const isQueryUsage = (
-      node: TSESTree.Identifier | TSESTree.MemberExpression
-    ) =>
-      !isAwaited(node.parent.parent) &&
-      !isPromiseResolved(node) &&
-      !hasClosestExpectResolvesRejects(node);
-
-    let hasImportedFromTestingLibraryModule = false;
-
-    function report(params: ReportDescriptor<'awaitAsyncQuery'>) {
-      if (hasImportedFromTestingLibraryModule) {
-        context.report(params);
+    function detectAsyncQueryWrapper(node: TSESTree.Identifier) {
+      const innerFunction = getInnermostReturningFunction(context, node);
+      if (innerFunction) {
+        functionWrappersNames.push(getFunctionName(innerFunction));
       }
     }
 
     return {
-      'ImportDeclaration > ImportSpecifier,ImportNamespaceSpecifier'(
-        node: TSESTree.Node
-      ) {
-        const importDeclaration = node.parent as TSESTree.ImportDeclaration;
-        const module = importDeclaration.source.value.toString();
+      'CallExpression Identifier'(node: TSESTree.Identifier) {
+        if (helpers.isAsyncQuery(node)) {
+          // detect async query used within wrapper function for later analysis
+          detectAsyncQueryWrapper(node);
 
-        if (LIBRARY_MODULES.includes(module)) {
-          hasImportedFromTestingLibraryModule = true;
-        }
-      },
-      [`CallExpression > Identifier[name=${ASYNC_QUERIES_REGEXP}]`](
-        node: TSESTree.Identifier
-      ) {
-        if (isQueryUsage(node)) {
-          testingLibraryQueryUsage.push({ node, queryName: node.name });
-        }
-      },
-      [`MemberExpression > Identifier[name=${ASYNC_QUERIES_REGEXP}]`](
-        node: TSESTree.Identifier
-      ) {
-        // Perform checks in parent MemberExpression instead of current identifier
-        const parent = node.parent as TSESTree.MemberExpression;
-        if (isQueryUsage(parent)) {
-          testingLibraryQueryUsage.push({ node: parent, queryName: node.name });
-        }
-      },
-      'Program:exit'() {
-        testingLibraryQueryUsage.forEach(({ node, queryName }) => {
-          const references = getVariableReferences(context, node.parent.parent);
+          const closestCallExpressionNode = findClosestCallExpressionNode(
+            node,
+            true
+          );
 
+          if (!closestCallExpressionNode || !closestCallExpressionNode.parent) {
+            return;
+          }
+
+          const references = getVariableReferences(
+            context,
+            closestCallExpressionNode.parent
+          );
+
+          // check direct usage of async query:
+          //  const element = await findByRole('button')
           if (references && references.length === 0) {
-            report({
-              node,
-              messageId: 'awaitAsyncQuery',
-              data: {
-                name: queryName,
-              },
-            });
-          } else {
-            for (const reference of references) {
-              const referenceNode = reference.identifier;
-              if (
-                !isAwaited(referenceNode.parent) &&
-                !isPromiseResolved(referenceNode)
-              ) {
-                report({
-                  node,
-                  messageId: 'awaitAsyncQuery',
-                  data: {
-                    name: queryName,
-                  },
-                });
-
-                break;
-              }
+            if (!isPromiseHandled(node)) {
+              return context.report({
+                node,
+                messageId: 'awaitAsyncQuery',
+                data: { name: node.name },
+              });
             }
           }
-        });
+
+          // check references usages of async query:
+          //  const promise = findByRole('button')
+          //  const element = await promise
+          for (const reference of references) {
+            if (
+              ASTUtils.isIdentifier(reference.identifier) &&
+              !isPromiseHandled(reference.identifier)
+            ) {
+              return context.report({
+                node,
+                messageId: 'awaitAsyncQuery',
+                data: { name: node.name },
+              });
+            }
+          }
+        } else if (functionWrappersNames.includes(node.name)) {
+          // check async queries used within a wrapper previously detected
+          if (!isPromiseHandled(node)) {
+            return context.report({
+              node,
+              messageId: 'asyncQueryWrapper',
+              data: { name: node.name },
+            });
+          }
+        }
       },
     };
   },

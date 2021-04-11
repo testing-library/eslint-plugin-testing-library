@@ -1,4 +1,4 @@
-# Empty callbacks inside `waitFor` and `waitForElementToBeRemoved` are not preferred (no-wait-for-empty-callback)
+# Empty callbacks inside `waitFor` and `waitForElementToBeRemoved` are not preferred (`testing-library/no-wait-for-empty-callback`)
 
 ## Rule Details
 
@@ -11,11 +11,11 @@ Examples of **incorrect** code for this rule:
 ```js
 const foo = async () => {
   await waitFor(() => {});
-  await waitFor(function() {});
+  await waitFor(function () {});
   await waitFor(noop);
 
   await waitForElementToBeRemoved(() => {});
-  await waitForElementToBeRemoved(function() {});
+  await waitForElementToBeRemoved(function () {});
   await waitForElementToBeRemoved(noop);
 };
 ```

@@ -1,8 +1,8 @@
-const combineQueries = (variants: string[], methods: string[]) => {
+const combineQueries = (variants: string[], methods: string[]): string[] => {
   const combinedQueries: string[] = [];
-  variants.forEach(variant => {
+  variants.forEach((variant) => {
     const variantPrefix = variant.replace('By', '');
-    methods.forEach(method => {
+    methods.forEach((method) => {
       combinedQueries.push(`${variantPrefix}${method}`);
     });
   });
@@ -61,19 +61,52 @@ const ASYNC_UTILS = [
   'wait',
   'waitForElement',
   'waitForDomChange',
-];
+] as const;
 
-const SYNC_EVENTS = [
-  'fireEvent',
-  'userEvent',
-];
+const EVENTS_SIMULATORS = ['fireEvent', 'userEvent'] as const;
 
 const TESTING_FRAMEWORK_SETUP_HOOKS = ['beforeEach', 'beforeAll'];
+
+const PROPERTIES_RETURNING_NODES = [
+  'activeElement',
+  'children',
+  'firstChild',
+  'firstElementChild',
+  'fullscreenElement',
+  'lastChild',
+  'lastElementChild',
+  'nextElementSibling',
+  'nextSibling',
+  'parentElement',
+  'parentNode',
+  'pointerLockElement',
+  'previousElementSibling',
+  'previousSibling',
+  'rootNode',
+  'scripts',
+];
+
+const METHODS_RETURNING_NODES = [
+  'closest',
+  'getElementById',
+  'getElementsByClassName',
+  'getElementsByName',
+  'getElementsByTagName',
+  'getElementsByTagNameNS',
+  'querySelector',
+  'querySelectorAll',
+];
+
+const ALL_RETURNING_NODES = [
+  ...PROPERTIES_RETURNING_NODES,
+  ...METHODS_RETURNING_NODES,
+];
 
 const PRESENCE_MATCHERS = ['toBeInTheDocument', 'toBeTruthy', 'toBeDefined'];
 const ABSENCE_MATCHERS = ['toBeNull', 'toBeFalsy'];
 
 export {
+  combineQueries,
   getDocsUrl,
   SYNC_QUERIES_VARIANTS,
   ASYNC_QUERIES_VARIANTS,
@@ -83,9 +116,12 @@ export {
   ASYNC_QUERIES_COMBINATIONS,
   ALL_QUERIES_COMBINATIONS,
   ASYNC_UTILS,
-  SYNC_EVENTS,
+  EVENTS_SIMULATORS,
   TESTING_FRAMEWORK_SETUP_HOOKS,
   LIBRARY_MODULES,
+  PROPERTIES_RETURNING_NODES,
+  METHODS_RETURNING_NODES,
+  ALL_RETURNING_NODES,
   PRESENCE_MATCHERS,
-  ABSENCE_MATCHERS
+  ABSENCE_MATCHERS,
 };

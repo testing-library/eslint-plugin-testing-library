@@ -1,6 +1,6 @@
-import { ESLintUtils, TSESTree } from '@typescript-eslint/experimental-utils';
-import { getDocsUrl } from '../utils';
-import { isLiteral, isIdentifier } from '../node-utils';
+import { TSESTree } from '@typescript-eslint/experimental-utils';
+import { createTestingLibraryRule } from '../create-testing-library-rule';
+import { isCallExpression } from '../node-utils';
 
 export const RULE_NAME = 'no-dom-import';
 export type MessageIds = 'noDomImport' | 'noDomImportFramework';
@@ -11,7 +11,7 @@ const DOM_TESTING_LIBRARY_MODULES = [
   '@testing-library/dom',
 ];
 
-export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
+export default createTestingLibraryRule<Options, MessageIds>({
   name: RULE_NAME,
   meta: {
     type: 'problem',
@@ -35,13 +35,12 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
   },
   defaultOptions: [''],
 
-  create(context, [framework]) {
+  create(context, [framework], helpers) {
     function report(
-      node: TSESTree.ImportDeclaration | TSESTree.Identifier,
+      node: TSESTree.ImportDeclaration | TSESTree.CallExpression,
       moduleName: string
     ) {
       if (framework) {
-        const isRequire = isIdentifier(node) && node.name === 'require';
         const correctModuleName = moduleName.replace('dom', framework);
         context.report({
           node,
@@ -50,9 +49,8 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
             module: correctModuleName,
           },
           fix(fixer) {
-            if (isRequire) {
-              const callExpression = node.parent as TSESTree.CallExpression;
-              const name = callExpression.arguments[0] as TSESTree.Literal;
+            if (isCallExpression(node)) {
+              const name = node.arguments[0] as TSESTree.Literal;
 
               // Replace the module name with the raw module name as we can't predict which punctuation the user is going to use
               return fixer.replaceText(
@@ -60,8 +58,7 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
                 name.raw.replace(moduleName, correctModuleName)
               );
             } else {
-              const importDeclaration = node as TSESTree.ImportDeclaration;
-              const name = importDeclaration.source;
+              const name = node.source;
               return fixer.replaceText(
                 name,
                 name.raw.replace(moduleName, correctModuleName)
@@ -76,34 +73,25 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
         });
       }
     }
+
     return {
-      ImportDeclaration(node) {
-        const value = node.source.value;
+      'Program:exit'() {
+        const importName = helpers.getTestingLibraryImportName();
+        const importNode = helpers.getTestingLibraryImportNode();
+
+        if (!importNode) {
+          return;
+        }
+
         const domModuleName = DOM_TESTING_LIBRARY_MODULES.find(
-          module => module === value
+          (module) => module === importName
         );
 
-        if (domModuleName) {
-          report(node, domModuleName);
+        if (!domModuleName) {
+          return;
         }
-      },
 
-      [`CallExpression > Identifier[name="require"]`](
-        node: TSESTree.Identifier
-      ) {
-        const callExpression = node.parent as TSESTree.CallExpression;
-        const { arguments: args } = callExpression;
-
-        const literalNodeDomModuleName = args.find(
-          args =>
-            isLiteral(args) &&
-            typeof args.value === 'string' &&
-            DOM_TESTING_LIBRARY_MODULES.includes(args.value)
-        ) as TSESTree.Literal;
-
-        if (literalNodeDomModuleName) {
-          report(node, literalNodeDomModuleName.value as string);
-        }
+        report(importNode, domModuleName);
       },
     };
   },
