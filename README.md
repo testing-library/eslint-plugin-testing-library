@@ -17,16 +17,11 @@
 <br>
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg?style=flat-square)](https://github.com/semantic-release/semantic-release)
 [![PRs Welcome][pr-badge]][pr-url]
-<br>
+[![All Contributors][all-contributors-badge]](#contributors-)
+<br />
 [![Watch on Github][gh-watchers-badge]][gh-watchers-url]
 [![Star on Github][gh-stars-badge]][gh-stars-url]
 [![Tweet][tweet-badge]][tweet-url]
-
-<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-
-[![All Contributors](https://img.shields.io/badge/all_contributors-36-orange.svg?style=flat-square)](#contributors-)
-
-<!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 ## Installation
 
@@ -161,7 +156,7 @@ To enable this configuration use the `extends` property in your
 | [testing-library/no-dom-import](docs/rules/no-dom-import.md)                                     | Disallow importing from DOM Testing Library                                              | ![angular-badge][] ![react-badge][] ![vue-badge][]                | ![fixable-badge][] |
 | [testing-library/no-manual-cleanup](docs/rules/no-manual-cleanup.md)                             | Disallow the use of `cleanup`                                                            |                                                                   |                    |
 | [testing-library/no-node-access](docs/rules/no-node-access.md)                                   | Disallow direct Node access                                                              | ![angular-badge][] ![react-badge][] ![vue-badge][]                |                    |
-| [testing-library/no-promise-in-fire-event](docs/rules/no-promise-in-fire-event.md)               | Disallow the use of promises passed to a `fireEvent` method                              |                                                                   |                    |
+| [testing-library/no-promise-in-fire-event](docs/rules/no-promise-in-fire-event.md)               | Disallow the use of promises passed to a `fireEvent` method                              | ![dom-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] |                    |
 | [testing-library/no-render-in-setup](docs/rules/no-render-in-setup.md)                           | Disallow the use of `render` in setup functions                                          |                                                                   |                    |
 | [testing-library/no-wait-for-empty-callback](docs/rules/no-wait-for-empty-callback.md)           | Disallow empty callbacks for `waitFor` and `waitForElementToBeRemoved`                   | ![dom-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] |                    |
 | [testing-library/no-wait-for-multiple-assertions](docs/rules/no-wait-for-multiple-assertions.md) | Disallow the use of multiple expect inside `waitFor`                                     |                                                                   |                    |
@@ -180,15 +175,16 @@ To enable this configuration use the `extends` property in your
 [version-badge]: https://img.shields.io/npm/v/eslint-plugin-testing-library?style=flat-square
 [version-url]: https://www.npmjs.com/package/eslint-plugin-testing-library
 [license-badge]: https://img.shields.io/npm/l/eslint-plugin-testing-library?style=flat-square
-[license-url]: https://github.com/belco90/eslint-plugin-testing-library/blob/main/license
+[license-url]: https://github.com/testing-library/eslint-plugin-testing-library/blob/main/license
 [pr-badge]: https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square
+[all-contributors-badge]: https://img.shields.io/github/all-contributors/testing-library/eslint-plugin-testing-library?color=orange&style=flat-square
 [pr-url]: http://makeapullrequest.com
-[gh-watchers-badge]: https://img.shields.io/github/watchers/Belco90/eslint-plugin-testing-library?style=social
-[gh-watchers-url]: https://github.com/belco90/eslint-plugin-testing-library/watchers
-[gh-stars-badge]: https://img.shields.io/github/stars/Belco90/eslint-plugin-testing-library?style=social
-[gh-stars-url]: https://github.com/belco90/eslint-plugin-testing-library/stargazers
-[tweet-badge]: https://img.shields.io/twitter/url?style=social&url=https%3A%2F%2Fgithub.com%2FBelco90%2Feslint-plugin-testing-library
-[tweet-url]: https://twitter.com/intent/tweet?url=https%3a%2f%2fgithub.com%2fbelco90%2feslint-plugin-testing-library&text=check%20out%20eslint-plugin-testing-library%20by%20@belcodev
+[gh-watchers-badge]: https://img.shields.io/github/watchers/testing-library/eslint-plugin-testing-library?style=social
+[gh-watchers-url]: https://github.com/testing-library/eslint-plugin-testing-library/watchers
+[gh-stars-badge]: https://img.shields.io/github/stars/testing-library/eslint-plugin-testing-library?style=social
+[gh-stars-url]: https://github.com/testing-library/eslint-plugin-testing-library/stargazers
+[tweet-badge]: https://img.shields.io/twitter/url?style=social&url=https%3A%2F%2Fgithub.com%2Ftesting-library%2Feslint-plugin-testing-library
+[tweet-url]: https://twitter.com/intent/tweet?url=https%3a%2f%2fgithub.com%2ftesting-library%2feslint-plugin-testing-library&text=check%20out%20eslint-plugin-testing-library%20by%20@belcodev
 [dom-badge]: https://img.shields.io/badge/%F0%9F%90%99-DOM-black?style=flat-square
 [fixable-badge]: https://img.shields.io/badge/fixable-success?style=flat-square
 [angular-badge]: https://img.shields.io/badge/-Angular-black?style=flat-square&logo=angular&logoColor=white&labelColor=DD0031&color=black
