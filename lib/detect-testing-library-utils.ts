@@ -554,31 +554,18 @@ export function detectTestingLibraryUtils<
      * Testing Library. Otherwise, it means `custom-module` has been set up, so
      * only those nodes coming from Testing Library will be considered as valid.
      */
-    const isRenderUtil: IsRenderUtilFn = (node) => {
-      return isTestingLibraryUtil(
-        node,
-        (identifierNodeName, originalNodeName) => {
-          if (isAggressiveRenderReportingEnabled()) {
-            return identifierNodeName.toLowerCase().includes(RENDER_NAME);
-          }
-
-          return [RENDER_NAME, ...getCustomRenders()].some(
-            (validRenderName) => {
-              let isMatch = false;
-
-              if (validRenderName === identifierNodeName) {
-                isMatch = true;
-              }
-
-              if (!!originalNodeName && validRenderName === originalNodeName) {
-                isMatch = true;
-              }
-              return isMatch;
-            }
-          );
+    const isRenderUtil: IsRenderUtilFn = (node) =>
+      isTestingLibraryUtil(node, (identifierNodeName, originalNodeName) => {
+        if (isAggressiveRenderReportingEnabled()) {
+          return identifierNodeName.toLowerCase().includes(RENDER_NAME);
         }
-      );
-    };
+
+        return [RENDER_NAME, ...getCustomRenders()].some(
+          (validRenderName) =>
+            validRenderName === identifierNodeName ||
+            (Boolean(originalNodeName) && validRenderName === originalNodeName)
+        );
+      });
 
     const isRenderVariableDeclarator: IsRenderVariableDeclaratorFn = (node) => {
       if (!node.init) {
