@@ -56,7 +56,7 @@ type GetTestingLibraryImportNodeFn = () => ImportModuleNode | null;
 type GetCustomModuleImportNodeFn = () => ImportModuleNode | null;
 type GetTestingLibraryImportNameFn = () => string | undefined;
 type GetCustomModuleImportNameFn = () => string | undefined;
-type IsTestingLibraryImportedFn = () => boolean;
+type IsTestingLibraryImportedFn = (isStrict?: boolean) => boolean;
 type IsGetQueryVariantFn = (node: TSESTree.Identifier) => boolean;
 type IsQueryQueryVariantFn = (node: TSESTree.Identifier) => boolean;
 type IsFindQueryVariantFn = (node: TSESTree.Identifier) => boolean;
@@ -242,12 +242,17 @@ export function detectTestingLibraryUtils<
      * then this method will return `true` ONLY IF a testing-library package
      * or custom module are imported.
      */
-    const isTestingLibraryImported: IsTestingLibraryImportedFn = () => {
-      return (
-        isAggressiveModuleReportingEnabled() ||
-        !!importedTestingLibraryNode ||
-        !!importedCustomModuleNode
-      );
+    const isTestingLibraryImported: IsTestingLibraryImportedFn = (
+      isStrict = false
+    ) => {
+      const isSomeModuleImported =
+        !!importedTestingLibraryNode || !!importedCustomModuleNode;
+
+      if (isStrict) {
+        return isSomeModuleImported;
+      }
+
+      return isAggressiveModuleReportingEnabled() || isSomeModuleImported;
     };
 
     /**
