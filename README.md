@@ -78,7 +78,7 @@ Assuming you are using the same pattern for your test files as [Jest by default]
 
 ```javascript
 // .eslintrc
-module.exports = {
+{
   // here you have your usual config which applies to the whole project...
   extends: ['airbnb', 'plugin:prettier/recommended'],
   plugins: ['react-hooks'],
