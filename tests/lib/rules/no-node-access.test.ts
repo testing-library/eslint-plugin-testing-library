@@ -65,7 +65,7 @@ ruleTester.run(RULE_NAME, rule, {
       const closestButton = document.getElementById('submit-btn')
       expect(closestButton).toBeInTheDocument();
       `,
-      errors: [{ messageId: 'noNodeAccess', line: 3 }],
+      errors: [{ line: 3, column: 38, messageId: 'noNodeAccess' }],
     },
     {
       code: `
@@ -75,9 +75,13 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [
         {
+          line: 4,
+          column: 33,
           messageId: 'noNodeAccess',
         },
         {
+          line: 4,
+          column: 62,
           messageId: 'noNodeAccess',
         },
       ],
@@ -90,6 +94,8 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [
         {
+          line: 4,
+          column: 18,
           messageId: 'noNodeAccess',
         },
       ],
@@ -117,6 +123,8 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [
         {
+          line: 4,
+          column: 43,
           messageId: 'noNodeAccess',
         },
       ],
@@ -128,11 +136,7 @@ ruleTester.run(RULE_NAME, rule, {
         const { getByText } = render(<Example />)
         getByText('submit').closest('button');
       `,
-      errors: [
-        {
-          messageId: 'noNodeAccess',
-        },
-      ],
+      errors: [{ line: 5, column: 29, messageId: 'noNodeAccess' }],
     },
     {
       code: `
@@ -165,11 +169,7 @@ ruleTester.run(RULE_NAME, rule, {
         const buttonText = screen.getByText('submit');
         const button = buttonText.closest('button');
       `,
-      errors: [
-        {
-          messageId: 'noNodeAccess',
-        },
-      ],
+      errors: [{ line: 5, column: 35, messageId: 'noNodeAccess' }],
     },
     {
       code: `
@@ -181,6 +181,8 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [
         {
+          line: 6,
+          column: 35,
           messageId: 'noNodeAccess',
         },
       ],
@@ -192,11 +194,7 @@ ruleTester.run(RULE_NAME, rule, {
         const { getByText } = render(<Example />)
         const button = getByText('submit').closest('button');
       `,
-      errors: [
-        {
-          messageId: 'noNodeAccess',
-        },
-      ],
+      errors: [{ line: 5, column: 44, messageId: 'noNodeAccess' }],
     },
     {
       code: `
