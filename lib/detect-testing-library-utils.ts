@@ -248,11 +248,10 @@ export function detectTestingLibraryUtils<
       const isSomeModuleImported =
         !!importedTestingLibraryNode || !!importedCustomModuleNode;
 
-      if (isStrict) {
-        return isSomeModuleImported;
-      }
-
-      return isAggressiveModuleReportingEnabled() || isSomeModuleImported;
+      return (
+        (!isStrict && isAggressiveModuleReportingEnabled()) ||
+        isSomeModuleImported
+      );
     };
 
     /**
