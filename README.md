@@ -70,6 +70,39 @@ Then configure the rules you want to use within `rules` property of your `.eslin
 }
 ```
 
+### Run the plugin only against test files
+
+With the default setup mentioned before, `eslint-plugin-testing-library` will be run against your whole codebase. If you want to run this plugin only against your tests files, you have the following options:
+
+#### ESLint `overrides`
+
+One way of restricting ESLint config by file patterns is by using [ESLint `overrides`](https://eslint.org/docs/user-guide/configuring/configuration-files#configuration-based-on-glob-patterns).
+
+Assuming you are using the same pattern for your test files as [Jest by default](https://jestjs.io/docs/configuration#testmatch-arraystring), the following config would run `eslint-plugin-testing-library` only against your test files:
+
+```json
+// .eslintrc
+{
+  // 1) Here we have our usual config which applies to the whole project, so we don't put testing-library preset here.
+  "extends": ["airbnb", "plugin:prettier/recommended"],
+
+  // 2) We load eslint-plugin-testing-library globally with other ESLint plugins.
+  "plugins": ["react-hooks", "testing-library"],
+
+  "overrides": [
+    {
+      // 3) Now we enable eslint-plugin-testing-library rules or preset only for matching files!
+      "files": ["**/__tests__/**/*.[jt]s?(x)", "**/?(*.)+(spec|test).[jt]s?(x)"],
+      "extends": ["plugin:testing-library/react"]
+    },
+  ],
+};
+```
+
+#### ESLint Cascading and Hierachy
+
+Another approach for customizing ESLint config by paths is through [ESLint Cascading and Hierachy](https://eslint.org/docs/user-guide/configuring/configuration-files#cascading-and-hierarchy). This is useful if all your tests are placed under the same folder, so you can place there another `.eslintrc` where you enable `eslint-plugin-testing-library` for applying it only to the files under such folder, rather than enabling it on your global `.eslintrc` which would apply to your whole project.
+
 ## Shareable configurations
 
 This plugin exports several recommended configurations that enforce good practices for specific Testing Library packages.
@@ -191,6 +224,12 @@ To enable this configuration use the `extends` property in your
 [react-badge]: https://img.shields.io/badge/-React-black?style=flat-square&logo=react&logoColor=white&labelColor=61DAFB&color=black
 [vue-badge]: https://img.shields.io/badge/-Vue-black?style=flat-square&logo=vue.js&logoColor=white&labelColor=4FC08D&color=black
 
+## Aggressive Reporting
+
+In v4 this plugin introduced a new feature called "Aggressive Reporting", which intends to detect Testing Library utils usages even if they don't come directly from a Testing Library package (i.e. [using a custom utility file to re-export everything from Testing Library](https://testing-library.com/docs/react-testing-library/setup/#custom-render)). You can [read more about this feature here](docs/migrating-to-v4-guide.md#aggressive-reporting).
+
+If you are looking to restricting this feature, please refer to the [Shared Settings section](#shared-settings) to do so. It's not possible to switch this mechanism entirely off yet, but there will be a new option in the Shared Settings in the future to be able to achieve this.
+
 ## Shared Settings
 
 There are some configuration options available that will be shared across all the plugin rules. This is achieved using [ESLint Shared Settings](https://eslint.org/docs/user-guide/configuring/configuration-files#adding-shared-settings). These Shared Settings are meant to be used if you need to restrict the Aggressive Reporting mechanism, which is an out of the box advanced feature to lint Testing Library usages in a simpler way for most of the users. **So please before configuring any of these settings**, read more about [the advantages of `eslint-plugin-testing-library` Aggressive Reporting mechanism](docs/migrating-to-v4-guide.md#aggressive-reporting), and [how it's affected by these settings](docs/migrating-to-v4-guide.md#shared-settings).
@@ -226,6 +265,27 @@ A list of function names that are valid as Testing Library custom renders. Relat
 ```
 
 [You can find more details here](docs/migrating-to-v4-guide.md#testing-librarycustom-renders).
+
+## Troubleshooting
+
+### There are errors reported in non-testing files
+
+If you find ESLint errors related to `eslint-plugin-testing-library` in files other than testing, this could be caused by [Aggressive Reporting](#aggressive-reporting).
+
+You can avoid this by:
+
+1. [running `eslint-plugin-testing-library` only against testing files](#run-the-plugin-only-against-test-files)
+2. [limiting the scope of Aggressive Reporting through Shared Settings](#shared-settings)
+
+If you think the error you are getting is not related to this at all, please [fill a new issue](https://github.com/testing-library/eslint-plugin-testing-library/issues/new/choose) with as many details as possible.
+
+### There are false positives in testing files
+
+If you are getting false positive ESLint errors in your testing files, this could be caused by [Aggressive Reporting](#aggressive-reporting).
+
+You can avoid this by [limiting the scope of Aggressive Reporting through Shared Settings](#shared-settings)
+
+If you think the error you are getting is not related to this at all, please [fill a new issue](https://github.com/testing-library/eslint-plugin-testing-library/issues/new/choose) with as many details as possible.
 
 ## Contributors ✨
 
