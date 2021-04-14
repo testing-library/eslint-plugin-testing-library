@@ -80,7 +80,7 @@ One way of restricting ESLint config by file patterns is by using [ESLint `overr
 
 Assuming you are using the same pattern for your test files as [Jest by default](https://jestjs.io/docs/configuration#testmatch-arraystring), the following config would run `eslint-plugin-testing-library` only against your test files:
 
-```json
+```javascript
 // .eslintrc
 {
   // 1) Here we have our usual config which applies to the whole project, so we don't put testing-library preset here.
