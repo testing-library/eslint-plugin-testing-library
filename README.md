@@ -72,27 +72,34 @@ Then configure the rules you want to use within `rules` property of your `.eslin
 
 ### Run the plugin only against test files
 
-With the default setup mentioned before `eslint-plugin-testing-library` will be run against your whole codebase. If want to run this plugin only against your tests files, you can do that by using [ESLint `overrides`](https://eslint.org/docs/user-guide/configuring/configuration-files#configuration-based-on-glob-patterns).
+With the default setup mentioned before, `eslint-plugin-testing-library` will be run against your whole codebase. If you want to run this plugin only against your tests files, you have the following options:
+
+**ESLint `overrides`**
+One way of restricting ESLint config by file patterns is by using [ESLint `overrides`](https://eslint.org/docs/user-guide/configuring/configuration-files#configuration-based-on-glob-patterns).
 
 Assuming you are using the same pattern for your test files as [Jest by default](https://jestjs.io/docs/configuration#testmatch-arraystring), the following config would run `eslint-plugin-testing-library` only against your test files:
 
-```javascript
+```json
 // .eslintrc
 {
-  // here you have your usual config which applies to the whole project...
-  extends: ['airbnb', 'plugin:prettier/recommended'],
-  plugins: ['react-hooks'],
+  // 1) Here we have our usual config which applies to the whole project, so we don't put testing-library preset here.
+  "extends": ["airbnb", "plugin:prettier/recommended"],
 
-  overrides: [
+  // 2) We load eslint-plugin-testing-library globally with other ESLint plugins.
+  "plugins": ["react-hooks", "testing-library"],
+
+  "overrides": [
     {
-      // ... and here you expand the ESLint plugins run for your tests files
-      files: ['**/__tests__/**/*.[jt]s?(x)', '**/?(*.)+(spec|test).[jt]s?(x)'],
-      extends: ['plugin:testing-library/react'],
-      plugins: ['testing-library'],
+      // 3) Now we enable eslint-plugin-testing-library rules or preset only for matching files!
+      "files": ["**/__tests__/**/*.[jt]s?(x)", "**/?(*.)+(spec|test).[jt]s?(x)"],
+      "extends": ["plugin:testing-library/react"]
     },
   ],
 };
 ```
+
+**ESLint Cascading and Hierachy**
+Another approach for customizing ESLint config by paths is through [ESLint Cascading and Hierachy](https://eslint.org/docs/user-guide/configuring/configuration-files#cascading-and-hierarchy). This is useful if all your tests are placed under the same folder, so you can place there another `.eslintrc` where you enable `eslint-plugin-testing-library` for applying it only to the files under such folder, rather than enabling it on your global `.eslintrc` which would apply to your whole project.
 
 ## Shareable configurations
 
