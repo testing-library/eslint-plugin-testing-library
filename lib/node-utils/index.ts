@@ -7,6 +7,20 @@ import {
 } from '@typescript-eslint/experimental-utils';
 import { RuleContext } from '@typescript-eslint/experimental-utils/dist/ts-eslint';
 
+import {
+  isArrayExpression,
+  isArrowFunctionExpression,
+  isBlockStatement,
+  isCallExpression,
+  isExpressionStatement,
+  isImportDeclaration,
+  isLiteral,
+  isMemberExpression,
+  isReturnStatement,
+} from './is-node-of-type';
+
+export * from './is-node-of-type';
+
 const ValidLeftHandSideExpressions = [
   AST_NODE_TYPES.CallExpression,
   AST_NODE_TYPES.ClassExpression,
@@ -34,78 +48,6 @@ const ValidLeftHandSideExpressions = [
   AST_NODE_TYPES.TSAsExpression,
   AST_NODE_TYPES.ArrowFunctionExpression,
 ];
-
-export function isCallExpression(
-  node: TSESTree.Node | null | undefined
-): node is TSESTree.CallExpression {
-  return node?.type === AST_NODE_TYPES.CallExpression;
-}
-
-export function isNewExpression(
-  node: TSESTree.Node | null | undefined
-): node is TSESTree.NewExpression {
-  return node?.type === 'NewExpression';
-}
-
-export function isMemberExpression(
-  node: TSESTree.Node | null | undefined
-): node is TSESTree.MemberExpression {
-  return node?.type === AST_NODE_TYPES.MemberExpression;
-}
-
-export function isLiteral(
-  node: TSESTree.Node | null | undefined
-): node is TSESTree.Literal {
-  return node?.type === AST_NODE_TYPES.Literal;
-}
-
-export function isImportSpecifier(
-  node: TSESTree.Node | null | undefined
-): node is TSESTree.ImportSpecifier {
-  return node?.type === AST_NODE_TYPES.ImportSpecifier;
-}
-
-export function isImportNamespaceSpecifier(
-  node: TSESTree.Node | null | undefined
-): node is TSESTree.ImportNamespaceSpecifier {
-  return node?.type === AST_NODE_TYPES.ImportNamespaceSpecifier;
-}
-
-export function isImportDefaultSpecifier(
-  node: TSESTree.Node | null | undefined
-): node is TSESTree.ImportDefaultSpecifier {
-  return node?.type === AST_NODE_TYPES.ImportDefaultSpecifier;
-}
-
-export function isBlockStatement(
-  node: TSESTree.Node | null | undefined
-): node is TSESTree.BlockStatement {
-  return node?.type === AST_NODE_TYPES.BlockStatement;
-}
-
-export function isObjectPattern(
-  node: TSESTree.Node | null | undefined
-): node is TSESTree.ObjectPattern {
-  return node?.type === AST_NODE_TYPES.ObjectPattern;
-}
-
-export function isProperty(
-  node: TSESTree.Node | null | undefined
-): node is TSESTree.Property {
-  return node?.type === AST_NODE_TYPES.Property;
-}
-
-export function isJSXAttribute(
-  node: TSESTree.Node | null | undefined
-): node is TSESTree.JSXAttribute {
-  return node?.type === AST_NODE_TYPES.JSXAttribute;
-}
-
-export function isExpressionStatement(
-  node: TSESTree.Node | null | undefined
-): node is TSESTree.ExpressionStatement {
-  return node?.type === AST_NODE_TYPES.ExpressionStatement;
-}
 
 /**
  * Finds the closest CallExpression node for a given node.
@@ -153,42 +95,12 @@ export function findClosestCallNode(
   }
 }
 
-export function isObjectExpression(
-  node: TSESTree.Expression
-): node is TSESTree.ObjectExpression {
-  return node?.type === AST_NODE_TYPES.ObjectExpression;
-}
-
 export function hasThenProperty(node: TSESTree.Node): boolean {
   return (
     isMemberExpression(node) &&
     ASTUtils.isIdentifier(node.property) &&
     node.property.name === 'then'
   );
-}
-
-export function isArrowFunctionExpression(
-  node: TSESTree.Node
-): node is TSESTree.ArrowFunctionExpression {
-  return node?.type === AST_NODE_TYPES.ArrowFunctionExpression;
-}
-
-export function isReturnStatement(
-  node: TSESTree.Node
-): node is TSESTree.ReturnStatement {
-  return node?.type === AST_NODE_TYPES.ReturnStatement;
-}
-
-export function isArrayExpression(
-  node: TSESTree.Node
-): node is TSESTree.ArrayExpression {
-  return node?.type === AST_NODE_TYPES.ArrayExpression;
-}
-
-export function isImportDeclaration(
-  node: TSESTree.Node | null | undefined
-): node is TSESTree.ImportDeclaration {
-  return node?.type === AST_NODE_TYPES.ImportDeclaration;
 }
 
 export function hasChainedThen(node: TSESTree.Node): boolean {
