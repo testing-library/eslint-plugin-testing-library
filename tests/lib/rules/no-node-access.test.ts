@@ -31,7 +31,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import { screen } from '@testing-library/react';  
+        import { screen } from '@testing-library/react';
         
         const { getByText } = screen;
         const button = getByRole('button');
@@ -43,29 +43,57 @@ ruleTester.run(RULE_NAME, rule, {
         import { render, within } from '@testing-library/react';
 
         const { getByLabelText } = render(<MyComponent />);
-        const signinModal = getByLabelText('Sign In');
-        within(signinModal).getByPlaceholderText('Username');
+        const signInModal = getByLabelText('Sign In');
+        within(signInModal).getByPlaceholderText('Username');
       `,
     },
     {
       code: `
-      // case: importing custom module
-      const closestButton = document.getElementById('submit-btn').closest('button');
-      expect(closestButton).toBeInTheDocument();
+      // case: code not related to testing library at all
+      ReactDOM.render(
+        <CommProvider useDsa={false}>
+          <ThemeProvider>
+            <GlobalStyle />
+            <Suspense fallback={<Loader />}>
+              <AppLogin />
+            </Suspense>
+          </ThemeProvider>
+        </CommProvider>,
+
+        document.getElementById('root')
+      );
       `,
+    },
+    {
       settings: {
         'testing-library/utils-module': 'test-utils',
       },
+      code: `
+      // case: custom module set but not imported (aggressive reporting limited)
+      const closestButton = document.getElementById('submit-btn').closest('button');
+      expect(closestButton).toBeInTheDocument();
+      `,
+    },
+    {
+      code: `
+      // case: without importing TL (aggressive reporting skipped)
+      const closestButton = document.getElementById('submit-btn')
+      expect(closestButton).toBeInTheDocument();
+      `,
     },
   ],
   invalid: [
     {
+      settings: {
+        'testing-library/utils-module': 'test-utils',
+      },
       code: `
-      // case: without importing TL (aggressive reporting)
+      // case: importing from custom module (aggressive reporting limited)
+      import 'test-utils';
       const closestButton = document.getElementById('submit-btn')
       expect(closestButton).toBeInTheDocument();
       `,
-      errors: [{ messageId: 'noNodeAccess', line: 3 }],
+      errors: [{ line: 4, column: 38, messageId: 'noNodeAccess' }],
     },
     {
       code: `
@@ -75,9 +103,13 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [
         {
+          line: 4,
+          column: 33,
           messageId: 'noNodeAccess',
         },
         {
+          line: 4,
+          column: 62,
           messageId: 'noNodeAccess',
         },
       ],
@@ -90,6 +122,8 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [
         {
+          line: 4,
+          column: 18,
           messageId: 'noNodeAccess',
         },
       ],
@@ -117,6 +151,8 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [
         {
+          line: 4,
+          column: 43,
           messageId: 'noNodeAccess',
         },
       ],
@@ -128,11 +164,7 @@ ruleTester.run(RULE_NAME, rule, {
         const { getByText } = render(<Example />)
         getByText('submit').closest('button');
       `,
-      errors: [
-        {
-          messageId: 'noNodeAccess',
-        },
-      ],
+      errors: [{ line: 5, column: 29, messageId: 'noNodeAccess' }],
     },
     {
       code: `
@@ -165,11 +197,7 @@ ruleTester.run(RULE_NAME, rule, {
         const buttonText = screen.getByText('submit');
         const button = buttonText.closest('button');
       `,
-      errors: [
-        {
-          messageId: 'noNodeAccess',
-        },
-      ],
+      errors: [{ line: 5, column: 35, messageId: 'noNodeAccess' }],
     },
     {
       code: `
@@ -181,6 +209,8 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [
         {
+          line: 6,
+          column: 35,
           messageId: 'noNodeAccess',
         },
       ],
@@ -192,11 +222,7 @@ ruleTester.run(RULE_NAME, rule, {
         const { getByText } = render(<Example />)
         const button = getByText('submit').closest('button');
       `,
-      errors: [
-        {
-          messageId: 'noNodeAccess',
-        },
-      ],
+      errors: [{ line: 5, column: 44, messageId: 'noNodeAccess' }],
     },
     {
       code: `
