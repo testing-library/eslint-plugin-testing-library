@@ -281,10 +281,7 @@ If you think the error you are getting is not related to this at all, please [fi
 
 If you are getting false positive ESLint errors in your testing files, this could be caused by [Aggressive Reporting](#aggressive-reporting).
 
-You can avoid this by:
-
-1. [running `eslint-plugin-testing-library` only against testing files](#run-the-plugin-only-against-test-files)
-2. [limiting the scope of Aggressive Reporting through Shared Settings](#shared-settings)
+You can avoid this by [limiting the scope of Aggressive Reporting through Shared Settings](#shared-settings)
 
 If you think the error you are getting is not related to this at all, please [fill a new issue](https://github.com/testing-library/eslint-plugin-testing-library/issues/new/choose) with as many details as possible.
 
