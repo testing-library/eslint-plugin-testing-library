@@ -74,7 +74,8 @@ Then configure the rules you want to use within `rules` property of your `.eslin
 
 With the default setup mentioned before, `eslint-plugin-testing-library` will be run against your whole codebase. If you want to run this plugin only against your tests files, you have the following options:
 
-**ESLint `overrides`**
+#### ESLint `overrides`
+
 One way of restricting ESLint config by file patterns is by using [ESLint `overrides`](https://eslint.org/docs/user-guide/configuring/configuration-files#configuration-based-on-glob-patterns).
 
 Assuming you are using the same pattern for your test files as [Jest by default](https://jestjs.io/docs/configuration#testmatch-arraystring), the following config would run `eslint-plugin-testing-library` only against your test files:
@@ -98,7 +99,8 @@ Assuming you are using the same pattern for your test files as [Jest by default]
 };
 ```
 
-**ESLint Cascading and Hierachy**
+#### ESLint Cascading and Hierachy
+
 Another approach for customizing ESLint config by paths is through [ESLint Cascading and Hierachy](https://eslint.org/docs/user-guide/configuring/configuration-files#cascading-and-hierarchy). This is useful if all your tests are placed under the same folder, so you can place there another `.eslintrc` where you enable `eslint-plugin-testing-library` for applying it only to the files under such folder, rather than enabling it on your global `.eslintrc` which would apply to your whole project.
 
 ## Shareable configurations
