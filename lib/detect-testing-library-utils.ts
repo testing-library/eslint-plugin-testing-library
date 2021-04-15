@@ -257,24 +257,32 @@ export function detectTestingLibraryUtils<
     };
 
     /**
+     * Determines whether a given node is a reportable query,
+     * either a built-in or a custom one.
+     */
+    const isQuery: IsQueryFn = (node) => {
+      return /^(get|query|find)(All)?By.+$/.test(node.name);
+    };
+
+    /**
      * Determines whether a given node is `get*` query variant or not.
      */
     const isGetQueryVariant: IsGetQueryVariantFn = (node) => {
-      return /^get(All)?By.+$/.test(node.name);
+      return isQuery(node) && node.name.startsWith('get');
     };
 
     /**
      * Determines whether a given node is `query*` query variant or not.
      */
     const isQueryQueryVariant: IsQueryQueryVariantFn = (node) => {
-      return /^query(All)?By.+$/.test(node.name);
+      return isQuery(node) && node.name.startsWith('query');
     };
 
     /**
      * Determines whether a given node is `find*` query variant or not.
      */
     const isFindQueryVariant: IsFindQueryVariantFn = (node) => {
-      return /^find(All)?By.+$/.test(node.name);
+      return isQuery(node) && node.name.startsWith('find');
     };
 
     /**
@@ -291,20 +299,12 @@ export function detectTestingLibraryUtils<
       return isFindQueryVariant(node);
     };
 
-    /**
-     * Determines whether a given node is a valid query,
-     * either built-in or custom
-     */
-    const isQuery: IsQueryFn = (node) => {
-      return isSyncQuery(node) || isAsyncQuery(node);
-    };
-
     const isCustomQuery: IsCustomQueryFn = (node) => {
       return isQuery(node) && !ALL_QUERIES_COMBINATIONS.includes(node.name);
     };
 
     const isBuiltInQuery = (node: TSESTree.Identifier): boolean => {
-      return ALL_QUERIES_COMBINATIONS.includes(node.name);
+      return isQuery(node) && ALL_QUERIES_COMBINATIONS.includes(node.name);
     };
 
     /**
