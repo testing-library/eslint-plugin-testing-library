@@ -64,6 +64,7 @@ type IsSyncQueryFn = (node: TSESTree.Identifier) => boolean;
 type IsAsyncQueryFn = (node: TSESTree.Identifier) => boolean;
 type IsQueryFn = (node: TSESTree.Identifier) => boolean;
 type IsCustomQueryFn = (node: TSESTree.Identifier) => boolean;
+type IsBuiltInQueryFn = (node: TSESTree.Identifier) => boolean;
 type IsAsyncUtilFn = (
   node: TSESTree.Identifier,
   validNames?: readonly typeof ASYNC_UTILS[number][]
@@ -98,6 +99,7 @@ export interface DetectionHelpers {
   isAsyncQuery: IsAsyncQueryFn;
   isQuery: IsQueryFn;
   isCustomQuery: IsCustomQueryFn;
+  isBuiltInQuery: IsBuiltInQueryFn;
   isAsyncUtil: IsAsyncUtilFn;
   isFireEventUtil: (node: TSESTree.Identifier) => boolean;
   isUserEventUtil: (node: TSESTree.Identifier) => boolean;
@@ -299,6 +301,10 @@ export function detectTestingLibraryUtils<
 
     const isCustomQuery: IsCustomQueryFn = (node) => {
       return isQuery(node) && !ALL_QUERIES_COMBINATIONS.includes(node.name);
+    };
+
+    const isBuiltInQuery = (node: TSESTree.Identifier): boolean => {
+      return ALL_QUERIES_COMBINATIONS.includes(node.name);
     };
 
     /**
@@ -704,6 +710,7 @@ export function detectTestingLibraryUtils<
       isAsyncQuery,
       isQuery,
       isCustomQuery,
+      isBuiltInQuery,
       isAsyncUtil,
       isFireEventUtil,
       isUserEventUtil,
