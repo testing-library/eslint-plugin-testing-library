@@ -30,6 +30,7 @@ import {
 export type TestingLibrarySettings = {
   'testing-library/utils-module'?: string;
   'testing-library/custom-renders'?: string[];
+  'testing-library/custom-queries'?: string[];
 };
 
 export type TestingLibraryContext<
@@ -140,6 +141,7 @@ export function detectTestingLibraryUtils<
     const customModule = context.settings['testing-library/utils-module'];
     const customRenders =
       context.settings['testing-library/custom-renders'] ?? [];
+    const customQueries = context.settings['testing-library/custom-queries'];
 
     /**
      * Small method to extract common checks to determine whether a node is
@@ -214,6 +216,17 @@ export function detectTestingLibraryUtils<
     const isAggressiveRenderReportingEnabled = () =>
       !Array.isArray(customRenders) || customRenders.length === 0;
 
+    /**
+     * Determines whether Aggressive Reporting for queries is enabled or not.
+     *
+     * This Aggressive Reporting mechanism is considered as enabled when custom-queries setting is not set,
+     * so the plugin needs to report both built-in and custom queries.
+     * Otherwise, this Aggressive Reporting mechanism is opted-out in favour of reporting only built-in queries + those
+     * indicated in custom-queries setting.
+     */
+    const isAggressiveQueryReportingEnabled = (): boolean =>
+      !Array.isArray(customQueries) || customQueries.length === 0;
+
     // Helpers for Testing Library detection.
     const getTestingLibraryImportNode: GetTestingLibraryImportNodeFn = () => {
       return importedTestingLibraryNode;
@@ -259,9 +272,25 @@ export function detectTestingLibraryUtils<
     /**
      * Determines whether a given node is a reportable query,
      * either a built-in or a custom one.
+     *
+     * Depending on Aggressive Query Reporting setting, custom queries will be
+     * reportable or not.
      */
     const isQuery: IsQueryFn = (node) => {
-      return /^(get|query|find)(All)?By.+$/.test(node.name);
+      const hasQueryPattern = /^(get|query|find)(All)?By.+$/.test(node.name);
+      if (!hasQueryPattern) {
+        return false;
+      }
+
+      if (isAggressiveQueryReportingEnabled()) {
+        return true;
+      }
+
+      const isBuiltInQuery = ALL_QUERIES_COMBINATIONS.includes(node.name);
+      const isReportableCustomQuery = !!customQueries?.some((pattern) =>
+        new RegExp(pattern).test(node.name)
+      );
+      return isBuiltInQuery || isReportableCustomQuery;
     };
 
     /**
