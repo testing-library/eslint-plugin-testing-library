@@ -65,6 +65,19 @@ ruleTester.run(RULE_NAME, rule, {
       })
     `
     ),
+    ...CUSTOM_QUERY_COMBINATIONS.map((query) => ({
+      settings: {
+        'testing-library/custom-queries': [query, 'ByComplexText'],
+      },
+      code: `
+      import { render } from '@testing-library/react'
+      
+      test("custom queries + custom-queries setting, since they can't be used through screen", () => {
+        const { ${query} } = render(foo)
+        ${query}('bar')
+      })
+    `,
+    })),
     {
       code: `
         const screen = render(baz);
