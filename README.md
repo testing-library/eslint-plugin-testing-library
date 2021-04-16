@@ -249,7 +249,7 @@ The name of your custom utility file from where you re-export everything from Te
 }
 ```
 
-[You can find more details here](docs/migrating-to-v4-guide.md#testing-libraryutils-module).
+[You can find more details about `utils-module` setting here](docs/migrating-to-v4-guide.md#testing-libraryutils-module).
 
 ### `testing-library/custom-renders`
 
@@ -264,7 +264,7 @@ A list of function names that are valid as Testing Library custom renders. Relat
 }
 ```
 
-[You can find more details here](docs/migrating-to-v4-guide.md#testing-librarycustom-renders).
+[You can find more details about `custom-renders` setting here](docs/migrating-to-v4-guide.md#testing-librarycustom-renders).
 
 ### `testing-library/custom-queries`
 
@@ -278,6 +278,8 @@ A list of query names/patterns that are valid as Testing Library custom queries.
   }
 }
 ```
+
+[You can find more details about `custom-queries` setting here](docs/migrating-to-v4-guide.md#testing-librarycustom-queries).
 
 ## Troubleshooting
 
