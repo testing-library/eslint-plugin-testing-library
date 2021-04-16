@@ -99,9 +99,9 @@ Assuming you are using the same pattern for your test files as [Jest by default]
 };
 ```
 
-#### ESLint Cascading and Hierachy
+#### ESLint Cascading and Hierarchy
 
-Another approach for customizing ESLint config by paths is through [ESLint Cascading and Hierachy](https://eslint.org/docs/user-guide/configuring/configuration-files#cascading-and-hierarchy). This is useful if all your tests are placed under the same folder, so you can place there another `.eslintrc` where you enable `eslint-plugin-testing-library` for applying it only to the files under such folder, rather than enabling it on your global `.eslintrc` which would apply to your whole project.
+Another approach for customizing ESLint config by paths is through [ESLint Cascading and Hierarchy](https://eslint.org/docs/user-guide/configuring/configuration-files#cascading-and-hierarchy). This is useful if all your tests are placed under the same folder, so you can place there another `.eslintrc` where you enable `eslint-plugin-testing-library` for applying it only to the files under such folder, rather than enabling it on your global `.eslintrc` which would apply to your whole project.
 
 ## Shareable configurations
 
@@ -232,7 +232,7 @@ If you are looking to restricting this feature, please refer to the [Shared Sett
 
 ## Shared Settings
 
-There are some configuration options available that will be shared across all the plugin rules. This is achieved using [ESLint Shared Settings](https://eslint.org/docs/user-guide/configuring/configuration-files#adding-shared-settings). These Shared Settings are meant to be used if you need to restrict the Aggressive Reporting mechanism, which is an out of the box advanced feature to lint Testing Library usages in a simpler way for most of the users. **So please before configuring any of these settings**, read more about [the advantages of `eslint-plugin-testing-library` Aggressive Reporting mechanism](docs/migrating-to-v4-guide.md#aggressive-reporting), and [how it's affected by these settings](docs/migrating-to-v4-guide.md#shared-settings).
+There are some configuration options available that will be shared across all the plugin rules. This is achieved using [ESLint Shared Settings](https://eslint.org/docs/user-guide/configuring/configuration-files#adding-shared-settings). These Shared Settings are meant to be used if you need to restrict the Aggressive Reporting, which is an out of the box advanced feature to lint Testing Library usages in a simpler way for most of the users. **So please before configuring any of these settings**, read more about [the advantages of `eslint-plugin-testing-library` Aggressive Reporting mechanism](docs/migrating-to-v4-guide.md#aggressive-reporting), and [how it's affected by these settings](docs/migrating-to-v4-guide.md#shared-settings).
 
 If you are sure about configuring the settings, these are the options available:
 
@@ -265,6 +265,19 @@ A list of function names that are valid as Testing Library custom renders. Relat
 ```
 
 [You can find more details here](docs/migrating-to-v4-guide.md#testing-librarycustom-renders).
+
+### `testing-library/custom-queries'
+
+A list of query names/patterns that are valid as Testing Library custom queries. Relates to [Aggressive Reporting - Queries](docs/migrating-to-v4-guide.md#queries)
+
+```json
+// .eslintrc
+{
+  "settings": {
+    "testing-library/custom-queries": ["ByIcon", "getByComplexText"]
+  }
+}
+```
 
 ## Troubleshooting
 
