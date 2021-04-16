@@ -266,7 +266,7 @@ A list of function names that are valid as Testing Library custom renders. Relat
 
 [You can find more details here](docs/migrating-to-v4-guide.md#testing-librarycustom-renders).
 
-### `testing-library/custom-queries'
+### `testing-library/custom-queries`
 
 A list of query names/patterns that are valid as Testing Library custom queries. Relates to [Aggressive Reporting - Queries](docs/migrating-to-v4-guide.md#queries)
 
