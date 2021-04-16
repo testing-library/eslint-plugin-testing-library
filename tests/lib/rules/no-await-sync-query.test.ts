@@ -39,6 +39,19 @@ ruleTester.run(RULE_NAME, rule, {
       });
     }
     `,
+
+    // awaited custom sync query not matching custom-queries setting is valid
+    {
+      settings: {
+        'testing-library/custom-queries': ['queryByIcon', 'ByComplexText'],
+      },
+      code: `
+      test('A valid example test', async () => {
+        const element = await getByIcon('search')
+      })
+      `,
+    },
+
     // sync queries without await inside assert are valid
     ...SYNC_QUERIES_COMBINATIONS.map((query) => ({
       code: `() => {
@@ -232,6 +245,19 @@ ruleTester.run(RULE_NAME, rule, {
       }
       `,
       errors: [{ messageId: 'noAwaitSyncQuery', line: 4, column: 38 }],
+    },
+
+    // awaited custom sync query matching custom-queries setting is invalid
+    {
+      settings: {
+        'testing-library/custom-queries': ['queryByIcon', 'ByComplexText'],
+      },
+      code: `
+      test('A valid example test', async () => {
+        const element = await queryByIcon('search')
+      })
+      `,
+      errors: [{ messageId: 'noAwaitSyncQuery', line: 3, column: 31 }],
     },
   ],
 });
