@@ -219,7 +219,7 @@ ruleTester.run(RULE_NAME, rule, {
 
     // non-matching query is valid
     `
-    test('An valid example test', async () => {
+    test('A valid example test', async () => {
       const example = findText("my example")
     })
     `,
@@ -231,11 +231,23 @@ ruleTester.run(RULE_NAME, rule, {
       return somethingElse(element)
     }
 
-    test('An valid example test', async () => {
+    test('A valid example test', async () => {
       // findButton doesn't match async query pattern
       const button = findButton()
     })
     `,
+
+    // unhandled promise from custom query not matching custom-queries setting is valid
+    {
+      settings: {
+        'testing-library/custom-queries': ['queryByIcon', 'ByComplexText'],
+      },
+      code: `
+      test('A valid example test', () => {
+        const element = findByIcon('search')
+      })
+      `,
+    },
 
     // edge case for coverage
     // return non-matching query and other than Identifier or CallExpression
@@ -245,7 +257,7 @@ ruleTester.run(RULE_NAME, rule, {
       return element ? findSomethingElse(element) : null
     }
 
-    test('An valid example test', async () => {
+    test('A valid example test', async () => {
       someSetup()
     })
     `,
@@ -365,7 +377,7 @@ ruleTester.run(RULE_NAME, rule, {
           const element = queryWrapper()
         })
 
-        test("An valid example test", async () => {
+        test("An invalid example test", async () => {
           const element = await queryWrapper()
         })
       `,
@@ -387,7 +399,7 @@ ruleTester.run(RULE_NAME, rule, {
           const element = queryWrapper()
         })
 
-        test("An valid example test", async () => {
+        test("An invalid example test", async () => {
           const element = await queryWrapper()
         })
       `,
@@ -405,12 +417,25 @@ ruleTester.run(RULE_NAME, rule, {
           const element = queryWrapper()
         })
 
-        test("An valid example test", async () => {
+        test("An invalid example test", async () => {
           const element = await queryWrapper()
         })
       `,
           errors: [{ messageId: 'asyncQueryWrapper', line: 5, column: 27 }],
         } as const)
     ),
+
+    // unhandled promise from custom query matching custom-queries setting is invalid
+    {
+      settings: {
+        'testing-library/custom-queries': ['ByIcon', 'getByComplexText'],
+      },
+      code: `
+      test('An invalid example test', () => {
+        const element = findByIcon('search')
+      })
+      `,
+      errors: [{ messageId: 'awaitAsyncQuery', line: 3, column: 25 }],
+    },
   ],
 });
