@@ -252,6 +252,27 @@ ruleTester.run(RULE_NAME, rule, {
       within(container).findByRole('button')
     `,
     },
+    {
+      settings: {
+        'testing-library/custom-queries': ['ByComplexText', 'findByIcon'],
+      },
+      code: `// case: custom "queryBy*" query not reported (custom-queries not matching)
+      queryByIcon('search')`,
+    },
+    {
+      settings: {
+        'testing-library/custom-queries': ['ByComplexText', 'queryByIcon'],
+      },
+      code: `// case: custom "getBy*" query not reported (custom-queries not matching)
+      getByIcon('search')`,
+    },
+    {
+      settings: {
+        'testing-library/custom-queries': ['ByComplexText', 'getByIcon'],
+      },
+      code: `// case: custom "findBy*" query not reported (custom-queries not matching)
+      findByIcon('search')`,
+    },
 
     // Test Cases for async utils
     {
@@ -286,14 +307,21 @@ ruleTester.run(RULE_NAME, rule, {
     {
       settings: {
         'testing-library/utils-module': 'test-utils',
+        'testing-library/custom-renders': ['customRender'],
+        'testing-library/custom-queries': ['ByIcon', 'ByComplexText'],
       },
       code: `
-      // case: matching custom settings
+      // case: not matching any of the custom settings
+      import { renderWithRedux } from 'test-utils'
       import { render } from 'other-utils'
       import { somethingElse } from 'another-module'
       const foo = require('bar')
       
-      const utils = render();
+      const utils = render()
+      renderWithRedux()
+      getBySomethingElse('foo')
+      queryBySomethingElse('foo')
+      findBySomethingElse('foo')
       `,
     },
     {
@@ -728,6 +756,36 @@ ruleTester.run(RULE_NAME, rule, {
       errors: [{ line: 3, column: 25, messageId: 'findByError' }],
     },
     {
+      settings: {
+        'testing-library/custom-queries': ['ByIcon'],
+      },
+      code: `
+      // case: built-in "queryBy*" query reported (aggressive reporting disabled)
+      queryByRole('button')
+    `,
+      errors: [{ line: 3, column: 7, messageId: 'queryByError' }],
+    },
+    {
+      settings: {
+        'testing-library/custom-queries': ['ByIcon'],
+      },
+      code: `
+      // case: built-in "queryBy*" query reported (aggressive reporting disabled)
+      within(container).queryByRole('button')
+    `,
+      errors: [{ line: 3, column: 25, messageId: 'queryByError' }],
+    },
+    {
+      settings: {
+        'testing-library/custom-queries': ['ByIcon'],
+      },
+      code: `
+      // case: built-in "findBy*" query reported (aggressive reporting disabled)
+      findByRole('button')
+    `,
+      errors: [{ line: 3, column: 7, messageId: 'findByError' }],
+    },
+    {
       code: `
       // case: custom "queryBy*" query reported without import (aggressive reporting)
       queryByIcon('search')
@@ -751,6 +809,50 @@ ruleTester.run(RULE_NAME, rule, {
     {
       code: `
       // case: custom "findBy*" query reported without import using within (aggressive reporting)
+      within(container).findByIcon('search')
+    `,
+      errors: [{ line: 3, column: 25, messageId: 'customQueryError' }],
+    },
+    {
+      settings: {
+        'testing-library/custom-queries': ['queryByIcon', 'ByComplexText'],
+      },
+      code: `
+      // case: custom "queryBy*" query reported without import (custom-queries set)
+      queryByIcon('search')
+    `,
+      errors: [{ line: 3, column: 7, messageId: 'customQueryError' }],
+    },
+    {
+      settings: {
+        'testing-library/custom-queries': ['ByIcon', 'ByComplexText'],
+      },
+      code: `
+      // case: custom "queryBy*" query reported without import using within (custom-queries set)
+      within(container).queryByIcon('search')
+    `,
+      errors: [{ line: 3, column: 25, messageId: 'customQueryError' }],
+    },
+    {
+      settings: {
+        'testing-library/custom-queries': [
+          'queryByIcon',
+          'ByComplexText',
+          'findByIcon',
+        ],
+      },
+      code: `
+      // case: custom "findBy*" query reported without import (custom-queries set)
+      findByIcon('search')
+    `,
+      errors: [{ line: 3, column: 7, messageId: 'customQueryError' }],
+    },
+    {
+      settings: {
+        'testing-library/custom-queries': ['ByIcon', 'ByComplexText'],
+      },
+      code: `
+      // case: custom "findBy*" query reported without import using within (custom-queries set)
       within(container).findByIcon('search')
     `,
       errors: [{ line: 3, column: 25, messageId: 'customQueryError' }],
@@ -806,24 +908,31 @@ ruleTester.run(RULE_NAME, rule, {
       settings: {
         'testing-library/custom-renders': ['customRender', 'renderWithRedux'],
         'testing-library/utils-module': 'test-utils',
+        'testing-library/custom-queries': ['ByIcon', 'findByComplexText'],
       },
       code: `
       // case: aggressive reporting disabled - matching all custom settings
       import { renderWithRedux, waitFor, screen } from 'test-utils'
+      import { findByComplexText } from 'custom-queries'
       
-      const { getByRole } = renderWithRedux()
+      const { getByRole, getAllByIcon } = renderWithRedux()
       const el = getByRole('button')
+      const iconButtons = getAllByIcon('search')
       waitFor(() => {})
+      findByComplexText('foo')
+      
       `,
       errors: [
-        { line: 5, column: 29, messageId: 'renderError' },
-        { line: 6, column: 18, messageId: 'getByError' },
+        { line: 6, column: 43, messageId: 'renderError' },
+        { line: 7, column: 18, messageId: 'getByError' },
+        { line: 8, column: 27, messageId: 'customQueryError' },
         {
-          line: 7,
+          line: 9,
           column: 7,
           messageId: 'asyncUtilError',
           data: { utilName: 'waitFor' },
         },
+        { line: 10, column: 7, messageId: 'customQueryError' },
       ],
     },
     {
