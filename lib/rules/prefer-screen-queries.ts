@@ -64,7 +64,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
           if (
             isProperty(property) &&
             ASTUtils.isIdentifier(property.key) &&
-            helpers.isQuery(property.key)
+            helpers.isBuiltInQuery(property.key)
           ) {
             safeDestructuredQueries.push(property.key.name);
           }
@@ -115,7 +115,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
         }
       },
       'CallExpression > Identifier'(node: TSESTree.Identifier) {
-        if (!helpers.isQuery(node)) {
+        if (!helpers.isBuiltInQuery(node)) {
           return;
         }
 
@@ -130,7 +130,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
           return ['screen', ...withinDeclaredVariables].includes(name);
         }
 
-        if (!helpers.isQuery(node)) {
+        if (!helpers.isBuiltInQuery(node)) {
           return;
         }
 

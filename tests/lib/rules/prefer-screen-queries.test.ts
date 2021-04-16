@@ -11,17 +11,13 @@ const ruleTester = createRuleTester();
 const CUSTOM_QUERY_COMBINATIONS = combineQueries(ALL_QUERIES_VARIANTS, [
   'ByIcon',
 ]);
-const ALL_BUILTIN_AND_CUSTOM_QUERIES_COMBINATIONS = [
-  ...ALL_QUERIES_COMBINATIONS,
-  ...CUSTOM_QUERY_COMBINATIONS,
-];
 
 ruleTester.run(RULE_NAME, rule, {
   valid: [
     {
       code: `const baz = () => 'foo'`,
     },
-    ...ALL_BUILTIN_AND_CUSTOM_QUERIES_COMBINATIONS.map((queryMethod) => ({
+    ...ALL_QUERIES_COMBINATIONS.map((queryMethod) => ({
       code: `screen.${queryMethod}()`,
     })),
     {
@@ -30,24 +26,45 @@ ruleTester.run(RULE_NAME, rule, {
     {
       code: `component.otherFunctionShouldNotThrow()`,
     },
-    ...ALL_BUILTIN_AND_CUSTOM_QUERIES_COMBINATIONS.map((queryMethod) => ({
+    ...ALL_QUERIES_COMBINATIONS.map((queryMethod) => ({
       code: `within(component).${queryMethod}()`,
     })),
-    ...ALL_BUILTIN_AND_CUSTOM_QUERIES_COMBINATIONS.map((queryMethod) => ({
+    ...ALL_QUERIES_COMBINATIONS.map((queryMethod) => ({
       code: `within(screen.${queryMethod}()).${queryMethod}()`,
     })),
-    ...ALL_BUILTIN_AND_CUSTOM_QUERIES_COMBINATIONS.map((queryMethod) => ({
+    ...ALL_QUERIES_COMBINATIONS.map((queryMethod) => ({
       code: `
         const { ${queryMethod} } = within(screen.getByText('foo'))
         ${queryMethod}(baz)
       `,
     })),
-    ...ALL_BUILTIN_AND_CUSTOM_QUERIES_COMBINATIONS.map((queryMethod) => ({
+    ...ALL_QUERIES_COMBINATIONS.map((queryMethod) => ({
       code: `
         const myWithinVariable = within(foo)
         myWithinVariable.${queryMethod}('baz')
       `,
     })),
+    ...CUSTOM_QUERY_COMBINATIONS.map(
+      (query) => `
+      import { render } from '@testing-library/react'
+      import { ${query} } from 'custom-queries'
+      
+      test("imported custom queries, since they can't be used through screen", () => {
+        render(foo)
+        ${query}('bar')
+      })
+    `
+    ),
+    ...CUSTOM_QUERY_COMBINATIONS.map(
+      (query) => `
+      import { render } from '@testing-library/react'
+      
+      test("render-returned custom queries, since they can't be used through screen", () => {
+        const { ${query} } = render(foo)
+        ${query}('bar')
+      })
+    `
+    ),
     {
       code: `
         const screen = render(baz);
@@ -96,62 +113,48 @@ ruleTester.run(RULE_NAME, rule, {
         utils.unmount();
       `,
     },
-    ...ALL_BUILTIN_AND_CUSTOM_QUERIES_COMBINATIONS.map(
-      (queryMethod: string) => ({
-        code: `
+    ...ALL_QUERIES_COMBINATIONS.map((queryMethod: string) => ({
+      code: `
         const { ${queryMethod} } = render(baz, { baseElement: treeA })
         expect(${queryMethod}(baz)).toBeDefined()
       `,
-      })
-    ),
-    ...ALL_BUILTIN_AND_CUSTOM_QUERIES_COMBINATIONS.map(
-      (queryMethod: string) => ({
-        code: `
+    })),
+    ...ALL_QUERIES_COMBINATIONS.map((queryMethod: string) => ({
+      code: `
         const { ${queryMethod}: aliasMethod } = render(baz, { baseElement: treeA })
         expect(aliasMethod(baz)).toBeDefined()
       `,
-      })
-    ),
-    ...ALL_BUILTIN_AND_CUSTOM_QUERIES_COMBINATIONS.map(
-      (queryMethod: string) => ({
-        code: `
+    })),
+    ...ALL_QUERIES_COMBINATIONS.map((queryMethod: string) => ({
+      code: `
         const { ${queryMethod} } = render(baz, { container: treeA })
         expect(${queryMethod}(baz)).toBeDefined()
       `,
-      })
-    ),
-    ...ALL_BUILTIN_AND_CUSTOM_QUERIES_COMBINATIONS.map(
-      (queryMethod: string) => ({
-        code: `
+    })),
+    ...ALL_QUERIES_COMBINATIONS.map((queryMethod: string) => ({
+      code: `
         const { ${queryMethod}: aliasMethod } = render(baz, { container: treeA })
         expect(aliasMethod(baz)).toBeDefined()
       `,
-      })
-    ),
-    ...ALL_BUILTIN_AND_CUSTOM_QUERIES_COMBINATIONS.map(
-      (queryMethod: string) => ({
-        code: `
+    })),
+    ...ALL_QUERIES_COMBINATIONS.map((queryMethod: string) => ({
+      code: `
         const { ${queryMethod} } = render(baz, { baseElement: treeB, container: treeA })
         expect(${queryMethod}(baz)).toBeDefined()
       `,
-      })
-    ),
-    ...ALL_BUILTIN_AND_CUSTOM_QUERIES_COMBINATIONS.map(
-      (queryMethod: string) => ({
-        code: `
+    })),
+    ...ALL_QUERIES_COMBINATIONS.map((queryMethod: string) => ({
+      code: `
         const { ${queryMethod}: aliasMethod } = render(baz, { baseElement: treeB, container: treeA })
         expect(aliasMethod(baz)).toBeDefined()
       `,
-      })
-    ),
-    ...ALL_BUILTIN_AND_CUSTOM_QUERIES_COMBINATIONS.map(
-      (queryMethod: string) => ({
-        code: `
+    })),
+    ...ALL_QUERIES_COMBINATIONS.map((queryMethod: string) => ({
+      code: `
         render(foo, { baseElement: treeA }).${queryMethod}()
       `,
-      })
-    ),
-    ...ALL_BUILTIN_AND_CUSTOM_QUERIES_COMBINATIONS.map((queryMethod) => ({
+    })),
+    ...ALL_QUERIES_COMBINATIONS.map((queryMethod) => ({
       settings: { 'testing-library/utils-module': 'test-utils' },
       code: `
         import { render as testUtilRender } from 'test-utils'
@@ -159,7 +162,7 @@ ruleTester.run(RULE_NAME, rule, {
         const { ${queryMethod} } = render(foo)
         ${queryMethod}()`,
     })),
-    ...ALL_BUILTIN_AND_CUSTOM_QUERIES_COMBINATIONS.map((queryMethod) => ({
+    ...ALL_QUERIES_COMBINATIONS.map((queryMethod) => ({
       settings: {
         'testing-library/custom-renders': ['customRender'],
       },
@@ -171,7 +174,7 @@ ruleTester.run(RULE_NAME, rule, {
   ],
 
   invalid: [
-    ...ALL_BUILTIN_AND_CUSTOM_QUERIES_COMBINATIONS.map(
+    ...ALL_QUERIES_COMBINATIONS.map(
       (queryMethod) =>
         ({
           code: `
@@ -187,7 +190,7 @@ ruleTester.run(RULE_NAME, rule, {
           ],
         } as const)
     ),
-    ...ALL_BUILTIN_AND_CUSTOM_QUERIES_COMBINATIONS.map(
+    ...ALL_QUERIES_COMBINATIONS.map(
       (queryMethod) =>
         ({
           settings: { 'testing-library/utils-module': 'test-utils' },
@@ -208,7 +211,7 @@ ruleTester.run(RULE_NAME, rule, {
         } as const)
     ),
 
-    ...ALL_BUILTIN_AND_CUSTOM_QUERIES_COMBINATIONS.map(
+    ...ALL_QUERIES_COMBINATIONS.map(
       (queryMethod) =>
         ({
           settings: {
@@ -230,7 +233,7 @@ ruleTester.run(RULE_NAME, rule, {
           ],
         } as const)
     ),
-    ...ALL_BUILTIN_AND_CUSTOM_QUERIES_COMBINATIONS.map(
+    ...ALL_QUERIES_COMBINATIONS.map(
       (queryMethod) =>
         ({
           settings: { 'testing-library/utils-module': 'test-utils' },
@@ -250,7 +253,7 @@ ruleTester.run(RULE_NAME, rule, {
           ],
         } as const)
     ),
-    ...ALL_BUILTIN_AND_CUSTOM_QUERIES_COMBINATIONS.map(
+    ...ALL_QUERIES_COMBINATIONS.map(
       (queryMethod) =>
         ({
           settings: { 'testing-library/utils-module': 'test-utils' },
@@ -270,7 +273,7 @@ ruleTester.run(RULE_NAME, rule, {
           ],
         } as const)
     ),
-    ...ALL_BUILTIN_AND_CUSTOM_QUERIES_COMBINATIONS.map(
+    ...ALL_QUERIES_COMBINATIONS.map(
       (queryMethod) =>
         ({
           code: `render().${queryMethod}()`,
@@ -284,7 +287,7 @@ ruleTester.run(RULE_NAME, rule, {
           ],
         } as const)
     ),
-    ...ALL_BUILTIN_AND_CUSTOM_QUERIES_COMBINATIONS.map(
+    ...ALL_QUERIES_COMBINATIONS.map(
       (queryMethod) =>
         ({
           code: `render(foo, { hydrate: true }).${queryMethod}()`,
@@ -298,7 +301,7 @@ ruleTester.run(RULE_NAME, rule, {
           ],
         } as const)
     ),
-    ...ALL_BUILTIN_AND_CUSTOM_QUERIES_COMBINATIONS.map(
+    ...ALL_QUERIES_COMBINATIONS.map(
       (queryMethod) =>
         ({
           code: `component.${queryMethod}()`,
@@ -312,7 +315,7 @@ ruleTester.run(RULE_NAME, rule, {
           ],
         } as const)
     ),
-    ...ALL_BUILTIN_AND_CUSTOM_QUERIES_COMBINATIONS.map(
+    ...ALL_QUERIES_COMBINATIONS.map(
       (queryMethod) =>
         ({
           code: `
@@ -329,7 +332,7 @@ ruleTester.run(RULE_NAME, rule, {
           ],
         } as const)
     ),
-    ...ALL_BUILTIN_AND_CUSTOM_QUERIES_COMBINATIONS.map(
+    ...ALL_QUERIES_COMBINATIONS.map(
       (queryMethod) =>
         ({
           code: `
@@ -346,7 +349,7 @@ ruleTester.run(RULE_NAME, rule, {
           ],
         } as const)
     ),
-    ...ALL_BUILTIN_AND_CUSTOM_QUERIES_COMBINATIONS.map(
+    ...ALL_QUERIES_COMBINATIONS.map(
       (queryMethod) =>
         ({
           code: `
@@ -363,7 +366,7 @@ ruleTester.run(RULE_NAME, rule, {
           ],
         } as const)
     ),
-    ...ALL_BUILTIN_AND_CUSTOM_QUERIES_COMBINATIONS.map(
+    ...ALL_QUERIES_COMBINATIONS.map(
       (queryMethod) =>
         ({
           code: `
@@ -380,7 +383,7 @@ ruleTester.run(RULE_NAME, rule, {
           ],
         } as const)
     ),
-    ...ALL_BUILTIN_AND_CUSTOM_QUERIES_COMBINATIONS.map(
+    ...ALL_QUERIES_COMBINATIONS.map(
       (queryMethod) =>
         ({
           code: `
