@@ -145,7 +145,7 @@ const wrapper = renderWithRedux(<Component />);
 const el = findByIcon('profile');
 ```
 
-There are 3 mechanisms then that can be aggressively reported: imports, renders, and queries. This new Aggressive Reporting feature will just work fine out of the box and won't create false positives for most of the users. However, it's possible to do some tweaks to disable some of these behaviors using the new [Shared Settings](#shared-settings). We recommend you to keep reading this section to know more about these Aggressive Reporting behaviors and then check the Shared Settings if you think you'd still need it for some particular reason.
+There are 3 mechanisms then that can be aggressively reported: imports, renders, and queries. This new Aggressive Reporting feature will just work fine out of the box and won't create false positives for most of the users. However, it's possible to restrict or switch off these mechanisms using proper [Shared Settings](#shared-settings). We recommend you to keep reading this section to know more about these Aggressive Reporting mechanisms and then check the Shared Settings if you think you'd still need it for some particular reason.
 
 _You can find the motivation behind this behavior on [this issue comment](https://github.com/testing-library/eslint-plugin-testing-library/issues/222#issuecomment-679592434)._
 
@@ -153,23 +153,23 @@ _You can find the motivation behind this behavior on [this issue comment](https:
 
 By default, `eslint-plugin-testing-library` v4 won't check from which module are the utils imported. This means it doesn't matter if you are importing the utils from `@testing-library/*`, `test-utils` or `whatever`: they'll be assumed as Testing Library related if matching Testing Library utils patterns.
 
-There is a Shared Setting property to restrict this mechanism though: [`utils-module`](#testing-libraryutils-module). By using this setting, only utils imported from `@testing-library/*` packages + the custom one indicated in this setting would be reported.
+There is a Shared Setting property to restrict or switch off this mechanism though: [`utils-module`](#testing-libraryutils-module). By using this setting, only utils imported from `@testing-library/*` packages + the custom one indicated in this setting (if any) would be reported.
 
 ### Renders
 
 By default, `eslint-plugin-testing-library` v4 will assume that all methods which names contain "render" should be reported. This means it doesn't matter if you are rendering your elements for testing using `render`, `customRender` or `renderWithRedux`.
 
-There is a Shared Setting property to restrict this mechanism though: [`custom-renders`](#testing-librarycustom-renders). By using this setting, only methods strictly named `render` + custom ones indicated in this setting would be reported.
+There is a Shared Setting property to restrict or switch off this mechanism though: [`custom-renders`](#testing-librarycustom-renders). By using this setting, only methods strictly named `render` + custom ones indicated in this setting (if any) would be reported.
 
 ### Queries
 
 `eslint-plugin-testing-library` v4 will assume that all methods named following the pattern `get(All)By*`, `query(All)By*`, or `find(All)By*` are queries to be reported. This means it doesn't matter if you are using a built-in query (`getByText`), or a custom one (`getByIcon`): if it matches this pattern, it will be assumed as a potential query to be reported.
 
-There is a Shared Setting property to restrict this mechanism though: [`custom-queries`](#testing-librarycustom-queries). By using this setting, only [built-in queries](https://testing-library.com/docs/queries/about) + custom ones indicated in this setting would be reported.
+There is a Shared Setting property to restrict or switch off this mechanism though: [`custom-queries`](#testing-librarycustom-queries). By using this setting, only [built-in queries](https://testing-library.com/docs/queries/about) + custom ones indicated in this setting (if any) would be reported.
 
 ## Shared Settings
 
-ESLint has a setting feature which allows configuring data that must be shared across all its rules: [Shared Settings](https://eslint.org/docs/user-guide/configuring/configuration-files#adding-shared-settings). Since `eslint-plugin-testing-library` v4 we are using this Shared Settings to config global things for the plugin.
+ESLint provides a way of configuring data that must be shared across all its rules: [Shared Settings](https://eslint.org/docs/user-guide/configuring/configuration-files#adding-shared-settings). Since `eslint-plugin-testing-library` v4 we are using this Shared Settings to config global things for the plugin.
 
 To avoid collision with settings from other ESLint plugins, all the properties for this one are prefixed with `testing-library/`.
 
@@ -177,7 +177,9 @@ To avoid collision with settings from other ESLint plugins, all the properties f
 
 ### `testing-library/utils-module`
 
-The name of your custom utility file from where you re-export everything from Testing Library package. Relates to [Aggressive Reporting - Imports](#imports).
+Relates to [Aggressive Imports Reporting mechanism](#imports). This setting accepts any string value.
+
+If you pass a string other than `"off"` to this option, it will represent your custom utility file from where you re-export everything from Testing Library package.
 
 ```json
 // .eslintrc
@@ -188,7 +190,7 @@ The name of your custom utility file from where you re-export everything from Te
 }
 ```
 
-Enabling this setting, you'll restrict the errors reported by the plugin to only those utils being imported from this custom utility file, or some `@testing-library/*` package. The previous setting example would cause:
+Configuring this setting like that, you'll restrict the errors reported by the plugin to only those utils being imported from this custom utility file, or some `@testing-library/*` package. The previous setting example would cause:
 
 ```javascript
 import { waitFor } from '@testing-library/react';
@@ -220,9 +222,22 @@ test('testing-library/utils-module setting example', () => {
 });
 ```
 
+You can also set this setting to `"off"` to entirely opt-out Aggressive Imports Reporting mechanism, so only utils coming from Testing Library packages are reported.
+
+```json
+// .eslintrc
+{
+  "settings": {
+    "testing-library/utils-module": "off"
+  }
+}
+```
+
 ### `testing-library/custom-renders`
 
-A list of function names that are valid as Testing Library custom renders. Relates to [Aggressive Reporting - Renders](#renders)
+Relates to [Aggressive Renders Reporting mechanism](#renders). This setting accepts an array of strings or `"off"`.
+
+If you pass an array of strings to this option, it will represent a list of function names that are valid as Testing Library custom renders.
 
 ```json
 // .eslintrc
@@ -233,7 +248,7 @@ A list of function names that are valid as Testing Library custom renders. Relat
 }
 ```
 
-Enabling this setting, you'll restrict the errors reported by the plugin related to `render` somehow to only those functions sharing a name with one of the elements of that list, or built-in `render`. The previous setting example would cause:
+Configuring this setting like that, you'll restrict the errors reported by the plugin related to `render` somehow to only those functions sharing a name with one of the elements of that list, or built-in `render`. The previous setting example would cause:
 
 ```javascript
 import {
@@ -270,9 +285,22 @@ test('testing-library/custom-renders setting example', () => {
 });
 ```
 
+You can also set this setting to `"off"` to entirely opt-out Aggressive Renders Reporting mechanism, so only methods named `render` are reported as Testing Library render util.
+
+```json
+// .eslintrc
+{
+  "settings": {
+    "testing-library/custom-renders": "off"
+  }
+}
+```
+
 ### `testing-library/custom-queries`
 
-A list of query names/variants that are the only valid Testing Library custom queries. Relates to [Aggressive Reporting - Queries](#queries).
+Relates to [Aggressive Queries Reporting mechanism](#queries). This setting accepts an array of strings or `"off"`.
+
+If you pass an array of strings to this option, it will represent a list of query names/variants that are the only valid Testing Library custom queries.
 
 Each string passed to this list of custom queries can be:
 
@@ -288,7 +316,7 @@ Each string passed to this list of custom queries can be:
 }
 ```
 
-Enabling this setting, you'll restrict the errors reported by the plugin related to the queries somehow to only those custom queries matching name or pattern from that list, or [built-in queries](https://testing-library.com/docs/queries/about). The previous setting example would cause:
+Configuring this setting like that, you'll restrict the errors reported by the plugin related to the queries somehow to only those custom queries matching name or pattern from that list, or [built-in queries](https://testing-library.com/docs/queries/about). The previous setting example would cause:
 
 ```javascript
 // ✅ this would be reported since `getByText` is a built-in Testing Library query
@@ -311,4 +339,15 @@ getAllByComplexText('foo');
 
 // ❌ this would NOT be reported since `findBySomethingElse` is a custom query but not matching any setting
 findBySomethingElse('foo');
+```
+
+You can also set this setting to `"off"` to entirely opt-out Aggressive Queries Reporting mechanism, so only built-in queries are reported.
+
+```json
+// .eslintrc
+{
+  "settings": {
+    "testing-library/custom-queries": "off"
+  }
+}
 ```
