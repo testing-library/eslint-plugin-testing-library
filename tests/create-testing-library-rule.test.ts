@@ -70,6 +70,16 @@ ruleTester.run(RULE_NAME, rule, {
       import { foo } from 'custom-module-forced-report'
     `,
     },
+    {
+      settings: {
+        'testing-library/utils-module': 'off',
+      },
+      code: `
+      // case: aggressive import switched off - imported from non-built-in module
+      import 'report-me';
+      require('report-me');
+      `,
+    },
 
     // Test Cases for user-event imports
     {
@@ -139,6 +149,39 @@ ruleTester.run(RULE_NAME, rule, {
       import { render } from 'somewhere-else'
 
       const utils = render()
+      `,
+    },
+    {
+      settings: { 'testing-library/utils-module': 'test-utils' },
+      code: `
+      // case: aggressive module disabled and render coming from non-related module
+      import * as somethingElse from '@somewhere/else'
+      import { render } from '@testing-library/react'
+      
+      // somethingElse.render is not coming from any module related to TL
+      const utils = somethingElse.render()
+      `,
+    },
+    {
+      settings: {
+        'testing-library/custom-renders': ['customRender', 'renderWithRedux'],
+      },
+      code: `
+      // case: aggressive render disabled - method not matching custom-renders
+      import { renderWithProviders } from '@somewhere/else'
+      
+      const utils = renderWithProviders()
+      `,
+    },
+    {
+      settings: {
+        'testing-library/custom-renders': 'off',
+      },
+      code: `
+      // case: aggressive render switched off
+      import { renderWithProviders } from '@somewhere/else'
+      
+      const utils = renderWithProviders()
       `,
     },
 
@@ -273,6 +316,19 @@ ruleTester.run(RULE_NAME, rule, {
       code: `// case: custom "findBy*" query not reported (custom-queries not matching)
       findByIcon('search')`,
     },
+    {
+      settings: {
+        'testing-library/custom-queries': 'off',
+      },
+      code: `// case: custom queries not reported (aggressive queries switched off)
+      getByIcon('search');
+      queryByIcon('search');
+      findByIcon('search');
+      getAllByIcon('search');
+      queryAllByIcon('search');
+      findAllByIcon('search');
+      `,
+    },
 
     // Test Cases for async utils
     {
@@ -325,14 +381,23 @@ ruleTester.run(RULE_NAME, rule, {
       `,
     },
     {
-      settings: { 'testing-library/utils-module': 'test-utils' },
+      settings: {
+        'testing-library/utils-module': 'off',
+        'testing-library/custom-renders': 'off',
+        'testing-library/custom-queries': 'off',
+      },
       code: `
-      // case: aggressive module disabled and render coming from non-related module
-      import * as somethingElse from '@somewhere/else'
-      import { render } from '@testing-library/react'
+      // case: all settings switched off + only custom utils used
+      import { renderWithRedux } from 'test-utils'
+      import { render } from 'other-utils'
+      import { somethingElse } from 'another-module'
+      const foo = require('bar')
       
-      // somethingElse.render is not coming from any module related to TL
-      const utils = somethingElse.render()
+      const utils = render()
+      renderWithRedux()
+      getBySomethingElse('foo')
+      queryBySomethingElse('foo')
+      findBySomethingElse('foo')
       `,
     },
 
@@ -623,6 +688,20 @@ ruleTester.run(RULE_NAME, rule, {
       const utils = rtl.render()
       `,
       errors: [{ line: 5, column: 25, messageId: 'renderError' }],
+    },
+    {
+      settings: {
+        'testing-library/utils-module': 'test-utils',
+      },
+      code: `
+      // case: matching all custom settings
+      import { render } from 'test-utils'
+      import { somethingElse } from 'another-module'
+      const foo = require('bar')
+      
+      const utils = render();
+      `,
+      errors: [{ line: 7, column: 21, messageId: 'renderError' }],
     },
 
     // Test Cases for presence/absence assertions
@@ -937,17 +1016,48 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       settings: {
-        'testing-library/utils-module': 'test-utils',
+        'testing-library/utils-module': 'off',
+        'testing-library/custom-renders': 'off',
+        'testing-library/custom-queries': 'off',
       },
       code: `
-      // case: matching all custom settings
-      import { render } from 'test-utils'
-      import { somethingElse } from 'another-module'
-      const foo = require('bar')
+      // case: built-in utils reported when all aggressive reporting completely switched off
+      import { render, screen, waitFor } from '@testing-library/react';
+      import userEvent from '@testing-library/user-event'
       
       const utils = render();
+      const el = utils.getByText('foo');
+      screen.findByRole('button');
+      waitFor();
+      userEvent.click(el);
       `,
-      errors: [{ line: 7, column: 21, messageId: 'renderError' }],
+      errors: [
+        {
+          line: 6,
+          column: 21,
+          messageId: 'renderError',
+        },
+        {
+          line: 7,
+          column: 24,
+          messageId: 'getByError',
+        },
+        {
+          line: 8,
+          column: 14,
+          messageId: 'findByError',
+        },
+        {
+          line: 9,
+          column: 7,
+          messageId: 'asyncUtilError',
+        },
+        {
+          line: 10,
+          column: 17,
+          messageId: 'userEventError',
+        },
+      ],
     },
   ],
 });

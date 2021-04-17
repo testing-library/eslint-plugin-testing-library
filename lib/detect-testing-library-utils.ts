@@ -217,10 +217,13 @@ export function detectTestingLibraryUtils<
      * reporting mechanism is opted-out in favour to report only `render` or
      * names set up on custom renders setting.
      */
-    const isAggressiveRenderReportingEnabled = () =>
-      !customRendersSetting ||
-      !Array.isArray(customRendersSetting) ||
-      customRendersSetting.length === 0;
+    const isAggressiveRenderReportingEnabled = (): boolean => {
+      const isSwitchedOff = customRendersSetting === SETTING_OPTION_OFF;
+      const hasCustomOptions =
+        Array.isArray(customRendersSetting) && customRendersSetting.length > 0;
+
+      return !isSwitchedOff && !hasCustomOptions;
+    };
 
     /**
      * Determines whether Aggressive Reporting for queries is enabled or not.
@@ -230,10 +233,13 @@ export function detectTestingLibraryUtils<
      * Otherwise, this Aggressive Reporting mechanism is opted-out in favour of reporting only built-in queries + those
      * indicated in custom-queries setting.
      */
-    const isAggressiveQueryReportingEnabled = (): boolean =>
-      !customQueriesSetting ||
-      !Array.isArray(customQueriesSetting) ||
-      customQueriesSetting.length === 0;
+    const isAggressiveQueryReportingEnabled = (): boolean => {
+      const isSwitchedOff = customQueriesSetting === SETTING_OPTION_OFF;
+      const hasCustomOptions =
+        Array.isArray(customQueriesSetting) && customQueriesSetting.length > 0;
+
+      return !isSwitchedOff && !hasCustomOptions;
+    };
 
     const getCustomModule = (): string | undefined => {
       if (
