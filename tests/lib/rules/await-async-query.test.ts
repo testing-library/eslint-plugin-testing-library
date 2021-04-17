@@ -249,6 +249,18 @@ ruleTester.run(RULE_NAME, rule, {
       `,
     },
 
+    // unhandled promise from custom query with aggressive query switched off is valid
+    {
+      settings: {
+        'testing-library/custom-queries': 'off',
+      },
+      code: `
+      test('A valid example test', () => {
+        const element = findByIcon('search')
+      })
+      `,
+    },
+
     // edge case for coverage
     // return non-matching query and other than Identifier or CallExpression
     `

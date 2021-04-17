@@ -162,10 +162,34 @@ ruleTester.run(RULE_NAME, rule, {
         };
 
         test(
-        'both render and module aggressive reporting disabled - should not report render result called "wrapper" from nont-related renamed custom render wrapped in a function',
+        'both render and module aggressive reporting disabled - should not report render result called "wrapper" from non-related renamed custom render wrapped in a function',
         async () => {
           const wrapper = setup();
           await wrapper.findByRole('button');
+        });
+      `,
+    },
+    {
+      settings: {
+        'testing-library/utils-module': 'off',
+        'testing-library/custom-renders': 'off',
+      },
+      code: `
+        import { customRender as myRender } from 'test-utils';
+        import { render } from 'non-related'
+        
+        const setup = () => {
+          return render(<SomeComponent />);
+        };
+
+        test(
+        'both render and module aggressive reporting switched off - should not report render result called "wrapper"',
+        async () => {
+          const wrapper1 = render();
+          const wrapper2 = myRender();
+          const wrapper3 = setup();
+
+          await wrapper1.findByRole('button');
         });
       `,
     },
