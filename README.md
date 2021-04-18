@@ -238,7 +238,7 @@ If you are sure about configuring the settings, these are the options available:
 
 ### `testing-library/utils-module`
 
-The name of your custom utility file from where you re-export everything from Testing Library package, or `"off"` to switch related Aggressive Reporting mechanism off. Relates to [Aggressive Imports Reporting](docs/migrating-to-v4-guide.md#imports).
+The name of your custom utility file from where you re-export everything from the Testing Library package, or `"off"` to switch related Aggressive Reporting mechanism off. Relates to [Aggressive Imports Reporting](docs/migrating-to-v4-guide.md#imports).
 
 ```json
 // .eslintrc
@@ -249,7 +249,7 @@ The name of your custom utility file from where you re-export everything from Te
 }
 ```
 
-[You can find more details about `utils-module` setting here](docs/migrating-to-v4-guide.md#testing-libraryutils-module).
+[You can find more details about the `utils-module` setting here](docs/migrating-to-v4-guide.md#testing-libraryutils-module).
 
 ### `testing-library/custom-renders`
 
@@ -264,7 +264,7 @@ A list of function names that are valid as Testing Library custom renders, or `"
 }
 ```
 
-[You can find more details about `custom-renders` setting here](docs/migrating-to-v4-guide.md#testing-librarycustom-renders).
+[You can find more details about the `custom-renders` setting here](docs/migrating-to-v4-guide.md#testing-librarycustom-renders).
 
 ### `testing-library/custom-queries`
 
@@ -279,11 +279,11 @@ A list of query names/patterns that are valid as Testing Library custom queries,
 }
 ```
 
-[You can find more details about `custom-queries` setting here](docs/migrating-to-v4-guide.md#testing-librarycustom-queries).
+[You can find more details about the `custom-queries` setting here](docs/migrating-to-v4-guide.md#testing-librarycustom-queries).
 
 ### Switching all Aggressive Reporting mechanisms off
 
-Since each Shared Setting is related to one Aggressive Reporting mechanism, and they accept `"off"` option to opt that mechanism out, you can switch the entire feature off by doing:
+Since each Shared Setting is related to one Aggressive Reporting mechanism, and they accept `"off"` to opt out of that mechanism, you can switch the entire feature off by doing:
 
 ```json
 // .eslintrc

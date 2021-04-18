@@ -98,7 +98,7 @@ So what is this Aggressive Reporting introduced on v4? Until v3, `eslint-plugin-
 - users can [re-export Testing Library utils from a custom module](https://testing-library.com/docs/react-testing-library/setup/#configuring-jest-with-test-utils), so they won't be imported from a Testing Library package but a custom one.
 - users can [add their own Custom Queries](https://testing-library.com/docs/react-testing-library/setup/#add-custom-queries), so it's possible to use other queries than built-in ones.
 
-These customization possibilities make impossible for `eslint-plugin-testing-library` to figure out if some utils are related to Testing Library or not. Here you have some examples illustrating it:
+These customization possibilities make it impossible for `eslint-plugin-testing-library` to figure out if some utils are related to Testing Library or not. Here you have some examples illustrating it:
 
 ```javascript
 import { render, screen } from '@testing-library/react';
@@ -129,7 +129,7 @@ const el = findByIcon('profile');
 
 How can the `eslint-plugin-testing-library` be aware of this? Until v3, the plugin offered some options to indicate some of these custom things, so the plugin would check them when reporting usages. This can lead to false negatives though since the users might not be aware of the necessity of indicating such custom utils or just forget about doing so.
 
-Instead, in `eslint-plugin-testing-library` v4 we have opted-in a more **aggressive reporting** feature which, by default, will assume any method named following the same patterns as Testing Library utils has to be reported too:
+Instead, in `eslint-plugin-testing-library` v4 we have opted-in into a more **aggressive reporting** feature which, by default, will assume any method named following the same patterns as Testing Library utils has to be reported too:
 
 ```javascript
 // importing from Custom Module
@@ -145,27 +145,28 @@ const wrapper = renderWithRedux(<Component />);
 const el = findByIcon('profile');
 ```
 
-There are 3 mechanisms then that can be aggressively reported: imports, renders, and queries. This new Aggressive Reporting feature will just work fine out of the box and won't create false positives for most of the users. However, it's possible to restrict or switch off these mechanisms using proper [Shared Settings](#shared-settings). We recommend you to keep reading this section to know more about these Aggressive Reporting mechanisms and then check the Shared Settings if you think you'd still need it for some particular reason.
+There are 3 mechanisms that can be aggressively reported: imports, renders, and queries. This new Aggressive Reporting feature will work fine out of the box and won't create false positives for most of the users. However, it's possible to restrict or switch off these mechanisms using [Shared Settings](#shared-settings).  
+We recommend you to keep reading this section to know more about these Aggressive Reporting mechanisms and afterwards check the Shared Settings if you think you'd still need them for some particular reason.
 
 _You can find the motivation behind this behavior on [this issue comment](https://github.com/testing-library/eslint-plugin-testing-library/issues/222#issuecomment-679592434)._
 
 ### Imports
 
-By default, `eslint-plugin-testing-library` v4 won't check from which module are the utils imported. This means it doesn't matter if you are importing the utils from `@testing-library/*`, `test-utils` or `whatever`: they'll be assumed as Testing Library related if matching Testing Library utils patterns.
+By default, `eslint-plugin-testing-library` v4 won't check from which module the utils are imported. This means it doesn't matter if you are importing the utils from `@testing-library/*`, `test-utils` or `whatever`: they'll be assumed as Testing Library related if matching Testing Library utils patterns.
 
-There is a Shared Setting property to restrict or switch off this mechanism though: [`utils-module`](#testing-libraryutils-module). By using this setting, only utils imported from `@testing-library/*` packages + the custom one indicated in this setting (if any) would be reported.
+There is a Shared Setting property to restrict or switch off this mechanism though: [`utils-module`](#testing-libraryutils-module). By using this setting, only utils imported from `@testing-library/*` packages + those indicated in this setting (if any) will be reported.
 
 ### Renders
 
 By default, `eslint-plugin-testing-library` v4 will assume that all methods which names contain "render" should be reported. This means it doesn't matter if you are rendering your elements for testing using `render`, `customRender` or `renderWithRedux`.
 
-There is a Shared Setting property to restrict or switch off this mechanism though: [`custom-renders`](#testing-librarycustom-renders). By using this setting, only methods strictly named `render` + custom ones indicated in this setting (if any) would be reported.
+There is a Shared Setting property to restrict or switch off this mechanism though: [`custom-renders`](#testing-librarycustom-renders). By using this setting, only methods strictly named `render` + those indicated in this setting (if any) will be reported.
 
 ### Queries
 
 `eslint-plugin-testing-library` v4 will assume that all methods named following the pattern `get(All)By*`, `query(All)By*`, or `find(All)By*` are queries to be reported. This means it doesn't matter if you are using a built-in query (`getByText`), or a custom one (`getByIcon`): if it matches this pattern, it will be assumed as a potential query to be reported.
 
-There is a Shared Setting property to restrict or switch off this mechanism though: [`custom-queries`](#testing-librarycustom-queries). By using this setting, only [built-in queries](https://testing-library.com/docs/queries/about) + custom ones indicated in this setting (if any) would be reported.
+There is a Shared Setting property to restrict or switch off this mechanism though: [`custom-queries`](#testing-librarycustom-queries). By using this setting, only [built-in queries](https://testing-library.com/docs/queries/about) + those indicated in this setting (if any) will be reported.
 
 ## Shared Settings
 
@@ -177,7 +178,7 @@ To avoid collision with settings from other ESLint plugins, all the properties f
 
 ### `testing-library/utils-module`
 
-Relates to [Aggressive Imports Reporting mechanism](#imports). This setting accepts any string value.
+Relates to the [Aggressive Imports Reporting mechanism](#imports). This setting accepts any string value.
 
 If you pass a string other than `"off"` to this option, it will represent your custom utility file from where you re-export everything from Testing Library package.
 
@@ -235,7 +236,7 @@ You can also set this setting to `"off"` to entirely opt-out Aggressive Imports 
 
 ### `testing-library/custom-renders`
 
-Relates to [Aggressive Renders Reporting mechanism](#renders). This setting accepts an array of strings or `"off"`.
+Relates to the [Aggressive Renders Reporting mechanism](#renders). This setting accepts an array of strings or `"off"`.
 
 If you pass an array of strings to this option, it will represent a list of function names that are valid as Testing Library custom renders.
 
@@ -298,7 +299,7 @@ You can also set this setting to `"off"` to entirely opt-out Aggressive Renders 
 
 ### `testing-library/custom-queries`
 
-Relates to [Aggressive Queries Reporting mechanism](#queries). This setting accepts an array of strings or `"off"`.
+Relates to the [Aggressive Queries Reporting mechanism](#queries). This setting accepts an array of strings or `"off"`.
 
 If you pass an array of strings to this option, it will represent a list of query names/variants that are the only valid Testing Library custom queries.
 
@@ -316,7 +317,7 @@ Each string passed to this list of custom queries can be:
 }
 ```
 
-Configuring this setting like that, you'll restrict the errors reported by the plugin related to the queries somehow to only those custom queries matching name or pattern from that list, or [built-in queries](https://testing-library.com/docs/queries/about). The previous setting example would cause:
+Configuring this setting like that, you'll restrict the errors reported by the plugin related to the queries to only those custom queries matching name or pattern from that list, or [built-in queries](https://testing-library.com/docs/queries/about). The previous setting example would cause:
 
 ```javascript
 // ✅ this would be reported since `getByText` is a built-in Testing Library query
