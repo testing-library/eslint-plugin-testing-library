@@ -27,9 +27,12 @@ import {
   PRESENCE_MATCHERS,
 } from './utils';
 
+const SETTING_OPTION_OFF = 'off' as const;
+
 export type TestingLibrarySettings = {
-  'testing-library/utils-module'?: string;
-  'testing-library/custom-renders'?: string[];
+  'testing-library/utils-module'?: string | typeof SETTING_OPTION_OFF;
+  'testing-library/custom-renders'?: string[] | typeof SETTING_OPTION_OFF;
+  'testing-library/custom-queries'?: string[] | typeof SETTING_OPTION_OFF;
 };
 
 export type TestingLibraryContext<
@@ -137,9 +140,12 @@ export function detectTestingLibraryUtils<
     let importedUserEventLibraryNode: ImportModuleNode | null = null;
 
     // Init options based on shared ESLint settings
-    const customModule = context.settings['testing-library/utils-module'];
-    const customRenders =
-      context.settings['testing-library/custom-renders'] ?? [];
+    const customModuleSetting =
+      context.settings['testing-library/utils-module'];
+    const customRendersSetting =
+      context.settings['testing-library/custom-renders'];
+    const customQueriesSetting =
+      context.settings['testing-library/custom-queries'];
 
     /**
      * Small method to extract common checks to determine whether a node is
@@ -200,7 +206,7 @@ export function detectTestingLibraryUtils<
      * opted-out in favour to report only those utils coming from Testing
      * Library package or custom module set up on settings.
      */
-    const isAggressiveModuleReportingEnabled = () => !customModule;
+    const isAggressiveModuleReportingEnabled = () => !customModuleSetting;
 
     /**
      * Determines whether aggressive render reporting is enabled or not.
@@ -211,8 +217,61 @@ export function detectTestingLibraryUtils<
      * reporting mechanism is opted-out in favour to report only `render` or
      * names set up on custom renders setting.
      */
-    const isAggressiveRenderReportingEnabled = () =>
-      !Array.isArray(customRenders) || customRenders.length === 0;
+    const isAggressiveRenderReportingEnabled = (): boolean => {
+      const isSwitchedOff = customRendersSetting === SETTING_OPTION_OFF;
+      const hasCustomOptions =
+        Array.isArray(customRendersSetting) && customRendersSetting.length > 0;
+
+      return !isSwitchedOff && !hasCustomOptions;
+    };
+
+    /**
+     * Determines whether Aggressive Reporting for queries is enabled or not.
+     *
+     * This Aggressive Reporting mechanism is considered as enabled when custom-queries setting is not set,
+     * so the plugin needs to report both built-in and custom queries.
+     * Otherwise, this Aggressive Reporting mechanism is opted-out in favour of reporting only built-in queries + those
+     * indicated in custom-queries setting.
+     */
+    const isAggressiveQueryReportingEnabled = (): boolean => {
+      const isSwitchedOff = customQueriesSetting === SETTING_OPTION_OFF;
+      const hasCustomOptions =
+        Array.isArray(customQueriesSetting) && customQueriesSetting.length > 0;
+
+      return !isSwitchedOff && !hasCustomOptions;
+    };
+
+    const getCustomModule = (): string | undefined => {
+      if (
+        !isAggressiveModuleReportingEnabled() &&
+        customModuleSetting !== SETTING_OPTION_OFF
+      ) {
+        return customModuleSetting;
+      }
+      return undefined;
+    };
+
+    const getCustomRenders = (): string[] => {
+      if (
+        !isAggressiveRenderReportingEnabled() &&
+        customRendersSetting !== SETTING_OPTION_OFF
+      ) {
+        return customRendersSetting as string[];
+      }
+
+      return [];
+    };
+
+    const getCustomQueries = (): string[] => {
+      if (
+        !isAggressiveQueryReportingEnabled() &&
+        customQueriesSetting !== SETTING_OPTION_OFF
+      ) {
+        return customQueriesSetting as string[];
+      }
+
+      return [];
+    };
 
     // Helpers for Testing Library detection.
     const getTestingLibraryImportNode: GetTestingLibraryImportNodeFn = () => {
@@ -257,24 +316,49 @@ export function detectTestingLibraryUtils<
     };
 
     /**
+     * Determines whether a given node is a reportable query,
+     * either a built-in or a custom one.
+     *
+     * Depending on Aggressive Query Reporting setting, custom queries will be
+     * reportable or not.
+     */
+    const isQuery: IsQueryFn = (node) => {
+      const hasQueryPattern = /^(get|query|find)(All)?By.+$/.test(node.name);
+      if (!hasQueryPattern) {
+        return false;
+      }
+
+      if (isAggressiveQueryReportingEnabled()) {
+        return true;
+      }
+
+      const customQueries = getCustomQueries();
+      const isBuiltInQuery = ALL_QUERIES_COMBINATIONS.includes(node.name);
+      const isReportableCustomQuery = customQueries.some((pattern) =>
+        new RegExp(pattern).test(node.name)
+      );
+      return isBuiltInQuery || isReportableCustomQuery;
+    };
+
+    /**
      * Determines whether a given node is `get*` query variant or not.
      */
     const isGetQueryVariant: IsGetQueryVariantFn = (node) => {
-      return /^get(All)?By.+$/.test(node.name);
+      return isQuery(node) && node.name.startsWith('get');
     };
 
     /**
      * Determines whether a given node is `query*` query variant or not.
      */
     const isQueryQueryVariant: IsQueryQueryVariantFn = (node) => {
-      return /^query(All)?By.+$/.test(node.name);
+      return isQuery(node) && node.name.startsWith('query');
     };
 
     /**
      * Determines whether a given node is `find*` query variant or not.
      */
     const isFindQueryVariant: IsFindQueryVariantFn = (node) => {
-      return /^find(All)?By.+$/.test(node.name);
+      return isQuery(node) && node.name.startsWith('find');
     };
 
     /**
@@ -291,20 +375,12 @@ export function detectTestingLibraryUtils<
       return isFindQueryVariant(node);
     };
 
-    /**
-     * Determines whether a given node is a valid query,
-     * either built-in or custom
-     */
-    const isQuery: IsQueryFn = (node) => {
-      return isSyncQuery(node) || isAsyncQuery(node);
-    };
-
     const isCustomQuery: IsCustomQueryFn = (node) => {
       return isQuery(node) && !ALL_QUERIES_COMBINATIONS.includes(node.name);
     };
 
     const isBuiltInQuery = (node: TSESTree.Identifier): boolean => {
-      return ALL_QUERIES_COMBINATIONS.includes(node.name);
+      return isQuery(node) && ALL_QUERIES_COMBINATIONS.includes(node.name);
     };
 
     /**
@@ -486,18 +562,20 @@ export function detectTestingLibraryUtils<
             return identifierNodeName.toLowerCase().includes(RENDER_NAME);
           }
 
-          return [RENDER_NAME, ...customRenders].some((validRenderName) => {
-            let isMatch = false;
+          return [RENDER_NAME, ...getCustomRenders()].some(
+            (validRenderName) => {
+              let isMatch = false;
 
-            if (validRenderName === identifierNodeName) {
-              isMatch = true;
-            }
+              if (validRenderName === identifierNodeName) {
+                isMatch = true;
+              }
 
-            if (!!originalNodeName && validRenderName === originalNodeName) {
-              isMatch = true;
+              if (!!originalNodeName && validRenderName === originalNodeName) {
+                isMatch = true;
+              }
+              return isMatch;
             }
-            return isMatch;
-          });
+          );
         }
       );
     };
@@ -747,6 +825,7 @@ export function detectTestingLibraryUtils<
 
         // check only if custom module import not found yet so we avoid
         // to override importedCustomModuleNode after it's found
+        const customModule = getCustomModule();
         if (
           customModule &&
           !importedCustomModuleNode &&
@@ -784,6 +863,7 @@ export function detectTestingLibraryUtils<
           importedTestingLibraryNode = callExpression;
         }
 
+        const customModule = getCustomModule();
         if (
           !importedCustomModuleNode &&
           args.some(

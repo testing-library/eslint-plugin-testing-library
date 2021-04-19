@@ -99,9 +99,9 @@ Assuming you are using the same pattern for your test files as [Jest by default]
 };
 ```
 
-#### ESLint Cascading and Hierachy
+#### ESLint Cascading and Hierarchy
 
-Another approach for customizing ESLint config by paths is through [ESLint Cascading and Hierachy](https://eslint.org/docs/user-guide/configuring/configuration-files#cascading-and-hierarchy). This is useful if all your tests are placed under the same folder, so you can place there another `.eslintrc` where you enable `eslint-plugin-testing-library` for applying it only to the files under such folder, rather than enabling it on your global `.eslintrc` which would apply to your whole project.
+Another approach for customizing ESLint config by paths is through [ESLint Cascading and Hierarchy](https://eslint.org/docs/user-guide/configuring/configuration-files#cascading-and-hierarchy). This is useful if all your tests are placed under the same folder, so you can place there another `.eslintrc` where you enable `eslint-plugin-testing-library` for applying it only to the files under such folder, rather than enabling it on your global `.eslintrc` which would apply to your whole project.
 
 ## Shareable configurations
 
@@ -228,17 +228,17 @@ To enable this configuration use the `extends` property in your
 
 In v4 this plugin introduced a new feature called "Aggressive Reporting", which intends to detect Testing Library utils usages even if they don't come directly from a Testing Library package (i.e. [using a custom utility file to re-export everything from Testing Library](https://testing-library.com/docs/react-testing-library/setup/#custom-render)). You can [read more about this feature here](docs/migrating-to-v4-guide.md#aggressive-reporting).
 
-If you are looking to restricting this feature, please refer to the [Shared Settings section](#shared-settings) to do so. It's not possible to switch this mechanism entirely off yet, but there will be a new option in the Shared Settings in the future to be able to achieve this.
+If you are looking to restricting or switching off this feature, please refer to the [Shared Settings section](#shared-settings) to do so.
 
 ## Shared Settings
 
-There are some configuration options available that will be shared across all the plugin rules. This is achieved using [ESLint Shared Settings](https://eslint.org/docs/user-guide/configuring/configuration-files#adding-shared-settings). These Shared Settings are meant to be used if you need to restrict the Aggressive Reporting mechanism, which is an out of the box advanced feature to lint Testing Library usages in a simpler way for most of the users. **So please before configuring any of these settings**, read more about [the advantages of `eslint-plugin-testing-library` Aggressive Reporting mechanism](docs/migrating-to-v4-guide.md#aggressive-reporting), and [how it's affected by these settings](docs/migrating-to-v4-guide.md#shared-settings).
+There are some configuration options available that will be shared across all the plugin rules. This is achieved using [ESLint Shared Settings](https://eslint.org/docs/user-guide/configuring/configuration-files#adding-shared-settings). These Shared Settings are meant to be used if you need to restrict or switch off the Aggressive Reporting, which is an out of the box advanced feature to lint Testing Library usages in a simpler way for most of the users. **So please before configuring any of these settings**, read more about [the advantages of `eslint-plugin-testing-library` Aggressive Reporting feature](docs/migrating-to-v4-guide.md#aggressive-reporting), and [how it's affected by these settings](docs/migrating-to-v4-guide.md#shared-settings).
 
 If you are sure about configuring the settings, these are the options available:
 
 ### `testing-library/utils-module`
 
-The name of your custom utility file from where you re-export everything from Testing Library package.
+The name of your custom utility file from where you re-export everything from the Testing Library package, or `"off"` to switch related Aggressive Reporting mechanism off. Relates to [Aggressive Imports Reporting](docs/migrating-to-v4-guide.md#imports).
 
 ```json
 // .eslintrc
@@ -249,11 +249,11 @@ The name of your custom utility file from where you re-export everything from Te
 }
 ```
 
-[You can find more details here](docs/migrating-to-v4-guide.md#testing-libraryutils-module).
+[You can find more details about the `utils-module` setting here](docs/migrating-to-v4-guide.md#testing-libraryutils-module).
 
 ### `testing-library/custom-renders`
 
-A list of function names that are valid as Testing Library custom renders. Relates to [Aggressive Reporting - Renders](docs/migrating-to-v4-guide.md#renders)
+A list of function names that are valid as Testing Library custom renders, or `"off"` to switch related Aggressive Reporting mechanism off. Relates to [Aggressive Renders Reporting](docs/migrating-to-v4-guide.md#renders).
 
 ```json
 // .eslintrc
@@ -264,11 +264,41 @@ A list of function names that are valid as Testing Library custom renders. Relat
 }
 ```
 
-[You can find more details here](docs/migrating-to-v4-guide.md#testing-librarycustom-renders).
+[You can find more details about the `custom-renders` setting here](docs/migrating-to-v4-guide.md#testing-librarycustom-renders).
+
+### `testing-library/custom-queries`
+
+A list of query names/patterns that are valid as Testing Library custom queries, or `"off"` to switch related Aggressive Reporting mechanism off. Relates to [Aggressive Reporting - Queries](docs/migrating-to-v4-guide.md#queries)
+
+```json
+// .eslintrc
+{
+  "settings": {
+    "testing-library/custom-queries": ["ByIcon", "getByComplexText"]
+  }
+}
+```
+
+[You can find more details about the `custom-queries` setting here](docs/migrating-to-v4-guide.md#testing-librarycustom-queries).
+
+### Switching all Aggressive Reporting mechanisms off
+
+Since each Shared Setting is related to one Aggressive Reporting mechanism, and they accept `"off"` to opt out of that mechanism, you can switch the entire feature off by doing:
+
+```json
+// .eslintrc
+{
+  "settings": {
+    "testing-library/utils-module": "off",
+    "testing-library/custom-renders": "off",
+    "testing-library/custom-queries": "off"
+  }
+}
+```
 
 ## Troubleshooting
 
-### There are errors reported in non-testing files
+### Errors reported in non-testing files
 
 If you find ESLint errors related to `eslint-plugin-testing-library` in files other than testing, this could be caused by [Aggressive Reporting](#aggressive-reporting).
 
@@ -276,14 +306,18 @@ You can avoid this by:
 
 1. [running `eslint-plugin-testing-library` only against testing files](#run-the-plugin-only-against-test-files)
 2. [limiting the scope of Aggressive Reporting through Shared Settings](#shared-settings)
+3. [switching Aggressive Reporting feature off](#switching-all-aggressive-reporting-mechanisms-off)
 
 If you think the error you are getting is not related to this at all, please [fill a new issue](https://github.com/testing-library/eslint-plugin-testing-library/issues/new/choose) with as many details as possible.
 
-### There are false positives in testing files
+### False positives in testing files
 
 If you are getting false positive ESLint errors in your testing files, this could be caused by [Aggressive Reporting](#aggressive-reporting).
 
-You can avoid this by [limiting the scope of Aggressive Reporting through Shared Settings](#shared-settings)
+You can avoid this by:
+
+1. [limiting the scope of Aggressive Reporting through Shared Settings](#shared-settings)
+2. [switching Aggressive Reporting feature off](#switching-all-aggressive-reporting-mechanisms-off)
 
 If you think the error you are getting is not related to this at all, please [fill a new issue](https://github.com/testing-library/eslint-plugin-testing-library/issues/new/choose) with as many details as possible.
 
