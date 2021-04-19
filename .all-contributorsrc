@@ -367,7 +367,9 @@
       "contributions": [
         "code",
         "platform",
-        "maintenance"
+        "maintenance",
+        "infra",
+        "review"
       ]
     },
     {
