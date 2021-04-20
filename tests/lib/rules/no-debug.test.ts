@@ -65,6 +65,18 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
+        const { debug } = console
+        debug()
+      `,
+    },
+    {
+      code: `
+        const { debug: consoleDebug } = console
+        consoleDebug()
+      `,
+    },
+    {
+      code: `
         const { screen } = require('@testing-library/dom')
         screen.debug
       `,
