@@ -6,6 +6,7 @@ import {
   getReferenceNode,
   isObjectPattern,
   isProperty,
+  isMemberExpression,
 } from '../node-utils';
 import { createTestingLibraryRule } from '../create-testing-library-rule';
 import { ASTUtils, TSESTree } from '@typescript-eslint/experimental-utils';
@@ -50,7 +51,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
         }
         const initIdentifierNode = getDeepestIdentifierNode(node.init);
 
-        if (!initIdentifierNode) {
+        if (!initIdentifierNode || initIdentifierNode.name === 'console') {
           return;
         }
 
@@ -107,7 +108,11 @@ export default createTestingLibraryRule<Options, MessageIds>({
           return;
         }
 
-        const isDebugUtil = helpers.isDebugUtil(callExpressionIdentifier);
+        const isDebugUtil =
+          helpers.isDebugUtil(callExpressionIdentifier) &&
+          (!isMemberExpression(node.callee) ||
+            !ASTUtils.isIdentifier(node.callee.object) ||
+            node.callee.object.name !== 'console');
         const isDeclaredDebugVariable = suspiciousDebugVariableNames.includes(
           callExpressionIdentifier.name
         );
