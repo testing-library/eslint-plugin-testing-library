@@ -78,7 +78,10 @@ type IsRenderUtilFn = (node: TSESTree.Identifier) => boolean;
 type IsRenderVariableDeclaratorFn = (
   node: TSESTree.VariableDeclarator
 ) => boolean;
-type IsDebugUtilFn = (node: TSESTree.Identifier) => boolean;
+type IsDebugUtilFn = (
+  identifierNode: TSESTree.Identifier,
+  callExpressionNode: TSESTree.CallExpression
+) => boolean;
 type IsPresenceAssertFn = (node: TSESTree.MemberExpression) => boolean;
 type IsAbsenceAssertFn = (node: TSESTree.MemberExpression) => boolean;
 type CanReportErrorsFn = () => boolean;
@@ -580,14 +583,22 @@ export function detectTestingLibraryUtils<
       return isRenderUtil(initIdentifierNode);
     };
 
-    const isDebugUtil: IsDebugUtilFn = (node) => {
-      return isTestingLibraryUtil(
-        node,
-        (identifierNodeName, originalNodeName) => {
-          return [identifierNodeName, originalNodeName]
-            .filter(Boolean)
-            .includes('debug');
-        }
+    const isDebugUtil: IsDebugUtilFn = (identifierNode, callExpressionNode) => {
+      const isBuiltInConsole =
+        isMemberExpression(callExpressionNode.callee) &&
+        ASTUtils.isIdentifier(callExpressionNode.callee.object) &&
+        callExpressionNode.callee.object.name === 'console';
+
+      return (
+        !isBuiltInConsole &&
+        isTestingLibraryUtil(
+          identifierNode,
+          (identifierNodeName, originalNodeName) => {
+            return [identifierNodeName, originalNodeName]
+              .filter(Boolean)
+              .includes('debug');
+          }
+        )
       );
     };
 
