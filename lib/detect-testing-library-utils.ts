@@ -16,7 +16,6 @@ import {
   isImportNamespaceSpecifier,
   isImportSpecifier,
   isLiteral,
-  isCallExpression,
   isMemberExpression,
   isObjectPattern,
   isProperty,
@@ -584,11 +583,8 @@ export function detectTestingLibraryUtils<
     const isDebugUtil: IsDebugUtilFn = (identifierNode) => {
       const isBuiltInConsole =
         isMemberExpression(identifierNode.parent) &&
-        identifierNode.parent.parent &&
-        isCallExpression(identifierNode.parent.parent) &&
-        isMemberExpression(identifierNode.parent.parent.callee) &&
-        ASTUtils.isIdentifier(identifierNode.parent.parent.callee.object) &&
-        identifierNode.parent.parent.callee.object.name === 'console';
+        ASTUtils.isIdentifier(identifierNode.parent.object) &&
+        identifierNode.parent.object.name === 'console';
 
       return (
         !isBuiltInConsole &&
