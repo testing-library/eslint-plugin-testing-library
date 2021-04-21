@@ -537,5 +537,23 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [{ line: 7, column: 7, messageId: 'noDebug' }],
     },
+    {
+      settings: { 'testing-library/utils-module': 'test-utils' },
+      code: `
+      import { render } from '@testing-library/react'
+      
+      const utils = render(element)
+      const { debug: renamedDestructuredDebug } = console
+      const { debug } = console
+      const assignedDebug = console.debug
+      console.debug('debugging')
+      debug('destructured')
+      assignedDebug('foo')
+      // the following line is the one that fails
+      utils.debug()
+      renamedDestructuredDebug('foo')
+      `,
+      errors: [{ line: 12, column: 13, messageId: 'noDebug' }],
+    },
   ],
 });

@@ -16,6 +16,7 @@ import {
   isImportNamespaceSpecifier,
   isImportSpecifier,
   isLiteral,
+  isCallExpression,
   isMemberExpression,
   isObjectPattern,
   isProperty,
@@ -78,10 +79,7 @@ type IsRenderUtilFn = (node: TSESTree.Identifier) => boolean;
 type IsRenderVariableDeclaratorFn = (
   node: TSESTree.VariableDeclarator
 ) => boolean;
-type IsDebugUtilFn = (
-  identifierNode: TSESTree.Identifier,
-  callExpressionNode: TSESTree.CallExpression
-) => boolean;
+type IsDebugUtilFn = (identifierNode: TSESTree.Identifier) => boolean;
 type IsPresenceAssertFn = (node: TSESTree.MemberExpression) => boolean;
 type IsAbsenceAssertFn = (node: TSESTree.MemberExpression) => boolean;
 type CanReportErrorsFn = () => boolean;
@@ -583,11 +581,14 @@ export function detectTestingLibraryUtils<
       return isRenderUtil(initIdentifierNode);
     };
 
-    const isDebugUtil: IsDebugUtilFn = (identifierNode, callExpressionNode) => {
+    const isDebugUtil: IsDebugUtilFn = (identifierNode) => {
       const isBuiltInConsole =
-        isMemberExpression(callExpressionNode.callee) &&
-        ASTUtils.isIdentifier(callExpressionNode.callee.object) &&
-        callExpressionNode.callee.object.name === 'console';
+        isMemberExpression(identifierNode.parent) &&
+        identifierNode.parent.parent &&
+        isCallExpression(identifierNode.parent.parent) &&
+        isMemberExpression(identifierNode.parent.parent.callee) &&
+        ASTUtils.isIdentifier(identifierNode.parent.parent.callee.object) &&
+        identifierNode.parent.parent.callee.object.name === 'console';
 
       return (
         !isBuiltInConsole &&

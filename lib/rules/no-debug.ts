@@ -4,6 +4,7 @@ import {
   getInnermostReturningFunction,
   getPropertyIdentifierNode,
   getReferenceNode,
+  isCallExpression,
   isObjectPattern,
   isProperty,
 } from '../node-utils';
@@ -113,7 +114,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
           return;
         }
 
-        const isDebugUtil = helpers.isDebugUtil(callExpressionIdentifier, node);
+        const isDebugUtil = helpers.isDebugUtil(callExpressionIdentifier);
         const isDeclaredDebugVariable = suspiciousDebugVariableNames.includes(
           callExpressionIdentifier.name
         );
@@ -130,7 +131,9 @@ export default createTestingLibraryRule<Options, MessageIds>({
           (variableDeclarator) => {
             const variables = context.getDeclaredVariables(variableDeclarator);
             return variables.some(
-              ({ name }) => name === callExpressionIdentifier.name
+              ({ name }) =>
+                name === callExpressionIdentifier.name &&
+                isCallExpression(callExpressionIdentifier.parent)
             );
           }
         );
