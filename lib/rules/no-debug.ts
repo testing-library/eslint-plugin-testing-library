@@ -4,6 +4,7 @@ import {
   getInnermostReturningFunction,
   getPropertyIdentifierNode,
   getReferenceNode,
+  isCallExpression,
   isObjectPattern,
   isProperty,
 } from '../node-utils';
@@ -34,6 +35,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
     const suspiciousDebugVariableNames: string[] = [];
     const suspiciousReferenceNodes: TSESTree.Identifier[] = [];
     const renderWrapperNames: string[] = [];
+    const builtInConsoleNodes: TSESTree.VariableDeclarator[] = [];
 
     function detectRenderWrapper(node: TSESTree.Identifier): void {
       const innerFunction = getInnermostReturningFunction(context, node);
@@ -51,6 +53,11 @@ export default createTestingLibraryRule<Options, MessageIds>({
         const initIdentifierNode = getDeepestIdentifierNode(node.init);
 
         if (!initIdentifierNode) {
+          return;
+        }
+
+        if (initIdentifierNode.name === 'console') {
+          builtInConsoleNodes.push(node);
           return;
         }
 
@@ -120,7 +127,21 @@ export default createTestingLibraryRule<Options, MessageIds>({
           }
         );
 
-        if (isDebugUtil || isDeclaredDebugVariable || isChainedReferenceDebug) {
+        const isVariableFromBuiltInConsole = builtInConsoleNodes.some(
+          (variableDeclarator) => {
+            const variables = context.getDeclaredVariables(variableDeclarator);
+            return variables.some(
+              ({ name }) =>
+                name === callExpressionIdentifier.name &&
+                isCallExpression(callExpressionIdentifier.parent)
+            );
+          }
+        );
+
+        if (
+          !isVariableFromBuiltInConsole &&
+          (isDebugUtil || isDeclaredDebugVariable || isChainedReferenceDebug)
+        ) {
           context.report({
             node: callExpressionIdentifier,
             messageId: 'noDebug',

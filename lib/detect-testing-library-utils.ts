@@ -78,7 +78,7 @@ type IsRenderUtilFn = (node: TSESTree.Identifier) => boolean;
 type IsRenderVariableDeclaratorFn = (
   node: TSESTree.VariableDeclarator
 ) => boolean;
-type IsDebugUtilFn = (node: TSESTree.Identifier) => boolean;
+type IsDebugUtilFn = (identifierNode: TSESTree.Identifier) => boolean;
 type IsPresenceAssertFn = (node: TSESTree.MemberExpression) => boolean;
 type IsAbsenceAssertFn = (node: TSESTree.MemberExpression) => boolean;
 type CanReportErrorsFn = () => boolean;
@@ -580,14 +580,22 @@ export function detectTestingLibraryUtils<
       return isRenderUtil(initIdentifierNode);
     };
 
-    const isDebugUtil: IsDebugUtilFn = (node) => {
-      return isTestingLibraryUtil(
-        node,
-        (identifierNodeName, originalNodeName) => {
-          return [identifierNodeName, originalNodeName]
-            .filter(Boolean)
-            .includes('debug');
-        }
+    const isDebugUtil: IsDebugUtilFn = (identifierNode) => {
+      const isBuiltInConsole =
+        isMemberExpression(identifierNode.parent) &&
+        ASTUtils.isIdentifier(identifierNode.parent.object) &&
+        identifierNode.parent.object.name === 'console';
+
+      return (
+        !isBuiltInConsole &&
+        isTestingLibraryUtil(
+          identifierNode,
+          (identifierNodeName, originalNodeName) => {
+            return [identifierNodeName, originalNodeName]
+              .filter(Boolean)
+              .includes('debug');
+          }
+        )
       );
     };
 
