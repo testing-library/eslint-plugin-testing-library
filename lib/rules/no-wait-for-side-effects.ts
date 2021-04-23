@@ -87,7 +87,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
     }
 
     function reportImplicitReturnSideEffect(node: TSESTree.CallExpression) {
-      if (!isCallerWaitFor) {
+      if (!isCallerWaitFor(node)) {
         return;
       }
 
