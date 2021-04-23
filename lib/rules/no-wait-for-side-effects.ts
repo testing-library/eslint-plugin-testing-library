@@ -28,7 +28,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
   create: function (context, _, helpers) {
     function isCallerWaitFor(
       node: TSESTree.BlockStatement | TSESTree.CallExpression
-    ) {
+    ): boolean {
       if (!node.parent) {
         return false;
       }
@@ -37,15 +37,10 @@ export default createTestingLibraryRule<Options, MessageIds>({
         callExpressionNode
       );
 
-      if (!callExpressionIdentifier) {
-        return false;
-      }
-
-      if (!helpers.isAsyncUtil(callExpressionIdentifier, ['waitFor'])) {
-        return false;
-      }
-
-      return true;
+      return (
+        !!callExpressionIdentifier &&
+        helpers.isAsyncUtil(callExpressionIdentifier, ['waitFor'])
+      );
     }
 
     function getSideEffectNodes(
