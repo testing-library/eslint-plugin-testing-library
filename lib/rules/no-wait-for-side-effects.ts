@@ -93,7 +93,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
       const expressionIdentifier = getPropertyIdentifierNode(node.callee);
       if (!expressionIdentifier) {
-        return false;
+        return;
       }
 
       if (
