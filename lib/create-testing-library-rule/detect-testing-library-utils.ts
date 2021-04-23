@@ -172,9 +172,9 @@ export function detectTestingLibraryUtils<
      * - it's imported from valid Testing Library module (depends on aggressive
      *    reporting)
      */
-    function isTestingLibraryUtil(
+    function isPotentialTestingLibraryFunction(
       node: TSESTree.Identifier,
-      isUtilCallback: (
+      isPotentialFunctionCallback: (
         identifierNodeName: string,
         originalNodeName?: string
       ) => boolean
@@ -200,7 +200,7 @@ export function detectTestingLibraryUtils<
           ? importedUtilSpecifier.imported.name
           : undefined;
 
-      if (!isUtilCallback(node.name, originalNodeName)) {
+      if (!isPotentialFunctionCallback(node.name, originalNodeName)) {
         return false;
       }
 
@@ -412,7 +412,7 @@ export function detectTestingLibraryUtils<
      * coming from Testing Library will be considered as valid.
      */
     const isAsyncUtil: IsAsyncUtilFn = (node, validNames = ASYNC_UTILS) => {
-      return isTestingLibraryUtil(
+      return isPotentialTestingLibraryFunction(
         node,
         (identifierNodeName, originalNodeName) => {
           return (
@@ -430,7 +430,7 @@ export function detectTestingLibraryUtils<
      * Not to be confused with {@link isFireEventMethod}
      */
     const isFireEventUtil = (node: TSESTree.Identifier): boolean => {
-      return isTestingLibraryUtil(
+      return isPotentialTestingLibraryFunction(
         node,
         (identifierNodeName, originalNodeName) => {
           return [identifierNodeName, originalNodeName].includes('fireEvent');
@@ -570,17 +570,21 @@ export function detectTestingLibraryUtils<
      * only those nodes coming from Testing Library will be considered as valid.
      */
     const isRenderUtil: IsRenderUtilFn = (node) =>
-      isTestingLibraryUtil(node, (identifierNodeName, originalNodeName) => {
-        if (isAggressiveRenderReportingEnabled()) {
-          return identifierNodeName.toLowerCase().includes(RENDER_NAME);
-        }
+      isPotentialTestingLibraryFunction(
+        node,
+        (identifierNodeName, originalNodeName) => {
+          if (isAggressiveRenderReportingEnabled()) {
+            return identifierNodeName.toLowerCase().includes(RENDER_NAME);
+          }
 
-        return [RENDER_NAME, ...getCustomRenders()].some(
-          (validRenderName) =>
-            validRenderName === identifierNodeName ||
-            (Boolean(originalNodeName) && validRenderName === originalNodeName)
-        );
-      });
+          return [RENDER_NAME, ...getCustomRenders()].some(
+            (validRenderName) =>
+              validRenderName === identifierNodeName ||
+              (Boolean(originalNodeName) &&
+                validRenderName === originalNodeName)
+          );
+        }
+      );
 
     const isRenderVariableDeclarator: IsRenderVariableDeclaratorFn = (node) => {
       if (!node.init) {
@@ -603,7 +607,7 @@ export function detectTestingLibraryUtils<
 
       return (
         !isBuiltInConsole &&
-        isTestingLibraryUtil(
+        isPotentialTestingLibraryFunction(
           identifierNode,
           (identifierNodeName, originalNodeName) => {
             return [identifierNodeName, originalNodeName]
