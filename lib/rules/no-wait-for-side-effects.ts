@@ -76,8 +76,44 @@ export default createTestingLibraryRule<Options, MessageIds>({
       }
     }
 
+    function reportImplicitReturnSideEffect(node: TSESTree.CallExpression) {
+      if (!node.parent) {
+        return;
+      }
+      const callExpressionNode = node.parent.parent as TSESTree.CallExpression;
+      const callExpressionIdentifier = getPropertyIdentifierNode(
+        callExpressionNode
+      );
+
+      if (!callExpressionIdentifier) {
+        return;
+      }
+
+      if (!helpers.isAsyncUtil(callExpressionIdentifier, ['waitFor'])) {
+        return;
+      }
+
+      const expressionIdentifier = getPropertyIdentifierNode(node.callee);
+      if (!expressionIdentifier) {
+        return false;
+      }
+
+      if (
+        !helpers.isFireEventUtil(expressionIdentifier) &&
+        !helpers.isUserEventUtil(expressionIdentifier)
+      ) {
+        return;
+      }
+
+      context.report({
+        node,
+        messageId: 'noSideEffectsWaitFor',
+      });
+    }
+
     return {
       'CallExpression > ArrowFunctionExpression > BlockStatement': reportSideEffects,
+      'CallExpression > ArrowFunctionExpression > CallExpression': reportImplicitReturnSideEffect,
       'CallExpression > FunctionExpression > BlockStatement': reportSideEffects,
     };
   },

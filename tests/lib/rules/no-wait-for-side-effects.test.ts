@@ -163,7 +163,14 @@ ruleTester.run(RULE_NAME, rule, {
     // fireEvent
     {
       code: `
-        import { waitFor } from '@testing-library/react';  
+        import { waitFor } from '@testing-library/react';
+        await waitFor(() => fireEvent.keyDown(input, {key: 'ArrowDown'}))
+      `,
+      errors: [{ line: 3, column: 29, messageId: 'noSideEffectsWaitFor' }],
+    },
+    {
+      code: `
+        import { waitFor } from '@testing-library/react';
         await waitFor(() => {
           fireEvent.keyDown(input, {key: 'ArrowDown'})
         })
@@ -241,7 +248,14 @@ ruleTester.run(RULE_NAME, rule, {
     // userEvent
     {
       code: `
-        import { waitFor } from '@testing-library/react';  
+        import { waitFor } from '@testing-library/react';
+        await waitFor(() => userEvent.click(button))
+      `,
+      errors: [{ line: 3, column: 29, messageId: 'noSideEffectsWaitFor' }],
+    },
+    {
+      code: `
+        import { waitFor } from '@testing-library/react';
         await waitFor(() => {
           userEvent.click(button)
         })
