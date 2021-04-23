@@ -26,6 +26,28 @@ export default createTestingLibraryRule<Options, MessageIds>({
   },
   defaultOptions: [],
   create: function (context, _, helpers) {
+    function isCallerWaitFor(
+      node: TSESTree.BlockStatement | TSESTree.CallExpression
+    ) {
+      if (!node.parent) {
+        return false;
+      }
+      const callExpressionNode = node.parent.parent as TSESTree.CallExpression;
+      const callExpressionIdentifier = getPropertyIdentifierNode(
+        callExpressionNode
+      );
+
+      if (!callExpressionIdentifier) {
+        return false;
+      }
+
+      if (!helpers.isAsyncUtil(callExpressionIdentifier, ['waitFor'])) {
+        return false;
+      }
+
+      return true;
+    }
+
     function getSideEffectNodes(
       body: TSESTree.Node[]
     ): TSESTree.ExpressionStatement[] {
@@ -47,19 +69,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
     }
 
     function reportSideEffects(node: TSESTree.BlockStatement) {
-      if (!node.parent) {
-        return;
-      }
-      const callExpressionNode = node.parent.parent as TSESTree.CallExpression;
-      const callExpressionIdentifier = getPropertyIdentifierNode(
-        callExpressionNode
-      );
-
-      if (!callExpressionIdentifier) {
-        return;
-      }
-
-      if (!helpers.isAsyncUtil(callExpressionIdentifier, ['waitFor'])) {
+      if (!isCallerWaitFor(node)) {
         return;
       }
 
@@ -77,19 +87,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
     }
 
     function reportImplicitReturnSideEffect(node: TSESTree.CallExpression) {
-      if (!node.parent) {
-        return;
-      }
-      const callExpressionNode = node.parent.parent as TSESTree.CallExpression;
-      const callExpressionIdentifier = getPropertyIdentifierNode(
-        callExpressionNode
-      );
-
-      if (!callExpressionIdentifier) {
-        return;
-      }
-
-      if (!helpers.isAsyncUtil(callExpressionIdentifier, ['waitFor'])) {
+      if (!isCallerWaitFor) {
         return;
       }
 
