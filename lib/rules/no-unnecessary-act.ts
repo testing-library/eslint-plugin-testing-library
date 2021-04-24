@@ -35,6 +35,7 @@ export default createTestingLibraryRule<[], MessageIds>({
     function hasNonTestingLibraryCall(
       statements: TSESTree.Statement[]
     ): boolean {
+      // TODO: refactor to use Array.every
       for (const statement of statements) {
         if (!isExpressionStatement(statement)) {
           continue;
@@ -88,6 +89,11 @@ export default createTestingLibraryRule<[], MessageIds>({
       if (hasNonTestingLibraryCall(blockStatementNode.body)) {
         return;
       }
+
+      context.report({
+        node: callExpressionIdentifier,
+        messageId: 'noUnnecessaryActTestingLibraryUtil',
+      });
     }
 
     return {
