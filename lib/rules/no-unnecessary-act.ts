@@ -3,8 +3,7 @@ import { createTestingLibraryRule } from '../create-testing-library-rule';
 import {
   getDeepestIdentifierNode,
   getPropertyIdentifierNode,
-  isCallExpression,
-  isExpressionStatement,
+  getStatementCallExpression,
 } from '../node-utils';
 
 export const RULE_NAME = 'no-unnecessary-act';
@@ -32,20 +31,21 @@ export default createTestingLibraryRule<[], MessageIds>({
   defaultOptions: [],
 
   create(context, _, helpers) {
+    /**
+     * Determines whether a given list of statements has some call non-related to Testing Library utils.
+     */
     function hasNonTestingLibraryCall(
       statements: TSESTree.Statement[]
     ): boolean {
       // TODO: refactor to use Array.every
       for (const statement of statements) {
-        if (!isExpressionStatement(statement)) {
+        const callExpression = getStatementCallExpression(statement);
+
+        if (!callExpression) {
           continue;
         }
 
-        if (!isCallExpression(statement.expression)) {
-          continue;
-        }
-
-        const identifier = getDeepestIdentifierNode(statement.expression);
+        const identifier = getDeepestIdentifierNode(callExpression);
 
         if (!identifier) {
           continue;
@@ -61,7 +61,7 @@ export default createTestingLibraryRule<[], MessageIds>({
       return false;
     }
 
-    function checkNoUnnecessaryAct(
+    function checkNoUnnecessaryActFromBlockStatement(
       blockStatementNode: TSESTree.BlockStatement
     ) {
       const callExpressionNode = blockStatementNode?.parent?.parent as
@@ -96,10 +96,49 @@ export default createTestingLibraryRule<[], MessageIds>({
       });
     }
 
+    function checkNoUnnecessaryActFromImplicitReturn(
+      node: TSESTree.CallExpression
+    ) {
+      const nodeIdentifier = getDeepestIdentifierNode(node);
+
+      if (!nodeIdentifier) {
+        return;
+      }
+
+      const parentCallExpression = node?.parent?.parent as
+        | TSESTree.CallExpression
+        | undefined;
+
+      if (!parentCallExpression) {
+        return;
+      }
+
+      const parentCallExpressionIdentifier = getPropertyIdentifierNode(
+        parentCallExpression
+      );
+
+      if (!parentCallExpressionIdentifier) {
+        return;
+      }
+
+      if (!helpers.isActUtil(parentCallExpressionIdentifier)) {
+        return;
+      }
+
+      if (!helpers.isTestingLibraryUtil(nodeIdentifier)) {
+        return;
+      }
+
+      context.report({
+        node: parentCallExpressionIdentifier,
+        messageId: 'noUnnecessaryActTestingLibraryUtil',
+      });
+    }
+
     return {
-      'CallExpression > ArrowFunctionExpression > BlockStatement': checkNoUnnecessaryAct,
-      'CallExpression > FunctionExpression > BlockStatement': checkNoUnnecessaryAct,
-      // TODO: add selector for call expression > arrow function > implicit return
+      'CallExpression > ArrowFunctionExpression > BlockStatement': checkNoUnnecessaryActFromBlockStatement,
+      'CallExpression > FunctionExpression > BlockStatement': checkNoUnnecessaryActFromBlockStatement,
+      'CallExpression > ArrowFunctionExpression > CallExpression': checkNoUnnecessaryActFromImplicitReturn,
     };
   },
 });

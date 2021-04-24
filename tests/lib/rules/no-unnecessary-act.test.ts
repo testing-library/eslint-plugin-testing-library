@@ -25,13 +25,12 @@ ruleTester.run(RULE_NAME, rule, {
         
         act(function() {
           stuffThatDoesNotUseRTL();
+          const a = foo();
         });
         
-        /* TODO get this one back
         act(function() {
           return stuffThatDoesNotUseRTL();
         });
-        */
         
         act(() => stuffThatDoesNotUseRTL());
       });
@@ -54,11 +53,9 @@ ruleTester.run(RULE_NAME, rule, {
           stuffThatDoesNotUseRTL();
         });
         
-        /* TODO get this one back
         act(function() {
           return stuffThatDoesNotUseRTL();
         });
-        */
         
         act(() => stuffThatDoesNotUseRTL());
       });
@@ -85,11 +82,9 @@ ruleTester.run(RULE_NAME, rule, {
           waitFor();
         });
         
-        /* TODO get this one back
         act(function() {
           return waitFor();
         });
-        */
         
         act(() => waitFor());
       });
@@ -200,7 +195,129 @@ ruleTester.run(RULE_NAME, rule, {
       ],
     },
 
-    // TODO case: RTL act wrapping RTL calls - callbacks with return
+    {
+      code: `// case: RTL act wrapping RTL calls - callbacks with return
+      import { act, fireEvent, screen, render, waitFor } from '@testing-library/react'
+      import userEvent from '@testing-library/user-event'
+
+      test('invalid case', async () => {
+        act(() => fireEvent.click(el))
+        act(() => screen.getByText('blah'))
+        act(() => findByRole('button'))
+        act(() => userEvent.click(el))
+        await act(async () => userEvent.type('hi', el))
+        act(() => render(foo))
+        await act(async () => render(fo))
+        act(() => waitFor(() => {}))
+        await act(async () => waitFor(() => {}))
+
+        act(function () {
+          return fireEvent.click(el);
+        });
+        act(function () {
+          return screen.getByText('blah');
+        });
+        act(function () {
+          return findByRole('button');
+        });
+        act(function () {
+          return userEvent.click(el);
+        });
+        await act(async function () {
+          return userEvent.type('hi', el);
+        });
+        act(function () {
+          return render(foo);
+        });
+        await act(async function () {
+          return render(fo);
+        });
+        act(function () {
+          return waitFor(() => {});
+        });
+        await act(async function () {
+          return waitFor(() => {});
+        });
+      });
+      `,
+      errors: [
+        { messageId: 'noUnnecessaryActTestingLibraryUtil', line: 6, column: 9 },
+        { messageId: 'noUnnecessaryActTestingLibraryUtil', line: 7, column: 9 },
+        { messageId: 'noUnnecessaryActTestingLibraryUtil', line: 8, column: 9 },
+        { messageId: 'noUnnecessaryActTestingLibraryUtil', line: 9, column: 9 },
+        {
+          messageId: 'noUnnecessaryActTestingLibraryUtil',
+          line: 10,
+          column: 15,
+        },
+        {
+          messageId: 'noUnnecessaryActTestingLibraryUtil',
+          line: 11,
+          column: 9,
+        },
+        {
+          messageId: 'noUnnecessaryActTestingLibraryUtil',
+          line: 12,
+          column: 15,
+        },
+        {
+          messageId: 'noUnnecessaryActTestingLibraryUtil',
+          line: 13,
+          column: 9,
+        },
+        {
+          messageId: 'noUnnecessaryActTestingLibraryUtil',
+          line: 14,
+          column: 15,
+        },
+        {
+          messageId: 'noUnnecessaryActTestingLibraryUtil',
+          line: 16,
+          column: 9,
+        },
+        {
+          messageId: 'noUnnecessaryActTestingLibraryUtil',
+          line: 19,
+          column: 9,
+        },
+        {
+          messageId: 'noUnnecessaryActTestingLibraryUtil',
+          line: 22,
+          column: 9,
+        },
+        {
+          messageId: 'noUnnecessaryActTestingLibraryUtil',
+          line: 25,
+          column: 9,
+        },
+        {
+          messageId: 'noUnnecessaryActTestingLibraryUtil',
+          line: 28,
+          column: 15,
+        },
+        {
+          messageId: 'noUnnecessaryActTestingLibraryUtil',
+          line: 31,
+          column: 9,
+        },
+        {
+          messageId: 'noUnnecessaryActTestingLibraryUtil',
+          line: 34,
+          column: 15,
+        },
+        {
+          messageId: 'noUnnecessaryActTestingLibraryUtil',
+          line: 37,
+          column: 9,
+        },
+        {
+          messageId: 'noUnnecessaryActTestingLibraryUtil',
+          line: 40,
+          column: 15,
+        },
+      ],
+    },
+
     // TODO case: RTU act wrapping RTL calls - callbacks with body (BlockStatement)
     // TODO case: RTU act wrapping RTL calls - callbacks with return
     // TODO case: RTL act wrapping empty callback

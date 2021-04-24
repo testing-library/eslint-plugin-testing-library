@@ -17,6 +17,7 @@ import {
   isLiteral,
   isMemberExpression,
   isReturnStatement,
+  isVariableDeclaration,
 } from './is-node-of-type';
 
 export * from './is-node-of-type';
@@ -509,4 +510,28 @@ export function hasImportMatch(
   }
 
   return importNode.local.name === identifierName;
+}
+
+export function getStatementCallExpression(
+  statement: TSESTree.Statement
+): TSESTree.CallExpression | undefined {
+  if (
+    isExpressionStatement(statement) &&
+    isCallExpression(statement.expression)
+  ) {
+    return statement.expression;
+  }
+
+  if (isReturnStatement(statement) && isCallExpression(statement.argument)) {
+    return statement.argument;
+  }
+
+  if (isVariableDeclaration(statement)) {
+    for (const declaration of statement.declarations) {
+      if (isCallExpression(declaration.init)) {
+        return declaration.init;
+      }
+    }
+  }
+  return undefined;
 }
