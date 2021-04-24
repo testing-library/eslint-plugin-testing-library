@@ -96,6 +96,7 @@ export interface DetectionHelpers {
   getTestingLibraryImportName: GetTestingLibraryImportNameFn;
   getCustomModuleImportName: GetCustomModuleImportNameFn;
   isTestingLibraryImported: IsTestingLibraryImportedFn;
+  isTestingLibraryUtil: (node: TSESTree.Identifier) => boolean;
   isGetQueryVariant: IsGetQueryVariantFn;
   isQueryQueryVariant: IsQueryQueryVariantFn;
   isFindQueryVariant: IsFindQueryVariantFn;
@@ -112,6 +113,7 @@ export interface DetectionHelpers {
   isRenderUtil: IsRenderUtilFn;
   isRenderVariableDeclarator: IsRenderVariableDeclaratorFn;
   isDebugUtil: IsDebugUtilFn;
+  isActUtil: (node: TSESTree.Identifier) => boolean;
   isPresenceAssert: IsPresenceAssertFn;
   isAbsenceAssert: IsAbsenceAssertFn;
   canReportErrors: CanReportErrorsFn;
@@ -618,6 +620,30 @@ export function detectTestingLibraryUtils<
       );
     };
 
+    const isActUtil = (node: TSESTree.Identifier): boolean => {
+      return isPotentialTestingLibraryFunction(
+        node,
+        (identifierNodeName, originalNodeName) => {
+          return [identifierNodeName, originalNodeName]
+            .filter(Boolean)
+            .includes('act');
+        }
+      );
+
+      // TODO: check if `act` coming from 'react-dom/test-utils'
+    };
+
+    const isTestingLibraryUtil = (node: TSESTree.Identifier): boolean => {
+      return (
+        isAsyncUtil(node) ||
+        isQuery(node) ||
+        isRenderUtil(node) ||
+        isFireEventMethod(node) ||
+        isUserEventMethod(node) ||
+        isActUtil(node)
+      );
+    };
+
     /**
      * Determines whether a given MemberExpression node is a presence assert
      *
@@ -795,6 +821,7 @@ export function detectTestingLibraryUtils<
       getTestingLibraryImportName,
       getCustomModuleImportName,
       isTestingLibraryImported,
+      isTestingLibraryUtil,
       isGetQueryVariant,
       isQueryQueryVariant,
       isFindQueryVariant,
@@ -811,6 +838,7 @@ export function detectTestingLibraryUtils<
       isRenderUtil,
       isRenderVariableDeclarator,
       isDebugUtil,
+      isActUtil,
       isPresenceAssert,
       isAbsenceAssert,
       canReportErrors,
