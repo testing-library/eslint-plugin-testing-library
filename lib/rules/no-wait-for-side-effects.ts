@@ -26,6 +26,23 @@ export default createTestingLibraryRule<Options, MessageIds>({
   },
   defaultOptions: [],
   create: function (context, _, helpers) {
+    function isCallerWaitFor(
+      node: TSESTree.BlockStatement | TSESTree.CallExpression
+    ): boolean {
+      if (!node.parent) {
+        return false;
+      }
+      const callExpressionNode = node.parent.parent as TSESTree.CallExpression;
+      const callExpressionIdentifier = getPropertyIdentifierNode(
+        callExpressionNode
+      );
+
+      return (
+        !!callExpressionIdentifier &&
+        helpers.isAsyncUtil(callExpressionIdentifier, ['waitFor'])
+      );
+    }
+
     function getSideEffectNodes(
       body: TSESTree.Node[]
     ): TSESTree.ExpressionStatement[] {
@@ -47,19 +64,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
     }
 
     function reportSideEffects(node: TSESTree.BlockStatement) {
-      if (!node.parent) {
-        return;
-      }
-      const callExpressionNode = node.parent.parent as TSESTree.CallExpression;
-      const callExpressionIdentifier = getPropertyIdentifierNode(
-        callExpressionNode
-      );
-
-      if (!callExpressionIdentifier) {
-        return;
-      }
-
-      if (!helpers.isAsyncUtil(callExpressionIdentifier, ['waitFor'])) {
+      if (!isCallerWaitFor(node)) {
         return;
       }
 
@@ -76,8 +81,32 @@ export default createTestingLibraryRule<Options, MessageIds>({
       }
     }
 
+    function reportImplicitReturnSideEffect(node: TSESTree.CallExpression) {
+      if (!isCallerWaitFor(node)) {
+        return;
+      }
+
+      const expressionIdentifier = getPropertyIdentifierNode(node.callee);
+      if (!expressionIdentifier) {
+        return;
+      }
+
+      if (
+        !helpers.isFireEventUtil(expressionIdentifier) &&
+        !helpers.isUserEventUtil(expressionIdentifier)
+      ) {
+        return;
+      }
+
+      context.report({
+        node,
+        messageId: 'noSideEffectsWaitFor',
+      });
+    }
+
     return {
       'CallExpression > ArrowFunctionExpression > BlockStatement': reportSideEffects,
+      'CallExpression > ArrowFunctionExpression > CallExpression': reportImplicitReturnSideEffect,
       'CallExpression > FunctionExpression > BlockStatement': reportSideEffects,
     };
   },
