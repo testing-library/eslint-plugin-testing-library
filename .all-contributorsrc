@@ -391,6 +391,17 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "zaicevas",
+      "name": "Tomas Zaicevas",
+      "avatar_url": "https://avatars.githubusercontent.com/u/34719980?v=4",
+      "profile": "http://zaicevas.me",
+      "contributions": [
+        "bug",
+        "code",
+        "test"
+      ]
     }
   ],
   "contributorsPerLine": 7,
