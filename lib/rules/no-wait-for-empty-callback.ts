@@ -1,8 +1,8 @@
 import { ASTUtils, TSESTree } from '@typescript-eslint/experimental-utils';
 import {
   getPropertyIdentifierNode,
-  isBlockStatement,
   isCallExpression,
+  isEmptyFunction,
 } from '../node-utils';
 import { createTestingLibraryRule } from '../create-testing-library-rule';
 
@@ -57,8 +57,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
       }
 
       if (
-        isBlockStatement(node.body) &&
-        node.body.body.length === 0 &&
+        isEmptyFunction(node) &&
         isCallExpression(node.parent) &&
         ASTUtils.isIdentifier(node.parent.callee)
       ) {

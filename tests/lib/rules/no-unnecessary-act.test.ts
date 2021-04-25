@@ -318,9 +318,9 @@ ruleTester.run(RULE_NAME, rule, {
       ],
     },
 
+    // TODO case: RTL act wrapping empty callback
     // TODO case: RTU act wrapping RTL calls - callbacks with body (BlockStatement)
     // TODO case: RTU act wrapping RTL calls - callbacks with return
-    // TODO case: RTL act wrapping empty callback
     // TODO case: RTU act wrapping empty callback
 
     // TODO cases like previous ones but with AGR disabled

@@ -535,3 +535,20 @@ export function getStatementCallExpression(
   }
   return undefined;
 }
+
+/**
+ * Determines whether a given function node is considered as empty function or not.
+ *
+ * A function is considered empty if its body is empty.
+ *
+ * Note that comments don't affect the check.
+ *
+ * If node given is not a function, `false` will be returned.
+ */
+export function isEmptyFunction(node: TSESTree.Node): boolean | undefined {
+  if (ASTUtils.isFunction(node) && isBlockStatement(node.body)) {
+    return node.body.body.length === 0;
+  }
+
+  return false;
+}
