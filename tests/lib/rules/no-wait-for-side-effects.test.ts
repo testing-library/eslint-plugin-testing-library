@@ -158,12 +158,42 @@ ruleTester.run(RULE_NAME, rule, {
       })
       `,
     },
+    {
+      settings: { 'testing-library/utils-module': 'test-utils' },
+      code: `
+        import { waitFor } from 'somewhere-else';
+        await waitFor(() => fireEvent.keyDown(input, {key: 'ArrowDown'}))
+      `,
+    },
+    {
+      settings: { 'testing-library/utils-module': 'test-utils' },
+      code: `
+        import { waitFor } from 'somewhere-else';
+        import { userEvent } from '@testing-library/react';
+        await waitFor(() => userEvent.click(button))
+      `,
+    },
+    {
+      settings: { 'testing-library/utils-module': '~/test-utils' },
+      code: `
+        import { waitFor, userEvent } from '~/test-utils';
+        await waitFor(() => userEvent.click(button))
+      `,
+    },
   ],
   invalid: [
     // fireEvent
     {
       code: `
         import { waitFor } from '@testing-library/react';
+        await waitFor(() => fireEvent.keyDown(input, {key: 'ArrowDown'}))
+      `,
+      errors: [{ line: 3, column: 29, messageId: 'noSideEffectsWaitFor' }],
+    },
+    {
+      settings: { 'testing-library/utils-module': '~/test-utils' },
+      code: `
+        import { waitFor, fireEvent } from '~/test-utils';
         await waitFor(() => fireEvent.keyDown(input, {key: 'ArrowDown'}))
       `,
       errors: [{ line: 3, column: 29, messageId: 'noSideEffectsWaitFor' }],
