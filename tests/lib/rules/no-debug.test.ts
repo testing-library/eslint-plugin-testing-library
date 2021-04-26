@@ -88,6 +88,19 @@ ruleTester.run(RULE_NAME, rule, {
       `,
     },
     {
+      code: `
+        import { screen } from '@testing-library/dom'
+        screen.logTestingPlaygroundURL()
+      `,
+    },
+    {
+      code: `
+        import { screen } from '@testing-library/dom'
+        screen.debug()
+      `,
+      options: [{ utilNames: ['anotherUtil'] }],
+    },
+    {
       code: `const { queries } = require('@testing-library/dom')`,
     },
     {
@@ -411,6 +424,20 @@ ruleTester.run(RULE_NAME, rule, {
         import { screen } from '@testing-library/dom'
         screen.debug()
       `,
+      errors: [
+        {
+          line: 3,
+          column: 16,
+          messageId: 'noDebug',
+        },
+      ],
+    },
+    {
+      code: `
+        import { screen } from '@testing-library/dom'
+        screen.logTestingPlaygroundURL()
+      `,
+      options: [{ utilNames: ['logTestingPlaygroundURL'] }],
       errors: [
         {
           line: 3,

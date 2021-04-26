@@ -80,6 +80,10 @@ type IsRenderVariableDeclaratorFn = (
   node: TSESTree.VariableDeclarator
 ) => boolean;
 type IsDebugUtilFn = (identifierNode: TSESTree.Identifier) => boolean;
+type IsOneOfDebugUtils = (
+  identifierNode: TSESTree.Identifier,
+  names: string[]
+) => boolean;
 type IsPresenceAssertFn = (node: TSESTree.MemberExpression) => boolean;
 type IsAbsenceAssertFn = (node: TSESTree.MemberExpression) => boolean;
 type CanReportErrorsFn = () => boolean;
@@ -112,6 +116,7 @@ export interface DetectionHelpers {
   isRenderUtil: IsRenderUtilFn;
   isRenderVariableDeclarator: IsRenderVariableDeclaratorFn;
   isDebugUtil: IsDebugUtilFn;
+  isOneOfDebugUtils: IsOneOfDebugUtils;
   isPresenceAssert: IsPresenceAssertFn;
   isAbsenceAssert: IsAbsenceAssertFn;
   canReportErrors: CanReportErrorsFn;
@@ -595,6 +600,26 @@ export function detectTestingLibraryUtils<
       return isRenderUtil(initIdentifierNode);
     };
 
+    const isOneOfDebugUtils: IsOneOfDebugUtils = (
+      identifierNode,
+      names: string[]
+    ) => {
+      const isBuiltInConsole =
+        isMemberExpression(identifierNode.parent) &&
+        ASTUtils.isIdentifier(identifierNode.parent.object) &&
+        identifierNode.parent.object.name === 'console';
+
+      return (
+        !isBuiltInConsole &&
+        isTestingLibraryUtil(
+          identifierNode,
+          (identifierNodeName, originalNodeName) => {
+            return names.includes(originalNodeName || identifierNodeName);
+          }
+        )
+      );
+    };
+
     const isDebugUtil: IsDebugUtilFn = (identifierNode) => {
       const isBuiltInConsole =
         isMemberExpression(identifierNode.parent) &&
@@ -807,6 +832,7 @@ export function detectTestingLibraryUtils<
       isRenderUtil,
       isRenderVariableDeclarator,
       isDebugUtil,
+      isOneOfDebugUtils,
       isPresenceAssert,
       isAbsenceAssert,
       canReportErrors,

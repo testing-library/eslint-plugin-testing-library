@@ -28,6 +28,12 @@ const { screen } = require('@testing-library/react');
 screen.debug();
 ```
 
+If you want to disallow the use of other debugging functions, you can configure what names this rule checks for with the `utilNames` option:
+
+```
+   "testing-library/no-debug": ["error", {"utilNames": ["debug", "logTestingPlaygroundURL"]}],
+```
+
 ## Further Reading
 
 - [debug API in React Testing Library](https://testing-library.com/docs/react-testing-library/api#debug)

@@ -13,7 +13,7 @@ import { ASTUtils, TSESTree } from '@typescript-eslint/experimental-utils';
 
 export const RULE_NAME = 'no-debug';
 export type MessageIds = 'noDebug';
-type Options = [];
+type Options = [{ utilNames: string[] }];
 
 export default createTestingLibraryRule<Options, MessageIds>({
   name: RULE_NAME,
@@ -32,11 +32,22 @@ export default createTestingLibraryRule<Options, MessageIds>({
     messages: {
       noDebug: 'Unexpected debug statement',
     },
-    schema: [],
+    schema: [
+      {
+        type: 'object',
+        properties: {
+          utilNames: {
+            type: 'array',
+            items: { type: 'string' },
+          },
+        },
+        additionalProperties: false,
+      },
+    ],
   },
-  defaultOptions: [],
+  defaultOptions: [{ utilNames: ['debug'] }],
 
-  create(context, [], helpers) {
+  create(context, [{ utilNames }], helpers) {
     const suspiciousDebugVariableNames: string[] = [];
     const suspiciousReferenceNodes: TSESTree.Identifier[] = [];
     const renderWrapperNames: string[] = [];
@@ -84,7 +95,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
             if (
               isProperty(property) &&
               ASTUtils.isIdentifier(property.key) &&
-              property.key.name === 'debug'
+              utilNames.includes(property.key.name)
             ) {
               const identifierNode = getDeepestIdentifierNode(property.value);
 
@@ -119,14 +130,17 @@ export default createTestingLibraryRule<Options, MessageIds>({
           return;
         }
 
-        const isDebugUtil = helpers.isDebugUtil(callExpressionIdentifier);
+        const isDebugUtil = helpers.isOneOfDebugUtils(
+          callExpressionIdentifier,
+          utilNames
+        );
         const isDeclaredDebugVariable = suspiciousDebugVariableNames.includes(
           callExpressionIdentifier.name
         );
         const isChainedReferenceDebug = suspiciousReferenceNodes.some(
           (suspiciousReferenceIdentifier) => {
             return (
-              callExpressionIdentifier.name === 'debug' &&
+              utilNames.includes(callExpressionIdentifier.name) &&
               suspiciousReferenceIdentifier.name === referenceIdentifier.name
             );
           }
