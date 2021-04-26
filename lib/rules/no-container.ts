@@ -20,7 +20,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
     docs: {
       description: 'Disallow the use of container methods',
       category: 'Best Practices',
-      recommended: {
+      recommendedConfig: {
         dom: false,
         angular: 'error',
         react: 'error',

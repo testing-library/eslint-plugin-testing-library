@@ -13,7 +13,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
     docs: {
       description: 'Disallow unnecessary `await` for sync queries',
       category: 'Best Practices',
-      recommended: {
+      recommendedConfig: {
         dom: 'error',
         angular: 'error',
         react: 'error',

@@ -22,7 +22,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
     docs: {
       description: 'Disallow unnecessary debug usages in the tests',
       category: 'Best Practices',
-      recommended: {
+      recommendedConfig: {
         dom: false,
         angular: 'error',
         react: 'error',

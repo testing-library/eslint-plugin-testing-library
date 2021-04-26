@@ -20,7 +20,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
       description:
         'Disallow the use of promises passed to a `fireEvent` method',
       category: 'Best Practices',
-      recommended: {
+      recommendedConfig: {
         dom: 'error',
         angular: 'error',
         react: 'error',

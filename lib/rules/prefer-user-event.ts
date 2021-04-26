@@ -66,7 +66,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
     docs: {
       description: 'Suggest using userEvent over fireEvent',
       category: 'Best Practices',
-      recommended: {
+      recommendedConfig: {
         dom: false,
         angular: false,
         react: false,

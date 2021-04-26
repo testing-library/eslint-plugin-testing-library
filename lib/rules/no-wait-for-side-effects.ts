@@ -16,7 +16,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
     docs: {
       description: "It's preferred to avoid side effects in `waitFor`",
       category: 'Best Practices',
-      recommended: {
+      recommendedConfig: {
         dom: false,
         angular: false,
         react: false,

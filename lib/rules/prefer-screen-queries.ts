@@ -37,7 +37,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
     docs: {
       description: 'Suggest using screen while querying',
       category: 'Best Practices',
-      recommended: {
+      recommendedConfig: {
         dom: 'error',
         angular: 'error',
         react: 'error',

@@ -18,7 +18,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
       description:
         "It's preferred to avoid empty callbacks in `waitFor` and `waitForElementToBeRemoved`",
       category: 'Best Practices',
-      recommended: {
+      recommendedConfig: {
         dom: 'error',
         angular: 'error',
         react: 'error',

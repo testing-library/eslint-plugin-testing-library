@@ -24,7 +24,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
     docs: {
       description: 'Enforce a valid naming for return value from `render`',
       category: 'Best Practices',
-      recommended: {
+      recommendedConfig: {
         dom: false,
         angular: 'error',
         react: 'error',

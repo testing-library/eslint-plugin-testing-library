@@ -50,7 +50,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
       description:
         'Disallow the use of `render` in testing frameworks setup functions',
       category: 'Best Practices',
-      recommended: {
+      recommendedConfig: {
         dom: false,
         angular: false,
         react: false,

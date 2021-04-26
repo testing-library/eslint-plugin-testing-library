@@ -10,7 +10,10 @@ type TestingLibraryRuleMetaDocs<TOptions extends readonly unknown[]> = Omit<
   TSESLint.RuleMetaDataDocs,
   'recommended' | 'url'
 > & {
-  recommended: Record<SupportedTestingFramework, RecommendedConfig<TOptions>>;
+  recommendedConfig: Record<
+    SupportedTestingFramework,
+    RecommendedConfig<TOptions>
+  >;
 };
 export type TestingLibraryRuleMeta<
   TMessageIds extends string,

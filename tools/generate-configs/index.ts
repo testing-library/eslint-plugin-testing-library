@@ -14,11 +14,14 @@ const getRecommendedRulesForTestingFramework = (
 ): LinterConfigRules =>
   Object.entries(rules)
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    .filter(([_, { meta: { docs } }]) => Boolean(docs.recommended[framework]))
+    .filter(([_, { meta: { docs } }]) =>
+      Boolean(docs.recommendedConfig[framework])
+    )
     .reduce(
       (allRules, [ruleName, { meta }]) => ({
         ...allRules,
-        [ruleName.split(RULE_NAME_PREFIX)[0]]: meta.docs.recommended[framework],
+        [ruleName.split(RULE_NAME_PREFIX)[0]]:
+          meta.docs.recommendedConfig[framework],
       }),
       {}
     );

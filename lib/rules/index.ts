@@ -6,7 +6,9 @@ import { TSESLint } from '@typescript-eslint/experimental-utils';
 import { importDefault, TestingLibraryRuleMeta } from '../utils';
 
 type RuleModule = TSESLint.RuleModule<string, unknown[]> & {
-  meta: TestingLibraryRuleMeta<string, unknown[]>;
+  meta: TestingLibraryRuleMeta<string, unknown[]> & {
+    recommended: false;
+  };
 };
 
 const rulesDir = __dirname;

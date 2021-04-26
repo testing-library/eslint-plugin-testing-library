@@ -19,7 +19,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
     docs: {
       description: 'Enforce promises from async utils to be handled',
       category: 'Best Practices',
-      recommended: {
+      recommendedConfig: {
         dom: 'error',
         angular: 'error',
         react: 'error',

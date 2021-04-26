@@ -25,7 +25,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
       description:
         'Suggest using explicit assertions rather than just `getBy*` queries',
       category: 'Best Practices',
-      recommended: {
+      recommendedConfig: {
         dom: false,
         angular: false,
         react: false,

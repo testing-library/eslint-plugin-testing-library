@@ -56,7 +56,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
       description:
         'Suggest using `find*` query instead of `waitFor` + `get*` to wait for elements',
       category: 'Best Practices',
-      recommended: {
+      recommendedConfig: {
         dom: 'error',
         angular: 'error',
         react: 'error',
