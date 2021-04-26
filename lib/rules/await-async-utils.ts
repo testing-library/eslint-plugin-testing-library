@@ -19,7 +19,12 @@ export default createTestingLibraryRule<Options, MessageIds>({
     docs: {
       description: 'Enforce promises from async utils to be handled',
       category: 'Best Practices',
-      recommended: 'warn',
+      recommended: {
+        dom: 'error',
+        angular: 'error',
+        react: 'error',
+        vue: 'error',
+      },
     },
     messages: {
       awaitAsyncUtil: 'Promise returned from `{{ name }}` must be handled',

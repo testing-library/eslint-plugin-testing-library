@@ -24,7 +24,12 @@ export default createTestingLibraryRule<Options, MessageIds>({
     docs: {
       description: 'Enforce a valid naming for return value from `render`',
       category: 'Best Practices',
-      recommended: false,
+      recommended: {
+        dom: false,
+        angular: 'error',
+        react: 'error',
+        vue: 'error',
+      },
     },
     messages: {
       renderResultNamingConvention: `\`{{ renderResultName }}\` is not a recommended name for \`render\` returned value. Instead, you should destructure it, or name it using one of: ${ALLOWED_VAR_NAMES_TEXT}`,

@@ -56,7 +56,12 @@ export default createTestingLibraryRule<Options, MessageIds>({
       description:
         'Suggest using `find*` query instead of `waitFor` + `get*` to wait for elements',
       category: 'Best Practices',
-      recommended: 'warn',
+      recommended: {
+        dom: 'error',
+        angular: 'error',
+        react: 'error',
+        vue: 'error',
+      },
     },
     messages: {
       preferFindBy:

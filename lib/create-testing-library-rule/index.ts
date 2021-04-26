@@ -19,7 +19,7 @@ export function createTestingLibraryRule<
   ...remainingConfig
 }: Readonly<{
   name: string;
-  meta: TestingLibraryRuleMeta<TMessageIds>;
+  meta: TestingLibraryRuleMeta<TMessageIds, TOptions>;
   defaultOptions: Readonly<TOptions>;
   detectionOptions?: Partial<DetectionOptions>;
   create: EnhancedRuleCreate<TOptions, TMessageIds, TRuleListener>;

@@ -19,7 +19,12 @@ export default createTestingLibraryRule<Options, MessageIds>({
     docs: {
       description: 'Enforce promises from fire event methods to be handled',
       category: 'Best Practices',
-      recommended: false,
+      recommended: {
+        dom: false,
+        angular: false,
+        react: false,
+        vue: 'error',
+      },
     },
     messages: {
       awaitFireEvent:

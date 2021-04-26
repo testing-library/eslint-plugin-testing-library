@@ -28,7 +28,12 @@ export default createTestingLibraryRule<Options, MessageIds>({
     docs: {
       description: 'Disallow the use of `cleanup`',
       category: 'Best Practices',
-      recommended: false,
+      recommended: {
+        dom: false,
+        angular: false,
+        react: false,
+        vue: false,
+      },
     },
     messages: {
       noManualCleanup:

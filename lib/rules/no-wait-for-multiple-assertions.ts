@@ -16,7 +16,12 @@ export default createTestingLibraryRule<Options, MessageIds>({
     docs: {
       description: "It's preferred to avoid multiple assertions in `waitFor`",
       category: 'Best Practices',
-      recommended: false,
+      recommended: {
+        dom: false,
+        angular: false,
+        react: false,
+        vue: false,
+      },
     },
     messages: {
       noWaitForMultipleAssertion:

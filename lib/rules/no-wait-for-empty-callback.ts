@@ -18,7 +18,12 @@ export default createTestingLibraryRule<Options, MessageIds>({
       description:
         "It's preferred to avoid empty callbacks in `waitFor` and `waitForElementToBeRemoved`",
       category: 'Best Practices',
-      recommended: 'error',
+      recommended: {
+        dom: 'error',
+        angular: 'error',
+        react: 'error',
+        vue: 'error',
+      },
     },
     messages: {
       noWaitForEmptyCallback:
