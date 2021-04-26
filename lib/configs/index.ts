@@ -8,7 +8,7 @@ import {
   SupportedTestingFramework,
 } from '../utils';
 
-type LinterConfigRules = Record<string, TSESLint.Linter.RuleEntry>;
+export type LinterConfigRules = Record<string, TSESLint.Linter.RuleEntry>;
 
 const configsDir = __dirname;
 

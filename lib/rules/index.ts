@@ -3,9 +3,11 @@ import { join, parse } from 'path';
 
 import { TSESLint } from '@typescript-eslint/experimental-utils';
 
-import { importDefault } from '../utils';
+import { importDefault, TestingLibraryRuleMeta } from '../utils';
 
-type RuleModule = TSESLint.RuleModule<string, unknown[]>;
+type RuleModule = TSESLint.RuleModule<string, unknown[]> & {
+  meta: TestingLibraryRuleMeta<string>;
+};
 
 const rulesDir = __dirname;
 const excludedFiles = ['index'];

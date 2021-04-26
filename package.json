@@ -29,6 +29,7 @@
     "postbuild": "cpy README.md ./dist && cpy package.json ./dist && cpy LICENSE ./dist",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
+    "generate:configs": "ts-node tools/generate-configs",
     "lint": "eslint . --max-warnings 0 --ext .js,.ts",
     "lint:fix": "npm run lint -- --fix",
     "test": "jest",
