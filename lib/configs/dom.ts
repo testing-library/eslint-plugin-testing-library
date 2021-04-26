@@ -5,12 +5,12 @@
 export = {
   plugins: ['testing-library'],
   rules: {
-    'await-async-query': 'error',
-    'await-async-utils': 'error',
-    'no-await-sync-query': 'error',
-    'no-promise-in-fire-event': 'error',
-    'no-wait-for-empty-callback': 'error',
-    'prefer-find-by': 'error',
-    'prefer-screen-queries': 'error',
+    'testing-library/await-async-query': 'error',
+    'testing-library/await-async-utils': 'error',
+    'testing-library/no-await-sync-query': 'error',
+    'testing-library/no-promise-in-fire-event': 'error',
+    'testing-library/no-wait-for-empty-callback': 'error',
+    'testing-library/prefer-find-by': 'error',
+    'testing-library/prefer-screen-queries': 'error',
   },
 };

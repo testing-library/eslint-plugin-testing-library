@@ -17,14 +17,15 @@ const getRecommendedRulesForTestingFramework = (
     .filter(([_, { meta: { docs } }]) =>
       Boolean(docs.recommendedConfig[framework])
     )
-    .reduce(
-      (allRules, [ruleName, { meta }]) => ({
+    .reduce((allRules, [ruleName, { meta }]) => {
+      const name = `${RULE_NAME_PREFIX}${ruleName}`;
+      const recommendation = meta.docs.recommendedConfig[framework];
+
+      return {
         ...allRules,
-        [ruleName.split(RULE_NAME_PREFIX)[0]]:
-          meta.docs.recommendedConfig[framework],
-      }),
-      {}
-    );
+        [name]: recommendation,
+      };
+    }, {});
 
 SUPPORTED_TESTING_FRAMEWORKS.forEach((framework) => {
   const specificFrameworkConfig: LinterConfig = {
