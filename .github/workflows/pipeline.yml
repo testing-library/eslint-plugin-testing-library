@@ -12,7 +12,7 @@ on:
       - 'alpha'
       - '!all-contributors/**'
   pull_request:
-    types: [ opened, synchronize ]
+    types: [opened, synchronize]
 
 jobs:
   code_validation:
@@ -51,8 +51,8 @@ jobs:
 
     strategy:
       matrix:
-        node: [ '10.12', '10', '12.0', '12', '14' ]
-        eslint: [ '7.5', '7' ]
+        node: ['10.12', '10', '12.0', '12', '14']
+        eslint: ['7.5', '7']
 
     steps:
       - name: Cancel Previous Runs
