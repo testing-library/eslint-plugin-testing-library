@@ -1,10 +1,9 @@
-import { getDocsUrl } from '../utils';
-import { ESLintUtils } from '@typescript-eslint/experimental-utils';
+import { createTestingLibraryRule } from '../create-testing-library-rule';
 import { isJSXAttribute, isLiteral } from '../node-utils';
 
 export const RULE_NAME = 'consistent-data-testid';
 export type MessageIds = 'consistentDataTestId';
-type Options = [
+export type Options = [
   {
     testIdAttribute?: string | string[];
     testIdPattern: string;
@@ -13,12 +12,7 @@ type Options = [
 
 const FILENAME_PLACEHOLDER = '{fileName}';
 
-/**
- * This rule is not created with `createTestingLibraryRule` since:
- * - it doesn't need any detection helper
- * - it doesn't apply to testing files but component files
- */
-export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
+export default createTestingLibraryRule<Options, MessageIds>({
   name: RULE_NAME,
   meta: {
     type: 'suggestion',
@@ -64,8 +58,11 @@ export default ESLintUtils.RuleCreator(getDocsUrl)<Options, MessageIds>({
       testIdAttribute: 'data-testid',
     },
   ],
+  detectionOptions: {
+    skipRuleReportingCheck: true,
+  },
 
-  create(context, [options]) {
+  create: (context, [options]) => {
     const { getFilename } = context;
     const { testIdPattern, testIdAttribute: attr } = options;
 

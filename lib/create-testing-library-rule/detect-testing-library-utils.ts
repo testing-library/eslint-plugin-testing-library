@@ -3,6 +3,7 @@ import {
   TSESLint,
   TSESTree,
 } from '@typescript-eslint/experimental-utils';
+
 import {
   getAssertNodeInfo,
   getDeepestIdentifierNode,
@@ -19,13 +20,13 @@ import {
   isMemberExpression,
   isObjectPattern,
   isProperty,
-} from './node-utils';
+} from '../node-utils';
 import {
   ABSENCE_MATCHERS,
   ALL_QUERIES_COMBINATIONS,
   ASYNC_UTILS,
   PRESENCE_MATCHERS,
-} from './utils';
+} from '../utils';
 
 const SETTING_OPTION_OFF = 'off' as const;
 
@@ -123,6 +124,17 @@ const FIRE_EVENT_NAME = 'fireEvent';
 const USER_EVENT_NAME = 'userEvent';
 const RENDER_NAME = 'render';
 
+export type DetectionOptions = {
+  /**
+   * If true, force `detectTestingLibraryUtils` to skip `canReportErrors`
+   * so it doesn't opt-out rule listener.
+   *
+   * Useful when some rule apply to files other than testing ones
+   * (e.g. `consistent-data-testid`)
+   */
+  skipRuleReportingCheck: boolean;
+};
+
 /**
  * Enhances a given rule `create` with helpers to detect Testing Library utils.
  */
@@ -130,7 +142,10 @@ export function detectTestingLibraryUtils<
   TOptions extends readonly unknown[],
   TMessageIds extends string,
   TRuleListener extends TSESLint.RuleListener = TSESLint.RuleListener
->(ruleCreate: EnhancedRuleCreate<TOptions, TMessageIds, TRuleListener>) {
+>(
+  ruleCreate: EnhancedRuleCreate<TOptions, TMessageIds, TRuleListener>,
+  { skipRuleReportingCheck = false }: Partial<DetectionOptions> = {}
+) {
   return (
     context: TestingLibraryContext<TOptions, TMessageIds>,
     optionsWithDefault: Readonly<TOptions>
@@ -742,7 +757,7 @@ export function detectTestingLibraryUtils<
      * Determines if file inspected meets all conditions to be reported by rules or not.
      */
     const canReportErrors: CanReportErrorsFn = () => {
-      return isTestingLibraryImported();
+      return skipRuleReportingCheck || isTestingLibraryImported();
     };
 
     /**
