@@ -14,7 +14,7 @@ type CreateRuleMeta<TMessageIds extends string> = {
   docs: CreateRuleMetaDocs;
 } & Omit<TSESLint.RuleMetaData<TMessageIds>, 'docs'>;
 
-export const createTestingLibraryRule = <
+export function createTestingLibraryRule<
   TOptions extends readonly unknown[],
   TMessageIds extends string,
   TRuleListener extends TSESLint.RuleListener = TSESLint.RuleListener
@@ -28,11 +28,12 @@ export const createTestingLibraryRule = <
   defaultOptions: Readonly<TOptions>;
   detectionOptions?: Partial<DetectionOptions>;
   create: EnhancedRuleCreate<TOptions, TMessageIds, TRuleListener>;
-}>): TSESLint.RuleModule<TMessageIds, TOptions> =>
-  ESLintUtils.RuleCreator(getDocsUrl)({
+}>): TSESLint.RuleModule<TMessageIds, TOptions> {
+  return ESLintUtils.RuleCreator(getDocsUrl)({
     ...remainingConfig,
     create: detectTestingLibraryUtils<TOptions, TMessageIds, TRuleListener>(
       create,
       detectionOptions
     ),
   });
+}
