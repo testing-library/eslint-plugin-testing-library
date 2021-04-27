@@ -10,6 +10,11 @@ type TestingLibraryRuleMetaDocs<TOptions extends readonly unknown[]> = Omit<
   TSESLint.RuleMetaDataDocs,
   'recommended' | 'url'
 > & {
+  /**
+   * The recommendation level for the rule on a framework basis.
+   * Used by the build tools to generate the framework config.
+   * Set to false to not include it the config
+   */
   recommendedConfig: Record<
     SupportedTestingFramework,
     RecommendedConfig<TOptions>

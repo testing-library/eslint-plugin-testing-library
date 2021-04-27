@@ -1,7 +1,10 @@
+import { exec } from 'child_process';
 import { existsSync } from 'fs';
 import { resolve } from 'path';
 
 import plugin from '../lib';
+
+const generateConfigs = () => exec(`npm run generate:configs`);
 
 const numberOfRules = 24;
 const ruleNames = Object.keys(plugin.rules);
@@ -43,10 +46,16 @@ it('should have the correct amount of rules', () => {
   }
 });
 
+it("should have run 'generate:configs' script when changing config rules", async () => {
+  await generateConfigs();
+
+  const allConfigs = plugin.configs;
+  expect(allConfigs).toMatchSnapshot();
+});
+
 it('should export configs that refer to actual rules', () => {
   const allConfigs = plugin.configs;
 
-  expect(allConfigs).toMatchSnapshot();
   expect(Object.keys(allConfigs)).toEqual(['dom', 'angular', 'react', 'vue']);
   const allConfigRules = Object.values(allConfigs)
     .map((config) => Object.keys(config.rules))
