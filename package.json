@@ -27,10 +27,10 @@
   "scripts": {
     "build": "tsc",
     "postbuild": "cpy README.md ./dist && cpy package.json ./dist && cpy LICENSE ./dist",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "lint": "eslint . --max-warnings 0 --ext .js,.ts",
     "lint:fix": "npm run lint -- --fix",
-    "format": "prettier --write README.md \"{lib,docs,tests}/**/*.{js,ts,md}\"",
-    "format:check": "prettier --check README.md \"{lib,docs,tests}/**/*.{js,json,yml,ts,md}\"",
     "test": "jest",
     "test:ci": "jest --ci --coverage",
     "test:update": "npm run test -- --u",
