@@ -4,5 +4,5 @@
     "prettier --write",
     "jest --findRelatedTests"
   ],
-  "*.{md,yml}": ["prettier --write"]
+  "*.{json,md,yml}": ["prettier --write"]
 }
