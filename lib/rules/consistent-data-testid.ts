@@ -3,7 +3,7 @@ import { isJSXAttribute, isLiteral } from '../node-utils';
 
 export const RULE_NAME = 'consistent-data-testid';
 export type MessageIds = 'consistentDataTestId';
-type Options = [
+export type Options = [
   {
     testIdAttribute?: string | string[];
     testIdPattern: string;
