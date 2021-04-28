@@ -373,6 +373,6 @@ ruleTester.run(RULE_NAME, rule, {
     // TODO case: RTU act wrapping RTL calls - callbacks with return
     // TODO case: RTU act wrapping empty callback
 
-    // TODO cases like previous ones but with AGR disabled
+    // TODO case: mixed scenarios - AGR disabled
   ],
 });

@@ -33,33 +33,26 @@ export default createTestingLibraryRule<[], MessageIds>({
 
   create(context, _, helpers) {
     /**
-     * Determines whether a given list of statements has some call non-related to Testing Library utils.
+     * Determines whether some call is non Testing Library related for a given list of statements.
      */
-    function hasNonTestingLibraryCall(
+    function hasSomeNonTestingLibraryCall(
       statements: TSESTree.Statement[]
     ): boolean {
-      // TODO: refactor to use Array.every
-      for (const statement of statements) {
+      return statements.some((statement) => {
         const callExpression = getStatementCallExpression(statement);
 
         if (!callExpression) {
-          continue;
+          return false;
         }
 
         const identifier = getDeepestIdentifierNode(callExpression);
 
         if (!identifier) {
-          continue;
+          return false;
         }
 
-        if (helpers.isTestingLibraryUtil(identifier)) {
-          continue;
-        }
-
-        // at this point the statement is a non testing library call
-        return true;
-      }
-      return false;
+        return !helpers.isTestingLibraryUtil(identifier);
+      });
     }
 
     function checkNoUnnecessaryActFromBlockStatement(
@@ -94,18 +87,12 @@ export default createTestingLibraryRule<[], MessageIds>({
           node: callExpressionIdentifier,
           messageId: 'noUnnecessaryActEmptyFunction',
         });
-
-        return;
+      } else if (!hasSomeNonTestingLibraryCall(blockStatementNode.body)) {
+        context.report({
+          node: callExpressionIdentifier,
+          messageId: 'noUnnecessaryActTestingLibraryUtil',
+        });
       }
-
-      if (hasNonTestingLibraryCall(blockStatementNode.body)) {
-        return;
-      }
-
-      context.report({
-        node: callExpressionIdentifier,
-        messageId: 'noUnnecessaryActTestingLibraryUtil',
-      });
     }
 
     function checkNoUnnecessaryActFromImplicitReturn(
