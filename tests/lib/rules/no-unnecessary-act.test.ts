@@ -96,7 +96,7 @@ ruleTester.run(RULE_NAME, rule, {
 
       test('valid case', async () => {
         act(() => {
-          render(<Foo />);
+          render(element);
           stuffThatDoesNotUseRTL();
         });
         
@@ -109,6 +109,39 @@ ruleTester.run(RULE_NAME, rule, {
           waitFor();
           stuffThatDoesNotUseRTL();
         });
+      });
+      `,
+    },
+    {
+      settings: {
+        'testing-library/utils-module': 'test-utils',
+      },
+      code: `// case: non-RTL act wrapping RTL - AGR disabled
+      import { act } from 'somewhere-else'
+      import { waitFor } from '@testing-library/react'
+
+      test('valid case', async () => {
+        act(() => {
+          waitFor();
+        });
+        
+        await act(async () => {
+          waitFor();
+        });
+        
+        act(function() {
+          waitFor();
+        });
+        
+        act(function() {
+          return waitFor();
+        });
+        
+        act(() => waitFor());
+
+        act(() => {})
+        await act(async () => {})
+        act(function() {})
       });
       `,
     },
@@ -317,8 +350,25 @@ ruleTester.run(RULE_NAME, rule, {
         },
       ],
     },
+    {
+      code: `// case: RTL act wrapping empty callback
+      import { act } from '@testing-library/react'
 
-    // TODO case: RTL act wrapping empty callback
+      test('invalid case', async () => {
+        await act(async () => {})
+        act(() => {})
+        await act(async function () {})
+        act(function () {})
+      })
+      `,
+      errors: [
+        { messageId: 'noUnnecessaryActEmptyFunction', line: 5, column: 15 },
+        { messageId: 'noUnnecessaryActEmptyFunction', line: 6, column: 9 },
+        { messageId: 'noUnnecessaryActEmptyFunction', line: 7, column: 15 },
+        { messageId: 'noUnnecessaryActEmptyFunction', line: 8, column: 9 },
+      ],
+    },
+
     // TODO case: RTU act wrapping RTL calls - callbacks with body (BlockStatement)
     // TODO case: RTU act wrapping RTL calls - callbacks with return
     // TODO case: RTU act wrapping empty callback

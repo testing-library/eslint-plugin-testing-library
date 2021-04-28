@@ -4,6 +4,7 @@ import {
   getDeepestIdentifierNode,
   getPropertyIdentifierNode,
   getStatementCallExpression,
+  isEmptyFunction,
 } from '../node-utils';
 
 export const RULE_NAME = 'no-unnecessary-act';
@@ -64,11 +65,15 @@ export default createTestingLibraryRule<[], MessageIds>({
     function checkNoUnnecessaryActFromBlockStatement(
       blockStatementNode: TSESTree.BlockStatement
     ) {
-      const callExpressionNode = blockStatementNode?.parent?.parent as
+      const functionNode = blockStatementNode?.parent as
+        | TSESTree.FunctionExpression
+        | TSESTree.ArrowFunctionExpression
+        | undefined;
+      const callExpressionNode = functionNode?.parent as
         | TSESTree.CallExpression
         | undefined;
 
-      if (!callExpressionNode) {
+      if (!callExpressionNode || !functionNode) {
         return;
       }
 
@@ -84,7 +89,14 @@ export default createTestingLibraryRule<[], MessageIds>({
         return;
       }
 
-      // TODO: check if empty function body
+      if (isEmptyFunction(functionNode)) {
+        context.report({
+          node: callExpressionIdentifier,
+          messageId: 'noUnnecessaryActEmptyFunction',
+        });
+
+        return;
+      }
 
       if (hasNonTestingLibraryCall(blockStatementNode.body)) {
         return;
