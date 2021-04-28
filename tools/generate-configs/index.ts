@@ -13,7 +13,6 @@ const getRecommendedRulesForTestingFramework = (
   framework: SupportedTestingFramework
 ): LinterConfigRules =>
   Object.entries(rules)
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     .filter(([_, { meta: { docs } }]) =>
       Boolean(docs.recommendedConfig[framework])
     )
