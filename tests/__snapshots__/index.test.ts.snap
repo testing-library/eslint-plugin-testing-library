@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`should export configs that refer to actual rules 1`] = `
+exports[`should have run 'generate:configs' script when changing config rules 1`] = `
 Object {
   "angular": Object {
     "plugins": Array [

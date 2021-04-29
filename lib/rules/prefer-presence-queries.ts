@@ -13,7 +13,12 @@ export default createTestingLibraryRule<Options, MessageIds>({
       category: 'Best Practices',
       description:
         'Ensure appropriate get*/query* queries are used with their respective matchers',
-      recommended: 'error',
+      recommendedConfig: {
+        dom: false,
+        angular: false,
+        react: false,
+        vue: false,
+      },
     },
     messages: {
       wrongPresenceQuery:

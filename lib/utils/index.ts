@@ -1,3 +1,6 @@
+export * from './file-import';
+export * from './types';
+
 const combineQueries = (variants: string[], methods: string[]): string[] => {
   const combinedQueries: string[] = [];
   variants.forEach((variant) => {

@@ -63,11 +63,6 @@ each rule has three files named with its identifier (e.g. `no-debug`):
 
 Additionally, you need to do a couple of extra things:
 
-- Import the new rule in `lib/index.ts` and include it
-  in `rules` constant (there is a test which will make sure you did
-  this). Remember to include your rule under corresponding `config` if necessary
-  (a snapshot test will check this too, but you can update it just running
-  `npm run test:update`).
 - Include your rule in the "Supported Rules" table within the [README.md](./README.md).
   Don't forget to include the proper badges if needed and to sort alphabetically the rules for readability.
 
@@ -104,6 +99,8 @@ If you need some check related to Testing Library which is not available in any 
 - add corresponding type
 - pass it through `helpers`
 - write some generic test within `fake-rule.ts`, which is a dumb rule to be able to test all enhanced behavior from our custom Rule Creator.
+
+Take also into account that we're using our own `recommendedConfig` meta instead of the default `recommended` one. This is done so that our tools can automatically generate (`npm run generate:configs`) our configs.
 
 ## Updating existing rules
 

@@ -26,7 +26,12 @@ export default createTestingLibraryRule<Options, MessageIds>({
     docs: {
       description: 'Fake rule to test rule maker and detection helpers',
       category: 'Possible Errors',
-      recommended: false,
+      recommendedConfig: {
+        dom: false,
+        angular: false,
+        react: false,
+        vue: false,
+      },
     },
     messages: {
       fakeError: 'fake error reported',

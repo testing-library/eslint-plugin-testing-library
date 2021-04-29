@@ -19,7 +19,12 @@ export default createTestingLibraryRule<Options, MessageIds>({
     docs: {
       description: 'Enforce promises from async queries to be handled',
       category: 'Best Practices',
-      recommended: 'warn',
+      recommendedConfig: {
+        dom: 'error',
+        angular: 'error',
+        react: 'error',
+        vue: 'error',
+      },
     },
     messages: {
       awaitAsyncQuery: 'promise returned from {{ name }} query must be handled',

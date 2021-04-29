@@ -19,7 +19,12 @@ export default createTestingLibraryRule<Options, MessageIds>({
     docs: {
       description: 'Ensures consistent usage of `data-testid`',
       category: 'Best Practices',
-      recommended: false,
+      recommendedConfig: {
+        dom: false,
+        angular: false,
+        react: false,
+        vue: false,
+      },
     },
     messages: {
       consistentDataTestId: '`{{attr}}` "{{value}}" should match `{{regex}}`',
