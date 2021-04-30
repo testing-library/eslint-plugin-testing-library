@@ -2,6 +2,8 @@
 
 Just like `console.log` statements pollutes the browser's output, debug statements also pollutes the tests if one of your teammates forgot to remove it. `debug` statements should be used when you actually want to debug your tests but should not be pushed to the codebase.
 
+By default, this rule disallows the `debug` and `logTestingPlaygroundURL` utils.
+
 ## Rule Details
 
 This rule aims to disallow the use of `debug` in your tests.
@@ -28,10 +30,10 @@ const { screen } = require('@testing-library/react');
 screen.debug();
 ```
 
-If you want to disallow the use of other debugging functions, you can configure what names this rule checks for with the `utilNames` option:
+If you want to allow the use of some debugging functions, you can configure what names this rule checks for with the `utilNames` option:
 
 ```
-   "testing-library/no-debug": ["error", {"utilNames": ["debug", "logTestingPlaygroundURL"]}],
+   "testing-library/no-debug": ["error", {"utilNames": ["debug"}],
 ```
 
 ## Further Reading
