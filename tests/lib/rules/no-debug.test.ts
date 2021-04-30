@@ -441,6 +441,19 @@ ruleTester.run(RULE_NAME, rule, {
       ],
     },
     {
+      code: `
+        import { screen } from '@testing-library/dom'
+        screen.logTestingPlaygroundURL()
+      `,
+      errors: [
+        {
+          line: 3,
+          column: 16,
+          messageId: 'noDebug',
+        },
+      ],
+    },
+    {
       settings: { 'testing-library/utils-module': 'test-utils' },
       code: `// aggressive reporting disabled
         import { screen } from '@testing-library/dom'
