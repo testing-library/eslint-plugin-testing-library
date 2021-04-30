@@ -14,7 +14,7 @@ import { ASTUtils, TSESTree } from '@typescript-eslint/experimental-utils';
 
 export const RULE_NAME = 'no-debug';
 export type MessageIds = 'noDebug';
-type Options = [{ utilNames: Array<typeof DEBUG_UTILS[number]> }];
+type Options = [{ utilNames?: Array<typeof DEBUG_UTILS[number]> }];
 
 export default createTestingLibraryRule<Options, MessageIds>({
   name: RULE_NAME,
