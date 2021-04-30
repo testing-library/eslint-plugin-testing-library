@@ -13,7 +13,7 @@ import { ASTUtils, TSESTree } from '@typescript-eslint/experimental-utils';
 
 export const RULE_NAME = 'no-debug';
 export type MessageIds = 'noDebug';
-type Options = [{ utilNames: string[] }];
+type Options = [{ utilNames: Array<'debug' | 'logTestingPlaygroundURL'> }];
 
 export default createTestingLibraryRule<Options, MessageIds>({
   name: RULE_NAME,
@@ -38,14 +38,17 @@ export default createTestingLibraryRule<Options, MessageIds>({
         properties: {
           utilNames: {
             type: 'array',
-            items: { type: 'string' },
+            items: {
+              type: 'string',
+              enum: ['debug', 'logTestingPlaygroundURL'],
+            },
           },
         },
         additionalProperties: false,
       },
     ],
   },
-  defaultOptions: [{ utilNames: ['debug'] }],
+  defaultOptions: [{ utilNames: ['debug', 'logTestingPlaygroundURL'] }],
 
   create(context, [{ utilNames }], helpers) {
     const suspiciousDebugVariableNames: string[] = [];
@@ -95,7 +98,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
             if (
               isProperty(property) &&
               ASTUtils.isIdentifier(property.key) &&
-              utilNames.includes(property.key.name)
+              (utilNames as string[]).includes(property.key.name)
             ) {
               const identifierNode = getDeepestIdentifierNode(property.value);
 
@@ -140,7 +143,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
         const isChainedReferenceDebug = suspiciousReferenceNodes.some(
           (suspiciousReferenceIdentifier) => {
             return (
-              utilNames.includes(callExpressionIdentifier.name) &&
+              (utilNames as string[]).includes(callExpressionIdentifier.name) &&
               suspiciousReferenceIdentifier.name === referenceIdentifier.name
             );
           }

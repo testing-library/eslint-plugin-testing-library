@@ -92,13 +92,7 @@ ruleTester.run(RULE_NAME, rule, {
         import { screen } from '@testing-library/dom'
         screen.logTestingPlaygroundURL()
       `,
-    },
-    {
-      code: `
-        import { screen } from '@testing-library/dom'
-        screen.debug()
-      `,
-      options: [{ utilNames: ['anotherUtil'] }],
+      options: [{ utilNames: ['debug'] }],
     },
     {
       code: `const { queries } = require('@testing-library/dom')`,
