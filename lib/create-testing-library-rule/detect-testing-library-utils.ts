@@ -25,6 +25,7 @@ import {
   ABSENCE_MATCHERS,
   ALL_QUERIES_COMBINATIONS,
   ASYNC_UTILS,
+  DEBUG_UTILS,
   PRESENCE_MATCHERS,
 } from '../utils';
 
@@ -79,10 +80,9 @@ type IsRenderUtilFn = (node: TSESTree.Identifier) => boolean;
 type IsRenderVariableDeclaratorFn = (
   node: TSESTree.VariableDeclarator
 ) => boolean;
-type IsDebugUtilFn = (identifierNode: TSESTree.Identifier) => boolean;
-type IsOneOfDebugUtils = (
+type IsDebugUtilFn = (
   identifierNode: TSESTree.Identifier,
-  names: string[]
+  validNames?: ReadonlyArray<typeof DEBUG_UTILS[number]>
 ) => boolean;
 type IsPresenceAssertFn = (node: TSESTree.MemberExpression) => boolean;
 type IsAbsenceAssertFn = (node: TSESTree.MemberExpression) => boolean;
@@ -116,7 +116,6 @@ export interface DetectionHelpers {
   isRenderUtil: IsRenderUtilFn;
   isRenderVariableDeclarator: IsRenderVariableDeclaratorFn;
   isDebugUtil: IsDebugUtilFn;
-  isOneOfDebugUtils: IsOneOfDebugUtils;
   isPresenceAssert: IsPresenceAssertFn;
   isAbsenceAssert: IsAbsenceAssertFn;
   canReportErrors: CanReportErrorsFn;
@@ -600,9 +599,9 @@ export function detectTestingLibraryUtils<
       return isRenderUtil(initIdentifierNode);
     };
 
-    const isOneOfDebugUtils: IsOneOfDebugUtils = (
+    const isDebugUtil: IsDebugUtilFn = (
       identifierNode,
-      names: string[]
+      validNames = DEBUG_UTILS
     ) => {
       const isBuiltInConsole =
         isMemberExpression(identifierNode.parent) &&
@@ -614,26 +613,11 @@ export function detectTestingLibraryUtils<
         isTestingLibraryUtil(
           identifierNode,
           (identifierNodeName, originalNodeName) => {
-            return names.includes(originalNodeName || identifierNodeName);
-          }
-        )
-      );
-    };
-
-    const isDebugUtil: IsDebugUtilFn = (identifierNode) => {
-      const isBuiltInConsole =
-        isMemberExpression(identifierNode.parent) &&
-        ASTUtils.isIdentifier(identifierNode.parent.object) &&
-        identifierNode.parent.object.name === 'console';
-
-      return (
-        !isBuiltInConsole &&
-        isTestingLibraryUtil(
-          identifierNode,
-          (identifierNodeName, originalNodeName) => {
-            return [identifierNodeName, originalNodeName]
-              .filter(Boolean)
-              .includes('debug');
+            return (
+              (validNames as string[]).includes(identifierNodeName) ||
+              (!!originalNodeName &&
+                (validNames as string[]).includes(originalNodeName))
+            );
           }
         )
       );
@@ -832,7 +816,6 @@ export function detectTestingLibraryUtils<
       isRenderUtil,
       isRenderVariableDeclarator,
       isDebugUtil,
-      isOneOfDebugUtils,
       isPresenceAssert,
       isAbsenceAssert,
       canReportErrors,

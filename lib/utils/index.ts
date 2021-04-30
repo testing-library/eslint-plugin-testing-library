@@ -66,6 +66,11 @@ const ASYNC_UTILS = [
   'waitForDomChange',
 ] as const;
 
+const DEBUG_UTILS = [
+  'debug', //
+  'logTestingPlaygroundURL',
+] as const;
+
 const EVENTS_SIMULATORS = ['fireEvent', 'userEvent'] as const;
 
 const TESTING_FRAMEWORK_SETUP_HOOKS = ['beforeEach', 'beforeAll'];
@@ -119,6 +124,7 @@ export {
   ASYNC_QUERIES_COMBINATIONS,
   ALL_QUERIES_COMBINATIONS,
   ASYNC_UTILS,
+  DEBUG_UTILS,
   EVENTS_SIMULATORS,
   TESTING_FRAMEWORK_SETUP_HOOKS,
   LIBRARY_MODULES,

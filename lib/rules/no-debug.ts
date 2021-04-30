@@ -8,12 +8,13 @@ import {
   isObjectPattern,
   isProperty,
 } from '../node-utils';
+import { DEBUG_UTILS } from '../utils';
 import { createTestingLibraryRule } from '../create-testing-library-rule';
 import { ASTUtils, TSESTree } from '@typescript-eslint/experimental-utils';
 
 export const RULE_NAME = 'no-debug';
 export type MessageIds = 'noDebug';
-type Options = [{ utilNames: Array<'debug' | 'logTestingPlaygroundURL'> }];
+type Options = [{ utilNames: Array<typeof DEBUG_UTILS[number]> }];
 
 export default createTestingLibraryRule<Options, MessageIds>({
   name: RULE_NAME,
@@ -40,7 +41,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
             type: 'array',
             items: {
               type: 'string',
-              enum: ['debug', 'logTestingPlaygroundURL'],
+              enum: DEBUG_UTILS,
             },
           },
         },
@@ -133,7 +134,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
           return;
         }
 
-        const isDebugUtil = helpers.isOneOfDebugUtils(
+        const isDebugUtil = helpers.isDebugUtil(
           callExpressionIdentifier,
           utilNames
         );
