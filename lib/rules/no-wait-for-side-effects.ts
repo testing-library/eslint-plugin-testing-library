@@ -117,8 +117,9 @@ export default createTestingLibraryRule<Options, MessageIds>({
         return;
       }
 
-      const expressionIdentifier =
-        isCallExpression(node) && getPropertyIdentifierNode(node.callee);
+      const expressionIdentifier = isCallExpression(node)
+        ? getPropertyIdentifierNode(node.callee)
+        : null;
       const isRenderInAssignment =
         isAssignmentExpression(node) &&
         helpers.isRenderUtil(getPropertyIdentifierNode(node.right));
@@ -131,9 +132,9 @@ export default createTestingLibraryRule<Options, MessageIds>({
         );
 
       if (
-        !helpers.isFireEventUtil(expressionIdentifier || null) &&
-        !helpers.isUserEventUtil(expressionIdentifier || null) &&
-        !helpers.isRenderUtil(expressionIdentifier || null) &&
+        !helpers.isFireEventUtil(expressionIdentifier) &&
+        !helpers.isUserEventUtil(expressionIdentifier) &&
+        !helpers.isRenderUtil(expressionIdentifier) &&
         !isRenderInAssignment &&
         !isRenderInSequenceAssignment
       ) {
