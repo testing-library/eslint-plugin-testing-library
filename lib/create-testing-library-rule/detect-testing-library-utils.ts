@@ -75,7 +75,7 @@ type IsAsyncUtilFn = (
 ) => boolean;
 type IsFireEventMethodFn = (node: TSESTree.Identifier) => boolean;
 type IsUserEventMethodFn = (node: TSESTree.Identifier) => boolean;
-type IsRenderUtilFn = (node: TSESTree.Identifier) => boolean;
+type IsRenderUtilFn = (node: TSESTree.Identifier | null) => boolean;
 type IsRenderVariableDeclaratorFn = (
   node: TSESTree.VariableDeclarator
 ) => boolean;
@@ -105,8 +105,8 @@ export interface DetectionHelpers {
   isCustomQuery: IsCustomQueryFn;
   isBuiltInQuery: IsBuiltInQueryFn;
   isAsyncUtil: IsAsyncUtilFn;
-  isFireEventUtil: (node: TSESTree.Identifier) => boolean;
-  isUserEventUtil: (node: TSESTree.Identifier) => boolean;
+  isFireEventUtil: (node: TSESTree.Identifier | null) => boolean;
+  isUserEventUtil: (node: TSESTree.Identifier | null) => boolean;
   isFireEventMethod: IsFireEventMethodFn;
   isUserEventMethod: IsUserEventMethodFn;
   isRenderUtil: IsRenderUtilFn;
@@ -429,7 +429,9 @@ export function detectTestingLibraryUtils<
      *
      * Not to be confused with {@link isFireEventMethod}
      */
-    const isFireEventUtil = (node: TSESTree.Identifier): boolean => {
+    const isFireEventUtil = (node: TSESTree.Identifier | null): boolean => {
+      if (!node) return false;
+
       return isTestingLibraryUtil(
         node,
         (identifierNodeName, originalNodeName) => {
@@ -443,7 +445,9 @@ export function detectTestingLibraryUtils<
      *
      * Not to be confused with {@link isUserEventMethod}
      */
-    const isUserEventUtil = (node: TSESTree.Identifier): boolean => {
+    const isUserEventUtil = (node: TSESTree.Identifier | null): boolean => {
+      if (!node) return false;
+
       const userEvent = findImportedUserEventSpecifier();
       let userEventName: string | undefined;
 
@@ -569,18 +573,25 @@ export function detectTestingLibraryUtils<
      * Testing Library. Otherwise, it means `custom-module` has been set up, so
      * only those nodes coming from Testing Library will be considered as valid.
      */
-    const isRenderUtil: IsRenderUtilFn = (node) =>
-      isTestingLibraryUtil(node, (identifierNodeName, originalNodeName) => {
-        if (isAggressiveRenderReportingEnabled()) {
-          return identifierNodeName.toLowerCase().includes(RENDER_NAME);
-        }
+    const isRenderUtil: IsRenderUtilFn = (node) => {
+      if (!node) return false;
 
-        return [RENDER_NAME, ...getCustomRenders()].some(
-          (validRenderName) =>
-            validRenderName === identifierNodeName ||
-            (Boolean(originalNodeName) && validRenderName === originalNodeName)
-        );
-      });
+      return isTestingLibraryUtil(
+        node,
+        (identifierNodeName, originalNodeName) => {
+          if (isAggressiveRenderReportingEnabled()) {
+            return identifierNodeName.toLowerCase().includes(RENDER_NAME);
+          }
+
+          return [RENDER_NAME, ...getCustomRenders()].some(
+            (validRenderName) =>
+              validRenderName === identifierNodeName ||
+              (Boolean(originalNodeName) &&
+                validRenderName === originalNodeName)
+          );
+        }
+      );
+    };
 
     const isRenderVariableDeclarator: IsRenderVariableDeclaratorFn = (node) => {
       if (!node.init) {

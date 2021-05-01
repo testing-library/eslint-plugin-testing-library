@@ -2,6 +2,10 @@ import { TSESTree } from '@typescript-eslint/experimental-utils';
 import {
   getPropertyIdentifierNode,
   isExpressionStatement,
+  isVariableDeclaration,
+  isAssignmentExpression,
+  isCallExpression,
+  isSequenceExpression,
 } from '../node-utils';
 import { createTestingLibraryRule } from '../create-testing-library-rule';
 
@@ -32,7 +36,11 @@ export default createTestingLibraryRule<Options, MessageIds>({
   defaultOptions: [],
   create: function (context, _, helpers) {
     function isCallerWaitFor(
-      node: TSESTree.BlockStatement | TSESTree.CallExpression
+      node:
+        | TSESTree.BlockStatement
+        | TSESTree.CallExpression
+        | TSESTree.AssignmentExpression
+        | TSESTree.SequenceExpression
     ): boolean {
       if (!node.parent) {
         return false;
@@ -52,18 +60,31 @@ export default createTestingLibraryRule<Options, MessageIds>({
       body: TSESTree.Node[]
     ): TSESTree.ExpressionStatement[] {
       return body.filter((node) => {
-        if (!isExpressionStatement(node)) {
+        if (!isExpressionStatement(node) && !isVariableDeclaration(node)) {
           return false;
         }
 
         const expressionIdentifier = getPropertyIdentifierNode(node);
-        if (!expressionIdentifier) {
-          return false;
-        }
+
+        const isRenderInVariableDeclaration =
+          isVariableDeclaration(node) &&
+          node.declarations.some((declaration) =>
+            helpers.isRenderVariableDeclarator(declaration)
+          );
+
+        const isRenderInAssignment =
+          isExpressionStatement(node) &&
+          isAssignmentExpression(node.expression) &&
+          helpers.isRenderUtil(
+            getPropertyIdentifierNode(node.expression.right)
+          );
 
         return (
           helpers.isFireEventUtil(expressionIdentifier) ||
-          helpers.isUserEventUtil(expressionIdentifier)
+          helpers.isUserEventUtil(expressionIdentifier) ||
+          helpers.isRenderUtil(expressionIdentifier) ||
+          isRenderInVariableDeclaration ||
+          isRenderInAssignment
         );
       }) as TSESTree.ExpressionStatement[];
     }
@@ -86,19 +107,35 @@ export default createTestingLibraryRule<Options, MessageIds>({
       }
     }
 
-    function reportImplicitReturnSideEffect(node: TSESTree.CallExpression) {
+    function reportImplicitReturnSideEffect(
+      node:
+        | TSESTree.CallExpression
+        | TSESTree.AssignmentExpression
+        | TSESTree.SequenceExpression
+    ) {
       if (!isCallerWaitFor(node)) {
         return;
       }
 
-      const expressionIdentifier = getPropertyIdentifierNode(node.callee);
-      if (!expressionIdentifier) {
-        return;
-      }
+      const expressionIdentifier =
+        isCallExpression(node) && getPropertyIdentifierNode(node.callee);
+      const isRenderInAssignment =
+        isAssignmentExpression(node) &&
+        helpers.isRenderUtil(getPropertyIdentifierNode(node.right));
+      const isRenderInSequenceAssignment =
+        isSequenceExpression(node) &&
+        node.expressions.some(
+          (expression) =>
+            isAssignmentExpression(expression) &&
+            helpers.isRenderUtil(getPropertyIdentifierNode(expression.right))
+        );
 
       if (
-        !helpers.isFireEventUtil(expressionIdentifier) &&
-        !helpers.isUserEventUtil(expressionIdentifier)
+        !helpers.isFireEventUtil(expressionIdentifier || null) &&
+        !helpers.isUserEventUtil(expressionIdentifier || null) &&
+        !helpers.isRenderUtil(expressionIdentifier || null) &&
+        !isRenderInAssignment &&
+        !isRenderInSequenceAssignment
       ) {
         return;
       }
@@ -112,6 +149,8 @@ export default createTestingLibraryRule<Options, MessageIds>({
     return {
       'CallExpression > ArrowFunctionExpression > BlockStatement': reportSideEffects,
       'CallExpression > ArrowFunctionExpression > CallExpression': reportImplicitReturnSideEffect,
+      'CallExpression > ArrowFunctionExpression > AssignmentExpression': reportImplicitReturnSideEffect,
+      'CallExpression > ArrowFunctionExpression > SequenceExpression': reportImplicitReturnSideEffect,
       'CallExpression > FunctionExpression > BlockStatement': reportSideEffects,
     };
   },

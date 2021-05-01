@@ -180,8 +180,331 @@ ruleTester.run(RULE_NAME, rule, {
         await waitFor(() => userEvent.click(button))
       `,
     },
+    {
+      settings: { 'testing-library/utils-module': 'test-utils' },
+      code: `
+        import { waitFor } from 'somewhere-else';
+        await waitFor(() => render(<App />))
+      `,
+    },
+    {
+      settings: { 'testing-library/utils-module': 'test-utils' },
+      code: `
+        import { waitFor } from 'somewhere-else';
+        await waitFor(() => {
+          const { container } = render(<App />)
+        })
+      `,
+    },
+    {
+      settings: { 'testing-library/utils-module': 'test-utils' },
+      code: `
+        import { waitFor } from 'somewhere-else';
+        const { rerender } = render(<App />)
+        await waitFor(() => {
+          rerender(<App />)
+        })
+      `,
+    },
+    {
+      settings: { 'testing-library/utils-module': '~/test-utils' },
+      code: `
+        import { waitFor } from '~/test-utils';
+        import { render } from 'somewhere-else';
+        await waitFor(() => render(<App />))
+      `,
+    },
+    {
+      settings: { 'testing-library/utils-module': '~/test-utils' },
+      code: `
+        import { waitFor } from '@testing-library/react';
+        import { render } from 'somewhere-else';
+        await waitFor(() => render(<App />))
+      `,
+    },
+    {
+      settings: { 'testing-library/custom-renders': ['renderHelper'] },
+      code: `
+        import { waitFor } from '@testing-library/react';
+        import { renderWrapper } from 'somewhere-else';
+        await waitFor(() => renderWrapper(<App />))
+      `,
+    },
+    {
+      settings: { 'testing-library/custom-renders': ['renderHelper'] },
+      code: `
+        import { waitFor } from '@testing-library/react';
+        import { renderWrapper } from 'somewhere-else';
+        await waitFor(() => {
+          renderWrapper(<App />)
+        })
+      `,
+    },
+    {
+      settings: { 'testing-library/custom-renders': ['renderHelper'] },
+      code: `
+        import { waitFor } from '@testing-library/react';
+        import { renderWrapper } from 'somewhere-else';
+        await waitFor(() => {
+          const { container } = renderWrapper(<App />)
+        })
+      `,
+    },
+    {
+      settings: { 'testing-library/utils-module': 'test-utils' },
+      code: `
+        import { waitFor } from 'somewhere-else';
+        await waitFor(() => {
+          render(<App />)
+        })
+      `,
+    },
+    {
+      settings: { 'testing-library/utils-module': 'test-utils' },
+      code: `
+        import { waitFor } from 'test-utils';
+        import { render } from 'somewhere-else';
+        await waitFor(() => {
+          render(<App />)
+        })
+      `,
+    },
+    {
+      settings: { 'testing-library/custom-renders': ['renderHelper'] },
+      code: `
+        import { waitFor } from '@testing-library/react';
+        import { renderWrapper } from 'somewhere-else';
+        await waitFor(() => {
+          renderWrapper(<App />)
+        })
+      `,
+    },
+    {
+      settings: { 'testing-library/custom-renders': ['renderHelper'] },
+      code: `
+        import { waitFor } from '@testing-library/react';
+        await waitFor(() => result = renderWrapper(<App />))
+      `,
+    },
+    {
+      settings: { 'testing-library/utils-module': 'test-utils' },
+      code: `
+        import { waitFor } from 'test-utils';
+        import { render } from 'somewhere-else';
+        await waitFor(() => result = render(<App />))
+      `,
+    },
+    {
+      settings: { 'testing-library/utils-module': 'test-utils' },
+      code: `
+        import { waitFor } from 'somewhere-else';
+        await waitFor(() => result = render(<App />))
+      `,
+    },
   ],
   invalid: [
+    // render
+    {
+      code: `
+        import { waitFor } from '@testing-library/react';
+        await waitFor(() => render(<App />))
+      `,
+      errors: [{ line: 3, column: 29, messageId: 'noSideEffectsWaitFor' }],
+    },
+    {
+      code: `
+        import { waitFor } from '@testing-library/react';
+        await waitFor(function() {
+          render(<App />)
+        })
+      `,
+      errors: [{ line: 4, column: 11, messageId: 'noSideEffectsWaitFor' }],
+    },
+    {
+      code: `
+        import { waitFor } from '@testing-library/react';
+        await waitFor(function() {
+          const { container } = renderHelper(<App />)
+        })
+      `,
+      errors: [{ line: 4, column: 11, messageId: 'noSideEffectsWaitFor' }],
+    },
+    {
+      settings: { 'testing-library/custom-renders': ['renderHelper'] },
+      code: `
+        import { waitFor } from '@testing-library/react';
+        import { renderHelper } from 'somewhere-else';
+        await waitFor(() => renderHelper(<App />))
+      `,
+      errors: [{ line: 4, column: 29, messageId: 'noSideEffectsWaitFor' }],
+    },
+    {
+      settings: { 'testing-library/custom-renders': ['renderHelper'] },
+      code: `
+        import { waitFor } from '@testing-library/react';
+        import { renderHelper } from 'somewhere-else';
+        await waitFor(() => {
+          renderHelper(<App />)
+        })
+      `,
+      errors: [{ line: 5, column: 11, messageId: 'noSideEffectsWaitFor' }],
+    },
+    {
+      settings: { 'testing-library/custom-renders': ['renderHelper'] },
+      code: `
+        import { waitFor } from '@testing-library/react';
+        import { renderHelper } from 'somewhere-else';
+        await waitFor(() => {
+          const { container } = renderHelper(<App />)
+        })
+      `,
+      errors: [{ line: 5, column: 11, messageId: 'noSideEffectsWaitFor' }],
+    },
+    {
+      settings: { 'testing-library/custom-renders': ['renderHelper'] },
+      code: `
+        import { waitFor } from '@testing-library/react';
+        import { renderHelper } from 'somewhere-else';
+        let container;
+        await waitFor(() => {
+          ({ container } = renderHelper(<App />))
+        })
+      `,
+      errors: [{ line: 6, column: 11, messageId: 'noSideEffectsWaitFor' }],
+    },
+    {
+      code: `
+        import { waitFor } from '@testing-library/react';
+        await waitFor(() => result = render(<App />))
+      `,
+      errors: [{ line: 3, column: 29, messageId: 'noSideEffectsWaitFor' }],
+    },
+    {
+      code: `
+        import { waitFor } from '@testing-library/react';
+        await waitFor(() => (a = 5, result = render(<App />)))
+      `,
+      errors: [{ line: 3, column: 30, messageId: 'noSideEffectsWaitFor' }],
+    },
+    {
+      code: `
+        import { waitFor } from '@testing-library/react';
+        const { rerender } = render(<App />)
+        await waitFor(() => rerender(<App />))
+      `,
+      errors: [{ line: 4, column: 29, messageId: 'noSideEffectsWaitFor' }],
+    },
+    {
+      code: `
+        import { waitFor, render } from '@testing-library/react';
+        await waitFor(() => render(<App />))
+      `,
+      errors: [{ line: 3, column: 29, messageId: 'noSideEffectsWaitFor' }],
+    },
+    {
+      code: `
+        import { waitFor } from '@testing-library/react';
+        const { rerender } = render(<App />)
+        await waitFor(() => rerender(<App />))
+      `,
+      errors: [{ line: 4, column: 29, messageId: 'noSideEffectsWaitFor' }],
+    },
+    {
+      code: `
+        import { waitFor } from '@testing-library/react';
+        await waitFor(() => renderHelper(<App />))
+      `,
+      errors: [{ line: 3, column: 29, messageId: 'noSideEffectsWaitFor' }],
+    },
+    {
+      code: `
+        import { waitFor } from '@testing-library/react';
+        import { render } from 'somewhere-else';
+        await waitFor(() => render(<App />))
+      `,
+      errors: [{ line: 4, column: 29, messageId: 'noSideEffectsWaitFor' }],
+    },
+    {
+      settings: { 'testing-library/utils-module': '~/test-utils' },
+      code: `
+        import { waitFor, render } from '~/test-utils';
+        await waitFor(() => render(<App />))
+      `,
+      errors: [{ line: 3, column: 29, messageId: 'noSideEffectsWaitFor' }],
+    },
+    {
+      settings: { 'testing-library/custom-renders': ['renderWrapper'] },
+      code: `
+        import { waitFor } from '@testing-library/react';
+        import { renderWrapper } from 'somewhere-else';
+        await waitFor(() => renderWrapper(<App />))
+      `,
+      errors: [{ line: 4, column: 29, messageId: 'noSideEffectsWaitFor' }],
+    },
+    {
+      code: `
+        import { waitFor } from '@testing-library/react';
+        await waitFor(() => {
+          render(<App />)
+        })
+      `,
+      errors: [{ line: 4, column: 11, messageId: 'noSideEffectsWaitFor' }],
+    },
+    {
+      code: `
+        import { waitFor } from '@testing-library/react';
+        await waitFor(() => {
+          const { container } = render(<App />)
+        })
+      `,
+      errors: [{ line: 4, column: 11, messageId: 'noSideEffectsWaitFor' }],
+    },
+    {
+      code: `
+        import { waitFor } from '@testing-library/react';
+        await waitFor(() => {
+          const a = 5,
+          { container } = render(<App />)
+        })
+      `,
+      errors: [{ line: 4, column: 11, messageId: 'noSideEffectsWaitFor' }],
+    },
+    {
+      code: `
+        import { waitFor } from '@testing-library/react';
+        const { rerender } = render(<App />)
+        await waitFor(() => {
+          rerender(<App />)
+        })
+      `,
+      errors: [{ line: 5, column: 11, messageId: 'noSideEffectsWaitFor' }],
+    },
+    {
+      code: `
+        import { waitFor } from '@testing-library/react';
+        await waitFor(() => {
+          render(<App />)
+          fireEvent.keyDown(input, {key: 'ArrowDown'})
+        })
+      `,
+      errors: [
+        { line: 4, column: 11, messageId: 'noSideEffectsWaitFor' },
+        { line: 5, column: 11, messageId: 'noSideEffectsWaitFor' },
+      ],
+    },
+    {
+      code: `
+        import { waitFor } from '@testing-library/react';
+        await waitFor(() => {
+          render(<App />)
+          userEvent.click(button)
+        })
+      `,
+      errors: [
+        { line: 4, column: 11, messageId: 'noSideEffectsWaitFor' },
+        { line: 5, column: 11, messageId: 'noSideEffectsWaitFor' },
+      ],
+    },
     // fireEvent
     {
       code: `
