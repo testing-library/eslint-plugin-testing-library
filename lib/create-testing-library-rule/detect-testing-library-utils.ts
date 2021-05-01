@@ -173,7 +173,7 @@ export function detectTestingLibraryUtils<
      *    reporting)
      */
     function isTestingLibraryUtil(
-      node: TSESTree.Identifier,
+      node: TSESTree.Identifier | null,
       isUtilCallback: (
         identifierNodeName: string,
         originalNodeName?: string
@@ -430,8 +430,6 @@ export function detectTestingLibraryUtils<
      * Not to be confused with {@link isFireEventMethod}
      */
     const isFireEventUtil = (node: TSESTree.Identifier | null): boolean => {
-      if (!node) return false;
-
       return isTestingLibraryUtil(
         node,
         (identifierNodeName, originalNodeName) => {
@@ -573,25 +571,18 @@ export function detectTestingLibraryUtils<
      * Testing Library. Otherwise, it means `custom-module` has been set up, so
      * only those nodes coming from Testing Library will be considered as valid.
      */
-    const isRenderUtil: IsRenderUtilFn = (node) => {
-      if (!node) return false;
-
-      return isTestingLibraryUtil(
-        node,
-        (identifierNodeName, originalNodeName) => {
-          if (isAggressiveRenderReportingEnabled()) {
-            return identifierNodeName.toLowerCase().includes(RENDER_NAME);
-          }
-
-          return [RENDER_NAME, ...getCustomRenders()].some(
-            (validRenderName) =>
-              validRenderName === identifierNodeName ||
-              (Boolean(originalNodeName) &&
-                validRenderName === originalNodeName)
-          );
+    const isRenderUtil: IsRenderUtilFn = (node) =>
+      isTestingLibraryUtil(node, (identifierNodeName, originalNodeName) => {
+        if (isAggressiveRenderReportingEnabled()) {
+          return identifierNodeName.toLowerCase().includes(RENDER_NAME);
         }
-      );
-    };
+
+        return [RENDER_NAME, ...getCustomRenders()].some(
+          (validRenderName) =>
+            validRenderName === identifierNodeName ||
+            (Boolean(originalNodeName) && validRenderName === originalNodeName)
+        );
+      });
 
     const isRenderVariableDeclarator: IsRenderVariableDeclaratorFn = (node) => {
       if (!node.init) {
