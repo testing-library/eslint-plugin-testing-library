@@ -444,7 +444,9 @@ export function detectTestingLibraryUtils<
      * Not to be confused with {@link isUserEventMethod}
      */
     const isUserEventUtil = (node: TSESTree.Identifier | null): boolean => {
-      if (!node) return false;
+      if (!node) {
+        return false;
+      }
 
       const userEvent = findImportedUserEventSpecifier();
       let userEventName: string | undefined;
