@@ -66,29 +66,58 @@ export default createTestingLibraryRule<Options, MessageIds>({
     }
 
     function isRenderInAssignment(node: TSESTree.Node) {
-      return (
-        isExpressionStatement(node) &&
-        isAssignmentExpression(node.expression) &&
-        helpers.isRenderUtil(getPropertyIdentifierNode(node.expression.right))
+      if (
+        !isExpressionStatement(node) ||
+        !isAssignmentExpression(node.expression)
+      ) {
+        return false;
+      }
+
+      const expressionIdentifier = getPropertyIdentifierNode(
+        node.expression.right
       );
+
+      if (!expressionIdentifier) {
+        return false;
+      }
+
+      return helpers.isRenderUtil(expressionIdentifier);
     }
 
     function isRenderInImplicitReturnAssignment(node: TSESTree.Node) {
-      return (
-        isAssignmentExpression(node) &&
-        helpers.isRenderUtil(getPropertyIdentifierNode(node.right))
-      );
+      if (!isAssignmentExpression(node)) {
+        return false;
+      }
+
+      const expressionIdentifier = getPropertyIdentifierNode(node.right);
+
+      if (!expressionIdentifier) {
+        return false;
+      }
+
+      return helpers.isRenderUtil(expressionIdentifier);
+    }
+
+    function isExpressionRenderUtil(expression: TSESTree.Expression) {
+      if (!isAssignmentExpression(expression)) {
+        return false;
+      }
+
+      const expressionIdentifier = getPropertyIdentifierNode(expression.right);
+
+      if (!expressionIdentifier) {
+        return false;
+      }
+
+      return helpers.isRenderUtil(expressionIdentifier);
     }
 
     function isRenderInSequenceAssignment(node: TSESTree.Node) {
-      return (
-        isSequenceExpression(node) &&
-        node.expressions.some(
-          (expression) =>
-            isAssignmentExpression(expression) &&
-            helpers.isRenderUtil(getPropertyIdentifierNode(expression.right))
-        )
-      );
+      if (!isSequenceExpression(node)) {
+        return false;
+      }
+
+      return node.expressions.some(isExpressionRenderUtil);
     }
 
     function getSideEffectNodes(
@@ -104,6 +133,10 @@ export default createTestingLibraryRule<Options, MessageIds>({
         }
 
         const expressionIdentifier = getPropertyIdentifierNode(node);
+
+        if (!expressionIdentifier) {
+          return false;
+        }
 
         return (
           helpers.isFireEventUtil(expressionIdentifier) ||
@@ -146,11 +179,18 @@ export default createTestingLibraryRule<Options, MessageIds>({
         : null;
 
       if (
-        !helpers.isFireEventUtil(expressionIdentifier) &&
-        !helpers.isUserEventUtil(expressionIdentifier) &&
-        !helpers.isRenderUtil(expressionIdentifier) &&
+        !expressionIdentifier &&
         !isRenderInImplicitReturnAssignment(node) &&
         !isRenderInSequenceAssignment(node)
+      ) {
+        return;
+      }
+
+      if (
+        expressionIdentifier &&
+        !helpers.isFireEventUtil(expressionIdentifier) &&
+        !helpers.isUserEventUtil(expressionIdentifier) &&
+        !helpers.isRenderUtil(expressionIdentifier)
       ) {
         return;
       }

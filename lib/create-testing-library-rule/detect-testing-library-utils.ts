@@ -75,7 +75,7 @@ type IsAsyncUtilFn = (
 ) => boolean;
 type IsFireEventMethodFn = (node: TSESTree.Identifier) => boolean;
 type IsUserEventMethodFn = (node: TSESTree.Identifier) => boolean;
-type IsRenderUtilFn = (node: TSESTree.Identifier | null) => boolean;
+type IsRenderUtilFn = (node: TSESTree.Identifier) => boolean;
 type IsRenderVariableDeclaratorFn = (
   node: TSESTree.VariableDeclarator
 ) => boolean;
@@ -105,8 +105,8 @@ export interface DetectionHelpers {
   isCustomQuery: IsCustomQueryFn;
   isBuiltInQuery: IsBuiltInQueryFn;
   isAsyncUtil: IsAsyncUtilFn;
-  isFireEventUtil: (node: TSESTree.Identifier | null) => boolean;
-  isUserEventUtil: (node: TSESTree.Identifier | null) => boolean;
+  isFireEventUtil: (node: TSESTree.Identifier) => boolean;
+  isUserEventUtil: (node: TSESTree.Identifier) => boolean;
   isFireEventMethod: IsFireEventMethodFn;
   isUserEventMethod: IsUserEventMethodFn;
   isRenderUtil: IsRenderUtilFn;
@@ -173,7 +173,7 @@ export function detectTestingLibraryUtils<
      *    reporting)
      */
     function isTestingLibraryUtil(
-      node: TSESTree.Identifier | null,
+      node: TSESTree.Identifier,
       isUtilCallback: (
         identifierNodeName: string,
         originalNodeName?: string
@@ -429,7 +429,7 @@ export function detectTestingLibraryUtils<
      *
      * Not to be confused with {@link isFireEventMethod}
      */
-    const isFireEventUtil = (node: TSESTree.Identifier | null): boolean => {
+    const isFireEventUtil = (node: TSESTree.Identifier): boolean => {
       return isTestingLibraryUtil(
         node,
         (identifierNodeName, originalNodeName) => {
@@ -443,11 +443,7 @@ export function detectTestingLibraryUtils<
      *
      * Not to be confused with {@link isUserEventMethod}
      */
-    const isUserEventUtil = (node: TSESTree.Identifier | null): boolean => {
-      if (!node) {
-        return false;
-      }
-
+    const isUserEventUtil = (node: TSESTree.Identifier): boolean => {
       const userEvent = findImportedUserEventSpecifier();
       let userEventName: string | undefined;
 
