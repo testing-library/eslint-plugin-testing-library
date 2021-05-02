@@ -77,6 +77,23 @@ export function findClosestCallExpressionNode(
   return findClosestCallExpressionNode(node.parent, shouldRestrictInnerScope);
 }
 
+export function findClosestVariableDeclaratorNode(
+  node: TSESTree.Node | undefined
+): TSESTree.VariableDeclarator | null {
+  if (!node) {
+    return null;
+  }
+
+  if (ASTUtils.isVariableDeclarator(node)) {
+    return node;
+  }
+
+  return findClosestVariableDeclaratorNode(node.parent);
+}
+
+/**
+ * TODO: remove this one in favor of {@link findClosestCallExpressionNode}
+ */
 export function findClosestCallNode(
   node: TSESTree.Node,
   name: string

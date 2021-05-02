@@ -5,6 +5,7 @@ import {
 } from '@typescript-eslint/experimental-utils';
 
 import {
+  findClosestVariableDeclaratorNode,
   getAssertNodeInfo,
   getDeepestIdentifierNode,
   getImportModuleName,
@@ -12,6 +13,7 @@ import {
   getReferenceNode,
   hasImportMatch,
   ImportModuleNode,
+  isCallExpression,
   isImportDeclaration,
   isImportDefaultSpecifier,
   isImportNamespaceSpecifier,
@@ -805,6 +807,31 @@ export function detectTestingLibraryUtils<
         return false;
       }
 
+      const importDeclaration = (() => {
+        if (isImportDeclaration(importNode.parent)) {
+          return importNode.parent;
+        }
+
+        const variableDeclarator = findClosestVariableDeclaratorNode(
+          importNode
+        );
+
+        if (isCallExpression(variableDeclarator?.init)) {
+          return variableDeclarator?.init;
+        }
+
+        return undefined;
+      })();
+
+      if (!importDeclaration) {
+        return false;
+      }
+
+      const importDeclarationName = getImportModuleName(importDeclaration);
+      if (!importDeclarationName) {
+        return false;
+      }
+
       const identifierName: string | undefined = getPropertyIdentifierNode(node)
         ?.name;
 
@@ -812,7 +839,13 @@ export function detectTestingLibraryUtils<
         return false;
       }
 
-      return hasImportMatch(importNode, identifierName);
+      const hasImportElementMatch = hasImportMatch(importNode, identifierName);
+      const hasImportModuleMatch =
+        /testing-library/g.test(importDeclarationName) ||
+        (typeof customModuleSetting === 'string' &&
+          importDeclarationName.endsWith(customModuleSetting));
+
+      return hasImportElementMatch && hasImportModuleMatch;
     };
 
     const helpers: DetectionHelpers = {
