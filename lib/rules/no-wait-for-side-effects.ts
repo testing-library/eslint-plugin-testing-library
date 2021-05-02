@@ -73,17 +73,12 @@ export default createTestingLibraryRule<Options, MessageIds>({
         return;
       }
 
-      const sideEffectNodes = getSideEffectNodes(node.body);
-      if (sideEffectNodes.length === 0) {
-        return;
-      }
-
-      for (const sideEffectNode of sideEffectNodes) {
+      getSideEffectNodes(node.body).forEach((sideEffectNode) =>
         context.report({
           node: sideEffectNode,
           messageId: 'noSideEffectsWaitFor',
-        });
-      }
+        })
+      );
     }
 
     function reportImplicitReturnSideEffect(node: TSESTree.CallExpression) {
