@@ -64,13 +64,15 @@ export default createTestingLibraryRule<Options, MessageIds>({
           return false;
         }
 
-        const expressionIdentifier = getPropertyIdentifierNode(node);
-
         const isRenderInVariableDeclaration =
           isVariableDeclaration(node) &&
           node.declarations.some((declaration) =>
             helpers.isRenderVariableDeclarator(declaration)
           );
+
+        if (isRenderInVariableDeclaration) {
+          return true;
+        }
 
         const isRenderInAssignment =
           isExpressionStatement(node) &&
@@ -79,12 +81,16 @@ export default createTestingLibraryRule<Options, MessageIds>({
             getPropertyIdentifierNode(node.expression.right)
           );
 
+        if (isRenderInAssignment) {
+          return true;
+        }
+
+        const expressionIdentifier = getPropertyIdentifierNode(node);
+
         return (
           helpers.isFireEventUtil(expressionIdentifier) ||
           helpers.isUserEventUtil(expressionIdentifier) ||
-          helpers.isRenderUtil(expressionIdentifier) ||
-          isRenderInVariableDeclaration ||
-          isRenderInAssignment
+          helpers.isRenderUtil(expressionIdentifier)
         );
       }) as TSESTree.ExpressionStatement[];
     }
