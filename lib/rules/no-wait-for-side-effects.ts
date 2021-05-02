@@ -99,11 +99,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
           return false;
         }
 
-        if (isRenderInVariableDeclaration(node)) {
-          return true;
-        }
-
-        if (isRenderInAssignment(node)) {
+        if (isRenderInVariableDeclaration(node) || isRenderInAssignment(node)) {
           return true;
         }
 
