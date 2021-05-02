@@ -69,7 +69,6 @@ export default createTestingLibraryRule<Options, MessageIds>({
           node.declarations.some((declaration) =>
             helpers.isRenderVariableDeclarator(declaration)
           );
-
         if (isRenderInVariableDeclaration) {
           return true;
         }
@@ -80,7 +79,6 @@ export default createTestingLibraryRule<Options, MessageIds>({
           helpers.isRenderUtil(
             getPropertyIdentifierNode(node.expression.right)
           );
-
         if (isRenderInAssignment) {
           return true;
         }
