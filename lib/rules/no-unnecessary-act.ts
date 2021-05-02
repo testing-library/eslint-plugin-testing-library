@@ -20,7 +20,12 @@ export default createTestingLibraryRule<[], MessageIds>({
       description:
         'Disallow the use of `act` when wrapping Testing Library utils or empty functions',
       category: 'Possible Errors',
-      recommended: false,
+      recommendedConfig: {
+        dom: false,
+        angular: false,
+        react: false, // this should be enabled on v5 of the plugin
+        vue: false,
+      },
     },
     messages: {
       noUnnecessaryActTestingLibraryUtil:
