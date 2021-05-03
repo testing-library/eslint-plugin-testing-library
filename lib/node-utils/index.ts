@@ -14,8 +14,12 @@ import {
   isCallExpression,
   isExpressionStatement,
   isImportDeclaration,
+  isImportNamespaceSpecifier,
+  isImportSpecifier,
   isLiteral,
   isMemberExpression,
+  isObjectPattern,
+  isProperty,
   isReturnStatement,
   isVariableDeclaration,
 } from './is-node-of-type';
@@ -568,4 +572,55 @@ export function isEmptyFunction(node: TSESTree.Node): boolean | undefined {
   }
 
   return false;
+}
+
+/**
+ * Finds the import specifier matching a given name for a given import module node.
+ */
+export function findImportSpecifier(
+  specifierName: string,
+  node: ImportModuleNode
+): TSESTree.ImportClause | TSESTree.Identifier | undefined {
+  if (isImportDeclaration(node)) {
+    const namedExport = node.specifiers.find((n) => {
+      return (
+        isImportSpecifier(n) &&
+        [n.imported.name, n.local.name].includes(specifierName)
+      );
+    });
+
+    // it is "import { foo [as alias] } from 'baz'""
+    if (namedExport) {
+      return namedExport;
+    }
+
+    // it could be "import * as rtl from 'baz'"
+    return node.specifiers.find((n) => isImportNamespaceSpecifier(n));
+  } else {
+    if (!ASTUtils.isVariableDeclarator(node.parent)) {
+      return undefined;
+    }
+    const requireNode = node.parent;
+
+    if (ASTUtils.isIdentifier(requireNode.id)) {
+      // this is const rtl = require('foo')
+      return requireNode.id;
+    }
+
+    // this should be const { something } = require('foo')
+    if (!isObjectPattern(requireNode.id)) {
+      return undefined;
+    }
+
+    const property = requireNode.id.properties.find(
+      (n) =>
+        isProperty(n) &&
+        ASTUtils.isIdentifier(n.key) &&
+        n.key.name === specifierName
+    );
+    if (!property) {
+      return undefined;
+    }
+    return (property as TSESTree.Property).key as TSESTree.Identifier;
+  }
 }

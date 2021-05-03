@@ -6,6 +6,7 @@ import {
 
 import {
   findClosestVariableDeclaratorNode,
+  findImportSpecifier,
   getAssertNodeInfo,
   getDeepestIdentifierNode,
   getImportModuleName,
@@ -196,7 +197,7 @@ export function detectTestingLibraryUtils<
         return false;
       }
 
-      const importedUtilSpecifier = getImportedUtilSpecifier(
+      const importedUtilSpecifier = getTestingLibraryImportedUtilSpecifier(
         referenceNodeIdentifier
       );
 
@@ -470,7 +471,9 @@ export function detectTestingLibraryUtils<
      * Determines whether a given node is fireEvent method or not
      */
     const isFireEventMethod: IsFireEventMethodFn = (node) => {
-      const fireEventUtil = findImportedUtilSpecifier(FIRE_EVENT_NAME);
+      const fireEventUtil = findImportedTestingLibraryUtilSpecifier(
+        FIRE_EVENT_NAME
+      );
       let fireEventUtilName: string | undefined;
 
       if (fireEventUtil) {
@@ -687,60 +690,18 @@ export function detectTestingLibraryUtils<
     };
 
     /**
-     * Gets a string and verifies if it was imported/required by Testing Library
-     * related module.
+     * Finds the import util specifier related to Testing Library for a given name.
      */
-    const findImportedUtilSpecifier: FindImportedUtilSpecifierFn = (
+    const findImportedTestingLibraryUtilSpecifier: FindImportedUtilSpecifierFn = (
       specifierName
-    ) => {
+    ): TSESTree.ImportClause | TSESTree.Identifier | undefined => {
       const node = getCustomModuleImportNode() ?? getTestingLibraryImportNode();
 
       if (!node) {
         return undefined;
       }
 
-      if (isImportDeclaration(node)) {
-        const namedExport = node.specifiers.find((n) => {
-          return (
-            isImportSpecifier(n) &&
-            [n.imported.name, n.local.name].includes(specifierName)
-          );
-        });
-
-        // it is "import { foo [as alias] } from 'baz'""
-        if (namedExport) {
-          return namedExport;
-        }
-
-        // it could be "import * as rtl from 'baz'"
-        return node.specifiers.find((n) => isImportNamespaceSpecifier(n));
-      } else {
-        if (!ASTUtils.isVariableDeclarator(node.parent)) {
-          return undefined;
-        }
-        const requireNode = node.parent;
-
-        if (ASTUtils.isIdentifier(requireNode.id)) {
-          // this is const rtl = require('foo')
-          return requireNode.id;
-        }
-
-        // this should be const { something } = require('foo')
-        if (!isObjectPattern(requireNode.id)) {
-          return undefined;
-        }
-
-        const property = requireNode.id.properties.find(
-          (n) =>
-            isProperty(n) &&
-            ASTUtils.isIdentifier(n.key) &&
-            n.key.name === specifierName
-        );
-        if (!property) {
-          return undefined;
-        }
-        return (property as TSESTree.Property).key as TSESTree.Identifier;
-      }
+      return findImportSpecifier(specifierName, node);
     };
 
     const findImportedUserEventSpecifier: () => TSESTree.Identifier | null = () => {
@@ -774,7 +735,7 @@ export function detectTestingLibraryUtils<
       return null;
     };
 
-    const getImportedUtilSpecifier = (
+    const getTestingLibraryImportedUtilSpecifier = (
       node: TSESTree.MemberExpression | TSESTree.Identifier
     ): TSESTree.ImportClause | TSESTree.Identifier | undefined => {
       const identifierName: string | undefined = getPropertyIdentifierNode(node)
@@ -784,7 +745,7 @@ export function detectTestingLibraryUtils<
         return undefined;
       }
 
-      return findImportedUtilSpecifier(identifierName);
+      return findImportedTestingLibraryUtilSpecifier(identifierName);
     };
 
     /**
@@ -803,7 +764,7 @@ export function detectTestingLibraryUtils<
     const isNodeComingFromTestingLibrary: IsNodeComingFromTestingLibraryFn = (
       node
     ) => {
-      const importNode = getImportedUtilSpecifier(node);
+      const importNode = getTestingLibraryImportedUtilSpecifier(node);
 
       if (!importNode) {
         return false;
@@ -877,7 +838,7 @@ export function detectTestingLibraryUtils<
       isPresenceAssert,
       isAbsenceAssert,
       canReportErrors,
-      findImportedUtilSpecifier,
+      findImportedUtilSpecifier: findImportedTestingLibraryUtilSpecifier,
       isNodeComingFromTestingLibrary,
     };
 
