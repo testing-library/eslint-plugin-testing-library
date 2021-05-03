@@ -2,7 +2,7 @@
 
 ## Rule Details
 
-This rule aims to avoid the usage of side effects actions (`fireEvent` or `userEvent`) inside `waitFor`.
+This rule aims to avoid the usage of side effects actions (`fireEvent`, `userEvent` or `render`) inside `waitFor`.
 Since `waitFor` is intended for things that have a non-deterministic amount of time between the action you performed and the assertion passing,
 the callback can be called (or checked for errors) a non-deterministic number of times and frequency.
 This will make your side-effect run multiple times.
@@ -32,6 +32,18 @@ Example of **incorrect** code for this rule:
     userEvent.click(button);
     expect(b).toEqual('b');
   });
+
+  // or
+  await waitFor(() => {
+    render(<App />)
+    expect(b).toEqual('b');
+  });
+
+  // or
+  await waitFor(function() {
+    render(<App />)
+    expect(b).toEqual('b');
+  });
 };
 ```
 
@@ -57,6 +69,18 @@ Examples of **correct** code for this rule:
 
   // or
   userEvent.click(button);
+  await waitFor(function() {
+    expect(b).toEqual('b');
+  });
+
+  // or
+  render(<App />)
+  await waitFor(() => {
+    expect(b).toEqual('b');
+  });
+
+  // or
+  render(<App />)
   await waitFor(function() {
     expect(b).toEqual('b');
   });
