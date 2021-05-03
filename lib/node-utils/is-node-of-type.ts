@@ -43,6 +43,3 @@ export const isObjectExpression = isNodeOfType(AST_NODE_TYPES.ObjectExpression);
 export const isObjectPattern = isNodeOfType(AST_NODE_TYPES.ObjectPattern);
 export const isProperty = isNodeOfType(AST_NODE_TYPES.Property);
 export const isReturnStatement = isNodeOfType(AST_NODE_TYPES.ReturnStatement);
-export const isVariableDeclaration = isNodeOfType(
-  AST_NODE_TYPES.VariableDeclaration
-);
