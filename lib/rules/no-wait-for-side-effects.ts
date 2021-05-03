@@ -65,7 +65,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
       );
     }
 
-    function isRenderInAssignment(node: TSESTree.Node) {
+    function isRenderInExpressionStatement(node: TSESTree.Node) {
       if (
         !isExpressionStatement(node) ||
         !isAssignmentExpression(node.expression)
@@ -84,27 +84,12 @@ export default createTestingLibraryRule<Options, MessageIds>({
       return helpers.isRenderUtil(expressionIdentifier);
     }
 
-    function isRenderInImplicitReturnAssignment(node: TSESTree.Node) {
+    function isRenderInAssignmentExpression(node: TSESTree.Node) {
       if (!isAssignmentExpression(node)) {
         return false;
       }
 
       const expressionIdentifier = getPropertyIdentifierNode(node.right);
-
-      if (!expressionIdentifier) {
-        return false;
-      }
-
-      return helpers.isRenderUtil(expressionIdentifier);
-    }
-
-    function isExpressionRenderUtil(expression: TSESTree.Expression) {
-      if (!isAssignmentExpression(expression)) {
-        return false;
-      }
-
-      const expressionIdentifier = getPropertyIdentifierNode(expression.right);
-
       if (!expressionIdentifier) {
         return false;
       }
@@ -117,7 +102,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
         return false;
       }
 
-      return node.expressions.some(isExpressionRenderUtil);
+      return node.expressions.some(isRenderInAssignmentExpression);
     }
 
     function getSideEffectNodes(
@@ -128,7 +113,10 @@ export default createTestingLibraryRule<Options, MessageIds>({
           return false;
         }
 
-        if (isRenderInVariableDeclaration(node) || isRenderInAssignment(node)) {
+        if (
+          isRenderInVariableDeclaration(node) ||
+          isRenderInExpressionStatement(node)
+        ) {
           return true;
         }
 
@@ -180,7 +168,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
       if (
         !expressionIdentifier &&
-        !isRenderInImplicitReturnAssignment(node) &&
+        !isRenderInAssignmentExpression(node) &&
         !isRenderInSequenceAssignment(node)
       ) {
         return;

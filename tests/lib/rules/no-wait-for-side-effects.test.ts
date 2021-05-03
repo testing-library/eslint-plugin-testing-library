@@ -463,6 +463,15 @@ ruleTester.run(RULE_NAME, rule, {
       code: `
         import { waitFor } from '@testing-library/react';
         await waitFor(() => {
+          result = render(<App />)
+        })
+      `,
+      errors: [{ line: 4, column: 11, messageId: 'noSideEffectsWaitFor' }],
+    },
+    {
+      code: `
+        import { waitFor } from '@testing-library/react';
+        await waitFor(() => {
           const a = 5,
           { container } = render(<App />)
         })
