@@ -124,6 +124,7 @@ export interface DetectionHelpers {
 }
 
 const USER_EVENT_PACKAGE = '@testing-library/user-event';
+const REACT_DOM_TEST_UTILS_PACKAGE = 'react-dom/test-utils';
 const FIRE_EVENT_NAME = 'fireEvent';
 const USER_EVENT_NAME = 'userEvent';
 const RENDER_NAME = 'render';
@@ -157,6 +158,7 @@ export function detectTestingLibraryUtils<
     let importedTestingLibraryNode: ImportModuleNode | null = null;
     let importedCustomModuleNode: ImportModuleNode | null = null;
     let importedUserEventLibraryNode: ImportModuleNode | null = null;
+    let importedReactDomTestUtilsNode: ImportModuleNode | null = null;
 
     // Init options based on shared ESLint settings
     const customModuleSetting =
@@ -889,11 +891,14 @@ export function detectTestingLibraryUtils<
        * parts of the file.
        */
       ImportDeclaration(node: TSESTree.ImportDeclaration) {
+        if (typeof node.source.value !== 'string') {
+          return;
+        }
         // check only if testing library import not found yet so we avoid
         // to override importedTestingLibraryNode after it's found
         if (
           !importedTestingLibraryNode &&
-          /testing-library/g.test(node.source.value as string)
+          /testing-library/g.test(node.source.value)
         ) {
           importedTestingLibraryNode = node;
         }
@@ -904,7 +909,7 @@ export function detectTestingLibraryUtils<
         if (
           customModule &&
           !importedCustomModuleNode &&
-          String(node.source.value).endsWith(customModule)
+          node.source.value.endsWith(customModule)
         ) {
           importedCustomModuleNode = node;
         }
@@ -913,9 +918,18 @@ export function detectTestingLibraryUtils<
         // to override importedUserEventLibraryNode after it's found
         if (
           !importedUserEventLibraryNode &&
-          String(node.source.value) === USER_EVENT_PACKAGE
+          node.source.value === USER_EVENT_PACKAGE
         ) {
           importedUserEventLibraryNode = node;
+        }
+
+        // check only if react-dom/test-utils import not found yet so we avoid
+        // to override importedReactDomTestUtilsNode after it's found
+        if (
+          !importedUserEventLibraryNode &&
+          node.source.value === REACT_DOM_TEST_UTILS_PACKAGE
+        ) {
+          importedReactDomTestUtilsNode = node;
         }
       },
 
