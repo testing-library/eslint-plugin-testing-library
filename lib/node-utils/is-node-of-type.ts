@@ -16,6 +16,15 @@ export const isCallExpression = isNodeOfType(AST_NODE_TYPES.CallExpression);
 export const isExpressionStatement = isNodeOfType(
   AST_NODE_TYPES.ExpressionStatement
 );
+export const isVariableDeclaration = isNodeOfType(
+  AST_NODE_TYPES.VariableDeclaration
+);
+export const isAssignmentExpression = isNodeOfType(
+  AST_NODE_TYPES.AssignmentExpression
+);
+export const isSequenceExpression = isNodeOfType(
+  AST_NODE_TYPES.SequenceExpression
+);
 export const isImportDeclaration = isNodeOfType(
   AST_NODE_TYPES.ImportDeclaration
 );
