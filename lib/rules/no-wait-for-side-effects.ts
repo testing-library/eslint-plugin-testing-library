@@ -59,9 +59,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
     function isRenderInVariableDeclaration(node: TSESTree.Node) {
       return (
         isVariableDeclaration(node) &&
-        node.declarations.some((declaration) =>
-          helpers.isRenderVariableDeclarator(declaration)
-        )
+        node.declarations.some(helpers.isRenderVariableDeclarator)
       );
     }
 
