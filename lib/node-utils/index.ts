@@ -589,7 +589,7 @@ export function findImportSpecifier(
       );
     });
 
-    // it is "import { foo [as alias] } from 'baz'""
+    // it is "import { foo [as alias] } from 'baz'"
     if (namedExport) {
       return namedExport;
     }

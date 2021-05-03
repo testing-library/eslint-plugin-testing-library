@@ -18,20 +18,20 @@ ruleTester.run(RULE_NAME, rule, {
         act(() => {
           stuffThatDoesNotUseRTL();
         });
-        
+
         await act(async () => {
           stuffThatDoesNotUseRTL();
         });
-        
+
         act(function() {
           stuffThatDoesNotUseRTL();
           const a = foo();
         });
-        
+
         act(function() {
           return stuffThatDoesNotUseRTL();
         });
-        
+
         act(() => stuffThatDoesNotUseRTL());
       });
       `,
@@ -44,19 +44,19 @@ ruleTester.run(RULE_NAME, rule, {
         act(() => {
           stuffThatDoesNotUseRTL();
         });
-        
+
         await act(async () => {
           stuffThatDoesNotUseRTL();
         });
-        
+
         act(function() {
           stuffThatDoesNotUseRTL();
         });
-        
+
         act(function() {
           return stuffThatDoesNotUseRTL();
         });
-        
+
         act(() => stuffThatDoesNotUseRTL());
       });
       `,
@@ -73,19 +73,19 @@ ruleTester.run(RULE_NAME, rule, {
         act(() => {
           waitFor();
         });
-        
+
         await act(async () => {
           waitFor();
         });
-        
+
         act(function() {
           waitFor();
         });
-        
+
         act(function() {
           return waitFor();
         });
-        
+
         act(() => waitFor());
       });
       `,
@@ -99,12 +99,12 @@ ruleTester.run(RULE_NAME, rule, {
           render(element);
           stuffThatDoesNotUseRTL();
         });
-        
+
         await act(async () => {
           waitFor();
           stuffThatDoesNotUseRTL();
         });
-        
+
         act(function() {
           waitFor();
           stuffThatDoesNotUseRTL();
@@ -124,19 +124,19 @@ ruleTester.run(RULE_NAME, rule, {
         act(() => {
           waitFor();
         });
-        
+
         await act(async () => {
           waitFor();
         });
-        
+
         act(function() {
           waitFor();
         });
-        
+
         act(function() {
           return waitFor();
         });
-        
+
         act(() => waitFor());
 
         act(() => {})
@@ -157,23 +157,23 @@ ruleTester.run(RULE_NAME, rule, {
         act(() => {
           fireEvent.click(el);
         });
-        
+
         await act(async () => {
           waitFor(() => {});
         });
-        
+
         await act(async () => {
           waitForElementToBeRemoved(el);
         });
-        
+
         act(function() {
           const blah = screen.getByText('blah');
         });
-        
+
         act(function() {
           render(something);
         });
-        
+
         await act(() => {
           const button = findByRole('button')
         });
@@ -181,7 +181,90 @@ ruleTester.run(RULE_NAME, rule, {
         act(() => {
           userEvent.click(el)
         });
-        
+
+        act(() => {
+          waitFor();
+          const element = screen.getByText('blah');
+          userEvent.click(element)
+        });
+      });
+      `,
+      errors: [
+        { messageId: 'noUnnecessaryActTestingLibraryUtil', line: 6, column: 9 },
+        {
+          messageId: 'noUnnecessaryActTestingLibraryUtil',
+          line: 10,
+          column: 15,
+        },
+        {
+          messageId: 'noUnnecessaryActTestingLibraryUtil',
+          line: 14,
+          column: 15,
+        },
+        {
+          messageId: 'noUnnecessaryActTestingLibraryUtil',
+          line: 18,
+          column: 9,
+        },
+        {
+          messageId: 'noUnnecessaryActTestingLibraryUtil',
+          line: 22,
+          column: 9,
+        },
+        {
+          messageId: 'noUnnecessaryActTestingLibraryUtil',
+          line: 26,
+          column: 15,
+        },
+        {
+          messageId: 'noUnnecessaryActTestingLibraryUtil',
+          line: 30,
+          column: 9,
+        },
+        {
+          messageId: 'noUnnecessaryActTestingLibraryUtil',
+          line: 34,
+          column: 9,
+        },
+      ],
+    },
+    {
+      settings: {
+        'testing-library/utils-module': 'test-utils',
+      },
+      code: `// case: RTL act wrapping RTL calls - callbacks with body (BlockStatement) - AGR disabled
+      import { act, fireEvent, screen, render, waitFor, waitForElementToBeRemoved } from 'test-utils'
+      import userEvent from '@testing-library/user-event'
+
+      test('invalid case', async () => {
+        act(() => {
+          fireEvent.click(el);
+        });
+
+        await act(async () => {
+          waitFor(() => {});
+        });
+
+        await act(async () => {
+          waitForElementToBeRemoved(el);
+        });
+
+        act(function() {
+          const blah = screen.getByText('blah');
+        });
+
+        act(function() {
+          render(something);
+        });
+
+        await act(() => {
+          const button = findByRole('button')
+        });
+
+        act(() => {
+          userEvent.click(el)
+        });
+
         act(() => {
           waitFor();
           const element = screen.getByText('blah');
@@ -393,34 +476,34 @@ ruleTester.run(RULE_NAME, rule, {
     // cases for act related to React Test Utils
     {
       settings: {
-        'testing-library/utils-module': 'test-utils',
+        'testing-library/utils-module': 'custom-testing-module',
       },
       code: `// case: RTU act wrapping RTL calls - callbacks with body (BlockStatement)
       import { act } from 'react-dom/test-utils';
-      import { fireEvent, screen, render, waitFor, waitForElementToBeRemoved } from 'test-utils'
+      import { fireEvent, screen, render, waitFor, waitForElementToBeRemoved } from 'custom-testing-module'
       import userEvent from '@testing-library/user-event'
 
       test('invalid case', async () => {
         act(() => {
           fireEvent.click(el);
         });
-        
+
         await act(async () => {
           waitFor(() => {});
         });
-        
+
         await act(async () => {
           waitForElementToBeRemoved(el);
         });
-        
+
         act(function() {
           const blah = screen.getByText('blah');
         });
-        
+
         act(function() {
           render(something);
         });
-        
+
         await act(() => {
           const button = findByRole('button')
         });
@@ -428,7 +511,7 @@ ruleTester.run(RULE_NAME, rule, {
         act(() => {
           userEvent.click(el)
         });
-        
+
         act(() => {
           waitFor();
           const element = screen.getByText('blah');
@@ -477,11 +560,11 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       settings: {
-        'testing-library/utils-module': 'test-utils',
+        'testing-library/utils-module': 'custom-testing-module',
       },
       code: `// case: RTU act wrapping RTL calls - callbacks with return
       import { act } from 'react-dom/test-utils';
-      import { fireEvent, screen, render, waitFor } from 'test-utils'
+      import { fireEvent, screen, render, waitFor } from 'custom-testing-module'
       import userEvent from '@testing-library/user-event'
 
       test('invalid case', async () => {
@@ -607,44 +690,48 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       settings: {
-        'testing-library/utils-module': 'test-utils',
+        'testing-library/utils-module': 'off',
       },
       code: `// case: RTU act wrapping empty callback
       import { act } from 'react-dom/test-utils';
+      import { render } from '@testing-library/react'
 
       test('invalid case', async () => {
-        await act(async () => {})
-        act(() => {})
-        await act(async function () {})
-        act(function () {})
-      })
+        render(element);
+        await act(async () => {});
+        act(() => {});
+        await act(async function () {});
+        act(function () {});
+      });
       `,
       errors: [
-        { messageId: 'noUnnecessaryActEmptyFunction', line: 5, column: 15 },
-        { messageId: 'noUnnecessaryActEmptyFunction', line: 6, column: 9 },
         { messageId: 'noUnnecessaryActEmptyFunction', line: 7, column: 15 },
         { messageId: 'noUnnecessaryActEmptyFunction', line: 8, column: 9 },
+        { messageId: 'noUnnecessaryActEmptyFunction', line: 9, column: 15 },
+        { messageId: 'noUnnecessaryActEmptyFunction', line: 10, column: 9 },
       ],
     },
     {
       settings: {
-        'testing-library/utils-module': 'test-utils',
+        'testing-library/utils-module': 'off',
       },
       code: `// case: RTU act wrapping empty callback - require version
       const { act } = require('react-dom/test-utils');
+      const { render } = require('@testing-library/react');
 
       test('invalid case', async () => {
-        await act(async () => {})
-        act(() => {})
-        await act(async function () {})
-        act(function () {})
+        render(element);
+        await act(async () => {});
+        act(() => {});
+        await act(async function () {});
+        act(function () {});
       })
       `,
       errors: [
-        { messageId: 'noUnnecessaryActEmptyFunction', line: 5, column: 15 },
-        { messageId: 'noUnnecessaryActEmptyFunction', line: 6, column: 9 },
         { messageId: 'noUnnecessaryActEmptyFunction', line: 7, column: 15 },
         { messageId: 'noUnnecessaryActEmptyFunction', line: 8, column: 9 },
+        { messageId: 'noUnnecessaryActEmptyFunction', line: 9, column: 15 },
+        { messageId: 'noUnnecessaryActEmptyFunction', line: 10, column: 9 },
       ],
     },
 

@@ -17,12 +17,9 @@ import {
   isCallExpression,
   isImportDeclaration,
   isImportDefaultSpecifier,
-  isImportNamespaceSpecifier,
   isImportSpecifier,
   isLiteral,
   isMemberExpression,
-  isObjectPattern,
-  isProperty,
 } from '../node-utils';
 import {
   ABSENCE_MATCHERS,
@@ -627,8 +624,15 @@ export function detectTestingLibraryUtils<
       );
     };
 
+    /**
+     * Determines whether a given node is some reportable `act` util.
+     *
+     * An `act` is reportable if some of these conditions is met:
+     * - it's related to Testing Library module (this depends on Aggressive Reporting)
+     * - it's related to React DOM Test Utils
+     */
     const isActUtil = (node: TSESTree.Identifier): boolean => {
-      return isPotentialTestingLibraryFunction(
+      const isTestingLibraryAct = isPotentialTestingLibraryFunction(
         node,
         (identifierNodeName, originalNodeName) => {
           return [identifierNodeName, originalNodeName]
@@ -637,7 +641,65 @@ export function detectTestingLibraryUtils<
         }
       );
 
-      // TODO: check if `act` coming from 'react-dom/test-utils'
+      const isReactDomTestUtilsAct = (() => {
+        if (!importedReactDomTestUtilsNode) {
+          return false;
+        }
+        const referenceNode = getReferenceNode(node);
+        const referenceNodeIdentifier = getPropertyIdentifierNode(
+          referenceNode
+        );
+        if (!referenceNodeIdentifier) {
+          return false;
+        }
+
+        const importedUtilSpecifier = findImportSpecifier(
+          node.name,
+          importedReactDomTestUtilsNode
+        );
+        if (!importedUtilSpecifier) {
+          return false;
+        }
+
+        const importDeclaration = (() => {
+          if (isImportDeclaration(importedUtilSpecifier.parent)) {
+            return importedUtilSpecifier.parent;
+          }
+
+          const variableDeclarator = findClosestVariableDeclaratorNode(
+            importedUtilSpecifier
+          );
+
+          if (isCallExpression(variableDeclarator?.init)) {
+            return variableDeclarator?.init;
+          }
+
+          return undefined;
+        })();
+        if (!importDeclaration) {
+          return false;
+        }
+
+        const importDeclarationName = getImportModuleName(importDeclaration);
+        if (!importDeclarationName) {
+          return false;
+        }
+
+        if (importDeclarationName !== REACT_DOM_TEST_UTILS_PACKAGE) {
+          return false;
+        }
+
+        const originalNodeName =
+          isImportSpecifier(importedUtilSpecifier) &&
+          importedUtilSpecifier.local.name !==
+            importedUtilSpecifier.imported.name
+            ? importedUtilSpecifier.imported.name
+            : undefined;
+
+        return [node.name, originalNodeName].filter(Boolean).includes('act');
+      })();
+
+      return isTestingLibraryAct || isReactDomTestUtilsAct;
     };
 
     const isTestingLibraryUtil = (node: TSESTree.Identifier): boolean => {
@@ -937,6 +999,18 @@ export function detectTestingLibraryUtils<
           )
         ) {
           importedUserEventLibraryNode = callExpression;
+        }
+
+        if (
+          !importedReactDomTestUtilsNode &&
+          args.some(
+            (arg) =>
+              isLiteral(arg) &&
+              typeof arg.value === 'string' &&
+              arg.value === REACT_DOM_TEST_UTILS_PACKAGE
+          )
+        ) {
+          importedReactDomTestUtilsNode = callExpression;
         }
       },
     };
