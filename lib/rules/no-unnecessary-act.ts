@@ -2,7 +2,6 @@ import { TSESTree } from '@typescript-eslint/experimental-utils';
 import { createTestingLibraryRule } from '../create-testing-library-rule';
 import {
   getDeepestIdentifierNode,
-  getPropertyIdentifierNode,
   getStatementCallExpression,
   isEmptyFunction,
 } from '../node-utils';
@@ -75,26 +74,23 @@ export default createTestingLibraryRule<[], MessageIds>({
         return;
       }
 
-      const callExpressionIdentifier = getPropertyIdentifierNode(
-        callExpressionNode
-      );
-
-      if (!callExpressionIdentifier) {
+      const identifierNode = getDeepestIdentifierNode(callExpressionNode);
+      if (!identifierNode) {
         return;
       }
 
-      if (!helpers.isActUtil(callExpressionIdentifier)) {
+      if (!helpers.isActUtil(identifierNode)) {
         return;
       }
 
       if (isEmptyFunction(functionNode)) {
         context.report({
-          node: callExpressionIdentifier,
+          node: identifierNode,
           messageId: 'noUnnecessaryActEmptyFunction',
         });
       } else if (!hasSomeNonTestingLibraryCall(blockStatementNode.body)) {
         context.report({
-          node: callExpressionIdentifier,
+          node: identifierNode,
           messageId: 'noUnnecessaryActTestingLibraryUtil',
         });
       }
@@ -117,15 +113,12 @@ export default createTestingLibraryRule<[], MessageIds>({
         return;
       }
 
-      const parentCallExpressionIdentifier = getPropertyIdentifierNode(
-        parentCallExpression
-      );
-
-      if (!parentCallExpressionIdentifier) {
+      const identifierNode = getDeepestIdentifierNode(parentCallExpression);
+      if (!identifierNode) {
         return;
       }
 
-      if (!helpers.isActUtil(parentCallExpressionIdentifier)) {
+      if (!helpers.isActUtil(identifierNode)) {
         return;
       }
 
@@ -134,7 +127,7 @@ export default createTestingLibraryRule<[], MessageIds>({
       }
 
       context.report({
-        node: parentCallExpressionIdentifier,
+        node: identifierNode,
         messageId: 'noUnnecessaryActTestingLibraryUtil',
       });
     }

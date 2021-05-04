@@ -689,14 +689,10 @@ export function detectTestingLibraryUtils<
           return false;
         }
 
-        const originalNodeName =
-          isImportSpecifier(importedUtilSpecifier) &&
-          importedUtilSpecifier.local.name !==
-            importedUtilSpecifier.imported.name
-            ? importedUtilSpecifier.imported.name
-            : undefined;
-
-        return [node.name, originalNodeName].filter(Boolean).includes('act');
+        return hasImportMatch(
+          importedUtilSpecifier,
+          referenceNodeIdentifier.name
+        );
       })();
 
       return isTestingLibraryAct || isReactDomTestUtilsAct;
@@ -829,6 +825,12 @@ export function detectTestingLibraryUtils<
       const importNode = getTestingLibraryImportedUtilSpecifier(node);
 
       if (!importNode) {
+        return false;
+      }
+
+      const referenceNode = getReferenceNode(node);
+      const referenceNodeIdentifier = getPropertyIdentifierNode(referenceNode);
+      if (!referenceNodeIdentifier) {
         return false;
       }
 

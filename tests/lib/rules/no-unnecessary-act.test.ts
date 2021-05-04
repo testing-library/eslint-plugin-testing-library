@@ -735,6 +735,48 @@ ruleTester.run(RULE_NAME, rule, {
       ],
     },
 
-    // TODO case: mixed scenarios - AGR disabled
+    {
+      settings: {
+        'testing-library/utils-module': 'custom-testing-module',
+        'testing-library/custom-renders': 'off',
+      },
+      code: `// case: mixed scenarios - AGR disabled
+      import * as ReactTestUtils from 'react-dom/test-utils';
+      import { act as renamedAct, fireEvent, screen as renamedScreen, render, waitFor } from 'custom-testing-module'
+      import userEvent from '@testing-library/user-event'
+      import { act, waitForElementToBeRemoved } from 'somewhere-else'
+
+      test('invalid case', async () => {
+        ReactTestUtils.act(() => {})
+        await ReactTestUtils.act(() => render())
+        await renamedAct(async () => waitFor())
+        renamedAct(function() { renamedScreen.findByRole('button') })
+
+        // these are valid
+        await renamedAct(() => waitForElementToBeRemoved(element))
+        act(() => {})
+        await act(async () => { userEvent.click(element) })
+        act(function() { return renamedScreen.getByText('foo') })
+      });
+      `,
+      errors: [
+        { messageId: 'noUnnecessaryActEmptyFunction', line: 8, column: 24 },
+        {
+          messageId: 'noUnnecessaryActTestingLibraryUtil',
+          line: 9,
+          column: 30,
+        },
+        {
+          messageId: 'noUnnecessaryActTestingLibraryUtil',
+          line: 10,
+          column: 15,
+        },
+        {
+          messageId: 'noUnnecessaryActTestingLibraryUtil',
+          line: 11,
+          column: 9,
+        },
+      ],
+    },
   ],
 });
