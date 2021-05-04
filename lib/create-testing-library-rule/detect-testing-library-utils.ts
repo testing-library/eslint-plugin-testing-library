@@ -83,7 +83,7 @@ type IsDebugUtilFn = (identifierNode: TSESTree.Identifier) => boolean;
 type IsPresenceAssertFn = (node: TSESTree.MemberExpression) => boolean;
 type IsAbsenceAssertFn = (node: TSESTree.MemberExpression) => boolean;
 type CanReportErrorsFn = () => boolean;
-type FindImportedUtilSpecifierFn = (
+type FindImportedTestingLibraryUtilSpecifierFn = (
   specifierName: string
 ) => TSESTree.ImportClause | TSESTree.Identifier | undefined;
 type IsNodeComingFromTestingLibraryFn = (
@@ -117,7 +117,7 @@ export interface DetectionHelpers {
   isPresenceAssert: IsPresenceAssertFn;
   isAbsenceAssert: IsAbsenceAssertFn;
   canReportErrors: CanReportErrorsFn;
-  findImportedUtilSpecifier: FindImportedUtilSpecifierFn;
+  findImportedTestingLibraryUtilSpecifier: FindImportedTestingLibraryUtilSpecifierFn;
   isNodeComingFromTestingLibrary: IsNodeComingFromTestingLibraryFn;
 }
 
@@ -750,7 +750,7 @@ export function detectTestingLibraryUtils<
     /**
      * Finds the import util specifier related to Testing Library for a given name.
      */
-    const findImportedTestingLibraryUtilSpecifier: FindImportedUtilSpecifierFn = (
+    const findImportedTestingLibraryUtilSpecifier: FindImportedTestingLibraryUtilSpecifierFn = (
       specifierName
     ): TSESTree.ImportClause | TSESTree.Identifier | undefined => {
       const node = getCustomModuleImportNode() ?? getTestingLibraryImportNode();
@@ -902,7 +902,7 @@ export function detectTestingLibraryUtils<
       isPresenceAssert,
       isAbsenceAssert,
       canReportErrors,
-      findImportedUtilSpecifier: findImportedTestingLibraryUtilSpecifier,
+      findImportedTestingLibraryUtilSpecifier,
       isNodeComingFromTestingLibrary,
     };
 
