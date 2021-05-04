@@ -17,7 +17,7 @@ export default createTestingLibraryRule<[], MessageIds>({
     type: 'problem',
     docs: {
       description:
-        'Disallow the use of `act` when wrapping Testing Library utils or empty functions',
+        'Disallow wrapping Testing Library utils or empty callbacks in `act`',
       category: 'Possible Errors',
       recommendedConfig: {
         dom: false,
