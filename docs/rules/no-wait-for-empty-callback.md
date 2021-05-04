@@ -38,3 +38,4 @@ const foo = async () => {
 ## Further Reading
 
 - [dom-testing-library v7 release](https://github.com/testing-library/dom-testing-library/releases/tag/v7.0.0)
+- [inspiration for this rule](https://kentcdodds.com/blog/common-mistakes-with-react-testing-library#passing-an-empty-callback-to-waitfor)
