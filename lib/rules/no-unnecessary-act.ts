@@ -22,7 +22,7 @@ export default createTestingLibraryRule<[], MessageIds>({
       recommendedConfig: {
         dom: false,
         angular: false,
-        react: false, // this should be enabled on v5 of the plugin
+        react: false,
         vue: false,
       },
     },
