@@ -18,9 +18,17 @@ ruleTester.run(RULE_NAME, rule, {
         act(() => {
           stuffThatDoesNotUseRTL();
         });
+        
+        act(function() {
+          a = stuffThatDoesNotUseRTL();
+        });
+        
+        act(function() {
+          a = await stuffThatDoesNotUseRTL();
+        });
 
         await act(async () => {
-          stuffThatDoesNotUseRTL();
+          await stuffThatDoesNotUseRTL();
         });
 
         act(function() {

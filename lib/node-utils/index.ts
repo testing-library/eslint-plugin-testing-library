@@ -10,6 +10,7 @@ import { RuleContext } from '@typescript-eslint/experimental-utils/dist/ts-eslin
 import {
   isArrayExpression,
   isArrowFunctionExpression,
+  isAssignmentExpression,
   isBlockStatement,
   isCallExpression,
   isExpressionStatement,
@@ -536,11 +537,31 @@ export function hasImportMatch(
 export function getStatementCallExpression(
   statement: TSESTree.Statement
 ): TSESTree.CallExpression | undefined {
-  if (
-    isExpressionStatement(statement) &&
-    isCallExpression(statement.expression)
-  ) {
-    return statement.expression;
+  if (isExpressionStatement(statement)) {
+    const { expression } = statement;
+    if (isCallExpression(expression)) {
+      return expression;
+    }
+
+    if (
+      ASTUtils.isAwaitExpression(expression) &&
+      isCallExpression(expression.argument)
+    ) {
+      return expression.argument;
+    }
+
+    if (isAssignmentExpression(expression)) {
+      if (isCallExpression(expression.right)) {
+        return expression.right;
+      }
+
+      if (
+        ASTUtils.isAwaitExpression(expression.right) &&
+        isCallExpression(expression.right.argument)
+      ) {
+        return expression.right.argument;
+      }
+    }
   }
 
   if (isReturnStatement(statement) && isCallExpression(statement.argument)) {
