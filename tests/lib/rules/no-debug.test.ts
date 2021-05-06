@@ -449,6 +449,34 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
+        import { logRoles } from '@testing-library/dom'
+        logRoles(document.createElement('nav'))
+      `,
+      options: [{ utilsToCheckFor: { logRoles: true } }],
+      errors: [
+        {
+          line: 3,
+          column: 9,
+          messageId: 'noDebug',
+        },
+      ],
+    },
+    {
+      code: `
+        import { screen } from '@testing-library/dom'
+        screen.logTestingPlaygroundURL()
+      `,
+      options: [{ utilsToCheckFor: { logRoles: true } }],
+      errors: [
+        {
+          line: 3,
+          column: 16,
+          messageId: 'noDebug',
+        },
+      ],
+    },
+    {
+      code: `
         import { screen } from '@testing-library/dom'
         screen.logTestingPlaygroundURL()
       `,

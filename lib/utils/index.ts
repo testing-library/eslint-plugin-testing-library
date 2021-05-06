@@ -67,8 +67,12 @@ const ASYNC_UTILS = [
 ] as const;
 
 const DEBUG_UTILS = [
-  'debug', //
+  'debug',
   'logTestingPlaygroundURL',
+  'prettyDOM',
+  'logRoles',
+  'logDOM',
+  'prettyFormat',
 ] as const;
 
 const EVENTS_SIMULATORS = ['fireEvent', 'userEvent'] as const;
