@@ -10,11 +10,19 @@ import {
 } from '../node-utils';
 import { DEBUG_UTILS } from '../utils';
 import { createTestingLibraryRule } from '../create-testing-library-rule';
-import { ASTUtils, TSESTree } from '@typescript-eslint/experimental-utils';
+import {
+  ASTUtils,
+  TSESTree,
+  JSONSchema,
+} from '@typescript-eslint/experimental-utils';
+
+type DebugUtilsToCheckFor = Partial<
+  Record<typeof DEBUG_UTILS[number], boolean>
+>;
 
 export const RULE_NAME = 'no-debug';
 export type MessageIds = 'noDebug';
-type Options = [{ utilNames?: Array<typeof DEBUG_UTILS[number]> }];
+type Options = [{ utilsToCheckFor?: DebugUtilsToCheckFor }];
 
 export default createTestingLibraryRule<Options, MessageIds>({
   name: RULE_NAME,
@@ -37,25 +45,37 @@ export default createTestingLibraryRule<Options, MessageIds>({
       {
         type: 'object',
         properties: {
-          utilNames: {
-            type: 'array',
-            items: {
-              type: 'string',
-              enum: DEBUG_UTILS,
-            },
+          utilsToCheckFor: {
+            type: 'object',
+            properties: DEBUG_UTILS.reduce<
+              Record<string, JSONSchema.JSONSchema7>
+            >(
+              (obj, name) => ({
+                [name]: { type: 'boolean' },
+                ...obj,
+              }),
+              {}
+            ),
+            additionalProperties: false,
           },
         },
         additionalProperties: false,
       },
     ],
   },
-  defaultOptions: [{ utilNames: ['debug', 'logTestingPlaygroundURL'] }],
+  defaultOptions: [
+    { utilsToCheckFor: { debug: true, logTestingPlaygroundURL: true } },
+  ],
 
-  create(context, [{ utilNames }], helpers) {
+  create(context, [{ utilsToCheckFor = {} }], helpers) {
     const suspiciousDebugVariableNames: string[] = [];
     const suspiciousReferenceNodes: TSESTree.Identifier[] = [];
     const renderWrapperNames: string[] = [];
     const builtInConsoleNodes: TSESTree.VariableDeclarator[] = [];
+
+    const utilsToReport = Object.entries(utilsToCheckFor)
+      .filter(([, shouldCheckFor]) => shouldCheckFor)
+      .map(([name]) => name);
 
     function detectRenderWrapper(node: TSESTree.Identifier): void {
       const innerFunction = getInnermostReturningFunction(context, node);
@@ -99,7 +119,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
             if (
               isProperty(property) &&
               ASTUtils.isIdentifier(property.key) &&
-              (utilNames as string[]).includes(property.key.name)
+              utilsToReport.includes(property.key.name)
             ) {
               const identifierNode = getDeepestIdentifierNode(property.value);
 
@@ -136,7 +156,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
         const isDebugUtil = helpers.isDebugUtil(
           callExpressionIdentifier,
-          utilNames
+          utilsToReport as Array<typeof DEBUG_UTILS[number]>
         );
         const isDeclaredDebugVariable = suspiciousDebugVariableNames.includes(
           callExpressionIdentifier.name
@@ -144,7 +164,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
         const isChainedReferenceDebug = suspiciousReferenceNodes.some(
           (suspiciousReferenceIdentifier) => {
             return (
-              (utilNames as string[]).includes(callExpressionIdentifier.name) &&
+              utilsToReport.includes(callExpressionIdentifier.name) &&
               suspiciousReferenceIdentifier.name === referenceIdentifier.name
             );
           }
