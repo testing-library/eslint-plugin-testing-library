@@ -27,6 +27,7 @@ import {
   waitFor,
   fireEvent,
 } from '@testing-library/react';
+// ^ act imported from 'react-dom/test-utils' will be reported too
 import userEvent from '@testing-library/user-event';
 
 // ...
@@ -51,6 +52,7 @@ act(() => {
 ```js
 // ❌ wrapping empty callbacks in `act` is incorrect
 import { act } from '@testing-library/react';
+// ^ act imported from 'react-dom/test-utils' will be reported too
 import userEvent from '@testing-library/user-event';
 
 // ...
@@ -58,31 +60,6 @@ import userEvent from '@testing-library/user-event';
 act(() => {});
 
 await act(async () => {});
-```
-
-```js
-// ❌ wrapping things related to Testing Library in React DOM Test Utils `act` is also incorrect
-import { act } from 'react-dom/test-utils';
-import { render, screen, waitFor, fireEvent } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-
-// ...
-
-act(() => {
-  render(<Example />);
-});
-
-await act(async () => waitFor(() => {}));
-
-act(() => screen.getByRole('button'));
-
-act(() => {
-  fireEvent.click(element);
-});
-
-act(() => {
-  userEvent.click(element);
-});
 ```
 
 Examples of **correct** code for this rule:
