@@ -41,6 +41,9 @@ ruleTester.run(RULE_NAME, rule, {
         });
 
         act(() => stuffThatDoesNotUseRTL());
+        
+        act(() => stuffThatDoesNotUseRTL()).then(() => {})
+        act(stuffThatDoesNotUseRTL().then(() => {}))
       });
       `,
     },
@@ -362,6 +365,9 @@ ruleTester.run(RULE_NAME, rule, {
         await act(async function () {
           return waitFor(() => {});
         });
+        act(async function () {
+          return waitFor(() => {});
+        }).then(() => {})
       });
       `,
       errors: [
@@ -439,6 +445,11 @@ ruleTester.run(RULE_NAME, rule, {
           line: 40,
           column: 15,
         },
+        {
+          messageId: 'noUnnecessaryActTestingLibraryUtil',
+          line: 43,
+          column: 9,
+        },
       ],
     },
     {
@@ -471,6 +482,7 @@ ruleTester.run(RULE_NAME, rule, {
         act(() => {})
         await act(async function () {})
         act(function () {})
+        act(function () {}).then(() => {})
       })
       `,
       errors: [
@@ -478,6 +490,7 @@ ruleTester.run(RULE_NAME, rule, {
         { messageId: 'noUnnecessaryActEmptyFunction', line: 6, column: 9 },
         { messageId: 'noUnnecessaryActEmptyFunction', line: 7, column: 15 },
         { messageId: 'noUnnecessaryActEmptyFunction', line: 8, column: 9 },
+        { messageId: 'noUnnecessaryActEmptyFunction', line: 9, column: 9 },
       ],
     },
 
