@@ -274,6 +274,32 @@ ruleTester.run(RULE_NAME, rule, {
     })
     `,
 
+    // https://github.com/testing-library/eslint-plugin-testing-library/issues/359
+    `// issue #359
+      import { render, screen } from 'mocks/test-utils'
+      import userEvent from '@testing-library/user-event'
+      
+      const testData = {
+        name: 'John Doe',
+        email: 'john@doe.com',
+        password: 'extremeSecret',
+      }
+      
+      const selectors = {
+        username: () => screen.findByRole('textbox', { name: /username/i }),
+        email: () => screen.findByRole('textbox', { name: /e-mail/i }),
+        password: () => screen.findByLabelText(/password/i),
+      }
+      
+      test('this is a valid case', async () => {
+        render(<SomeComponent />)
+        userEvent.type(await selectors.username(), testData.name)
+        userEvent.type(await selectors.email(), testData.email)
+        userEvent.type(await selectors.password(), testData.password)
+        // ...
+      })
+    `,
+
     // edge case for coverage
     // valid async query usage without any function defined
     // so there is no innermost function scope found
@@ -448,6 +474,34 @@ ruleTester.run(RULE_NAME, rule, {
       })
       `,
       errors: [{ messageId: 'awaitAsyncQuery', line: 3, column: 25 }],
+    },
+
+    {
+      code: `// similar to issue #359 but forcing an error in no-awaited wrapper
+      import { render, screen } from 'mocks/test-utils'
+      import userEvent from '@testing-library/user-event'
+      
+      const testData = {
+        name: 'John Doe',
+        email: 'john@doe.com',
+        password: 'extremeSecret',
+      }
+      
+      const selectors = {
+        username: () => screen.findByRole('textbox', { name: /username/i }),
+        email: () => screen.findByRole('textbox', { name: /e-mail/i }),
+        password: () => screen.findByLabelText(/password/i),
+      }
+      
+      test('this is a valid case', async () => {
+        render(<SomeComponent />)
+        userEvent.type(selectors.username(), testData.name) // <-- unhandled here
+        userEvent.type(await selectors.email(), testData.email)
+        userEvent.type(await selectors.password(), testData.password)
+        // ...
+      })
+    `,
+      errors: [{ messageId: 'asyncQueryWrapper', line: 19, column: 34 }],
     },
   ],
 });

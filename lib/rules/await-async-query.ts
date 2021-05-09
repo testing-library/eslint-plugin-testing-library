@@ -1,6 +1,7 @@
 import { ASTUtils, TSESTree } from '@typescript-eslint/experimental-utils';
 import {
   findClosestCallExpressionNode,
+  getDeepestIdentifierNode,
   getFunctionName,
   getInnermostReturningFunction,
   getVariableReferences,
@@ -27,9 +28,10 @@ export default createTestingLibraryRule<Options, MessageIds>({
       },
     },
     messages: {
-      awaitAsyncQuery: 'promise returned from {{ name }} query must be handled',
+      awaitAsyncQuery:
+        'promise returned from `{{ name }}` query must be handled',
       asyncQueryWrapper:
-        'promise returned from {{ name }} wrapper over async query must be handled',
+        'promise returned from `{{ name }}` wrapper over async query must be handled',
     },
     schema: [],
   },
@@ -46,10 +48,16 @@ export default createTestingLibraryRule<Options, MessageIds>({
     }
 
     return {
-      'CallExpression Identifier'(node: TSESTree.Identifier) {
-        if (helpers.isAsyncQuery(node)) {
+      CallExpression(node) {
+        const identifierNode = getDeepestIdentifierNode(node);
+
+        if (!identifierNode) {
+          return;
+        }
+
+        if (helpers.isAsyncQuery(identifierNode)) {
           // detect async query used within wrapper function for later analysis
-          detectAsyncQueryWrapper(node);
+          detectAsyncQueryWrapper(identifierNode);
 
           const closestCallExpressionNode = findClosestCallExpressionNode(
             node,
@@ -68,11 +76,11 @@ export default createTestingLibraryRule<Options, MessageIds>({
           // check direct usage of async query:
           //  const element = await findByRole('button')
           if (references && references.length === 0) {
-            if (!isPromiseHandled(node)) {
+            if (!isPromiseHandled(identifierNode)) {
               return context.report({
-                node,
+                node: identifierNode,
                 messageId: 'awaitAsyncQuery',
-                data: { name: node.name },
+                data: { name: identifierNode.name },
               });
             }
           }
@@ -86,19 +94,19 @@ export default createTestingLibraryRule<Options, MessageIds>({
               !isPromiseHandled(reference.identifier)
             ) {
               return context.report({
-                node,
+                node: identifierNode,
                 messageId: 'awaitAsyncQuery',
-                data: { name: node.name },
+                data: { name: identifierNode.name },
               });
             }
           }
-        } else if (functionWrappersNames.includes(node.name)) {
+        } else if (functionWrappersNames.includes(identifierNode.name)) {
           // check async queries used within a wrapper previously detected
-          if (!isPromiseHandled(node)) {
+          if (!isPromiseHandled(identifierNode)) {
             return context.report({
-              node,
+              node: identifierNode,
               messageId: 'asyncQueryWrapper',
-              data: { name: node.name },
+              data: { name: identifierNode.name },
             });
           }
         }
