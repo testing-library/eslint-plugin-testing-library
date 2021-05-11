@@ -6,7 +6,7 @@ import plugin from '../lib';
 
 const generateConfigs = () => exec(`npm run generate:configs`);
 
-const numberOfRules = 24;
+const numberOfRules = 25;
 const ruleNames = Object.keys(plugin.rules);
 
 // eslint-disable-next-line jest/expect-expect

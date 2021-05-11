@@ -10,13 +10,19 @@ import { RuleContext } from '@typescript-eslint/experimental-utils/dist/ts-eslin
 import {
   isArrayExpression,
   isArrowFunctionExpression,
+  isAssignmentExpression,
   isBlockStatement,
   isCallExpression,
   isExpressionStatement,
   isImportDeclaration,
+  isImportNamespaceSpecifier,
+  isImportSpecifier,
   isLiteral,
   isMemberExpression,
+  isObjectPattern,
+  isProperty,
   isReturnStatement,
+  isVariableDeclaration,
 } from './is-node-of-type';
 
 export * from './is-node-of-type';
@@ -76,6 +82,23 @@ export function findClosestCallExpressionNode(
   return findClosestCallExpressionNode(node.parent, shouldRestrictInnerScope);
 }
 
+export function findClosestVariableDeclaratorNode(
+  node: TSESTree.Node | undefined
+): TSESTree.VariableDeclarator | null {
+  if (!node) {
+    return null;
+  }
+
+  if (ASTUtils.isVariableDeclarator(node)) {
+    return node;
+  }
+
+  return findClosestVariableDeclaratorNode(node.parent);
+}
+
+/**
+ * TODO: remove this one in favor of {@link findClosestCallExpressionNode}
+ */
 export function findClosestCallNode(
   node: TSESTree.Node,
   name: string
@@ -509,4 +532,116 @@ export function hasImportMatch(
   }
 
   return importNode.local.name === identifierName;
+}
+
+export function getStatementCallExpression(
+  statement: TSESTree.Statement
+): TSESTree.CallExpression | undefined {
+  if (isExpressionStatement(statement)) {
+    const { expression } = statement;
+    if (isCallExpression(expression)) {
+      return expression;
+    }
+
+    if (
+      ASTUtils.isAwaitExpression(expression) &&
+      isCallExpression(expression.argument)
+    ) {
+      return expression.argument;
+    }
+
+    if (isAssignmentExpression(expression)) {
+      if (isCallExpression(expression.right)) {
+        return expression.right;
+      }
+
+      if (
+        ASTUtils.isAwaitExpression(expression.right) &&
+        isCallExpression(expression.right.argument)
+      ) {
+        return expression.right.argument;
+      }
+    }
+  }
+
+  if (isReturnStatement(statement) && isCallExpression(statement.argument)) {
+    return statement.argument;
+  }
+
+  if (isVariableDeclaration(statement)) {
+    for (const declaration of statement.declarations) {
+      if (isCallExpression(declaration.init)) {
+        return declaration.init;
+      }
+    }
+  }
+  return undefined;
+}
+
+/**
+ * Determines whether a given function node is considered as empty function or not.
+ *
+ * A function is considered empty if its body is empty.
+ *
+ * Note that comments don't affect the check.
+ *
+ * If node given is not a function, `false` will be returned.
+ */
+export function isEmptyFunction(node: TSESTree.Node): boolean | undefined {
+  if (ASTUtils.isFunction(node) && isBlockStatement(node.body)) {
+    return node.body.body.length === 0;
+  }
+
+  return false;
+}
+
+/**
+ * Finds the import specifier matching a given name for a given import module node.
+ */
+export function findImportSpecifier(
+  specifierName: string,
+  node: ImportModuleNode
+): TSESTree.ImportClause | TSESTree.Identifier | undefined {
+  if (isImportDeclaration(node)) {
+    const namedExport = node.specifiers.find((n) => {
+      return (
+        isImportSpecifier(n) &&
+        [n.imported.name, n.local.name].includes(specifierName)
+      );
+    });
+
+    // it is "import { foo [as alias] } from 'baz'"
+    if (namedExport) {
+      return namedExport;
+    }
+
+    // it could be "import * as rtl from 'baz'"
+    return node.specifiers.find((n) => isImportNamespaceSpecifier(n));
+  } else {
+    if (!ASTUtils.isVariableDeclarator(node.parent)) {
+      return undefined;
+    }
+    const requireNode = node.parent;
+
+    if (ASTUtils.isIdentifier(requireNode.id)) {
+      // this is const rtl = require('foo')
+      return requireNode.id;
+    }
+
+    // this should be const { something } = require('foo')
+    if (!isObjectPattern(requireNode.id)) {
+      return undefined;
+    }
+
+    const property = requireNode.id.properties.find(
+      (n) =>
+        isProperty(n) &&
+        ASTUtils.isIdentifier(n.key) &&
+        n.key.name === specifierName
+    );
+    if (!property) {
+      return undefined;
+    }
+    return (property as TSESTree.Property).key as TSESTree.Identifier;
+  }
 }

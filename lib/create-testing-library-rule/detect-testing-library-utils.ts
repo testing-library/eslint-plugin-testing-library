@@ -5,6 +5,8 @@ import {
 } from '@typescript-eslint/experimental-utils';
 
 import {
+  findClosestVariableDeclaratorNode,
+  findImportSpecifier,
   getAssertNodeInfo,
   getDeepestIdentifierNode,
   getImportModuleName,
@@ -12,14 +14,12 @@ import {
   getReferenceNode,
   hasImportMatch,
   ImportModuleNode,
+  isCallExpression,
   isImportDeclaration,
   isImportDefaultSpecifier,
-  isImportNamespaceSpecifier,
   isImportSpecifier,
   isLiteral,
   isMemberExpression,
-  isObjectPattern,
-  isProperty,
 } from '../node-utils';
 import {
   ABSENCE_MATCHERS,
@@ -83,7 +83,7 @@ type IsDebugUtilFn = (identifierNode: TSESTree.Identifier) => boolean;
 type IsPresenceAssertFn = (node: TSESTree.MemberExpression) => boolean;
 type IsAbsenceAssertFn = (node: TSESTree.MemberExpression) => boolean;
 type CanReportErrorsFn = () => boolean;
-type FindImportedUtilSpecifierFn = (
+type FindImportedTestingLibraryUtilSpecifierFn = (
   specifierName: string
 ) => TSESTree.ImportClause | TSESTree.Identifier | undefined;
 type IsNodeComingFromTestingLibraryFn = (
@@ -96,6 +96,7 @@ export interface DetectionHelpers {
   getTestingLibraryImportName: GetTestingLibraryImportNameFn;
   getCustomModuleImportName: GetCustomModuleImportNameFn;
   isTestingLibraryImported: IsTestingLibraryImportedFn;
+  isTestingLibraryUtil: (node: TSESTree.Identifier) => boolean;
   isGetQueryVariant: IsGetQueryVariantFn;
   isQueryQueryVariant: IsQueryQueryVariantFn;
   isFindQueryVariant: IsFindQueryVariantFn;
@@ -112,14 +113,16 @@ export interface DetectionHelpers {
   isRenderUtil: IsRenderUtilFn;
   isRenderVariableDeclarator: IsRenderVariableDeclaratorFn;
   isDebugUtil: IsDebugUtilFn;
+  isActUtil: (node: TSESTree.Identifier) => boolean;
   isPresenceAssert: IsPresenceAssertFn;
   isAbsenceAssert: IsAbsenceAssertFn;
   canReportErrors: CanReportErrorsFn;
-  findImportedUtilSpecifier: FindImportedUtilSpecifierFn;
+  findImportedTestingLibraryUtilSpecifier: FindImportedTestingLibraryUtilSpecifierFn;
   isNodeComingFromTestingLibrary: IsNodeComingFromTestingLibraryFn;
 }
 
 const USER_EVENT_PACKAGE = '@testing-library/user-event';
+const REACT_DOM_TEST_UTILS_PACKAGE = 'react-dom/test-utils';
 const FIRE_EVENT_NAME = 'fireEvent';
 const USER_EVENT_NAME = 'userEvent';
 const RENDER_NAME = 'render';
@@ -153,6 +156,7 @@ export function detectTestingLibraryUtils<
     let importedTestingLibraryNode: ImportModuleNode | null = null;
     let importedCustomModuleNode: ImportModuleNode | null = null;
     let importedUserEventLibraryNode: ImportModuleNode | null = null;
+    let importedReactDomTestUtilsNode: ImportModuleNode | null = null;
 
     // Init options based on shared ESLint settings
     const customModuleSetting =
@@ -172,9 +176,9 @@ export function detectTestingLibraryUtils<
      * - it's imported from valid Testing Library module (depends on aggressive
      *    reporting)
      */
-    function isTestingLibraryUtil(
+    function isPotentialTestingLibraryFunction(
       node: TSESTree.Identifier,
-      isUtilCallback: (
+      isPotentialFunctionCallback: (
         identifierNodeName: string,
         originalNodeName?: string
       ) => boolean
@@ -190,7 +194,7 @@ export function detectTestingLibraryUtils<
         return false;
       }
 
-      const importedUtilSpecifier = getImportedUtilSpecifier(
+      const importedUtilSpecifier = getTestingLibraryImportedUtilSpecifier(
         referenceNodeIdentifier
       );
 
@@ -200,7 +204,7 @@ export function detectTestingLibraryUtils<
           ? importedUtilSpecifier.imported.name
           : undefined;
 
-      if (!isUtilCallback(node.name, originalNodeName)) {
+      if (!isPotentialFunctionCallback(node.name, originalNodeName)) {
         return false;
       }
 
@@ -412,7 +416,7 @@ export function detectTestingLibraryUtils<
      * coming from Testing Library will be considered as valid.
      */
     const isAsyncUtil: IsAsyncUtilFn = (node, validNames = ASYNC_UTILS) => {
-      return isTestingLibraryUtil(
+      return isPotentialTestingLibraryFunction(
         node,
         (identifierNodeName, originalNodeName) => {
           return (
@@ -430,7 +434,7 @@ export function detectTestingLibraryUtils<
      * Not to be confused with {@link isFireEventMethod}
      */
     const isFireEventUtil = (node: TSESTree.Identifier): boolean => {
-      return isTestingLibraryUtil(
+      return isPotentialTestingLibraryFunction(
         node,
         (identifierNodeName, originalNodeName) => {
           return [identifierNodeName, originalNodeName].includes('fireEvent');
@@ -464,7 +468,9 @@ export function detectTestingLibraryUtils<
      * Determines whether a given node is fireEvent method or not
      */
     const isFireEventMethod: IsFireEventMethodFn = (node) => {
-      const fireEventUtil = findImportedUtilSpecifier(FIRE_EVENT_NAME);
+      const fireEventUtil = findImportedTestingLibraryUtilSpecifier(
+        FIRE_EVENT_NAME
+      );
       let fireEventUtilName: string | undefined;
 
       if (fireEventUtil) {
@@ -570,17 +576,21 @@ export function detectTestingLibraryUtils<
      * only those nodes coming from Testing Library will be considered as valid.
      */
     const isRenderUtil: IsRenderUtilFn = (node) =>
-      isTestingLibraryUtil(node, (identifierNodeName, originalNodeName) => {
-        if (isAggressiveRenderReportingEnabled()) {
-          return identifierNodeName.toLowerCase().includes(RENDER_NAME);
-        }
+      isPotentialTestingLibraryFunction(
+        node,
+        (identifierNodeName, originalNodeName) => {
+          if (isAggressiveRenderReportingEnabled()) {
+            return identifierNodeName.toLowerCase().includes(RENDER_NAME);
+          }
 
-        return [RENDER_NAME, ...getCustomRenders()].some(
-          (validRenderName) =>
-            validRenderName === identifierNodeName ||
-            (Boolean(originalNodeName) && validRenderName === originalNodeName)
-        );
-      });
+          return [RENDER_NAME, ...getCustomRenders()].some(
+            (validRenderName) =>
+              validRenderName === identifierNodeName ||
+              (Boolean(originalNodeName) &&
+                validRenderName === originalNodeName)
+          );
+        }
+      );
 
     const isRenderVariableDeclarator: IsRenderVariableDeclaratorFn = (node) => {
       if (!node.init) {
@@ -603,7 +613,7 @@ export function detectTestingLibraryUtils<
 
       return (
         !isBuiltInConsole &&
-        isTestingLibraryUtil(
+        isPotentialTestingLibraryFunction(
           identifierNode,
           (identifierNodeName, originalNodeName) => {
             return [identifierNodeName, originalNodeName]
@@ -611,6 +621,91 @@ export function detectTestingLibraryUtils<
               .includes('debug');
           }
         )
+      );
+    };
+
+    /**
+     * Determines whether a given node is some reportable `act` util.
+     *
+     * An `act` is reportable if some of these conditions is met:
+     * - it's related to Testing Library module (this depends on Aggressive Reporting)
+     * - it's related to React DOM Test Utils
+     */
+    const isActUtil = (node: TSESTree.Identifier): boolean => {
+      const isTestingLibraryAct = isPotentialTestingLibraryFunction(
+        node,
+        (identifierNodeName, originalNodeName) => {
+          return [identifierNodeName, originalNodeName]
+            .filter(Boolean)
+            .includes('act');
+        }
+      );
+
+      const isReactDomTestUtilsAct = (() => {
+        if (!importedReactDomTestUtilsNode) {
+          return false;
+        }
+        const referenceNode = getReferenceNode(node);
+        const referenceNodeIdentifier = getPropertyIdentifierNode(
+          referenceNode
+        );
+        if (!referenceNodeIdentifier) {
+          return false;
+        }
+
+        const importedUtilSpecifier = findImportSpecifier(
+          node.name,
+          importedReactDomTestUtilsNode
+        );
+        if (!importedUtilSpecifier) {
+          return false;
+        }
+
+        const importDeclaration = (() => {
+          if (isImportDeclaration(importedUtilSpecifier.parent)) {
+            return importedUtilSpecifier.parent;
+          }
+
+          const variableDeclarator = findClosestVariableDeclaratorNode(
+            importedUtilSpecifier
+          );
+
+          if (isCallExpression(variableDeclarator?.init)) {
+            return variableDeclarator?.init;
+          }
+
+          return undefined;
+        })();
+        if (!importDeclaration) {
+          return false;
+        }
+
+        const importDeclarationName = getImportModuleName(importDeclaration);
+        if (!importDeclarationName) {
+          return false;
+        }
+
+        if (importDeclarationName !== REACT_DOM_TEST_UTILS_PACKAGE) {
+          return false;
+        }
+
+        return hasImportMatch(
+          importedUtilSpecifier,
+          referenceNodeIdentifier.name
+        );
+      })();
+
+      return isTestingLibraryAct || isReactDomTestUtilsAct;
+    };
+
+    const isTestingLibraryUtil = (node: TSESTree.Identifier): boolean => {
+      return (
+        isAsyncUtil(node) ||
+        isQuery(node) ||
+        isRenderUtil(node) ||
+        isFireEventMethod(node) ||
+        isUserEventMethod(node) ||
+        isActUtil(node)
       );
     };
 
@@ -653,60 +748,18 @@ export function detectTestingLibraryUtils<
     };
 
     /**
-     * Gets a string and verifies if it was imported/required by Testing Library
-     * related module.
+     * Finds the import util specifier related to Testing Library for a given name.
      */
-    const findImportedUtilSpecifier: FindImportedUtilSpecifierFn = (
+    const findImportedTestingLibraryUtilSpecifier: FindImportedTestingLibraryUtilSpecifierFn = (
       specifierName
-    ) => {
+    ): TSESTree.ImportClause | TSESTree.Identifier | undefined => {
       const node = getCustomModuleImportNode() ?? getTestingLibraryImportNode();
 
       if (!node) {
         return undefined;
       }
 
-      if (isImportDeclaration(node)) {
-        const namedExport = node.specifiers.find((n) => {
-          return (
-            isImportSpecifier(n) &&
-            [n.imported.name, n.local.name].includes(specifierName)
-          );
-        });
-
-        // it is "import { foo [as alias] } from 'baz'""
-        if (namedExport) {
-          return namedExport;
-        }
-
-        // it could be "import * as rtl from 'baz'"
-        return node.specifiers.find((n) => isImportNamespaceSpecifier(n));
-      } else {
-        if (!ASTUtils.isVariableDeclarator(node.parent)) {
-          return undefined;
-        }
-        const requireNode = node.parent;
-
-        if (ASTUtils.isIdentifier(requireNode.id)) {
-          // this is const rtl = require('foo')
-          return requireNode.id;
-        }
-
-        // this should be const { something } = require('foo')
-        if (!isObjectPattern(requireNode.id)) {
-          return undefined;
-        }
-
-        const property = requireNode.id.properties.find(
-          (n) =>
-            isProperty(n) &&
-            ASTUtils.isIdentifier(n.key) &&
-            n.key.name === specifierName
-        );
-        if (!property) {
-          return undefined;
-        }
-        return (property as TSESTree.Property).key as TSESTree.Identifier;
-      }
+      return findImportSpecifier(specifierName, node);
     };
 
     const findImportedUserEventSpecifier: () => TSESTree.Identifier | null = () => {
@@ -740,7 +793,7 @@ export function detectTestingLibraryUtils<
       return null;
     };
 
-    const getImportedUtilSpecifier = (
+    const getTestingLibraryImportedUtilSpecifier = (
       node: TSESTree.MemberExpression | TSESTree.Identifier
     ): TSESTree.ImportClause | TSESTree.Identifier | undefined => {
       const identifierName: string | undefined = getPropertyIdentifierNode(node)
@@ -750,7 +803,7 @@ export function detectTestingLibraryUtils<
         return undefined;
       }
 
-      return findImportedUtilSpecifier(identifierName);
+      return findImportedTestingLibraryUtilSpecifier(identifierName);
     };
 
     /**
@@ -769,9 +822,40 @@ export function detectTestingLibraryUtils<
     const isNodeComingFromTestingLibrary: IsNodeComingFromTestingLibraryFn = (
       node
     ) => {
-      const importNode = getImportedUtilSpecifier(node);
+      const importNode = getTestingLibraryImportedUtilSpecifier(node);
 
       if (!importNode) {
+        return false;
+      }
+
+      const referenceNode = getReferenceNode(node);
+      const referenceNodeIdentifier = getPropertyIdentifierNode(referenceNode);
+      if (!referenceNodeIdentifier) {
+        return false;
+      }
+
+      const importDeclaration = (() => {
+        if (isImportDeclaration(importNode.parent)) {
+          return importNode.parent;
+        }
+
+        const variableDeclarator = findClosestVariableDeclaratorNode(
+          importNode
+        );
+
+        if (isCallExpression(variableDeclarator?.init)) {
+          return variableDeclarator?.init;
+        }
+
+        return undefined;
+      })();
+
+      if (!importDeclaration) {
+        return false;
+      }
+
+      const importDeclarationName = getImportModuleName(importDeclaration);
+      if (!importDeclarationName) {
         return false;
       }
 
@@ -782,7 +866,13 @@ export function detectTestingLibraryUtils<
         return false;
       }
 
-      return hasImportMatch(importNode, identifierName);
+      const hasImportElementMatch = hasImportMatch(importNode, identifierName);
+      const hasImportModuleMatch =
+        /testing-library/g.test(importDeclarationName) ||
+        (typeof customModuleSetting === 'string' &&
+          importDeclarationName.endsWith(customModuleSetting));
+
+      return hasImportElementMatch && hasImportModuleMatch;
     };
 
     const helpers: DetectionHelpers = {
@@ -791,6 +881,7 @@ export function detectTestingLibraryUtils<
       getTestingLibraryImportName,
       getCustomModuleImportName,
       isTestingLibraryImported,
+      isTestingLibraryUtil,
       isGetQueryVariant,
       isQueryQueryVariant,
       isFindQueryVariant,
@@ -807,10 +898,11 @@ export function detectTestingLibraryUtils<
       isRenderUtil,
       isRenderVariableDeclarator,
       isDebugUtil,
+      isActUtil,
       isPresenceAssert,
       isAbsenceAssert,
       canReportErrors,
-      findImportedUtilSpecifier,
+      findImportedTestingLibraryUtilSpecifier,
       isNodeComingFromTestingLibrary,
     };
 
@@ -824,11 +916,14 @@ export function detectTestingLibraryUtils<
        * parts of the file.
        */
       ImportDeclaration(node: TSESTree.ImportDeclaration) {
+        if (typeof node.source.value !== 'string') {
+          return;
+        }
         // check only if testing library import not found yet so we avoid
         // to override importedTestingLibraryNode after it's found
         if (
           !importedTestingLibraryNode &&
-          /testing-library/g.test(node.source.value as string)
+          /testing-library/g.test(node.source.value)
         ) {
           importedTestingLibraryNode = node;
         }
@@ -839,7 +934,7 @@ export function detectTestingLibraryUtils<
         if (
           customModule &&
           !importedCustomModuleNode &&
-          String(node.source.value).endsWith(customModule)
+          node.source.value.endsWith(customModule)
         ) {
           importedCustomModuleNode = node;
         }
@@ -848,9 +943,18 @@ export function detectTestingLibraryUtils<
         // to override importedUserEventLibraryNode after it's found
         if (
           !importedUserEventLibraryNode &&
-          String(node.source.value) === USER_EVENT_PACKAGE
+          node.source.value === USER_EVENT_PACKAGE
         ) {
           importedUserEventLibraryNode = node;
+        }
+
+        // check only if react-dom/test-utils import not found yet so we avoid
+        // to override importedReactDomTestUtilsNode after it's found
+        if (
+          !importedUserEventLibraryNode &&
+          node.source.value === REACT_DOM_TEST_UTILS_PACKAGE
+        ) {
+          importedReactDomTestUtilsNode = node;
         }
       },
 
@@ -897,6 +1001,18 @@ export function detectTestingLibraryUtils<
           )
         ) {
           importedUserEventLibraryNode = callExpression;
+        }
+
+        if (
+          !importedReactDomTestUtilsNode &&
+          args.some(
+            (arg) =>
+              isLiteral(arg) &&
+              typeof arg.value === 'string' &&
+              arg.value === REACT_DOM_TEST_UTILS_PACKAGE
+          )
+        ) {
+          importedReactDomTestUtilsNode = callExpression;
         }
       },
     };
