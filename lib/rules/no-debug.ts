@@ -29,7 +29,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
   meta: {
     type: 'problem',
     docs: {
-      description: 'Disallow unnecessary debug usages in the tests',
+      description: 'Disallow the use of debugging utilities like `debug`',
       category: 'Best Practices',
       recommendedConfig: {
         dom: false,
