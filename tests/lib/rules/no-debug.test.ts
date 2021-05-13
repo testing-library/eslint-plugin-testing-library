@@ -88,6 +88,20 @@ ruleTester.run(RULE_NAME, rule, {
       `,
     },
     {
+      code: `
+        import { screen } from '@testing-library/dom'
+        screen.logTestingPlaygroundURL()
+      `,
+      options: [{ utilsToCheckFor: { logTestingPlaygroundURL: false } }],
+    },
+    {
+      code: `
+        import { screen } from '@testing-library/dom'
+        screen.logTestingPlaygroundURL()
+      `,
+      options: [{ utilsToCheckFor: undefined }],
+    },
+    {
       code: `const { queries } = require('@testing-library/dom')`,
     },
     {
@@ -410,6 +424,89 @@ ruleTester.run(RULE_NAME, rule, {
       code: `
         import { screen } from '@testing-library/dom'
         screen.debug()
+      `,
+      errors: [
+        {
+          line: 3,
+          column: 16,
+          messageId: 'noDebug',
+        },
+      ],
+    },
+    {
+      code: `
+        import { screen } from '@testing-library/dom'
+        screen.logTestingPlaygroundURL()
+      `,
+      options: [{ utilsToCheckFor: { logTestingPlaygroundURL: true } }],
+      errors: [
+        {
+          line: 3,
+          column: 16,
+          messageId: 'noDebug',
+        },
+      ],
+    },
+    {
+      code: `
+        import { logRoles } from '@testing-library/dom'
+        logRoles(document.createElement('nav'))
+      `,
+      options: [{ utilsToCheckFor: { logRoles: true } }],
+      errors: [
+        {
+          line: 3,
+          column: 9,
+          messageId: 'noDebug',
+        },
+      ],
+    },
+    {
+      code: `
+        import { screen } from '@testing-library/dom'
+        screen.logTestingPlaygroundURL()
+      `,
+      options: [{ utilsToCheckFor: { logRoles: true } }],
+      errors: [
+        {
+          line: 3,
+          column: 16,
+          messageId: 'noDebug',
+        },
+      ],
+    },
+    {
+      code: `
+        import { screen } from '@testing-library/dom'
+        screen.logTestingPlaygroundURL()
+      `,
+      options: [{ utilsToCheckFor: { debug: false } }],
+      errors: [
+        {
+          line: 3,
+          column: 16,
+          messageId: 'noDebug',
+        },
+      ],
+    },
+    {
+      code: `
+        import { screen } from '@testing-library/dom'
+        screen.logTestingPlaygroundURL()
+      `,
+      options: [{ utilsToCheckFor: {} }],
+      errors: [
+        {
+          line: 3,
+          column: 16,
+          messageId: 'noDebug',
+        },
+      ],
+    },
+    {
+      code: `
+        import { screen } from '@testing-library/dom'
+        screen.logTestingPlaygroundURL()
       `,
       errors: [
         {

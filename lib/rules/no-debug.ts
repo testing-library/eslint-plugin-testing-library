@@ -8,19 +8,28 @@ import {
   isObjectPattern,
   isProperty,
 } from '../node-utils';
+import { DEBUG_UTILS } from '../utils';
 import { createTestingLibraryRule } from '../create-testing-library-rule';
-import { ASTUtils, TSESTree } from '@typescript-eslint/experimental-utils';
+import {
+  ASTUtils,
+  TSESTree,
+  JSONSchema,
+} from '@typescript-eslint/experimental-utils';
+
+type DebugUtilsToCheckFor = Partial<
+  Record<typeof DEBUG_UTILS[number], boolean>
+>;
 
 export const RULE_NAME = 'no-debug';
 export type MessageIds = 'noDebug';
-type Options = [];
+type Options = [{ utilsToCheckFor?: DebugUtilsToCheckFor }];
 
 export default createTestingLibraryRule<Options, MessageIds>({
   name: RULE_NAME,
   meta: {
     type: 'problem',
     docs: {
-      description: 'Disallow unnecessary debug usages in the tests',
+      description: 'Disallow the use of debugging utilities like `debug`',
       category: 'Best Practices',
       recommendedConfig: {
         dom: false,
@@ -32,15 +41,41 @@ export default createTestingLibraryRule<Options, MessageIds>({
     messages: {
       noDebug: 'Unexpected debug statement',
     },
-    schema: [],
+    schema: [
+      {
+        type: 'object',
+        properties: {
+          utilsToCheckFor: {
+            type: 'object',
+            properties: DEBUG_UTILS.reduce<
+              Record<string, JSONSchema.JSONSchema7>
+            >(
+              (obj, name) => ({
+                [name]: { type: 'boolean' },
+                ...obj,
+              }),
+              {}
+            ),
+            additionalProperties: false,
+          },
+        },
+        additionalProperties: false,
+      },
+    ],
   },
-  defaultOptions: [],
+  defaultOptions: [
+    { utilsToCheckFor: { debug: true, logTestingPlaygroundURL: true } },
+  ],
 
-  create(context, [], helpers) {
+  create(context, [{ utilsToCheckFor = {} }], helpers) {
     const suspiciousDebugVariableNames: string[] = [];
     const suspiciousReferenceNodes: TSESTree.Identifier[] = [];
     const renderWrapperNames: string[] = [];
     const builtInConsoleNodes: TSESTree.VariableDeclarator[] = [];
+
+    const utilsToReport = Object.entries(utilsToCheckFor)
+      .filter(([, shouldCheckFor]) => shouldCheckFor)
+      .map(([name]) => name);
 
     function detectRenderWrapper(node: TSESTree.Identifier): void {
       const innerFunction = getInnermostReturningFunction(context, node);
@@ -84,7 +119,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
             if (
               isProperty(property) &&
               ASTUtils.isIdentifier(property.key) &&
-              property.key.name === 'debug'
+              utilsToReport.includes(property.key.name)
             ) {
               const identifierNode = getDeepestIdentifierNode(property.value);
 
@@ -119,14 +154,17 @@ export default createTestingLibraryRule<Options, MessageIds>({
           return;
         }
 
-        const isDebugUtil = helpers.isDebugUtil(callExpressionIdentifier);
+        const isDebugUtil = helpers.isDebugUtil(
+          callExpressionIdentifier,
+          utilsToReport as Array<typeof DEBUG_UTILS[number]>
+        );
         const isDeclaredDebugVariable = suspiciousDebugVariableNames.includes(
           callExpressionIdentifier.name
         );
         const isChainedReferenceDebug = suspiciousReferenceNodes.some(
           (suspiciousReferenceIdentifier) => {
             return (
-              callExpressionIdentifier.name === 'debug' &&
+              utilsToReport.includes(callExpressionIdentifier.name) &&
               suspiciousReferenceIdentifier.name === referenceIdentifier.name
             );
           }
