@@ -88,7 +88,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
     function reportInvalidUsage(
       node: TSESTree.CallExpression,
       replacementParams: {
-        queryVariant: 'findBy' | 'findAllBy';
+        queryVariant: 'findAllBy' | 'findBy';
         queryMethod: string;
         prevQuery: string;
         waitForMethodName: string;
@@ -233,9 +233,10 @@ export default createTestingLibraryRule<Options, MessageIds>({
               const textDestructuring = sourceCode.getText(
                 allVariableDeclarations
               );
-              const text =
-                textDestructuring.substring(0, textDestructuring.length - 2) +
-                `, ${findByMethod} }`;
+              const text = `${textDestructuring.substring(
+                0,
+                textDestructuring.length - 2
+              )}, ${findByMethod} }`;
               allFixes.push(fixer.replaceText(allVariableDeclarations, text));
             }
 

@@ -27,7 +27,7 @@ function createTestCode({ code, isAsync = true }: TestCode) {
 interface TestCaseParams {
   isAsync?: boolean;
   combinations?: string[];
-  errors?: TestCaseError<'awaitAsyncQuery' | 'asyncQueryWrapper'>[];
+  errors?: TestCaseError<'asyncQueryWrapper' | 'awaitAsyncQuery'>[];
 }
 
 function createTestCase(

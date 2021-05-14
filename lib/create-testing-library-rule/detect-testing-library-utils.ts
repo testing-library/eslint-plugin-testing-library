@@ -89,9 +89,9 @@ type IsAbsenceAssertFn = (node: TSESTree.MemberExpression) => boolean;
 type CanReportErrorsFn = () => boolean;
 type FindImportedTestingLibraryUtilSpecifierFn = (
   specifierName: string
-) => TSESTree.ImportClause | TSESTree.Identifier | undefined;
+) => TSESTree.Identifier | TSESTree.ImportClause | undefined;
 type IsNodeComingFromTestingLibraryFn = (
-  node: TSESTree.MemberExpression | TSESTree.Identifier
+  node: TSESTree.Identifier | TSESTree.MemberExpression
 ) => boolean;
 
 export interface DetectionHelpers {
@@ -761,7 +761,7 @@ export function detectTestingLibraryUtils<
      */
     const findImportedTestingLibraryUtilSpecifier: FindImportedTestingLibraryUtilSpecifierFn = (
       specifierName
-    ): TSESTree.ImportClause | TSESTree.Identifier | undefined => {
+    ): TSESTree.Identifier | TSESTree.ImportClause | undefined => {
       const node = getCustomModuleImportNode() ?? getTestingLibraryImportNode();
 
       if (!node) {
@@ -803,8 +803,8 @@ export function detectTestingLibraryUtils<
     };
 
     const getTestingLibraryImportedUtilSpecifier = (
-      node: TSESTree.MemberExpression | TSESTree.Identifier
-    ): TSESTree.ImportClause | TSESTree.Identifier | undefined => {
+      node: TSESTree.Identifier | TSESTree.MemberExpression
+    ): TSESTree.Identifier | TSESTree.ImportClause | undefined => {
       const identifierName: string | undefined = getPropertyIdentifierNode(node)
         ?.name;
 

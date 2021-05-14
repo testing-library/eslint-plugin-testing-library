@@ -37,9 +37,9 @@ export default createTestingLibraryRule<Options, MessageIds>({
   create: function (context, _, helpers) {
     function isCallerWaitFor(
       node:
+        | TSESTree.AssignmentExpression
         | TSESTree.BlockStatement
         | TSESTree.CallExpression
-        | TSESTree.AssignmentExpression
         | TSESTree.SequenceExpression
     ): boolean {
       if (!node.parent) {
@@ -147,8 +147,8 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
     function reportImplicitReturnSideEffect(
       node:
-        | TSESTree.CallExpression
         | TSESTree.AssignmentExpression
+        | TSESTree.CallExpression
         | TSESTree.SequenceExpression
     ) {
       if (!isCallerWaitFor(node)) {

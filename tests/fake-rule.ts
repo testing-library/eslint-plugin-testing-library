@@ -8,16 +8,16 @@ import { createTestingLibraryRule } from '../lib/create-testing-library-rule';
 export const RULE_NAME = 'fake-rule';
 type Options = [];
 type MessageIds =
-  | 'fakeError'
-  | 'renderError'
+  | 'absenceAssertError'
   | 'asyncUtilError'
-  | 'getByError'
-  | 'queryByError'
-  | 'findByError'
   | 'customQueryError'
-  | 'userEventError'
+  | 'fakeError'
+  | 'findByError'
+  | 'getByError'
   | 'presenceAssertError'
-  | 'absenceAssertError';
+  | 'queryByError'
+  | 'renderError'
+  | 'userEventError';
 
 export default createTestingLibraryRule<Options, MessageIds>({
   name: RULE_NAME,

@@ -3,7 +3,7 @@ import { findClosestCallNode, isMemberExpression } from '../node-utils';
 import { createTestingLibraryRule } from '../create-testing-library-rule';
 
 export const RULE_NAME = 'prefer-presence-queries';
-export type MessageIds = 'wrongPresenceQuery' | 'wrongAbsenceQuery';
+export type MessageIds = 'wrongAbsenceQuery' | 'wrongPresenceQuery';
 type Options = [];
 
 export default createTestingLibraryRule<Options, MessageIds>({

@@ -42,7 +42,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
   create(context, [framework], helpers) {
     function report(
-      node: TSESTree.ImportDeclaration | TSESTree.CallExpression,
+      node: TSESTree.CallExpression | TSESTree.ImportDeclaration,
       moduleName: string
     ) {
       if (framework) {

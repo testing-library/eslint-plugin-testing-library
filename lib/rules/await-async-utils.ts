@@ -9,7 +9,7 @@ import {
 import { createTestingLibraryRule } from '../create-testing-library-rule';
 
 export const RULE_NAME = 'await-async-utils';
-export type MessageIds = 'awaitAsyncUtil' | 'asyncUtilWrapper';
+export type MessageIds = 'asyncUtilWrapper' | 'awaitAsyncUtil';
 type Options = [];
 
 export default createTestingLibraryRule<Options, MessageIds>({

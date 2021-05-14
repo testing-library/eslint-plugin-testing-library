@@ -1,4 +1,9 @@
 import {
+  ASTUtils,
+  TSESTree,
+  JSONSchema,
+} from '@typescript-eslint/experimental-utils';
+import {
   getDeepestIdentifierNode,
   getFunctionName,
   getInnermostReturningFunction,
@@ -10,11 +15,6 @@ import {
 } from '../node-utils';
 import { DEBUG_UTILS } from '../utils';
 import { createTestingLibraryRule } from '../create-testing-library-rule';
-import {
-  ASTUtils,
-  TSESTree,
-  JSONSchema,
-} from '@typescript-eslint/experimental-utils';
 
 type DebugUtilsToCheckFor = Partial<
   Record<typeof DEBUG_UTILS[number], boolean>

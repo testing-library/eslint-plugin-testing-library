@@ -247,9 +247,9 @@ export function getVariableReferences(
 
 interface InnermostFunctionScope extends TSESLintScope.FunctionScope {
   block:
+    | TSESTree.ArrowFunctionExpression
     | TSESTree.FunctionDeclaration
-    | TSESTree.FunctionExpression
-    | TSESTree.ArrowFunctionExpression;
+    | TSESTree.FunctionExpression;
 }
 
 export function getInnermostFunctionScope(
@@ -262,7 +262,7 @@ export function getInnermostFunctionScope(
   );
 
   if (
-    innermostScope?.type === 'function' &&
+    innermostScope.type === 'function' &&
     ASTUtils.isFunction(innermostScope.block)
   ) {
     return (innermostScope as unknown) as InnermostFunctionScope;
@@ -273,9 +273,9 @@ export function getInnermostFunctionScope(
 
 export function getFunctionReturnStatementNode(
   functionNode:
+    | TSESTree.ArrowFunctionExpression
     | TSESTree.FunctionDeclaration
     | TSESTree.FunctionExpression
-    | TSESTree.ArrowFunctionExpression
 ): TSESTree.Node | null {
   if (isBlockStatement(functionNode.body)) {
     // regular function or arrow function with block
@@ -372,9 +372,9 @@ export function getDeepestIdentifierNode(
 export function getReferenceNode(
   node:
     | TSESTree.CallExpression
-    | TSESTree.MemberExpression
     | TSESTree.Identifier
-): TSESTree.CallExpression | TSESTree.MemberExpression | TSESTree.Identifier {
+    | TSESTree.MemberExpression
+): TSESTree.CallExpression | TSESTree.Identifier | TSESTree.MemberExpression {
   if (
     node.parent &&
     (isMemberExpression(node.parent) || isCallExpression(node.parent))
@@ -387,9 +387,9 @@ export function getReferenceNode(
 
 export function getFunctionName(
   node:
+    | TSESTree.ArrowFunctionExpression
     | TSESTree.FunctionDeclaration
     | TSESTree.FunctionExpression
-    | TSESTree.ArrowFunctionExpression
 ): string {
   return (
     ASTUtils.getFunctionNameWithKind(node)
@@ -400,11 +400,11 @@ export function getFunctionName(
 
 // TODO: extract into types file?
 export type ImportModuleNode =
-  | TSESTree.ImportDeclaration
-  | TSESTree.CallExpression;
+  | TSESTree.CallExpression
+  | TSESTree.ImportDeclaration;
 
 export function getImportModuleName(
-  node: ImportModuleNode | undefined | null
+  node: ImportModuleNode | null | undefined
 ): string | undefined {
   // import node of shape: import { foo } from 'bar'
   if (isImportDeclaration(node) && typeof node.source.value === 'string') {
@@ -494,9 +494,9 @@ export function getInnermostReturningFunction(
   context: RuleContext<string, unknown[]>,
   node: TSESTree.Identifier
 ):
+  | TSESTree.ArrowFunctionExpression
   | TSESTree.FunctionDeclaration
   | TSESTree.FunctionExpression
-  | TSESTree.ArrowFunctionExpression
   | undefined {
   const functionScope = getInnermostFunctionScope(context, node);
 
@@ -524,7 +524,7 @@ export function getInnermostReturningFunction(
 }
 
 export function hasImportMatch(
-  importNode: TSESTree.ImportClause | TSESTree.Identifier,
+  importNode: TSESTree.Identifier | TSESTree.ImportClause,
   identifierName: string
 ): boolean {
   if (ASTUtils.isIdentifier(importNode)) {
@@ -601,7 +601,7 @@ export function isEmptyFunction(node: TSESTree.Node): boolean | undefined {
 export function findImportSpecifier(
   specifierName: string,
   node: ImportModuleNode
-): TSESTree.ImportClause | TSESTree.Identifier | undefined {
+): TSESTree.Identifier | TSESTree.ImportClause | undefined {
   if (isImportDeclaration(node)) {
     const namedExport = node.specifiers.find((n) => {
       return (

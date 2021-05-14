@@ -12,8 +12,8 @@ import {
 
 export const RULE_NAME = 'prefer-wait-for';
 export type MessageIds =
-  | 'preferWaitForMethod'
   | 'preferWaitForImport'
+  | 'preferWaitForMethod'
   | 'preferWaitForRequire';
 type Options = [];
 
@@ -51,7 +51,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
     const reportRequire = (node: TSESTree.ObjectPattern) => {
       context.report({
-        node: node,
+        node,
         messageId: 'preferWaitForRequire',
         fix(fixer) {
           const excludedImports = [...DEPRECATED_METHODS, 'waitFor'];
@@ -76,7 +76,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
     const reportImport = (node: TSESTree.ImportDeclaration) => {
       context.report({
-        node: node,
+        node,
         messageId: 'preferWaitForImport',
         fix(fixer) {
           const excludedImports = [...DEPRECATED_METHODS, 'waitFor'];

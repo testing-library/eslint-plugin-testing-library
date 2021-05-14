@@ -10,7 +10,7 @@ import {
 import { createTestingLibraryRule } from '../create-testing-library-rule';
 
 export const RULE_NAME = 'await-async-query';
-export type MessageIds = 'awaitAsyncQuery' | 'asyncQueryWrapper';
+export type MessageIds = 'asyncQueryWrapper' | 'awaitAsyncQuery';
 type Options = [];
 
 export default createTestingLibraryRule<Options, MessageIds>({

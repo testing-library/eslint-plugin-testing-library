@@ -12,7 +12,7 @@ const ruleTester = createRuleTester();
 
 type ValidTestCase = TSESLint.ValidTestCase<Options>;
 type InvalidTestCase = TSESLint.InvalidTestCase<MessageIds, Options>;
-type TestCase = ValidTestCase | InvalidTestCase;
+type TestCase = InvalidTestCase | ValidTestCase;
 const disableAggressiveReporting = <T extends TestCase>(array: T[]): T[] =>
   array.map((testCase) => ({
     ...testCase,

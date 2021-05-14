@@ -40,15 +40,15 @@ export default createTestingLibraryRule<Options, MessageIds>({
       ASTUtils.isIdentifier(node.property) &&
         ALL_RETURNING_NODES.includes(node.property.name) &&
         context.report({
-          node: node,
+          node,
           loc: node.property.loc.start,
           messageId: 'noNodeAccess',
         });
     }
 
     return {
-      ['ExpressionStatement MemberExpression']: showErrorForNodeAccess,
-      ['VariableDeclarator MemberExpression']: showErrorForNodeAccess,
+      'ExpressionStatement MemberExpression': showErrorForNodeAccess,
+      'VariableDeclarator MemberExpression': showErrorForNodeAccess,
     };
   },
 });

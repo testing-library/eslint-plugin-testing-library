@@ -8,8 +8,8 @@ import {
 
 export const RULE_NAME = 'no-unnecessary-act';
 export type MessageIds =
-  | 'noUnnecessaryActTestingLibraryUtil'
-  | 'noUnnecessaryActEmptyFunction';
+  | 'noUnnecessaryActEmptyFunction'
+  | 'noUnnecessaryActTestingLibraryUtil';
 
 export default createTestingLibraryRule<[], MessageIds>({
   name: RULE_NAME,
@@ -62,9 +62,9 @@ export default createTestingLibraryRule<[], MessageIds>({
     function checkNoUnnecessaryActFromBlockStatement(
       blockStatementNode: TSESTree.BlockStatement
     ) {
-      const functionNode = blockStatementNode?.parent as
-        | TSESTree.FunctionExpression
+      const functionNode = blockStatementNode.parent as
         | TSESTree.ArrowFunctionExpression
+        | TSESTree.FunctionExpression
         | undefined;
       const callExpressionNode = functionNode?.parent as
         | TSESTree.CallExpression
@@ -105,7 +105,7 @@ export default createTestingLibraryRule<[], MessageIds>({
         return;
       }
 
-      const parentCallExpression = node?.parent?.parent as
+      const parentCallExpression = node.parent?.parent as
         | TSESTree.CallExpression
         | undefined;
 

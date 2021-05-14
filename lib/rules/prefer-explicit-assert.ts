@@ -15,7 +15,7 @@ type Options = [
 ];
 
 const isAtTopLevel = (node: TSESTree.Node) =>
-  !!node?.parent?.parent && node.parent.parent.type === 'ExpressionStatement';
+  !!node.parent?.parent && node.parent.parent.type === 'ExpressionStatement';
 
 export default createTestingLibraryRule<Options, MessageIds>({
   name: RULE_NAME,

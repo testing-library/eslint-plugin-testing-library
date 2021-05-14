@@ -21,7 +21,7 @@ function buildFindByMethod(queryMethod: string) {
 }
 
 function createScenario<
-  T extends ValidTestCase<[]> | InvalidTestCase<MessageIds, []>
+  T extends InvalidTestCase<MessageIds, []> | ValidTestCase<[]>
 >(callback: (waitMethod: string, queryMethod: string) => T) {
   return WAIT_METHODS.reduce(
     (acc: T[], waitMethod) =>

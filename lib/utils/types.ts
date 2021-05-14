@@ -23,9 +23,9 @@ type TestingLibraryRuleMetaDocs<TOptions extends readonly unknown[]> = Omit<
 export type TestingLibraryRuleMeta<
   TMessageIds extends string,
   TOptions extends readonly unknown[]
-> = {
+> = Omit<TSESLint.RuleMetaData<TMessageIds>, 'docs'> & {
   docs: TestingLibraryRuleMetaDocs<TOptions>;
-} & Omit<TSESLint.RuleMetaData<TMessageIds>, 'docs'>;
+};
 
 export const SUPPORTED_TESTING_FRAMEWORKS = [
   'dom',

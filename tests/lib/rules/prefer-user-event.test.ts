@@ -13,7 +13,7 @@ import rule, {
 } from '../../../lib/rules/prefer-user-event';
 
 function createScenarioWithImport<
-  T extends ValidTestCase<Options> | InvalidTestCase<MessageIds, Options>
+  T extends InvalidTestCase<MessageIds, Options> | ValidTestCase<Options>
 >(callback: (libraryModule: string, fireEventMethod: string) => T) {
   return LIBRARY_MODULES.reduce(
     (acc: Array<T>, libraryModule) =>
@@ -220,7 +220,7 @@ ruleTester.run(RULE_NAME, rule, {
             column: 9,
             data: {
               userEventMethods: formatUserEventMethodsMessage(fireEventMethod),
-              fireEventMethod: fireEventMethod,
+              fireEventMethod,
             },
           },
         ],
@@ -239,7 +239,7 @@ ruleTester.run(RULE_NAME, rule, {
             column: 9,
             data: {
               userEventMethods: formatUserEventMethodsMessage(fireEventMethod),
-              fireEventMethod: fireEventMethod,
+              fireEventMethod,
             },
           },
         ],
@@ -258,7 +258,7 @@ ruleTester.run(RULE_NAME, rule, {
             column: 9,
             data: {
               userEventMethods: formatUserEventMethodsMessage(fireEventMethod),
-              fireEventMethod: fireEventMethod,
+              fireEventMethod,
             },
           },
         ],
@@ -277,7 +277,7 @@ ruleTester.run(RULE_NAME, rule, {
             column: 9,
             data: {
               userEventMethods: formatUserEventMethodsMessage(fireEventMethod),
-              fireEventMethod: fireEventMethod,
+              fireEventMethod,
             },
           },
         ],
@@ -302,7 +302,7 @@ ruleTester.run(RULE_NAME, rule, {
                 userEventMethods: formatUserEventMethodsMessage(
                   fireEventMethod
                 ),
-                fireEventMethod: fireEventMethod,
+                fireEventMethod,
               },
             },
           ],
@@ -327,7 +327,7 @@ ruleTester.run(RULE_NAME, rule, {
                 userEventMethods: formatUserEventMethodsMessage(
                   fireEventMethod
                 ),
-                fireEventMethod: fireEventMethod,
+                fireEventMethod,
               },
             },
           ],
@@ -351,7 +351,7 @@ ruleTester.run(RULE_NAME, rule, {
                 userEventMethods: formatUserEventMethodsMessage(
                   fireEventMethod
                 ),
-                fireEventMethod: fireEventMethod,
+                fireEventMethod,
               },
             },
           ],
@@ -376,7 +376,7 @@ ruleTester.run(RULE_NAME, rule, {
                 userEventMethods: formatUserEventMethodsMessage(
                   fireEventMethod
                 ),
-                fireEventMethod: fireEventMethod,
+                fireEventMethod,
               },
             },
           ],
