@@ -30,7 +30,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
     schema: [],
   },
   defaultOptions: [],
-  create: function (context, _, helpers) {
+  create(context, _, helpers) {
     function getExpectNodes(
       body: Array<TSESTree.Node>
     ): Array<TSESTree.ExpressionStatement> {

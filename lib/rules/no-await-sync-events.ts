@@ -64,12 +64,12 @@ export default createTestingLibraryRule<Options, MessageIds>({
           isObjectExpression(lastArg) &&
           lastArg.properties.some(
             (property) =>
-              (isProperty(property) &&
-                ASTUtils.isIdentifier(property.key) &&
-                property.key.name === 'delay' &&
-                isLiteral(property.value) &&
-                property.value.value) ??
-              0 > 0
+              isProperty(property) &&
+              ASTUtils.isIdentifier(property.key) &&
+              property.key.name === 'delay' &&
+              isLiteral(property.value) &&
+              !!property.value.value &&
+              property.value.value > 0
           );
 
         const simulateEventFunctionName = simulateEventFunctionIdentifier.name;

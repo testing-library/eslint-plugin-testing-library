@@ -1,4 +1,4 @@
-import { TSESTree } from '@typescript-eslint/experimental-utils';
+import { ASTUtils, TSESTree } from '@typescript-eslint/experimental-utils';
 import {
   findClosestCallExpressionNode,
   getFunctionName,
@@ -36,7 +36,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
   },
   defaultOptions: [],
 
-  create: function (context, _, helpers) {
+  create(context, _, helpers) {
     const functionWrappersNames: string[] = [];
 
     function reportUnhandledNode(
@@ -81,11 +81,15 @@ export default createTestingLibraryRule<Options, MessageIds>({
           );
 
           if (references.length === 0) {
-            return reportUnhandledNode(node, closestCallExpression);
+            reportUnhandledNode(node, closestCallExpression);
           } else {
             for (const reference of references) {
-              const referenceNode = reference.identifier as TSESTree.Identifier;
-              return reportUnhandledNode(referenceNode, closestCallExpression);
+              if (ASTUtils.isIdentifier(reference.identifier)) {
+                reportUnhandledNode(
+                  reference.identifier,
+                  closestCallExpression
+                );
+              }
             }
           }
         } else if (functionWrappersNames.includes(node.name)) {
@@ -100,11 +104,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
             return;
           }
 
-          return reportUnhandledNode(
-            node,
-            closestCallExpression,
-            'fireEventWrapper'
-          );
+          reportUnhandledNode(node, closestCallExpression, 'fireEventWrapper');
         }
       },
     };

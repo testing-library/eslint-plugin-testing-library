@@ -181,7 +181,7 @@ export function detectTestingLibraryUtils<
      *    reporting)
      */
     function isPotentialTestingLibraryFunction(
-      node: TSESTree.Identifier,
+      node: TSESTree.Identifier | null | undefined,
       isPotentialFunctionCallback: (
         identifierNodeName: string,
         originalNodeName?: string
@@ -1045,6 +1045,8 @@ export function detectTestingLibraryUtils<
         if (canReportErrors() && ruleInstructions[instruction]) {
           return ruleInstructions[instruction]?.(node);
         }
+
+        return undefined;
       };
     });
 

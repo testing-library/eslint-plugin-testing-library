@@ -85,6 +85,8 @@ export default createTestingLibraryRule<Options, MessageIds>({
       if (helpers.isFindQueryVariant(node)) {
         return context.report({ node, messageId: 'findByError' });
       }
+
+      return undefined;
     };
 
     const reportMemberExpression = (node: TSESTree.MemberExpression) => {
@@ -95,6 +97,8 @@ export default createTestingLibraryRule<Options, MessageIds>({
       if (helpers.isAbsenceAssert(node)) {
         return context.report({ node, messageId: 'absenceAssertError' });
       }
+
+      return undefined;
     };
 
     const reportImportDeclaration = (node: TSESTree.ImportDeclaration) => {

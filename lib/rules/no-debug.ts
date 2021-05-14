@@ -101,9 +101,9 @@ export default createTestingLibraryRule<Options, MessageIds>({
           return;
         }
 
-        const isRenderWrapperVariableDeclarator = initIdentifierNode
-          ? renderWrapperNames.includes(initIdentifierNode.name)
-          : false;
+        const isRenderWrapperVariableDeclarator = renderWrapperNames.includes(
+          initIdentifierNode.name
+        );
 
         if (
           !helpers.isRenderVariableDeclarator(node) &&

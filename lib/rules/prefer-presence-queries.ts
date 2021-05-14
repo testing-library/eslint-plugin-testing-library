@@ -56,11 +56,9 @@ export default createTestingLibraryRule<Options, MessageIds>({
         }
 
         if (isPresenceAssert && !isPresenceQuery) {
-          return context.report({ node, messageId: 'wrongPresenceQuery' });
-        }
-
-        if (isAbsenceAssert && isPresenceQuery) {
-          return context.report({ node, messageId: 'wrongAbsenceQuery' });
+          context.report({ node, messageId: 'wrongPresenceQuery' });
+        } else if (isAbsenceAssert && isPresenceQuery) {
+          context.report({ node, messageId: 'wrongAbsenceQuery' });
         }
       },
     };

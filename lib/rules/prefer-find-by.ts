@@ -161,7 +161,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
                 return null;
               }
               const newCode = `${caller}.${queryVariant}${queryMethod}(${callArguments
-                .map((node) => sourceCode.getText(node))
+                .map((callArgNode) => sourceCode.getText(callArgNode))
                 .join(', ')})`;
               return fixer.replaceText(node, newCode);
             },
@@ -199,7 +199,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
             const allFixes: TSESLint.RuleFix[] = [];
             // this updates waitFor with findBy*
             const newCode = `${findByMethod}(${callArguments
-              .map((node) => sourceCode.getText(node))
+              .map((callArgNode) => sourceCode.getText(callArgNode))
               .join(', ')})`;
             allFixes.push(fixer.replaceText(node, newCode));
 

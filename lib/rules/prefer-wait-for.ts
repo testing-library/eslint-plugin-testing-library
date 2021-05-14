@@ -119,6 +119,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
           const [arg] = callExpressionNode.arguments;
           const fixers = [];
 
+          // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
           if (arg) {
             // if method been fixed already had a callback
             // then we just replace the method name.

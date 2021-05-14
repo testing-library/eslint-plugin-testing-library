@@ -74,14 +74,15 @@ export default createTestingLibraryRule<Options, MessageIds>({
           );
 
           // check direct usage of async query:
-          //  const element = await findByRole('button')
-          if (references && references.length === 0) {
+          // const element = await findByRole('button')
+          if (references.length === 0) {
             if (!isPromiseHandled(identifierNode)) {
-              return context.report({
+              context.report({
                 node: identifierNode,
                 messageId: 'awaitAsyncQuery',
                 data: { name: identifierNode.name },
               });
+              return;
             }
           }
 
@@ -93,22 +94,24 @@ export default createTestingLibraryRule<Options, MessageIds>({
               ASTUtils.isIdentifier(reference.identifier) &&
               !isPromiseHandled(reference.identifier)
             ) {
-              return context.report({
+              context.report({
                 node: identifierNode,
                 messageId: 'awaitAsyncQuery',
                 data: { name: identifierNode.name },
               });
+              return;
             }
           }
-        } else if (functionWrappersNames.includes(identifierNode.name)) {
+        } else if (
+          functionWrappersNames.includes(identifierNode.name) &&
+          !isPromiseHandled(identifierNode)
+        ) {
           // check async queries used within a wrapper previously detected
-          if (!isPromiseHandled(identifierNode)) {
-            return context.report({
-              node: identifierNode,
-              messageId: 'asyncQueryWrapper',
-              data: { name: identifierNode.name },
-            });
-          }
+          context.report({
+            node: identifierNode,
+            messageId: 'asyncQueryWrapper',
+            data: { name: identifierNode.name },
+          });
         }
       },
     };

@@ -66,9 +66,9 @@ export default createTestingLibraryRule<Options, MessageIds>({
             closestCallExpression.parent
           );
 
-          if (references && references.length === 0) {
+          if (references.length === 0) {
             if (!isPromiseHandled(node)) {
-              return context.report({
+              context.report({
                 node,
                 messageId: 'awaitAsyncUtil',
                 data: {
@@ -80,20 +80,21 @@ export default createTestingLibraryRule<Options, MessageIds>({
             for (const reference of references) {
               const referenceNode = reference.identifier as TSESTree.Identifier;
               if (!isPromiseHandled(referenceNode)) {
-                return context.report({
+                context.report({
                   node,
                   messageId: 'awaitAsyncUtil',
                   data: {
                     name: node.name,
                   },
                 });
+                return;
               }
             }
           }
         } else if (functionWrappersNames.includes(node.name)) {
           // check async queries used within a wrapper previously detected
           if (!isPromiseHandled(node)) {
-            return context.report({
+            context.report({
               node,
               messageId: 'asyncUtilWrapper',
               data: { name: node.name },

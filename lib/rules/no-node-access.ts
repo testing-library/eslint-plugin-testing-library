@@ -37,13 +37,16 @@ export default createTestingLibraryRule<Options, MessageIds>({
         return;
       }
 
-      ASTUtils.isIdentifier(node.property) &&
-        ALL_RETURNING_NODES.includes(node.property.name) &&
+      if (
+        ASTUtils.isIdentifier(node.property) &&
+        ALL_RETURNING_NODES.includes(node.property.name)
+      ) {
         context.report({
           node,
           loc: node.property.loc.start,
           messageId: 'noNodeAccess',
         });
+      }
     }
 
     return {

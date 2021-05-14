@@ -17,7 +17,7 @@ type Options = [
 ];
 
 export function findClosestBeforeHook(
-  node: TSESTree.Node,
+  node: TSESTree.Node | null,
   testingFrameworkSetupHooksToFilter: string[]
 ): TSESTree.Identifier | null {
   if (node === null) {

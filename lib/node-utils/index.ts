@@ -61,7 +61,7 @@ const ValidLeftHandSideExpressions = [
  * @param shouldRestrictInnerScope - If true, CallExpression must belong to innermost scope of given node
  */
 export function findClosestCallExpressionNode(
-  node: TSESTree.Node,
+  node: TSESTree.Node | null | undefined,
   shouldRestrictInnerScope = false
 ): TSESTree.CallExpression | null {
   if (isCallExpression(node)) {
@@ -240,6 +240,7 @@ export function getVariableReferences(
 ): TSESLint.Scope.Reference[] {
   return (
     (ASTUtils.isVariableDeclarator(node) &&
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       context.getDeclaredVariables(node)[0]?.references?.slice(1)) ||
     []
   );
@@ -419,6 +420,8 @@ export function getImportModuleName(
   ) {
     return node.arguments[0].value;
   }
+
+  return undefined;
 }
 
 type AssertNodeInfo = {
@@ -501,7 +504,7 @@ export function getInnermostReturningFunction(
   const functionScope = getInnermostFunctionScope(context, node);
 
   if (!functionScope) {
-    return;
+    return undefined;
   }
 
   const returnStatementNode = getFunctionReturnStatementNode(
@@ -509,7 +512,7 @@ export function getInnermostReturningFunction(
   );
 
   if (!returnStatementNode) {
-    return;
+    return undefined;
   }
 
   const returnStatementIdentifier = getDeepestIdentifierNode(
@@ -517,7 +520,7 @@ export function getInnermostReturningFunction(
   );
 
   if (returnStatementIdentifier?.name !== node.name) {
-    return;
+    return undefined;
   }
 
   return functionScope.block;

@@ -34,7 +34,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
     schema: [],
   },
   defaultOptions: [],
-  create: function (context, _, helpers) {
+  create(context, _, helpers) {
     function isCallerWaitFor(
       node:
         | TSESTree.AssignmentExpression
