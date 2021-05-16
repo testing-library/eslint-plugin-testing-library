@@ -32,6 +32,12 @@
     "@typescript-eslint/no-use-before-define": "off",
 
     // ESLint
-    "max-lines-per-function": "off"
+    "max-lines-per-function": "off",
+    "no-restricted-imports": [
+      "error",
+      {
+        "patterns": ["@typescript-eslint/experimental-utils/dist/*"]
+      }
+    ]
   }
 }

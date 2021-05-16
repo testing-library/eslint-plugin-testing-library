@@ -5,7 +5,6 @@ import {
   TSESLintScope,
   TSESTree,
 } from '@typescript-eslint/experimental-utils';
-import { RuleContext } from '@typescript-eslint/experimental-utils/dist/ts-eslint';
 
 import {
   isArrayExpression,
@@ -235,7 +234,7 @@ export function isPromiseHandled(nodeIdentifier: TSESTree.Identifier): boolean {
 }
 
 export function getVariableReferences(
-  context: RuleContext<string, []>,
+  context: TSESLint.RuleContext<string, []>,
   node: TSESTree.Node
 ): TSESLint.Scope.Reference[] {
   return (
@@ -254,7 +253,7 @@ interface InnermostFunctionScope extends TSESLintScope.FunctionScope {
 }
 
 export function getInnermostFunctionScope(
-  context: RuleContext<string, unknown[]>,
+  context: TSESLint.RuleContext<string, unknown[]>,
   asyncQueryNode: TSESTree.Identifier
 ): InnermostFunctionScope | null {
   const innermostScope = ASTUtils.getInnermostScope(
@@ -494,7 +493,7 @@ export function hasClosestExpectResolvesRejects(node: TSESTree.Node): boolean {
  * Gets the Function node which returns the given Identifier.
  */
 export function getInnermostReturningFunction(
-  context: RuleContext<string, unknown[]>,
+  context: TSESLint.RuleContext<string, unknown[]>,
   node: TSESTree.Identifier
 ):
   | TSESTree.ArrowFunctionExpression

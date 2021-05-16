@@ -1,4 +1,5 @@
-import { TestCaseError } from '@typescript-eslint/experimental-utils/dist/ts-eslint';
+import { TSESLint } from '@typescript-eslint/experimental-utils';
+
 import { createRuleTester } from '../test-utils';
 import rule, { RULE_NAME } from '../../../lib/rules/await-async-query';
 import {
@@ -27,13 +28,15 @@ function createTestCode({ code, isAsync = true }: TestCode) {
 interface TestCaseParams {
   isAsync?: boolean;
   combinations?: string[];
-  errors?: TestCaseError<'asyncQueryWrapper' | 'awaitAsyncQuery'>[];
+  errors?: TSESLint.TestCaseError<'asyncQueryWrapper' | 'awaitAsyncQuery'>[];
 }
 
 function createTestCase(
   getTest: (
     query: string
-  ) => string | { code: string; errors?: TestCaseError<'awaitAsyncQuery'>[] },
+  ) =>
+    | string
+    | { code: string; errors?: TSESLint.TestCaseError<'awaitAsyncQuery'>[] },
   {
     combinations = ALL_ASYNC_COMBINATIONS_TO_TEST,
     isAsync,
