@@ -1,4 +1,6 @@
 import { ASTUtils, TSESTree } from '@typescript-eslint/experimental-utils';
+
+import { createTestingLibraryRule } from '../create-testing-library-rule';
 import {
   findClosestCallExpressionNode,
   getDeepestIdentifierNode,
@@ -7,7 +9,6 @@ import {
   getVariableReferences,
   isPromiseHandled,
 } from '../node-utils';
-import { createTestingLibraryRule } from '../create-testing-library-rule';
 
 export const RULE_NAME = 'await-async-query';
 export type MessageIds = 'asyncQueryWrapper' | 'awaitAsyncQuery';

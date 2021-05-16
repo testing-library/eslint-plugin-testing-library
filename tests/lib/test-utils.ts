@@ -1,4 +1,5 @@
 import { resolve } from 'path';
+
 import { TSESLint } from '@typescript-eslint/experimental-utils';
 
 const DEFAULT_TEST_CASE_CONFIG = {

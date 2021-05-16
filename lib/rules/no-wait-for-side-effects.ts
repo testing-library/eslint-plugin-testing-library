@@ -1,4 +1,6 @@
 import { TSESTree } from '@typescript-eslint/experimental-utils';
+
+import { createTestingLibraryRule } from '../create-testing-library-rule';
 import {
   getPropertyIdentifierNode,
   isExpressionStatement,
@@ -7,7 +9,6 @@ import {
   isCallExpression,
   isSequenceExpression,
 } from '../node-utils';
-import { createTestingLibraryRule } from '../create-testing-library-rule';
 
 export const RULE_NAME = 'no-wait-for-side-effects';
 export type MessageIds = 'noSideEffectsWaitFor';

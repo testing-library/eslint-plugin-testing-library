@@ -1,9 +1,9 @@
-import { createRuleTester } from '../test-utils';
 import rule, { RULE_NAME } from '../../../lib/rules/no-await-sync-query';
 import {
   SYNC_QUERIES_COMBINATIONS,
   ASYNC_QUERIES_COMBINATIONS,
 } from '../../../lib/utils';
+import { createRuleTester } from '../test-utils';
 
 const ruleTester = createRuleTester();
 

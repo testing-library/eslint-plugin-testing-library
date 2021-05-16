@@ -1,7 +1,7 @@
-import { createRuleTester } from '../test-utils';
 import rule, {
   RULE_NAME,
 } from '../../../lib/rules/render-result-naming-convention';
+import { createRuleTester } from '../test-utils';
 
 const ruleTester = createRuleTester();
 

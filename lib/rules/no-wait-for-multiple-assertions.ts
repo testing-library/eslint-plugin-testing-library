@@ -1,9 +1,10 @@
 import { TSESTree } from '@typescript-eslint/experimental-utils';
+
+import { createTestingLibraryRule } from '../create-testing-library-rule';
 import {
   getPropertyIdentifierNode,
   isExpressionStatement,
 } from '../node-utils';
-import { createTestingLibraryRule } from '../create-testing-library-rule';
 
 export const RULE_NAME = 'no-wait-for-multiple-assertions';
 export type MessageIds = 'noWaitForMultipleAssertion';

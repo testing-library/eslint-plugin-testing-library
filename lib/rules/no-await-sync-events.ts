@@ -1,4 +1,6 @@
 import { ASTUtils, TSESTree } from '@typescript-eslint/experimental-utils';
+
+import { createTestingLibraryRule } from '../create-testing-library-rule';
 import {
   getDeepestIdentifierNode,
   getPropertyIdentifierNode,
@@ -6,7 +8,6 @@ import {
   isObjectExpression,
   isProperty,
 } from '../node-utils';
-import { createTestingLibraryRule } from '../create-testing-library-rule';
 
 export const RULE_NAME = 'no-await-sync-events';
 export type MessageIds = 'noAwaitSyncEvents';

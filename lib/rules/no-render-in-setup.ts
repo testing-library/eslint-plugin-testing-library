@@ -1,12 +1,13 @@
 import { ASTUtils, TSESTree } from '@typescript-eslint/experimental-utils';
-import { TESTING_FRAMEWORK_SETUP_HOOKS } from '../utils';
+
+import { createTestingLibraryRule } from '../create-testing-library-rule';
 import {
   getDeepestIdentifierNode,
   getFunctionName,
   getInnermostReturningFunction,
   isCallExpression,
 } from '../node-utils';
-import { createTestingLibraryRule } from '../create-testing-library-rule';
+import { TESTING_FRAMEWORK_SETUP_HOOKS } from '../utils';
 
 export const RULE_NAME = 'no-render-in-setup';
 export type MessageIds = 'noRenderInSetup';

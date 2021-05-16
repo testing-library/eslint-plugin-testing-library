@@ -1,6 +1,5 @@
 import { TSESLint } from '@typescript-eslint/experimental-utils';
 
-import { createRuleTester } from '../test-utils';
 import rule, { RULE_NAME } from '../../../lib/rules/await-async-query';
 import {
   ASYNC_QUERIES_COMBINATIONS,
@@ -8,6 +7,7 @@ import {
   combineQueries,
   SYNC_QUERIES_COMBINATIONS,
 } from '../../../lib/utils';
+import { createRuleTester } from '../test-utils';
 
 const ruleTester = createRuleTester();
 

@@ -1,4 +1,5 @@
 import { ASTUtils, TSESTree } from '@typescript-eslint/experimental-utils';
+
 import { createTestingLibraryRule } from '../create-testing-library-rule';
 import {
   getDeepestIdentifierNode,

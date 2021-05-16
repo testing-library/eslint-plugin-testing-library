@@ -1,4 +1,5 @@
 import { TSESTree } from '@typescript-eslint/experimental-utils';
+
 import { createTestingLibraryRule } from '../create-testing-library-rule';
 import { isCallExpression } from '../node-utils';
 

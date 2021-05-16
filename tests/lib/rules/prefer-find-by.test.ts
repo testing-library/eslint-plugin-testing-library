@@ -1,15 +1,16 @@
 import { TSESLint } from '@typescript-eslint/experimental-utils';
-import { createRuleTester } from '../test-utils';
-import {
-  ASYNC_QUERIES_COMBINATIONS,
-  SYNC_QUERIES_COMBINATIONS,
-} from '../../../lib/utils';
+
 import rule, {
   WAIT_METHODS,
   RULE_NAME,
   getFindByQueryVariant,
   MessageIds,
 } from '../../../lib/rules/prefer-find-by';
+import {
+  ASYNC_QUERIES_COMBINATIONS,
+  SYNC_QUERIES_COMBINATIONS,
+} from '../../../lib/utils';
+import { createRuleTester } from '../test-utils';
 
 const ruleTester = createRuleTester();
 

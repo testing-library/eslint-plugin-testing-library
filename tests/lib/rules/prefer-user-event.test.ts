@@ -1,6 +1,5 @@
 import { TSESLint } from '@typescript-eslint/experimental-utils';
-import { createRuleTester } from '../test-utils';
-import { LIBRARY_MODULES } from '../../../lib/utils';
+
 import rule, {
   MAPPING_TO_USER_EVENT,
   MessageIds,
@@ -8,6 +7,8 @@ import rule, {
   RULE_NAME,
   UserEventMethods,
 } from '../../../lib/rules/prefer-user-event';
+import { LIBRARY_MODULES } from '../../../lib/utils';
+import { createRuleTester } from '../test-utils';
 
 function createScenarioWithImport<
   T extends

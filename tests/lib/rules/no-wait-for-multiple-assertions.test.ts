@@ -1,7 +1,7 @@
-import { createRuleTester } from '../test-utils';
 import rule, {
   RULE_NAME,
 } from '../../../lib/rules/no-wait-for-multiple-assertions';
+import { createRuleTester } from '../test-utils';
 
 const ruleTester = createRuleTester();
 

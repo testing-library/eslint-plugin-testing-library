@@ -5,7 +5,6 @@ import rule, {
   Options,
   RULE_NAME,
 } from '../../../lib/rules/consistent-data-testid';
-
 import { createRuleTester } from '../test-utils';
 
 const ruleTester = createRuleTester();

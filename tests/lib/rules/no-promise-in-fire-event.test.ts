@@ -1,5 +1,5 @@
-import { createRuleTester } from '../test-utils';
 import rule, { RULE_NAME } from '../../../lib/rules/no-promise-in-fire-event';
+import { createRuleTester } from '../test-utils';
 
 const ruleTester = createRuleTester();
 

@@ -1,6 +1,7 @@
 import { TSESTree } from '@typescript-eslint/experimental-utils';
-import { findClosestCallNode, isMemberExpression } from '../node-utils';
+
 import { createTestingLibraryRule } from '../create-testing-library-rule';
+import { findClosestCallNode, isMemberExpression } from '../node-utils';
 
 export const RULE_NAME = 'prefer-presence-queries';
 export type MessageIds = 'wrongAbsenceQuery' | 'wrongPresenceQuery';

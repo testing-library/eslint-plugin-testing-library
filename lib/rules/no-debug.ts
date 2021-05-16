@@ -3,6 +3,8 @@ import {
   TSESTree,
   JSONSchema,
 } from '@typescript-eslint/experimental-utils';
+
+import { createTestingLibraryRule } from '../create-testing-library-rule';
 import {
   getDeepestIdentifierNode,
   getFunctionName,
@@ -14,7 +16,6 @@ import {
   isProperty,
 } from '../node-utils';
 import { DEBUG_UTILS } from '../utils';
-import { createTestingLibraryRule } from '../create-testing-library-rule';
 
 type DebugUtilsToCheckFor = Partial<
   Record<typeof DEBUG_UTILS[number], boolean>

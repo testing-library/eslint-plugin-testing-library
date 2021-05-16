@@ -38,6 +38,22 @@
       {
         "patterns": ["@typescript-eslint/experimental-utils/dist/*"]
       }
+    ],
+
+    // Import
+    "import/order": [
+      "warn",
+      {
+        "groups": ["builtin", "external", "parent", "sibling", "index"],
+        "pathGroups": [
+          { "pattern": "@typescript-eslint/**", "group": "external" }
+        ],
+        "newlines-between": "always",
+        "alphabetize": {
+          "order": "asc",
+          "caseInsensitive": false
+        }
+      }
     ]
   }
 }

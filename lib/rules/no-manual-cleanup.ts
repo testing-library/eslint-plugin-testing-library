@@ -3,6 +3,8 @@ import {
   TSESTree,
   TSESLint,
 } from '@typescript-eslint/experimental-utils';
+
+import { createTestingLibraryRule } from '../create-testing-library-rule';
 import {
   getVariableReferences,
   isImportDefaultSpecifier,
@@ -13,7 +15,6 @@ import {
   ImportModuleNode,
   isImportDeclaration,
 } from '../node-utils';
-import { createTestingLibraryRule } from '../create-testing-library-rule';
 
 export const RULE_NAME = 'no-manual-cleanup';
 export type MessageIds = 'noManualCleanup';

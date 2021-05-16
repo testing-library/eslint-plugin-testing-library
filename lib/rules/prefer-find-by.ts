@@ -3,6 +3,8 @@ import {
   ASTUtils,
   TSESLint,
 } from '@typescript-eslint/experimental-utils';
+
+import { createTestingLibraryRule } from '../create-testing-library-rule';
 import {
   isArrowFunctionExpression,
   isCallExpression,
@@ -10,7 +12,6 @@ import {
   isObjectPattern,
   isProperty,
 } from '../node-utils';
-import { createTestingLibraryRule } from '../create-testing-library-rule';
 
 export const RULE_NAME = 'prefer-find-by';
 export type MessageIds = 'preferFindBy';

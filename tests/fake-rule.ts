@@ -3,6 +3,7 @@
  * detectTestingLibraryUtils properly
  */
 import { TSESTree } from '@typescript-eslint/experimental-utils';
+
 import { createTestingLibraryRule } from '../lib/create-testing-library-rule';
 
 export const RULE_NAME = 'fake-rule';

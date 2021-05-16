@@ -1,6 +1,7 @@
 import { TSESTree, ASTUtils } from '@typescript-eslint/experimental-utils';
-import { ALL_RETURNING_NODES } from '../utils';
+
 import { createTestingLibraryRule } from '../create-testing-library-rule';
+import { ALL_RETURNING_NODES } from '../utils';
 
 export const RULE_NAME = 'no-node-access';
 export type MessageIds = 'noNodeAccess';

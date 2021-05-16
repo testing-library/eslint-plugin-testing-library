@@ -1,10 +1,11 @@
 import { TSESLint } from '@typescript-eslint/experimental-utils';
-import { createRuleTester } from '../test-utils';
+
 import rule, {
   RULE_NAME,
   MessageIds,
 } from '../../../lib/rules/prefer-presence-queries';
 import { ALL_QUERIES_METHODS } from '../../../lib/utils';
+import { createRuleTester } from '../test-utils';
 
 const ruleTester = createRuleTester();
 

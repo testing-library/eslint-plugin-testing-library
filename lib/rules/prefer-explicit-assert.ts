@@ -1,8 +1,8 @@
 import { TSESTree, ASTUtils } from '@typescript-eslint/experimental-utils';
-import { PRESENCE_MATCHERS, ABSENCE_MATCHERS } from '../utils';
-import { findClosestCallNode, isMemberExpression } from '../node-utils';
 
 import { createTestingLibraryRule } from '../create-testing-library-rule';
+import { findClosestCallNode, isMemberExpression } from '../node-utils';
+import { PRESENCE_MATCHERS, ABSENCE_MATCHERS } from '../utils';
 
 export const RULE_NAME = 'prefer-explicit-assert';
 export type MessageIds =
