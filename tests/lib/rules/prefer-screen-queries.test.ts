@@ -413,5 +413,43 @@ ruleTester.run(RULE_NAME, rule, {
           ],
         } as const)
     ),
+    {
+      code: ` // issue #367
+      import { render } from '@testing-library/react';
+      
+      function setup() {
+        return render(<div />);
+      }
+      
+      it('undetected 1', () => {
+        const { getByText } = setup();
+        getByText('foo')).toBeInTheDocument();
+      });
+      
+      it('undetected 2', () => {
+        const results = setup();
+        const { getByText } = results;
+        expect(getByText('foo')).toBe('foo');
+      });
+      `,
+      errors: [
+        {
+          messageId: 'preferScreenQueries',
+          line: 10,
+          column: 16,
+          data: {
+            name: 'getByText',
+          },
+        },
+        {
+          messageId: 'preferScreenQueries',
+          line: 16,
+          column: 16,
+          data: {
+            name: 'getByText',
+          },
+        },
+      ],
+    },
   ],
 });
