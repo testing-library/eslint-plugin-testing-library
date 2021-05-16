@@ -84,7 +84,8 @@ export default createTestingLibraryRule<Options, MessageIds>({
         }
 
         for (const definition of nodeVariable.defs) {
-          const variableDeclarator = definition.node as TSESTree.VariableDeclarator;
+          const variableDeclarator =
+            definition.node as TSESTree.VariableDeclarator;
           if (variableDeclarator.init) {
             checkSuspiciousNode(variableDeclarator.init, node);
           }

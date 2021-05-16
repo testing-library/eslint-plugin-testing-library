@@ -299,9 +299,8 @@ ruleTester.run(RULE_NAME, rule, {
               line: 3,
               column: 9,
               data: {
-                userEventMethods: formatUserEventMethodsMessage(
-                  fireEventMethod
-                ),
+                userEventMethods:
+                  formatUserEventMethodsMessage(fireEventMethod),
                 fireEventMethod,
               },
             },
@@ -324,9 +323,8 @@ ruleTester.run(RULE_NAME, rule, {
               line: 3,
               column: 9,
               data: {
-                userEventMethods: formatUserEventMethodsMessage(
-                  fireEventMethod
-                ),
+                userEventMethods:
+                  formatUserEventMethodsMessage(fireEventMethod),
                 fireEventMethod,
               },
             },
@@ -348,9 +346,8 @@ ruleTester.run(RULE_NAME, rule, {
               line: 5,
               column: 9,
               data: {
-                userEventMethods: formatUserEventMethodsMessage(
-                  fireEventMethod
-                ),
+                userEventMethods:
+                  formatUserEventMethodsMessage(fireEventMethod),
                 fireEventMethod,
               },
             },
@@ -373,9 +370,8 @@ ruleTester.run(RULE_NAME, rule, {
               line: 3,
               column: 9,
               data: {
-                userEventMethods: formatUserEventMethodsMessage(
-                  fireEventMethod
-                ),
+                userEventMethods:
+                  formatUserEventMethodsMessage(fireEventMethod),
                 fireEventMethod,
               },
             },

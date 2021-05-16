@@ -92,9 +92,10 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
     return {
       CallExpression(node) {
-        const testingFrameworkSetupHooksToFilter = TESTING_FRAMEWORK_SETUP_HOOKS.filter(
-          (hook) => hook !== allowTestingFrameworkSetupHook
-        );
+        const testingFrameworkSetupHooksToFilter =
+          TESTING_FRAMEWORK_SETUP_HOOKS.filter(
+            (hook) => hook !== allowTestingFrameworkSetupHook
+          );
         const callExpressionIdentifier = getDeepestIdentifierNode(node);
 
         if (!callExpressionIdentifier) {

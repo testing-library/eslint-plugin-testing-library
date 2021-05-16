@@ -47,9 +47,8 @@ export default createTestingLibraryRule<Options, MessageIds>({
         return false;
       }
       const callExpressionNode = node.parent.parent as TSESTree.CallExpression;
-      const callExpressionIdentifier = getPropertyIdentifierNode(
-        callExpressionNode
-      );
+      const callExpressionIdentifier =
+        getPropertyIdentifierNode(callExpressionNode);
 
       return (
         !!callExpressionIdentifier &&
@@ -184,10 +183,14 @@ export default createTestingLibraryRule<Options, MessageIds>({
     }
 
     return {
-      'CallExpression > ArrowFunctionExpression > BlockStatement': reportSideEffects,
-      'CallExpression > ArrowFunctionExpression > CallExpression': reportImplicitReturnSideEffect,
-      'CallExpression > ArrowFunctionExpression > AssignmentExpression': reportImplicitReturnSideEffect,
-      'CallExpression > ArrowFunctionExpression > SequenceExpression': reportImplicitReturnSideEffect,
+      'CallExpression > ArrowFunctionExpression > BlockStatement':
+        reportSideEffects,
+      'CallExpression > ArrowFunctionExpression > CallExpression':
+        reportImplicitReturnSideEffect,
+      'CallExpression > ArrowFunctionExpression > AssignmentExpression':
+        reportImplicitReturnSideEffect,
+      'CallExpression > ArrowFunctionExpression > SequenceExpression':
+        reportImplicitReturnSideEffect,
       'CallExpression > FunctionExpression > BlockStatement': reportSideEffects,
     };
   },

@@ -472,9 +472,8 @@ export function detectTestingLibraryUtils<
      * Determines whether a given node is fireEvent method or not
      */
     const isFireEventMethod: IsFireEventMethodFn = (node) => {
-      const fireEventUtil = findImportedTestingLibraryUtilSpecifier(
-        FIRE_EVENT_NAME
-      );
+      const fireEventUtil =
+        findImportedTestingLibraryUtilSpecifier(FIRE_EVENT_NAME);
       let fireEventUtilName: string | undefined;
 
       if (fireEventUtil) {
@@ -655,9 +654,8 @@ export function detectTestingLibraryUtils<
           return false;
         }
         const referenceNode = getReferenceNode(node);
-        const referenceNodeIdentifier = getPropertyIdentifierNode(
-          referenceNode
-        );
+        const referenceNodeIdentifier =
+          getPropertyIdentifierNode(referenceNode);
         if (!referenceNodeIdentifier) {
           return false;
         }
@@ -759,54 +757,58 @@ export function detectTestingLibraryUtils<
     /**
      * Finds the import util specifier related to Testing Library for a given name.
      */
-    const findImportedTestingLibraryUtilSpecifier: FindImportedTestingLibraryUtilSpecifierFn = (
-      specifierName
-    ): TSESTree.Identifier | TSESTree.ImportClause | undefined => {
-      const node = getCustomModuleImportNode() ?? getTestingLibraryImportNode();
+    const findImportedTestingLibraryUtilSpecifier: FindImportedTestingLibraryUtilSpecifierFn =
+      (
+        specifierName
+      ): TSESTree.Identifier | TSESTree.ImportClause | undefined => {
+        const node =
+          getCustomModuleImportNode() ?? getTestingLibraryImportNode();
 
-      if (!node) {
-        return undefined;
-      }
+        if (!node) {
+          return undefined;
+        }
 
-      return findImportSpecifier(specifierName, node);
-    };
+        return findImportSpecifier(specifierName, node);
+      };
 
-    const findImportedUserEventSpecifier: () => TSESTree.Identifier | null = () => {
-      if (!importedUserEventLibraryNode) {
+    const findImportedUserEventSpecifier: () => TSESTree.Identifier | null =
+      () => {
+        if (!importedUserEventLibraryNode) {
+          return null;
+        }
+
+        if (isImportDeclaration(importedUserEventLibraryNode)) {
+          const userEventIdentifier =
+            importedUserEventLibraryNode.specifiers.find((specifier) =>
+              isImportDefaultSpecifier(specifier)
+            );
+
+          if (userEventIdentifier) {
+            return userEventIdentifier.local;
+          }
+        } else {
+          if (
+            !ASTUtils.isVariableDeclarator(importedUserEventLibraryNode.parent)
+          ) {
+            return null;
+          }
+
+          const requireNode = importedUserEventLibraryNode.parent;
+          if (!ASTUtils.isIdentifier(requireNode.id)) {
+            return null;
+          }
+
+          return requireNode.id;
+        }
+
         return null;
-      }
-
-      if (isImportDeclaration(importedUserEventLibraryNode)) {
-        const userEventIdentifier = importedUserEventLibraryNode.specifiers.find(
-          (specifier) => isImportDefaultSpecifier(specifier)
-        );
-
-        if (userEventIdentifier) {
-          return userEventIdentifier.local;
-        }
-      } else {
-        if (
-          !ASTUtils.isVariableDeclarator(importedUserEventLibraryNode.parent)
-        ) {
-          return null;
-        }
-
-        const requireNode = importedUserEventLibraryNode.parent;
-        if (!ASTUtils.isIdentifier(requireNode.id)) {
-          return null;
-        }
-
-        return requireNode.id;
-      }
-
-      return null;
-    };
+      };
 
     const getTestingLibraryImportedUtilSpecifier = (
       node: TSESTree.Identifier | TSESTree.MemberExpression
     ): TSESTree.Identifier | TSESTree.ImportClause | undefined => {
-      const identifierName: string | undefined = getPropertyIdentifierNode(node)
-        ?.name;
+      const identifierName: string | undefined =
+        getPropertyIdentifierNode(node)?.name;
 
       if (!identifierName) {
         return undefined;
@@ -848,9 +850,8 @@ export function detectTestingLibraryUtils<
           return importNode.parent;
         }
 
-        const variableDeclarator = findClosestVariableDeclaratorNode(
-          importNode
-        );
+        const variableDeclarator =
+          findClosestVariableDeclaratorNode(importNode);
 
         if (isCallExpression(variableDeclarator?.init)) {
           return variableDeclarator?.init;
@@ -868,8 +869,8 @@ export function detectTestingLibraryUtils<
         return false;
       }
 
-      const identifierName: string | undefined = getPropertyIdentifierNode(node)
-        ?.name;
+      const identifierName: string | undefined =
+        getPropertyIdentifierNode(node)?.name;
 
       if (!identifierName) {
         return false;

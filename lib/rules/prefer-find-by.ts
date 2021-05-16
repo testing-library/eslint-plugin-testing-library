@@ -96,13 +96,8 @@ export default createTestingLibraryRule<Options, MessageIds>({
         fix: TSESLint.ReportFixFunction;
       }
     ) {
-      const {
-        queryMethod,
-        queryVariant,
-        prevQuery,
-        waitForMethodName,
-        fix,
-      } = replacementParams;
+      const { queryMethod, queryVariant, prevQuery, waitForMethodName, fix } =
+        replacementParams;
       context.report({
         node,
         messageId: 'preferFindBy',
@@ -156,8 +151,10 @@ export default createTestingLibraryRule<Options, MessageIds>({
             prevQuery: fullQueryMethod,
             waitForMethodName,
             fix(fixer) {
-              const property = ((argument.body as TSESTree.CallExpression)
-                .callee as TSESTree.MemberExpression).property;
+              const property = (
+                (argument.body as TSESTree.CallExpression)
+                  .callee as TSESTree.MemberExpression
+              ).property;
               if (helpers.isCustomQuery(property as TSESTree.Identifier)) {
                 return null;
               }

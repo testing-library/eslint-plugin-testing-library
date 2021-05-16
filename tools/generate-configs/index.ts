@@ -14,8 +14,13 @@ const getRecommendedRulesForTestingFramework = (
   framework: SupportedTestingFramework
 ): LinterConfigRules =>
   Object.entries(rules)
-    .filter(([_, { meta: { docs } }]) =>
-      Boolean(docs.recommendedConfig[framework])
+    .filter(
+      ([
+        _,
+        {
+          meta: { docs },
+        },
+      ]) => Boolean(docs.recommendedConfig[framework])
     )
     .reduce((allRules, [ruleName, { meta }]) => {
       const name = `${RULE_NAME_PREFIX}${ruleName}`;

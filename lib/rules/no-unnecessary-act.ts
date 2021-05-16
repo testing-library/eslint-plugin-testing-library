@@ -134,9 +134,12 @@ export default createTestingLibraryRule<[], MessageIds>({
     }
 
     return {
-      'CallExpression > ArrowFunctionExpression > BlockStatement': checkNoUnnecessaryActFromBlockStatement,
-      'CallExpression > FunctionExpression > BlockStatement': checkNoUnnecessaryActFromBlockStatement,
-      'CallExpression > ArrowFunctionExpression > CallExpression': checkNoUnnecessaryActFromImplicitReturn,
+      'CallExpression > ArrowFunctionExpression > BlockStatement':
+        checkNoUnnecessaryActFromBlockStatement,
+      'CallExpression > FunctionExpression > BlockStatement':
+        checkNoUnnecessaryActFromBlockStatement,
+      'CallExpression > ArrowFunctionExpression > CallExpression':
+        checkNoUnnecessaryActFromImplicitReturn,
     };
   },
 });

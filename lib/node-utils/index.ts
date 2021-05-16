@@ -265,7 +265,7 @@ export function getInnermostFunctionScope(
     innermostScope.type === 'function' &&
     ASTUtils.isFunction(innermostScope.block)
   ) {
-    return (innermostScope as unknown) as InnermostFunctionScope;
+    return innermostScope as unknown as InnermostFunctionScope;
   }
 
   return null;
@@ -514,9 +514,8 @@ export function getInnermostReturningFunction(
     return undefined;
   }
 
-  const returnStatementIdentifier = getDeepestIdentifierNode(
-    returnStatementNode
-  );
+  const returnStatementIdentifier =
+    getDeepestIdentifierNode(returnStatementNode);
 
   if (returnStatementIdentifier?.name !== node.name) {
     return undefined;

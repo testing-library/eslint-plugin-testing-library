@@ -79,7 +79,8 @@ export default createTestingLibraryRule<Options, MessageIds>({
             const expectCallNode = findClosestCallNode(node, 'expect');
             if (!expectCallNode) return;
 
-            const expectStatement = expectCallNode.parent as TSESTree.MemberExpression;
+            const expectStatement =
+              expectCallNode.parent as TSESTree.MemberExpression;
             const property = expectStatement.property as TSESTree.Identifier;
             let matcher = property.name;
             let isNegatedMatcher = false;

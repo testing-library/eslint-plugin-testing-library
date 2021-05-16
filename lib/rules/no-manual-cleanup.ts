@@ -20,7 +20,8 @@ export const RULE_NAME = 'no-manual-cleanup';
 export type MessageIds = 'noManualCleanup';
 type Options = [];
 
-const CLEANUP_LIBRARY_REGEXP = /(@testing-library\/(preact|react|svelte|vue))|@marko\/testing-library/;
+const CLEANUP_LIBRARY_REGEXP =
+  /(@testing-library\/(preact|react|svelte|vue))|@marko\/testing-library/;
 
 export default createTestingLibraryRule<Options, MessageIds>({
   name: RULE_NAME,

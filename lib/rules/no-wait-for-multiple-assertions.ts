@@ -54,9 +54,8 @@ export default createTestingLibraryRule<Options, MessageIds>({
         return;
       }
       const callExpressionNode = node.parent.parent as TSESTree.CallExpression;
-      const callExpressionIdentifier = getPropertyIdentifierNode(
-        callExpressionNode
-      );
+      const callExpressionIdentifier =
+        getPropertyIdentifierNode(callExpressionNode);
 
       if (!callExpressionIdentifier) {
         return;
@@ -83,8 +82,10 @@ export default createTestingLibraryRule<Options, MessageIds>({
     }
 
     return {
-      'CallExpression > ArrowFunctionExpression > BlockStatement': reportMultipleAssertion,
-      'CallExpression > FunctionExpression > BlockStatement': reportMultipleAssertion,
+      'CallExpression > ArrowFunctionExpression > BlockStatement':
+        reportMultipleAssertion,
+      'CallExpression > FunctionExpression > BlockStatement':
+        reportMultipleAssertion,
     };
   },
 });

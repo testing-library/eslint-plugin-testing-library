@@ -191,7 +191,8 @@ export default createTestingLibraryRule<Options, MessageIds>({
           helpers.getCustomModuleImportNode() ??
           helpers.getTestingLibraryImportNode();
         if (isCallExpression(testingLibraryNode)) {
-          const parent = testingLibraryNode.parent as TSESTree.VariableDeclarator;
+          const parent =
+            testingLibraryNode.parent as TSESTree.VariableDeclarator;
           if (!isObjectPattern(parent.id)) {
             // if there is no destructuring, there is nothing to replace
             return;

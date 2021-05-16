@@ -33,4 +33,5 @@ export const SUPPORTED_TESTING_FRAMEWORKS = [
   'react',
   'vue',
 ] as const;
-export type SupportedTestingFramework = typeof SUPPORTED_TESTING_FRAMEWORKS[number];
+export type SupportedTestingFramework =
+  typeof SUPPORTED_TESTING_FRAMEWORKS[number];

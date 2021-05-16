@@ -90,9 +90,8 @@ export default createTestingLibraryRule<Options, MessageIds>({
           return;
         }
 
-        const isAllowedRenderResultName = ALLOWED_VAR_NAMES.includes(
-          renderResultName
-        );
+        const isAllowedRenderResultName =
+          ALLOWED_VAR_NAMES.includes(renderResultName);
 
         // check if return value var name is allowed
         if (isAllowedRenderResultName) {
