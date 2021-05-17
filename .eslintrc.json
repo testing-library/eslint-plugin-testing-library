@@ -45,9 +45,6 @@
       "warn",
       {
         "groups": ["builtin", "external", "parent", "sibling", "index"],
-        "pathGroups": [
-          { "pattern": "@typescript-eslint/**", "group": "external" }
-        ],
         "newlines-between": "always",
         "alphabetize": {
           "order": "asc",

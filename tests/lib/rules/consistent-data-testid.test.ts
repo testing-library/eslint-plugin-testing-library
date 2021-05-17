@@ -1,4 +1,3 @@
-import type { TSESLint } from '@typescript-eslint/experimental-utils';
 
 import rule, {
   MessageIds,
@@ -6,6 +5,8 @@ import rule, {
   RULE_NAME,
 } from '../../../lib/rules/consistent-data-testid';
 import { createRuleTester } from '../test-utils';
+
+import type { TSESLint } from '@typescript-eslint/experimental-utils';
 
 const ruleTester = createRuleTester();
 

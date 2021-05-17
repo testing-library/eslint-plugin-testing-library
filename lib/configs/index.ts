@@ -1,12 +1,13 @@
 import { join } from 'path';
 
-import type { TSESLint } from '@typescript-eslint/experimental-utils';
-
 import {
   importDefault,
   SUPPORTED_TESTING_FRAMEWORKS,
   SupportedTestingFramework,
 } from '../utils';
+
+import type { TSESLint } from '@typescript-eslint/experimental-utils';
+
 
 export type LinterConfigRules = Record<string, TSESLint.Linter.RuleEntry>;
 
