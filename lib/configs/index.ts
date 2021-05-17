@@ -8,7 +8,6 @@ import {
 
 import type { TSESLint } from '@typescript-eslint/experimental-utils';
 
-
 export type LinterConfigRules = Record<string, TSESLint.Linter.RuleEntry>;
 
 const configsDir = __dirname;

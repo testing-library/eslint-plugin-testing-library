@@ -1,4 +1,3 @@
-
 import rule, {
   MessageIds,
   Options,
