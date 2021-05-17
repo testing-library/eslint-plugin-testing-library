@@ -237,12 +237,11 @@ export function getVariableReferences(
   context: TSESLint.RuleContext<string, []>,
   node: TSESTree.Node
 ): TSESLint.Scope.Reference[] {
-  return (
-    (ASTUtils.isVariableDeclarator(node) &&
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-      context.getDeclaredVariables(node)[0]?.references?.slice(1)) ||
-    []
-  );
+  if (ASTUtils.isVariableDeclarator(node)) {
+    return context.getDeclaredVariables(node)[0]?.references?.slice(1);
+  }
+
+  return [];
 }
 
 interface InnermostFunctionScope extends TSESLintScope.FunctionScope {
