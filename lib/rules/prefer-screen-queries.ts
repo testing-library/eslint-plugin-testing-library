@@ -3,6 +3,8 @@ import { ASTUtils, TSESTree } from '@typescript-eslint/experimental-utils';
 import { createTestingLibraryRule } from '../create-testing-library-rule';
 import {
   getDeepestIdentifierNode,
+  getFunctionName,
+  getInnermostReturningFunction,
   isCallExpression,
   isMemberExpression,
   isObjectExpression,
@@ -55,6 +57,22 @@ export default createTestingLibraryRule<Options, MessageIds>({
   defaultOptions: [],
 
   create(context, _, helpers) {
+    const renderWrapperNames: string[] = [];
+
+    function detectRenderWrapper(node: TSESTree.Identifier): void {
+      const innerFunction = getInnermostReturningFunction(context, node);
+
+      if (innerFunction) {
+        renderWrapperNames.push(getFunctionName(innerFunction));
+      }
+    }
+
+    function isReportableRender(node: TSESTree.Identifier): boolean {
+      return (
+        helpers.isRenderUtil(node) || renderWrapperNames.includes(node.name)
+      );
+    }
+
     function reportInvalidUsage(node: TSESTree.Identifier) {
       context.report({
         node,
@@ -98,8 +116,9 @@ export default createTestingLibraryRule<Options, MessageIds>({
           return;
         }
 
-        const isComingFromValidRender = helpers.isRenderUtil(node.init.callee);
+        const isComingFromValidRender = isReportableRender(node.init.callee);
 
+        // TODO: why is saving `setup` here? that's the problem
         if (!isComingFromValidRender) {
           // save the destructured query methods as safe since they are coming
           // from render not related to TL
@@ -129,6 +148,10 @@ export default createTestingLibraryRule<Options, MessageIds>({
           return;
         }
 
+        if (helpers.isRenderUtil(identifierNode)) {
+          detectRenderWrapper(identifierNode);
+        }
+
         if (!helpers.isBuiltInQuery(identifierNode)) {
           return;
         }
@@ -139,7 +162,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
             isCallExpression(memberExpressionNode.object) &&
             ASTUtils.isIdentifier(memberExpressionNode.object.callee) &&
             memberExpressionNode.object.callee.name !== 'within' &&
-            helpers.isRenderUtil(memberExpressionNode.object.callee) &&
+            isReportableRender(memberExpressionNode.object.callee) &&
             !usesContainerOrBaseElement(memberExpressionNode.object)
           ) {
             reportInvalidUsage(identifierNode);

@@ -48,7 +48,7 @@ ruleTester.run(RULE_NAME, rule, {
       (query) => `
       import { render } from '@testing-library/react'
       import { ${query} } from 'custom-queries'
-      
+
       test("imported custom queries, since they can't be used through screen", () => {
         render(foo)
         ${query}('bar')
@@ -58,7 +58,7 @@ ruleTester.run(RULE_NAME, rule, {
     ...CUSTOM_QUERY_COMBINATIONS.map(
       (query) => `
       import { render } from '@testing-library/react'
-      
+
       test("render-returned custom queries, since they can't be used through screen", () => {
         const { ${query} } = render(foo)
         ${query}('bar')
@@ -71,7 +71,7 @@ ruleTester.run(RULE_NAME, rule, {
       },
       code: `
       import { render } from '@testing-library/react'
-      
+
       test("custom queries + custom-queries setting, since they can't be used through screen", () => {
         const { ${query} } = render(foo)
         ${query}('bar')
@@ -423,7 +423,7 @@ ruleTester.run(RULE_NAME, rule, {
       
       it('undetected 1', () => {
         const { getByText } = setup();
-        getByText('foo')).toBeInTheDocument();
+        expect(getByText('foo')).toBeInTheDocument();
       });
       
       it('undetected 2', () => {
