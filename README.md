@@ -303,6 +303,10 @@ You can avoid this by:
 
 If you think the error you are getting is not related to this at all, please [fill a new issue](https://github.com/testing-library/eslint-plugin-testing-library/issues/new/choose) with as many details as possible.
 
+## Other documentation
+
+- [Semantic Versioning Policy](/docs/semantic-versioning-policy.md)
+
 ## Contributors ✨
 
 Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
