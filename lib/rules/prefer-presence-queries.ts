@@ -1,9 +1,10 @@
 import { TSESTree } from '@typescript-eslint/experimental-utils';
-import { findClosestCallNode, isMemberExpression } from '../node-utils';
+
 import { createTestingLibraryRule } from '../create-testing-library-rule';
+import { findClosestCallNode, isMemberExpression } from '../node-utils';
 
 export const RULE_NAME = 'prefer-presence-queries';
-export type MessageIds = 'wrongPresenceQuery' | 'wrongAbsenceQuery';
+export type MessageIds = 'wrongAbsenceQuery' | 'wrongPresenceQuery';
 type Options = [];
 
 export default createTestingLibraryRule<Options, MessageIds>({
@@ -56,11 +57,9 @@ export default createTestingLibraryRule<Options, MessageIds>({
         }
 
         if (isPresenceAssert && !isPresenceQuery) {
-          return context.report({ node, messageId: 'wrongPresenceQuery' });
-        }
-
-        if (isAbsenceAssert && isPresenceQuery) {
-          return context.report({ node, messageId: 'wrongAbsenceQuery' });
+          context.report({ node, messageId: 'wrongPresenceQuery' });
+        } else if (isAbsenceAssert && isPresenceQuery) {
+          context.report({ node, messageId: 'wrongAbsenceQuery' });
         }
       },
     };

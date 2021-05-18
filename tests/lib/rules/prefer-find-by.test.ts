@@ -1,18 +1,16 @@
-import {
-  InvalidTestCase,
-  ValidTestCase,
-} from '@typescript-eslint/experimental-utils/dist/ts-eslint';
-import { createRuleTester } from '../test-utils';
-import {
-  ASYNC_QUERIES_COMBINATIONS,
-  SYNC_QUERIES_COMBINATIONS,
-} from '../../../lib/utils';
+import { TSESLint } from '@typescript-eslint/experimental-utils';
+
 import rule, {
   WAIT_METHODS,
   RULE_NAME,
   getFindByQueryVariant,
   MessageIds,
 } from '../../../lib/rules/prefer-find-by';
+import {
+  ASYNC_QUERIES_COMBINATIONS,
+  SYNC_QUERIES_COMBINATIONS,
+} from '../../../lib/utils';
+import { createRuleTester } from '../test-utils';
 
 const ruleTester = createRuleTester();
 
@@ -21,7 +19,9 @@ function buildFindByMethod(queryMethod: string) {
 }
 
 function createScenario<
-  T extends ValidTestCase<[]> | InvalidTestCase<MessageIds, []>
+  T extends
+    | TSESLint.InvalidTestCase<MessageIds, []>
+    | TSESLint.ValidTestCase<[]>
 >(callback: (waitMethod: string, queryMethod: string) => T) {
   return WAIT_METHODS.reduce(
     (acc: T[], waitMethod) =>

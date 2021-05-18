@@ -1,10 +1,11 @@
 import { ASTUtils, TSESTree } from '@typescript-eslint/experimental-utils';
+
+import { createTestingLibraryRule } from '../create-testing-library-rule';
 import {
   getPropertyIdentifierNode,
   isCallExpression,
   isEmptyFunction,
 } from '../node-utils';
-import { createTestingLibraryRule } from '../create-testing-library-rule';
 
 export const RULE_NAME = 'no-wait-for-empty-callback';
 export type MessageIds = 'noWaitForEmptyCallback';

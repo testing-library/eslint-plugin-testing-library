@@ -3,21 +3,22 @@
  * detectTestingLibraryUtils properly
  */
 import { TSESTree } from '@typescript-eslint/experimental-utils';
+
 import { createTestingLibraryRule } from '../lib/create-testing-library-rule';
 
 export const RULE_NAME = 'fake-rule';
 type Options = [];
 type MessageIds =
-  | 'fakeError'
-  | 'renderError'
+  | 'absenceAssertError'
   | 'asyncUtilError'
-  | 'getByError'
-  | 'queryByError'
-  | 'findByError'
   | 'customQueryError'
-  | 'userEventError'
+  | 'fakeError'
+  | 'findByError'
+  | 'getByError'
   | 'presenceAssertError'
-  | 'absenceAssertError';
+  | 'queryByError'
+  | 'renderError'
+  | 'userEventError';
 
 export default createTestingLibraryRule<Options, MessageIds>({
   name: RULE_NAME,
@@ -85,6 +86,8 @@ export default createTestingLibraryRule<Options, MessageIds>({
       if (helpers.isFindQueryVariant(node)) {
         return context.report({ node, messageId: 'findByError' });
       }
+
+      return undefined;
     };
 
     const reportMemberExpression = (node: TSESTree.MemberExpression) => {
@@ -95,6 +98,8 @@ export default createTestingLibraryRule<Options, MessageIds>({
       if (helpers.isAbsenceAssert(node)) {
         return context.report({ node, messageId: 'absenceAssertError' });
       }
+
+      return undefined;
     };
 
     const reportImportDeclaration = (node: TSESTree.ImportDeclaration) => {

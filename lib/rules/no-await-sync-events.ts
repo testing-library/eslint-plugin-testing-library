@@ -1,4 +1,6 @@
 import { ASTUtils, TSESTree } from '@typescript-eslint/experimental-utils';
+
+import { createTestingLibraryRule } from '../create-testing-library-rule';
 import {
   getDeepestIdentifierNode,
   getPropertyIdentifierNode,
@@ -6,7 +8,6 @@ import {
   isObjectExpression,
   isProperty,
 } from '../node-utils';
-import { createTestingLibraryRule } from '../create-testing-library-rule';
 
 export const RULE_NAME = 'no-await-sync-events';
 export type MessageIds = 'noAwaitSyncEvents';
@@ -64,12 +65,12 @@ export default createTestingLibraryRule<Options, MessageIds>({
           isObjectExpression(lastArg) &&
           lastArg.properties.some(
             (property) =>
-              (isProperty(property) &&
-                ASTUtils.isIdentifier(property.key) &&
-                property.key.name === 'delay' &&
-                isLiteral(property.value) &&
-                property.value.value) ??
-              0 > 0
+              isProperty(property) &&
+              ASTUtils.isIdentifier(property.key) &&
+              property.key.name === 'delay' &&
+              isLiteral(property.value) &&
+              !!property.value.value &&
+              property.value.value > 0
           );
 
         const simulateEventFunctionName = simulateEventFunctionIdentifier.name;

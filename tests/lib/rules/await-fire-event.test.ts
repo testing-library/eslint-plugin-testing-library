@@ -1,5 +1,5 @@
-import { createRuleTester } from '../test-utils';
 import rule, { RULE_NAME } from '../../../lib/rules/await-fire-event';
+import { createRuleTester } from '../test-utils';
 
 const ruleTester = createRuleTester();
 

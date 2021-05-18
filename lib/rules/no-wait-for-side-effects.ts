@@ -1,4 +1,6 @@
 import { TSESTree } from '@typescript-eslint/experimental-utils';
+
+import { createTestingLibraryRule } from '../create-testing-library-rule';
 import {
   getPropertyIdentifierNode,
   isExpressionStatement,
@@ -7,7 +9,6 @@ import {
   isCallExpression,
   isSequenceExpression,
 } from '../node-utils';
-import { createTestingLibraryRule } from '../create-testing-library-rule';
 
 export const RULE_NAME = 'no-wait-for-side-effects';
 export type MessageIds = 'noSideEffectsWaitFor';
@@ -34,21 +35,20 @@ export default createTestingLibraryRule<Options, MessageIds>({
     schema: [],
   },
   defaultOptions: [],
-  create: function (context, _, helpers) {
+  create(context, _, helpers) {
     function isCallerWaitFor(
       node:
+        | TSESTree.AssignmentExpression
         | TSESTree.BlockStatement
         | TSESTree.CallExpression
-        | TSESTree.AssignmentExpression
         | TSESTree.SequenceExpression
     ): boolean {
       if (!node.parent) {
         return false;
       }
       const callExpressionNode = node.parent.parent as TSESTree.CallExpression;
-      const callExpressionIdentifier = getPropertyIdentifierNode(
-        callExpressionNode
-      );
+      const callExpressionIdentifier =
+        getPropertyIdentifierNode(callExpressionNode);
 
       return (
         !!callExpressionIdentifier &&
@@ -147,8 +147,8 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
     function reportImplicitReturnSideEffect(
       node:
-        | TSESTree.CallExpression
         | TSESTree.AssignmentExpression
+        | TSESTree.CallExpression
         | TSESTree.SequenceExpression
     ) {
       if (!isCallerWaitFor(node)) {
@@ -183,10 +183,14 @@ export default createTestingLibraryRule<Options, MessageIds>({
     }
 
     return {
-      'CallExpression > ArrowFunctionExpression > BlockStatement': reportSideEffects,
-      'CallExpression > ArrowFunctionExpression > CallExpression': reportImplicitReturnSideEffect,
-      'CallExpression > ArrowFunctionExpression > AssignmentExpression': reportImplicitReturnSideEffect,
-      'CallExpression > ArrowFunctionExpression > SequenceExpression': reportImplicitReturnSideEffect,
+      'CallExpression > ArrowFunctionExpression > BlockStatement':
+        reportSideEffects,
+      'CallExpression > ArrowFunctionExpression > CallExpression':
+        reportImplicitReturnSideEffect,
+      'CallExpression > ArrowFunctionExpression > AssignmentExpression':
+        reportImplicitReturnSideEffect,
+      'CallExpression > ArrowFunctionExpression > SequenceExpression':
+        reportImplicitReturnSideEffect,
       'CallExpression > FunctionExpression > BlockStatement': reportSideEffects,
     };
   },

@@ -1,6 +1,7 @@
 import { TSESTree, ASTUtils } from '@typescript-eslint/experimental-utils';
-import { ALL_RETURNING_NODES } from '../utils';
+
 import { createTestingLibraryRule } from '../create-testing-library-rule';
+import { ALL_RETURNING_NODES } from '../utils';
 
 export const RULE_NAME = 'no-node-access';
 export type MessageIds = 'noNodeAccess';
@@ -37,18 +38,21 @@ export default createTestingLibraryRule<Options, MessageIds>({
         return;
       }
 
-      ASTUtils.isIdentifier(node.property) &&
-        ALL_RETURNING_NODES.includes(node.property.name) &&
+      if (
+        ASTUtils.isIdentifier(node.property) &&
+        ALL_RETURNING_NODES.includes(node.property.name)
+      ) {
         context.report({
-          node: node,
+          node,
           loc: node.property.loc.start,
           messageId: 'noNodeAccess',
         });
+      }
     }
 
     return {
-      ['ExpressionStatement MemberExpression']: showErrorForNodeAccess,
-      ['VariableDeclarator MemberExpression']: showErrorForNodeAccess,
+      'ExpressionStatement MemberExpression': showErrorForNodeAccess,
+      'VariableDeclarator MemberExpression': showErrorForNodeAccess,
     };
   },
 });

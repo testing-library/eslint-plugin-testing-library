@@ -1,8 +1,8 @@
 import { TSESTree, ASTUtils } from '@typescript-eslint/experimental-utils';
-import { PRESENCE_MATCHERS, ABSENCE_MATCHERS } from '../utils';
-import { findClosestCallNode, isMemberExpression } from '../node-utils';
 
 import { createTestingLibraryRule } from '../create-testing-library-rule';
+import { findClosestCallNode, isMemberExpression } from '../node-utils';
+import { PRESENCE_MATCHERS, ABSENCE_MATCHERS } from '../utils';
 
 export const RULE_NAME = 'prefer-explicit-assert';
 export type MessageIds =
@@ -15,7 +15,7 @@ type Options = [
 ];
 
 const isAtTopLevel = (node: TSESTree.Node) =>
-  !!node?.parent?.parent && node.parent.parent.type === 'ExpressionStatement';
+  !!node.parent?.parent && node.parent.parent.type === 'ExpressionStatement';
 
 export default createTestingLibraryRule<Options, MessageIds>({
   name: RULE_NAME,
@@ -79,7 +79,8 @@ export default createTestingLibraryRule<Options, MessageIds>({
             const expectCallNode = findClosestCallNode(node, 'expect');
             if (!expectCallNode) return;
 
-            const expectStatement = expectCallNode.parent as TSESTree.MemberExpression;
+            const expectStatement =
+              expectCallNode.parent as TSESTree.MemberExpression;
             const property = expectStatement.property as TSESTree.Identifier;
             let matcher = property.name;
             let isNegatedMatcher = false;

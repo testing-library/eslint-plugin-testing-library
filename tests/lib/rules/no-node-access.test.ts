@@ -1,5 +1,5 @@
-import { createRuleTester } from '../test-utils';
 import rule, { RULE_NAME } from '../../../lib/rules/no-node-access';
+import { createRuleTester } from '../test-utils';
 
 const ruleTester = createRuleTester();
 

@@ -24,6 +24,7 @@ export function createTestingLibraryRule<
   detectionOptions?: Partial<DetectionOptions>;
   create: EnhancedRuleCreate<TOptions, TMessageIds, TRuleListener>;
 }>): TSESLint.RuleModule<TMessageIds, TOptions> {
+  // eslint-disable-next-line @babel/new-cap
   return ESLintUtils.RuleCreator(getDocsUrl)({
     ...remainingConfig,
     create: detectTestingLibraryUtils<TOptions, TMessageIds, TRuleListener>(

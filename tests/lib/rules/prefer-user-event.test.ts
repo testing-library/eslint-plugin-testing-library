@@ -1,9 +1,5 @@
-import {
-  InvalidTestCase,
-  ValidTestCase,
-} from '@typescript-eslint/experimental-utils/dist/ts-eslint';
-import { createRuleTester } from '../test-utils';
-import { LIBRARY_MODULES } from '../../../lib/utils';
+import { TSESLint } from '@typescript-eslint/experimental-utils';
+
 import rule, {
   MAPPING_TO_USER_EVENT,
   MessageIds,
@@ -11,9 +7,13 @@ import rule, {
   RULE_NAME,
   UserEventMethods,
 } from '../../../lib/rules/prefer-user-event';
+import { LIBRARY_MODULES } from '../../../lib/utils';
+import { createRuleTester } from '../test-utils';
 
 function createScenarioWithImport<
-  T extends ValidTestCase<Options> | InvalidTestCase<MessageIds, Options>
+  T extends
+    | TSESLint.InvalidTestCase<MessageIds, Options>
+    | TSESLint.ValidTestCase<Options>
 >(callback: (libraryModule: string, fireEventMethod: string) => T) {
   return LIBRARY_MODULES.reduce(
     (acc: Array<T>, libraryModule) =>
@@ -69,7 +69,7 @@ ruleTester.run(RULE_NAME, rule, {
         userEvent.${userEventMethod}(foo)
       `,
     })),
-    ...createScenarioWithImport<ValidTestCase<Options>>(
+    ...createScenarioWithImport<TSESLint.ValidTestCase<Options>>(
       (libraryModule: string, fireEventMethod: string) => ({
         code: `
         import { fireEvent } from '${libraryModule}'
@@ -79,7 +79,7 @@ ruleTester.run(RULE_NAME, rule, {
         options: [{ allowedMethods: [fireEventMethod] }],
       })
     ),
-    ...createScenarioWithImport<ValidTestCase<Options>>(
+    ...createScenarioWithImport<TSESLint.ValidTestCase<Options>>(
       (libraryModule: string, fireEventMethod: string) => ({
         code: `
         import { fireEvent as fireEventAliased } from '${libraryModule}'
@@ -89,7 +89,7 @@ ruleTester.run(RULE_NAME, rule, {
         options: [{ allowedMethods: [fireEventMethod] }],
       })
     ),
-    ...createScenarioWithImport<ValidTestCase<Options>>(
+    ...createScenarioWithImport<TSESLint.ValidTestCase<Options>>(
       (libraryModule: string, fireEventMethod: string) => ({
         code: `
         import * as dom from '${libraryModule}'
@@ -206,7 +206,7 @@ ruleTester.run(RULE_NAME, rule, {
     `,
   ],
   invalid: [
-    ...createScenarioWithImport<InvalidTestCase<MessageIds, Options>>(
+    ...createScenarioWithImport<TSESLint.InvalidTestCase<MessageIds, Options>>(
       (libraryModule: string, fireEventMethod: string) => ({
         code: `
         import { fireEvent } from '${libraryModule}'
@@ -220,13 +220,13 @@ ruleTester.run(RULE_NAME, rule, {
             column: 9,
             data: {
               userEventMethods: formatUserEventMethodsMessage(fireEventMethod),
-              fireEventMethod: fireEventMethod,
+              fireEventMethod,
             },
           },
         ],
       })
     ),
-    ...createScenarioWithImport<InvalidTestCase<MessageIds, Options>>(
+    ...createScenarioWithImport<TSESLint.InvalidTestCase<MessageIds, Options>>(
       (libraryModule: string, fireEventMethod: string) => ({
         code: `
         import * as dom from '${libraryModule}'
@@ -239,13 +239,13 @@ ruleTester.run(RULE_NAME, rule, {
             column: 9,
             data: {
               userEventMethods: formatUserEventMethodsMessage(fireEventMethod),
-              fireEventMethod: fireEventMethod,
+              fireEventMethod,
             },
           },
         ],
       })
     ),
-    ...createScenarioWithImport<InvalidTestCase<MessageIds, Options>>(
+    ...createScenarioWithImport<TSESLint.InvalidTestCase<MessageIds, Options>>(
       (libraryModule: string, fireEventMethod: string) => ({
         code: `
         const { fireEvent } = require('${libraryModule}')
@@ -258,13 +258,13 @@ ruleTester.run(RULE_NAME, rule, {
             column: 9,
             data: {
               userEventMethods: formatUserEventMethodsMessage(fireEventMethod),
-              fireEventMethod: fireEventMethod,
+              fireEventMethod,
             },
           },
         ],
       })
     ),
-    ...createScenarioWithImport<InvalidTestCase<MessageIds, Options>>(
+    ...createScenarioWithImport<TSESLint.InvalidTestCase<MessageIds, Options>>(
       (libraryModule: string, fireEventMethod: string) => ({
         code: `
         const rtl = require('${libraryModule}')
@@ -277,7 +277,7 @@ ruleTester.run(RULE_NAME, rule, {
             column: 9,
             data: {
               userEventMethods: formatUserEventMethodsMessage(fireEventMethod),
-              fireEventMethod: fireEventMethod,
+              fireEventMethod,
             },
           },
         ],
@@ -299,10 +299,9 @@ ruleTester.run(RULE_NAME, rule, {
               line: 3,
               column: 9,
               data: {
-                userEventMethods: formatUserEventMethodsMessage(
-                  fireEventMethod
-                ),
-                fireEventMethod: fireEventMethod,
+                userEventMethods:
+                  formatUserEventMethodsMessage(fireEventMethod),
+                fireEventMethod,
               },
             },
           ],
@@ -324,10 +323,9 @@ ruleTester.run(RULE_NAME, rule, {
               line: 3,
               column: 9,
               data: {
-                userEventMethods: formatUserEventMethodsMessage(
-                  fireEventMethod
-                ),
-                fireEventMethod: fireEventMethod,
+                userEventMethods:
+                  formatUserEventMethodsMessage(fireEventMethod),
+                fireEventMethod,
               },
             },
           ],
@@ -348,10 +346,9 @@ ruleTester.run(RULE_NAME, rule, {
               line: 5,
               column: 9,
               data: {
-                userEventMethods: formatUserEventMethodsMessage(
-                  fireEventMethod
-                ),
-                fireEventMethod: fireEventMethod,
+                userEventMethods:
+                  formatUserEventMethodsMessage(fireEventMethod),
+                fireEventMethod,
               },
             },
           ],
@@ -373,10 +370,9 @@ ruleTester.run(RULE_NAME, rule, {
               line: 3,
               column: 9,
               data: {
-                userEventMethods: formatUserEventMethodsMessage(
-                  fireEventMethod
-                ),
-                fireEventMethod: fireEventMethod,
+                userEventMethods:
+                  formatUserEventMethodsMessage(fireEventMethod),
+                fireEventMethod,
               },
             },
           ],

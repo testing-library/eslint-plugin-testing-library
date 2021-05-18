@@ -1,4 +1,5 @@
 import { ASTUtils, TSESTree } from '@typescript-eslint/experimental-utils';
+
 import { createTestingLibraryRule } from '../create-testing-library-rule';
 import {
   findClosestCallExpressionNode,
@@ -46,10 +47,11 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
       if (isNewExpression(node)) {
         if (isPromiseIdentifier(node.callee)) {
-          return context.report({
+          context.report({
             node: originalNode ?? node,
             messageId: 'noPromiseInFireEvent',
           });
+          return;
         }
       }
 
@@ -64,10 +66,11 @@ export default createTestingLibraryRule<Options, MessageIds>({
           helpers.isAsyncQuery(domElementIdentifier) ||
           isPromiseIdentifier(domElementIdentifier)
         ) {
-          return context.report({
+          context.report({
             node: originalNode ?? node,
             messageId: 'noPromiseInFireEvent',
           });
+          return;
         }
       }
 
@@ -76,12 +79,13 @@ export default createTestingLibraryRule<Options, MessageIds>({
           context.getScope(),
           node.name
         );
-        if (!nodeVariable || !nodeVariable.defs) {
+        if (!nodeVariable) {
           return;
         }
 
         for (const definition of nodeVariable.defs) {
-          const variableDeclarator = definition.node as TSESTree.VariableDeclarator;
+          const variableDeclarator =
+            definition.node as TSESTree.VariableDeclarator;
           if (variableDeclarator.init) {
             checkSuspiciousNode(variableDeclarator.init, node);
           }

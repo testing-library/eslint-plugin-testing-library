@@ -1,9 +1,10 @@
 import { TSESTree } from '@typescript-eslint/experimental-utils';
+
+import { createTestingLibraryRule } from '../create-testing-library-rule';
 import {
   getPropertyIdentifierNode,
   isExpressionStatement,
 } from '../node-utils';
-import { createTestingLibraryRule } from '../create-testing-library-rule';
 
 export const RULE_NAME = 'no-wait-for-multiple-assertions';
 export type MessageIds = 'noWaitForMultipleAssertion';
@@ -30,7 +31,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
     schema: [],
   },
   defaultOptions: [],
-  create: function (context, _, helpers) {
+  create(context, _, helpers) {
     function getExpectNodes(
       body: Array<TSESTree.Node>
     ): Array<TSESTree.ExpressionStatement> {
@@ -53,9 +54,8 @@ export default createTestingLibraryRule<Options, MessageIds>({
         return;
       }
       const callExpressionNode = node.parent.parent as TSESTree.CallExpression;
-      const callExpressionIdentifier = getPropertyIdentifierNode(
-        callExpressionNode
-      );
+      const callExpressionIdentifier =
+        getPropertyIdentifierNode(callExpressionNode);
 
       if (!callExpressionIdentifier) {
         return;
@@ -82,8 +82,10 @@ export default createTestingLibraryRule<Options, MessageIds>({
     }
 
     return {
-      'CallExpression > ArrowFunctionExpression > BlockStatement': reportMultipleAssertion,
-      'CallExpression > FunctionExpression > BlockStatement': reportMultipleAssertion,
+      'CallExpression > ArrowFunctionExpression > BlockStatement':
+        reportMultipleAssertion,
+      'CallExpression > FunctionExpression > BlockStatement':
+        reportMultipleAssertion,
     };
   },
 });

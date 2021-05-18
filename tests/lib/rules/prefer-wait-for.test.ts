@@ -1,6 +1,6 @@
-import { createRuleTester } from '../test-utils';
-import { LIBRARY_MODULES } from '../../../lib/utils';
 import rule, { RULE_NAME } from '../../../lib/rules/prefer-wait-for';
+import { LIBRARY_MODULES } from '../../../lib/utils';
+import { createRuleTester } from '../test-utils';
 
 const ruleTester = createRuleTester();
 

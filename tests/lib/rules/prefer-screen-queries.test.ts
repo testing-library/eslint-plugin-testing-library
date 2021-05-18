@@ -1,10 +1,10 @@
-import { createRuleTester } from '../test-utils';
 import rule, { RULE_NAME } from '../../../lib/rules/prefer-screen-queries';
 import {
   ALL_QUERIES_COMBINATIONS,
   ALL_QUERIES_VARIANTS,
   combineQueries,
 } from '../../../lib/utils';
+import { createRuleTester } from '../test-utils';
 
 const ruleTester = createRuleTester();
 

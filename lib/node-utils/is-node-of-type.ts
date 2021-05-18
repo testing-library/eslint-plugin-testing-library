@@ -3,9 +3,12 @@ import {
   TSESTree,
 } from '@typescript-eslint/experimental-utils';
 
-const isNodeOfType = <NodeType extends AST_NODE_TYPES>(nodeType: NodeType) => (
-  node: TSESTree.Node | null | undefined
-): node is TSESTree.Node & { type: NodeType } => node?.type === nodeType;
+const isNodeOfType =
+  <NodeType extends AST_NODE_TYPES>(nodeType: NodeType) =>
+  (
+    node: TSESTree.Node | null | undefined
+  ): node is TSESTree.Node & { type: NodeType } =>
+    node?.type === nodeType;
 
 export const isArrayExpression = isNodeOfType(AST_NODE_TYPES.ArrayExpression);
 export const isArrowFunctionExpression = isNodeOfType(

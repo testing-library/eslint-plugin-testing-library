@@ -1,6 +1,6 @@
-import { createRuleTester } from '../test-utils';
-import { TESTING_FRAMEWORK_SETUP_HOOKS } from '../../../lib/utils';
 import rule, { RULE_NAME } from '../../../lib/rules/no-render-in-setup';
+import { TESTING_FRAMEWORK_SETUP_HOOKS } from '../../../lib/utils';
+import { createRuleTester } from '../test-utils';
 
 const ruleTester = createRuleTester();
 

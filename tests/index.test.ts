@@ -47,7 +47,7 @@ it('should have the correct amount of rules', () => {
 });
 
 it("should have run 'generate:configs' script when changing config rules", async () => {
-  await generateConfigs();
+  generateConfigs();
 
   const allConfigs = plugin.configs;
   expect(allConfigs).toMatchSnapshot();

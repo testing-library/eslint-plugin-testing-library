@@ -1,4 +1,6 @@
 import { ASTUtils, TSESTree } from '@typescript-eslint/experimental-utils';
+
+import { createTestingLibraryRule } from '../create-testing-library-rule';
 import {
   getDeepestIdentifierNode,
   getFunctionName,
@@ -7,7 +9,6 @@ import {
   isObjectPattern,
   isProperty,
 } from '../node-utils';
-import { createTestingLibraryRule } from '../create-testing-library-rule';
 
 export const RULE_NAME = 'no-container';
 export type MessageIds = 'noContainer';
@@ -35,7 +36,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
   },
   defaultOptions: [],
 
-  create(context, [], helpers) {
+  create(context, _, helpers) {
     const destructuredContainerPropNames: string[] = [];
     const renderWrapperNames: string[] = [];
     let renderResultVarName: string | null = null;
@@ -99,17 +100,18 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
         if (isMemberExpression(node.callee)) {
           showErrorIfChainedContainerMethod(node.callee);
-        } else {
+        } else if (
           ASTUtils.isIdentifier(node.callee) &&
-            destructuredContainerPropNames.includes(node.callee.name) &&
-            context.report({
-              node,
-              messageId: 'noContainer',
-            });
+          destructuredContainerPropNames.includes(node.callee.name)
+        ) {
+          context.report({
+            node,
+            messageId: 'noContainer',
+          });
         }
       },
 
-      VariableDeclarator: function (node) {
+      VariableDeclarator(node) {
         if (!node.init) {
           return;
         }
@@ -119,9 +121,9 @@ export default createTestingLibraryRule<Options, MessageIds>({
           return;
         }
 
-        const isRenderWrapperVariableDeclarator = initIdentifierNode
-          ? renderWrapperNames.includes(initIdentifierNode.name)
-          : false;
+        const isRenderWrapperVariableDeclarator = renderWrapperNames.includes(
+          initIdentifierNode.name
+        );
 
         if (
           !helpers.isRenderVariableDeclarator(node) &&
@@ -147,14 +149,13 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
           if (ASTUtils.isIdentifier(nodeValue)) {
             containerName = nodeValue.name;
-          } else {
-            isObjectPattern(nodeValue) &&
-              nodeValue.properties.forEach(
-                (property) =>
-                  isProperty(property) &&
-                  ASTUtils.isIdentifier(property.key) &&
-                  destructuredContainerPropNames.push(property.key.name)
-              );
+          } else if (isObjectPattern(nodeValue)) {
+            nodeValue.properties.forEach(
+              (property) =>
+                isProperty(property) &&
+                ASTUtils.isIdentifier(property.key) &&
+                destructuredContainerPropNames.push(property.key.name)
+            );
           }
         } else if (ASTUtils.isIdentifier(node.id)) {
           renderResultVarName = node.id.name;

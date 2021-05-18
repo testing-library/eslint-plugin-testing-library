@@ -1,6 +1,6 @@
-import { createRuleTester } from '../test-utils';
 import rule, { RULE_NAME } from '../../../lib/rules/prefer-explicit-assert';
 import { ALL_QUERIES_METHODS } from '../../../lib/utils';
+import { createRuleTester } from '../test-utils';
 
 const ruleTester = createRuleTester();
 

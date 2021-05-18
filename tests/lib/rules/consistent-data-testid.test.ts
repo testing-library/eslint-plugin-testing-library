@@ -1,18 +1,17 @@
-import type { TSESLint } from '@typescript-eslint/experimental-utils';
-
 import rule, {
   MessageIds,
   Options,
   RULE_NAME,
 } from '../../../lib/rules/consistent-data-testid';
-
 import { createRuleTester } from '../test-utils';
+
+import type { TSESLint } from '@typescript-eslint/experimental-utils';
 
 const ruleTester = createRuleTester();
 
 type ValidTestCase = TSESLint.ValidTestCase<Options>;
 type InvalidTestCase = TSESLint.InvalidTestCase<MessageIds, Options>;
-type TestCase = ValidTestCase | InvalidTestCase;
+type TestCase = InvalidTestCase | ValidTestCase;
 const disableAggressiveReporting = <T extends TestCase>(array: T[]): T[] =>
   array.map((testCase) => ({
     ...testCase,

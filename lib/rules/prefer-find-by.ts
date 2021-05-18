@@ -3,6 +3,8 @@ import {
   ASTUtils,
   TSESLint,
 } from '@typescript-eslint/experimental-utils';
+
+import { createTestingLibraryRule } from '../create-testing-library-rule';
 import {
   isArrowFunctionExpression,
   isCallExpression,
@@ -10,7 +12,6 @@ import {
   isObjectPattern,
   isProperty,
 } from '../node-utils';
-import { createTestingLibraryRule } from '../create-testing-library-rule';
 
 export const RULE_NAME = 'prefer-find-by';
 export type MessageIds = 'preferFindBy';
@@ -88,20 +89,15 @@ export default createTestingLibraryRule<Options, MessageIds>({
     function reportInvalidUsage(
       node: TSESTree.CallExpression,
       replacementParams: {
-        queryVariant: 'findBy' | 'findAllBy';
+        queryVariant: 'findAllBy' | 'findBy';
         queryMethod: string;
         prevQuery: string;
         waitForMethodName: string;
         fix: TSESLint.ReportFixFunction;
       }
     ) {
-      const {
-        queryMethod,
-        queryVariant,
-        prevQuery,
-        waitForMethodName,
-        fix,
-      } = replacementParams;
+      const { queryMethod, queryVariant, prevQuery, waitForMethodName, fix } =
+        replacementParams;
       context.report({
         node,
         messageId: 'preferFindBy',
@@ -155,13 +151,15 @@ export default createTestingLibraryRule<Options, MessageIds>({
             prevQuery: fullQueryMethod,
             waitForMethodName,
             fix(fixer) {
-              const property = ((argument.body as TSESTree.CallExpression)
-                .callee as TSESTree.MemberExpression).property;
+              const property = (
+                (argument.body as TSESTree.CallExpression)
+                  .callee as TSESTree.MemberExpression
+              ).property;
               if (helpers.isCustomQuery(property as TSESTree.Identifier)) {
                 return null;
               }
               const newCode = `${caller}.${queryVariant}${queryMethod}(${callArguments
-                .map((node) => sourceCode.getText(node))
+                .map((callArgNode) => sourceCode.getText(callArgNode))
                 .join(', ')})`;
               return fixer.replaceText(node, newCode);
             },
@@ -199,7 +197,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
             const allFixes: TSESLint.RuleFix[] = [];
             // this updates waitFor with findBy*
             const newCode = `${findByMethod}(${callArguments
-              .map((node) => sourceCode.getText(node))
+              .map((callArgNode) => sourceCode.getText(callArgNode))
               .join(', ')})`;
             allFixes.push(fixer.replaceText(node, newCode));
 
@@ -233,9 +231,10 @@ export default createTestingLibraryRule<Options, MessageIds>({
               const textDestructuring = sourceCode.getText(
                 allVariableDeclarations
               );
-              const text =
-                textDestructuring.substring(0, textDestructuring.length - 2) +
-                `, ${findByMethod} }`;
+              const text = `${textDestructuring.substring(
+                0,
+                textDestructuring.length - 2
+              )}, ${findByMethod} }`;
               allFixes.push(fixer.replaceText(allVariableDeclarations, text));
             }
 

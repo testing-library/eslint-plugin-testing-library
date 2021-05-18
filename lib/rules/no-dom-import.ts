@@ -1,4 +1,5 @@
 import { TSESTree } from '@typescript-eslint/experimental-utils';
+
 import { createTestingLibraryRule } from '../create-testing-library-rule';
 import { isCallExpression } from '../node-utils';
 
@@ -42,7 +43,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
   create(context, [framework], helpers) {
     function report(
-      node: TSESTree.ImportDeclaration | TSESTree.CallExpression,
+      node: TSESTree.CallExpression | TSESTree.ImportDeclaration,
       moduleName: string
     ) {
       if (framework) {
