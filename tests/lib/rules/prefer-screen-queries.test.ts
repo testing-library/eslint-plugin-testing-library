@@ -414,19 +414,56 @@ ruleTester.run(RULE_NAME, rule, {
         } as const)
     ),
     {
-      code: ` // issue #367
+      code: ` // issue #367 - example A
       import { render } from '@testing-library/react';
       
       function setup() {
         return render(<div />);
       }
       
-      it('undetected 1', () => {
+      it('foo', async () => {
+        const { getByText } = await setup();
+        expect(getByText('foo')).toBeInTheDocument();
+      });
+      
+      it('bar', () => {
+        const { getByText } = setup();
+        expect(getByText('foo')).toBeInTheDocument();
+      });
+      `,
+      errors: [
+        {
+          messageId: 'preferScreenQueries',
+          line: 10,
+          column: 16,
+          data: {
+            name: 'getByText',
+          },
+        },
+        {
+          messageId: 'preferScreenQueries',
+          line: 15,
+          column: 16,
+          data: {
+            name: 'getByText',
+          },
+        },
+      ],
+    },
+    {
+      code: ` // issue #367 - example B
+      import { render } from '@testing-library/react';
+      
+      function setup() {
+        return render(<div />);
+      }
+      
+      it('foo', () => {
         const { getByText } = setup();
         expect(getByText('foo')).toBeInTheDocument();
       });
       
-      it('undetected 2', () => {
+      it('bar', () => {
         const results = setup();
         const { getByText } = results;
         expect(getByText('foo')).toBe('foo');
