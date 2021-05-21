@@ -118,7 +118,6 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
         const isComingFromValidRender = isReportableRender(node.init.callee);
 
-        // TODO: why is saving `setup` here? that's the problem
         if (!isComingFromValidRender) {
           // save the destructured query methods as safe since they are coming
           // from render not related to TL
