@@ -155,31 +155,62 @@ export default createTestingLibraryRule<Options, MessageIds>({
           return;
         }
 
-        if (isMemberExpression(identifierNode.parent)) {
-          const memberExpressionNode = identifierNode.parent;
-          if (
-            isCallExpression(memberExpressionNode.object) &&
-            ASTUtils.isIdentifier(memberExpressionNode.object.callee) &&
-            memberExpressionNode.object.callee.name !== 'within' &&
-            isReportableRender(memberExpressionNode.object.callee) &&
-            !usesContainerOrBaseElement(memberExpressionNode.object)
-          ) {
-            reportInvalidUsage(identifierNode);
-          } else if (
-            ASTUtils.isIdentifier(memberExpressionNode.object) &&
-            !isIdentifierAllowed(memberExpressionNode.object.name)
-          ) {
-            reportInvalidUsage(identifierNode);
-          }
-        } else {
+        if (!isMemberExpression(identifierNode.parent)) {
           const isSafeDestructuredQuery = safeDestructuredQueries.some(
             (queryName) => queryName === identifierNode.name
           );
-
-          if (!isSafeDestructuredQuery) {
-            reportInvalidUsage(identifierNode);
+          if (isSafeDestructuredQuery) {
+            return;
           }
+
+          reportInvalidUsage(identifierNode);
+          return;
         }
+
+        const memberExpressionNode = identifierNode.parent;
+        if (
+          isCallExpression(memberExpressionNode.object) &&
+          ASTUtils.isIdentifier(memberExpressionNode.object.callee) &&
+          memberExpressionNode.object.callee.name !== 'within' &&
+          isReportableRender(memberExpressionNode.object.callee) &&
+          !usesContainerOrBaseElement(memberExpressionNode.object)
+        ) {
+          reportInvalidUsage(identifierNode);
+          return;
+        }
+
+        if (
+          ASTUtils.isIdentifier(memberExpressionNode.object) &&
+          !isIdentifierAllowed(memberExpressionNode.object.name)
+        ) {
+          reportInvalidUsage(identifierNode);
+        }
+
+        // if (isMemberExpression(identifierNode.parent)) {
+        //   const memberExpressionNode = identifierNode.parent;
+        //   if (
+        //     isCallExpression(memberExpressionNode.object) &&
+        //     ASTUtils.isIdentifier(memberExpressionNode.object.callee) &&
+        //     memberExpressionNode.object.callee.name !== 'within' &&
+        //     isReportableRender(memberExpressionNode.object.callee) &&
+        //     !usesContainerOrBaseElement(memberExpressionNode.object)
+        //   ) {
+        //     reportInvalidUsage(identifierNode);
+        //   } else if (
+        //     ASTUtils.isIdentifier(memberExpressionNode.object) &&
+        //     !isIdentifierAllowed(memberExpressionNode.object.name)
+        //   ) {
+        //     reportInvalidUsage(identifierNode);
+        //   }
+        // } else {
+        //   const isSafeDestructuredQuery = safeDestructuredQueries.some(
+        //     (queryName) => queryName === identifierNode.name
+        //   );
+        //
+        //   if (!isSafeDestructuredQuery) {
+        //     reportInvalidUsage(identifierNode);
+        //   }
+        // }
       },
     };
   },
