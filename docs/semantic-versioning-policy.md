@@ -6,6 +6,7 @@
   - A bug fix in a rule that results in `eslint-plugin-testing-library` reporting fewer errors.
   - A bug fix to the core.
   - Re-releasing after a failed release (i.e., publishing a release that doesn't work for anyone).
+  - A dependency gets updated
 - Minor release (might break your lint build)
   - A bug fix in a rule that results in `eslint-plugin-testing-library` reporting more errors.
   - A new rule is created.
