@@ -2,6 +2,9 @@ import { ASTUtils, TSESTree } from '@typescript-eslint/experimental-utils';
 
 import { createTestingLibraryRule } from '../create-testing-library-rule';
 import {
+  getDeepestIdentifierNode,
+  getFunctionName,
+  getInnermostReturningFunction,
   isCallExpression,
   isMemberExpression,
   isObjectExpression,
@@ -54,6 +57,22 @@ export default createTestingLibraryRule<Options, MessageIds>({
   defaultOptions: [],
 
   create(context, _, helpers) {
+    const renderWrapperNames: string[] = [];
+
+    function detectRenderWrapper(node: TSESTree.Identifier): void {
+      const innerFunction = getInnermostReturningFunction(context, node);
+
+      if (innerFunction) {
+        renderWrapperNames.push(getFunctionName(innerFunction));
+      }
+    }
+
+    function isReportableRender(node: TSESTree.Identifier): boolean {
+      return (
+        helpers.isRenderUtil(node) || renderWrapperNames.includes(node.name)
+      );
+    }
+
     function reportInvalidUsage(node: TSESTree.Identifier) {
       context.report({
         node,
@@ -78,6 +97,10 @@ export default createTestingLibraryRule<Options, MessageIds>({
       }
     }
 
+    function isIdentifierAllowed(name: string) {
+      return ['screen', ...withinDeclaredVariables].includes(name);
+    }
+
     // keep here those queries which are safe and shouldn't be reported
     // (from within, from render + container/base element, not related to TL, etc)
     const safeDestructuredQueries: string[] = [];
@@ -93,7 +116,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
           return;
         }
 
-        const isComingFromValidRender = helpers.isRenderUtil(node.init.callee);
+        const isComingFromValidRender = isReportableRender(node.init.callee);
 
         if (!isComingFromValidRender) {
           // save the destructured query methods as safe since they are coming
@@ -113,52 +136,54 @@ export default createTestingLibraryRule<Options, MessageIds>({
           // save the destructured query methods as safe since they are coming
           // from within or render + base/container options
           saveSafeDestructuredQueries(node);
-          return;
-        }
-
-        if (ASTUtils.isIdentifier(node.id)) {
+        } else if (ASTUtils.isIdentifier(node.id)) {
           withinDeclaredVariables.push(node.id.name);
         }
       },
-      'CallExpression > Identifier'(node: TSESTree.Identifier) {
-        if (!helpers.isBuiltInQuery(node)) {
+      CallExpression(node) {
+        const identifierNode = getDeepestIdentifierNode(node);
+
+        if (!identifierNode) {
+          return;
+        }
+
+        if (helpers.isRenderUtil(identifierNode)) {
+          detectRenderWrapper(identifierNode);
+        }
+
+        if (!helpers.isBuiltInQuery(identifierNode)) {
+          return;
+        }
+
+        if (!isMemberExpression(identifierNode.parent)) {
+          const isSafeDestructuredQuery = safeDestructuredQueries.some(
+            (queryName) => queryName === identifierNode.name
+          );
+          if (isSafeDestructuredQuery) {
+            return;
+          }
+
+          reportInvalidUsage(identifierNode);
+          return;
+        }
+
+        const memberExpressionNode = identifierNode.parent;
+        if (
+          isCallExpression(memberExpressionNode.object) &&
+          ASTUtils.isIdentifier(memberExpressionNode.object.callee) &&
+          memberExpressionNode.object.callee.name !== 'within' &&
+          isReportableRender(memberExpressionNode.object.callee) &&
+          !usesContainerOrBaseElement(memberExpressionNode.object)
+        ) {
+          reportInvalidUsage(identifierNode);
           return;
         }
 
         if (
-          !safeDestructuredQueries.some((queryName) => queryName === node.name)
+          ASTUtils.isIdentifier(memberExpressionNode.object) &&
+          !isIdentifierAllowed(memberExpressionNode.object.name)
         ) {
-          reportInvalidUsage(node);
-        }
-      },
-      'MemberExpression > Identifier'(node: TSESTree.Identifier) {
-        function isIdentifierAllowed(name: string) {
-          return ['screen', ...withinDeclaredVariables].includes(name);
-        }
-
-        if (!helpers.isBuiltInQuery(node)) {
-          return;
-        }
-
-        if (
-          ASTUtils.isIdentifier(node) &&
-          isMemberExpression(node.parent) &&
-          isCallExpression(node.parent.object) &&
-          ASTUtils.isIdentifier(node.parent.object.callee) &&
-          node.parent.object.callee.name !== 'within' &&
-          helpers.isRenderUtil(node.parent.object.callee) &&
-          !usesContainerOrBaseElement(node.parent.object)
-        ) {
-          reportInvalidUsage(node);
-          return;
-        }
-
-        if (
-          isMemberExpression(node.parent) &&
-          ASTUtils.isIdentifier(node.parent.object) &&
-          !isIdentifierAllowed(node.parent.object.name)
-        ) {
-          reportInvalidUsage(node);
+          reportInvalidUsage(identifierNode);
         }
       },
     };

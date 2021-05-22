@@ -48,7 +48,7 @@ ruleTester.run(RULE_NAME, rule, {
       (query) => `
       import { render } from '@testing-library/react'
       import { ${query} } from 'custom-queries'
-      
+
       test("imported custom queries, since they can't be used through screen", () => {
         render(foo)
         ${query}('bar')
@@ -58,7 +58,7 @@ ruleTester.run(RULE_NAME, rule, {
     ...CUSTOM_QUERY_COMBINATIONS.map(
       (query) => `
       import { render } from '@testing-library/react'
-      
+
       test("render-returned custom queries, since they can't be used through screen", () => {
         const { ${query} } = render(foo)
         ${query}('bar')
@@ -71,7 +71,7 @@ ruleTester.run(RULE_NAME, rule, {
       },
       code: `
       import { render } from '@testing-library/react'
-      
+
       test("custom queries + custom-queries setting, since they can't be used through screen", () => {
         const { ${query} } = render(foo)
         ${query}('bar')
@@ -413,5 +413,80 @@ ruleTester.run(RULE_NAME, rule, {
           ],
         } as const)
     ),
+    {
+      code: ` // issue #367 - example A
+      import { render } from '@testing-library/react';
+      
+      function setup() {
+        return render(<div />);
+      }
+      
+      it('foo', async () => {
+        const { getByText } = await setup();
+        expect(getByText('foo')).toBeInTheDocument();
+      });
+      
+      it('bar', () => {
+        const { getByText } = setup();
+        expect(getByText('foo')).toBeInTheDocument();
+      });
+      `,
+      errors: [
+        {
+          messageId: 'preferScreenQueries',
+          line: 10,
+          column: 16,
+          data: {
+            name: 'getByText',
+          },
+        },
+        {
+          messageId: 'preferScreenQueries',
+          line: 15,
+          column: 16,
+          data: {
+            name: 'getByText',
+          },
+        },
+      ],
+    },
+    {
+      code: ` // issue #367 - example B
+      import { render } from '@testing-library/react';
+      
+      function setup() {
+        return render(<div />);
+      }
+      
+      it('foo', () => {
+        const { getByText } = setup();
+        expect(getByText('foo')).toBeInTheDocument();
+      });
+      
+      it('bar', () => {
+        const results = setup();
+        const { getByText } = results;
+        expect(getByText('foo')).toBe('foo');
+      });
+      `,
+      errors: [
+        {
+          messageId: 'preferScreenQueries',
+          line: 10,
+          column: 16,
+          data: {
+            name: 'getByText',
+          },
+        },
+        {
+          messageId: 'preferScreenQueries',
+          line: 16,
+          column: 16,
+          data: {
+            name: 'getByText',
+          },
+        },
+      ],
+    },
   ],
 });
