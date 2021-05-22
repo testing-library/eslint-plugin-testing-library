@@ -1,3 +1,4 @@
+import type { LinterConfigRules } from '../../lib/configs';
 import rules from '../../lib/rules';
 import {
   SUPPORTED_TESTING_FRAMEWORKS,
@@ -5,8 +6,6 @@ import {
 } from '../../lib/utils';
 
 import { LinterConfig, writeConfig } from './utils';
-
-import type { LinterConfigRules } from '../../lib/configs';
 
 const RULE_NAME_PREFIX = 'testing-library/';
 
