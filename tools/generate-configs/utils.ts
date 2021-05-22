@@ -1,9 +1,8 @@
 import { writeFileSync } from 'fs';
 import { resolve } from 'path';
 
-import { format, resolveConfig } from 'prettier';
-
 import type { TSESLint } from '@typescript-eslint/experimental-utils';
+import { format, resolveConfig } from 'prettier';
 
 const prettierConfig = resolveConfig.sync(__dirname);
 
