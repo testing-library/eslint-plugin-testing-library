@@ -1,7 +1,11 @@
-import { TSESTree } from '@typescript-eslint/experimental-utils';
+import { TSESTree, ASTUtils } from '@typescript-eslint/experimental-utils';
 
 import { createTestingLibraryRule } from '../create-testing-library-rule';
-import { findClosestCallExpressionNode } from '../node-utils';
+import {
+  findClosestCallExpressionNode,
+  isCallExpression,
+  isMemberExpression,
+} from '../node-utils';
 
 export const RULE_NAME = 'prefer-user-event';
 
@@ -91,28 +95,68 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
   create(context, [options], helpers) {
     const { allowedMethods } = options;
+    const createEventVariables: Record<string, string | undefined> = {};
 
+    const isfireEventMethodAllowed = (methodName: string) =>
+      !fireEventMappedMethods.includes(methodName) ||
+      allowedMethods.includes(methodName);
+
+    const getFireEventMethodName = (
+      callExpressionNode: TSESTree.CallExpression,
+      node: TSESTree.Identifier
+    ) => {
+      if (
+        !ASTUtils.isIdentifier(callExpressionNode.callee) &&
+        !isMemberExpression(callExpressionNode.callee)
+      ) {
+        return node.name;
+      }
+      const secondArgument = callExpressionNode.arguments[1];
+      if (
+        ASTUtils.isIdentifier(secondArgument) &&
+        createEventVariables[secondArgument.name] !== undefined
+      ) {
+        return createEventVariables[secondArgument.name];
+      }
+      if (
+        !isCallExpression(secondArgument) ||
+        !helpers.isCreateEventUtil(secondArgument)
+      ) {
+        return node.name;
+      }
+      if (ASTUtils.isIdentifier(secondArgument.callee)) {
+        // createEvent('click', foo)
+        return (secondArgument.arguments[0] as TSESTree.Literal)
+          .value as string;
+      }
+      // createEvent.click(foo)
+      return (
+        (secondArgument.callee as TSESTree.MemberExpression)
+          .property as TSESTree.Identifier
+      ).name;
+    };
     return {
       'CallExpression Identifier'(node: TSESTree.Identifier) {
         if (!helpers.isFireEventMethod(node)) {
           return;
         }
-
         const closestCallExpression = findClosestCallExpressionNode(node, true);
 
         if (!closestCallExpression) {
           return;
         }
 
-        const fireEventMethodName: string = node.name;
+        const fireEventMethodName = getFireEventMethodName(
+          closestCallExpression,
+          node
+        );
 
         if (
-          !fireEventMappedMethods.includes(fireEventMethodName) ||
-          allowedMethods.includes(fireEventMethodName)
+          !fireEventMethodName ||
+          isfireEventMethodAllowed(fireEventMethodName)
         ) {
           return;
         }
-
         context.report({
           node: closestCallExpression.callee,
           messageId: 'preferUserEvent',
@@ -121,6 +165,29 @@ export default createTestingLibraryRule<Options, MessageIds>({
             fireEventMethod: fireEventMethodName,
           },
         });
+      },
+
+      VariableDeclarator(node: TSESTree.VariableDeclarator) {
+        if (
+          !isCallExpression(node.init) ||
+          !helpers.isCreateEventUtil(node.init) ||
+          !ASTUtils.isIdentifier(node.id)
+        ) {
+          return;
+        }
+        let fireEventMethodName = '';
+        if (
+          isMemberExpression(node.init.callee) &&
+          ASTUtils.isIdentifier(node.init.callee.property)
+        ) {
+          fireEventMethodName = node.init.callee.property.name;
+        } else {
+          fireEventMethodName = (node.init.arguments[0] as TSESTree.Literal)
+            .value as string;
+        }
+        if (!isfireEventMethodAllowed(fireEventMethodName)) {
+          createEventVariables[node.id.name] = fireEventMethodName;
+        }
       },
     };
   },
