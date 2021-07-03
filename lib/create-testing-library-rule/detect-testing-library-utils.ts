@@ -627,25 +627,20 @@ export function detectTestingLibraryUtils<
         identifierNodeName: string,
         originalNodeName?: string
       ) => [identifierNodeName, originalNodeName].includes(CREATE_EVENT_NAME);
-      if (ASTUtils.isIdentifier(node)) {
-        return isPotentialTestingLibraryFunction(node, isCreateEventCallback);
-      }
-      if (ASTUtils.isIdentifier(node.callee)) {
-        return isPotentialTestingLibraryFunction(
-          node.callee,
-          isCreateEventCallback
-        );
-      }
-      if (!isMemberExpression(node.callee)) {
-        return false;
-      }
-      if (ASTUtils.isIdentifier(node.callee.object)) {
+      if (
+        isCallExpression(node) &&
+        isMemberExpression(node.callee) &&
+        ASTUtils.isIdentifier(node.callee.object)
+      ) {
         return isPotentialTestingLibraryFunction(
           node.callee.object,
           isCreateEventCallback
         );
       }
+
       if (
+        isCallExpression(node) &&
+        isMemberExpression(node.callee) &&
         isMemberExpression(node.callee.object) &&
         ASTUtils.isIdentifier(node.callee.object.property)
       ) {
@@ -654,7 +649,11 @@ export function detectTestingLibraryUtils<
           isCreateEventCallback
         );
       }
-      return false;
+      const identifier = getDeepestIdentifierNode(node);
+      return isPotentialTestingLibraryFunction(
+        identifier,
+        isCreateEventCallback
+      );
     };
 
     const isRenderVariableDeclarator: IsRenderVariableDeclaratorFn = (node) => {
