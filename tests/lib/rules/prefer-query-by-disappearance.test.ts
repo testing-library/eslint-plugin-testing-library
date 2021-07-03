@@ -14,22 +14,29 @@ ruleTester.run(RULE_NAME, rule, {
         await waitForElementToBeRemoved(() => screen.queryByText("hello"))
       `,
     },
+    {
+      code: `
+        import { screen } from '@testing-library/react';
+
+        await waitForElementToBeRemoved(screen.queryByText("hello"))
+      `,
+    },
   ],
   invalid: [
-    // {
-    //   code: `
-    //     import { screen, waitForElementToBeRemoved } from '@testing-library/react';
+    {
+      code: `
+        import { screen, waitForElementToBeRemoved } from '@testing-library/react';
 
-    //     waitForElementToBeRemoved(() => screen.getByText("hello"))
-    //   `,
-    //   errors: [
-    //     {
-    //       messageId: 'preferQueryByDisappearance',
-    //       line: 4,
-    //       column: 17,
-    //     },
-    //   ],
-    // },
+        waitForElementToBeRemoved(() => screen.getByText("hello"))
+      `,
+      errors: [
+        {
+          messageId: 'preferQueryByDisappearance',
+          line: 4,
+          column: 35,
+        },
+      ],
+    },
     {
       code: `
         import { screen, waitForElementToBeRemoved } from '@testing-library/react';
@@ -40,7 +47,7 @@ ruleTester.run(RULE_NAME, rule, {
         {
           messageId: 'preferQueryByDisappearance',
           line: 4,
-          column: 48,
+          column: 41,
         },
       ],
     },

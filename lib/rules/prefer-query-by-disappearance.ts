@@ -3,6 +3,7 @@ import { TSESTree } from '@typescript-eslint/experimental-utils';
 import { createTestingLibraryRule } from '../create-testing-library-rule';
 import {
   getPropertyIdentifierNode,
+  isArrowFunctionExpression,
   isCallExpression,
   isMemberExpression,
 } from '../node-utils';
@@ -44,19 +45,15 @@ export default createTestingLibraryRule<[], MessageIds>({
       return helpers.isAsyncUtil(identifierNode, ['waitForElementToBeRemoved']);
     }
 
-    function check(node: TSESTree.CallExpression) {
-      if (!isValidWaitFor(node)) {
-        return;
-      }
-
-      const argumentNode = node.arguments[0];
-
+    function isNonCallbackViolation(
+      argumentNode: TSESTree.CallExpressionArgument
+    ) {
       if (!isCallExpression(argumentNode)) {
-        return;
+        return false;
       }
 
       if (!isMemberExpression(argumentNode.callee)) {
-        return;
+        return false;
       }
 
       const argumentObjectIdentifier = getPropertyIdentifierNode(
@@ -67,7 +64,7 @@ export default createTestingLibraryRule<[], MessageIds>({
         argumentObjectIdentifier?.name &&
         argumentObjectIdentifier.name !== 'screen'
       ) {
-        return;
+        return false;
       }
 
       const argumentProperty = getPropertyIdentifierNode(
@@ -75,19 +72,71 @@ export default createTestingLibraryRule<[], MessageIds>({
       );
 
       if (!argumentProperty) {
+        return false;
+      }
+
+      return (
+        helpers.isGetQueryVariant(argumentProperty) ||
+        helpers.isFindQueryVariant(argumentProperty)
+      );
+    }
+
+    function isArrowFunctionViolation(
+      argumentNode: TSESTree.CallExpressionArgument
+    ) {
+      if (!isArrowFunctionExpression(argumentNode)) {
+        return false;
+      }
+
+      if (!isCallExpression(argumentNode.body)) {
+        return false;
+      }
+
+      if (!isMemberExpression(argumentNode.body.callee)) {
+        return false;
+      }
+
+      const argumentObjectIdentifier = getPropertyIdentifierNode(
+        argumentNode.body.callee.object
+      );
+
+      if (
+        argumentObjectIdentifier?.name &&
+        argumentObjectIdentifier.name !== 'screen'
+      ) {
+        return false;
+      }
+
+      const argumentProperty = getPropertyIdentifierNode(
+        argumentNode.body.callee.property
+      );
+
+      if (!argumentProperty) {
+        return false;
+      }
+
+      return (
+        helpers.isGetQueryVariant(argumentProperty) ||
+        helpers.isFindQueryVariant(argumentProperty)
+      );
+    }
+
+    function check(node: TSESTree.CallExpression) {
+      if (!isValidWaitFor(node)) {
         return;
       }
 
+      const argumentNode = node.arguments[0];
+
       if (
-        !helpers.isGetQueryVariant(argumentProperty) &&
-        // not sure if this rule should handle findBy*, perhaps it could be a new rule to disallow findBy
-        !helpers.isFindQueryVariant(argumentProperty)
+        !isNonCallbackViolation(argumentNode) &&
+        !isArrowFunctionViolation(argumentNode)
       ) {
         return;
       }
 
       context.report({
-        node: argumentProperty,
+        node: argumentNode, // should we report only .getBy* and not the whole argument?
         messageId: 'preferQueryByDisappearance',
       });
     }
