@@ -6,6 +6,8 @@ import {
   isArrowFunctionExpression,
   isCallExpression,
   isMemberExpression,
+  isFunctionExpression,
+  isExpressionStatement,
 } from '../node-utils';
 
 export const RULE_NAME = 'prefer-query-wait-disappearance';
@@ -46,7 +48,7 @@ export default createTestingLibraryRule<[], MessageIds>({
     }
 
     function isNonCallbackViolation(
-      argumentNode: TSESTree.CallExpressionArgument
+      argumentNode: TSESTree.CallExpressionArgument // TODO: rename to node
     ) {
       if (!isCallExpression(argumentNode)) {
         return false;
@@ -79,6 +81,53 @@ export default createTestingLibraryRule<[], MessageIds>({
         helpers.isGetQueryVariant(argumentProperty) ||
         helpers.isFindQueryVariant(argumentProperty)
       );
+    }
+
+    function isFunctionExpressionViolation(
+      node: TSESTree.CallExpressionArgument
+    ) {
+      if (!isFunctionExpression(node)) {
+        return false;
+      }
+
+      return node.body.body.reduce((acc, value) => {
+        if (!isExpressionStatement(value)) {
+          return acc || false;
+        }
+
+        if (!isCallExpression(value.expression)) {
+          return acc || false;
+        }
+
+        if (!isMemberExpression(value.expression.callee)) {
+          return acc || false;
+        }
+
+        const argumentObjectIdentifier = getPropertyIdentifierNode(
+          value.expression.callee.object
+        );
+
+        if (
+          argumentObjectIdentifier?.name &&
+          argumentObjectIdentifier.name !== 'screen'
+        ) {
+          return acc || false;
+        }
+
+        const argumentProperty = getPropertyIdentifierNode(
+          value.expression.callee.property
+        );
+
+        if (!argumentProperty) {
+          return acc || false;
+        }
+
+        return (
+          acc ||
+          helpers.isGetQueryVariant(argumentProperty) ||
+          helpers.isFindQueryVariant(argumentProperty)
+        );
+      }, false);
     }
 
     function isArrowFunctionViolation(
@@ -130,7 +179,8 @@ export default createTestingLibraryRule<[], MessageIds>({
 
       if (
         !isNonCallbackViolation(argumentNode) &&
-        !isArrowFunctionViolation(argumentNode)
+        !isArrowFunctionViolation(argumentNode) &&
+        !isFunctionExpressionViolation(argumentNode)
       ) {
         return;
       }
