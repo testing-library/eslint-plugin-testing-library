@@ -9,6 +9,7 @@ import {
   isFunctionExpression,
   isExpressionStatement,
   isReturnStatement,
+  isBlockStatement,
 } from '../node-utils';
 
 export const RULE_NAME = 'prefer-query-wait-disappearance';
@@ -182,7 +183,27 @@ export default createTestingLibraryRule<[], MessageIds>({
       }, false);
     }
 
-    function isArrowFunctionViolation(
+    function isArrowFunctionBodyViolation(
+      node: TSESTree.CallExpressionArgument
+    ) {
+      if (!isArrowFunctionExpression(node)) {
+        return false;
+      }
+
+      if (!isBlockStatement(node.body)) {
+        return false;
+      }
+
+      return node.body.body.reduce((acc, value) => {
+        if (!isReturnViolation(value) && !isNonReturnViolation(value)) {
+          return acc || false;
+        }
+
+        return true;
+      }, false);
+    }
+
+    function isArrowFunctionImplicitReturnViolation(
       argumentNode: TSESTree.CallExpressionArgument
     ) {
       if (!isArrowFunctionExpression(argumentNode)) {
@@ -219,6 +240,15 @@ export default createTestingLibraryRule<[], MessageIds>({
       return (
         helpers.isGetQueryVariant(argumentProperty) ||
         helpers.isFindQueryVariant(argumentProperty)
+      );
+    }
+
+    function isArrowFunctionViolation(
+      argumentNode: TSESTree.CallExpressionArgument
+    ) {
+      return (
+        isArrowFunctionBodyViolation(argumentNode) ||
+        isArrowFunctionImplicitReturnViolation(argumentNode)
       );
     }
 
