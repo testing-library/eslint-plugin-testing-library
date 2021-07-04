@@ -204,6 +204,7 @@ To enable this configuration use the `extends` property in your
 | [testing-library/prefer-screen-queries](docs/rules/prefer-screen-queries.md)                     | Suggest using screen while using queries                                                 | ![dom-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] |                    |
 | [testing-library/prefer-user-event](docs/rules/prefer-user-event.md)                             | Suggest using `userEvent` library instead of `fireEvent` for simulating user interaction |                                                                   |                    |
 | [testing-library/prefer-wait-for](docs/rules/prefer-wait-for.md)                                 | Use `waitFor` instead of deprecated wait methods                                         |                                                                   | ![fixable-badge][] |
+| [testing-library/prefer-query-by-disappearance](docs/rules/prefer-query-by-disappearance.md)     | Suggest using `queryBy*` queries when waiting for disappearance                          |
 | [testing-library/render-result-naming-convention](docs/rules/render-result-naming-convention.md) | Enforce a valid naming for return value from `render`                                    | ![angular-badge][] ![react-badge][] ![vue-badge][]                |                    |
 
 ## Aggressive Reporting
