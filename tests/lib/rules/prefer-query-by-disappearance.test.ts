@@ -5,6 +5,7 @@ import { createRuleTester } from '../test-utils';
 
 const ruleTester = createRuleTester();
 
+// TODO: add test cases without screen.
 ruleTester.run(RULE_NAME, rule, {
   valid: [
     {
@@ -20,6 +21,15 @@ ruleTester.run(RULE_NAME, rule, {
 
     //     await waitForElementToBeRemoved(() => {
     //       screen.queryByText("hello")
+    //     })
+    //   `,
+    // },
+    // {
+    //   code: `
+    //     import { screen } from '@testing-library/react';
+
+    //     await waitForElementToBeRemoved(() => {
+    //       return screen.queryByText("hello")
     //     })
     //   `,
     // },
@@ -78,22 +88,22 @@ ruleTester.run(RULE_NAME, rule, {
         },
       ],
     },
-    // {
-    //   code: `
-    //     import { screen } from '@testing-library/react';
+    {
+      code: `
+        import { screen } from '@testing-library/react';
 
-    //     await waitForElementToBeRemoved(function() {
-    //       return screen.getByText('hey')
-    //     })
-    //   `,
-    //   errors: [
-    //     {
-    //       messageId: 'preferQueryByDisappearance',
-    //       line: 5,
-    //       column: 41,
-    //     },
-    //   ],
-    // },
+        await waitForElementToBeRemoved(function() {
+          return screen.getByText('hey')
+        })
+      `,
+      errors: [
+        {
+          messageId: 'preferQueryByDisappearance',
+          line: 4,
+          column: 41,
+        },
+      ],
+    },
     {
       code: `
         import { screen } from '@testing-library/react';

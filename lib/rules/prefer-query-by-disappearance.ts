@@ -8,6 +8,7 @@ import {
   isMemberExpression,
   isFunctionExpression,
   isExpressionStatement,
+  isReturnStatement,
 } from '../node-utils';
 
 export const RULE_NAME = 'prefer-query-wait-disappearance';
@@ -83,6 +84,88 @@ export default createTestingLibraryRule<[], MessageIds>({
       );
     }
 
+    function isReturnViolation(node: TSESTree.Statement) {
+      if (!isReturnStatement(node)) {
+        return false;
+      }
+
+      if (!node.argument) {
+        return false;
+      }
+
+      if (!isCallExpression(node.argument)) {
+        return false;
+      }
+
+      const argumentNode = node.argument;
+
+      if (!isMemberExpression(argumentNode.callee)) {
+        return false;
+      }
+
+      const argumentObjectIdentifier = getPropertyIdentifierNode(
+        argumentNode.callee.object
+      );
+
+      if (
+        argumentObjectIdentifier?.name &&
+        argumentObjectIdentifier.name !== 'screen'
+      ) {
+        return false;
+      }
+
+      const argumentProperty = getPropertyIdentifierNode(
+        argumentNode.callee.property
+      );
+
+      if (!argumentProperty) {
+        return false;
+      }
+
+      return (
+        helpers.isGetQueryVariant(argumentProperty) ||
+        helpers.isFindQueryVariant(argumentProperty)
+      );
+    }
+
+    function isNonReturnViolation(node: TSESTree.Statement) {
+      if (!isExpressionStatement(node)) {
+        return false;
+      }
+
+      if (!isCallExpression(node.expression)) {
+        return false;
+      }
+
+      if (!isMemberExpression(node.expression.callee)) {
+        return false;
+      }
+
+      const argumentObjectIdentifier = getPropertyIdentifierNode(
+        node.expression.callee.object
+      );
+
+      if (
+        argumentObjectIdentifier?.name &&
+        argumentObjectIdentifier.name !== 'screen'
+      ) {
+        return false;
+      }
+
+      const argumentProperty = getPropertyIdentifierNode(
+        node.expression.callee.property
+      );
+
+      if (!argumentProperty) {
+        return false;
+      }
+
+      return (
+        helpers.isGetQueryVariant(argumentProperty) ||
+        helpers.isFindQueryVariant(argumentProperty)
+      );
+    }
+
     function isFunctionExpressionViolation(
       node: TSESTree.CallExpressionArgument
     ) {
@@ -91,42 +174,11 @@ export default createTestingLibraryRule<[], MessageIds>({
       }
 
       return node.body.body.reduce((acc, value) => {
-        if (!isExpressionStatement(value)) {
+        if (!isReturnViolation(value) && !isNonReturnViolation(value)) {
           return acc || false;
         }
 
-        if (!isCallExpression(value.expression)) {
-          return acc || false;
-        }
-
-        if (!isMemberExpression(value.expression.callee)) {
-          return acc || false;
-        }
-
-        const argumentObjectIdentifier = getPropertyIdentifierNode(
-          value.expression.callee.object
-        );
-
-        if (
-          argumentObjectIdentifier?.name &&
-          argumentObjectIdentifier.name !== 'screen'
-        ) {
-          return acc || false;
-        }
-
-        const argumentProperty = getPropertyIdentifierNode(
-          value.expression.callee.property
-        );
-
-        if (!argumentProperty) {
-          return acc || false;
-        }
-
-        return (
-          acc ||
-          helpers.isGetQueryVariant(argumentProperty) ||
-          helpers.isFindQueryVariant(argumentProperty)
-        );
+        return true;
       }, false);
     }
 
