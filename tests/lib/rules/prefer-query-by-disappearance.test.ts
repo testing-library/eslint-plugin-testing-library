@@ -133,6 +133,62 @@ ruleTester.run(RULE_NAME, rule, {
         })
       `,
     },
+    {
+      code: `
+        import { render } from '@testing-library/react';
+
+        const { queryByText } = render(<App />)
+        await waitForElementToBeRemoved(() => {
+          return queryByText("hello")
+        })
+      `,
+    },
+    {
+      code: `
+        import { render } from '@testing-library/react';
+
+        const { queryByText } = render(<App />)
+        await waitForElementToBeRemoved(() => {
+          queryByText("hello")
+        })
+      `,
+    },
+    {
+      code: `
+        import { render } from '@testing-library/react';
+
+        const { queryByText } = render(<App />)
+        await waitForElementToBeRemoved(() => queryByText("hello"))
+      `,
+    },
+    {
+      code: `
+        import { render } from '@testing-library/react';
+
+        const { queryByText } = render(<App />)
+        await waitForElementToBeRemoved(queryByText("hello"))
+      `,
+    },
+    {
+      code: `
+        import { render } from '@testing-library/react';
+
+        const { queryByText } = render(<App />)
+        await waitForElementToBeRemoved(function() {
+          queryByText("hello")
+        })
+      `,
+    },
+    {
+      code: `
+        import { render } from '@testing-library/react';
+
+        const { queryByText } = render(<App />)
+        await waitForElementToBeRemoved(function() {
+          return queryByText("hello")
+        })
+      `,
+    },
   ],
   invalid: [
     {
@@ -338,9 +394,77 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
+        import { render } from '@testing-library/react';
+
+        const { getByText } = render(<App />)
+        await waitForElementToBeRemoved(function() {
+          getByText('hey')
+        })
+      `,
+      errors: [
+        {
+          messageId: 'preferQueryByDisappearance',
+          line: 5,
+          column: 41,
+        },
+      ],
+    },
+    {
+      code: `
+        import { screen } from '@testing-library/react';
+
+        const { findByText } = screen
+        await waitForElementToBeRemoved(function() {
+          findByText('hey')
+        })
+      `,
+      errors: [
+        {
+          messageId: 'preferQueryByDisappearance',
+          line: 5,
+          column: 41,
+        },
+      ],
+    },
+    {
+      code: `
+        import { render } from '@testing-library/react';
+
+        const { findByText } = render
+        await waitForElementToBeRemoved(function() {
+          findByText('hey')
+        })
+      `,
+      errors: [
+        {
+          messageId: 'preferQueryByDisappearance',
+          line: 5,
+          column: 41,
+        },
+      ],
+    },
+    {
+      code: `
         import { screen } from '@testing-library/react';
 
         const { getByText } = screen
+        await waitForElementToBeRemoved(function() {
+          return getByText('hey')
+        })
+      `,
+      errors: [
+        {
+          messageId: 'preferQueryByDisappearance',
+          line: 5,
+          column: 41,
+        },
+      ],
+    },
+    {
+      code: `
+        import { render } from '@testing-library/react';
+
+        const { getByText } = render(<App />)
         await waitForElementToBeRemoved(function() {
           return getByText('hey')
         })
@@ -372,6 +496,23 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
+        import { render } from '@testing-library/react';
+
+        const { findByText } = render(<App />)
+        await waitForElementToBeRemoved(function() {
+          return findByText('hey')
+        })
+      `,
+      errors: [
+        {
+          messageId: 'preferQueryByDisappearance',
+          line: 5,
+          column: 41,
+        },
+      ],
+    },
+    {
+      code: `
         import { screen } from '@testing-library/react';
 
         const { getByText } = screen
@@ -389,9 +530,43 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
+        import { render } from '@testing-library/react';
+
+        const { getByText } = render(<App />)
+        await waitForElementToBeRemoved(() => {
+          return getByText('hey')
+        })
+      `,
+      errors: [
+        {
+          messageId: 'preferQueryByDisappearance',
+          line: 5,
+          column: 41,
+        },
+      ],
+    },
+    {
+      code: `
         import { screen } from '@testing-library/react';
 
         const { findByText } = screen
+        await waitForElementToBeRemoved(() => {
+          return findByText('hey')
+        })
+      `,
+      errors: [
+        {
+          messageId: 'preferQueryByDisappearance',
+          line: 5,
+          column: 41,
+        },
+      ],
+    },
+    {
+      code: `
+        import { screen } from '@testing-library/react';
+
+        const { findByText } = render(<App />)
         await waitForElementToBeRemoved(() => {
           return findByText('hey')
         })
@@ -423,9 +598,43 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
+        import { render } from '@testing-library/react';
+
+        const { getByText } = render(<App />)
+        await waitForElementToBeRemoved(() => {
+          getByText('hey')
+        })
+      `,
+      errors: [
+        {
+          messageId: 'preferQueryByDisappearance',
+          line: 5,
+          column: 41,
+        },
+      ],
+    },
+    {
+      code: `
         import { screen } from '@testing-library/react';
 
         const { findByText } = screen
+        await waitForElementToBeRemoved(() => {
+          findByText('hey')
+        })
+      `,
+      errors: [
+        {
+          messageId: 'preferQueryByDisappearance',
+          line: 5,
+          column: 41,
+        },
+      ],
+    },
+    {
+      code: `
+        import { render } from '@testing-library/react';
+
+        const { findByText } = render(<App />)
         await waitForElementToBeRemoved(() => {
           findByText('hey')
         })
@@ -455,6 +664,21 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
+        import { render } from '@testing-library/react';
+
+        const { findByText } = render(<App />)
+        await waitForElementToBeRemoved(() => findByText('hey'))
+      `,
+      errors: [
+        {
+          messageId: 'preferQueryByDisappearance',
+          line: 5,
+          column: 41,
+        },
+      ],
+    },
+    {
+      code: `
         import { screen } from '@testing-library/react';
 
         const { getByText } = screen
@@ -470,9 +694,39 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
+        import { render } from '@testing-library/react';
+
+        const { getByText } = render(<App />)
+        await waitForElementToBeRemoved(getByText('hey'))
+      `,
+      errors: [
+        {
+          messageId: 'preferQueryByDisappearance',
+          line: 5,
+          column: 41,
+        },
+      ],
+    },
+    {
+      code: `
         import { screen } from '@testing-library/react';
 
         const { findByText } = screen
+        await waitForElementToBeRemoved(findByText('hey'))
+      `,
+      errors: [
+        {
+          messageId: 'preferQueryByDisappearance',
+          line: 5,
+          column: 41,
+        },
+      ],
+    },
+    {
+      code: `
+        import { render } from '@testing-library/react';
+
+        const { findByText } = render(<App />)
         await waitForElementToBeRemoved(findByText('hey'))
       `,
       errors: [
