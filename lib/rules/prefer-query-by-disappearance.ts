@@ -49,24 +49,13 @@ export default createTestingLibraryRule<[], MessageIds>({
       return helpers.isAsyncUtil(identifierNode, ['waitForElementToBeRemoved']);
     }
 
-    function isNonCallbackViolation(node: TSESTree.CallExpressionArgument) {
-      if (!isCallExpression(node)) {
-        return false;
-      }
-
-      if (
-        !isMemberExpression(node.callee) &&
-        !getPropertyIdentifierNode(node.callee)
-      ) {
-        return false;
-      }
-
+    function isReportableExpression(node: TSESTree.LeftHandSideExpression) {
       let argumentProperty;
 
-      if (isMemberExpression(node.callee)) {
-        argumentProperty = getPropertyIdentifierNode(node.callee.property);
+      if (isMemberExpression(node)) {
+        argumentProperty = getPropertyIdentifierNode(node.property);
       } else {
-        argumentProperty = getPropertyIdentifierNode(node.callee);
+        argumentProperty = getPropertyIdentifierNode(node);
       }
 
       if (!argumentProperty) {
@@ -79,39 +68,27 @@ export default createTestingLibraryRule<[], MessageIds>({
       );
     }
 
+    function isNonCallbackViolation(node: TSESTree.CallExpressionArgument) {
+      if (!isCallExpression(node)) {
+        return false;
+      }
+
+      if (
+        !isMemberExpression(node.callee) &&
+        !getPropertyIdentifierNode(node.callee)
+      ) {
+        return false;
+      }
+
+      return isReportableExpression(node.callee);
+    }
+
     function isReturnViolation(node: TSESTree.Statement) {
-      if (!isReturnStatement(node)) {
+      if (!isReturnStatement(node) || !isCallExpression(node.argument)) {
         return false;
       }
 
-      if (!node.argument) {
-        return false;
-      }
-
-      if (!isCallExpression(node.argument)) {
-        return false;
-      }
-
-      const argumentNode = node.argument;
-
-      let argumentProperty;
-
-      if (isMemberExpression(argumentNode.callee)) {
-        argumentProperty = getPropertyIdentifierNode(
-          argumentNode.callee.property
-        );
-      } else {
-        argumentProperty = getPropertyIdentifierNode(argumentNode.callee);
-      }
-
-      if (!argumentProperty) {
-        return false;
-      }
-
-      return (
-        helpers.isGetQueryVariant(argumentProperty) ||
-        helpers.isFindQueryVariant(argumentProperty)
-      );
+      return isReportableExpression(node.argument.callee);
     }
 
     function isNonReturnViolation(node: TSESTree.Statement) {
@@ -130,24 +107,7 @@ export default createTestingLibraryRule<[], MessageIds>({
         return false;
       }
 
-      let argumentProperty;
-
-      if (isMemberExpression(node.expression.callee)) {
-        argumentProperty = getPropertyIdentifierNode(
-          node.expression.callee.property
-        );
-      } else {
-        argumentProperty = getPropertyIdentifierNode(node.expression.callee);
-      }
-
-      if (!argumentProperty) {
-        return false;
-      }
-
-      return (
-        helpers.isGetQueryVariant(argumentProperty) ||
-        helpers.isFindQueryVariant(argumentProperty)
-      );
+      return isReportableExpression(node.expression.callee);
     }
 
     function isFunctionExpressionViolation(
@@ -204,22 +164,7 @@ export default createTestingLibraryRule<[], MessageIds>({
         return false;
       }
 
-      let argumentProperty;
-
-      if (isMemberExpression(node.body.callee)) {
-        argumentProperty = getPropertyIdentifierNode(node.body.callee.property);
-      } else {
-        argumentProperty = getPropertyIdentifierNode(node.body.callee);
-      }
-
-      if (!argumentProperty) {
-        return false;
-      }
-
-      return (
-        helpers.isGetQueryVariant(argumentProperty) ||
-        helpers.isFindQueryVariant(argumentProperty)
-      );
+      return isReportableExpression(node.body.callee);
     }
 
     function isArrowFunctionViolation(node: TSESTree.CallExpressionArgument) {
