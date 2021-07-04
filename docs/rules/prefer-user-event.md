@@ -29,6 +29,14 @@ fireEventAliased.click(node);
 import * as dom from '@testing-library/dom';
 // or const dom = require(@testing-library/dom');
 dom.fireEvent.click(node);
+
+// using fireEvent as a function
+import * as dom from '@testing-library/dom';
+dom.fireEvent(node, dom.createEvent('click', node));
+
+import { fireEvent, createEvent } from '@testing-library/dom';
+const clickEvent = createEvent.click(node);
+fireEvent(node, clickEvent);
 ```
 
 Examples of **correct** code for this rule:
@@ -48,6 +56,9 @@ fireEvent.cut(node);
 import * as dom from '@testing-library/dom';
 // or const dom = require('@testing-library/dom');
 dom.fireEvent.cut(node);
+
+import { fireEvent, createEvent } from '@testing-library/dom';
+fireEvent(node, createEvent('cut', node));
 ```
 
 #### Options

@@ -204,6 +204,67 @@ ruleTester.run(RULE_NAME, rule, {
       const click = fireEvent.click
     })
     `,
+    ...Object.keys(MAPPING_TO_USER_EVENT).map((fireEventMethod) => ({
+      settings: {
+        'testing-library/utils-module': 'test-utils',
+      },
+      code: `
+        import { fireEvent, createEvent } from 'test-utils'
+        const event = createEvent.${fireEventMethod}(node)
+        fireEvent(node, event)
+      `,
+      options: [{ allowedMethods: [fireEventMethod] }],
+    })),
+    ...Object.keys(MAPPING_TO_USER_EVENT).map((fireEventMethod) => ({
+      settings: {
+        'testing-library/utils-module': 'test-utils',
+      },
+      code: `
+        import { fireEvent as fireEventAliased, createEvent } from 'test-utils'
+        fireEventAliased(node, createEvent.${fireEventMethod}(node))
+      `,
+      options: [{ allowedMethods: [fireEventMethod] }],
+    })),
+    {
+      settings: {
+        'testing-library/utils-module': 'test-utils',
+      },
+      code: `
+        import { fireEvent, createEvent } from 'test-utils'
+        const event = createEvent.drop(node)
+        fireEvent(node, event)
+      `,
+    },
+    {
+      settings: {
+        'testing-library/utils-module': 'test-utils',
+      },
+      code: `
+        import { fireEvent, createEvent } from 'test-utils'
+        const event = createEvent('drop', node)
+        fireEvent(node, event)
+      `,
+    },
+    {
+      settings: {
+        'testing-library/utils-module': 'test-utils',
+      },
+      code: `
+        import { fireEvent as fireEventAliased, createEvent as createEventAliased } from 'test-utils'
+        const event = createEventAliased.drop(node)
+        fireEventAliased(node, event)
+      `,
+    },
+    {
+      settings: {
+        'testing-library/utils-module': 'test-utils',
+      },
+      code: `
+      import { fireEvent as fireEventAliased, createEvent as createEventAliased } from 'test-utils'
+        const event = createEventAliased('drop', node)
+        fireEventAliased(node, event)
+      `,
+    },
   ],
   invalid: [
     ...createScenarioWithImport<TSESLint.InvalidTestCase<MessageIds, Options>>(
@@ -411,5 +472,137 @@ ruleTester.run(RULE_NAME, rule, {
         },
       ],
     },
+    ...Object.keys(MAPPING_TO_USER_EVENT).map((fireEventMethod) => ({
+      settings: {
+        'testing-library/utils-module': 'test-utils',
+      },
+      code: `
+        import { fireEvent, createEvent } from 'test-utils'
+        
+        fireEvent(node, createEvent('${fireEventMethod}', node))
+      `,
+      errors: [
+        {
+          messageId: 'preferUserEvent',
+          line: 4,
+          column: 9,
+          data: {
+            userEventMethods: formatUserEventMethodsMessage(fireEventMethod),
+            fireEventMethod,
+          },
+        } as const,
+      ],
+    })),
+    ...Object.keys(MAPPING_TO_USER_EVENT).map((fireEventMethod) => ({
+      settings: {
+        'testing-library/utils-module': 'test-utils',
+      },
+      code: `
+        import { fireEvent, createEvent } from 'test-utils'
+
+        fireEvent(node, createEvent.${fireEventMethod}(node))
+      `,
+      errors: [
+        {
+          messageId: 'preferUserEvent',
+          line: 4,
+          column: 9,
+          data: {
+            userEventMethods: formatUserEventMethodsMessage(fireEventMethod),
+            fireEventMethod,
+          },
+        } as const,
+      ],
+    })),
+    ...Object.keys(MAPPING_TO_USER_EVENT).map((fireEventMethod) => ({
+      settings: {
+        'testing-library/utils-module': 'test-utils',
+      },
+      code: `
+        import { fireEvent, createEvent } from 'test-utils'
+        const event = createEvent.${fireEventMethod}(node)
+        fireEvent(node, event)
+      `,
+      errors: [
+        {
+          messageId: 'preferUserEvent',
+          line: 4,
+          column: 9,
+          data: {
+            userEventMethods: formatUserEventMethodsMessage(fireEventMethod),
+            fireEventMethod,
+          },
+        } as const,
+      ],
+    })),
+    ...Object.keys(MAPPING_TO_USER_EVENT).map((fireEventMethod) => ({
+      settings: {
+        'testing-library/utils-module': 'test-utils',
+      },
+      code: `
+        import { fireEvent as fireEventAliased, createEvent as createEventAliased } from 'test-utils'
+        const eventValid = createEventAliased.drop(node)
+        fireEventAliased(node, eventValid)
+        const eventInvalid = createEventAliased.${fireEventMethod}(node)
+        fireEventAliased(node, eventInvalid)
+      `,
+      errors: [
+        {
+          messageId: 'preferUserEvent',
+          line: 6,
+          column: 9,
+          data: {
+            userEventMethods: formatUserEventMethodsMessage(fireEventMethod),
+            fireEventMethod,
+          },
+        } as const,
+      ],
+    })),
+    ...Object.keys(MAPPING_TO_USER_EVENT).map((fireEventMethod) => ({
+      settings: {
+        'testing-library/utils-module': 'test-utils',
+      },
+      code: `
+        import * as dom from 'test-utils'
+        const eventValid = dom.createEvent.drop(node)
+        dom.fireEvent(node, eventValid)
+        const eventInvalid = dom.createEvent.${fireEventMethod}(node)
+        dom.fireEvent(node, eventInvalid)
+      `,
+      errors: [
+        {
+          messageId: 'preferUserEvent',
+          line: 6,
+          column: 9,
+          data: {
+            userEventMethods: formatUserEventMethodsMessage(fireEventMethod),
+            fireEventMethod,
+          },
+        } as const,
+      ],
+    })),
+    ...Object.keys(MAPPING_TO_USER_EVENT).map((fireEventMethod) => ({
+      settings: {
+        'testing-library/utils-module': 'test-utils',
+      },
+      code: `
+        import * as dom from 'test-utils'
+        // valid event
+        dom.fireEvent(node, dom.createEvent.drop(node))
+        // invalid event
+        dom.fireEvent(node, dom.createEvent.${fireEventMethod}(node))
+      `,
+      errors: [
+        {
+          messageId: 'preferUserEvent',
+          line: 6,
+          column: 9,
+          data: {
+            userEventMethods: formatUserEventMethodsMessage(fireEventMethod),
+            fireEventMethod,
+          },
+        } as const,
+      ],
+    })),
   ],
 });

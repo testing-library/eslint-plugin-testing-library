@@ -77,6 +77,9 @@ type IsAsyncUtilFn = (
 type IsFireEventMethodFn = (node: TSESTree.Identifier) => boolean;
 type IsUserEventMethodFn = (node: TSESTree.Identifier) => boolean;
 type IsRenderUtilFn = (node: TSESTree.Identifier) => boolean;
+type IsCreateEventUtil = (
+  node: TSESTree.CallExpression | TSESTree.Identifier
+) => boolean;
 type IsRenderVariableDeclaratorFn = (
   node: TSESTree.VariableDeclarator
 ) => boolean;
@@ -115,6 +118,7 @@ export interface DetectionHelpers {
   isFireEventMethod: IsFireEventMethodFn;
   isUserEventMethod: IsUserEventMethodFn;
   isRenderUtil: IsRenderUtilFn;
+  isCreateEventUtil: IsCreateEventUtil;
   isRenderVariableDeclarator: IsRenderVariableDeclaratorFn;
   isDebugUtil: IsDebugUtilFn;
   isActUtil: (node: TSESTree.Identifier) => boolean;
@@ -128,6 +132,7 @@ export interface DetectionHelpers {
 const USER_EVENT_PACKAGE = '@testing-library/user-event';
 const REACT_DOM_TEST_UTILS_PACKAGE = 'react-dom/test-utils';
 const FIRE_EVENT_NAME = 'fireEvent';
+const CREATE_EVENT_NAME = 'createEvent';
 const USER_EVENT_NAME = 'userEvent';
 const RENDER_NAME = 'render';
 
@@ -471,6 +476,7 @@ export function detectTestingLibraryUtils<
     /**
      * Determines whether a given node is fireEvent method or not
      */
+    // eslint-disable-next-line complexity
     const isFireEventMethod: IsFireEventMethodFn = (node) => {
       const fireEventUtil =
         findImportedTestingLibraryUtilSpecifier(FIRE_EVENT_NAME);
@@ -493,33 +499,54 @@ export function detectTestingLibraryUtils<
           ? node.parent
           : undefined;
 
-      if (!parentMemberExpression) {
+      const parentCallExpression: TSESTree.CallExpression | undefined =
+        node.parent && isCallExpression(node.parent) ? node.parent : undefined;
+
+      if (!parentMemberExpression && !parentCallExpression) {
         return false;
       }
 
-      // make sure that given node it's not fireEvent object itself
-      if (
-        [fireEventUtilName, FIRE_EVENT_NAME].includes(node.name) ||
-        (ASTUtils.isIdentifier(parentMemberExpression.object) &&
-          parentMemberExpression.object.name === node.name)
-      ) {
-        return false;
+      // check fireEvent('method', node) usage
+      if (parentCallExpression) {
+        return [fireEventUtilName, FIRE_EVENT_NAME].includes(node.name);
       }
+
+      // we know it's defined at this point, but TS seems to think it is not
+      // so here I'm enforcing it once in order to avoid using "!" operator every time
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const definedParentMemberExpression = parentMemberExpression!;
 
       // check fireEvent.click() usage
       const regularCall =
-        ASTUtils.isIdentifier(parentMemberExpression.object) &&
-        parentMemberExpression.object.name === fireEventUtilName;
+        ASTUtils.isIdentifier(definedParentMemberExpression.object) &&
+        isCallExpression(definedParentMemberExpression.parent) &&
+        definedParentMemberExpression.object.name === fireEventUtilName &&
+        node.name !== FIRE_EVENT_NAME &&
+        node.name !== fireEventUtilName;
 
       // check testingLibraryUtils.fireEvent.click() usage
       const wildcardCall =
-        isMemberExpression(parentMemberExpression.object) &&
-        ASTUtils.isIdentifier(parentMemberExpression.object.object) &&
-        parentMemberExpression.object.object.name === fireEventUtilName &&
-        ASTUtils.isIdentifier(parentMemberExpression.object.property) &&
-        parentMemberExpression.object.property.name === FIRE_EVENT_NAME;
+        isMemberExpression(definedParentMemberExpression.object) &&
+        ASTUtils.isIdentifier(definedParentMemberExpression.object.object) &&
+        definedParentMemberExpression.object.object.name ===
+          fireEventUtilName &&
+        ASTUtils.isIdentifier(definedParentMemberExpression.object.property) &&
+        definedParentMemberExpression.object.property.name ===
+          FIRE_EVENT_NAME &&
+        node.name !== FIRE_EVENT_NAME &&
+        node.name !== fireEventUtilName;
 
-      return regularCall || wildcardCall;
+      // check testingLibraryUtils.fireEvent('click')
+      const wildcardCallWithCallExpression =
+        ASTUtils.isIdentifier(definedParentMemberExpression.object) &&
+        definedParentMemberExpression.object.name === fireEventUtilName &&
+        ASTUtils.isIdentifier(definedParentMemberExpression.property) &&
+        definedParentMemberExpression.property.name === FIRE_EVENT_NAME &&
+        !isMemberExpression(definedParentMemberExpression.parent) &&
+        node.name === FIRE_EVENT_NAME &&
+        node.name !== fireEventUtilName;
+
+      return regularCall || wildcardCall || wildcardCallWithCallExpression;
     };
 
     const isUserEventMethod: IsUserEventMethodFn = (node) => {
@@ -594,6 +621,40 @@ export function detectTestingLibraryUtils<
           );
         }
       );
+
+    const isCreateEventUtil: IsCreateEventUtil = (node) => {
+      const isCreateEventCallback = (
+        identifierNodeName: string,
+        originalNodeName?: string
+      ) => [identifierNodeName, originalNodeName].includes(CREATE_EVENT_NAME);
+      if (
+        isCallExpression(node) &&
+        isMemberExpression(node.callee) &&
+        ASTUtils.isIdentifier(node.callee.object)
+      ) {
+        return isPotentialTestingLibraryFunction(
+          node.callee.object,
+          isCreateEventCallback
+        );
+      }
+
+      if (
+        isCallExpression(node) &&
+        isMemberExpression(node.callee) &&
+        isMemberExpression(node.callee.object) &&
+        ASTUtils.isIdentifier(node.callee.object.property)
+      ) {
+        return isPotentialTestingLibraryFunction(
+          node.callee.object.property,
+          isCreateEventCallback
+        );
+      }
+      const identifier = getDeepestIdentifierNode(node);
+      return isPotentialTestingLibraryFunction(
+        identifier,
+        isCreateEventCallback
+      );
+    };
 
     const isRenderVariableDeclarator: IsRenderVariableDeclaratorFn = (node) => {
       if (!node.init) {
@@ -712,7 +773,8 @@ export function detectTestingLibraryUtils<
         isRenderUtil(node) ||
         isFireEventMethod(node) ||
         isUserEventMethod(node) ||
-        isActUtil(node)
+        isActUtil(node) ||
+        isCreateEventUtil(node)
       );
     };
 
@@ -906,6 +968,7 @@ export function detectTestingLibraryUtils<
       isFireEventMethod,
       isUserEventMethod,
       isRenderUtil,
+      isCreateEventUtil,
       isRenderVariableDeclarator,
       isDebugUtil,
       isActUtil,
