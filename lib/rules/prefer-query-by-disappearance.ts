@@ -113,13 +113,10 @@ export default createTestingLibraryRule<[], MessageIds>({
         return false;
       }
 
-      return node.body.body.reduce((acc, value) => {
-        if (!isReturnViolation(value) && !isNonReturnViolation(value)) {
-          return acc || false;
-        }
-
-        return true;
-      }, false);
+      return node.body.body.some(
+        (statement) =>
+          isReturnViolation(statement) || isNonReturnViolation(statement)
+      );
     }
 
     function isArrowFunctionBodyViolation(
@@ -129,13 +126,10 @@ export default createTestingLibraryRule<[], MessageIds>({
         return false;
       }
 
-      return node.body.body.reduce((acc, value) => {
-        if (!isReturnViolation(value) && !isNonReturnViolation(value)) {
-          return acc || false;
-        }
-
-        return true;
-      }, false);
+      return node.body.body.some(
+        (statement) =>
+          isReturnViolation(statement) || isNonReturnViolation(statement)
+      );
     }
 
     function isArrowFunctionImplicitReturnViolation(
