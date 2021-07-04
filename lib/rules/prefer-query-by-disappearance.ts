@@ -50,27 +50,25 @@ export default createTestingLibraryRule<[], MessageIds>({
     }
 
     function isNonCallbackViolation(
-      argumentNode: TSESTree.CallExpressionArgument // TODO: rename to node
+      node: TSESTree.CallExpressionArgument // TODO: rename to node
     ) {
-      if (!isCallExpression(argumentNode)) {
+      if (!isCallExpression(node)) {
         return false;
       }
 
       if (
-        !isMemberExpression(argumentNode.callee) &&
-        !getPropertyIdentifierNode(argumentNode.callee)
+        !isMemberExpression(node.callee) &&
+        !getPropertyIdentifierNode(node.callee)
       ) {
         return false;
       }
 
       let argumentProperty;
 
-      if (isMemberExpression(argumentNode.callee)) {
-        argumentProperty = getPropertyIdentifierNode(
-          argumentNode.callee.property
-        );
+      if (isMemberExpression(node.callee)) {
+        argumentProperty = getPropertyIdentifierNode(node.callee.property);
       } else {
-        argumentProperty = getPropertyIdentifierNode(argumentNode.callee);
+        argumentProperty = getPropertyIdentifierNode(node.callee);
       }
 
       if (!argumentProperty) {
@@ -191,31 +189,29 @@ export default createTestingLibraryRule<[], MessageIds>({
     }
 
     function isArrowFunctionImplicitReturnViolation(
-      argumentNode: TSESTree.CallExpressionArgument
+      node: TSESTree.CallExpressionArgument
     ) {
-      if (!isArrowFunctionExpression(argumentNode)) {
+      if (!isArrowFunctionExpression(node)) {
         return false;
       }
 
-      if (!isCallExpression(argumentNode.body)) {
+      if (!isCallExpression(node.body)) {
         return false;
       }
 
       if (
-        !isMemberExpression(argumentNode.body.callee) &&
-        !getPropertyIdentifierNode(argumentNode.body.callee)
+        !isMemberExpression(node.body.callee) &&
+        !getPropertyIdentifierNode(node.body.callee)
       ) {
         return false;
       }
 
       let argumentProperty;
 
-      if (isMemberExpression(argumentNode.body.callee)) {
-        argumentProperty = getPropertyIdentifierNode(
-          argumentNode.body.callee.property
-        );
+      if (isMemberExpression(node.body.callee)) {
+        argumentProperty = getPropertyIdentifierNode(node.body.callee.property);
       } else {
-        argumentProperty = getPropertyIdentifierNode(argumentNode.body.callee);
+        argumentProperty = getPropertyIdentifierNode(node.body.callee);
       }
 
       if (!argumentProperty) {
@@ -228,12 +224,10 @@ export default createTestingLibraryRule<[], MessageIds>({
       );
     }
 
-    function isArrowFunctionViolation(
-      argumentNode: TSESTree.CallExpressionArgument
-    ) {
+    function isArrowFunctionViolation(node: TSESTree.CallExpressionArgument) {
       return (
-        isArrowFunctionBodyViolation(argumentNode) ||
-        isArrowFunctionImplicitReturnViolation(argumentNode)
+        isArrowFunctionBodyViolation(node) ||
+        isArrowFunctionImplicitReturnViolation(node)
       );
     }
 
