@@ -39,7 +39,7 @@ export default createTestingLibraryRule<[], MessageIds>({
   defaultOptions: [],
 
   create(context, _, helpers) {
-    function isValidWaitFor(node: TSESTree.CallExpression): boolean {
+    function isWaitForElementToBeRemoved(node: TSESTree.CallExpression) {
       const identifierNode = getPropertyIdentifierNode(node);
 
       if (!identifierNode) {
@@ -92,11 +92,7 @@ export default createTestingLibraryRule<[], MessageIds>({
     }
 
     function isNonReturnViolation(node: TSESTree.Statement) {
-      if (!isExpressionStatement(node)) {
-        return false;
-      }
-
-      if (!isCallExpression(node.expression)) {
+      if (!isExpressionStatement(node) || !isCallExpression(node.expression)) {
         return false;
       }
 
@@ -129,11 +125,7 @@ export default createTestingLibraryRule<[], MessageIds>({
     function isArrowFunctionBodyViolation(
       node: TSESTree.CallExpressionArgument
     ) {
-      if (!isArrowFunctionExpression(node)) {
-        return false;
-      }
-
-      if (!isBlockStatement(node.body)) {
+      if (!isArrowFunctionExpression(node) || !isBlockStatement(node.body)) {
         return false;
       }
 
@@ -149,11 +141,7 @@ export default createTestingLibraryRule<[], MessageIds>({
     function isArrowFunctionImplicitReturnViolation(
       node: TSESTree.CallExpressionArgument
     ) {
-      if (!isArrowFunctionExpression(node)) {
-        return false;
-      }
-
-      if (!isCallExpression(node.body)) {
+      if (!isArrowFunctionExpression(node) || !isCallExpression(node.body)) {
         return false;
       }
 
@@ -175,7 +163,7 @@ export default createTestingLibraryRule<[], MessageIds>({
     }
 
     function check(node: TSESTree.CallExpression) {
-      if (!isValidWaitFor(node)) {
+      if (!isWaitForElementToBeRemoved(node)) {
         return;
       }
 
