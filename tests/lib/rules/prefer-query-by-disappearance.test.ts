@@ -11,6 +11,14 @@ ruleTester.run(RULE_NAME, rule, {
       code: `
         import { screen } from '@testing-library/react';
 
+        const button = screen.getByRole('button')
+        await waitForElementToBeRemoved(button)
+      `,
+    },
+    {
+      code: `
+        import { screen } from '@testing-library/react';
+
         await waitForElementToBeRemoved(() => screen.queryByText("hello"))
       `,
     },
