@@ -21,7 +21,7 @@ export default createTestingLibraryRule<[], MessageIds>({
     type: 'problem',
     docs: {
       description:
-        'Disallow using getBy* query inside waitForElementToBeRemoved',
+        'Suggest using `queryBy*` queries when waiting for disappearance',
       category: 'Possible Errors',
       recommendedConfig: {
         dom: false,
