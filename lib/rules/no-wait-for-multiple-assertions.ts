@@ -15,7 +15,8 @@ export default createTestingLibraryRule<Options, MessageIds>({
   meta: {
     type: 'suggestion',
     docs: {
-      description: "It's preferred to avoid multiple assertions in `waitFor`",
+      description:
+        'Disallow the use of multiple `expect` calls inside `waitFor`',
       category: 'Best Practices',
       recommendedConfig: {
         dom: false,

@@ -39,7 +39,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
   meta: {
     type: 'suggestion',
     docs: {
-      description: 'Suggest using screen while querying',
+      description: 'Suggest using `screen` while querying',
       category: 'Best Practices',
       recommendedConfig: {
         dom: 'error',
