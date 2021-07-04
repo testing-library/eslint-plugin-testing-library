@@ -6,20 +6,18 @@ type RecommendedConfig<TOptions extends readonly unknown[]> =
 
 // These 2 types are copied from @typescript-eslint/experimental-utils' CreateRuleMeta
 // and modified to our needs
-type TestingLibraryRuleMetaDocs<TOptions extends readonly unknown[]> = Omit<
-  TSESLint.RuleMetaDataDocs,
-  'recommended' | 'url'
-> & {
-  /**
-   * The recommendation level for the rule on a framework basis.
-   * Used by the build tools to generate the framework config.
-   * Set to false to not include it the config
-   */
-  recommendedConfig: Record<
-    SupportedTestingFramework,
-    RecommendedConfig<TOptions>
-  >;
-};
+export type TestingLibraryRuleMetaDocs<TOptions extends readonly unknown[]> =
+  Omit<TSESLint.RuleMetaDataDocs, 'recommended' | 'url'> & {
+    /**
+     * The recommendation level for the rule on a framework basis.
+     * Used by the build tools to generate the framework config.
+     * Set to false to not include it the config
+     */
+    recommendedConfig: Record<
+      SupportedTestingFramework,
+      RecommendedConfig<TOptions>
+    >;
+  };
 export type TestingLibraryRuleMeta<
   TMessageIds extends string,
   TOptions extends readonly unknown[]

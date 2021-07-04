@@ -9,14 +9,14 @@
   <p>ESLint plugin to follow best practices and anticipate common mistakes when writing tests with Testing Library</p>
 </div>
 
-<hr>
+---
 
 [![Build status][build-badge]][build-url]
 [![Package version][version-badge]][version-url]
 [![eslint-remote-tester][eslint-remote-tester-badge]][eslint-remote-tester-workflow]
 [![eslint-plugin-testing-library][package-health-badge]][package-health-url]
 [![MIT License][license-badge]][license-url]
-<br>
+<br />
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg?style=flat-square)](https://github.com/semantic-release/semantic-release)
 [![PRs Welcome][pr-badge]][pr-url]
 [![All Contributors][all-contributors-badge]](#contributors-)
@@ -178,33 +178,41 @@ To enable this configuration use the `extends` property in your
 
 ## Supported Rules
 
-| Rule                                                                                             | Description                                                                              | Configurations                                                    | Fixable            |
-| ------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------- | ----------------------------------------------------------------- | ------------------ |
-| [testing-library/await-async-query](docs/rules/await-async-query.md)                             | Enforce promises from async queries to be handled                                        | ![dom-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] |                    |
-| [testing-library/await-async-utils](docs/rules/await-async-utils.md)                             | Enforce async utils to be awaited properly                                               | ![dom-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] |                    |
-| [testing-library/await-fire-event](docs/rules/await-fire-event.md)                               | Enforce promises from fire event methods to be handled                                   | ![vue-badge][]                                                    |                    |
-| [testing-library/consistent-data-testid](docs/rules/consistent-data-testid.md)                   | Ensure `data-testid` values match a provided regex.                                      |                                                                   |                    |
-| [testing-library/no-await-sync-events](docs/rules/no-await-sync-events.md)                       | Disallow unnecessary `await` for sync events                                             |                                                                   |                    |
-| [testing-library/no-await-sync-query](docs/rules/no-await-sync-query.md)                         | Disallow unnecessary `await` for sync queries                                            | ![dom-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] |                    |
-| [testing-library/no-container](docs/rules/no-container.md)                                       | Disallow the use of `container` methods                                                  | ![angular-badge][] ![react-badge][] ![vue-badge][]                |                    |
-| [testing-library/no-debug](docs/rules/no-debug.md)                                               | Disallow the use of debugging utilities like `debug`                                     | ![angular-badge][] ![react-badge][] ![vue-badge][]                |                    |
-| [testing-library/no-dom-import](docs/rules/no-dom-import.md)                                     | Disallow importing from DOM Testing Library                                              | ![angular-badge][] ![react-badge][] ![vue-badge][]                | ![fixable-badge][] |
-| [testing-library/no-manual-cleanup](docs/rules/no-manual-cleanup.md)                             | Disallow the use of `cleanup`                                                            |                                                                   |                    |
-| [testing-library/no-node-access](docs/rules/no-node-access.md)                                   | Disallow direct Node access                                                              | ![angular-badge][] ![react-badge][] ![vue-badge][]                |                    |
-| [testing-library/no-promise-in-fire-event](docs/rules/no-promise-in-fire-event.md)               | Disallow the use of promises passed to a `fireEvent` method                              | ![dom-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] |                    |
-| [testing-library/no-render-in-setup](docs/rules/no-render-in-setup.md)                           | Disallow the use of `render` in setup functions                                          |                                                                   |                    |
-| [testing-library/no-unnecessary-act](docs/rules/no-unnecessary-act.md)                           | Disallow wrapping Testing Library utils or empty callbacks in `act`                      |                                                                   |                    |
-| [testing-library/no-wait-for-empty-callback](docs/rules/no-wait-for-empty-callback.md)           | Disallow empty callbacks for `waitFor` and `waitForElementToBeRemoved`                   | ![dom-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] |                    |
-| [testing-library/no-wait-for-multiple-assertions](docs/rules/no-wait-for-multiple-assertions.md) | Disallow the use of multiple expect inside `waitFor`                                     |                                                                   |                    |
-| [testing-library/no-wait-for-side-effects](docs/rules/no-wait-for-side-effects.md)               | Disallow the use of side effects inside `waitFor`                                        |                                                                   |                    |
-| [testing-library/no-wait-for-snapshot](docs/rules/no-wait-for-snapshot.md)                       | Ensures no snapshot is generated inside of a `waitFor` call                              |                                                                   |                    |
-| [testing-library/prefer-explicit-assert](docs/rules/prefer-explicit-assert.md)                   | Suggest using explicit assertions rather than just `getBy*` queries                      |                                                                   |                    |
-| [testing-library/prefer-find-by](docs/rules/prefer-find-by.md)                                   | Suggest using `findBy*` methods instead of the `waitFor` + `getBy` queries               | ![dom-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] | ![fixable-badge][] |
-| [testing-library/prefer-presence-queries](docs/rules/prefer-presence-queries.md)                 | Enforce specific queries when checking element is present or not                         |                                                                   |                    |
-| [testing-library/prefer-screen-queries](docs/rules/prefer-screen-queries.md)                     | Suggest using screen while using queries                                                 | ![dom-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] |                    |
-| [testing-library/prefer-user-event](docs/rules/prefer-user-event.md)                             | Suggest using `userEvent` library instead of `fireEvent` for simulating user interaction |                                                                   |                    |
-| [testing-library/prefer-wait-for](docs/rules/prefer-wait-for.md)                                 | Use `waitFor` instead of deprecated wait methods                                         |                                                                   | ![fixable-badge][] |
-| [testing-library/render-result-naming-convention](docs/rules/render-result-naming-convention.md) | Enforce a valid naming for return value from `render`                                    | ![angular-badge][] ![react-badge][] ![vue-badge][]                |                    |
+<!-- RULES-LIST:START -->
+
+**Key**: 🔧 = fixable
+
+**Configurations**: ![dom-badge][] = dom, ![angular-badge][] = angular, ![react-badge][] = react, ![vue-badge][] = vue
+
+| Name                                                                                                 | Description                                                                                  | 🔧  | Included in configurations                                        |
+| ---------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- | --- | ----------------------------------------------------------------- |
+| [`testing-library/await-async-query`](./docs/rules/await-async-query.md)                             | Enforce promises from async queries to be handled                                            |     | ![dom-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] |
+| [`testing-library/await-async-utils`](./docs/rules/await-async-utils.md)                             | Enforce promises from async utils to be awaited properly                                     |     | ![dom-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] |
+| [`testing-library/await-fire-event`](./docs/rules/await-fire-event.md)                               | Enforce promises from `fireEvent` methods to be handled                                      |     | ![vue-badge][]                                                    |
+| [`testing-library/consistent-data-testid`](./docs/rules/consistent-data-testid.md)                   | Ensures consistent usage of `data-testid`                                                    |     |                                                                   |
+| [`testing-library/no-await-sync-events`](./docs/rules/no-await-sync-events.md)                       | Disallow unnecessary `await` for sync events                                                 |     |                                                                   |
+| [`testing-library/no-await-sync-query`](./docs/rules/no-await-sync-query.md)                         | Disallow unnecessary `await` for sync queries                                                |     | ![dom-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] |
+| [`testing-library/no-container`](./docs/rules/no-container.md)                                       | Disallow the use of `container` methods                                                      |     | ![angular-badge][] ![react-badge][] ![vue-badge][]                |
+| [`testing-library/no-debug`](./docs/rules/no-debug.md)                                               | Disallow the use of debugging utilities like `debug`                                         |     | ![angular-badge][] ![react-badge][] ![vue-badge][]                |
+| [`testing-library/no-dom-import`](./docs/rules/no-dom-import.md)                                     | Disallow importing from DOM Testing Library                                                  | 🔧  | ![angular-badge][] ![react-badge][] ![vue-badge][]                |
+| [`testing-library/no-manual-cleanup`](./docs/rules/no-manual-cleanup.md)                             | Disallow the use of `cleanup`                                                                |     |                                                                   |
+| [`testing-library/no-node-access`](./docs/rules/no-node-access.md)                                   | Disallow direct Node access                                                                  |     | ![angular-badge][] ![react-badge][] ![vue-badge][]                |
+| [`testing-library/no-promise-in-fire-event`](./docs/rules/no-promise-in-fire-event.md)               | Disallow the use of promises passed to a `fireEvent` method                                  |     | ![dom-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] |
+| [`testing-library/no-render-in-setup`](./docs/rules/no-render-in-setup.md)                           | Disallow the use of `render` in testing frameworks setup functions                           |     |                                                                   |
+| [`testing-library/no-unnecessary-act`](./docs/rules/no-unnecessary-act.md)                           | Disallow wrapping Testing Library utils or empty callbacks in `act`                          |     |                                                                   |
+| [`testing-library/no-wait-for-empty-callback`](./docs/rules/no-wait-for-empty-callback.md)           | Disallow empty callbacks for `waitFor` and `waitForElementToBeRemoved`                       |     | ![dom-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] |
+| [`testing-library/no-wait-for-multiple-assertions`](./docs/rules/no-wait-for-multiple-assertions.md) | Disallow the use of multiple `expect` calls inside `waitFor`                                 |     |                                                                   |
+| [`testing-library/no-wait-for-side-effects`](./docs/rules/no-wait-for-side-effects.md)               | Disallow the us of side effects in `waitFor`                                                 |     |                                                                   |
+| [`testing-library/no-wait-for-snapshot`](./docs/rules/no-wait-for-snapshot.md)                       | Ensures no snapshot is generated inside of a `waitFor` call                                  |     |                                                                   |
+| [`testing-library/prefer-explicit-assert`](./docs/rules/prefer-explicit-assert.md)                   | Suggest using explicit assertions rather than just `getBy*` queries                          |     |                                                                   |
+| [`testing-library/prefer-find-by`](./docs/rules/prefer-find-by.md)                                   | Suggest using `find(All)By*` query instead of `waitFor` + `get(All)By*` to wait for elements | 🔧  | ![dom-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] |
+| [`testing-library/prefer-presence-queries`](./docs/rules/prefer-presence-queries.md)                 | Ensure appropriate `get*`/`query*` queries are used with their respective matchers           |     |                                                                   |
+| [`testing-library/prefer-screen-queries`](./docs/rules/prefer-screen-queries.md)                     | Suggest using `screen` while querying                                                        |     | ![dom-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] |
+| [`testing-library/prefer-user-event`](./docs/rules/prefer-user-event.md)                             | Suggest using `userEvent` over `fireEvent` for simulating user interactions                  |     |                                                                   |
+| [`testing-library/prefer-wait-for`](./docs/rules/prefer-wait-for.md)                                 | Use `waitFor` instead of deprecated wait methods                                             | 🔧  |                                                                   |
+| [`testing-library/render-result-naming-convention`](./docs/rules/render-result-naming-convention.md) | Enforce a valid naming for return value from `render`                                        |     | ![angular-badge][] ![react-badge][] ![vue-badge][]                |
+
+<!-- RULES-LIST:END -->
 
 ## Aggressive Reporting
 
@@ -394,7 +402,6 @@ This project follows the [all-contributors](https://github.com/all-contributors/
 [tweet-badge]: https://img.shields.io/twitter/url?style=social&url=https%3A%2F%2Fgithub.com%2Ftesting-library%2Feslint-plugin-testing-library
 [tweet-url]: https://twitter.com/intent/tweet?url=https%3a%2f%2fgithub.com%2ftesting-library%2feslint-plugin-testing-library&text=check%20out%20eslint-plugin-testing-library%20by%20@belcodev
 [dom-badge]: https://img.shields.io/badge/%F0%9F%90%99-DOM-black?style=flat-square
-[fixable-badge]: https://img.shields.io/badge/fixable-success?style=flat-square
 [angular-badge]: https://img.shields.io/badge/-Angular-black?style=flat-square&logo=angular&logoColor=white&labelColor=DD0031&color=black
 [react-badge]: https://img.shields.io/badge/-React-black?style=flat-square&logo=react&logoColor=white&labelColor=61DAFB&color=black
 [vue-badge]: https://img.shields.io/badge/-Vue-black?style=flat-square&logo=vue.js&logoColor=white&labelColor=4FC08D&color=black

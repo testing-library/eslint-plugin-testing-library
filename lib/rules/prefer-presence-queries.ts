@@ -13,7 +13,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
     docs: {
       category: 'Best Practices',
       description:
-        'Ensure appropriate get*/query* queries are used with their respective matchers',
+        'Ensure appropriate `get*`/`query*` queries are used with their respective matchers',
       recommendedConfig: {
         dom: false,
         angular: false,
