@@ -56,24 +56,22 @@ export default createTestingLibraryRule<[], MessageIds>({
         return false;
       }
 
-      if (!isMemberExpression(argumentNode.callee)) {
-        return false;
-      }
-
-      const argumentObjectIdentifier = getPropertyIdentifierNode(
-        argumentNode.callee.object
-      );
-
       if (
-        argumentObjectIdentifier?.name &&
-        argumentObjectIdentifier.name !== 'screen'
+        !isMemberExpression(argumentNode.callee) &&
+        !getPropertyIdentifierNode(argumentNode.callee)
       ) {
         return false;
       }
 
-      const argumentProperty = getPropertyIdentifierNode(
-        argumentNode.callee.property
-      );
+      let argumentProperty;
+
+      if (isMemberExpression(argumentNode.callee)) {
+        argumentProperty = getPropertyIdentifierNode(
+          argumentNode.callee.property
+        );
+      } else {
+        argumentProperty = getPropertyIdentifierNode(argumentNode.callee);
+      }
 
       if (!argumentProperty) {
         return false;
@@ -100,24 +98,15 @@ export default createTestingLibraryRule<[], MessageIds>({
 
       const argumentNode = node.argument;
 
-      if (!isMemberExpression(argumentNode.callee)) {
-        return false;
+      let argumentProperty;
+
+      if (isMemberExpression(argumentNode.callee)) {
+        argumentProperty = getPropertyIdentifierNode(
+          argumentNode.callee.property
+        );
+      } else {
+        argumentProperty = getPropertyIdentifierNode(argumentNode.callee);
       }
-
-      const argumentObjectIdentifier = getPropertyIdentifierNode(
-        argumentNode.callee.object
-      );
-
-      if (
-        argumentObjectIdentifier?.name &&
-        argumentObjectIdentifier.name !== 'screen'
-      ) {
-        return false;
-      }
-
-      const argumentProperty = getPropertyIdentifierNode(
-        argumentNode.callee.property
-      );
 
       if (!argumentProperty) {
         return false;
@@ -138,24 +127,22 @@ export default createTestingLibraryRule<[], MessageIds>({
         return false;
       }
 
-      if (!isMemberExpression(node.expression.callee)) {
-        return false;
-      }
-
-      const argumentObjectIdentifier = getPropertyIdentifierNode(
-        node.expression.callee.object
-      );
-
       if (
-        argumentObjectIdentifier?.name &&
-        argumentObjectIdentifier.name !== 'screen'
+        !isMemberExpression(node.expression.callee) &&
+        !getPropertyIdentifierNode(node.expression.callee)
       ) {
         return false;
       }
 
-      const argumentProperty = getPropertyIdentifierNode(
-        node.expression.callee.property
-      );
+      let argumentProperty;
+
+      if (isMemberExpression(node.expression.callee)) {
+        argumentProperty = getPropertyIdentifierNode(
+          node.expression.callee.property
+        );
+      } else {
+        argumentProperty = getPropertyIdentifierNode(node.expression.callee);
+      }
 
       if (!argumentProperty) {
         return false;
@@ -214,24 +201,22 @@ export default createTestingLibraryRule<[], MessageIds>({
         return false;
       }
 
-      if (!isMemberExpression(argumentNode.body.callee)) {
-        return false;
-      }
-
-      const argumentObjectIdentifier = getPropertyIdentifierNode(
-        argumentNode.body.callee.object
-      );
-
       if (
-        argumentObjectIdentifier?.name &&
-        argumentObjectIdentifier.name !== 'screen'
+        !isMemberExpression(argumentNode.body.callee) &&
+        !getPropertyIdentifierNode(argumentNode.body.callee)
       ) {
         return false;
       }
 
-      const argumentProperty = getPropertyIdentifierNode(
-        argumentNode.body.callee.property
-      );
+      let argumentProperty;
+
+      if (isMemberExpression(argumentNode.body.callee)) {
+        argumentProperty = getPropertyIdentifierNode(
+          argumentNode.body.callee.property
+        );
+      } else {
+        argumentProperty = getPropertyIdentifierNode(argumentNode.body.callee);
+      }
 
       if (!argumentProperty) {
         return false;
