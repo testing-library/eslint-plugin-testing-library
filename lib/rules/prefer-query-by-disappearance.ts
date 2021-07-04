@@ -49,9 +49,7 @@ export default createTestingLibraryRule<[], MessageIds>({
       return helpers.isAsyncUtil(identifierNode, ['waitForElementToBeRemoved']);
     }
 
-    function isNonCallbackViolation(
-      node: TSESTree.CallExpressionArgument // TODO: rename to node
-    ) {
+    function isNonCallbackViolation(node: TSESTree.CallExpressionArgument) {
       if (!isCallExpression(node)) {
         return false;
       }
@@ -247,7 +245,7 @@ export default createTestingLibraryRule<[], MessageIds>({
       }
 
       context.report({
-        node: argumentNode, // should we report only .getBy* and not the whole argument?
+        node: argumentNode,
         messageId: 'preferQueryByDisappearance',
       });
     }
