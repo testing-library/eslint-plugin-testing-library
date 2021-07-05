@@ -103,6 +103,10 @@ export default createTestingLibraryRule<Options, MessageIds>({
       return isReportableExpression(node.expression.callee);
     }
 
+    function isStatementViolation(statement: TSESTree.Statement) {
+      return isReturnViolation(statement) || isNonReturnViolation(statement);
+    }
+
     function isFunctionExpressionViolation(
       node: TSESTree.CallExpressionArgument
     ) {
@@ -110,9 +114,8 @@ export default createTestingLibraryRule<Options, MessageIds>({
         return false;
       }
 
-      return node.body.body.some(
-        (statement) =>
-          isReturnViolation(statement) || isNonReturnViolation(statement)
+      return node.body.body.some((statement) =>
+        isStatementViolation(statement)
       );
     }
 
@@ -123,9 +126,8 @@ export default createTestingLibraryRule<Options, MessageIds>({
         return false;
       }
 
-      return node.body.body.some(
-        (statement) =>
-          isReturnViolation(statement) || isNonReturnViolation(statement)
+      return node.body.body.some((statement) =>
+        isStatementViolation(statement)
       );
     }
 
