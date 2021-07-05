@@ -14,8 +14,9 @@ import {
 
 export const RULE_NAME = 'prefer-query-wait-disappearance';
 type MessageIds = 'preferQueryByDisappearance';
+type Options = [];
 
-export default createTestingLibraryRule<[], MessageIds>({
+export default createTestingLibraryRule<Options, MessageIds>({
   name: RULE_NAME,
   meta: {
     type: 'problem',
