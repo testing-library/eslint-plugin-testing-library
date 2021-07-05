@@ -12,8 +12,8 @@ import {
   isBlockStatement,
 } from '../node-utils';
 
-export const RULE_NAME = 'prefer-query-wait-disappearance';
-export type MessageIds = 'preferQueryByDisappearance';
+const RULE_NAME = 'prefer-query-wait-disappearance';
+type MessageIds = 'preferQueryByDisappearance';
 
 export default createTestingLibraryRule<[], MessageIds>({
   name: RULE_NAME,
@@ -50,13 +50,9 @@ export default createTestingLibraryRule<[], MessageIds>({
     }
 
     function isReportableExpression(node: TSESTree.LeftHandSideExpression) {
-      let argumentProperty;
-
-      if (isMemberExpression(node)) {
-        argumentProperty = getPropertyIdentifierNode(node.property);
-      } else {
-        argumentProperty = getPropertyIdentifierNode(node);
-      }
+      const argumentProperty = isMemberExpression(node)
+        ? getPropertyIdentifierNode(node.property)
+        : getPropertyIdentifierNode(node);
 
       if (!argumentProperty) {
         return false;
