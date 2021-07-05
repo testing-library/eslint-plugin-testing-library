@@ -4,7 +4,7 @@
 
 This rule enforces using `queryBy*` queries when waiting for disappearance with `waitForElementToBeRemoved`.
 
-Using `queryBy*` queries in a `waitForElementToBeRemoved` yield more descriptive error messages and helps achieving more consistency in a codebase.
+Using `queryBy*` queries in a `waitForElementToBeRemoved` yields more descriptive error messages and helps to achieve more consistency in a codebase.
 
 ```js
 // TestingLibraryElementError: Unable to find an element by: [data-testid="loader"]
