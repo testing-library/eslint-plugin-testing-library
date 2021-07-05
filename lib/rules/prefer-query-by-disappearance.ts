@@ -12,7 +12,7 @@ import {
   isBlockStatement,
 } from '../node-utils';
 
-const RULE_NAME = 'prefer-query-wait-disappearance';
+export const RULE_NAME = 'prefer-query-wait-disappearance';
 type MessageIds = 'preferQueryByDisappearance';
 
 export default createTestingLibraryRule<[], MessageIds>({
