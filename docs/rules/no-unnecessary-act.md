@@ -91,7 +91,7 @@ await act(async () => {
 
 This rule has one option:
 
-- `isStrict`: wrapping both things related and not related to Testing Library in `act` is reported
+- `isStrict`: **disabled by default**. Wrapping both things related and not related to Testing Library in `act` is reported
 
   ```js
   "testing-library/no-unnecessary-act": ["error", {"isStrict": true}]
