@@ -87,6 +87,30 @@ await act(async () => {
 });
 ```
 
+## Options
+
+This rule has one option:
+
+- `isStrict`: wrapping both things related and not related to Testing Library in `act` is reported
+
+  ```js
+  "testing-library/no-unnecessary-act": ["error", {"isStrict": true}]
+  ```
+
+Incorrect:
+
+```jsx
+// ❌ wrapping both things related and not related to Testing Library in `act` is NOT correct
+
+import { act, screen } from '@testing-library/react';
+import { stuffThatDoesNotUseRTL } from 'somwhere-else';
+
+await act(async () => {
+  await screen.findByRole('button');
+  stuffThatDoesNotUseRTL();
+});
+```
+
 ## Further Reading
 
 - [Inspiration for this rule](https://kentcdodds.com/blog/common-mistakes-with-react-testing-library#wrapping-things-in-act-unnecessarily)

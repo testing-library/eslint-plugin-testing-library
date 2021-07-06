@@ -156,6 +156,27 @@ ruleTester.run(RULE_NAME, rule, {
       });
       `,
     },
+    {
+      options: [
+        {
+          isStrict: true,
+        },
+      ],
+      code: `// case: RTL act wrapping non-RTL calls with strict option
+      import { act, render } from '@testing-library/react'
+
+      act(() => jest.advanceTimersByTime(1000))
+      act(() => {
+        jest.advanceTimersByTime(1000)
+      })
+      act(() => {
+        return jest.advanceTimersByTime(1000)
+      })
+      act(function() {
+        return jest.advanceTimersByTime(1000)
+      })
+      `,
+    },
   ],
   invalid: [
     // cases for act related to React Testing Library
@@ -796,6 +817,37 @@ ruleTester.run(RULE_NAME, rule, {
           messageId: 'noUnnecessaryActTestingLibraryUtil',
           line: 11,
           column: 9,
+        },
+      ],
+    },
+    {
+      options: [
+        {
+          isStrict: true,
+        },
+      ],
+      code: `// case: RTL act wrapping both RTL and non-RTL calls with strict option
+      import { act, render } from '@testing-library/react'
+
+      await act(async () => {
+        userEvent.click(screen.getByText("Submit"))
+        await flushPromises()
+      })
+      act(function() {
+        userEvent.click(screen.getByText("Submit"))
+        flushPromises()
+      })
+      `,
+      errors: [
+        {
+          messageId: 'noUnnecessaryActTestingLibraryUtil',
+          line: 4,
+          column: 13,
+        },
+        {
+          messageId: 'noUnnecessaryActTestingLibraryUtil',
+          line: 8,
+          column: 7,
         },
       ],
     },
