@@ -127,13 +127,12 @@ export default createTestingLibraryRule<Options, MessageIds>({
         return;
       }
 
-      const isReported =
-        (!isStrict && !hasSomeNonTestingLibraryCall(blockStatementNode.body)) ||
-        (isStrict &&
-          hasSomeNonTestingLibraryCall(blockStatementNode.body) &&
-          hasTestingLibraryCall(blockStatementNode.body));
+      const shouldBeReported = isStrict
+        ? hasSomeNonTestingLibraryCall(blockStatementNode.body) &&
+          hasTestingLibraryCall(blockStatementNode.body)
+        : !hasSomeNonTestingLibraryCall(blockStatementNode.body);
 
-      if (isReported) {
+      if (shouldBeReported) {
         context.report({
           node: identifierNode,
           messageId: 'noUnnecessaryActTestingLibraryUtil',
