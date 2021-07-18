@@ -19,7 +19,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
   meta: {
     type: 'suggestion',
     docs: {
-      description: 'Disallow the us of side effects in `waitFor`',
+      description: 'Disallow the use of side effects in `waitFor`',
       category: 'Best Practices',
       recommendedConfig: {
         dom: false,
