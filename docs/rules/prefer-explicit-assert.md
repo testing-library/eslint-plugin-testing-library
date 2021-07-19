@@ -40,7 +40,7 @@ expect(utils.getByText('foo')).toBeDefined();
 expect(queryByText('foo')).toBeInTheDocument();
 
 // Doing something with the element returned without asserting is absolutely fine
-await waitForElement(() => getByText('foo'));
+await waitFor(() => getByText('foo'));
 fireEvent.click(getByText('bar'));
 const quxElement = getByText('qux');
 ```
