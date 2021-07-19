@@ -29,14 +29,14 @@ const isVariableDeclaration = (node: TSESTree.Node) => {
     isAwaitExpression(node.parent.parent) &&
     isVariableDeclarator(node.parent.parent.parent)
   ) {
-    return true;
+    return true; // const quxElement = await findByLabelText('qux')
   }
 
   if (
     isCallExpression(node.parent) &&
     isVariableDeclarator(node.parent.parent)
   ) {
-    return true;
+    return true; // const quxElement = findByLabelText('qux')
   }
 
   if (
@@ -45,7 +45,7 @@ const isVariableDeclaration = (node: TSESTree.Node) => {
     isAwaitExpression(node.parent.parent.parent) &&
     isVariableDeclarator(node.parent.parent.parent.parent)
   ) {
-    return true;
+    return true; // const quxElement = await screen.findByLabelText('qux')
   }
 
   if (
@@ -53,7 +53,7 @@ const isVariableDeclaration = (node: TSESTree.Node) => {
     isCallExpression(node.parent.parent) &&
     isVariableDeclarator(node.parent.parent.parent)
   ) {
-    return true;
+    return true; // const quxElement = screen.findByLabelText('qux')
   }
 
   return false;
