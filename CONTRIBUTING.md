@@ -5,7 +5,7 @@ Thanks for being willing to contribute!
 Working on your first Pull Request? You can learn how from this free series
 [How to Contribute to an Open Source Project on GitHub](https://egghead.io/series/how-to-contribute-to-an-open-source-project-on-github).
 
-Tweaking eslint rules is mostly about traversing through the AST. [AST Explorer] is a great tool that simplifies the process.
+Tweaking ESLint rules is mostly about traversing through the AST. [AST Explorer](https://astexplorer.net) is a great tool that simplifies the process.
 
 ## Project setup
 
