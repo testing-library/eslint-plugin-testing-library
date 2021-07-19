@@ -265,6 +265,12 @@ ruleTester.run(RULE_NAME, rule, {
         fireEventAliased(node, event)
       `,
     },
+    {
+      code: `
+        const createEvent = () => 'Event';
+        const event = createEvent();
+      `,
+    },
   ],
   invalid: [
     ...createScenarioWithImport<TSESLint.InvalidTestCase<MessageIds, Options>>(
