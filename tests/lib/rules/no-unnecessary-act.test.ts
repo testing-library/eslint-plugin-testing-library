@@ -31,6 +31,30 @@ ruleTester.run(RULE_NAME, rule, {
           await stuffThatDoesNotUseRTL();
         });
 
+        await act(async () => {
+          await stuffThatDoesNotUseRTL;
+        });
+
+        await act(() => stuffThatDoesNotUseRTL);
+
+        act(() => stuffThatDoesNotUseRTL);
+
+        act(() => {
+          return stuffThatDoesNotUseRTL
+        });
+
+        act(async function() {
+          await stuffThatDoesNotUseRTL;
+        });
+
+        await act(async function() {
+          await stuffThatDoesNotUseRTL;
+        });
+
+        act(async function() {
+          return stuffThatDoesNotUseRTL;
+        });
+
         act(function() {
           stuffThatDoesNotUseRTL();
           const a = foo();

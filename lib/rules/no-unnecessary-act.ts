@@ -3,8 +3,12 @@ import { TSESTree } from '@typescript-eslint/experimental-utils';
 import { createTestingLibraryRule } from '../create-testing-library-rule';
 import {
   getDeepestIdentifierNode,
+  getPropertyIdentifierNode,
   getStatementCallExpression,
+  isAwaitExpression,
   isEmptyFunction,
+  isExpressionStatement,
+  isReturnStatement,
 } from '../node-utils';
 
 export const RULE_NAME = 'no-unnecessary-act';
@@ -52,17 +56,30 @@ export default createTestingLibraryRule<Options, MessageIds>({
     function getStatementIdentifier(statement: TSESTree.Statement) {
       const callExpression = getStatementCallExpression(statement);
 
-      if (!callExpression) {
+      if (
+        !callExpression &&
+        !isExpressionStatement(statement) &&
+        !isReturnStatement(statement)
+      ) {
         return null;
       }
 
-      const identifier = getDeepestIdentifierNode(callExpression);
-
-      if (!identifier) {
-        return null;
+      if (callExpression) {
+        return getDeepestIdentifierNode(callExpression);
       }
 
-      return identifier;
+      if (
+        isExpressionStatement(statement) &&
+        isAwaitExpression(statement.expression)
+      ) {
+        return getPropertyIdentifierNode(statement.expression.argument);
+      }
+
+      if (isReturnStatement(statement) && statement.argument) {
+        return getPropertyIdentifierNode(statement.argument);
+      }
+
+      return null;
     }
 
     /**
