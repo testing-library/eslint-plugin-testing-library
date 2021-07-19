@@ -5,6 +5,8 @@ Thanks for being willing to contribute!
 Working on your first Pull Request? You can learn how from this free series
 [How to Contribute to an Open Source Project on GitHub](https://egghead.io/series/how-to-contribute-to-an-open-source-project-on-github).
 
+Tweaking eslint rules is mostly about traversing through the AST. [AST Explorer] is a great tool that simplifies the process.
+
 ## Project setup
 
 1. Fork this repository
@@ -63,8 +65,7 @@ each rule has three files named with its identifier (e.g. `no-debug`):
 
 Additionally, you need to do a couple of extra things:
 
-- Include your rule in the "Supported Rules" table within the [README.md](./README.md).
-  Don't forget to include the proper badges if needed and to sort alphabetically the rules for readability.
+- Run `npm run generate:rules-list` to include your rule in the "Supported Rules" table within the [README.md](./README.md)
 
 ### Custom rule creator
 
@@ -112,6 +113,17 @@ A couple of things you need to remember when editing already existing rules:
   a bug fix or a new feature.
 
 ## Writing Tests
+
+If you wish to run a single test while developing locally, add `only: true` to the test case:
+
+```javascript
+valid: [
+  {
+    only: true,
+    code: `...`,
+  },
+];
+```
 
 When writing tests for a new or existing rule, please make sure to follow these guidelines:
 
