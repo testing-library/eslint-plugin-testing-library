@@ -1,11 +1,10 @@
-import { TSESTree } from '@typescript-eslint/experimental-utils';
+import { TSESTree, ASTUtils } from '@typescript-eslint/experimental-utils';
 
 import { createTestingLibraryRule } from '../create-testing-library-rule';
 import {
   getDeepestIdentifierNode,
   getPropertyIdentifierNode,
   getStatementCallExpression,
-  isAwaitExpression,
   isEmptyFunction,
   isExpressionStatement,
   isReturnStatement,
@@ -70,7 +69,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
       if (
         isExpressionStatement(statement) &&
-        isAwaitExpression(statement.expression)
+        ASTUtils.isAwaitExpression(statement.expression)
       ) {
         return getPropertyIdentifierNode(statement.expression.argument);
       }
