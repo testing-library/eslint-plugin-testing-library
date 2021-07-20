@@ -73,6 +73,34 @@ ruleTester.run(RULE_NAME, rule, {
       }`,
     })),
     ...COMBINED_QUERIES_METHODS.map((queryMethod) => ({
+      code: `
+      function findBySubmit() {
+        return screen.find${queryMethod}('foo')
+      }`,
+    })),
+    ...COMBINED_QUERIES_METHODS.map((queryMethod) => ({
+      code: `
+      function findBySubmit() {
+        return find${queryMethod}('foo')
+      }`,
+    })),
+    ...COMBINED_QUERIES_METHODS.map((queryMethod) => ({
+      code: `
+      () => { return screen.find${queryMethod}('foo') }`,
+    })),
+    ...COMBINED_QUERIES_METHODS.map((queryMethod) => ({
+      code: `
+      () => { return find${queryMethod}('foo') }`,
+    })),
+    ...COMBINED_QUERIES_METHODS.map((queryMethod) => ({
+      code: `
+      () => screen.find${queryMethod}('foo')`,
+    })),
+    ...COMBINED_QUERIES_METHODS.map((queryMethod) => ({
+      code: `
+      () => find${queryMethod}('foo')`,
+    })),
+    ...COMBINED_QUERIES_METHODS.map((queryMethod) => ({
       code: `() => { return get${queryMethod}('foo') }`,
     })),
     ...COMBINED_QUERIES_METHODS.map((queryMethod) => ({

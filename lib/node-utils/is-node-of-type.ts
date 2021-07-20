@@ -49,7 +49,3 @@ export const isReturnStatement = isNodeOfType(AST_NODE_TYPES.ReturnStatement);
 export const isFunctionExpression = isNodeOfType(
   AST_NODE_TYPES.FunctionExpression
 );
-export const isAwaitExpression = isNodeOfType(AST_NODE_TYPES.AwaitExpression);
-export const isVariableDeclarator = isNodeOfType(
-  AST_NODE_TYPES.VariableDeclarator
-);

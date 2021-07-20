@@ -3,10 +3,8 @@ import { TSESTree, ASTUtils } from '@typescript-eslint/experimental-utils';
 import { createTestingLibraryRule } from '../create-testing-library-rule';
 import {
   findClosestCallNode,
-  isAwaitExpression,
   isCallExpression,
   isMemberExpression,
-  isVariableDeclarator,
 } from '../node-utils';
 import { PRESENCE_MATCHERS, ABSENCE_MATCHERS } from '../utils';
 
@@ -21,20 +19,24 @@ type Options = [
 ];
 
 const isAtTopLevel = (node: TSESTree.Node) =>
-  !!node.parent?.parent && node.parent.parent.type === 'ExpressionStatement';
+  (!!node.parent?.parent &&
+    node.parent.parent.type === 'ExpressionStatement') ||
+  (node.parent?.parent?.type === 'AwaitExpression' &&
+    !!node.parent.parent.parent &&
+    node.parent.parent.parent.type === 'ExpressionStatement');
 
 const isVariableDeclaration = (node: TSESTree.Node) => {
   if (
     isCallExpression(node.parent) &&
-    isAwaitExpression(node.parent.parent) &&
-    isVariableDeclarator(node.parent.parent.parent)
+    ASTUtils.isAwaitExpression(node.parent.parent) &&
+    ASTUtils.isVariableDeclarator(node.parent.parent.parent)
   ) {
     return true; // const quxElement = await findByLabelText('qux')
   }
 
   if (
     isCallExpression(node.parent) &&
-    isVariableDeclarator(node.parent.parent)
+    ASTUtils.isVariableDeclarator(node.parent.parent)
   ) {
     return true; // const quxElement = findByLabelText('qux')
   }
@@ -42,8 +44,8 @@ const isVariableDeclaration = (node: TSESTree.Node) => {
   if (
     isMemberExpression(node.parent) &&
     isCallExpression(node.parent.parent) &&
-    isAwaitExpression(node.parent.parent.parent) &&
-    isVariableDeclarator(node.parent.parent.parent.parent)
+    ASTUtils.isAwaitExpression(node.parent.parent.parent) &&
+    ASTUtils.isVariableDeclarator(node.parent.parent.parent.parent)
   ) {
     return true; // const quxElement = await screen.findByLabelText('qux')
   }
@@ -51,7 +53,7 @@ const isVariableDeclaration = (node: TSESTree.Node) => {
   if (
     isMemberExpression(node.parent) &&
     isCallExpression(node.parent.parent) &&
-    isVariableDeclarator(node.parent.parent.parent)
+    ASTUtils.isVariableDeclarator(node.parent.parent.parent)
   ) {
     return true; // const quxElement = screen.findByLabelText('qux')
   }
@@ -111,7 +113,14 @@ export default createTestingLibraryRule<Options, MessageIds>({
       },
       'Program:exit'() {
         findQueryCalls.forEach((queryCall) => {
-          if (isVariableDeclaration(queryCall)) {
+          const memberExpression = isMemberExpression(queryCall.parent)
+            ? queryCall.parent
+            : queryCall;
+
+          if (
+            isVariableDeclaration(queryCall) ||
+            !isAtTopLevel(memberExpression)
+          ) {
             return;
           }
 
