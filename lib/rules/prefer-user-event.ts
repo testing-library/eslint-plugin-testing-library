@@ -182,7 +182,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
           ASTUtils.isIdentifier(node.init.callee.property)
         ) {
           fireEventMethodName = node.init.callee.property.name;
-        } else {
+        } else if (node.init.arguments.length > 0) {
           fireEventMethodName = (node.init.arguments[0] as TSESTree.Literal)
             .value as string;
         }
