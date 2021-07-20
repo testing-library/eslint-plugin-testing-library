@@ -144,8 +144,9 @@ export default createTestingLibraryRule<Options, MessageIds>({
       }
 
       const shouldBeReported = isStrict
-        ? hasSomeNonTestingLibraryCall(blockStatementNode.body) &&
-          hasTestingLibraryCall(blockStatementNode.body)
+        ? (hasSomeNonTestingLibraryCall(blockStatementNode.body) &&
+            hasTestingLibraryCall(blockStatementNode.body)) ||
+          !hasSomeNonTestingLibraryCall(blockStatementNode.body)
         : !hasSomeNonTestingLibraryCall(blockStatementNode.body);
 
       if (shouldBeReported) {
