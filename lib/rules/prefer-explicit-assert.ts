@@ -67,7 +67,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
     type: 'suggestion',
     docs: {
       description:
-        'Suggest using explicit assertions rather than just `getBy*` and `findBy*` queries',
+        'Suggest using explicit assertions rather than standalone queries',
       category: 'Best Practices',
       recommendedConfig: {
         dom: false,
@@ -80,7 +80,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
       preferExplicitAssert:
         'Wrap stand-alone `{{queryType}}` query with `expect` function for better explicit assertion',
       preferExplicitAssertAssertion:
-        '`getBy*` queries must be asserted with `{{assertion}}`',
+        '`getBy*` queries must be asserted with `{{assertion}}`', // TODO: support findBy* queries as well
     },
     schema: [
       {
