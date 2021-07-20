@@ -55,6 +55,52 @@ ruleTester.run(RULE_NAME, rule, {
       code: `const quxElement = get${queryMethod}('qux')`,
     })),
     ...COMBINED_QUERIES_METHODS.map((queryMethod) => ({
+      code: `
+      async () => {
+        const quxElement = await find${queryMethod}('qux')
+      }`,
+    })),
+    ...COMBINED_QUERIES_METHODS.map((queryMethod) => ({
+      code: `const quxElement = find${queryMethod}('qux')`,
+    })),
+    ...COMBINED_QUERIES_METHODS.map((queryMethod) => ({
+      code: `const quxElement = screen.find${queryMethod}('qux')`,
+    })),
+    ...COMBINED_QUERIES_METHODS.map((queryMethod) => ({
+      code: `
+      async () => {
+        const quxElement = await screen.find${queryMethod}('qux')
+      }`,
+    })),
+    ...COMBINED_QUERIES_METHODS.map((queryMethod) => ({
+      code: `
+      function findBySubmit() {
+        return screen.find${queryMethod}('foo')
+      }`,
+    })),
+    ...COMBINED_QUERIES_METHODS.map((queryMethod) => ({
+      code: `
+      function findBySubmit() {
+        return find${queryMethod}('foo')
+      }`,
+    })),
+    ...COMBINED_QUERIES_METHODS.map((queryMethod) => ({
+      code: `
+      () => { return screen.find${queryMethod}('foo') }`,
+    })),
+    ...COMBINED_QUERIES_METHODS.map((queryMethod) => ({
+      code: `
+      () => { return find${queryMethod}('foo') }`,
+    })),
+    ...COMBINED_QUERIES_METHODS.map((queryMethod) => ({
+      code: `
+      () => screen.find${queryMethod}('foo')`,
+    })),
+    ...COMBINED_QUERIES_METHODS.map((queryMethod) => ({
+      code: `
+      () => find${queryMethod}('foo')`,
+    })),
+    ...COMBINED_QUERIES_METHODS.map((queryMethod) => ({
       code: `() => { return get${queryMethod}('foo') }`,
     })),
     ...COMBINED_QUERIES_METHODS.map((queryMethod) => ({
@@ -106,6 +152,65 @@ ruleTester.run(RULE_NAME, rule, {
           errors: [
             {
               messageId: 'preferExplicitAssert',
+              data: {
+                queryType: 'getBy*',
+              },
+            },
+          ],
+        } as const)
+    ),
+    ...COMBINED_QUERIES_METHODS.map(
+      (queryMethod) =>
+        ({
+          code: `find${queryMethod}('foo')`,
+          errors: [
+            {
+              messageId: 'preferExplicitAssert',
+              data: { queryType: 'findBy*' },
+            },
+          ],
+        } as const)
+    ),
+    ...COMBINED_QUERIES_METHODS.map(
+      (queryMethod) =>
+        ({
+          code: `screen.find${queryMethod}('foo')`,
+          errors: [
+            {
+              messageId: 'preferExplicitAssert',
+              data: { queryType: 'findBy*' },
+            },
+          ],
+        } as const)
+    ),
+    ...COMBINED_QUERIES_METHODS.map(
+      (queryMethod) =>
+        ({
+          code: `
+        async () => {
+          await screen.find${queryMethod}('foo')
+        }
+          `,
+          errors: [
+            {
+              messageId: 'preferExplicitAssert',
+              data: { queryType: 'findBy*' },
+            },
+          ],
+        } as const)
+    ),
+    ...COMBINED_QUERIES_METHODS.map(
+      (queryMethod) =>
+        ({
+          code: `
+        async () => {
+          await find${queryMethod}('foo')
+        }
+          `,
+          errors: [
+            {
+              messageId: 'preferExplicitAssert',
+              data: { queryType: 'findBy*' },
             },
           ],
         } as const)
@@ -122,6 +227,9 @@ ruleTester.run(RULE_NAME, rule, {
               messageId: 'preferExplicitAssert',
               line: 3,
               column: 15,
+              data: {
+                queryType: 'getBy*',
+              },
             },
           ],
         } as const)
@@ -135,6 +243,9 @@ ruleTester.run(RULE_NAME, rule, {
               messageId: 'preferExplicitAssert',
               line: 1,
               column: 8,
+              data: {
+                queryType: 'getBy*',
+              },
             },
           ],
         } as const)
@@ -155,10 +266,16 @@ ruleTester.run(RULE_NAME, rule, {
             {
               messageId: 'preferExplicitAssert',
               line: 3,
+              data: {
+                queryType: 'getBy*',
+              },
             },
             {
               messageId: 'preferExplicitAssert',
               line: 6,
+              data: {
+                queryType: 'getBy*',
+              },
             },
           ],
         } as const)
@@ -176,6 +293,9 @@ ruleTester.run(RULE_NAME, rule, {
           errors: [
             {
               messageId: 'preferExplicitAssert',
+              data: {
+                queryType: 'getBy*',
+              },
             },
           ],
         } as const)
