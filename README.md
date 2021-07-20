@@ -27,7 +27,7 @@
 
 ## Installation
 
-You'll first need to install [ESLint](https://eslint.org/):
+You'll first need to install [ESLint](https://eslint.org):
 
 ```shell
 $ npm install --save-dev eslint
