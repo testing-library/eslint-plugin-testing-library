@@ -1,0 +1,52 @@
+name: Bug Report
+description: File a bug report
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: '## User environment'
+
+  - type: input
+    id: plugin_version
+    attributes:
+      label: Plugin version
+      description: What version of the plugin are you using?
+      placeholder: v4.10.1
+    validations:
+      required: true
+
+  - type: input
+    id: eslint_version
+    attributes:
+      label: ESLint version
+      description: What version of ESLint are you using?
+      placeholder: v7.31.0
+    validations:
+      required: true
+
+  - type: input
+    id: node_js_version
+    attributes:
+      label: Node.js version
+      description: What version of Node.js are you using?
+      placeholder: 14.17.3
+    validations:
+      required: true
+ 
+  - type: input
+    id: npm_yarn_version
+    attributes:
+      label: npm/yarn version
+      description: Tell us whether you use npm or yarn as your package manager, and what version.
+      placeholder: npm 6.14.13
+    validations:
+      required: true
+      
+  - type: input
+    id: operating_system
+    attributes:
+      label: Operating system
+      description: Tell us what operating system you use, and what version.
+      placeholder: macOS Big Sur, version 11.4
+    validations:
+      required: true
