@@ -51,11 +51,11 @@ body:
     validations:
       required: true
 
-- type: textarea
-  id: bug_description
-  attributes:
-    label: Bug description
-    description: "Describe the bug at a high level."
-    placeholder: "I was doing ..., but I expected ..."
-  validations:
-    required: true
+  - type: textarea
+    id: bug_description
+    attributes:
+      label: Bug description
+      description: "Describe the bug at a high level."
+      placeholder: "I was doing ..., but I expected ..."
+    validations:
+      required: true
