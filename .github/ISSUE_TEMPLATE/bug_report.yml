@@ -32,7 +32,7 @@ body:
       placeholder: 14.17.3
     validations:
       required: true
- 
+
   - type: input
     id: npm_yarn_version
     attributes:
@@ -41,7 +41,7 @@ body:
       placeholder: npm 6.14.13
     validations:
       required: true
-      
+
   - type: input
     id: operating_system
     attributes:
@@ -55,7 +55,67 @@ body:
     id: bug_description
     attributes:
       label: Bug description
-      description: "Describe the bug at a high level."
-      placeholder: "I was doing ..., but I expected ..."
+      description: Describe the bug at a high level.
+      placeholder: I was doing ..., but I expected ...
     validations:
       required: true
+
+  - type: textarea
+    id: steps_to_reproduce
+    attributes:
+      label: Steps to reproduce
+      description: Give the steps to reproduce the problem
+      placeholder: |
+        1. Go to ...
+        2. Do ....
+        3. See bug
+    validations:
+      required: true
+
+  - type: textarea
+    id: error_output_screenshots
+    attributes:
+      label: Error output/screenshots
+      description: Copy/paste any error messages or helpful screenshots into this field.
+      placeholder: 'Tip: you can copy/paste error messages in here. You can click and drag screenshots into this field.'
+    validations:
+      required: false
+
+  - type: textarea
+    id: eslint_config
+    attributes:
+      label: ESLint configuration
+      description: Copy/paste your ESLint configuration into this field.
+      placeholder: You can find your eslint configuration in these files TODO ADD LIST OF VALID FILENAMES
+    validations:
+      required: true
+
+  - type: textarea
+    id: rule_affected
+    attributes:
+      label: Rules(s) affected
+      description: Tell us what `eslint-pluging-testing-library` rule(s) are affected by this bug.
+      placeholder: TODO ADD EXAMPLE OF A RULE
+    validations:
+      required: true
+
+  - type: textarea
+    id: anything_else
+    attributes:
+      label: Anything else we need to know?
+      description: If there's anything else we need to know, tell us about it!
+      placeholder: Tell us anything else we need to know.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: want_to_submit_pr_to_fix_bug
+    attributes:
+      label: Do you want to submit a pull request to fix this bug?
+      options:
+        - 'Yes'
+        - 'Yes, but need help'
+        - 'No'
+    validations:
+      required: true
+ 
