@@ -50,3 +50,12 @@ body:
       placeholder: macOS Big Sur, version 11.4
     validations:
       required: true
+
+- type: textarea
+  id: bug_description
+  attributes:
+    label: Bug description
+    description: "Describe the bug at a high level."
+    placeholder: "I was doing ..., but I expected ..."
+  validations:
+    required: true
