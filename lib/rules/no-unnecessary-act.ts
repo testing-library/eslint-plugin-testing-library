@@ -14,7 +14,7 @@ export const RULE_NAME = 'no-unnecessary-act';
 export type MessageIds =
   | 'noUnnecessaryActEmptyFunction'
   | 'noUnnecessaryActTestingLibraryUtil';
-type Options = [{ isStrict: boolean }];
+export type Options = [{ isStrict: boolean }];
 
 export default createTestingLibraryRule<Options, MessageIds>({
   name: RULE_NAME,
@@ -144,8 +144,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
       }
 
       const shouldBeReported = isStrict
-        ? hasSomeNonTestingLibraryCall(blockStatementNode.body) &&
-          hasTestingLibraryCall(blockStatementNode.body)
+        ? hasTestingLibraryCall(blockStatementNode.body)
         : !hasSomeNonTestingLibraryCall(blockStatementNode.body);
 
       if (shouldBeReported) {
