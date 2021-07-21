@@ -2,10 +2,6 @@ name: Bug Report
 description: File a bug report
 labels: [bug]
 body:
-  - type: markdown
-    attributes:
-      value: '## User environment'
-
   - type: input
     id: plugin_version
     attributes:
@@ -64,7 +60,7 @@ body:
     id: steps_to_reproduce
     attributes:
       label: Steps to reproduce
-      description: Give the steps to reproduce the problem
+      description: Give us a ordered list of the steps to reproduce the problem.
       placeholder: |
         1. Go to ...
         2. Do ....
@@ -86,7 +82,7 @@ body:
     attributes:
       label: ESLint configuration
       description: Copy/paste your ESLint configuration into this field.
-      placeholder: You can find your eslint configuration in these files TODO ADD LIST OF VALID FILENAMES
+      placeholder: You can find your ESLint configuration in these files TODO ADD LIST OF VALID FILENAMES
     validations:
       required: true
 
@@ -102,9 +98,9 @@ body:
   - type: textarea
     id: anything_else
     attributes:
-      label: Anything else we need to know?
-      description: If there's anything else we need to know, tell us about it!
-      placeholder: Tell us anything else we need to know.
+      label: Anything else?
+      description: If there's anything else we need to know, tell us about it here.
+      placeholder: By the way, you also need to know about...
     validations:
       required: true
 
@@ -118,4 +114,3 @@ body:
         - 'No'
     validations:
       required: true
- 
