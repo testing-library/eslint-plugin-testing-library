@@ -14,7 +14,7 @@ export const RULE_NAME = 'no-unnecessary-act';
 export type MessageIds =
   | 'noUnnecessaryActEmptyFunction'
   | 'noUnnecessaryActTestingLibraryUtil';
-type Options = [{ isStrict: boolean }];
+export type Options = [{ isStrict: boolean }];
 
 export default createTestingLibraryRule<Options, MessageIds>({
   name: RULE_NAME,
