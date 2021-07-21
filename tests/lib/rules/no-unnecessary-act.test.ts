@@ -1,78 +1,123 @@
-import rule, { RULE_NAME } from '../../../lib/rules/no-unnecessary-act';
+import type { TSESLint } from '@typescript-eslint/experimental-utils';
+
+import rule, {
+  MessageIds,
+  Options,
+  RULE_NAME,
+} from '../../../lib/rules/no-unnecessary-act';
 import { createRuleTester } from '../test-utils';
 
 const ruleTester = createRuleTester();
+
+type ValidTestCase = TSESLint.ValidTestCase<Options>;
+type InvalidTestCase = TSESLint.InvalidTestCase<MessageIds, Options>;
+type TestCase = InvalidTestCase | ValidTestCase;
+
+const enableStrict = <T extends TestCase>(array: T[]): T[] =>
+  array.map((testCase) => ({
+    ...testCase,
+    options: [
+      {
+        isStrict: true,
+      },
+    ],
+  }));
 
 /**
  * - AGR stands for Aggressive Reporting
  * - RTL stands for React Testing Library (@testing-library/react)
  * - RTU stands for React Test Utils (react-dom/test-utils)
  */
-ruleTester.run(RULE_NAME, rule, {
-  valid: [
-    {
-      code: `// case: RTL act wrapping non-RTL calls
-      import { act } from '@testing-library/react'
+
+const validNonStrictTestCases: ValidTestCase[] = [
+  {
+    code: `// case: RTL act wrapping both RTL and non-RTL calls
+      import { act, render, waitFor } from '@testing-library/react'
 
       test('valid case', async () => {
         act(() => {
+          render(element);
           stuffThatDoesNotUseRTL();
-        });
-        
-        act(function() {
-          a = stuffThatDoesNotUseRTL();
-        });
-        
-        act(function() {
-          a = await stuffThatDoesNotUseRTL();
         });
 
         await act(async () => {
-          await stuffThatDoesNotUseRTL();
-        });
-
-        await act(async () => {
-          await stuffThatDoesNotUseRTL;
-        });
-
-        await act(() => stuffThatDoesNotUseRTL);
-
-        act(() => stuffThatDoesNotUseRTL);
-
-        act(() => {
-          return stuffThatDoesNotUseRTL
-        });
-
-        act(async function() {
-          await stuffThatDoesNotUseRTL;
-        });
-
-        await act(async function() {
-          await stuffThatDoesNotUseRTL;
-        });
-
-        act(async function() {
-          return stuffThatDoesNotUseRTL;
-        });
-
-        act(function() {
+          waitFor();
           stuffThatDoesNotUseRTL();
-          const a = foo();
         });
 
         act(function() {
-          return stuffThatDoesNotUseRTL();
+          waitFor();
+          stuffThatDoesNotUseRTL();
         });
-
-        act(() => stuffThatDoesNotUseRTL());
-        
-        act(() => stuffThatDoesNotUseRTL()).then(() => {})
-        act(stuffThatDoesNotUseRTL().then(() => {}))
       });
       `,
-    },
-    {
-      code: `// case: RTU act wrapping non-RTL
+  },
+];
+
+const validTestCases: ValidTestCase[] = [
+  {
+    code: `// case: RTL act wrapping non-RTL calls
+    import { act } from '@testing-library/react'
+
+    test('valid case', async () => {
+      act(() => {
+        stuffThatDoesNotUseRTL();
+      });
+
+      act(function() {
+        a = stuffThatDoesNotUseRTL();
+      });
+
+      act(function() {
+        a = await stuffThatDoesNotUseRTL();
+      });
+
+      await act(async () => {
+        await stuffThatDoesNotUseRTL();
+      });
+
+      await act(async () => {
+        await stuffThatDoesNotUseRTL;
+      });
+
+      await act(() => stuffThatDoesNotUseRTL);
+
+      act(() => stuffThatDoesNotUseRTL);
+
+      act(() => {
+        return stuffThatDoesNotUseRTL
+      });
+
+      act(async function() {
+        await stuffThatDoesNotUseRTL;
+      });
+
+      await act(async function() {
+        await stuffThatDoesNotUseRTL;
+      });
+
+      act(async function() {
+        return stuffThatDoesNotUseRTL;
+      });
+
+      act(function() {
+        stuffThatDoesNotUseRTL();
+        const a = foo();
+      });
+
+      act(function() {
+        return stuffThatDoesNotUseRTL();
+      });
+
+      act(() => stuffThatDoesNotUseRTL());
+
+      act(() => stuffThatDoesNotUseRTL()).then(() => {})
+      act(stuffThatDoesNotUseRTL().then(() => {}))
+    });
+    `,
+  },
+  {
+    code: `// case: RTU act wrapping non-RTL
       import { act } from 'react-dom/test-utils'
 
       test('valid case', async () => {
@@ -95,12 +140,12 @@ ruleTester.run(RULE_NAME, rule, {
         act(() => stuffThatDoesNotUseRTL());
       });
       `,
+  },
+  {
+    settings: {
+      'testing-library/utils-module': 'test-utils',
     },
-    {
-      settings: {
-        'testing-library/utils-module': 'test-utils',
-      },
-      code: `// case: RTL act wrapping non-RTL - AGR disabled
+    code: `// case: RTL act wrapping non-RTL - AGR disabled
       import { act } from '@testing-library/react'
       import { waitFor } from 'somewhere-else'
 
@@ -124,34 +169,13 @@ ruleTester.run(RULE_NAME, rule, {
         act(() => waitFor());
       });
       `,
+  },
+
+  {
+    settings: {
+      'testing-library/utils-module': 'test-utils',
     },
-    {
-      code: `// case: RTL act wrapping both RTL and non-RTL calls
-      import { act, render, waitFor } from '@testing-library/react'
-
-      test('valid case', async () => {
-        act(() => {
-          render(element);
-          stuffThatDoesNotUseRTL();
-        });
-
-        await act(async () => {
-          waitFor();
-          stuffThatDoesNotUseRTL();
-        });
-
-        act(function() {
-          waitFor();
-          stuffThatDoesNotUseRTL();
-        });
-      });
-      `,
-    },
-    {
-      settings: {
-        'testing-library/utils-module': 'test-utils',
-      },
-      code: `// case: non-RTL act wrapping RTL - AGR disabled
+    code: `// case: non-RTL act wrapping RTL - AGR disabled
       import { act } from 'somewhere-else'
       import { waitFor } from '@testing-library/react'
 
@@ -179,33 +203,46 @@ ruleTester.run(RULE_NAME, rule, {
         act(function() {})
       });
       `,
-    },
-    {
-      options: [
-        {
-          isStrict: true,
-        },
-      ],
-      code: `// case: RTL act wrapping non-RTL calls with strict option
+  },
+];
+
+const invalidStrictTestCases: InvalidTestCase[] = [
+  {
+    options: [
+      {
+        isStrict: true,
+      },
+    ],
+    code: `// case: RTL act wrapping both RTL and non-RTL calls with strict option
       import { act, render } from '@testing-library/react'
 
-      act(() => jest.advanceTimersByTime(1000))
-      act(() => {
-        jest.advanceTimersByTime(1000)
-      })
-      act(() => {
-        return jest.advanceTimersByTime(1000)
+      await act(async () => {
+        userEvent.click(screen.getByText("Submit"))
+        await flushPromises()
       })
       act(function() {
-        return jest.advanceTimersByTime(1000)
+        userEvent.click(screen.getByText("Submit"))
+        flushPromises()
       })
       `,
-    },
-  ],
-  invalid: [
-    // cases for act related to React Testing Library
-    {
-      code: `// case: RTL act wrapping RTL calls - callbacks with body (BlockStatement)
+    errors: [
+      {
+        messageId: 'noUnnecessaryActTestingLibraryUtil',
+        line: 4,
+        column: 13,
+      },
+      {
+        messageId: 'noUnnecessaryActTestingLibraryUtil',
+        line: 8,
+        column: 7,
+      },
+    ],
+  },
+];
+
+const invalidTestCases: InvalidTestCase[] = [
+  {
+    code: `// case: RTL act wrapping RTL calls - callbacks with body (BlockStatement)
       import { act, fireEvent, screen, render, waitFor, waitForElementToBeRemoved } from '@testing-library/react'
       import userEvent from '@testing-library/user-event'
 
@@ -245,50 +282,50 @@ ruleTester.run(RULE_NAME, rule, {
         });
       });
       `,
-      errors: [
-        { messageId: 'noUnnecessaryActTestingLibraryUtil', line: 6, column: 9 },
-        {
-          messageId: 'noUnnecessaryActTestingLibraryUtil',
-          line: 10,
-          column: 15,
-        },
-        {
-          messageId: 'noUnnecessaryActTestingLibraryUtil',
-          line: 14,
-          column: 15,
-        },
-        {
-          messageId: 'noUnnecessaryActTestingLibraryUtil',
-          line: 18,
-          column: 9,
-        },
-        {
-          messageId: 'noUnnecessaryActTestingLibraryUtil',
-          line: 22,
-          column: 9,
-        },
-        {
-          messageId: 'noUnnecessaryActTestingLibraryUtil',
-          line: 26,
-          column: 15,
-        },
-        {
-          messageId: 'noUnnecessaryActTestingLibraryUtil',
-          line: 30,
-          column: 9,
-        },
-        {
-          messageId: 'noUnnecessaryActTestingLibraryUtil',
-          line: 34,
-          column: 9,
-        },
-      ],
-    },
-    {
-      settings: {
-        'testing-library/utils-module': 'test-utils',
+    errors: [
+      { messageId: 'noUnnecessaryActTestingLibraryUtil', line: 6, column: 9 },
+      {
+        messageId: 'noUnnecessaryActTestingLibraryUtil',
+        line: 10,
+        column: 15,
       },
-      code: `// case: RTL act wrapping RTL calls - callbacks with body (BlockStatement) - AGR disabled
+      {
+        messageId: 'noUnnecessaryActTestingLibraryUtil',
+        line: 14,
+        column: 15,
+      },
+      {
+        messageId: 'noUnnecessaryActTestingLibraryUtil',
+        line: 18,
+        column: 9,
+      },
+      {
+        messageId: 'noUnnecessaryActTestingLibraryUtil',
+        line: 22,
+        column: 9,
+      },
+      {
+        messageId: 'noUnnecessaryActTestingLibraryUtil',
+        line: 26,
+        column: 15,
+      },
+      {
+        messageId: 'noUnnecessaryActTestingLibraryUtil',
+        line: 30,
+        column: 9,
+      },
+      {
+        messageId: 'noUnnecessaryActTestingLibraryUtil',
+        line: 34,
+        column: 9,
+      },
+    ],
+  },
+  {
+    settings: {
+      'testing-library/utils-module': 'test-utils',
+    },
+    code: `// case: RTL act wrapping RTL calls - callbacks with body (BlockStatement) - AGR disabled
       import { act, fireEvent, screen, render, waitFor, waitForElementToBeRemoved } from 'test-utils'
       import userEvent from '@testing-library/user-event'
 
@@ -328,47 +365,47 @@ ruleTester.run(RULE_NAME, rule, {
         });
       });
       `,
-      errors: [
-        { messageId: 'noUnnecessaryActTestingLibraryUtil', line: 6, column: 9 },
-        {
-          messageId: 'noUnnecessaryActTestingLibraryUtil',
-          line: 10,
-          column: 15,
-        },
-        {
-          messageId: 'noUnnecessaryActTestingLibraryUtil',
-          line: 14,
-          column: 15,
-        },
-        {
-          messageId: 'noUnnecessaryActTestingLibraryUtil',
-          line: 18,
-          column: 9,
-        },
-        {
-          messageId: 'noUnnecessaryActTestingLibraryUtil',
-          line: 22,
-          column: 9,
-        },
-        {
-          messageId: 'noUnnecessaryActTestingLibraryUtil',
-          line: 26,
-          column: 15,
-        },
-        {
-          messageId: 'noUnnecessaryActTestingLibraryUtil',
-          line: 30,
-          column: 9,
-        },
-        {
-          messageId: 'noUnnecessaryActTestingLibraryUtil',
-          line: 34,
-          column: 9,
-        },
-      ],
-    },
-    {
-      code: `// case: RTL act wrapping RTL calls - callbacks with return
+    errors: [
+      { messageId: 'noUnnecessaryActTestingLibraryUtil', line: 6, column: 9 },
+      {
+        messageId: 'noUnnecessaryActTestingLibraryUtil',
+        line: 10,
+        column: 15,
+      },
+      {
+        messageId: 'noUnnecessaryActTestingLibraryUtil',
+        line: 14,
+        column: 15,
+      },
+      {
+        messageId: 'noUnnecessaryActTestingLibraryUtil',
+        line: 18,
+        column: 9,
+      },
+      {
+        messageId: 'noUnnecessaryActTestingLibraryUtil',
+        line: 22,
+        column: 9,
+      },
+      {
+        messageId: 'noUnnecessaryActTestingLibraryUtil',
+        line: 26,
+        column: 15,
+      },
+      {
+        messageId: 'noUnnecessaryActTestingLibraryUtil',
+        line: 30,
+        column: 9,
+      },
+      {
+        messageId: 'noUnnecessaryActTestingLibraryUtil',
+        line: 34,
+        column: 9,
+      },
+    ],
+  },
+  {
+    code: `// case: RTL act wrapping RTL calls - callbacks with return
       import { act, fireEvent, screen, render, waitFor } from '@testing-library/react'
       import userEvent from '@testing-library/user-event'
 
@@ -415,90 +452,90 @@ ruleTester.run(RULE_NAME, rule, {
         }).then(() => {})
       });
       `,
-      errors: [
-        { messageId: 'noUnnecessaryActTestingLibraryUtil', line: 6, column: 9 },
-        { messageId: 'noUnnecessaryActTestingLibraryUtil', line: 7, column: 9 },
-        { messageId: 'noUnnecessaryActTestingLibraryUtil', line: 8, column: 9 },
-        { messageId: 'noUnnecessaryActTestingLibraryUtil', line: 9, column: 9 },
-        {
-          messageId: 'noUnnecessaryActTestingLibraryUtil',
-          line: 10,
-          column: 15,
-        },
-        {
-          messageId: 'noUnnecessaryActTestingLibraryUtil',
-          line: 11,
-          column: 9,
-        },
-        {
-          messageId: 'noUnnecessaryActTestingLibraryUtil',
-          line: 12,
-          column: 15,
-        },
-        {
-          messageId: 'noUnnecessaryActTestingLibraryUtil',
-          line: 13,
-          column: 9,
-        },
-        {
-          messageId: 'noUnnecessaryActTestingLibraryUtil',
-          line: 14,
-          column: 15,
-        },
-        {
-          messageId: 'noUnnecessaryActTestingLibraryUtil',
-          line: 16,
-          column: 9,
-        },
-        {
-          messageId: 'noUnnecessaryActTestingLibraryUtil',
-          line: 19,
-          column: 9,
-        },
-        {
-          messageId: 'noUnnecessaryActTestingLibraryUtil',
-          line: 22,
-          column: 9,
-        },
-        {
-          messageId: 'noUnnecessaryActTestingLibraryUtil',
-          line: 25,
-          column: 9,
-        },
-        {
-          messageId: 'noUnnecessaryActTestingLibraryUtil',
-          line: 28,
-          column: 15,
-        },
-        {
-          messageId: 'noUnnecessaryActTestingLibraryUtil',
-          line: 31,
-          column: 9,
-        },
-        {
-          messageId: 'noUnnecessaryActTestingLibraryUtil',
-          line: 34,
-          column: 15,
-        },
-        {
-          messageId: 'noUnnecessaryActTestingLibraryUtil',
-          line: 37,
-          column: 9,
-        },
-        {
-          messageId: 'noUnnecessaryActTestingLibraryUtil',
-          line: 40,
-          column: 15,
-        },
-        {
-          messageId: 'noUnnecessaryActTestingLibraryUtil',
-          line: 43,
-          column: 9,
-        },
-      ],
-    },
-    {
-      code: `// case: RTL act wrapping empty callback
+    errors: [
+      { messageId: 'noUnnecessaryActTestingLibraryUtil', line: 6, column: 9 },
+      { messageId: 'noUnnecessaryActTestingLibraryUtil', line: 7, column: 9 },
+      { messageId: 'noUnnecessaryActTestingLibraryUtil', line: 8, column: 9 },
+      { messageId: 'noUnnecessaryActTestingLibraryUtil', line: 9, column: 9 },
+      {
+        messageId: 'noUnnecessaryActTestingLibraryUtil',
+        line: 10,
+        column: 15,
+      },
+      {
+        messageId: 'noUnnecessaryActTestingLibraryUtil',
+        line: 11,
+        column: 9,
+      },
+      {
+        messageId: 'noUnnecessaryActTestingLibraryUtil',
+        line: 12,
+        column: 15,
+      },
+      {
+        messageId: 'noUnnecessaryActTestingLibraryUtil',
+        line: 13,
+        column: 9,
+      },
+      {
+        messageId: 'noUnnecessaryActTestingLibraryUtil',
+        line: 14,
+        column: 15,
+      },
+      {
+        messageId: 'noUnnecessaryActTestingLibraryUtil',
+        line: 16,
+        column: 9,
+      },
+      {
+        messageId: 'noUnnecessaryActTestingLibraryUtil',
+        line: 19,
+        column: 9,
+      },
+      {
+        messageId: 'noUnnecessaryActTestingLibraryUtil',
+        line: 22,
+        column: 9,
+      },
+      {
+        messageId: 'noUnnecessaryActTestingLibraryUtil',
+        line: 25,
+        column: 9,
+      },
+      {
+        messageId: 'noUnnecessaryActTestingLibraryUtil',
+        line: 28,
+        column: 15,
+      },
+      {
+        messageId: 'noUnnecessaryActTestingLibraryUtil',
+        line: 31,
+        column: 9,
+      },
+      {
+        messageId: 'noUnnecessaryActTestingLibraryUtil',
+        line: 34,
+        column: 15,
+      },
+      {
+        messageId: 'noUnnecessaryActTestingLibraryUtil',
+        line: 37,
+        column: 9,
+      },
+      {
+        messageId: 'noUnnecessaryActTestingLibraryUtil',
+        line: 40,
+        column: 15,
+      },
+      {
+        messageId: 'noUnnecessaryActTestingLibraryUtil',
+        line: 43,
+        column: 9,
+      },
+    ],
+  },
+  {
+    code: `// case: RTL act wrapping empty callback
       import { act } from '@testing-library/react'
 
       test('invalid case', async () => {
@@ -508,18 +545,18 @@ ruleTester.run(RULE_NAME, rule, {
         act(function () {})
       })
       `,
-      errors: [
-        { messageId: 'noUnnecessaryActEmptyFunction', line: 5, column: 15 },
-        { messageId: 'noUnnecessaryActEmptyFunction', line: 6, column: 9 },
-        { messageId: 'noUnnecessaryActEmptyFunction', line: 7, column: 15 },
-        { messageId: 'noUnnecessaryActEmptyFunction', line: 8, column: 9 },
-      ],
+    errors: [
+      { messageId: 'noUnnecessaryActEmptyFunction', line: 5, column: 15 },
+      { messageId: 'noUnnecessaryActEmptyFunction', line: 6, column: 9 },
+      { messageId: 'noUnnecessaryActEmptyFunction', line: 7, column: 15 },
+      { messageId: 'noUnnecessaryActEmptyFunction', line: 8, column: 9 },
+    ],
+  },
+  {
+    settings: {
+      'testing-library/utils-module': 'test-utils',
     },
-    {
-      settings: {
-        'testing-library/utils-module': 'test-utils',
-      },
-      code: `// case: RTL act wrapping empty callback - require version
+    code: `// case: RTL act wrapping empty callback - require version
       const { act } = require('@testing-library/react');
 
       test('invalid case', async () => {
@@ -530,21 +567,21 @@ ruleTester.run(RULE_NAME, rule, {
         act(function () {}).then(() => {})
       })
       `,
-      errors: [
-        { messageId: 'noUnnecessaryActEmptyFunction', line: 5, column: 15 },
-        { messageId: 'noUnnecessaryActEmptyFunction', line: 6, column: 9 },
-        { messageId: 'noUnnecessaryActEmptyFunction', line: 7, column: 15 },
-        { messageId: 'noUnnecessaryActEmptyFunction', line: 8, column: 9 },
-        { messageId: 'noUnnecessaryActEmptyFunction', line: 9, column: 9 },
-      ],
-    },
+    errors: [
+      { messageId: 'noUnnecessaryActEmptyFunction', line: 5, column: 15 },
+      { messageId: 'noUnnecessaryActEmptyFunction', line: 6, column: 9 },
+      { messageId: 'noUnnecessaryActEmptyFunction', line: 7, column: 15 },
+      { messageId: 'noUnnecessaryActEmptyFunction', line: 8, column: 9 },
+      { messageId: 'noUnnecessaryActEmptyFunction', line: 9, column: 9 },
+    ],
+  },
 
-    // cases for act related to React Test Utils
-    {
-      settings: {
-        'testing-library/utils-module': 'custom-testing-module',
-      },
-      code: `// case: RTU act wrapping RTL calls - callbacks with body (BlockStatement)
+  // cases for act related to React Test Utils
+  {
+    settings: {
+      'testing-library/utils-module': 'custom-testing-module',
+    },
+    code: `// case: RTU act wrapping RTL calls - callbacks with body (BlockStatement)
       import { act } from 'react-dom/test-utils';
       import { fireEvent, screen, render, waitFor, waitForElementToBeRemoved } from 'custom-testing-module'
       import userEvent from '@testing-library/user-event'
@@ -585,50 +622,50 @@ ruleTester.run(RULE_NAME, rule, {
         });
       });
       `,
-      errors: [
-        { messageId: 'noUnnecessaryActTestingLibraryUtil', line: 7, column: 9 },
-        {
-          messageId: 'noUnnecessaryActTestingLibraryUtil',
-          line: 11,
-          column: 15,
-        },
-        {
-          messageId: 'noUnnecessaryActTestingLibraryUtil',
-          line: 15,
-          column: 15,
-        },
-        {
-          messageId: 'noUnnecessaryActTestingLibraryUtil',
-          line: 19,
-          column: 9,
-        },
-        {
-          messageId: 'noUnnecessaryActTestingLibraryUtil',
-          line: 23,
-          column: 9,
-        },
-        {
-          messageId: 'noUnnecessaryActTestingLibraryUtil',
-          line: 27,
-          column: 15,
-        },
-        {
-          messageId: 'noUnnecessaryActTestingLibraryUtil',
-          line: 31,
-          column: 9,
-        },
-        {
-          messageId: 'noUnnecessaryActTestingLibraryUtil',
-          line: 35,
-          column: 9,
-        },
-      ],
-    },
-    {
-      settings: {
-        'testing-library/utils-module': 'custom-testing-module',
+    errors: [
+      { messageId: 'noUnnecessaryActTestingLibraryUtil', line: 7, column: 9 },
+      {
+        messageId: 'noUnnecessaryActTestingLibraryUtil',
+        line: 11,
+        column: 15,
       },
-      code: `// case: RTU act wrapping RTL calls - callbacks with return
+      {
+        messageId: 'noUnnecessaryActTestingLibraryUtil',
+        line: 15,
+        column: 15,
+      },
+      {
+        messageId: 'noUnnecessaryActTestingLibraryUtil',
+        line: 19,
+        column: 9,
+      },
+      {
+        messageId: 'noUnnecessaryActTestingLibraryUtil',
+        line: 23,
+        column: 9,
+      },
+      {
+        messageId: 'noUnnecessaryActTestingLibraryUtil',
+        line: 27,
+        column: 15,
+      },
+      {
+        messageId: 'noUnnecessaryActTestingLibraryUtil',
+        line: 31,
+        column: 9,
+      },
+      {
+        messageId: 'noUnnecessaryActTestingLibraryUtil',
+        line: 35,
+        column: 9,
+      },
+    ],
+  },
+  {
+    settings: {
+      'testing-library/utils-module': 'custom-testing-module',
+    },
+    code: `// case: RTU act wrapping RTL calls - callbacks with return
       import { act } from 'react-dom/test-utils';
       import { fireEvent, screen, render, waitFor } from 'custom-testing-module'
       import userEvent from '@testing-library/user-event'
@@ -673,92 +710,92 @@ ruleTester.run(RULE_NAME, rule, {
         });
       });
       `,
-      errors: [
-        { messageId: 'noUnnecessaryActTestingLibraryUtil', line: 7, column: 9 },
-        { messageId: 'noUnnecessaryActTestingLibraryUtil', line: 8, column: 9 },
-        { messageId: 'noUnnecessaryActTestingLibraryUtil', line: 9, column: 9 },
-        {
-          messageId: 'noUnnecessaryActTestingLibraryUtil',
-          line: 10,
-          column: 9,
-        },
-        {
-          messageId: 'noUnnecessaryActTestingLibraryUtil',
-          line: 11,
-          column: 15,
-        },
-        {
-          messageId: 'noUnnecessaryActTestingLibraryUtil',
-          line: 12,
-          column: 9,
-        },
-        {
-          messageId: 'noUnnecessaryActTestingLibraryUtil',
-          line: 13,
-          column: 15,
-        },
-        {
-          messageId: 'noUnnecessaryActTestingLibraryUtil',
-          line: 14,
-          column: 9,
-        },
-        {
-          messageId: 'noUnnecessaryActTestingLibraryUtil',
-          line: 15,
-          column: 15,
-        },
-        {
-          messageId: 'noUnnecessaryActTestingLibraryUtil',
-          line: 17,
-          column: 9,
-        },
-        {
-          messageId: 'noUnnecessaryActTestingLibraryUtil',
-          line: 20,
-          column: 9,
-        },
-        {
-          messageId: 'noUnnecessaryActTestingLibraryUtil',
-          line: 23,
-          column: 9,
-        },
-        {
-          messageId: 'noUnnecessaryActTestingLibraryUtil',
-          line: 26,
-          column: 9,
-        },
-        {
-          messageId: 'noUnnecessaryActTestingLibraryUtil',
-          line: 29,
-          column: 15,
-        },
-        {
-          messageId: 'noUnnecessaryActTestingLibraryUtil',
-          line: 32,
-          column: 9,
-        },
-        {
-          messageId: 'noUnnecessaryActTestingLibraryUtil',
-          line: 35,
-          column: 15,
-        },
-        {
-          messageId: 'noUnnecessaryActTestingLibraryUtil',
-          line: 38,
-          column: 9,
-        },
-        {
-          messageId: 'noUnnecessaryActTestingLibraryUtil',
-          line: 41,
-          column: 15,
-        },
-      ],
-    },
-    {
-      settings: {
-        'testing-library/utils-module': 'off',
+    errors: [
+      { messageId: 'noUnnecessaryActTestingLibraryUtil', line: 7, column: 9 },
+      { messageId: 'noUnnecessaryActTestingLibraryUtil', line: 8, column: 9 },
+      { messageId: 'noUnnecessaryActTestingLibraryUtil', line: 9, column: 9 },
+      {
+        messageId: 'noUnnecessaryActTestingLibraryUtil',
+        line: 10,
+        column: 9,
       },
-      code: `// case: RTU act wrapping empty callback
+      {
+        messageId: 'noUnnecessaryActTestingLibraryUtil',
+        line: 11,
+        column: 15,
+      },
+      {
+        messageId: 'noUnnecessaryActTestingLibraryUtil',
+        line: 12,
+        column: 9,
+      },
+      {
+        messageId: 'noUnnecessaryActTestingLibraryUtil',
+        line: 13,
+        column: 15,
+      },
+      {
+        messageId: 'noUnnecessaryActTestingLibraryUtil',
+        line: 14,
+        column: 9,
+      },
+      {
+        messageId: 'noUnnecessaryActTestingLibraryUtil',
+        line: 15,
+        column: 15,
+      },
+      {
+        messageId: 'noUnnecessaryActTestingLibraryUtil',
+        line: 17,
+        column: 9,
+      },
+      {
+        messageId: 'noUnnecessaryActTestingLibraryUtil',
+        line: 20,
+        column: 9,
+      },
+      {
+        messageId: 'noUnnecessaryActTestingLibraryUtil',
+        line: 23,
+        column: 9,
+      },
+      {
+        messageId: 'noUnnecessaryActTestingLibraryUtil',
+        line: 26,
+        column: 9,
+      },
+      {
+        messageId: 'noUnnecessaryActTestingLibraryUtil',
+        line: 29,
+        column: 15,
+      },
+      {
+        messageId: 'noUnnecessaryActTestingLibraryUtil',
+        line: 32,
+        column: 9,
+      },
+      {
+        messageId: 'noUnnecessaryActTestingLibraryUtil',
+        line: 35,
+        column: 15,
+      },
+      {
+        messageId: 'noUnnecessaryActTestingLibraryUtil',
+        line: 38,
+        column: 9,
+      },
+      {
+        messageId: 'noUnnecessaryActTestingLibraryUtil',
+        line: 41,
+        column: 15,
+      },
+    ],
+  },
+  {
+    settings: {
+      'testing-library/utils-module': 'off',
+    },
+    code: `// case: RTU act wrapping empty callback
       import { act } from 'react-dom/test-utils';
       import { render } from '@testing-library/react'
 
@@ -770,18 +807,18 @@ ruleTester.run(RULE_NAME, rule, {
         act(function () {});
       });
       `,
-      errors: [
-        { messageId: 'noUnnecessaryActEmptyFunction', line: 7, column: 15 },
-        { messageId: 'noUnnecessaryActEmptyFunction', line: 8, column: 9 },
-        { messageId: 'noUnnecessaryActEmptyFunction', line: 9, column: 15 },
-        { messageId: 'noUnnecessaryActEmptyFunction', line: 10, column: 9 },
-      ],
+    errors: [
+      { messageId: 'noUnnecessaryActEmptyFunction', line: 7, column: 15 },
+      { messageId: 'noUnnecessaryActEmptyFunction', line: 8, column: 9 },
+      { messageId: 'noUnnecessaryActEmptyFunction', line: 9, column: 15 },
+      { messageId: 'noUnnecessaryActEmptyFunction', line: 10, column: 9 },
+    ],
+  },
+  {
+    settings: {
+      'testing-library/utils-module': 'off',
     },
-    {
-      settings: {
-        'testing-library/utils-module': 'off',
-      },
-      code: `// case: RTU act wrapping empty callback - require version
+    code: `// case: RTU act wrapping empty callback - require version
       const { act } = require('react-dom/test-utils');
       const { render } = require('@testing-library/react');
 
@@ -793,20 +830,20 @@ ruleTester.run(RULE_NAME, rule, {
         act(function () {});
       })
       `,
-      errors: [
-        { messageId: 'noUnnecessaryActEmptyFunction', line: 7, column: 15 },
-        { messageId: 'noUnnecessaryActEmptyFunction', line: 8, column: 9 },
-        { messageId: 'noUnnecessaryActEmptyFunction', line: 9, column: 15 },
-        { messageId: 'noUnnecessaryActEmptyFunction', line: 10, column: 9 },
-      ],
-    },
+    errors: [
+      { messageId: 'noUnnecessaryActEmptyFunction', line: 7, column: 15 },
+      { messageId: 'noUnnecessaryActEmptyFunction', line: 8, column: 9 },
+      { messageId: 'noUnnecessaryActEmptyFunction', line: 9, column: 15 },
+      { messageId: 'noUnnecessaryActEmptyFunction', line: 10, column: 9 },
+    ],
+  },
 
-    {
-      settings: {
-        'testing-library/utils-module': 'custom-testing-module',
-        'testing-library/custom-renders': 'off',
-      },
-      code: `// case: mixed scenarios - AGR disabled
+  {
+    settings: {
+      'testing-library/utils-module': 'custom-testing-module',
+      'testing-library/custom-renders': 'off',
+    },
+    code: `// case: mixed scenarios - AGR disabled
       import * as ReactTestUtils from 'react-dom/test-utils';
       import { act as renamedAct, fireEvent, screen as renamedScreen, render, waitFor } from 'custom-testing-module'
       import userEvent from '@testing-library/user-event'
@@ -825,55 +862,36 @@ ruleTester.run(RULE_NAME, rule, {
         act(function() { return renamedScreen.getByText('foo') })
       });
       `,
-      errors: [
-        { messageId: 'noUnnecessaryActEmptyFunction', line: 8, column: 24 },
-        {
-          messageId: 'noUnnecessaryActTestingLibraryUtil',
-          line: 9,
-          column: 30,
-        },
-        {
-          messageId: 'noUnnecessaryActTestingLibraryUtil',
-          line: 10,
-          column: 15,
-        },
-        {
-          messageId: 'noUnnecessaryActTestingLibraryUtil',
-          line: 11,
-          column: 9,
-        },
-      ],
-    },
-    {
-      options: [
-        {
-          isStrict: true,
-        },
-      ],
-      code: `// case: RTL act wrapping both RTL and non-RTL calls with strict option
-      import { act, render } from '@testing-library/react'
+    errors: [
+      { messageId: 'noUnnecessaryActEmptyFunction', line: 8, column: 24 },
+      {
+        messageId: 'noUnnecessaryActTestingLibraryUtil',
+        line: 9,
+        column: 30,
+      },
+      {
+        messageId: 'noUnnecessaryActTestingLibraryUtil',
+        line: 10,
+        column: 15,
+      },
+      {
+        messageId: 'noUnnecessaryActTestingLibraryUtil',
+        line: 11,
+        column: 9,
+      },
+    ],
+  },
+];
 
-      await act(async () => {
-        userEvent.click(screen.getByText("Submit"))
-        await flushPromises()
-      })
-      act(function() {
-        userEvent.click(screen.getByText("Submit"))
-        flushPromises()
-      })
-      `,
-      errors: [
-        {
-          messageId: 'noUnnecessaryActTestingLibraryUtil',
-          line: 4,
-          column: 13,
-        },
-        {
-          messageId: 'noUnnecessaryActTestingLibraryUtil',
-          line: 8,
-          column: 7,
-        },
-      ],
-    },
+ruleTester.run(RULE_NAME, rule, {
+  valid: [
+    ...validTestCases,
+    ...validNonStrictTestCases,
+    ...enableStrict(validTestCases),
+  ],
+  invalid: [
+    ...invalidTestCases,
+    ...invalidStrictTestCases,
+    ...enableStrict(invalidTestCases),
   ],
 });
