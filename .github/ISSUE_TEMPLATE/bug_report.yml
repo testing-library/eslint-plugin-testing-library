@@ -10,7 +10,7 @@ body:
     id: plugin_version
     attributes:
       label: Plugin version
-      description: What version of the plugin are you using?
+      description: What version of `eslint-plugin-testing-library` are you using?
       placeholder: v4.10.1
     validations:
       required: true
