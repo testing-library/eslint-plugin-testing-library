@@ -27,7 +27,7 @@
 
 ## Installation
 
-You'll first need to install [ESLint](http://eslint.org):
+You'll first need to install [ESLint](https://eslint.org):
 
 ```shell
 $ npm install --save-dev eslint
@@ -373,6 +373,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <td align="center"><a href="https://github.com/ph-fritsche"><img src="https://avatars.githubusercontent.com/u/39068198?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Philipp Fritsche</b></sub></a><br /><a href="https://github.com/testing-library/eslint-plugin-testing-library/commits?author=ph-fritsche" title="Code">💻</a></td>
     <td align="center"><a href="http://zaicevas.me"><img src="https://avatars.githubusercontent.com/u/34719980?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Tomas Zaicevas</b></sub></a><br /><a href="https://github.com/testing-library/eslint-plugin-testing-library/issues?q=author%3Azaicevas" title="Bug reports">🐛</a> <a href="https://github.com/testing-library/eslint-plugin-testing-library/commits?author=zaicevas" title="Code">💻</a> <a href="https://github.com/testing-library/eslint-plugin-testing-library/commits?author=zaicevas" title="Tests">⚠️</a> <a href="https://github.com/testing-library/eslint-plugin-testing-library/commits?author=zaicevas" title="Documentation">📖</a></td>
     <td align="center"><a href="https://github.com/G-Rath"><img src="https://avatars.githubusercontent.com/u/3151613?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Gareth Jones</b></sub></a><br /><a href="https://github.com/testing-library/eslint-plugin-testing-library/commits?author=G-Rath" title="Code">💻</a> <a href="https://github.com/testing-library/eslint-plugin-testing-library/commits?author=G-Rath" title="Documentation">📖</a> <a href="https://github.com/testing-library/eslint-plugin-testing-library/commits?author=G-Rath" title="Tests">⚠️</a></td>
+    <td align="center"><a href="https://github.com/HonkingGoose"><img src="https://avatars.githubusercontent.com/u/34918129?v=4?s=100" width="100px;" alt=""/><br /><sub><b>HonkingGoose</b></sub></a><br /><a href="https://github.com/testing-library/eslint-plugin-testing-library/commits?author=HonkingGoose" title="Documentation">📖</a></td>
   </tr>
 </table>
 
