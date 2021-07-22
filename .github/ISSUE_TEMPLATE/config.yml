@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: ESLint
+    url: https://github.com/eslint/eslint/issues
+    about: Report problems with the ESLint program itself to the ESLint project.
