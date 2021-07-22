@@ -1,0 +1,88 @@
+name: Propose a new rule
+description: Propose a new rule for the eslint-plugin-testing-library.
+labels: [new rule]
+body:
+  - type: input
+    id: name_for_new_rule
+    attributes:
+      label: Name for new rule
+      description: Suggest a name for the new rule.
+      placeholder: Put your suggestion for the name in here.
+    validations:
+      required: true
+
+  - type: textarea
+    id: description_of_the_new_rule
+    attributes:
+      label: Description of the new rule
+      description: Please describe what the new rule should do.
+      placeholder: The rule should ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: testing_library_feature
+    attributes:
+      label: Testing library feature
+      description: What Testing Library feature does this rule relate to?
+      placeholder: ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: testing_library_frameworks
+    attributes:
+      label: Testing library framework(s)
+      description: What Testing Library framework(s) does this rule relate to?
+      placeholder: ...
+    validations:
+      required: true
+
+  - type: dropdown
+    id: category_of_rule
+    attributes:
+      label: What category of rule is this?
+      options:
+        - 'Warns about a potential error'
+        - 'Suggests an alternate way of doing something'
+        - 'Other (specify in textbox below)'
+    validations:
+      required: true
+
+  - type: textarea
+    id: textbox_category_of_rule_when_selected_other
+    attributes:
+      label: 'Optional: other category of rule'
+      description: 'If you selected _other_ in the dropdown menu above, explain more here.'
+      placeholder: Explain the category of rule in more detail.
+    validations:
+      required: false
+
+  - type: textarea
+    id: code_examples
+    attributes:
+      label: Code examples
+      description: Provide two to three code examples that this rule will warn about.
+      placeholder: Code example 1, code example 2.
+    validations:
+      required: true
+
+  - type: textarea
+    id: anything_else
+    attributes:
+      label: Anything else?
+      description: If there's anything else we need to know, tell us about it here.
+      placeholder: By the way, you also need to know about...
+    validations:
+      required: false
+
+  - type: dropdown
+    id: want_to_submit_pr_to_make_new_rule
+    attributes:
+      label: Do you want to submit a pull request to make the new rule?
+      options:
+        - 'Yes'
+        - 'Yes, but need help'
+        - 'No'
+    validations:
+      required: true
