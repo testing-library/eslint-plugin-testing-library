@@ -82,7 +82,7 @@ body:
     attributes:
       label: ESLint configuration
       description: Copy/paste your ESLint configuration into this field.
-      placeholder: You can find your ESLint configuration in these files TODO ADD LIST OF VALID FILENAMES
+      placeholder: Tip: you can find your ESLint configuration in the `.eslintrc` file.
     validations:
       required: true
 
