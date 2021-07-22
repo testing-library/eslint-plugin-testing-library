@@ -89,7 +89,7 @@ body:
   - type: textarea
     id: rule_affected
     attributes:
-      label: Rules(s) affected
+      label: Rule(s) affected
       description: Tell us what `eslint-pluging-testing-library` rule(s) are affected by this bug.
       placeholder: 'Tip: check your `.eslintrc` for rules.'
     validations:
