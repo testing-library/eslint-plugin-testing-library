@@ -102,7 +102,7 @@ body:
       description: If there's anything else we need to know, tell us about it here.
       placeholder: By the way, you also need to know about...
     validations:
-      required: true
+      required: false
 
   - type: dropdown
     id: want_to_submit_pr_to_fix_bug
