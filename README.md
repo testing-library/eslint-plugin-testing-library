@@ -110,7 +110,7 @@ Another approach for customizing ESLint config by paths is through [ESLint Casca
 This plugin exports several recommended configurations that enforce good practices for specific Testing Library packages.
 You can find more info about enabled rules in the [Supported Rules section](#supported-rules), under the `Configurations` column.
 
-Since each one of these configurations is aimed at a particular Testing Library package, they are not extendable between them, so you should use only one of them at once per `eslintrc` file. For example, if you want to enable recommended configuration for React, you don't need to combine it somehow with DOM one:
+Since each one of these configurations is aimed at a particular Testing Library package, they are not extendable between them, so you should use only one of them at once per `.eslintrc` file. For example, if you want to enable recommended configuration for React, you don't need to combine it somehow with DOM one:
 
 ```json
 // ❌ Don't do this
