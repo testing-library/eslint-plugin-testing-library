@@ -91,7 +91,7 @@ body:
     attributes:
       label: Rules(s) affected
       description: Tell us what `eslint-pluging-testing-library` rule(s) are affected by this bug.
-      placeholder: Tip: check your `.eslintrc` for rules.
+      placeholder: 'Tip: check your `.eslintrc` for rules.'
     validations:
       required: true
 
