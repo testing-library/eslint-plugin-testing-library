@@ -1,0 +1,78 @@
+name: Request a rule change
+description: Request a rule change for the eslint-plugin-testing-library.
+labels: [enhancement]
+body:
+  - type: input
+    id: what_rule_do_you_want_to_change
+    attributes:
+      label: What rule do you want to change?
+      description: Enter the name of the rule you want to change.
+      placeholder: Enter the name of the rule you want to change.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: rule_change_more_fewer_warnings
+    attributes:
+      label: Does this change cause the rule to produce more or fewer warnings?
+      options:
+        - 'More warnings'
+        - 'Fewer warnings'
+    validations:
+      required: true
+
+  - type: textarea
+    id: change_implementation
+    attributes:
+      label: How will the change be implemented?
+      description: Describe how the new rule will be implemented.
+      placeholder: Describe how the new rule will be implemented.
+    validations:
+      required: true
+
+  - type: textarea
+    id: example_code
+    attributes:
+      label: Example code
+      description: Please provide some example code that this change will affect.
+      placeholder: Example of code that will be affected.
+    validations:
+      required: true
+
+  - type: textarea
+    id: current_rule_affects_code
+    attributes:
+      label: How does the current rule affect the code?
+      description: Explain how the current rule affects the example code.
+      placeholder: The current rule affects the example code like this...
+    validations:
+      required: true
+
+  - type: textarea
+    id: new_rule_affects_code_how
+    attributes:
+      label: How will the new rule affect the code?
+      description: Explain how the new rule will affect the example code.
+      placeholder: The new rule will affect the example code like this...
+    validations:
+      required: true
+
+  - type: textarea
+    id: anything_else
+    attributes:
+      label: Anything else?
+      description: If there's anything else we need to know, tell us about it here.
+      placeholder: By the way, you also need to know about...
+    validations:
+      required: false
+
+  - type: dropdown
+    id: want_to_submit_pr_to_make_new_rule
+    attributes:
+      label: Do you want to submit a pull request to change the rule?
+      options:
+        - 'Yes'
+        - 'Yes, but need help'
+        - 'No'
+    validations:
+      required: true
