@@ -25,7 +25,7 @@ body:
     attributes:
       label: Testing Library feature
       description: What Testing Library feature does this rule relate to?
-      placeholder: ...
+      placeholder: Enforce promises from async queries to be handled
     validations:
       required: true
 
