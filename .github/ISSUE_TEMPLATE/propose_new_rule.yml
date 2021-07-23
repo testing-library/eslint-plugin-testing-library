@@ -34,7 +34,7 @@ body:
     attributes:
       label: Testing Library framework(s)
       description: What Testing Library framework(s) does this rule relate to?
-      placeholder: ...
+      placeholder: angular, react and vue
     validations:
       required: true
 
