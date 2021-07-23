@@ -7,7 +7,7 @@ body:
     attributes:
       label: What rule do you want to change?
       description: Enter the name of the rule you want to change.
-      placeholder: Enter the name of the rule you want to change.
+      placeholder: prefer-find-by
     validations:
       required: true
 
