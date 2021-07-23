@@ -23,7 +23,7 @@ body:
   - type: textarea
     id: testing_library_feature
     attributes:
-      label: Testing library feature
+      label: Testing Library feature
       description: What Testing Library feature does this rule relate to?
       placeholder: ...
     validations:
