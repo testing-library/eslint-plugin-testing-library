@@ -1,0 +1,50 @@
+name: Request a general change
+description: Request a general change for the eslint-plugin-testing-library.
+labels: [enhancement]
+body:
+  - type: input
+    id: plugin_version
+    attributes:
+      label: Plugin version
+      description: What version of `eslint-plugin-testing-library` are you using?
+      placeholder: v4.10.1
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem_that_needs_solving
+    attributes:
+      label: What problem do you want to solve?
+      description: Tell us about your problem.
+      placeholder: Describe the problem.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed_solution
+    attributes:
+      label: Your take on the correct solution?
+      description: Tell us your idea to solve the problem.
+      placeholder: Describe your idea.
+    validations:
+      required: true
+
+  - type: textarea
+    id: anything_else
+    attributes:
+      label: Anything else?
+      description: If there's anything else we need to know, tell us about it here.
+      placeholder: By the way, you also need to know about...
+    validations:
+      required: false
+
+  - type: dropdown
+    id: want_to_submit_pr_to_implement_change
+    attributes:
+      label: Do you want to submit a pull request to implement this change?
+      options:
+        - 'Yes'
+        - 'Yes, but need help'
+        - 'No'
+    validations:
+      required: true
