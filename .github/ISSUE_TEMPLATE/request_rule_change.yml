@@ -26,7 +26,6 @@ body:
     attributes:
       label: How will the change be implemented?
       description: Describe how the new rule will be implemented.
-      placeholder: Describe how the new rule will be implemented.
     validations:
       required: true
 
