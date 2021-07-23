@@ -49,7 +49,7 @@ body:
       required: true
 
   - type: textarea
-    id: new_rule_affects_code_how
+    id: new_rule_affects_code
     attributes:
       label: How will the new rule affect the code?
       description: Explain how the new rule will affect the example code.
