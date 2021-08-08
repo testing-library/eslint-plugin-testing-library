@@ -111,7 +111,99 @@ export default createTestingLibraryRule<Options, MessageIds>({
       });
     }
 
+    // eslint-disable-next-line complexity
+    function getWrongQueryName(node: TSESTree.ArrowFunctionExpression) {
+      // refactor to take node.body.callee
+      if (!isCallExpression(node.body)) {
+        return null;
+      }
+
+      if (
+        ASTUtils.isIdentifier(node.body.callee) &&
+        helpers.isSyncQuery(node.body.callee)
+      ) {
+        return node.body.callee.name;
+      }
+
+      if (!isMemberExpression(node.body.callee)) {
+        return null;
+      }
+
+      if (
+        isCallExpression(node.body.callee.object) &&
+        isCallExpression(node.body.callee.object.arguments[0]) &&
+        ASTUtils.isIdentifier(node.body.callee.object.arguments[0].callee)
+      ) {
+        return node.body.callee.object.arguments[0].callee.name;
+      }
+
+      if (!ASTUtils.isIdentifier(node.body.callee.property)) {
+        return null;
+      }
+
+      if (
+        isCallExpression(node.body.callee.object) &&
+        isCallExpression(node.body.callee.object.arguments[0]) &&
+        isMemberExpression(node.body.callee.object.arguments[0].callee) &&
+        ASTUtils.isIdentifier(
+          node.body.callee.object.arguments[0].callee.property
+        )
+      ) {
+        return node.body.callee.object.arguments[0].callee.property.name;
+      }
+
+      if (
+        // expect().not
+        isMemberExpression(node.body.callee.object) &&
+        isCallExpression(node.body.callee.object.object) &&
+        isCallExpression(node.body.callee.object.object.arguments[0]) &&
+        isMemberExpression(
+          node.body.callee.object.object.arguments[0].callee
+        ) &&
+        ASTUtils.isIdentifier(
+          node.body.callee.object.object.arguments[0].callee.property
+        )
+      ) {
+        return node.body.callee.object.object.arguments[0].callee.property.name;
+      }
+
+      if (
+        isMemberExpression(node.body.callee.object) &&
+        isCallExpression(node.body.callee.object.object) &&
+        isCallExpression(node.body.callee.object.object.arguments[0]) &&
+        ASTUtils.isIdentifier(
+          node.body.callee.object.object.arguments[0].callee
+        )
+      ) {
+        return node.body.callee.object.object.arguments[0].callee.name;
+      }
+
+      return node.body.callee.property.name;
+    }
+
+    function getQueryArguments(node: TSESTree.CallExpression) {
+      if (
+        isMemberExpression(node.callee) &&
+        isCallExpression(node.callee.object) &&
+        isCallExpression(node.callee.object.arguments[0])
+      ) {
+        return node.callee.object.arguments[0].arguments;
+      }
+
+      if (
+        isMemberExpression(node.callee) &&
+        isMemberExpression(node.callee.object) &&
+        isCallExpression(node.callee.object.object) &&
+        isCallExpression(node.callee.object.object.arguments[0])
+      ) {
+        return node.callee.object.object.arguments[0].arguments;
+      }
+
+      return node.arguments;
+    }
+
     return {
+      // eslint-disable-next-line complexity
       'AwaitExpression > CallExpression'(node: TSESTree.CallExpression) {
         if (
           !ASTUtils.isIdentifier(node.callee) ||
@@ -135,14 +227,74 @@ export default createTestingLibraryRule<Options, MessageIds>({
         if (
           isMemberExpression(argument.body.callee) &&
           ASTUtils.isIdentifier(argument.body.callee.property) &&
-          ASTUtils.isIdentifier(argument.body.callee.object) &&
-          helpers.isSyncQuery(argument.body.callee.property)
+          (ASTUtils.isIdentifier(argument.body.callee.object) ||
+            isCallExpression(argument.body.callee.object) ||
+            isMemberExpression(argument.body.callee.object)) &&
+          (helpers.isSyncQuery(argument.body.callee.property) ||
+            (helpers.isPresenceAssert(argument.body.callee) &&
+              isCallExpression(argument.body.callee.object) &&
+              isCallExpression(argument.body.callee.object.arguments[0]) &&
+              isMemberExpression(
+                argument.body.callee.object.arguments[0].callee
+              ) &&
+              ASTUtils.isIdentifier(
+                argument.body.callee.object.arguments[0].callee.object
+              )) ||
+            (isMemberExpression(argument.body.callee.object) &&
+              helpers.isPresenceAssert(argument.body.callee.object) &&
+              isCallExpression(argument.body.callee.object.object) &&
+              isCallExpression(
+                argument.body.callee.object.object.arguments[0]
+              ) &&
+              isMemberExpression(
+                argument.body.callee.object.object.arguments[0].callee
+              )))
         ) {
+          let caller = '';
+
+          if (ASTUtils.isIdentifier(argument.body.callee.object)) {
+            // () => screen.getByText
+            caller = argument.body.callee.object.name;
+          } else if (
+            // expect()
+            isCallExpression(argument.body.callee.object) &&
+            ASTUtils.isIdentifier(argument.body.callee.object.callee) &&
+            isCallExpression(argument.body.callee.object.arguments[0]) &&
+            isMemberExpression(
+              argument.body.callee.object.arguments[0].callee
+            ) &&
+            ASTUtils.isIdentifier(
+              argument.body.callee.object.arguments[0].callee.object
+            )
+          ) {
+            caller =
+              argument.body.callee.object.arguments[0].callee.object.name;
+          } else if (
+            // expect().not
+            isMemberExpression(argument.body.callee.object) &&
+            isCallExpression(argument.body.callee.object.object) &&
+            isCallExpression(argument.body.callee.object.object.arguments[0]) &&
+            isMemberExpression(
+              argument.body.callee.object.object.arguments[0].callee
+            ) &&
+            ASTUtils.isIdentifier(
+              argument.body.callee.object.object.arguments[0].callee.object
+            )
+          ) {
+            caller =
+              argument.body.callee.object.object.arguments[0].callee.object
+                .name;
+          }
+
           // shape of () => screen.getByText
-          const fullQueryMethod = argument.body.callee.property.name;
-          const caller = argument.body.callee.object.name;
+          const fullQueryMethod = getWrongQueryName(argument);
+
+          if (!fullQueryMethod) {
+            return;
+          }
+
           const queryVariant = getFindByQueryVariant(fullQueryMethod);
-          const callArguments = argument.body.arguments;
+          const callArguments = getQueryArguments(argument.body);
           const queryMethod = fullQueryMethod.split('By')[1];
 
           reportInvalidUsage(node, {
@@ -166,17 +318,47 @@ export default createTestingLibraryRule<Options, MessageIds>({
           });
           return;
         }
+
         if (
-          !ASTUtils.isIdentifier(argument.body.callee) ||
-          !helpers.isSyncQuery(argument.body.callee)
+          (!ASTUtils.isIdentifier(argument.body.callee) || // () => getByText
+            !helpers.isSyncQuery(argument.body.callee)) &&
+          (!isMemberExpression(argument.body.callee) || // wrapped in presence expect()
+            !isCallExpression(argument.body.callee.object) ||
+            !isCallExpression(argument.body.callee.object.arguments[0]) ||
+            !ASTUtils.isIdentifier(
+              argument.body.callee.object.arguments[0].callee
+            ) ||
+            !helpers.isSyncQuery(
+              argument.body.callee.object.arguments[0].callee
+            ) ||
+            !helpers.isPresenceAssert(argument.body.callee)) &&
+          (!isMemberExpression(argument.body.callee) || // wrpaped in presence expect().not
+            !isMemberExpression(argument.body.callee.object) ||
+            !isCallExpression(argument.body.callee.object.object) ||
+            !isCallExpression(
+              argument.body.callee.object.object.arguments[0]
+            ) ||
+            !ASTUtils.isIdentifier(
+              argument.body.callee.object.object.arguments[0].callee
+            ) ||
+            !helpers.isSyncQuery(
+              argument.body.callee.object.object.arguments[0].callee
+            ) ||
+            !helpers.isPresenceAssert(argument.body.callee.object))
         ) {
           return;
         }
+
         // shape of () => getByText
-        const fullQueryMethod = argument.body.callee.name;
+        const fullQueryMethod = getWrongQueryName(argument);
+
+        if (!fullQueryMethod) {
+          return;
+        }
+
         const queryMethod = fullQueryMethod.split('By')[1];
         const queryVariant = getFindByQueryVariant(fullQueryMethod);
-        const callArguments = argument.body.arguments;
+        const callArguments = getQueryArguments(argument.body);
 
         reportInvalidUsage(node, {
           queryMethod,
