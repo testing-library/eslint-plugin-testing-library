@@ -232,6 +232,80 @@ export default createTestingLibraryRule<Options, MessageIds>({
       return null;
     }
 
+    function isSyncQuery(node: TSESTree.ArrowFunctionExpression) {
+      if (!isCallExpression(node.body)) {
+        return false;
+      }
+
+      const isQuery =
+        ASTUtils.isIdentifier(node.body.callee) && // () => getByText
+        helpers.isSyncQuery(node.body.callee);
+
+      const isWrappedInPresenceAssert =
+        isMemberExpression(node.body.callee) &&
+        isCallExpression(node.body.callee.object) &&
+        isCallExpression(node.body.callee.object.arguments[0]) &&
+        ASTUtils.isIdentifier(node.body.callee.object.arguments[0].callee) &&
+        helpers.isSyncQuery(node.body.callee.object.arguments[0].callee) &&
+        helpers.isPresenceAssert(node.body.callee);
+
+      const isWrappedInNegatedPresenceAssert =
+        isMemberExpression(node.body.callee) && // wrpaped in presence expect().not
+        isMemberExpression(node.body.callee.object) &&
+        isCallExpression(node.body.callee.object.object) &&
+        isCallExpression(node.body.callee.object.object.arguments[0]) &&
+        ASTUtils.isIdentifier(
+          node.body.callee.object.object.arguments[0].callee
+        ) &&
+        helpers.isSyncQuery(
+          node.body.callee.object.object.arguments[0].callee
+        ) &&
+        helpers.isPresenceAssert(node.body.callee.object);
+
+      return (
+        isQuery || isWrappedInPresenceAssert || isWrappedInNegatedPresenceAssert
+      );
+    }
+
+    function isScreenSyncQuery(node: TSESTree.ArrowFunctionExpression) {
+      if (!isArrowFunctionExpression(node) || !isCallExpression(node.body)) {
+        return false;
+      }
+
+      if (
+        !isMemberExpression(node.body.callee) ||
+        !ASTUtils.isIdentifier(node.body.callee.property)
+      ) {
+        return false;
+      }
+
+      if (
+        !ASTUtils.isIdentifier(node.body.callee.object) &&
+        !isCallExpression(node.body.callee.object) &&
+        !isMemberExpression(node.body.callee.object)
+      ) {
+        return false;
+      }
+
+      const yesA =
+        helpers.isPresenceAssert(node.body.callee) &&
+        isCallExpression(node.body.callee.object) &&
+        isCallExpression(node.body.callee.object.arguments[0]) &&
+        isMemberExpression(node.body.callee.object.arguments[0].callee) &&
+        ASTUtils.isIdentifier(
+          node.body.callee.object.arguments[0].callee.object
+        );
+
+      const yesB =
+        isMemberExpression(node.body.callee.object) &&
+        helpers.isPresenceAssert(node.body.callee.object) &&
+        isCallExpression(node.body.callee.object.object) &&
+        isCallExpression(node.body.callee.object.object.arguments[0]) &&
+        isMemberExpression(node.body.callee.object.object.arguments[0].callee);
+
+      return helpers.isSyncQuery(node.body.callee.property) || yesA || yesB;
+    }
+
     function getQueryArguments(node: TSESTree.CallExpression) {
       if (
         isMemberExpression(node.callee) &&
@@ -254,7 +328,6 @@ export default createTestingLibraryRule<Options, MessageIds>({
     }
 
     return {
-      // eslint-disable-next-line complexity
       'AwaitExpression > CallExpression'(node: TSESTree.CallExpression) {
         if (
           !ASTUtils.isIdentifier(node.callee) ||
@@ -265,42 +338,17 @@ export default createTestingLibraryRule<Options, MessageIds>({
         // ensure the only argument is an arrow function expression - if the arrow function is a block
         // we skip it
         const argument = node.arguments[0];
-        if (!isArrowFunctionExpression(argument)) {
-          return;
-        }
-        if (!isCallExpression(argument.body)) {
+        if (
+          !isArrowFunctionExpression(argument) ||
+          !isCallExpression(argument.body)
+        ) {
           return;
         }
 
         const waitForMethodName = node.callee.name;
 
         // ensure here it's one of the sync methods that we are calling
-        if (
-          isMemberExpression(argument.body.callee) &&
-          ASTUtils.isIdentifier(argument.body.callee.property) &&
-          (ASTUtils.isIdentifier(argument.body.callee.object) ||
-            isCallExpression(argument.body.callee.object) ||
-            isMemberExpression(argument.body.callee.object)) &&
-          (helpers.isSyncQuery(argument.body.callee.property) ||
-            (helpers.isPresenceAssert(argument.body.callee) &&
-              isCallExpression(argument.body.callee.object) &&
-              isCallExpression(argument.body.callee.object.arguments[0]) &&
-              isMemberExpression(
-                argument.body.callee.object.arguments[0].callee
-              ) &&
-              ASTUtils.isIdentifier(
-                argument.body.callee.object.arguments[0].callee.object
-              )) ||
-            (isMemberExpression(argument.body.callee.object) &&
-              helpers.isPresenceAssert(argument.body.callee.object) &&
-              isCallExpression(argument.body.callee.object.object) &&
-              isCallExpression(
-                argument.body.callee.object.object.arguments[0]
-              ) &&
-              isMemberExpression(
-                argument.body.callee.object.object.arguments[0].callee
-              )))
-        ) {
+        if (isScreenSyncQuery(argument)) {
           const caller = getCaller(argument);
 
           if (!caller) {
@@ -340,40 +388,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
           return;
         }
 
-        const isSyncQuery =
-          ASTUtils.isIdentifier(argument.body.callee) && // () => getByText
-          helpers.isSyncQuery(argument.body.callee);
-
-        const isWrappedInPresenceAssert =
-          isMemberExpression(argument.body.callee) &&
-          isCallExpression(argument.body.callee.object) &&
-          isCallExpression(argument.body.callee.object.arguments[0]) &&
-          ASTUtils.isIdentifier(
-            argument.body.callee.object.arguments[0].callee
-          ) &&
-          helpers.isSyncQuery(
-            argument.body.callee.object.arguments[0].callee
-          ) &&
-          helpers.isPresenceAssert(argument.body.callee);
-
-        const isWrappedInNegatedPresenceAssert =
-          isMemberExpression(argument.body.callee) && // wrpaped in presence expect().not
-          isMemberExpression(argument.body.callee.object) &&
-          isCallExpression(argument.body.callee.object.object) &&
-          isCallExpression(argument.body.callee.object.object.arguments[0]) &&
-          ASTUtils.isIdentifier(
-            argument.body.callee.object.object.arguments[0].callee
-          ) &&
-          helpers.isSyncQuery(
-            argument.body.callee.object.object.arguments[0].callee
-          ) &&
-          helpers.isPresenceAssert(argument.body.callee.object);
-
-        if (
-          !isSyncQuery &&
-          !isWrappedInPresenceAssert &&
-          !isWrappedInNegatedPresenceAssert
-        ) {
+        if (!isSyncQuery(argument)) {
           return;
         }
 
