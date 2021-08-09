@@ -238,7 +238,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
       }
 
       const isQuery =
-        ASTUtils.isIdentifier(node.body.callee) && // () => getByText
+        ASTUtils.isIdentifier(node.body.callee) &&
         helpers.isSyncQuery(node.body.callee);
 
       const isWrappedInPresenceAssert =
@@ -250,7 +250,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
         helpers.isPresenceAssert(node.body.callee);
 
       const isWrappedInNegatedPresenceAssert =
-        isMemberExpression(node.body.callee) && // wrpaped in presence expect().not
+        isMemberExpression(node.body.callee) &&
         isMemberExpression(node.body.callee.object) &&
         isCallExpression(node.body.callee.object.object) &&
         isCallExpression(node.body.callee.object.object.arguments[0]) &&
