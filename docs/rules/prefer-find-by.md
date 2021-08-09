@@ -26,6 +26,15 @@ const submitButton = await waitFor(() =>
 const submitButton = await waitFor(() =>
   queryAllByText('button', { name: /submit/i })
 );
+
+// arrow functions with one statement, calling any sync query method with presence assertion
+const submitButton = await waitFor(() =>
+  expect(queryByLabel('button', { name: /submit/i })).toBeInTheDocument()
+);
+
+const submitButton = await waitFor(() =>
+  expect(queryByLabel('button', { name: /submit/i })).not.toBeFalsy()
+);
 ```
 
 Examples of **correct** code for this rule:
