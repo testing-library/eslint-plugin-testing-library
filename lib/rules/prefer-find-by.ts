@@ -340,32 +340,39 @@ export default createTestingLibraryRule<Options, MessageIds>({
           return;
         }
 
+        const isSyncQuery =
+          ASTUtils.isIdentifier(argument.body.callee) && // () => getByText
+          helpers.isSyncQuery(argument.body.callee);
+
+        const isWrappedInPresenceAssert =
+          isMemberExpression(argument.body.callee) &&
+          isCallExpression(argument.body.callee.object) &&
+          isCallExpression(argument.body.callee.object.arguments[0]) &&
+          ASTUtils.isIdentifier(
+            argument.body.callee.object.arguments[0].callee
+          ) &&
+          helpers.isSyncQuery(
+            argument.body.callee.object.arguments[0].callee
+          ) &&
+          helpers.isPresenceAssert(argument.body.callee);
+
+        const isWrappedInNegatedPresenceAssert =
+          isMemberExpression(argument.body.callee) && // wrpaped in presence expect().not
+          isMemberExpression(argument.body.callee.object) &&
+          isCallExpression(argument.body.callee.object.object) &&
+          isCallExpression(argument.body.callee.object.object.arguments[0]) &&
+          ASTUtils.isIdentifier(
+            argument.body.callee.object.object.arguments[0].callee
+          ) &&
+          helpers.isSyncQuery(
+            argument.body.callee.object.object.arguments[0].callee
+          ) &&
+          helpers.isPresenceAssert(argument.body.callee.object);
+
         if (
-          (!ASTUtils.isIdentifier(argument.body.callee) || // () => getByText
-            !helpers.isSyncQuery(argument.body.callee)) &&
-          (!isMemberExpression(argument.body.callee) || // wrapped in presence expect()
-            !isCallExpression(argument.body.callee.object) ||
-            !isCallExpression(argument.body.callee.object.arguments[0]) ||
-            !ASTUtils.isIdentifier(
-              argument.body.callee.object.arguments[0].callee
-            ) ||
-            !helpers.isSyncQuery(
-              argument.body.callee.object.arguments[0].callee
-            ) ||
-            !helpers.isPresenceAssert(argument.body.callee)) &&
-          (!isMemberExpression(argument.body.callee) || // wrpaped in presence expect().not
-            !isMemberExpression(argument.body.callee.object) ||
-            !isCallExpression(argument.body.callee.object.object) ||
-            !isCallExpression(
-              argument.body.callee.object.object.arguments[0]
-            ) ||
-            !ASTUtils.isIdentifier(
-              argument.body.callee.object.object.arguments[0].callee
-            ) ||
-            !helpers.isSyncQuery(
-              argument.body.callee.object.object.arguments[0].callee
-            ) ||
-            !helpers.isPresenceAssert(argument.body.callee.object))
+          !isSyncQuery &&
+          !isWrappedInPresenceAssert &&
+          !isWrappedInNegatedPresenceAssert
         ) {
           return;
         }
