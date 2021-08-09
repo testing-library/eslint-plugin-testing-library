@@ -111,24 +111,17 @@ export default createTestingLibraryRule<Options, MessageIds>({
       });
     }
 
-    // eslint-disable-next-line complexity
-    function getWrongQueryName(node: TSESTree.ArrowFunctionExpression) {
-      // refactor to take node.body.callee
-      if (!isCallExpression(node.body)) {
-        return null;
-      }
-
+    function getWrongQueryNameInAssertion(
+      node: TSESTree.ArrowFunctionExpression
+    ) {
       if (
-        ASTUtils.isIdentifier(node.body.callee) &&
-        helpers.isSyncQuery(node.body.callee)
+        !isCallExpression(node.body) ||
+        !isMemberExpression(node.body.callee)
       ) {
-        return node.body.callee.name;
-      }
-
-      if (!isMemberExpression(node.body.callee)) {
         return null;
       }
 
+      // expect(getByText).toBeInTheDocument() shape
       if (
         isCallExpression(node.body.callee.object) &&
         isCallExpression(node.body.callee.object.arguments[0]) &&
@@ -141,6 +134,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
         return null;
       }
 
+      // expect(screen.getByText).toBeInTheDocument() shape
       if (
         isCallExpression(node.body.callee.object) &&
         isCallExpression(node.body.callee.object.arguments[0]) &&
@@ -152,8 +146,8 @@ export default createTestingLibraryRule<Options, MessageIds>({
         return node.body.callee.object.arguments[0].callee.property.name;
       }
 
+      // expect(screen.getByText).not shape
       if (
-        // expect().not
         isMemberExpression(node.body.callee.object) &&
         isCallExpression(node.body.callee.object.object) &&
         isCallExpression(node.body.callee.object.object.arguments[0]) &&
@@ -167,6 +161,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
         return node.body.callee.object.object.arguments[0].callee.property.name;
       }
 
+      // expect(getByText).not shape
       if (
         isMemberExpression(node.body.callee.object) &&
         isCallExpression(node.body.callee.object.object) &&
@@ -179,6 +174,62 @@ export default createTestingLibraryRule<Options, MessageIds>({
       }
 
       return node.body.callee.property.name;
+    }
+
+    function getWrongQueryName(node: TSESTree.ArrowFunctionExpression) {
+      if (!isCallExpression(node.body)) {
+        return null;
+      }
+
+      // expect(() => getByText) and expect(() => screen.getByText) shape
+      if (
+        ASTUtils.isIdentifier(node.body.callee) &&
+        helpers.isSyncQuery(node.body.callee)
+      ) {
+        return node.body.callee.name;
+      }
+
+      return getWrongQueryNameInAssertion(node);
+    }
+
+    function getCaller(node: TSESTree.ArrowFunctionExpression) {
+      if (
+        !isCallExpression(node.body) ||
+        !isMemberExpression(node.body.callee)
+      ) {
+        return null;
+      }
+
+      if (ASTUtils.isIdentifier(node.body.callee.object)) {
+        // () => screen.getByText
+        return node.body.callee.object.name;
+      } else if (
+        // expect()
+        isCallExpression(node.body.callee.object) &&
+        ASTUtils.isIdentifier(node.body.callee.object.callee) &&
+        isCallExpression(node.body.callee.object.arguments[0]) &&
+        isMemberExpression(node.body.callee.object.arguments[0].callee) &&
+        ASTUtils.isIdentifier(
+          node.body.callee.object.arguments[0].callee.object
+        )
+      ) {
+        return node.body.callee.object.arguments[0].callee.object.name;
+      } else if (
+        // expect().not
+        isMemberExpression(node.body.callee.object) &&
+        isCallExpression(node.body.callee.object.object) &&
+        isCallExpression(node.body.callee.object.object.arguments[0]) &&
+        isMemberExpression(
+          node.body.callee.object.object.arguments[0].callee
+        ) &&
+        ASTUtils.isIdentifier(
+          node.body.callee.object.object.arguments[0].callee.object
+        )
+      ) {
+        return node.body.callee.object.object.arguments[0].callee.object.name;
+      }
+
+      return null;
     }
 
     function getQueryArguments(node: TSESTree.CallExpression) {
@@ -250,40 +301,10 @@ export default createTestingLibraryRule<Options, MessageIds>({
                 argument.body.callee.object.object.arguments[0].callee
               )))
         ) {
-          let caller = '';
+          const caller = getCaller(argument);
 
-          if (ASTUtils.isIdentifier(argument.body.callee.object)) {
-            // () => screen.getByText
-            caller = argument.body.callee.object.name;
-          } else if (
-            // expect()
-            isCallExpression(argument.body.callee.object) &&
-            ASTUtils.isIdentifier(argument.body.callee.object.callee) &&
-            isCallExpression(argument.body.callee.object.arguments[0]) &&
-            isMemberExpression(
-              argument.body.callee.object.arguments[0].callee
-            ) &&
-            ASTUtils.isIdentifier(
-              argument.body.callee.object.arguments[0].callee.object
-            )
-          ) {
-            caller =
-              argument.body.callee.object.arguments[0].callee.object.name;
-          } else if (
-            // expect().not
-            isMemberExpression(argument.body.callee.object) &&
-            isCallExpression(argument.body.callee.object.object) &&
-            isCallExpression(argument.body.callee.object.object.arguments[0]) &&
-            isMemberExpression(
-              argument.body.callee.object.object.arguments[0].callee
-            ) &&
-            ASTUtils.isIdentifier(
-              argument.body.callee.object.object.arguments[0].callee.object
-            )
-          ) {
-            caller =
-              argument.body.callee.object.object.arguments[0].callee.object
-                .name;
+          if (!caller) {
+            return;
           }
 
           // shape of () => screen.getByText
