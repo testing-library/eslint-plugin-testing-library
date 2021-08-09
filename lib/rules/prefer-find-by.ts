@@ -287,7 +287,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
         return false;
       }
 
-      const yesA =
+      const isWrappedInPresenceAssert =
         helpers.isPresenceAssert(node.body.callee) &&
         isCallExpression(node.body.callee.object) &&
         isCallExpression(node.body.callee.object.arguments[0]) &&
@@ -296,14 +296,18 @@ export default createTestingLibraryRule<Options, MessageIds>({
           node.body.callee.object.arguments[0].callee.object
         );
 
-      const yesB =
+      const isWrappedInNegatedPresenceAssert =
         isMemberExpression(node.body.callee.object) &&
         helpers.isPresenceAssert(node.body.callee.object) &&
         isCallExpression(node.body.callee.object.object) &&
         isCallExpression(node.body.callee.object.object.arguments[0]) &&
         isMemberExpression(node.body.callee.object.object.arguments[0].callee);
 
-      return helpers.isSyncQuery(node.body.callee.property) || yesA || yesB;
+      return (
+        helpers.isSyncQuery(node.body.callee.property) ||
+        isWrappedInPresenceAssert ||
+        isWrappedInNegatedPresenceAssert
+      );
     }
 
     function getQueryArguments(node: TSESTree.CallExpression) {
