@@ -15,6 +15,7 @@ export type MessageIds =
 type Options = [
   {
     assertion?: string;
+    includeFindQueries?: boolean;
   }
 ];
 
@@ -91,13 +92,14 @@ export default createTestingLibraryRule<Options, MessageIds>({
             type: 'string',
             enum: PRESENCE_MATCHERS,
           },
+          includeFindQueries: { type: 'boolean' },
         },
       },
     ],
   },
-  defaultOptions: [{}],
+  defaultOptions: [{ includeFindQueries: true }],
   create(context, [options], helpers) {
-    const { assertion } = options;
+    const { assertion, includeFindQueries } = options;
     const getQueryCalls: TSESTree.Identifier[] = [];
     const findQueryCalls: TSESTree.Identifier[] = [];
 
@@ -112,26 +114,28 @@ export default createTestingLibraryRule<Options, MessageIds>({
         }
       },
       'Program:exit'() {
-        findQueryCalls.forEach((queryCall) => {
-          const memberExpression = isMemberExpression(queryCall.parent)
-            ? queryCall.parent
-            : queryCall;
+        if (includeFindQueries) {
+          findQueryCalls.forEach((queryCall) => {
+            const memberExpression = isMemberExpression(queryCall.parent)
+              ? queryCall.parent
+              : queryCall;
 
-          if (
-            isVariableDeclaration(queryCall) ||
-            !isAtTopLevel(memberExpression)
-          ) {
-            return;
-          }
+            if (
+              isVariableDeclaration(queryCall) ||
+              !isAtTopLevel(memberExpression)
+            ) {
+              return;
+            }
 
-          context.report({
-            node: queryCall,
-            messageId: 'preferExplicitAssert',
-            data: {
-              queryType: 'findBy*',
-            },
+            context.report({
+              node: queryCall,
+              messageId: 'preferExplicitAssert',
+              data: {
+                queryType: 'findBy*',
+              },
+            });
           });
-        });
+        }
 
         getQueryCalls.forEach((queryCall) => {
           const node = isMemberExpression(queryCall.parent)

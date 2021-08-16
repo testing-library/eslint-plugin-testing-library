@@ -61,6 +61,23 @@ ruleTester.run(RULE_NAME, rule, {
       }`,
     })),
     ...COMBINED_QUERIES_METHODS.map((queryMethod) => ({
+      code: `
+      async () => {
+        expect(await find${queryMethod}('qux')).toBeInTheDocument();
+      }`,
+    })),
+    ...COMBINED_QUERIES_METHODS.map((queryMethod) => ({
+      code: `
+        async () => {
+          await find${queryMethod}('foo')
+        }`,
+      options: [
+        {
+          includeFindQueries: false,
+        },
+      ],
+    })),
+    ...COMBINED_QUERIES_METHODS.map((queryMethod) => ({
       code: `const quxElement = find${queryMethod}('qux')`,
     })),
     ...COMBINED_QUERIES_METHODS.map((queryMethod) => ({
