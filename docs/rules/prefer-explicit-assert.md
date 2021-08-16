@@ -13,7 +13,7 @@ elements in their tests rather than just use `getBy*` queries and expect
 it doesn't throw an error so it's easier to understand what's the
 expected behavior within the test.
 
-Examples of **incorrect** code for this rule:
+Examples of **incorrect** code for this rule with the default configuration:
 
 ```js
 // just calling `getBy*` query expecting not to throw an error as an
@@ -23,9 +23,13 @@ getByText('foo');
 
 const utils = render(<Component />);
 utils.getByText('foo');
+
+// This is an incorrect code when `includeFindQueries` is `true`, which is the
+// default. Set it to `false` to shut off all warnings about find* queries.
+await findByText('foo');
 ```
 
-Examples of **correct** code for this rule:
+Examples of **correct** code for this rule with the default configuration:
 
 ```js
 // wrapping the get query within a `expect` and use some matcher for
@@ -43,25 +47,26 @@ expect(queryByText('foo')).toBeInTheDocument();
 await waitFor(() => getByText('foo'));
 fireEvent.click(getByText('bar'));
 const quxElement = getByText('qux');
+
+expect(await findbyText('foo')).toBeTruthy();
+const myButton = await screen.findByRole('button', { name: /Accept/ });
 ```
 
 ## Options
 
-This rule has one option:
+| Option               | Required | Default | Details                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        | Example               |
+| -------------------- | -------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------- |
+| `assertion`          | No       | None    | This string allows defining the preferred assertion to use with `getBy*` queries. By default, any assertion is valid (`toBeTruthy`, `toBeDefined`, etc.). However, they all assert slightly different things. This option ensures all `getBy*` assertions are consistent and use the same assertion. This rule only allows defining a presence matcher (`toBeInTheDocument`, `toBeTruthy`, or `toBeDefined`), but checks for both presence and absence matchers (`not.toBeFalsy` and `not.toBeNull`). This means other assertions such as `toHaveValue` or `toBeDisabled` will not trigger this rule since these are valid uses with `getBy*`. | `"toBeInTheDocument"` |
+| `includeFindQueries` | No       | `true`  | This boolean controls whether queries such as `findByText` are also checked by this rule.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | `false`               |
 
-- `assertion`: this string allows defining the preferred assertion to use
-  with `getBy*` queries. By default, any assertion is valid (`toBeTruthy`,
-  `toBeDefined`, etc.). However, they all assert slightly different things.
-  This option ensures all `getBy*` assertions are consistent and use the same
-  assertion. This rule only allows defining a presence matcher
-  (`toBeInTheDocument`, `toBeTruthy`, or `toBeDefined`), but checks for both
-  presence and absence matchers (`not.toBeFalsy` and `not.toBeNull`). This means
-  other assertions such as `toHaveValue` or `toBeDisabled` will not trigger this
-  rule since these are valid uses with `getBy*`.
+This is how you can use these options in eslint configuration:
 
-  ```js
-  "testing-library/prefer-explicit-assert": ["error", {"assertion": "toBeInTheDocument"}],
-  ```
+```js
+"testing-library/prefer-explicit-assert": [
+  "error",
+  { "assertion": "toBeInTheDocument", "includeFindQueries": false }
+],
+```
 
 ## When Not To Use It
 
