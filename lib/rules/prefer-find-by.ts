@@ -203,7 +203,9 @@ export default createTestingLibraryRule<Options, MessageIds>({
       if (ASTUtils.isIdentifier(node.body.callee.object)) {
         // () => screen.getByText
         return node.body.callee.object.name;
-      } else if (
+      }
+
+      if (
         // expect()
         isCallExpression(node.body.callee.object) &&
         ASTUtils.isIdentifier(node.body.callee.object.callee) &&
@@ -214,7 +216,9 @@ export default createTestingLibraryRule<Options, MessageIds>({
         )
       ) {
         return node.body.callee.object.arguments[0].callee.object.name;
-      } else if (
+      }
+
+      if (
         // expect().not
         isMemberExpression(node.body.callee.object) &&
         isCallExpression(node.body.callee.object.object) &&
