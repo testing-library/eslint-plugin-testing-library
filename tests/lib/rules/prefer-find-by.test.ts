@@ -116,6 +116,15 @@ ruleTester.run(RULE_NAME, rule, {
     })),
     ...SYNC_QUERIES_COMBINATIONS.map((queryMethod) => ({
       code: `
+        import {screen, waitFor} from '@testing-library/foo';
+        it('tests', async () => {
+          const { ${queryMethod} } = render()
+          await waitFor(() => expect(${queryMethod}('baz')).toBeDisabled());
+        })
+      `,
+    })),
+    ...SYNC_QUERIES_COMBINATIONS.map((queryMethod) => ({
+      code: `
         import {waitFor} from '@testing-library/foo';
         it('tests', async () => {
           await waitFor(() => expect(screen.${queryMethod}('baz')).not.toBeInTheDocument());
