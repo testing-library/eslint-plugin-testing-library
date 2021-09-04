@@ -31,7 +31,6 @@ export default createTestingLibraryRule<Options, MessageIds>({
     type: 'problem',
     docs: {
       description: 'Disallow the use of debugging utilities like `debug`',
-      category: 'Best Practices',
       recommendedConfig: {
         dom: false,
         angular: 'error',

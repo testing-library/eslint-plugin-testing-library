@@ -11,7 +11,6 @@ export default createTestingLibraryRule<Options, MessageIds>({
   name: RULE_NAME,
   meta: {
     docs: {
-      category: 'Best Practices',
       description:
         'Ensure appropriate `get*`/`query*` queries are used with their respective matchers',
       recommendedConfig: {

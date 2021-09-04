@@ -20,7 +20,6 @@ export default createTestingLibraryRule<Options, MessageIds>({
     type: 'suggestion',
     docs: {
       description: 'Disallow the use of side effects in `waitFor`',
-      category: 'Best Practices',
       recommendedConfig: {
         dom: 'error',
         angular: 'error',

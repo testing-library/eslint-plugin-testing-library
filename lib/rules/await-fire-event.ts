@@ -19,7 +19,6 @@ export default createTestingLibraryRule<Options, MessageIds>({
     type: 'problem',
     docs: {
       description: 'Enforce promises from `fireEvent` methods to be handled',
-      category: 'Best Practices',
       recommendedConfig: {
         dom: false,
         angular: false,
