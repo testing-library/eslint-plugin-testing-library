@@ -45,9 +45,11 @@ $ yarn add --dev eslint-plugin-testing-library
 
 **Note:** If you installed ESLint globally (using the `-g` flag) then you must also install `eslint-plugin-testing-library` globally.
 
-## Migrating to v4
+## Migrating
 
-You can find [here a detailed guide for migrating `eslint-plugin-testing-library` to v4](docs/migrating-to-v4-guide.md).
+You can find detailed guides for migrating `eslint-plugin-testing-library` in the [migration guide docs](docs/migration-guides):
+
+- [Migrate guide for v4](docs/migration-guides/v4.md)
 
 ## Usage
 
@@ -217,19 +219,19 @@ To enable this configuration use the `extends` property in your
 
 ## Aggressive Reporting
 
-In v4 this plugin introduced a new feature called "Aggressive Reporting", which intends to detect Testing Library utils usages even if they don't come directly from a Testing Library package (i.e. [using a custom utility file to re-export everything from Testing Library](https://testing-library.com/docs/react-testing-library/setup/#custom-render)). You can [read more about this feature here](docs/migrating-to-v4-guide.md#aggressive-reporting).
+In v4 this plugin introduced a new feature called "Aggressive Reporting", which intends to detect Testing Library utils usages even if they don't come directly from a Testing Library package (i.e. [using a custom utility file to re-export everything from Testing Library](https://testing-library.com/docs/react-testing-library/setup/#custom-render)). You can [read more about this feature here](docs/migration-guides/v4.md#aggressive-reporting).
 
 If you are looking to restricting or switching off this feature, please refer to the [Shared Settings section](#shared-settings) to do so.
 
 ## Shared Settings
 
-There are some configuration options available that will be shared across all the plugin rules. This is achieved using [ESLint Shared Settings](https://eslint.org/docs/user-guide/configuring/configuration-files#adding-shared-settings). These Shared Settings are meant to be used if you need to restrict or switch off the Aggressive Reporting, which is an out of the box advanced feature to lint Testing Library usages in a simpler way for most of the users. **So please before configuring any of these settings**, read more about [the advantages of `eslint-plugin-testing-library` Aggressive Reporting feature](docs/migrating-to-v4-guide.md#aggressive-reporting), and [how it's affected by these settings](docs/migrating-to-v4-guide.md#shared-settings).
+There are some configuration options available that will be shared across all the plugin rules. This is achieved using [ESLint Shared Settings](https://eslint.org/docs/user-guide/configuring/configuration-files#adding-shared-settings). These Shared Settings are meant to be used if you need to restrict or switch off the Aggressive Reporting, which is an out of the box advanced feature to lint Testing Library usages in a simpler way for most of the users. **So please before configuring any of these settings**, read more about [the advantages of `eslint-plugin-testing-library` Aggressive Reporting feature](docs/migration-guides/v4.md#aggressive-reporting), and [how it's affected by these settings](docs/migration-guides/v4.md#shared-settings).
 
 If you are sure about configuring the settings, these are the options available:
 
 ### `testing-library/utils-module`
 
-The name of your custom utility file from where you re-export everything from the Testing Library package, or `"off"` to switch related Aggressive Reporting mechanism off. Relates to [Aggressive Imports Reporting](docs/migrating-to-v4-guide.md#imports).
+The name of your custom utility file from where you re-export everything from the Testing Library package, or `"off"` to switch related Aggressive Reporting mechanism off. Relates to [Aggressive Imports Reporting](docs/migration-guides/v4.md#imports).
 
 ```json
 // .eslintrc
@@ -240,11 +242,11 @@ The name of your custom utility file from where you re-export everything from th
 }
 ```
 
-[You can find more details about the `utils-module` setting here](docs/migrating-to-v4-guide.md#testing-libraryutils-module).
+[You can find more details about the `utils-module` setting here](docs/migration-guides/v4.md#testing-libraryutils-module).
 
 ### `testing-library/custom-renders`
 
-A list of function names that are valid as Testing Library custom renders, or `"off"` to switch related Aggressive Reporting mechanism off. Relates to [Aggressive Renders Reporting](docs/migrating-to-v4-guide.md#renders).
+A list of function names that are valid as Testing Library custom renders, or `"off"` to switch related Aggressive Reporting mechanism off. Relates to [Aggressive Renders Reporting](docs/migration-guides/v4.md#renders).
 
 ```json
 // .eslintrc
@@ -255,11 +257,11 @@ A list of function names that are valid as Testing Library custom renders, or `"
 }
 ```
 
-[You can find more details about the `custom-renders` setting here](docs/migrating-to-v4-guide.md#testing-librarycustom-renders).
+[You can find more details about the `custom-renders` setting here](docs/migration-guides/v4.md#testing-librarycustom-renders).
 
 ### `testing-library/custom-queries`
 
-A list of query names/patterns that are valid as Testing Library custom queries, or `"off"` to switch related Aggressive Reporting mechanism off. Relates to [Aggressive Reporting - Queries](docs/migrating-to-v4-guide.md#queries)
+A list of query names/patterns that are valid as Testing Library custom queries, or `"off"` to switch related Aggressive Reporting mechanism off. Relates to [Aggressive Reporting - Queries](docs/migration-guides/v4.md#queries)
 
 ```json
 // .eslintrc
@@ -270,7 +272,7 @@ A list of query names/patterns that are valid as Testing Library custom queries,
 }
 ```
 
-[You can find more details about the `custom-queries` setting here](docs/migrating-to-v4-guide.md#testing-librarycustom-queries).
+[You can find more details about the `custom-queries` setting here](docs/migration-guides/v4.md#testing-librarycustom-queries).
 
 ### Switching all Aggressive Reporting mechanisms off
 
