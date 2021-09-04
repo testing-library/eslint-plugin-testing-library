@@ -27,7 +27,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
       recommendedConfig: {
         dom: false,
         angular: false,
-        react: false,
+        react: ['error', { isStrict: true }],
         vue: false,
       },
     },
