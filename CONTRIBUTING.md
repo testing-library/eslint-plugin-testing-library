@@ -44,7 +44,7 @@ If you ever need to update a snapshot, you can run `npm run test:update`
 
 Based on [ESLint's Rule Naming Conventions](https://eslint.org/docs/developer-guide/working-with-rules#rule-naming-conventions), you must follow these rules:
 
-- If your rule is disallowing something, prefix it with `no-` such as `no-debug`
+- If your rule is disallowing something, prefix it with `no-` such as `no-debugging-utils`
   for disallowing `debug()`.
 - If your rule is suggesting to prefer a way of doing something, among other ways, you can **optionally** prefix it with
   `prefer-`. For example, `prefer-screen-queries` suggests to use `screen.getByText()` from imported `screen` rather
@@ -57,11 +57,11 @@ Based on [ESLint's Rule Naming Conventions](https://eslint.org/docs/developer-gu
 ## Adding new rules
 
 In the [same way as ESLint](https://eslint.org/docs/developer-guide/working-with-rules),
-each rule has three files named with its identifier (e.g. `no-debug`):
+each rule has three files named with its identifier (e.g. `no-debugging-utils`):
 
-- in the `lib/rules` directory: a source file (e.g. `no-debug.ts`)
-- in the `tests/lib/rules` directory: a test file (e.g. `no-debug.ts`)
-- in the `docs/rules` directory: a Markdown documentation file (e.g. `no-debug.md`)
+- in the `lib/rules` directory: a source file (e.g. `no-debugging-utils.ts`)
+- in the `tests/lib/rules` directory: a test file (e.g. `no-debugging-utils.ts`)
+- in the `docs/rules` directory: a Markdown documentation file (e.g. `no-debugging-utils.md`)
 
 Additionally, you need to do a couple of extra things:
 

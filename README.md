@@ -66,7 +66,7 @@ Then configure the rules you want to use within `rules` property of your `.eslin
   "rules": {
     "testing-library/await-async-query": "error",
     "testing-library/no-await-sync-query": "error",
-    "testing-library/no-debug": "warn",
+    "testing-library/no-debugging-utils": "warn",
     "testing-library/no-dom-import": "off"
   }
 }
@@ -193,7 +193,7 @@ To enable this configuration use the `extends` property in your
 | [`testing-library/no-await-sync-events`](./docs/rules/no-await-sync-events.md)                       | Disallow unnecessary `await` for sync events                                                 |     |                                                                   |
 | [`testing-library/no-await-sync-query`](./docs/rules/no-await-sync-query.md)                         | Disallow unnecessary `await` for sync queries                                                |     | ![dom-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] |
 | [`testing-library/no-container`](./docs/rules/no-container.md)                                       | Disallow the use of `container` methods                                                      |     | ![angular-badge][] ![react-badge][] ![vue-badge][]                |
-| [`testing-library/no-debug`](./docs/rules/no-debug.md)                                               | Disallow the use of debugging utilities like `debug`                                         |     | ![angular-badge][] ![react-badge][] ![vue-badge][]                |
+| [`testing-library/no-debugging-utils`](./docs/rules/no-debugging-utils.md)                           | Disallow the use of debugging utilities like `debug`                                         |     | ![angular-badge][] ![react-badge][] ![vue-badge][]                |
 | [`testing-library/no-dom-import`](./docs/rules/no-dom-import.md)                                     | Disallow importing from DOM Testing Library                                                  | 🔧  | ![angular-badge][] ![react-badge][] ![vue-badge][]                |
 | [`testing-library/no-manual-cleanup`](./docs/rules/no-manual-cleanup.md)                             | Disallow the use of `cleanup`                                                                |     |                                                                   |
 | [`testing-library/no-node-access`](./docs/rules/no-node-access.md)                                   | Disallow direct Node access                                                                  |     | ![angular-badge][] ![react-badge][] ![vue-badge][]                |

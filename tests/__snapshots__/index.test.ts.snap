@@ -11,7 +11,7 @@ Object {
       "testing-library/await-async-utils": "error",
       "testing-library/no-await-sync-query": "error",
       "testing-library/no-container": "error",
-      "testing-library/no-debug": "error",
+      "testing-library/no-debugging-utils": "error",
       "testing-library/no-dom-import": Array [
         "error",
         "angular",
@@ -47,7 +47,7 @@ Object {
       "testing-library/await-async-utils": "error",
       "testing-library/no-await-sync-query": "error",
       "testing-library/no-container": "error",
-      "testing-library/no-debug": "error",
+      "testing-library/no-debugging-utils": "error",
       "testing-library/no-dom-import": Array [
         "error",
         "react",
@@ -70,7 +70,7 @@ Object {
       "testing-library/await-fire-event": "error",
       "testing-library/no-await-sync-query": "error",
       "testing-library/no-container": "error",
-      "testing-library/no-debug": "error",
+      "testing-library/no-debugging-utils": "error",
       "testing-library/no-dom-import": Array [
         "error",
         "vue",
