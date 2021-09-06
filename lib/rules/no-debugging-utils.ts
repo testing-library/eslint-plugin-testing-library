@@ -21,7 +21,7 @@ type DebugUtilsToCheckFor = Partial<
   Record<typeof DEBUG_UTILS[number], boolean>
 >;
 
-export const RULE_NAME = 'no-debug';
+export const RULE_NAME = 'no-debugging-utils';
 export type MessageIds = 'noDebug';
 type Options = [{ utilsToCheckFor?: DebugUtilsToCheckFor }];
 
