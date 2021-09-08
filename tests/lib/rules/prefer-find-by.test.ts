@@ -461,6 +461,35 @@ ruleTester.run(RULE_NAME, rule, {
       code: `
         import {${waitMethod}} from '@testing-library/foo';
         it('tests', async () => {
+          const {${queryMethod}} = render()
+          const submitButton = await ${waitMethod}(() => expect(${queryMethod}('foo', { name: 'baz' })).not.toBeNull())
+        })
+      `,
+      errors: [
+        {
+          messageId: 'preferFindBy',
+          data: {
+            queryVariant: getFindByQueryVariant(queryMethod),
+            queryMethod: queryMethod.split('By')[1],
+            prevQuery: queryMethod,
+            waitForMethodName: waitMethod,
+          },
+        },
+      ],
+      output: `
+        import {${waitMethod}} from '@testing-library/foo';
+        it('tests', async () => {
+          const {${queryMethod}, ${buildFindByMethod(queryMethod)}} = render()
+          const submitButton = await ${buildFindByMethod(
+            queryMethod
+          )}('foo', { name: 'baz' })
+        })
+      `,
+    })),
+    ...createScenario((waitMethod: string, queryMethod: string) => ({
+      code: `
+        import {${waitMethod}} from '@testing-library/foo';
+        it('tests', async () => {
           const { ${queryMethod} } = render()
           const submitButton = await ${waitMethod}(() => expect(${queryMethod}('foo', { name: 'baz' })).toBeTruthy())
         })

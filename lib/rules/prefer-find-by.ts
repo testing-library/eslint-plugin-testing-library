@@ -464,10 +464,12 @@ export default createTestingLibraryRule<Options, MessageIds>({
               const textDestructuring = sourceCode.getText(
                 allVariableDeclarations
               );
+              const hasSpaceBeforeBracket = textDestructuring.endsWith(' }');
+              const symbolsToRemove = hasSpaceBeforeBracket ? 2 : 1;
               const text = `${textDestructuring.substring(
                 0,
-                textDestructuring.length - 2
-              )}, ${findByMethod} }`;
+                textDestructuring.length - symbolsToRemove
+              )}, ${findByMethod}${hasSpaceBeforeBracket ? ' ' : ''}}`;
               allFixes.push(fixer.replaceText(allVariableDeclarations, text));
             }
 
