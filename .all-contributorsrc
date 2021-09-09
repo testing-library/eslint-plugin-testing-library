@@ -435,6 +435,16 @@
         "code",
         "test"
       ]
+    },
+    {
+      "login": "dyatko",
+      "name": "Marat Dyatko",
+      "avatar_url": "https://avatars.githubusercontent.com/u/31615495?v=4",
+      "profile": "https://www.linkedin.com/in/maratdyatko/",
+      "contributions": [
+        "bug",
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
