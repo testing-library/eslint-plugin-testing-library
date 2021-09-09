@@ -464,10 +464,10 @@ export default createTestingLibraryRule<Options, MessageIds>({
               const textDestructuring = sourceCode.getText(
                 allVariableDeclarations
               );
-              const text = `${textDestructuring.substring(
-                0,
-                textDestructuring.length - 2
-              )}, ${findByMethod} }`;
+              const text = textDestructuring.replace(
+                /(\s*})$/,
+                `, ${findByMethod}$1`
+              );
               allFixes.push(fixer.replaceText(allVariableDeclarations, text));
             }
 
