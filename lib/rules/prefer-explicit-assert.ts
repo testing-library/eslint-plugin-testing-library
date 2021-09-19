@@ -158,7 +158,17 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
             const expectStatement =
               expectCallNode.parent as TSESTree.MemberExpression;
-            const property = expectStatement.property as TSESTree.Identifier;
+
+            if (!isMemberExpression(expectStatement)) {
+              return;
+            }
+
+            const property = expectStatement.property;
+
+            if (!ASTUtils.isIdentifier(property)) {
+              return;
+            }
+
             let matcher = property.name;
             let isNegatedMatcher = false;
 
