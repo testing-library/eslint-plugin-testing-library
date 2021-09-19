@@ -160,6 +160,14 @@ ruleTester.run(RULE_NAME, rule, {
         },
       ],
     })),
+    {
+      // https://github.com/testing-library/eslint-plugin-testing-library/issues/475
+      code: `
+    // incomplete expect statement should be ignored
+    expect('something');
+    expect(getByText('foo'));
+    `,
+    },
   ],
   invalid: [
     ...COMBINED_QUERIES_METHODS.map(
