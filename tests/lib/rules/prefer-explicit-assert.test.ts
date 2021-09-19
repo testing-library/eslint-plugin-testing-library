@@ -167,6 +167,11 @@ ruleTester.run(RULE_NAME, rule, {
     expect('something');
     expect(getByText('foo'));
     `,
+      options: [
+        {
+          assertion: 'toBeInTheDocument',
+        },
+      ],
     },
   ],
   invalid: [
