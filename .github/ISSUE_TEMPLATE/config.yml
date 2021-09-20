@@ -1,0 +1,13 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Troubleshooting
+    url: https://github.com/testing-library/eslint-plugin-testing-library#troubleshooting
+    about: Make sure you have read our Troubleshooting section before reporting a new bug
+
+  - name: Ask a Question, Discuss
+    url: https://github.com/testing-library/eslint-plugin-testing-library/discussions
+    about: Look for `eslint-plugin-testing-library` Questions and Discussions or start a new one
+
+  - name: ESLint
+    url: https://github.com/eslint/eslint/issues
+    about: Report problems with the ESLint program itself to the ESLint project.

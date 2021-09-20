@@ -18,7 +18,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
   meta: {
     type: 'problem',
     docs: {
-      description: 'Enforce promises from async utils to be handled',
+      description: 'Enforce promises from async utils to be awaited properly',
       category: 'Best Practices',
       recommendedConfig: {
         dom: 'error',

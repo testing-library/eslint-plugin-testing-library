@@ -19,7 +19,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
   meta: {
     type: 'problem',
     docs: {
-      description: 'Disallow the use of container methods',
+      description: 'Disallow the use of `container` methods',
       category: 'Best Practices',
       recommendedConfig: {
         dom: false,

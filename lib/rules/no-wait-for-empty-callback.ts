@@ -17,7 +17,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
     type: 'suggestion',
     docs: {
       description:
-        "It's preferred to avoid empty callbacks in `waitFor` and `waitForElementToBeRemoved`",
+        'Disallow empty callbacks for `waitFor` and `waitForElementToBeRemoved`',
       category: 'Best Practices',
       recommendedConfig: {
         dom: 'error',

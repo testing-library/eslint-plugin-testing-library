@@ -1,18 +1,22 @@
-import { TSESTree } from '@typescript-eslint/experimental-utils';
+import { TSESTree, ASTUtils } from '@typescript-eslint/experimental-utils';
 
 import { createTestingLibraryRule } from '../create-testing-library-rule';
 import {
   getDeepestIdentifierNode,
+  getPropertyIdentifierNode,
   getStatementCallExpression,
   isEmptyFunction,
+  isExpressionStatement,
+  isReturnStatement,
 } from '../node-utils';
 
 export const RULE_NAME = 'no-unnecessary-act';
 export type MessageIds =
   | 'noUnnecessaryActEmptyFunction'
   | 'noUnnecessaryActTestingLibraryUtil';
+export type Options = [{ isStrict: boolean }];
 
-export default createTestingLibraryRule<[], MessageIds>({
+export default createTestingLibraryRule<Options, MessageIds>({
   name: RULE_NAME,
   meta: {
     type: 'problem',
@@ -32,11 +36,51 @@ export default createTestingLibraryRule<[], MessageIds>({
         'Avoid wrapping Testing Library util calls in `act`',
       noUnnecessaryActEmptyFunction: 'Avoid wrapping empty function in `act`',
     },
-    schema: [],
+    schema: [
+      {
+        type: 'object',
+        properties: {
+          isStrict: { type: 'boolean' },
+        },
+      },
+    ],
   },
-  defaultOptions: [],
+  defaultOptions: [
+    {
+      isStrict: false,
+    },
+  ],
 
-  create(context, _, helpers) {
+  create(context, [options], helpers) {
+    function getStatementIdentifier(statement: TSESTree.Statement) {
+      const callExpression = getStatementCallExpression(statement);
+
+      if (
+        !callExpression &&
+        !isExpressionStatement(statement) &&
+        !isReturnStatement(statement)
+      ) {
+        return null;
+      }
+
+      if (callExpression) {
+        return getDeepestIdentifierNode(callExpression);
+      }
+
+      if (
+        isExpressionStatement(statement) &&
+        ASTUtils.isAwaitExpression(statement.expression)
+      ) {
+        return getPropertyIdentifierNode(statement.expression.argument);
+      }
+
+      if (isReturnStatement(statement) && statement.argument) {
+        return getPropertyIdentifierNode(statement.argument);
+      }
+
+      return null;
+    }
+
     /**
      * Determines whether some call is non Testing Library related for a given list of statements.
      */
@@ -44,13 +88,7 @@ export default createTestingLibraryRule<[], MessageIds>({
       statements: TSESTree.Statement[]
     ): boolean {
       return statements.some((statement) => {
-        const callExpression = getStatementCallExpression(statement);
-
-        if (!callExpression) {
-          return false;
-        }
-
-        const identifier = getDeepestIdentifierNode(callExpression);
+        const identifier = getStatementIdentifier(statement);
 
         if (!identifier) {
           return false;
@@ -60,9 +98,22 @@ export default createTestingLibraryRule<[], MessageIds>({
       });
     }
 
+    function hasTestingLibraryCall(statements: TSESTree.Statement[]) {
+      return statements.some((statement) => {
+        const identifier = getStatementIdentifier(statement);
+
+        if (!identifier) {
+          return false;
+        }
+
+        return helpers.isTestingLibraryUtil(identifier);
+      });
+    }
+
     function checkNoUnnecessaryActFromBlockStatement(
       blockStatementNode: TSESTree.BlockStatement
     ) {
+      const { isStrict } = options;
       const functionNode = blockStatementNode.parent as
         | TSESTree.ArrowFunctionExpression
         | TSESTree.FunctionExpression
@@ -89,7 +140,14 @@ export default createTestingLibraryRule<[], MessageIds>({
           node: identifierNode,
           messageId: 'noUnnecessaryActEmptyFunction',
         });
-      } else if (!hasSomeNonTestingLibraryCall(blockStatementNode.body)) {
+        return;
+      }
+
+      const shouldBeReported = isStrict
+        ? hasTestingLibraryCall(blockStatementNode.body)
+        : !hasSomeNonTestingLibraryCall(blockStatementNode.body);
+
+      if (shouldBeReported) {
         context.report({
           node: identifierNode,
           messageId: 'noUnnecessaryActTestingLibraryUtil',
