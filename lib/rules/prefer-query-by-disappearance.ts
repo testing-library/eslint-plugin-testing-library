@@ -25,10 +25,10 @@ export default createTestingLibraryRule<Options, MessageIds>({
         'Suggest using `queryBy*` queries when waiting for disappearance',
       category: 'Possible Errors',
       recommendedConfig: {
-        dom: false,
-        angular: false,
-        react: false,
-        vue: false,
+        dom: 'error',
+        angular: 'error',
+        react: 'error',
+        vue: 'error',
       },
     },
     messages: {
