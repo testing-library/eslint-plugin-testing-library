@@ -13,7 +13,7 @@ export = {
     'testing-library/no-dom-import': ['error', 'react'],
     'testing-library/no-node-access': 'error',
     'testing-library/no-promise-in-fire-event': 'error',
-    'testing-library/no-unnecessary-act': ['error', { isStrict: true }],
+    'testing-library/no-unnecessary-act': 'error',
     'testing-library/no-wait-for-empty-callback': 'error',
     'testing-library/prefer-find-by': 'error',
     'testing-library/prefer-screen-queries': 'error',

@@ -13,15 +13,18 @@ type ValidTestCase = TSESLint.ValidTestCase<Options>;
 type InvalidTestCase = TSESLint.InvalidTestCase<MessageIds, Options>;
 type TestCase = InvalidTestCase | ValidTestCase;
 
-const enableStrict = <T extends TestCase>(array: T[]): T[] =>
+const addOptions = <T extends TestCase>(
+  array: T[],
+  options?: Options[number]
+): T[] =>
   array.map((testCase) => ({
     ...testCase,
-    options: [
-      {
-        isStrict: true,
-      },
-    ],
+    options: [options],
   }));
+const disableStrict = <T extends TestCase>(array: T[]): T[] =>
+  addOptions(array, { isStrict: false });
+const enableStrict = <T extends TestCase>(array: T[]): T[] =>
+  addOptions(array, { isStrict: true });
 
 /**
  * - AGR stands for Aggressive Reporting
@@ -886,12 +889,12 @@ const invalidTestCases: InvalidTestCase[] = [
 ruleTester.run(RULE_NAME, rule, {
   valid: [
     ...validTestCases,
-    ...validNonStrictTestCases,
+    ...disableStrict(validNonStrictTestCases),
     ...enableStrict(validTestCases),
   ],
   invalid: [
     ...invalidTestCases,
-    ...invalidStrictTestCases,
+    ...disableStrict(invalidStrictTestCases),
     ...enableStrict(invalidTestCases),
   ],
 });

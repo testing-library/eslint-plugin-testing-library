@@ -27,7 +27,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
       recommendedConfig: {
         dom: false,
         angular: false,
-        react: ['error', { isStrict: true }],
+        react: 'error',
         vue: false,
       },
     },
@@ -40,18 +40,20 @@ export default createTestingLibraryRule<Options, MessageIds>({
       {
         type: 'object',
         properties: {
-          isStrict: { type: 'boolean' },
+          isStrict: {
+            type: 'boolean',
+          },
         },
       },
     ],
   },
   defaultOptions: [
     {
-      isStrict: false,
+      isStrict: true,
     },
   ],
 
-  create(context, [options], helpers) {
+  create(context, [{ isStrict = true }], helpers) {
     function getStatementIdentifier(statement: TSESTree.Statement) {
       const callExpression = getStatementCallExpression(statement);
 
@@ -113,7 +115,6 @@ export default createTestingLibraryRule<Options, MessageIds>({
     function checkNoUnnecessaryActFromBlockStatement(
       blockStatementNode: TSESTree.BlockStatement
     ) {
-      const { isStrict } = options;
       const functionNode = blockStatementNode.parent as
         | TSESTree.ArrowFunctionExpression
         | TSESTree.FunctionExpression
