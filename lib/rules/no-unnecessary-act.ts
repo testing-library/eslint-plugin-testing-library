@@ -25,10 +25,10 @@ export default createTestingLibraryRule<Options, MessageIds>({
         'Disallow wrapping Testing Library utils or empty callbacks in `act`',
       category: 'Possible Errors',
       recommendedConfig: {
-        dom: false,
-        angular: false,
+        dom: 'error',
+        angular: 'error',
         react: 'error',
-        vue: false,
+        vue: 'error',
       },
     },
     messages: {
