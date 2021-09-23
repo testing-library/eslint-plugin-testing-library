@@ -21,10 +21,10 @@ export default createTestingLibraryRule<Options, MessageIds>({
         'Ensures no snapshot is generated inside of a `waitFor` call',
       category: 'Best Practices',
       recommendedConfig: {
-        dom: false,
-        angular: false,
-        react: false,
-        vue: false,
+        dom: 'error',
+        angular: 'error',
+        react: 'error',
+        vue: 'error',
       },
     },
     messages: {

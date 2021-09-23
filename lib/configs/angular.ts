@@ -17,6 +17,7 @@ export = {
     'testing-library/no-wait-for-empty-callback': 'error',
     'testing-library/no-wait-for-multiple-assertions': 'error',
     'testing-library/no-wait-for-side-effects': 'error',
+    'testing-library/no-wait-for-snapshot': 'error',
     'testing-library/prefer-find-by': 'error',
     'testing-library/prefer-screen-queries': 'error',
     'testing-library/render-result-naming-convention': 'error',
