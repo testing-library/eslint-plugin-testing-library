@@ -47,7 +47,7 @@
   "devDependencies": {
     "@babel/eslint-plugin": "^7.14.5",
     "@commitlint/cli": "^12.1.4",
-    "@commitlint/config-conventional": "^12.1.4",
+    "@commitlint/config-conventional": "^13.2.0",
     "@types/jest": "^27.0.1",
     "@types/node": "^10.17.60",
     "@typescript-eslint/eslint-plugin": "^4.30.0",
