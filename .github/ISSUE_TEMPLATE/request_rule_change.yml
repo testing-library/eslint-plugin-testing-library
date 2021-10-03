@@ -25,7 +25,7 @@ body:
     id: change_implementation
     attributes:
       label: How will the change be implemented?
-      description: Describe how the new rule will be implemented.
+      description: Describe how the rule change will be implemented.
     validations:
       required: true
 
@@ -34,7 +34,7 @@ body:
     attributes:
       label: Example code
       description: Please provide some example code that this change will affect.
-      placeholder: Example of code that will be affected.
+      placeholder: Example of code that will be affected by proposed change.
     validations:
       required: true
 
@@ -51,7 +51,7 @@ body:
     id: new_rule_affects_code
     attributes:
       label: How will the new rule affect the code?
-      description: Explain how the new rule will affect the example code.
+      description: Explain how the rule change will affect the example code.
       placeholder: The new rule will affect the example code like this...
     validations:
       required: true
