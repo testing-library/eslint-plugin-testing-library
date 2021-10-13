@@ -19,10 +19,10 @@ export default createTestingLibraryRule<Options, MessageIds>({
         'Disallow the use of multiple `expect` calls inside `waitFor`',
       category: 'Best Practices',
       recommendedConfig: {
-        dom: false,
-        angular: false,
-        react: false,
-        vue: false,
+        dom: 'error',
+        angular: 'error',
+        react: 'error',
+        vue: 'error',
       },
     },
     messages: {
