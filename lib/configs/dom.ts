@@ -14,6 +14,7 @@ export = {
     'testing-library/no-wait-for-side-effects': 'error',
     'testing-library/no-wait-for-snapshot': 'error',
     'testing-library/prefer-find-by': 'error',
+    'testing-library/prefer-presence-queries': 'error',
     'testing-library/prefer-screen-queries': 'error',
   },
 };

@@ -15,10 +15,10 @@ export default createTestingLibraryRule<Options, MessageIds>({
       description:
         'Ensure appropriate `get*`/`query*` queries are used with their respective matchers',
       recommendedConfig: {
-        dom: false,
-        angular: false,
-        react: false,
-        vue: false,
+        dom: 'error',
+        angular: 'error',
+        react: 'error',
+        vue: 'error',
       },
     },
     messages: {
