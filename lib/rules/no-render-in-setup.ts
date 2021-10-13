@@ -53,9 +53,9 @@ export default createTestingLibraryRule<Options, MessageIds>({
       category: 'Best Practices',
       recommendedConfig: {
         dom: false,
-        angular: false,
-        react: false,
-        vue: false,
+        angular: 'error',
+        react: 'error',
+        vue: 'error',
       },
     },
     messages: {
