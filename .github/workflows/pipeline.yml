@@ -52,7 +52,7 @@ jobs:
     strategy:
       matrix:
         node: [12.22.0, 12, 14.17.0, 14, '16.0', 16]
-        eslint: [7.5, 7]
+        eslint: [7.5, 7, 8]
 
     steps:
       - name: Cancel Previous Runs
@@ -72,7 +72,9 @@ jobs:
           useLockFile: false
 
       - name: Install ESLint v${{ matrix.eslint }}
-        run: npm install --no-save eslint@${{ matrix.eslint }}
+        # force installation for now until we get ESLint and all plugins updated
+        # in dev dependencies
+        run: npm install --no-save --force eslint@${{ matrix.eslint }}
 
       - name: Run tests
         run: npm run test:ci

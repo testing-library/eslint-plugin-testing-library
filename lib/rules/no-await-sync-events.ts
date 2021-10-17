@@ -21,7 +21,6 @@ export default createTestingLibraryRule<Options, MessageIds>({
     type: 'problem',
     docs: {
       description: 'Disallow unnecessary `await` for sync events',
-      category: 'Best Practices',
       recommendedConfig: {
         dom: false,
         angular: false,

@@ -56,7 +56,6 @@ export default createTestingLibraryRule<Options, MessageIds>({
     docs: {
       description:
         'Suggest using `find(All)By*` query instead of `waitFor` + `get(All)By*` to wait for elements',
-      category: 'Best Practices',
       recommendedConfig: {
         dom: 'error',
         angular: 'error',

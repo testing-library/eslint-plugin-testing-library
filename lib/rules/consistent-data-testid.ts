@@ -18,7 +18,6 @@ export default createTestingLibraryRule<Options, MessageIds>({
     type: 'suggestion',
     docs: {
       description: 'Ensures consistent usage of `data-testid`',
-      category: 'Best Practices',
       recommendedConfig: {
         dom: false,
         angular: false,

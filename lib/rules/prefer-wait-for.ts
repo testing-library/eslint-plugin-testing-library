@@ -26,7 +26,6 @@ export default createTestingLibraryRule<Options, MessageIds>({
     type: 'suggestion',
     docs: {
       description: 'Use `waitFor` instead of deprecated wait methods',
-      category: 'Best Practices',
       recommendedConfig: {
         dom: false,
         angular: false,

@@ -29,7 +29,6 @@ export default createTestingLibraryRule<Options, MessageIds>({
     type: 'problem',
     docs: {
       description: 'Disallow the use of `cleanup`',
-      category: 'Best Practices',
       recommendedConfig: {
         dom: false,
         angular: false,
