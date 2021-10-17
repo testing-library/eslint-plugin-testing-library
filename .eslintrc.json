@@ -6,11 +6,7 @@
     "jest/globals": true
   },
   "extends": [
-    /** Temporary disable eslint-config-kentcdodds until it supports ESLint v8
-     * This package is a dependency of eslint-config-kentcdodds, so because it's
-     * a devDependency to our package, we need to support ESLint v8 first.
-     */
-    // 'kentcdodds',
+    "kentcdodds",
     "plugin:@typescript-eslint/eslint-recommended",
     "plugin:@typescript-eslint/recommended",
     "prettier",
