@@ -50,6 +50,7 @@ $ yarn add --dev eslint-plugin-testing-library
 You can find detailed guides for migrating `eslint-plugin-testing-library` in the [migration guide docs](docs/migration-guides):
 
 - [Migrate guide for v4](docs/migration-guides/v4.md)
+- [Migrate guide for v5](docs/migration-guides/v5.md)
 
 ## Usage
 
@@ -68,7 +69,7 @@ Then configure the rules you want to use within `rules` property of your `.eslin
   "rules": {
     "testing-library/await-async-query": "error",
     "testing-library/no-await-sync-query": "error",
-    "testing-library/no-debug": "warn",
+    "testing-library/no-debugging-utils": "warn",
     "testing-library/no-dom-import": "off"
   }
 }
@@ -195,21 +196,21 @@ To enable this configuration use the `extends` property in your
 | [`testing-library/no-await-sync-events`](./docs/rules/no-await-sync-events.md)                       | Disallow unnecessary `await` for sync events                                                 |     |                                                                   |
 | [`testing-library/no-await-sync-query`](./docs/rules/no-await-sync-query.md)                         | Disallow unnecessary `await` for sync queries                                                |     | ![dom-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] |
 | [`testing-library/no-container`](./docs/rules/no-container.md)                                       | Disallow the use of `container` methods                                                      |     | ![angular-badge][] ![react-badge][] ![vue-badge][]                |
-| [`testing-library/no-debug`](./docs/rules/no-debug.md)                                               | Disallow the use of debugging utilities like `debug`                                         |     | ![angular-badge][] ![react-badge][] ![vue-badge][]                |
+| [`testing-library/no-debugging-utils`](./docs/rules/no-debugging-utils.md)                           | Disallow the use of debugging utilities like `debug`                                         |     | ![angular-badge][] ![react-badge][] ![vue-badge][]                |
 | [`testing-library/no-dom-import`](./docs/rules/no-dom-import.md)                                     | Disallow importing from DOM Testing Library                                                  | 🔧  | ![angular-badge][] ![react-badge][] ![vue-badge][]                |
 | [`testing-library/no-manual-cleanup`](./docs/rules/no-manual-cleanup.md)                             | Disallow the use of `cleanup`                                                                |     |                                                                   |
 | [`testing-library/no-node-access`](./docs/rules/no-node-access.md)                                   | Disallow direct Node access                                                                  |     | ![angular-badge][] ![react-badge][] ![vue-badge][]                |
 | [`testing-library/no-promise-in-fire-event`](./docs/rules/no-promise-in-fire-event.md)               | Disallow the use of promises passed to a `fireEvent` method                                  |     | ![dom-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] |
-| [`testing-library/no-render-in-setup`](./docs/rules/no-render-in-setup.md)                           | Disallow the use of `render` in testing frameworks setup functions                           |     |                                                                   |
-| [`testing-library/no-unnecessary-act`](./docs/rules/no-unnecessary-act.md)                           | Disallow wrapping Testing Library utils or empty callbacks in `act`                          |     |                                                                   |
+| [`testing-library/no-render-in-setup`](./docs/rules/no-render-in-setup.md)                           | Disallow the use of `render` in testing frameworks setup functions                           |     | ![angular-badge][] ![react-badge][] ![vue-badge][]                |
+| [`testing-library/no-unnecessary-act`](./docs/rules/no-unnecessary-act.md)                           | Disallow wrapping Testing Library utils or empty callbacks in `act`                          |     | ![react-badge][]                                                  |
 | [`testing-library/no-wait-for-empty-callback`](./docs/rules/no-wait-for-empty-callback.md)           | Disallow empty callbacks for `waitFor` and `waitForElementToBeRemoved`                       |     | ![dom-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] |
-| [`testing-library/no-wait-for-multiple-assertions`](./docs/rules/no-wait-for-multiple-assertions.md) | Disallow the use of multiple `expect` calls inside `waitFor`                                 |     |                                                                   |
-| [`testing-library/no-wait-for-side-effects`](./docs/rules/no-wait-for-side-effects.md)               | Disallow the use of side effects in `waitFor`                                                |     |                                                                   |
-| [`testing-library/no-wait-for-snapshot`](./docs/rules/no-wait-for-snapshot.md)                       | Ensures no snapshot is generated inside of a `waitFor` call                                  |     |                                                                   |
+| [`testing-library/no-wait-for-multiple-assertions`](./docs/rules/no-wait-for-multiple-assertions.md) | Disallow the use of multiple `expect` calls inside `waitFor`                                 |     | ![dom-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] |
+| [`testing-library/no-wait-for-side-effects`](./docs/rules/no-wait-for-side-effects.md)               | Disallow the use of side effects in `waitFor`                                                |     | ![dom-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] |
+| [`testing-library/no-wait-for-snapshot`](./docs/rules/no-wait-for-snapshot.md)                       | Ensures no snapshot is generated inside of a `waitFor` call                                  |     | ![dom-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] |
 | [`testing-library/prefer-explicit-assert`](./docs/rules/prefer-explicit-assert.md)                   | Suggest using explicit assertions rather than standalone queries                             |     |                                                                   |
 | [`testing-library/prefer-find-by`](./docs/rules/prefer-find-by.md)                                   | Suggest using `find(All)By*` query instead of `waitFor` + `get(All)By*` to wait for elements | 🔧  | ![dom-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] |
-| [`testing-library/prefer-presence-queries`](./docs/rules/prefer-presence-queries.md)                 | Ensure appropriate `get*`/`query*` queries are used with their respective matchers           |     |                                                                   |
-| [`testing-library/prefer-query-by-disappearance`](./docs/rules/prefer-query-by-disappearance.md)     | Suggest using `queryBy*` queries when waiting for disappearance                              |     |                                                                   |
+| [`testing-library/prefer-presence-queries`](./docs/rules/prefer-presence-queries.md)                 | Ensure appropriate `get*`/`query*` queries are used with their respective matchers           |     | ![dom-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] |
+| [`testing-library/prefer-query-by-disappearance`](./docs/rules/prefer-query-by-disappearance.md)     | Suggest using `queryBy*` queries when waiting for disappearance                              |     | ![dom-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] |
 | [`testing-library/prefer-screen-queries`](./docs/rules/prefer-screen-queries.md)                     | Suggest using `screen` while querying                                                        |     | ![dom-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] |
 | [`testing-library/prefer-user-event`](./docs/rules/prefer-user-event.md)                             | Suggest using `userEvent` over `fireEvent` for simulating user interactions                  |     |                                                                   |
 | [`testing-library/prefer-wait-for`](./docs/rules/prefer-wait-for.md)                                 | Use `waitFor` instead of deprecated wait methods                                             | 🔧  |                                                                   |

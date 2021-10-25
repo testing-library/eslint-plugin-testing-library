@@ -23,11 +23,10 @@ export default createTestingLibraryRule<Options, MessageIds>({
     docs: {
       description:
         'Disallow wrapping Testing Library utils or empty callbacks in `act`',
-      category: 'Possible Errors',
       recommendedConfig: {
         dom: false,
         angular: false,
-        react: false,
+        react: 'error',
         vue: false,
       },
     },
@@ -40,18 +39,20 @@ export default createTestingLibraryRule<Options, MessageIds>({
       {
         type: 'object',
         properties: {
-          isStrict: { type: 'boolean' },
+          isStrict: {
+            type: 'boolean',
+          },
         },
       },
     ],
   },
   defaultOptions: [
     {
-      isStrict: false,
+      isStrict: true,
     },
   ],
 
-  create(context, [options], helpers) {
+  create(context, [{ isStrict = true }], helpers) {
     function getStatementIdentifier(statement: TSESTree.Statement) {
       const callExpression = getStatementCallExpression(statement);
 
@@ -113,7 +114,6 @@ export default createTestingLibraryRule<Options, MessageIds>({
     function checkNoUnnecessaryActFromBlockStatement(
       blockStatementNode: TSESTree.BlockStatement
     ) {
-      const { isStrict } = options;
       const functionNode = blockStatementNode.parent as
         | TSESTree.ArrowFunctionExpression
         | TSESTree.FunctionExpression

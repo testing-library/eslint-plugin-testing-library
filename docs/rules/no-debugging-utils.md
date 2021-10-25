@@ -1,4 +1,4 @@
-# Disallow the use of debugging utilities like `debug` (`testing-library/no-debug`)
+# Disallow the use of debugging utilities (`testing-library/no-debugging-utils`)
 
 Just like `console.log` statements pollutes the browser's output, debug statements also pollutes the tests if one of your teammates forgot to remove it. `debug` statements should be used when you actually want to debug your tests but should not be pushed to the codebase.
 
@@ -41,7 +41,7 @@ You can control which debugging utils are checked for with the `utilsToCheckFor`
 
 ```json
 {
-  "testing-library/no-debug": [
+  "testing-library/no-debugging-utils": [
     "error",
     {
       "utilsToCheckFor": {

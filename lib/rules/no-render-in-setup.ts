@@ -50,12 +50,11 @@ export default createTestingLibraryRule<Options, MessageIds>({
     docs: {
       description:
         'Disallow the use of `render` in testing frameworks setup functions',
-      category: 'Best Practices',
       recommendedConfig: {
         dom: false,
-        angular: false,
-        react: false,
-        vue: false,
+        angular: 'error',
+        react: 'error',
+        vue: 'error',
       },
     },
     messages: {

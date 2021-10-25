@@ -18,7 +18,6 @@ export default createTestingLibraryRule<Options, MessageIds>({
     type: 'problem',
     docs: {
       description: 'Disallow importing from DOM Testing Library',
-      category: 'Best Practices',
       recommendedConfig: {
         dom: false,
         angular: ['error', 'angular'],

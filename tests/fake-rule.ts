@@ -26,7 +26,6 @@ export default createTestingLibraryRule<Options, MessageIds>({
     type: 'problem',
     docs: {
       description: 'Fake rule to test rule maker and detection helpers',
-      category: 'Possible Errors',
       recommendedConfig: {
         dom: false,
         angular: false,

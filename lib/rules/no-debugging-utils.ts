@@ -21,7 +21,7 @@ type DebugUtilsToCheckFor = Partial<
   Record<typeof DEBUG_UTILS[number], boolean>
 >;
 
-export const RULE_NAME = 'no-debug';
+export const RULE_NAME = 'no-debugging-utils';
 export type MessageIds = 'noDebug';
 type Options = [{ utilsToCheckFor?: DebugUtilsToCheckFor }];
 
@@ -31,7 +31,6 @@ export default createTestingLibraryRule<Options, MessageIds>({
     type: 'problem',
     docs: {
       description: 'Disallow the use of debugging utilities like `debug`',
-      category: 'Best Practices',
       recommendedConfig: {
         dom: false,
         angular: 'error',

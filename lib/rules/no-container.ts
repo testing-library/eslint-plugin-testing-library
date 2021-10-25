@@ -20,7 +20,6 @@ export default createTestingLibraryRule<Options, MessageIds>({
     type: 'problem',
     docs: {
       description: 'Disallow the use of `container` methods',
-      category: 'Best Practices',
       recommendedConfig: {
         dom: false,
         angular: 'error',

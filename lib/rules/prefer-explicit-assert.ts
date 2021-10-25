@@ -69,7 +69,6 @@ export default createTestingLibraryRule<Options, MessageIds>({
     docs: {
       description:
         'Suggest using explicit assertions rather than standalone queries',
-      category: 'Best Practices',
       recommendedConfig: {
         dom: false,
         angular: false,

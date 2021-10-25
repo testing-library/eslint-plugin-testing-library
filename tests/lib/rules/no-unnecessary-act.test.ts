@@ -13,15 +13,18 @@ type ValidTestCase = TSESLint.ValidTestCase<Options>;
 type InvalidTestCase = TSESLint.InvalidTestCase<MessageIds, Options>;
 type TestCase = InvalidTestCase | ValidTestCase;
 
-const enableStrict = <T extends TestCase>(array: T[]): T[] =>
+const addOptions = <T extends TestCase>(
+  array: T[],
+  options?: Options[number]
+): T[] =>
   array.map((testCase) => ({
     ...testCase,
-    options: [
-      {
-        isStrict: true,
-      },
-    ],
+    options: [options],
   }));
+const disableStrict = <T extends TestCase>(array: T[]): T[] =>
+  addOptions(array, { isStrict: false });
+const enableStrict = <T extends TestCase>(array: T[]): T[] =>
+  addOptions(array, { isStrict: true });
 
 /**
  * - AGR stands for Aggressive Reporting
@@ -208,11 +211,6 @@ const validTestCases: ValidTestCase[] = [
 
 const invalidStrictTestCases: InvalidTestCase[] = [
   {
-    options: [
-      {
-        isStrict: true,
-      },
-    ],
     code: `// case: RTL act wrapping both RTL and non-RTL calls with strict option
       import { act, render } from '@testing-library/react'
 
@@ -886,12 +884,12 @@ const invalidTestCases: InvalidTestCase[] = [
 ruleTester.run(RULE_NAME, rule, {
   valid: [
     ...validTestCases,
-    ...validNonStrictTestCases,
-    ...enableStrict(validTestCases),
+    ...disableStrict(validNonStrictTestCases),
+    ...disableStrict(validTestCases),
   ],
   invalid: [
     ...invalidTestCases,
-    ...invalidStrictTestCases,
-    ...enableStrict(invalidTestCases),
+    ...enableStrict(invalidStrictTestCases),
+    ...disableStrict(invalidTestCases),
   ],
 });

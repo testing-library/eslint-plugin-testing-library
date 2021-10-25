@@ -1,4 +1,4 @@
-import rule, { RULE_NAME } from '../../../lib/rules/no-debug';
+import rule, { RULE_NAME } from '../../../lib/rules/no-debugging-utils';
 import { createRuleTester } from '../test-utils';
 
 const ruleTester = createRuleTester();
