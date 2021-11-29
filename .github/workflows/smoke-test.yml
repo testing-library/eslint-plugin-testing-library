@@ -1,0 +1,27 @@
+name: Smoke test
+
+on:
+  schedule:
+    - cron: '0 0 * * SUN'
+  workflow_dispatch:
+  release:
+    types: [published]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 16
+      - run: |
+          npm install
+          npm run build
+      - run: npm link
+        working-directory: ./dist
+      - run: npm link eslint-plugin-testing-library
+      - uses: AriPerkkio/eslint-remote-tester-run-action@v2
+        with:
+          issue-title: 'Results of weekly scheduled smoke test'
+          eslint-remote-tester-config: tests/eslint-remote-tester.config.js
