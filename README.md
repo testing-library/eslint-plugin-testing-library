@@ -381,6 +381,9 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <td align="center"><a href="https://www.linkedin.com/in/maratdyatko/"><img src="https://avatars.githubusercontent.com/u/31615495?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Marat Dyatko</b></sub></a><br /><a href="https://github.com/testing-library/eslint-plugin-testing-library/issues?q=author%3Adyatko" title="Bug reports">🐛</a> <a href="https://github.com/testing-library/eslint-plugin-testing-library/commits?author=dyatko" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/DaJoTo"><img src="https://avatars.githubusercontent.com/u/28302401?v=4?s=100" width="100px;" alt=""/><br /><sub><b>David Tolman</b></sub></a><br /><a href="https://github.com/testing-library/eslint-plugin-testing-library/issues?q=author%3ADaJoTo" title="Bug reports">🐛</a></td>
   </tr>
+  <tr>
+    <td align="center"><a href="https://codepen.io/ariperkkio/"><img src="https://avatars.githubusercontent.com/u/14806298?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Ari Perkkiö</b></sub></a><br /><a href="https://github.com/testing-library/eslint-plugin-testing-library/commits?author=AriPerkkio" title="Tests">⚠️</a></td>
+  </tr>
 </table>
 
 <!-- markdownlint-restore -->
