@@ -61,7 +61,7 @@
     "eslint-plugin-jest-formatting": "^3.1.0",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "^4.0.0",
-    "eslint-plugin-promise": "^5.2.0",
+    "eslint-plugin-promise": "^6.0.0",
     "eslint-remote-tester": "^2.0.1",
     "eslint-remote-tester-repositories": "^0.0.3",
     "husky": "^7.0.4",
