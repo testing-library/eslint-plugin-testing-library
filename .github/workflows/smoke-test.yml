@@ -21,7 +21,7 @@ jobs:
       - run: npm link
         working-directory: ./dist
       - run: npm link eslint-plugin-testing-library
-      - uses: AriPerkkio/eslint-remote-tester-run-action@v2
+      - uses: AriPerkkio/eslint-remote-tester-run-action@v3
         with:
           issue-title: 'Results of weekly scheduled smoke test'
           eslint-remote-tester-config: tests/eslint-remote-tester.config.js
