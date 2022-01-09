@@ -14,9 +14,9 @@ export type MessageIds = 'renderResultNamingConvention';
 type Options = [];
 
 const ALLOWED_VAR_NAMES = ['view', 'utils'];
-const ALLOWED_VAR_NAMES_TEXT = ALLOWED_VAR_NAMES.map(
-  (name) => `\`${name}\``
-).join(', ');
+const ALLOWED_VAR_NAMES_TEXT = ALLOWED_VAR_NAMES.map((name) => `\`${name}\``)
+  .join(', ')
+  .replace(/, ([^,]*)$/, ', or $1');
 
 export default createTestingLibraryRule<Options, MessageIds>({
   name: RULE_NAME,
