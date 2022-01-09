@@ -463,6 +463,15 @@
       "contributions": [
         "test"
       ]
+    },
+    {
+      "login": "diegocasmo",
+      "name": "Diego Castillo",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4553097?v=4",
+      "profile": "https://diegocasmo.github.io/",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
