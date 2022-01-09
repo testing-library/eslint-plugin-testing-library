@@ -72,8 +72,6 @@ jobs:
           useLockFile: false
 
       - name: Install ESLint v${{ matrix.eslint }}
-        # force installation for now until we get ESLint and all plugins updated
-        # in dev dependencies
         run: npm install --no-save --force eslint@${{ matrix.eslint }}
 
       - name: Run tests
