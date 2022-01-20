@@ -373,6 +373,10 @@ export default createTestingLibraryRule<Options, MessageIds>({
           const callArguments = getQueryArguments(argument.body);
           const queryMethod = fullQueryMethod.split('By')[1];
 
+          if (!queryMethod) {
+            return;
+          }
+
           reportInvalidUsage(node, {
             queryMethod,
             queryVariant,
