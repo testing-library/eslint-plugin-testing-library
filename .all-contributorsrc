@@ -472,6 +472,16 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "bpinto",
+      "name": "Bruno Pinto",
+      "avatar_url": "https://avatars.githubusercontent.com/u/526122?v=4",
+      "profile": "http://bpinto.github.com",
+      "contributions": [
+        "code",
+        "test"
+      ]
     }
   ],
   "contributorsPerLine": 7,
