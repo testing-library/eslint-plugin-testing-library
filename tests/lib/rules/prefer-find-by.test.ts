@@ -157,6 +157,15 @@ ruleTester.run(RULE_NAME, rule, {
         })
       `,
     },
+    {
+      code: `
+        import {waitFor} from '@testing-library/foo';
+        it('tests', async () => {
+          const { container } = render()
+          await waitFor(() => expect(container.querySelector('baz')).toBeInTheDocument());
+        })
+      `,
+    },
   ],
   invalid: [
     ...createScenario((waitMethod: string, queryMethod: string) => ({
