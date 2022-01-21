@@ -384,6 +384,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
   <tr>
     <td align="center"><a href="https://codepen.io/ariperkkio/"><img src="https://avatars.githubusercontent.com/u/14806298?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Ari Perkkiö</b></sub></a><br /><a href="https://github.com/testing-library/eslint-plugin-testing-library/commits?author=AriPerkkio" title="Tests">⚠️</a></td>
     <td align="center"><a href="https://diegocasmo.github.io/"><img src="https://avatars.githubusercontent.com/u/4553097?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Diego Castillo</b></sub></a><br /><a href="https://github.com/testing-library/eslint-plugin-testing-library/commits?author=diegocasmo" title="Code">💻</a></td>
+    <td align="center"><a href="http://bpinto.github.com"><img src="https://avatars.githubusercontent.com/u/526122?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Bruno Pinto</b></sub></a><br /><a href="https://github.com/testing-library/eslint-plugin-testing-library/commits?author=bpinto" title="Code">💻</a> <a href="https://github.com/testing-library/eslint-plugin-testing-library/commits?author=bpinto" title="Tests">⚠️</a></td>
   </tr>
 </table>
 
