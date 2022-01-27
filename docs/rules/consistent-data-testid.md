@@ -2,6 +2,10 @@
 
 Ensure `data-testid` values match a provided regex. This rule is un-opinionated, and requires configuration.
 
+> ⚠️ This rule is only available in the following Testing Library packages:
+>
+> - `@testing-library/react` (supported by this plugin)
+
 ## Rule Details
 
 > Assuming the rule has been configured with the following regex: `^TestId(\_\_[A-Z]*)?$`
