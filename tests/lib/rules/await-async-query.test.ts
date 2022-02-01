@@ -1,4 +1,4 @@
-import { TSESLint } from '@typescript-eslint/experimental-utils';
+import { TSESLint } from '@typescript-eslint/utils';
 
 import rule, { RULE_NAME } from '../../../lib/rules/await-async-query';
 import {

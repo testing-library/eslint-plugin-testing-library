@@ -1,4 +1,4 @@
-import { ESLintUtils, TSESLint } from '@typescript-eslint/experimental-utils';
+import { ESLintUtils, TSESLint } from '@typescript-eslint/utils';
 
 import { getDocsUrl, TestingLibraryRuleMeta } from '../utils';
 
