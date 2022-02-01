@@ -4,7 +4,7 @@ import {
   TSESLint,
   TSESLintScope,
   TSESTree,
-} from '@typescript-eslint/experimental-utils';
+} from '@typescript-eslint/utils';
 
 import {
   isArrayExpression,

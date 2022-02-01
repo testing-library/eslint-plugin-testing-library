@@ -1,4 +1,4 @@
-import { TSESTree, ASTUtils } from '@typescript-eslint/experimental-utils';
+import { TSESTree, ASTUtils } from '@typescript-eslint/utils';
 
 import { createTestingLibraryRule } from '../create-testing-library-rule';
 import {

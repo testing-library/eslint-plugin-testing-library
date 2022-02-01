@@ -1,6 +1,6 @@
 import { resolve } from 'path';
 
-import { TSESLint } from '@typescript-eslint/experimental-utils';
+import { TSESLint } from '@typescript-eslint/utils';
 
 const DEFAULT_TEST_CASE_CONFIG = {
   filename: 'MyComponent.test.js',

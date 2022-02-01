@@ -36,7 +36,7 @@
     "no-restricted-imports": [
       "error",
       {
-        "patterns": ["@typescript-eslint/experimental-utils/dist/*"]
+        "patterns": ["@typescript-eslint/utils/dist/*"]
       }
     ],
 

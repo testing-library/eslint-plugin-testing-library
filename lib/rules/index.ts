@@ -1,7 +1,7 @@
 import { readdirSync } from 'fs';
 import { join, parse } from 'path';
 
-import { TSESLint } from '@typescript-eslint/experimental-utils';
+import { TSESLint } from '@typescript-eslint/utils';
 
 import { importDefault, TestingLibraryRuleMeta } from '../utils';
 

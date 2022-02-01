@@ -1,8 +1,4 @@
-import {
-  ASTUtils,
-  TSESTree,
-  JSONSchema,
-} from '@typescript-eslint/experimental-utils';
+import { ASTUtils, TSESTree, JSONSchema } from '@typescript-eslint/utils';
 
 import { createTestingLibraryRule } from '../create-testing-library-rule';
 import {

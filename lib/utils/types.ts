@@ -1,10 +1,10 @@
-import type { TSESLint } from '@typescript-eslint/experimental-utils';
+import type { TSESLint } from '@typescript-eslint/utils';
 
 type RecommendedConfig<TOptions extends readonly unknown[]> =
   | TSESLint.RuleMetaDataDocs['recommended']
   | [TSESLint.RuleMetaDataDocs['recommended'], ...TOptions];
 
-// These 2 types are copied from @typescript-eslint/experimental-utils' CreateRuleMeta
+// These 2 types are copied from @typescript-eslint/utils' CreateRuleMeta
 // and modified to our needs
 export type TestingLibraryRuleMetaDocs<TOptions extends readonly unknown[]> =
   Omit<TSESLint.RuleMetaDataDocs, 'recommended' | 'url'> & {
