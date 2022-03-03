@@ -1,48 +1,61 @@
-import { AST_NODE_TYPES, TSESTree } from '@typescript-eslint/utils';
+import { AST_NODE_TYPES, ASTUtils } from '@typescript-eslint/utils';
 
-const isNodeOfType =
-  <NodeType extends AST_NODE_TYPES>(nodeType: NodeType) =>
-  (
-    node: TSESTree.Node | null | undefined
-  ): node is TSESTree.Node & { type: NodeType } =>
-    node?.type === nodeType;
-
-export const isArrayExpression = isNodeOfType(AST_NODE_TYPES.ArrayExpression);
-export const isArrowFunctionExpression = isNodeOfType(
+export const isArrayExpression = ASTUtils.isNodeOfType(
+  AST_NODE_TYPES.ArrayExpression
+);
+export const isArrowFunctionExpression = ASTUtils.isNodeOfType(
   AST_NODE_TYPES.ArrowFunctionExpression
 );
-export const isBlockStatement = isNodeOfType(AST_NODE_TYPES.BlockStatement);
-export const isCallExpression = isNodeOfType(AST_NODE_TYPES.CallExpression);
-export const isExpressionStatement = isNodeOfType(
+export const isBlockStatement = ASTUtils.isNodeOfType(
+  AST_NODE_TYPES.BlockStatement
+);
+export const isCallExpression = ASTUtils.isNodeOfType(
+  AST_NODE_TYPES.CallExpression
+);
+export const isExpressionStatement = ASTUtils.isNodeOfType(
   AST_NODE_TYPES.ExpressionStatement
 );
-export const isVariableDeclaration = isNodeOfType(
+export const isVariableDeclaration = ASTUtils.isNodeOfType(
   AST_NODE_TYPES.VariableDeclaration
 );
-export const isAssignmentExpression = isNodeOfType(
+export const isAssignmentExpression = ASTUtils.isNodeOfType(
   AST_NODE_TYPES.AssignmentExpression
 );
-export const isSequenceExpression = isNodeOfType(
+export const isSequenceExpression = ASTUtils.isNodeOfType(
   AST_NODE_TYPES.SequenceExpression
 );
-export const isImportDeclaration = isNodeOfType(
+export const isImportDeclaration = ASTUtils.isNodeOfType(
   AST_NODE_TYPES.ImportDeclaration
 );
-export const isImportDefaultSpecifier = isNodeOfType(
+export const isImportDefaultSpecifier = ASTUtils.isNodeOfType(
   AST_NODE_TYPES.ImportDefaultSpecifier
 );
-export const isImportNamespaceSpecifier = isNodeOfType(
+export const isImportNamespaceSpecifier = ASTUtils.isNodeOfType(
   AST_NODE_TYPES.ImportNamespaceSpecifier
 );
-export const isImportSpecifier = isNodeOfType(AST_NODE_TYPES.ImportSpecifier);
-export const isJSXAttribute = isNodeOfType(AST_NODE_TYPES.JSXAttribute);
-export const isLiteral = isNodeOfType(AST_NODE_TYPES.Literal);
-export const isMemberExpression = isNodeOfType(AST_NODE_TYPES.MemberExpression);
-export const isNewExpression = isNodeOfType(AST_NODE_TYPES.NewExpression);
-export const isObjectExpression = isNodeOfType(AST_NODE_TYPES.ObjectExpression);
-export const isObjectPattern = isNodeOfType(AST_NODE_TYPES.ObjectPattern);
-export const isProperty = isNodeOfType(AST_NODE_TYPES.Property);
-export const isReturnStatement = isNodeOfType(AST_NODE_TYPES.ReturnStatement);
-export const isFunctionExpression = isNodeOfType(
+export const isImportSpecifier = ASTUtils.isNodeOfType(
+  AST_NODE_TYPES.ImportSpecifier
+);
+export const isJSXAttribute = ASTUtils.isNodeOfType(
+  AST_NODE_TYPES.JSXAttribute
+);
+export const isLiteral = ASTUtils.isNodeOfType(AST_NODE_TYPES.Literal);
+export const isMemberExpression = ASTUtils.isNodeOfType(
+  AST_NODE_TYPES.MemberExpression
+);
+export const isNewExpression = ASTUtils.isNodeOfType(
+  AST_NODE_TYPES.NewExpression
+);
+export const isObjectExpression = ASTUtils.isNodeOfType(
+  AST_NODE_TYPES.ObjectExpression
+);
+export const isObjectPattern = ASTUtils.isNodeOfType(
+  AST_NODE_TYPES.ObjectPattern
+);
+export const isProperty = ASTUtils.isNodeOfType(AST_NODE_TYPES.Property);
+export const isReturnStatement = ASTUtils.isNodeOfType(
+  AST_NODE_TYPES.ReturnStatement
+);
+export const isFunctionExpression = ASTUtils.isNodeOfType(
   AST_NODE_TYPES.FunctionExpression
 );
