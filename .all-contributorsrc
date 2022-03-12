@@ -482,6 +482,16 @@
         "code",
         "test"
       ]
+    },
+    {
+      "login": "themagickoala",
+      "name": "themagickoala",
+      "avatar_url": "https://avatars.githubusercontent.com/u/48416253?v=4",
+      "profile": "https://github.com/themagickoala",
+      "contributions": [
+        "code",
+        "test"
+      ]
     }
   ],
   "contributorsPerLine": 7,
