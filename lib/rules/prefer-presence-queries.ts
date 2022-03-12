@@ -54,8 +54,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
     },
   ],
 
-  create(context, [options], helpers) {
-    const { presence, absence } = options;
+  create(context, [{ absence = true, presence = true }], helpers) {
     return {
       'CallExpression Identifier'(node: TSESTree.Identifier) {
         const expectCallNode = findClosestCallNode(node, 'expect');
