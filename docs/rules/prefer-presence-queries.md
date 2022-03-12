@@ -59,6 +59,27 @@ test('some test', async () => {
 });
 ```
 
+## Options
+
+| Option     | Required | Default | Details                                                                                                                                                      |
+| ---------- | -------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `presence` | No       | `true`  | If enabled, this rule will ensure `getBy*` is used to validate whether an element is present. If disabled, `queryBy*` will be accepted for presence queries. |
+| `absence`  | No       | `true`  | If enabled, this rule will ensure `queryBy*` is used to validate whether an element is absent. If disabled, `getBy*` will be accepted for absence queries.   |
+
+## Example
+
+```json
+{
+  "testing-library/prefer-presence-queries": [
+    2,
+    {
+      "presence": true,
+      "absence": false
+    }
+  ]
+}
+```
+
 ## Further Reading
 
 - [Testing Library queries cheatsheet](https://testing-library.com/docs/dom-testing-library/cheatsheet#queries)

@@ -3,6 +3,7 @@ import { TSESLint } from '@typescript-eslint/utils';
 import rule, {
   RULE_NAME,
   MessageIds,
+  Options,
 } from '../../../lib/rules/prefer-presence-queries';
 import { ALL_QUERIES_METHODS } from '../../../lib/utils';
 import { createRuleTester } from '../test-utils';
@@ -16,38 +17,93 @@ const queryAllByQueries = ALL_QUERIES_METHODS.map(
   (method) => `queryAll${method}`
 );
 
-type RuleValidTestCase = TSESLint.ValidTestCase<[]>;
-type RuleInvalidTestCase = TSESLint.InvalidTestCase<MessageIds, []>;
+type RuleValidTestCase = TSESLint.ValidTestCase<Options>;
+type RuleInvalidTestCase = TSESLint.InvalidTestCase<MessageIds, Options>;
 
 type AssertionFnParams = {
   query: string;
   matcher: string;
   messageId: MessageIds;
   shouldUseScreen?: boolean;
+  assertionType: keyof Options[number];
 };
 
-const getValidAssertion = ({
+const getValidAssertions = ({
   query,
   matcher,
   shouldUseScreen = false,
+  assertionType,
+}: Omit<AssertionFnParams, 'messageId'>): RuleValidTestCase[] => {
+  const finalQuery = shouldUseScreen ? `screen.${query}` : query;
+  const code = `expect(${finalQuery}('Hello'))${matcher}`;
+  return [
+    {
+      code,
+    },
+    {
+      code,
+      options: [
+        {
+          [assertionType]: true,
+          [assertionType === 'absence' ? 'presence' : 'absence']: false,
+        },
+      ],
+    },
+    {
+      code,
+      options: [
+        {
+          presence: false,
+          absence: false,
+        },
+      ],
+    },
+  ];
+};
+
+const getDisabledValidAssertion = ({
+  query,
+  matcher,
+  shouldUseScreen = false,
+  assertionType,
 }: Omit<AssertionFnParams, 'messageId'>): RuleValidTestCase => {
   const finalQuery = shouldUseScreen ? `screen.${query}` : query;
   return {
     code: `expect(${finalQuery}('Hello'))${matcher}`,
-  } as const;
+    options: [
+      {
+        [assertionType]: false,
+        [assertionType === 'absence' ? 'presence' : 'absence']: true,
+      },
+    ],
+  };
 };
 
-const getInvalidAssertion = ({
+const getInvalidAssertions = ({
   query,
   matcher,
   messageId,
   shouldUseScreen = false,
-}: AssertionFnParams): RuleInvalidTestCase => {
+  assertionType,
+}: AssertionFnParams): RuleInvalidTestCase[] => {
   const finalQuery = shouldUseScreen ? `screen.${query}` : query;
-  return {
-    code: `expect(${finalQuery}('Hello'))${matcher}`,
-    errors: [{ messageId, line: 1, column: shouldUseScreen ? 15 : 8 }],
-  };
+  const code = `expect(${finalQuery}('Hello'))${matcher}`;
+  return [
+    {
+      code,
+      errors: [{ messageId, line: 1, column: shouldUseScreen ? 15 : 8 }],
+    },
+    {
+      code,
+      options: [
+        {
+          [assertionType]: true,
+          [assertionType === 'absence' ? 'presence' : 'absence']: false,
+        },
+      ],
+      errors: [{ messageId, line: 1, column: shouldUseScreen ? 15 : 8 }],
+    },
+  ];
 };
 
 ruleTester.run(RULE_NAME, rule, {
@@ -77,20 +133,50 @@ ruleTester.run(RULE_NAME, rule, {
     ...getByQueries.reduce<RuleValidTestCase[]>(
       (validRules, queryName) => [
         ...validRules,
-        getValidAssertion({
+        ...getValidAssertions({
           query: queryName,
           matcher: '.toBeInTheDocument()',
+          assertionType: 'presence',
         }),
-        getValidAssertion({ query: queryName, matcher: '.toBeTruthy()' }),
-        getValidAssertion({ query: queryName, matcher: '.toBeDefined()' }),
-        getValidAssertion({ query: queryName, matcher: '.toBe("foo")' }),
-        getValidAssertion({ query: queryName, matcher: '.toEqual("World")' }),
-        getValidAssertion({ query: queryName, matcher: '.not.toBeFalsy()' }),
-        getValidAssertion({ query: queryName, matcher: '.not.toBeNull()' }),
-        getValidAssertion({ query: queryName, matcher: '.not.toBeDisabled()' }),
-        getValidAssertion({
+        ...getValidAssertions({
+          query: queryName,
+          matcher: '.toBeTruthy()',
+          assertionType: 'presence',
+        }),
+        ...getValidAssertions({
+          query: queryName,
+          matcher: '.toBeDefined()',
+          assertionType: 'presence',
+        }),
+        ...getValidAssertions({
+          query: queryName,
+          matcher: '.toBe("foo")',
+          assertionType: 'presence',
+        }),
+        ...getValidAssertions({
+          query: queryName,
+          matcher: '.toEqual("World")',
+          assertionType: 'presence',
+        }),
+        ...getValidAssertions({
+          query: queryName,
+          matcher: '.not.toBeFalsy()',
+          assertionType: 'presence',
+        }),
+        ...getValidAssertions({
+          query: queryName,
+          matcher: '.not.toBeNull()',
+          assertionType: 'presence',
+        }),
+        ...getValidAssertions({
+          query: queryName,
+          matcher: '.not.toBeDisabled()',
+          assertionType: 'presence',
+        }),
+        ...getValidAssertions({
           query: queryName,
           matcher: '.not.toHaveClass("btn")',
+          assertionType: 'presence',
         }),
       ],
       []
@@ -99,50 +185,59 @@ ruleTester.run(RULE_NAME, rule, {
     ...getByQueries.reduce<RuleValidTestCase[]>(
       (validRules, queryName) => [
         ...validRules,
-        getValidAssertion({
+        ...getValidAssertions({
           query: queryName,
           matcher: '.toBeInTheDocument()',
           shouldUseScreen: true,
+          assertionType: 'presence',
         }),
-        getValidAssertion({
+        ...getValidAssertions({
           query: queryName,
           matcher: '.toBeTruthy()',
           shouldUseScreen: true,
+          assertionType: 'presence',
         }),
-        getValidAssertion({
+        ...getValidAssertions({
           query: queryName,
           matcher: '.toBeDefined()',
           shouldUseScreen: true,
+          assertionType: 'presence',
         }),
-        getValidAssertion({
+        ...getValidAssertions({
           query: queryName,
           matcher: '.toBe("foo")',
           shouldUseScreen: true,
+          assertionType: 'presence',
         }),
-        getValidAssertion({
+        ...getValidAssertions({
           query: queryName,
           matcher: '.toEqual("World")',
           shouldUseScreen: true,
+          assertionType: 'presence',
         }),
-        getValidAssertion({
+        ...getValidAssertions({
           query: queryName,
           matcher: '.not.toBeFalsy()',
           shouldUseScreen: true,
+          assertionType: 'presence',
         }),
-        getValidAssertion({
+        ...getValidAssertions({
           query: queryName,
           matcher: '.not.toBeNull()',
           shouldUseScreen: true,
+          assertionType: 'presence',
         }),
-        getValidAssertion({
+        ...getValidAssertions({
           query: queryName,
           matcher: '.not.toBeDisabled()',
           shouldUseScreen: true,
+          assertionType: 'presence',
         }),
-        getValidAssertion({
+        ...getValidAssertions({
           query: queryName,
           matcher: '.not.toHaveClass("btn")',
           shouldUseScreen: true,
+          assertionType: 'presence',
         }),
       ],
       []
@@ -151,20 +246,50 @@ ruleTester.run(RULE_NAME, rule, {
     ...getAllByQueries.reduce<RuleValidTestCase[]>(
       (validRules, queryName) => [
         ...validRules,
-        getValidAssertion({
+        ...getValidAssertions({
           query: queryName,
           matcher: '.toBeInTheDocument()',
+          assertionType: 'presence',
         }),
-        getValidAssertion({ query: queryName, matcher: '.toBeTruthy()' }),
-        getValidAssertion({ query: queryName, matcher: '.toBeDefined()' }),
-        getValidAssertion({ query: queryName, matcher: '.toBe("foo")' }),
-        getValidAssertion({ query: queryName, matcher: '.toEqual("World")' }),
-        getValidAssertion({ query: queryName, matcher: '.not.toBeFalsy()' }),
-        getValidAssertion({ query: queryName, matcher: '.not.toBeNull()' }),
-        getValidAssertion({ query: queryName, matcher: '.not.toBeDisabled()' }),
-        getValidAssertion({
+        ...getValidAssertions({
+          query: queryName,
+          matcher: '.toBeTruthy()',
+          assertionType: 'presence',
+        }),
+        ...getValidAssertions({
+          query: queryName,
+          matcher: '.toBeDefined()',
+          assertionType: 'presence',
+        }),
+        ...getValidAssertions({
+          query: queryName,
+          matcher: '.toBe("foo")',
+          assertionType: 'presence',
+        }),
+        ...getValidAssertions({
+          query: queryName,
+          matcher: '.toEqual("World")',
+          assertionType: 'presence',
+        }),
+        ...getValidAssertions({
+          query: queryName,
+          matcher: '.not.toBeFalsy()',
+          assertionType: 'presence',
+        }),
+        ...getValidAssertions({
+          query: queryName,
+          matcher: '.not.toBeNull()',
+          assertionType: 'presence',
+        }),
+        ...getValidAssertions({
+          query: queryName,
+          matcher: '.not.toBeDisabled()',
+          assertionType: 'presence',
+        }),
+        ...getValidAssertions({
           query: queryName,
           matcher: '.not.toHaveClass("btn")',
+          assertionType: 'presence',
         }),
       ],
       []
@@ -173,50 +298,59 @@ ruleTester.run(RULE_NAME, rule, {
     ...getAllByQueries.reduce<RuleValidTestCase[]>(
       (validRules, queryName) => [
         ...validRules,
-        getValidAssertion({
+        ...getValidAssertions({
           query: queryName,
           matcher: '.toBeInTheDocument()',
           shouldUseScreen: true,
+          assertionType: 'presence',
         }),
-        getValidAssertion({
+        ...getValidAssertions({
           query: queryName,
           matcher: '.toBeTruthy()',
           shouldUseScreen: true,
+          assertionType: 'presence',
         }),
-        getValidAssertion({
+        ...getValidAssertions({
           query: queryName,
           matcher: '.toBeDefined()',
           shouldUseScreen: true,
+          assertionType: 'presence',
         }),
-        getValidAssertion({
+        ...getValidAssertions({
           query: queryName,
           matcher: '.toBe("foo")',
           shouldUseScreen: true,
+          assertionType: 'presence',
         }),
-        getValidAssertion({
+        ...getValidAssertions({
           query: queryName,
           matcher: '.toEqual("World")',
           shouldUseScreen: true,
+          assertionType: 'presence',
         }),
-        getValidAssertion({
+        ...getValidAssertions({
           query: queryName,
           matcher: '.not.toBeFalsy()',
           shouldUseScreen: true,
+          assertionType: 'presence',
         }),
-        getValidAssertion({
+        ...getValidAssertions({
           query: queryName,
           matcher: '.not.toBeNull()',
           shouldUseScreen: true,
+          assertionType: 'presence',
         }),
-        getValidAssertion({
+        ...getValidAssertions({
           query: queryName,
           matcher: '.not.toBeDisabled()',
           shouldUseScreen: true,
+          assertionType: 'presence',
         }),
-        getValidAssertion({
+        ...getValidAssertions({
           query: queryName,
           matcher: '.not.toHaveClass("btn")',
           shouldUseScreen: true,
+          assertionType: 'presence',
         }),
       ],
       []
@@ -225,18 +359,40 @@ ruleTester.run(RULE_NAME, rule, {
     ...queryByQueries.reduce<RuleValidTestCase[]>(
       (validRules, queryName) => [
         ...validRules,
-        getValidAssertion({ query: queryName, matcher: '.toBeNull()' }),
-        getValidAssertion({ query: queryName, matcher: '.toBeFalsy()' }),
-        getValidAssertion({
+        ...getValidAssertions({
+          query: queryName,
+          matcher: '.toBeNull()',
+          assertionType: 'absence',
+        }),
+        ...getValidAssertions({
+          query: queryName,
+          matcher: '.toBeFalsy()',
+          assertionType: 'absence',
+        }),
+        ...getValidAssertions({
           query: queryName,
           matcher: '.not.toBeInTheDocument()',
+          assertionType: 'absence',
         }),
-        getValidAssertion({ query: queryName, matcher: '.not.toBeTruthy()' }),
-        getValidAssertion({ query: queryName, matcher: '.not.toBeDefined()' }),
-        getValidAssertion({ query: queryName, matcher: '.toEqual("World")' }),
-        getValidAssertion({
+        ...getValidAssertions({
+          query: queryName,
+          matcher: '.not.toBeTruthy()',
+          assertionType: 'absence',
+        }),
+        ...getValidAssertions({
+          query: queryName,
+          matcher: '.not.toBeDefined()',
+          assertionType: 'absence',
+        }),
+        ...getValidAssertions({
+          query: queryName,
+          matcher: '.toEqual("World")',
+          assertionType: 'absence',
+        }),
+        ...getValidAssertions({
           query: queryName,
           matcher: '.not.toHaveClass("btn")',
+          assertionType: 'absence',
         }),
       ],
       []
@@ -245,40 +401,47 @@ ruleTester.run(RULE_NAME, rule, {
     ...queryByQueries.reduce<RuleValidTestCase[]>(
       (validRules, queryName) => [
         ...validRules,
-        getValidAssertion({
+        ...getValidAssertions({
           query: queryName,
           matcher: '.toBeNull()',
           shouldUseScreen: true,
+          assertionType: 'absence',
         }),
-        getValidAssertion({
+        ...getValidAssertions({
           query: queryName,
           matcher: '.toBeFalsy()',
           shouldUseScreen: true,
+          assertionType: 'absence',
         }),
-        getValidAssertion({
+        ...getValidAssertions({
           query: queryName,
           matcher: '.not.toBeInTheDocument()',
           shouldUseScreen: true,
+          assertionType: 'absence',
         }),
-        getValidAssertion({
+        ...getValidAssertions({
           query: queryName,
           matcher: '.not.toBeTruthy()',
           shouldUseScreen: true,
+          assertionType: 'absence',
         }),
-        getValidAssertion({
+        ...getValidAssertions({
           query: queryName,
           matcher: '.not.toBeDefined()',
           shouldUseScreen: true,
+          assertionType: 'absence',
         }),
-        getValidAssertion({
+        ...getValidAssertions({
           query: queryName,
           matcher: '.toEqual("World")',
           shouldUseScreen: true,
+          assertionType: 'absence',
         }),
-        getValidAssertion({
+        ...getValidAssertions({
           query: queryName,
           matcher: '.not.toHaveClass("btn")',
           shouldUseScreen: true,
+          assertionType: 'absence',
         }),
       ],
       []
@@ -287,18 +450,40 @@ ruleTester.run(RULE_NAME, rule, {
     ...queryAllByQueries.reduce<RuleValidTestCase[]>(
       (validRules, queryName) => [
         ...validRules,
-        getValidAssertion({ query: queryName, matcher: '.toBeNull()' }),
-        getValidAssertion({ query: queryName, matcher: '.toBeFalsy()' }),
-        getValidAssertion({
+        ...getValidAssertions({
+          query: queryName,
+          matcher: '.toBeNull()',
+          assertionType: 'absence',
+        }),
+        ...getValidAssertions({
+          query: queryName,
+          matcher: '.toBeFalsy()',
+          assertionType: 'absence',
+        }),
+        ...getValidAssertions({
           query: queryName,
           matcher: '.not.toBeInTheDocument()',
+          assertionType: 'absence',
         }),
-        getValidAssertion({ query: queryName, matcher: '.not.toBeTruthy()' }),
-        getValidAssertion({ query: queryName, matcher: '.not.toBeDefined()' }),
-        getValidAssertion({ query: queryName, matcher: '.toEqual("World")' }),
-        getValidAssertion({
+        ...getValidAssertions({
+          query: queryName,
+          matcher: '.not.toBeTruthy()',
+          assertionType: 'absence',
+        }),
+        ...getValidAssertions({
+          query: queryName,
+          matcher: '.not.toBeDefined()',
+          assertionType: 'absence',
+        }),
+        ...getValidAssertions({
+          query: queryName,
+          matcher: '.toEqual("World")',
+          assertionType: 'absence',
+        }),
+        ...getValidAssertions({
           query: queryName,
           matcher: '.not.toHaveClass("btn")',
+          assertionType: 'absence',
         }),
       ],
       []
@@ -307,44 +492,329 @@ ruleTester.run(RULE_NAME, rule, {
     ...queryAllByQueries.reduce<RuleValidTestCase[]>(
       (validRules, queryName) => [
         ...validRules,
-        getValidAssertion({
+        ...getValidAssertions({
           query: queryName,
           matcher: '.toBeNull()',
           shouldUseScreen: true,
+          assertionType: 'absence',
         }),
-        getValidAssertion({
+        ...getValidAssertions({
           query: queryName,
           matcher: '.toBeFalsy()',
           shouldUseScreen: true,
+          assertionType: 'absence',
         }),
-        getValidAssertion({
+        ...getValidAssertions({
           query: queryName,
           matcher: '.not.toBeInTheDocument()',
           shouldUseScreen: true,
+          assertionType: 'absence',
         }),
-        getValidAssertion({
+        ...getValidAssertions({
           query: queryName,
           matcher: '.not.toBeTruthy()',
           shouldUseScreen: true,
+          assertionType: 'absence',
         }),
-        getValidAssertion({
+        ...getValidAssertions({
           query: queryName,
           matcher: '.not.toBeDefined()',
           shouldUseScreen: true,
+          assertionType: 'absence',
         }),
-        getValidAssertion({
+        ...getValidAssertions({
           query: queryName,
           matcher: '.toEqual("World")',
           shouldUseScreen: true,
+          assertionType: 'absence',
         }),
-        getValidAssertion({
+        ...getValidAssertions({
           query: queryName,
           matcher: '.not.toHaveClass("btn")',
           shouldUseScreen: true,
+          assertionType: 'absence',
         }),
       ],
       []
     ),
+
+    // cases: asserting absence incorrectly with `getBy*` queries with absence rule disabled
+    ...getByQueries.reduce<RuleValidTestCase[]>(
+      (invalidRules, queryName) => [
+        ...invalidRules,
+        getDisabledValidAssertion({
+          query: queryName,
+          matcher: '.toBeNull()',
+          assertionType: 'absence',
+        }),
+        getDisabledValidAssertion({
+          query: queryName,
+          matcher: '.toBeFalsy()',
+          assertionType: 'absence',
+        }),
+        getDisabledValidAssertion({
+          query: queryName,
+          matcher: '.not.toBeInTheDocument',
+          assertionType: 'absence',
+        }),
+        getDisabledValidAssertion({
+          query: queryName,
+          matcher: '.not.toBeTruthy()',
+          assertionType: 'absence',
+        }),
+        getDisabledValidAssertion({
+          query: queryName,
+          matcher: '.not.toBeDefined()',
+          assertionType: 'absence',
+        }),
+      ],
+      []
+    ),
+    // cases: asserting absence incorrectly with `screen.getBy*` queries with absence rule disabled
+    ...getByQueries.reduce<RuleValidTestCase[]>(
+      (invalidRules, queryName) => [
+        ...invalidRules,
+        getDisabledValidAssertion({
+          query: queryName,
+          matcher: '.toBeNull()',
+          shouldUseScreen: true,
+          assertionType: 'absence',
+        }),
+        getDisabledValidAssertion({
+          query: queryName,
+          matcher: '.toBeFalsy()',
+          shouldUseScreen: true,
+          assertionType: 'absence',
+        }),
+        getDisabledValidAssertion({
+          query: queryName,
+          matcher: '.not.toBeInTheDocument',
+          shouldUseScreen: true,
+          assertionType: 'absence',
+        }),
+        getDisabledValidAssertion({
+          query: queryName,
+          matcher: '.not.toBeTruthy()',
+          shouldUseScreen: true,
+          assertionType: 'absence',
+        }),
+        getDisabledValidAssertion({
+          query: queryName,
+          matcher: '.not.toBeDefined()',
+          shouldUseScreen: true,
+          assertionType: 'absence',
+        }),
+      ],
+      []
+    ),
+    // cases: asserting absence incorrectly with `getAllBy*` queries with absence rule disabled
+    ...getAllByQueries.reduce<RuleValidTestCase[]>(
+      (invalidRules, queryName) => [
+        ...invalidRules,
+        getDisabledValidAssertion({
+          query: queryName,
+          matcher: '.toBeNull()',
+          assertionType: 'absence',
+        }),
+        getDisabledValidAssertion({
+          query: queryName,
+          matcher: '.toBeFalsy()',
+          assertionType: 'absence',
+        }),
+        getDisabledValidAssertion({
+          query: queryName,
+          matcher: '.not.toBeInTheDocument',
+          assertionType: 'absence',
+        }),
+        getDisabledValidAssertion({
+          query: queryName,
+          matcher: '.not.toBeTruthy()',
+          assertionType: 'absence',
+        }),
+        getDisabledValidAssertion({
+          query: queryName,
+          matcher: '.not.toBeDefined()',
+          assertionType: 'absence',
+        }),
+      ],
+      []
+    ),
+    // cases: asserting absence incorrectly with `screen.getAllBy*` queries with absence rule disabled
+    ...getAllByQueries.reduce<RuleValidTestCase[]>(
+      (invalidRules, queryName) => [
+        ...invalidRules,
+        getDisabledValidAssertion({
+          query: queryName,
+          matcher: '.toBeNull()',
+          shouldUseScreen: true,
+          assertionType: 'absence',
+        }),
+        getDisabledValidAssertion({
+          query: queryName,
+          matcher: '.toBeFalsy()',
+          shouldUseScreen: true,
+          assertionType: 'absence',
+        }),
+        getDisabledValidAssertion({
+          query: queryName,
+          matcher: '.not.toBeInTheDocument',
+          shouldUseScreen: true,
+          assertionType: 'absence',
+        }),
+        getDisabledValidAssertion({
+          query: queryName,
+          matcher: '.not.toBeTruthy()',
+          shouldUseScreen: true,
+          assertionType: 'absence',
+        }),
+        getDisabledValidAssertion({
+          query: queryName,
+          matcher: '.not.toBeDefined()',
+          shouldUseScreen: true,
+          assertionType: 'absence',
+        }),
+      ],
+      []
+    ),
+    // cases: asserting presence incorrectly with `queryBy*` queries with presence rule disabled
+    ...queryByQueries.reduce<RuleValidTestCase[]>(
+      (validRules, queryName) => [
+        ...validRules,
+        getDisabledValidAssertion({
+          query: queryName,
+          matcher: '.toBeTruthy()',
+          assertionType: 'presence',
+        }),
+        getDisabledValidAssertion({
+          query: queryName,
+          matcher: '.toBeDefined()',
+          assertionType: 'presence',
+        }),
+        getDisabledValidAssertion({
+          query: queryName,
+          matcher: '.toBeInTheDocument()',
+          assertionType: 'presence',
+        }),
+        getDisabledValidAssertion({
+          query: queryName,
+          matcher: '.not.toBeFalsy()',
+          assertionType: 'presence',
+        }),
+        getDisabledValidAssertion({
+          query: queryName,
+          matcher: '.not.toBeNull()',
+          assertionType: 'presence',
+        }),
+      ],
+      []
+    ),
+    // cases: asserting presence incorrectly with `screen.queryBy*` queries with presence rule disabled
+    ...queryByQueries.reduce<RuleValidTestCase[]>(
+      (validRules, queryName) => [
+        ...validRules,
+        getDisabledValidAssertion({
+          query: queryName,
+          matcher: '.toBeTruthy()',
+          shouldUseScreen: true,
+          assertionType: 'presence',
+        }),
+        getDisabledValidAssertion({
+          query: queryName,
+          matcher: '.toBeDefined()',
+          shouldUseScreen: true,
+          assertionType: 'presence',
+        }),
+        getDisabledValidAssertion({
+          query: queryName,
+          matcher: '.toBeInTheDocument()',
+          shouldUseScreen: true,
+          assertionType: 'presence',
+        }),
+        getDisabledValidAssertion({
+          query: queryName,
+          matcher: '.not.toBeFalsy()',
+          shouldUseScreen: true,
+          assertionType: 'presence',
+        }),
+        getDisabledValidAssertion({
+          query: queryName,
+          matcher: '.not.toBeNull()',
+          shouldUseScreen: true,
+          assertionType: 'presence',
+        }),
+      ],
+      []
+    ),
+    // cases: asserting presence incorrectly with `queryAllBy*` queries with presence rule disabled
+    ...queryAllByQueries.reduce<RuleValidTestCase[]>(
+      (validRules, queryName) => [
+        ...validRules,
+        getDisabledValidAssertion({
+          query: queryName,
+          matcher: '.toBeTruthy()',
+          assertionType: 'presence',
+        }),
+        getDisabledValidAssertion({
+          query: queryName,
+          matcher: '.toBeDefined()',
+          assertionType: 'presence',
+        }),
+        getDisabledValidAssertion({
+          query: queryName,
+          matcher: '.toBeInTheDocument()',
+          assertionType: 'presence',
+        }),
+        getDisabledValidAssertion({
+          query: queryName,
+          matcher: '.not.toBeFalsy()',
+          assertionType: 'presence',
+        }),
+        getDisabledValidAssertion({
+          query: queryName,
+          matcher: '.not.toBeNull()',
+          assertionType: 'presence',
+        }),
+      ],
+      []
+    ),
+    // cases: asserting presence incorrectly with `screen.queryAllBy*` queries with presence rule disabled
+    ...queryAllByQueries.reduce<RuleValidTestCase[]>(
+      (validRules, queryName) => [
+        ...validRules,
+        getDisabledValidAssertion({
+          query: queryName,
+          matcher: '.toBeTruthy()',
+          shouldUseScreen: true,
+          assertionType: 'presence',
+        }),
+        getDisabledValidAssertion({
+          query: queryName,
+          matcher: '.toBeDefined()',
+          shouldUseScreen: true,
+          assertionType: 'presence',
+        }),
+        getDisabledValidAssertion({
+          query: queryName,
+          matcher: '.toBeInTheDocument()',
+          shouldUseScreen: true,
+          assertionType: 'presence',
+        }),
+        getDisabledValidAssertion({
+          query: queryName,
+          matcher: '.not.toBeFalsy()',
+          shouldUseScreen: true,
+          assertionType: 'presence',
+        }),
+        getDisabledValidAssertion({
+          query: queryName,
+          matcher: '.not.toBeNull()',
+          shouldUseScreen: true,
+          assertionType: 'presence',
+        }),
+      ],
+      []
+    ),
+
     {
       code: 'const el = getByText("button")',
     },
@@ -373,30 +843,35 @@ ruleTester.run(RULE_NAME, rule, {
     ...getByQueries.reduce<RuleInvalidTestCase[]>(
       (invalidRules, queryName) => [
         ...invalidRules,
-        getInvalidAssertion({
+        ...getInvalidAssertions({
           query: queryName,
           matcher: '.toBeNull()',
           messageId: 'wrongAbsenceQuery',
+          assertionType: 'absence',
         }),
-        getInvalidAssertion({
+        ...getInvalidAssertions({
           query: queryName,
           matcher: '.toBeFalsy()',
           messageId: 'wrongAbsenceQuery',
+          assertionType: 'absence',
         }),
-        getInvalidAssertion({
+        ...getInvalidAssertions({
           query: queryName,
           matcher: '.not.toBeInTheDocument()',
           messageId: 'wrongAbsenceQuery',
+          assertionType: 'absence',
         }),
-        getInvalidAssertion({
+        ...getInvalidAssertions({
           query: queryName,
           matcher: '.not.toBeTruthy()',
           messageId: 'wrongAbsenceQuery',
+          assertionType: 'absence',
         }),
-        getInvalidAssertion({
+        ...getInvalidAssertions({
           query: queryName,
           matcher: '.not.toBeDefined()',
           messageId: 'wrongAbsenceQuery',
+          assertionType: 'absence',
         }),
       ],
       []
@@ -405,35 +880,40 @@ ruleTester.run(RULE_NAME, rule, {
     ...getByQueries.reduce<RuleInvalidTestCase[]>(
       (invalidRules, queryName) => [
         ...invalidRules,
-        getInvalidAssertion({
+        ...getInvalidAssertions({
           query: queryName,
           matcher: '.toBeNull()',
           messageId: 'wrongAbsenceQuery',
           shouldUseScreen: true,
+          assertionType: 'absence',
         }),
-        getInvalidAssertion({
+        ...getInvalidAssertions({
           query: queryName,
           matcher: '.toBeFalsy()',
           messageId: 'wrongAbsenceQuery',
           shouldUseScreen: true,
+          assertionType: 'absence',
         }),
-        getInvalidAssertion({
+        ...getInvalidAssertions({
           query: queryName,
           matcher: '.not.toBeInTheDocument()',
           messageId: 'wrongAbsenceQuery',
           shouldUseScreen: true,
+          assertionType: 'absence',
         }),
-        getInvalidAssertion({
+        ...getInvalidAssertions({
           query: queryName,
           matcher: '.not.toBeTruthy()',
           messageId: 'wrongAbsenceQuery',
           shouldUseScreen: true,
+          assertionType: 'absence',
         }),
-        getInvalidAssertion({
+        ...getInvalidAssertions({
           query: queryName,
           matcher: '.not.toBeDefined()',
           messageId: 'wrongAbsenceQuery',
           shouldUseScreen: true,
+          assertionType: 'absence',
         }),
       ],
       []
@@ -442,30 +922,35 @@ ruleTester.run(RULE_NAME, rule, {
     ...getAllByQueries.reduce<RuleInvalidTestCase[]>(
       (invalidRules, queryName) => [
         ...invalidRules,
-        getInvalidAssertion({
+        ...getInvalidAssertions({
           query: queryName,
           matcher: '.toBeNull()',
           messageId: 'wrongAbsenceQuery',
+          assertionType: 'absence',
         }),
-        getInvalidAssertion({
+        ...getInvalidAssertions({
           query: queryName,
           matcher: '.toBeFalsy()',
           messageId: 'wrongAbsenceQuery',
+          assertionType: 'absence',
         }),
-        getInvalidAssertion({
+        ...getInvalidAssertions({
           query: queryName,
           matcher: '.not.toBeInTheDocument()',
           messageId: 'wrongAbsenceQuery',
+          assertionType: 'absence',
         }),
-        getInvalidAssertion({
+        ...getInvalidAssertions({
           query: queryName,
           matcher: '.not.toBeTruthy()',
           messageId: 'wrongAbsenceQuery',
+          assertionType: 'absence',
         }),
-        getInvalidAssertion({
+        ...getInvalidAssertions({
           query: queryName,
           matcher: '.not.toBeDefined()',
           messageId: 'wrongAbsenceQuery',
+          assertionType: 'absence',
         }),
       ],
       []
@@ -474,35 +959,40 @@ ruleTester.run(RULE_NAME, rule, {
     ...getAllByQueries.reduce<RuleInvalidTestCase[]>(
       (invalidRules, queryName) => [
         ...invalidRules,
-        getInvalidAssertion({
+        ...getInvalidAssertions({
           query: queryName,
           matcher: '.toBeNull()',
           messageId: 'wrongAbsenceQuery',
           shouldUseScreen: true,
+          assertionType: 'absence',
         }),
-        getInvalidAssertion({
+        ...getInvalidAssertions({
           query: queryName,
           matcher: '.toBeFalsy()',
           messageId: 'wrongAbsenceQuery',
           shouldUseScreen: true,
+          assertionType: 'absence',
         }),
-        getInvalidAssertion({
+        ...getInvalidAssertions({
           query: queryName,
           matcher: '.not.toBeInTheDocument()',
           messageId: 'wrongAbsenceQuery',
           shouldUseScreen: true,
+          assertionType: 'absence',
         }),
-        getInvalidAssertion({
+        ...getInvalidAssertions({
           query: queryName,
           matcher: '.not.toBeTruthy()',
           messageId: 'wrongAbsenceQuery',
           shouldUseScreen: true,
+          assertionType: 'absence',
         }),
-        getInvalidAssertion({
+        ...getInvalidAssertions({
           query: queryName,
           matcher: '.not.toBeDefined()',
           messageId: 'wrongAbsenceQuery',
           shouldUseScreen: true,
+          assertionType: 'absence',
         }),
       ],
       []
@@ -511,30 +1001,35 @@ ruleTester.run(RULE_NAME, rule, {
     ...queryByQueries.reduce<RuleInvalidTestCase[]>(
       (validRules, queryName) => [
         ...validRules,
-        getInvalidAssertion({
+        ...getInvalidAssertions({
           query: queryName,
           matcher: '.toBeTruthy()',
           messageId: 'wrongPresenceQuery',
+          assertionType: 'presence',
         }),
-        getInvalidAssertion({
+        ...getInvalidAssertions({
           query: queryName,
           matcher: '.toBeDefined()',
           messageId: 'wrongPresenceQuery',
+          assertionType: 'presence',
         }),
-        getInvalidAssertion({
+        ...getInvalidAssertions({
           query: queryName,
           matcher: '.toBeInTheDocument()',
           messageId: 'wrongPresenceQuery',
+          assertionType: 'presence',
         }),
-        getInvalidAssertion({
+        ...getInvalidAssertions({
           query: queryName,
           matcher: '.not.toBeFalsy()',
           messageId: 'wrongPresenceQuery',
+          assertionType: 'presence',
         }),
-        getInvalidAssertion({
+        ...getInvalidAssertions({
           query: queryName,
           matcher: '.not.toBeNull()',
           messageId: 'wrongPresenceQuery',
+          assertionType: 'presence',
         }),
       ],
       []
@@ -543,35 +1038,40 @@ ruleTester.run(RULE_NAME, rule, {
     ...queryByQueries.reduce<RuleInvalidTestCase[]>(
       (validRules, queryName) => [
         ...validRules,
-        getInvalidAssertion({
+        ...getInvalidAssertions({
           query: queryName,
           matcher: '.toBeTruthy()',
           messageId: 'wrongPresenceQuery',
           shouldUseScreen: true,
+          assertionType: 'presence',
         }),
-        getInvalidAssertion({
+        ...getInvalidAssertions({
           query: queryName,
           matcher: '.toBeDefined()',
           messageId: 'wrongPresenceQuery',
           shouldUseScreen: true,
+          assertionType: 'presence',
         }),
-        getInvalidAssertion({
+        ...getInvalidAssertions({
           query: queryName,
           matcher: '.toBeInTheDocument()',
           messageId: 'wrongPresenceQuery',
           shouldUseScreen: true,
+          assertionType: 'presence',
         }),
-        getInvalidAssertion({
+        ...getInvalidAssertions({
           query: queryName,
           matcher: '.not.toBeFalsy()',
           messageId: 'wrongPresenceQuery',
           shouldUseScreen: true,
+          assertionType: 'presence',
         }),
-        getInvalidAssertion({
+        ...getInvalidAssertions({
           query: queryName,
           matcher: '.not.toBeNull()',
           messageId: 'wrongPresenceQuery',
           shouldUseScreen: true,
+          assertionType: 'presence',
         }),
       ],
       []
@@ -580,30 +1080,35 @@ ruleTester.run(RULE_NAME, rule, {
     ...queryAllByQueries.reduce<RuleInvalidTestCase[]>(
       (validRules, queryName) => [
         ...validRules,
-        getInvalidAssertion({
+        ...getInvalidAssertions({
           query: queryName,
           matcher: '.toBeTruthy()',
           messageId: 'wrongPresenceQuery',
+          assertionType: 'presence',
         }),
-        getInvalidAssertion({
+        ...getInvalidAssertions({
           query: queryName,
           matcher: '.toBeDefined()',
           messageId: 'wrongPresenceQuery',
+          assertionType: 'presence',
         }),
-        getInvalidAssertion({
+        ...getInvalidAssertions({
           query: queryName,
           matcher: '.toBeInTheDocument()',
           messageId: 'wrongPresenceQuery',
+          assertionType: 'presence',
         }),
-        getInvalidAssertion({
+        ...getInvalidAssertions({
           query: queryName,
           matcher: '.not.toBeFalsy()',
           messageId: 'wrongPresenceQuery',
+          assertionType: 'presence',
         }),
-        getInvalidAssertion({
+        ...getInvalidAssertions({
           query: queryName,
           matcher: '.not.toBeNull()',
           messageId: 'wrongPresenceQuery',
+          assertionType: 'presence',
         }),
       ],
       []
@@ -612,35 +1117,40 @@ ruleTester.run(RULE_NAME, rule, {
     ...queryAllByQueries.reduce<RuleInvalidTestCase[]>(
       (validRules, queryName) => [
         ...validRules,
-        getInvalidAssertion({
+        ...getInvalidAssertions({
           query: queryName,
           matcher: '.toBeTruthy()',
           messageId: 'wrongPresenceQuery',
           shouldUseScreen: true,
+          assertionType: 'presence',
         }),
-        getInvalidAssertion({
+        ...getInvalidAssertions({
           query: queryName,
           matcher: '.toBeDefined()',
           messageId: 'wrongPresenceQuery',
           shouldUseScreen: true,
+          assertionType: 'presence',
         }),
-        getInvalidAssertion({
+        ...getInvalidAssertions({
           query: queryName,
           matcher: '.toBeInTheDocument()',
           messageId: 'wrongPresenceQuery',
           shouldUseScreen: true,
+          assertionType: 'presence',
         }),
-        getInvalidAssertion({
+        ...getInvalidAssertions({
           query: queryName,
           matcher: '.not.toBeFalsy()',
           messageId: 'wrongPresenceQuery',
           shouldUseScreen: true,
+          assertionType: 'presence',
         }),
-        getInvalidAssertion({
+        ...getInvalidAssertions({
           query: queryName,
           matcher: '.not.toBeNull()',
           messageId: 'wrongPresenceQuery',
           shouldUseScreen: true,
+          assertionType: 'presence',
         }),
       ],
       []

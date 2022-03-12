@@ -5,7 +5,12 @@ import { findClosestCallNode, isMemberExpression } from '../node-utils';
 
 export const RULE_NAME = 'prefer-presence-queries';
 export type MessageIds = 'wrongAbsenceQuery' | 'wrongPresenceQuery';
-type Options = [];
+export type Options = [
+  {
+    presence?: boolean;
+    absence?: boolean;
+  }
+];
 
 export default createTestingLibraryRule<Options, MessageIds>({
   name: RULE_NAME,
@@ -26,12 +31,30 @@ export default createTestingLibraryRule<Options, MessageIds>({
       wrongAbsenceQuery:
         'Use `queryBy*` queries rather than `getBy*` for checking element is NOT present',
     },
-    schema: [],
+    schema: [
+      {
+        type: 'object',
+        additionalProperties: false,
+        properties: {
+          presence: {
+            type: 'boolean',
+          },
+          absence: {
+            type: 'boolean',
+          },
+        },
+      },
+    ],
     type: 'suggestion',
   },
-  defaultOptions: [],
+  defaultOptions: [
+    {
+      presence: true,
+      absence: true,
+    },
+  ],
 
-  create(context, _, helpers) {
+  create(context, [{ absence = true, presence = true }], helpers) {
     return {
       'CallExpression Identifier'(node: TSESTree.Identifier) {
         const expectCallNode = findClosestCallNode(node, 'expect');
@@ -55,9 +78,9 @@ export default createTestingLibraryRule<Options, MessageIds>({
           return;
         }
 
-        if (isPresenceAssert && !isPresenceQuery) {
+        if (presence && isPresenceAssert && !isPresenceQuery) {
           context.report({ node, messageId: 'wrongPresenceQuery' });
-        } else if (isAbsenceAssert && isPresenceQuery) {
+        } else if (absence && isAbsenceAssert && isPresenceQuery) {
           context.report({ node, messageId: 'wrongAbsenceQuery' });
         }
       },
