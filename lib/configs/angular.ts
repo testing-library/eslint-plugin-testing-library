@@ -11,6 +11,7 @@ export = {
     'testing-library/no-container': 'error',
     'testing-library/no-debugging-utils': 'error',
     'testing-library/no-dom-import': ['error', 'angular'],
+    'testing-library/no-global-regexp-flag-in-query': 'error',
     'testing-library/no-node-access': 'error',
     'testing-library/no-promise-in-fire-event': 'error',
     'testing-library/no-render-in-setup': 'error',
