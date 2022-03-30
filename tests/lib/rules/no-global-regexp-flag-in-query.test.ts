@@ -81,54 +81,69 @@ ruleTester.run(RULE_NAME, rule, {
           messageId: 'noGlobalRegExpFlagInQuery',
         },
       ],
+      output: `
+        import { screen } from '@testing-library/dom'
+        screen.getByText(/hello/)`,
     },
     {
       code: `
-          import { screen } from '@testing-library/dom'
-          screen.findByRole('button', {name: /hello/g})`,
+        import { screen } from '@testing-library/dom'
+        screen.findByRole('button', {name: /hellogg/g})`,
       errors: [
         {
           messageId: 'noGlobalRegExpFlagInQuery',
           line: 3,
-          column: 46,
+          column: 44,
         },
       ],
+      output: `
+        import { screen } from '@testing-library/dom'
+        screen.findByRole('button', {name: /hellogg/})`,
     },
     {
       code: `
-            import { screen } from '@testing-library/dom'
-            screen.findByRole('button', {otherProp: true, name: /hello/g})`,
+        import { screen } from '@testing-library/dom'
+        screen.findByRole('button', {otherProp: true, name: /hello/g})`,
       errors: [
         {
           messageId: 'noGlobalRegExpFlagInQuery',
           line: 3,
-          column: 65,
+          column: 61,
         },
       ],
+      output: `
+        import { screen } from '@testing-library/dom'
+        screen.findByRole('button', {otherProp: true, name: /hello/})`,
     },
     {
       code: `
-            const utils = render(<Component/>)
-            utils.findByRole('button', {name: /hello/ig})`,
+        const utils = render(<Component/>)
+        utils.findByRole('button', {name: /hello/ig})`,
       errors: [
         {
           messageId: 'noGlobalRegExpFlagInQuery',
           line: 3,
-          column: 47,
+          column: 43,
         },
       ],
+      output: `
+        const utils = render(<Component/>)
+        utils.findByRole('button', {name: /hello/i})`,
     },
     {
       code: `
-            const {queryAllByLabelText} = render(<Component/>)
-            queryAllByLabelText(/hello/ig)`,
+        const {queryAllByLabelText} = render(<Component/>)
+        queryAllByLabelText(/hello/gi)`,
       errors: [
         {
           messageId: 'noGlobalRegExpFlagInQuery',
           line: 3,
-          column: 33,
+          column: 29,
         },
       ],
+      output: `
+        const {queryAllByLabelText} = render(<Component/>)
+        queryAllByLabelText(/hello/i)`,
     },
   ],
 });

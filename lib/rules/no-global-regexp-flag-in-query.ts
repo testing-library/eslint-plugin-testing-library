@@ -29,6 +29,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
       noGlobalRegExpFlagInQuery:
         'Avoid using the global RegExp flag (/g) in queries',
     },
+    fixable: 'code',
     schema: [],
   },
   defaultOptions: [],
@@ -41,6 +42,17 @@ export default createTestingLibraryRule<Options, MessageIds>({
         context.report({
           node: regexpNode,
           messageId: 'noGlobalRegExpFlagInQuery',
+          fix(fixer) {
+            const splitter = regexpNode.raw.lastIndexOf('/');
+            const raw = regexpNode.raw.substring(0, splitter);
+            const flags = regexpNode.raw.substring(splitter + 1);
+            const flagsWithoutGlobal = flags.replace('g', '');
+
+            return fixer.replaceText(
+              regexpNode,
+              `${raw}/${flagsWithoutGlobal}`
+            );
+          },
         });
       }
     }
