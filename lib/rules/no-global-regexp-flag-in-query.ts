@@ -62,6 +62,19 @@ export default createTestingLibraryRule<Options, MessageIds>({
       return false;
     }
 
+    function getArguments(identifierNode: TSESTree.Identifier) {
+      if (isCallExpression(identifierNode.parent)) {
+        return identifierNode.parent.arguments;
+      } else if (
+        isMemberExpression(identifierNode.parent) &&
+        isCallExpression(identifierNode.parent.parent)
+      ) {
+        return identifierNode.parent.parent.arguments;
+      }
+
+      return [];
+    }
+
     return {
       CallExpression(node) {
         const identifierNode = getDeepestIdentifierNode(node);
@@ -69,24 +82,22 @@ export default createTestingLibraryRule<Options, MessageIds>({
           return;
         }
 
-        const [firstArg, secondArg] = isCallExpression(identifierNode.parent)
-          ? identifierNode.parent.arguments
-          : isMemberExpression(identifierNode.parent) &&
-            isCallExpression(identifierNode.parent.parent)
-          ? identifierNode.parent.parent.arguments
-          : [];
+        const [firstArg, secondArg] = getArguments(identifierNode);
 
-        if (!report(firstArg)) {
-          if (isObjectExpression(secondArg)) {
-            const namePropertyNode = secondArg.properties.find(
-              (p) =>
-                isProperty(p) &&
-                ASTUtils.isIdentifier(p.key) &&
-                p.key.name === 'name' &&
-                isLiteral(p.value)
-            ) as TSESTree.ObjectLiteralElement & { value: TSESTree.Literal };
-            report(namePropertyNode.value);
-          }
+        const firstArgumentHasError = report(firstArg);
+        if (firstArgumentHasError) {
+          return;
+        }
+
+        if (isObjectExpression(secondArg)) {
+          const namePropertyNode = secondArg.properties.find(
+            (p) =>
+              isProperty(p) &&
+              ASTUtils.isIdentifier(p.key) &&
+              p.key.name === 'name' &&
+              isLiteral(p.value)
+          ) as TSESTree.ObjectLiteralElement & { value: TSESTree.Literal };
+          report(namePropertyNode.value);
         }
       },
     };

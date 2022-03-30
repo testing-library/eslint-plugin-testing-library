@@ -26,7 +26,7 @@ ruleTester.run(RULE_NAME, rule, {
     `,
     `
         import { screen } from '@testing-library/dom'
-        screen.findByRole('button', {name: /hello/i})
+        screen.findByRole('button', {name: /hello/im})
     `,
     `
         import { screen } from '@testing-library/dom'
@@ -34,7 +34,7 @@ ruleTester.run(RULE_NAME, rule, {
     `,
     `
         const utils = render(<Component/>)
-        utils.findByRole('button', {name: /hello/i})
+        utils.findByRole('button', {name: /hello/m})
     `,
     `
       const {queryAllByPlaceholderText} = render(<Component/>)
@@ -158,7 +158,7 @@ ruleTester.run(RULE_NAME, rule, {
     {
       code: `
         import { within } from '@testing-library/dom'
-        within(element).findByRole('button', {name: /hello/ig})`,
+        within(element).findByRole('button', {name: /hello/igm})`,
       errors: [
         {
           messageId: 'noGlobalRegExpFlagInQuery',
@@ -168,7 +168,7 @@ ruleTester.run(RULE_NAME, rule, {
       ],
       output: `
         import { within } from '@testing-library/dom'
-        within(element).findByRole('button', {name: /hello/i})`,
+        within(element).findByRole('button', {name: /hello/im})`,
     },
     {
       code: `
