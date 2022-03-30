@@ -6,6 +6,8 @@ import {
   isCallExpression,
   isProperty,
   isObjectExpression,
+  getDeepestIdentifierNode,
+  isLiteral,
 } from '../node-utils';
 
 export const RULE_NAME = 'no-global-regexp-flag-in-query';
@@ -34,62 +36,57 @@ export default createTestingLibraryRule<Options, MessageIds>({
   },
   defaultOptions: [],
   create(context, _, helpers) {
-    function lint(
-      regexpNode: TSESTree.Literal,
-      identifier: TSESTree.Identifier
-    ) {
-      if (helpers.isQuery(identifier)) {
+    function report(literalNode: TSESTree.Node) {
+      if (
+        isLiteral(literalNode) &&
+        'regex' in literalNode &&
+        literalNode.regex.flags.includes('g')
+      ) {
         context.report({
-          node: regexpNode,
+          node: literalNode,
           messageId: 'noGlobalRegExpFlagInQuery',
           fix(fixer) {
-            const splitter = regexpNode.raw.lastIndexOf('/');
-            const raw = regexpNode.raw.substring(0, splitter);
-            const flags = regexpNode.raw.substring(splitter + 1);
+            const splitter = literalNode.raw.lastIndexOf('/');
+            const raw = literalNode.raw.substring(0, splitter);
+            const flags = literalNode.raw.substring(splitter + 1);
             const flagsWithoutGlobal = flags.replace('g', '');
 
             return fixer.replaceText(
-              regexpNode,
+              literalNode,
               `${raw}/${flagsWithoutGlobal}`
             );
           },
         });
+        return true;
       }
+      return false;
     }
 
     return {
-      [`CallExpression[callee.type=MemberExpression] > Literal[regex.flags=/g/].arguments`](
-        node: TSESTree.Literal
-      ) {
-        if (
-          isCallExpression(node.parent) &&
-          isMemberExpression(node.parent.callee) &&
-          ASTUtils.isIdentifier(node.parent.callee.property)
-        ) {
-          lint(node, node.parent.callee.property);
+      CallExpression(node) {
+        const identifierNode = getDeepestIdentifierNode(node);
+        if (!identifierNode || !helpers.isQuery(identifierNode)) {
+          return;
         }
-      },
-      [`CallExpression[callee.type=Identifier] > Literal[regex.flags=/g/].arguments`](
-        node: TSESTree.Literal
-      ) {
-        if (
-          isCallExpression(node.parent) &&
-          ASTUtils.isIdentifier(node.parent.callee)
-        ) {
-          lint(node, node.parent.callee);
-        }
-      },
-      [`ObjectExpression:has(Property>[name="name"]) Literal[regex.flags=/g/]`](
-        node: TSESTree.Literal
-      ) {
-        if (
-          isProperty(node.parent) &&
-          isObjectExpression(node.parent.parent) &&
-          isCallExpression(node.parent.parent.parent) &&
-          isMemberExpression(node.parent.parent.parent.callee) &&
-          ASTUtils.isIdentifier(node.parent.parent.parent.callee.property)
-        ) {
-          lint(node, node.parent.parent.parent.callee.property);
+
+        const [firstArg, secondArg] = isCallExpression(identifierNode.parent)
+          ? identifierNode.parent.arguments
+          : isMemberExpression(identifierNode.parent) &&
+            isCallExpression(identifierNode.parent.parent)
+          ? identifierNode.parent.parent.arguments
+          : [];
+
+        if (!report(firstArg)) {
+          if (isObjectExpression(secondArg)) {
+            const namePropertyNode = secondArg.properties.find(
+              (p) =>
+                isProperty(p) &&
+                ASTUtils.isIdentifier(p.key) &&
+                p.key.name === 'name' &&
+                isLiteral(p.value)
+            ) as TSESTree.ObjectLiteralElement & { value: TSESTree.Literal };
+            report(namePropertyNode.value);
+          }
         }
       },
     };
