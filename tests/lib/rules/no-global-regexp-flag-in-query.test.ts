@@ -41,6 +41,14 @@ ruleTester.run(RULE_NAME, rule, {
       queryAllByPlaceholderText(/hello/i)
     `,
     `
+        import { within } from '@testing-library/dom'
+        within(element).findByRole('button', {name: /hello/i})
+    `,
+    `
+        import { within } from '@testing-library/dom'
+        within(element).queryByText('Hello')
+    `,
+    `
         const text = 'hello';
         /hello/g.test(text)
         text.match(/hello/g)
@@ -146,6 +154,36 @@ ruleTester.run(RULE_NAME, rule, {
       output: `
         const {queryAllByLabelText} = render(<Component/>)
         queryAllByLabelText(/hello/i)`,
+    },
+    {
+      code: `
+        import { within } from '@testing-library/dom'
+        within(element).findByRole('button', {name: /hello/ig})`,
+      errors: [
+        {
+          messageId: 'noGlobalRegExpFlagInQuery',
+          line: 3,
+          column: 53,
+        },
+      ],
+      output: `
+        import { within } from '@testing-library/dom'
+        within(element).findByRole('button', {name: /hello/i})`,
+    },
+    {
+      code: `
+        import { within } from '@testing-library/dom'
+        within(element).queryAllByText(/hello/ig)`,
+      errors: [
+        {
+          messageId: 'noGlobalRegExpFlagInQuery',
+          line: 3,
+          column: 40,
+        },
+      ],
+      output: `
+        import { within } from '@testing-library/dom'
+        within(element).queryAllByText(/hello/i)`,
     },
   ],
 });
