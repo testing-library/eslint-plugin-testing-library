@@ -79,6 +79,8 @@ ruleTester.run(RULE_NAME, rule, {
       errors: [
         {
           messageId: 'noGlobalRegExpFlagInQuery',
+          line: 3,
+          column: 26,
         },
       ],
       output: `
