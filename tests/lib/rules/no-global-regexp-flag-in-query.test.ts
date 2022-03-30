@@ -37,8 +37,38 @@ ruleTester.run(RULE_NAME, rule, {
         utils.findByRole('button', {name: /hello/i})
     `,
     `
-        const {queryAllByPlaceholderText} = render(<Component/>)
-        queryAllByPlaceholderText(/hello/i)
+      const {queryAllByPlaceholderText} = render(<Component/>)
+      queryAllByPlaceholderText(/hello/i)
+    `,
+    `
+        const text = 'hello';
+        /hello/g.test(text)
+        text.match(/hello/g)
+    `,
+    `
+        const text = somethingElse()
+        /hello/g.test(text)
+        text.match(/hello/g)
+    `,
+    `
+        import somethingElse from 'somethingElse'
+        somethingElse.lookup(/hello/g)
+    `,
+    `
+        import { screen } from '@testing-library/dom'
+        screen.notAQuery(/hello/g)
+    `,
+    `
+        import { screen } from '@testing-library/dom'
+        screen.notAQuery('button', {name: /hello/g})
+    `,
+    `
+        const utils = render(<Component/>)
+        utils.notAQuery('button', {name: /hello/i})
+    `,
+    `
+        const utils = render(<Component/>)
+        utils.notAQuery(/hello/i)
     `,
   ],
   invalid: [
@@ -59,6 +89,8 @@ ruleTester.run(RULE_NAME, rule, {
       errors: [
         {
           messageId: 'noGlobalRegExpFlagInQuery',
+          line: 3,
+          column: 46,
         },
       ],
     },
@@ -69,6 +101,8 @@ ruleTester.run(RULE_NAME, rule, {
       errors: [
         {
           messageId: 'noGlobalRegExpFlagInQuery',
+          line: 3,
+          column: 65,
         },
       ],
     },
@@ -79,6 +113,8 @@ ruleTester.run(RULE_NAME, rule, {
       errors: [
         {
           messageId: 'noGlobalRegExpFlagInQuery',
+          line: 3,
+          column: 47,
         },
       ],
     },
@@ -89,6 +125,8 @@ ruleTester.run(RULE_NAME, rule, {
       errors: [
         {
           messageId: 'noGlobalRegExpFlagInQuery',
+          line: 3,
+          column: 33,
         },
       ],
     },

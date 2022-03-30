@@ -1,9 +1,8 @@
-import { TSESTree } from '@typescript-eslint/utils';
+import { ASTUtils, TSESTree } from '@typescript-eslint/utils';
 
 import { createTestingLibraryRule } from '../create-testing-library-rule';
 import {
   isMemberExpression,
-  isIdentifier,
   isCallExpression,
   isProperty,
   isObjectExpression,
@@ -20,10 +19,10 @@ export default createTestingLibraryRule<Options, MessageIds>({
     docs: {
       description: 'Disallow the use of the global RegExp flag (/g) in queries',
       recommendedConfig: {
-        dom: 'error',
-        angular: 'error',
-        react: 'error',
-        vue: 'error',
+        dom: false,
+        angular: false,
+        react: false,
+        vue: false,
       },
     },
     messages: {
@@ -53,7 +52,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
         if (
           isCallExpression(node.parent) &&
           isMemberExpression(node.parent.callee) &&
-          isIdentifier(node.parent.callee.property)
+          ASTUtils.isIdentifier(node.parent.callee.property)
         ) {
           lint(node, node.parent.callee.property);
         }
@@ -61,7 +60,10 @@ export default createTestingLibraryRule<Options, MessageIds>({
       [`CallExpression[callee.type=Identifier] > Literal[regex.flags=/g/].arguments`](
         node: TSESTree.Literal
       ) {
-        if (isCallExpression(node.parent) && isIdentifier(node.parent.callee)) {
+        if (
+          isCallExpression(node.parent) &&
+          ASTUtils.isIdentifier(node.parent.callee)
+        ) {
           lint(node, node.parent.callee);
         }
       },
@@ -73,7 +75,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
           isObjectExpression(node.parent.parent) &&
           isCallExpression(node.parent.parent.parent) &&
           isMemberExpression(node.parent.parent.parent.callee) &&
-          isIdentifier(node.parent.parent.parent.callee.property)
+          ASTUtils.isIdentifier(node.parent.parent.parent.callee.property)
         ) {
           lint(node, node.parent.parent.parent.callee.property);
         }

@@ -8,7 +8,6 @@ export = {
     'testing-library/await-async-query': 'error',
     'testing-library/await-async-utils': 'error',
     'testing-library/no-await-sync-query': 'error',
-    'testing-library/no-global-regexp-flag-in-query': 'error',
     'testing-library/no-promise-in-fire-event': 'error',
     'testing-library/no-wait-for-empty-callback': 'error',
     'testing-library/no-wait-for-multiple-assertions': 'error',
