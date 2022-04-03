@@ -78,6 +78,19 @@ ruleTester.run(RULE_NAME, rule, {
         const utils = render(<Component/>)
         utils.notAQuery(/hello/i)
     `,
+
+    // issue #565
+    {
+      code: `
+      import { screen } from "@testing-library/react"
+
+      describe("App", () => {
+        test("is rendered", async () => {
+          await screen.findByText("Hello World", { exact: false });
+        })
+      })
+    `,
+    },
   ],
   invalid: [
     {

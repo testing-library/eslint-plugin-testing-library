@@ -96,8 +96,11 @@ export default createTestingLibraryRule<Options, MessageIds>({
               ASTUtils.isIdentifier(p.key) &&
               p.key.name === 'name' &&
               isLiteral(p.value)
-          ) as TSESTree.ObjectLiteralElement & { value: TSESTree.Literal };
-          report(namePropertyNode.value);
+          ) as TSESTree.Property | undefined;
+
+          if (namePropertyNode) {
+            report(namePropertyNode.value);
+          }
         }
       },
     };
