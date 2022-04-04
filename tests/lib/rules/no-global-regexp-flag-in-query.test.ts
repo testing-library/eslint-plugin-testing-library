@@ -80,8 +80,7 @@ ruleTester.run(RULE_NAME, rule, {
     `,
 
     // issue #565
-    {
-      code: `
+    `
       import { screen } from "@testing-library/react"
 
       describe("App", () => {
@@ -90,7 +89,6 @@ ruleTester.run(RULE_NAME, rule, {
         })
       })
     `,
-    },
   ],
   invalid: [
     {
