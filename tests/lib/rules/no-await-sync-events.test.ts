@@ -169,7 +169,6 @@ ruleTester.run(RULE_NAME, rule, {
 
     // valid tests for fire-event when only user-event set in eventModules
     ...FIRE_EVENT_FUNCTIONS.map((func) => ({
-      name: `await fireEvent.${func} - "fire-event" disabled in eventModules option`,
       code: `
         import { fireEvent } from '@testing-library/framework';
         test('should not report fireEvent.${func} sync event awaited', async() => {
@@ -181,7 +180,6 @@ ruleTester.run(RULE_NAME, rule, {
 
     // valid tests for user-event when only fire-event set in eventModules
     ...USER_EVENT_SYNC_FUNCTIONS.map((func) => ({
-      name: `await userEvent.${func} - "user-event" disabled in eventModules option`,
       code: `
         import userEvent from '@testing-library/user-event';
         test('should not report userEvent.${func} sync event awaited', async() => {
@@ -239,7 +237,6 @@ ruleTester.run(RULE_NAME, rule, {
     ...FIRE_EVENT_FUNCTIONS.map(
       (func) =>
         ({
-          name: `await fireEvent.${func} - "fire-event" set in eventModules option`,
           code: `
         import { fireEvent } from '@testing-library/framework';
         test('should report fireEvent.${func} sync event awaited', async() => {
@@ -262,7 +259,6 @@ ruleTester.run(RULE_NAME, rule, {
     ...USER_EVENT_SYNC_FUNCTIONS.map(
       (func) =>
         ({
-          name: `await userEvent.${func} - "user-event" set in eventModules option`,
           code: `
         import userEvent from '@testing-library/user-event';
         test('should report userEvent.${func} sync event awaited', async() => {
