@@ -9,11 +9,14 @@ import {
   isProperty,
 } from '../node-utils';
 
+const USER_EVENT_ASYNC_EXCEPTIONS: string[] = ['type', 'keyboard'];
+const VALID_EVENT_MODULES = ['fire-event', 'user-event'] as const;
+
 export const RULE_NAME = 'no-await-sync-events';
 export type MessageIds = 'noAwaitSyncEvents';
-type Options = [];
-
-const USER_EVENT_ASYNC_EXCEPTIONS: string[] = ['type', 'keyboard'];
+type Options = [
+  { eventModules?: readonly typeof VALID_EVENT_MODULES[number][] }
+];
 
 export default createTestingLibraryRule<Options, MessageIds>({
   name: RULE_NAME,
@@ -32,11 +35,23 @@ export default createTestingLibraryRule<Options, MessageIds>({
       noAwaitSyncEvents:
         '`{{ name }}` is sync and does not need `await` operator',
     },
-    schema: [],
+    schema: [
+      {
+        type: 'object',
+        properties: {
+          eventModules: {
+            enum: VALID_EVENT_MODULES,
+          },
+        },
+        additionalProperties: false,
+      },
+    ],
   },
-  defaultOptions: [],
+  defaultOptions: [{ eventModules: VALID_EVENT_MODULES }],
 
-  create(context, _, helpers) {
+  create(context, [options], helpers) {
+    const { eventModules = VALID_EVENT_MODULES } = options;
+
     // userEvent.type() and userEvent.keyboard() are exceptions, which returns a
     // Promise. But it is only necessary to wait when delay option other than 0
     // is specified. So this rule has a special exception for the case await:
@@ -50,11 +65,22 @@ export default createTestingLibraryRule<Options, MessageIds>({
           return;
         }
 
-        const isSimulateEventMethod =
-          helpers.isUserEventMethod(simulateEventFunctionIdentifier) ||
-          helpers.isFireEventMethod(simulateEventFunctionIdentifier);
+        const isUserEventMethod = helpers.isUserEventMethod(
+          simulateEventFunctionIdentifier
+        );
+        const isFireEventMethod = helpers.isFireEventMethod(
+          simulateEventFunctionIdentifier
+        );
+        const isSimulateEventMethod = isUserEventMethod || isFireEventMethod;
 
         if (!isSimulateEventMethod) {
+          return;
+        }
+
+        if (isFireEventMethod && !eventModules.includes('fire-event')) {
+          return;
+        }
+        if (isUserEventMethod && !eventModules.includes('user-event')) {
           return;
         }
 

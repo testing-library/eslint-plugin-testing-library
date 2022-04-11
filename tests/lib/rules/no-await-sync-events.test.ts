@@ -166,6 +166,28 @@ ruleTester.run(RULE_NAME, rule, {
         });
       `,
     },
+
+    // valid tests for fire-event when only user-event set in eventModules
+    ...FIRE_EVENT_FUNCTIONS.map((func) => ({
+      code: `
+        import { fireEvent } from '@testing-library/framework';
+        test('should not report fireEvent.${func} sync event awaited', async() => {
+          await fireEvent.${func}('foo');
+        });
+      `,
+      options: [{ eventModules: 'user-event' }],
+    })),
+
+    // valid tests for user-event when only fire-event set in eventModules
+    ...USER_EVENT_SYNC_FUNCTIONS.map((func) => ({
+      code: `
+        import userEvent from '@testing-library/user-event';
+        test('should not report userEvent.${func} sync event awaited', async() => {
+          await userEvent.${func}('foo');
+        });
+      `,
+      options: [{ eventModules: 'fire-event' }],
+    })),
   ],
 
   invalid: [
@@ -199,6 +221,51 @@ ruleTester.run(RULE_NAME, rule, {
           await userEvent.${func}('foo');
         });
       `,
+          errors: [
+            {
+              line: 4,
+              column: 17,
+              messageId: 'noAwaitSyncEvents',
+              data: { name: `userEvent.${func}` },
+            },
+          ],
+        } as const)
+    ),
+
+    // sync fireEvent methods with await operator are not valid
+    // when only fire-event set in eventModules
+    ...FIRE_EVENT_FUNCTIONS.map(
+      (func) =>
+        ({
+          code: `
+        import { fireEvent } from '@testing-library/framework';
+        test('should report fireEvent.${func} sync event awaited', async() => {
+          await fireEvent.${func}('foo');
+        });
+      `,
+          options: [{ eventModules: 'fire-event' }],
+          errors: [
+            {
+              line: 4,
+              column: 17,
+              messageId: 'noAwaitSyncEvents',
+              data: { name: `fireEvent.${func}` },
+            },
+          ],
+        } as const)
+    ),
+    // sync userEvent sync methods with await operator are not valid
+    // when only fire-event set in eventModules
+    ...USER_EVENT_SYNC_FUNCTIONS.map(
+      (func) =>
+        ({
+          code: `
+        import userEvent from '@testing-library/user-event';
+        test('should report userEvent.${func} sync event awaited', async() => {
+          await userEvent.${func}('foo');
+        });
+      `,
+          options: [{ eventModules: 'user-event' }],
           errors: [
             {
               line: 4,
