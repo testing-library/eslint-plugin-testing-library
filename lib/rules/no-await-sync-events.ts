@@ -40,7 +40,11 @@ export default createTestingLibraryRule<Options, MessageIds>({
         type: 'object',
         properties: {
           eventModules: {
-            enum: VALID_EVENT_MODULES,
+            type: 'array',
+            minItems: 1,
+            items: {
+              enum: VALID_EVENT_MODULES,
+            },
           },
         },
         additionalProperties: false,
