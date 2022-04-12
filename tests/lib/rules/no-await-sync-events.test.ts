@@ -175,7 +175,7 @@ ruleTester.run(RULE_NAME, rule, {
           await fireEvent.${func}('foo');
         });
       `,
-      options: [{ eventModules: 'user-event' }],
+      options: [{ eventModules: ['user-event'] }],
     })),
 
     // valid tests for user-event when only fire-event set in eventModules
@@ -186,7 +186,7 @@ ruleTester.run(RULE_NAME, rule, {
           await userEvent.${func}('foo');
         });
       `,
-      options: [{ eventModules: 'fire-event' }],
+      options: [{ eventModules: ['fire-event'] }],
     })),
   ],
 
@@ -243,7 +243,7 @@ ruleTester.run(RULE_NAME, rule, {
           await fireEvent.${func}('foo');
         });
       `,
-          options: [{ eventModules: 'fire-event' }],
+          options: [{ eventModules: ['fire-event'] }],
           errors: [
             {
               line: 4,
@@ -265,7 +265,7 @@ ruleTester.run(RULE_NAME, rule, {
           await userEvent.${func}('foo');
         });
       `,
-          options: [{ eventModules: 'user-event' }],
+          options: [{ eventModules: ['user-event'] }],
           errors: [
             {
               line: 4,
