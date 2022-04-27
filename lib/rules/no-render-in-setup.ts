@@ -55,6 +55,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
         angular: 'error',
         react: 'error',
         vue: 'error',
+        marko: 'error'
       },
     },
     messages: {
