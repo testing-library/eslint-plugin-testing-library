@@ -12,6 +12,7 @@ methods.
 >
 > - `@testing-library/vue` (supported by this plugin)
 > - `@testing-library/svelte` (not supported yet by this plugin)
+> - `@marko/testing-library` (supported by this plugin)
 
 Examples of **incorrect** code for this rule:
 

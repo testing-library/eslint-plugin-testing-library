@@ -76,3 +76,4 @@ With the configuration above, if the user imports from `@testing-library/dom` or
 - [Angular Testing Library API](https://testing-library.com/docs/angular-testing-library/api)
 - [React Testing Library API](https://testing-library.com/docs/react-testing-library/api)
 - [Vue Testing Library API](https://testing-library.com/docs/vue-testing-library/api)
+- [Marko Testing Library API](https://testing-library.com/docs/marko-testing-library/api)

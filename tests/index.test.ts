@@ -58,7 +58,13 @@ it("should have run 'generate:configs' script when changing config rules", async
 it('should export configs that refer to actual rules', () => {
   const allConfigs = plugin.configs;
 
-  expect(Object.keys(allConfigs)).toEqual(['dom', 'angular', 'react', 'vue']);
+  expect(Object.keys(allConfigs)).toEqual([
+    'dom',
+    'angular',
+    'react',
+    'vue',
+    'marko',
+  ]);
   const allConfigRules = Object.values(allConfigs)
     .map((config) => Object.keys(config.rules))
     .reduce((previousValue, currentValue) => [

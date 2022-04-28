@@ -5,6 +5,7 @@
 > - `@testing-library/react` (supported by this plugin)
 > - `@testing-library/preact` (not supported yet by this plugin)
 > - `@testing-library/svelte` (not supported yet by this plugin)
+> - `@marko/testing-library` (supported by this plugin)
 
 ## Rule Details
 
