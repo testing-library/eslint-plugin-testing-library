@@ -30,7 +30,7 @@ export const SUPPORTED_TESTING_FRAMEWORKS = [
   'angular',
   'react',
   'vue',
-  'marko'
+  'marko',
 ] as const;
 export type SupportedTestingFramework =
   typeof SUPPORTED_TESTING_FRAMEWORKS[number];
