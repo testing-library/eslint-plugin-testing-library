@@ -63,7 +63,7 @@
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-promise": "^6.0.0",
     "eslint-remote-tester": "^2.1.1",
-    "eslint-remote-tester-repositories": "^0.0.4",
+    "eslint-remote-tester-repositories": "^0.0.5",
     "husky": "^7.0.4",
     "is-ci": "^3.0.1",
     "jest": "^27.4.7",
