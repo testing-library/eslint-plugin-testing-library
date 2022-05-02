@@ -198,7 +198,7 @@ To enable this configuration use the `extends` property in your
 
 **Key**: 🔧 = fixable
 
-**Configurations**: ![dom-badge][] = dom, ![angular-badge][] = angular, ![react-badge][] = react, ![vue-badge][] = vue ![marko-badge][] = marko
+**Configurations**: ![dom-badge][] = dom, ![angular-badge][] = angular, ![react-badge][] = react, ![vue-badge][] = vue, ![marko-badge][] = marko
 
 | Name                                                                                                 | Description                                                                                  | 🔧  | Included in configurations                                                         |
 | ---------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- | --- | ---------------------------------------------------------------------------------- |
