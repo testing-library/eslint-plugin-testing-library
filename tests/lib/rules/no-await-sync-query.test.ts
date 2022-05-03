@@ -95,7 +95,7 @@ ruleTester.run(RULE_NAME, rule, {
       // ...
       await someOtherAsyncFunction();
     };
-     
+
     await chooseElementFromSomewhere('someTextToUseInAQuery', getAllByLabelText);
     `,
 
@@ -229,6 +229,18 @@ ruleTester.run(RULE_NAME, rule, {
       settings: { 'testing-library/utils-module': 'test-utils' },
       code: `
       import { screen } from '@testing-library/react'
+      () => {
+        const element = await screen.getByRole('button')
+      }
+      `,
+      errors: [{ messageId: 'noAwaitSyncQuery', line: 4, column: 38 }],
+    },
+    // sync query awaited and related to testing library module
+    // with custom module setting is not valid
+    {
+      settings: { 'testing-library/utils-module': 'test-utils' },
+      code: `
+      import { screen } from '@marko/testing-library'
       () => {
         const element = await screen.getByRole('button')
       }
