@@ -17,17 +17,13 @@ interface TestCode {
   testingFramework: string;
 }
 
-function createTestCode({ code, isAsync = true, testingFramework }: TestCode) {
-  if (!testingFramework) {
-    return `
-      import { render } from '@testing-library/react'
-      test("An example test",${isAsync ? ' async ' : ' '}() => {
-        ${code}
-      })
-    `;
-  }
+function createTestCode({
+  code,
+  isAsync = true,
+  testingFramework = '@testing-library/react',
+}: TestCode) {
   return `
-      import { render } from '@marko/testing-library'
+      import { render } from '${testingFramework}'
       test("An example test",${isAsync ? ' async ' : ' '}() => {
         ${code}
       })
