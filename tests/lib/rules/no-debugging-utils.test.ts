@@ -154,9 +154,21 @@ ruleTester.run(RULE_NAME, rule, {
       code: `
       import { render as testingRender } from '@testing-library/react'
       import { render } from 'somewhere-else'
-      
+
       const { debug } = render(element)
-      
+
+      somethingElse()
+      debug()
+      `,
+    },
+    {
+      settings: { 'testing-library/utils-module': 'test-utils' },
+      code: `
+      import { render as testingRender } from '@marko/testing-library'
+      import { render } from 'somewhere-else'
+
+      const { debug } = render(element)
+
       somethingElse()
       debug()
       `,
@@ -166,10 +178,10 @@ ruleTester.run(RULE_NAME, rule, {
       code: `
       import { render as testingRender } from '@testing-library/react'
       import { render } from 'somewhere-else'
-      
+
       const { debug } = render(element)
       const { debug: testingDebug } = testingRender(element)
-      
+
       somethingElse()
       debug()
       `,
@@ -575,9 +587,9 @@ ruleTester.run(RULE_NAME, rule, {
     {
       code: `
       import { render } from 'aggressive-reporting'
-      
+
       const { debug } = render(element)
-      
+
       somethingElse()
       debug()
       `,
@@ -587,9 +599,21 @@ ruleTester.run(RULE_NAME, rule, {
       settings: { 'testing-library/utils-module': 'test-utils' },
       code: `
       import { render } from '@testing-library/react'
-      
+
       const { debug } = render(element)
-      
+
+      somethingElse()
+      debug()
+      `,
+      errors: [{ line: 7, column: 7, messageId: 'noDebug' }],
+    },
+    {
+      settings: { 'testing-library/utils-module': 'test-utils' },
+      code: `
+      import { render } from '@marko/testing-library'
+
+      const { debug } = render(element)
+
       somethingElse()
       debug()
       `,
@@ -599,9 +623,9 @@ ruleTester.run(RULE_NAME, rule, {
       settings: { 'testing-library/utils-module': 'test-utils' },
       code: `
       import { render } from 'test-utils'
-      
+
       const { debug: renamed } = render(element)
-      
+
       somethingElse()
       renamed()
       `,
@@ -611,9 +635,9 @@ ruleTester.run(RULE_NAME, rule, {
       settings: { 'testing-library/utils-module': 'test-utils' },
       code: `
       import { render } from '@testing-library/react'
-      
+
       const utils = render(element)
-      
+
       somethingElse()
       utils.debug()
       `,
@@ -626,9 +650,9 @@ ruleTester.run(RULE_NAME, rule, {
       },
       code: `// aggressive reporting disabled, custom render set
       import { testingRender } from 'test-utils'
-      
+
       const { debug: renamedDebug } = testingRender(element)
-      
+
       somethingElse()
       renamedDebug()
       `,
@@ -638,7 +662,7 @@ ruleTester.run(RULE_NAME, rule, {
       settings: { 'testing-library/utils-module': 'test-utils' },
       code: `
       import { render } from '@testing-library/react'
-      
+
       const utils = render(element)
       const { debug: renamedDestructuredDebug } = console
       const { debug } = console
