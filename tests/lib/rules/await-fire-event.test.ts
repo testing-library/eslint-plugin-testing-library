@@ -31,6 +31,14 @@ ruleTester.run(RULE_NAME, rule, {
     })),
     ...COMMON_FIRE_EVENT_METHODS.map((fireEventMethod) => ({
       code: `
+      import { fireEvent } from '@marko/testing-library'
+      test('await promise from fire event method is valid', async () => {
+        await fireEvent.${fireEventMethod}(getByLabelText('username'))
+      })
+      `,
+    })),
+    ...COMMON_FIRE_EVENT_METHODS.map((fireEventMethod) => ({
+      code: `
       import { fireEvent } from '@testing-library/vue'
       test('await several promises from fire event methods is valid', async () => {
         await fireEvent.${fireEventMethod}(getByLabelText('username'))
@@ -94,7 +102,7 @@ ruleTester.run(RULE_NAME, rule, {
           doSomething()
           return fireEvent.${fireEventMethod}(getByLabelText('username'))
         }
-        
+
         await triggerEvent()
       })
       `,
@@ -132,7 +140,7 @@ ruleTester.run(RULE_NAME, rule, {
           doSomething()
           return fireEvent.focus(getByLabelText('username'))
         }
-        
+
       const reassignedFunction = triggerEvent
     })
     `,
@@ -144,6 +152,26 @@ ruleTester.run(RULE_NAME, rule, {
         ({
           code: `
       import { fireEvent } from '@testing-library/vue'
+      test('unhandled promise from fire event method is invalid', async () => {
+        fireEvent.${fireEventMethod}(getByLabelText('username'))
+      })
+      `,
+          errors: [
+            {
+              line: 4,
+              column: 9,
+              endColumn: 19 + fireEventMethod.length,
+              messageId: 'awaitFireEvent',
+              data: { name: fireEventMethod },
+            },
+          ],
+        } as const)
+    ),
+    ...COMMON_FIRE_EVENT_METHODS.map(
+      (fireEventMethod) =>
+        ({
+          code: `
+      import { fireEvent } from '@marko/testing-library'
       test('unhandled promise from fire event method is invalid', async () => {
         fireEvent.${fireEventMethod}(getByLabelText('username'))
       })
