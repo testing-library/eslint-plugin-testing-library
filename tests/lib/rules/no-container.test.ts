@@ -58,6 +58,15 @@ ruleTester.run(RULE_NAME, rule, {
       `,
     },
     {
+      settings: { 'testing-library/utils-module': 'test-utils' },
+      code: `
+        import { render as renamed } from '@marko/testing-library'
+        import { render } from 'somewhere-else'
+        const { container } = render(<Example />);
+        const button = container.querySelector('.btn-primary');
+      `,
+    },
+    {
       settings: {
         'testing-library/custom-renders': ['customRender', 'renderWithRedux'],
       },
@@ -116,7 +125,7 @@ ruleTester.run(RULE_NAME, rule, {
       settings: { 'testing-library/utils-module': 'test-utils' },
       code: `
         import { render } from '@testing-library/react'
-        
+
         const setup = () => render(<Example />)
 
         const { container } = setup()
