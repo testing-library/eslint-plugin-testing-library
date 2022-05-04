@@ -47,6 +47,14 @@ ruleTester.run(RULE_NAME, rule, {
         waitFor(() => {})
       `,
     },
+    {
+      settings: { 'testing-library/utils-module': 'test-utils' },
+      code: `
+        import { waitFor as renamedWaitFor } from '@marko/testing-library'
+        import { waitFor } from 'somewhere-else'
+        waitFor(() => {})
+      `,
+    },
   ],
 
   invalid: [
