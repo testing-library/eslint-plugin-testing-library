@@ -40,6 +40,17 @@ ruleTester.run(RULE_NAME, rule, {
         })
       `,
     },
+    {
+      settings: { 'testing-library/utils-module': 'test-utils' },
+      code: `// Aggressive Reporting disabled - waitFor renamed
+        import { waitFor as renamedWaitFor } from '@marko/testing-library'
+        import { waitFor } from 'somewhere-else'
+        await waitFor(() => {
+          expect(a).toEqual('a')
+          expect(b).toEqual('b')
+        })
+      `,
+    },
     // this needs to be check by other rule
     {
       code: `
@@ -107,6 +118,19 @@ ruleTester.run(RULE_NAME, rule, {
       settings: { 'testing-library/utils-module': 'test-utils' },
       code: `// Aggressive Reporting disabled
         import { waitFor } from '@testing-library/react'
+        await waitFor(() => {
+          expect(a).toEqual('a')
+          expect(b).toEqual('b')
+        })
+      `,
+      errors: [
+        { line: 5, column: 11, messageId: 'noWaitForMultipleAssertion' },
+      ],
+    },
+    {
+      settings: { 'testing-library/utils-module': 'test-utils' },
+      code: `// Aggressive Reporting disabled
+        import { waitFor } from '@marko/testing-library'
         await waitFor(() => {
           expect(a).toEqual('a')
           expect(b).toEqual('b')
