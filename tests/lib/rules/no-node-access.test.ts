@@ -8,7 +8,7 @@ ruleTester.run(RULE_NAME, rule, {
     {
       code: `
         import { screen } from '@testing-library/react';
-        
+
         const buttonText = screen.getByText('submit');
       `,
     },
@@ -31,8 +31,16 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
+        import { screen } from '@marko/testing-library';
+
+        const firstChild = screen.getByText('submit');
+        expect(firstChild).toBeInTheDocument()
+      `,
+    },
+    {
+      code: `
         import { screen } from '@testing-library/react';
-        
+
         const { getByText } = screen;
         const button = getByRole('button');
         expect(button).toHaveTextContent('submit');
@@ -98,7 +106,26 @@ ruleTester.run(RULE_NAME, rule, {
     {
       code: `
         import { screen } from '@testing-library/react';
-    
+
+        const button = document.getElementById('submit-btn').closest('button');
+      `,
+      errors: [
+        {
+          line: 4,
+          column: 33,
+          messageId: 'noNodeAccess',
+        },
+        {
+          line: 4,
+          column: 62,
+          messageId: 'noNodeAccess',
+        },
+      ],
+    },
+    {
+      code: `
+        import { screen } from '@marko/testing-library';
+
         const button = document.getElementById('submit-btn').closest('button');
       `,
       errors: [
@@ -131,7 +158,7 @@ ruleTester.run(RULE_NAME, rule, {
     {
       code: `
         import { screen } from '@testing-library/react';
-        
+
         screen.getByText('submit').closest('button');
       `,
       errors: [
@@ -146,7 +173,7 @@ ruleTester.run(RULE_NAME, rule, {
     {
       code: `
         import { screen } from '@testing-library/react';
-      
+
         expect(screen.getByText('submit').closest('button').textContent).toBe('Submit');
       `,
       errors: [
@@ -159,8 +186,8 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import { render } from '@testing-library/react';  
-        
+        import { render } from '@testing-library/react';
+
         const { getByText } = render(<Example />)
         getByText('submit').closest('button');
       `,
@@ -193,7 +220,7 @@ ruleTester.run(RULE_NAME, rule, {
     {
       code: `
         import { screen } from '@testing-library/react';
-        
+
         const buttonText = screen.getByText('submit');
         const button = buttonText.closest('button');
       `,
@@ -202,7 +229,7 @@ ruleTester.run(RULE_NAME, rule, {
     {
       code: `
         import { render } from '@testing-library/react';
-        
+
         const { getByText } = render(<Example />)
         const buttonText = getByText('submit');
         const button = buttonText.closest('button');
@@ -218,7 +245,7 @@ ruleTester.run(RULE_NAME, rule, {
     {
       code: `
         import { render } from '@testing-library/react';
-        
+
         const { getByText } = render(<Example />)
         const button = getByText('submit').closest('button');
       `,
@@ -227,7 +254,7 @@ ruleTester.run(RULE_NAME, rule, {
     {
       code: `
         import { screen } from '@testing-library/react';
-        
+
         function getExampleDOM() {
             const container = document.createElement('div');
             container.innerHTML = \`
