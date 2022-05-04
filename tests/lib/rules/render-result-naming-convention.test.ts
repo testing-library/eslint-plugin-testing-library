@@ -10,7 +10,17 @@ ruleTester.run(RULE_NAME, rule, {
     {
       code: `
         import { render } from '@testing-library/react';
-        
+
+        test('should not report straight destructured render result', () => {
+          const { rerender, getByText } = render(<SomeComponent />);
+          const button = getByText('some button');
+        });
+      `,
+    },
+    {
+      code: `
+        import { render } from '@marko/testing-library';
+
         test('should not report straight destructured render result', () => {
           const { rerender, getByText } = render(<SomeComponent />);
           const button = getByText('some button');
@@ -20,7 +30,7 @@ ruleTester.run(RULE_NAME, rule, {
     {
       code: `
         import * as RTL from '@testing-library/react';
-        
+
         test('should not report straight destructured render result from wildcard import', () => {
           const { rerender, getByText } = RTL.render(<SomeComponent />);
           const button = getByText('some button');
@@ -30,7 +40,7 @@ ruleTester.run(RULE_NAME, rule, {
     {
       code: `
         import { render } from '@testing-library/react';
-        
+
         test('should not report straight render result called "utils"', async () => {
           const utils = render(<SomeComponent />);
           await utils.findByRole('button');
@@ -40,7 +50,7 @@ ruleTester.run(RULE_NAME, rule, {
     {
       code: `
         import { render } from '@testing-library/react';
-        
+
         test('should not report straight render result called "view"', async () => {
           const view = render(<SomeComponent />);
           await view.findByRole('button');
@@ -50,9 +60,9 @@ ruleTester.run(RULE_NAME, rule, {
     {
       code: `
         import { render } from '@testing-library/react';
-        
+
         const setup = () => render(<SomeComponent />);
-        
+
         test('should not report destructured render result from wrapping function', () => {
           const { rerender, getByText } = setup();
           const button = getByText('some button');
@@ -62,9 +72,9 @@ ruleTester.run(RULE_NAME, rule, {
     {
       code: `
         import { render } from '@testing-library/react';
-        
+
         const setup = () => render(<SomeComponent />);
-        
+
         test('should not report render result called "utils" from wrapping function', async () => {
           const utils = setup();
           await utils.findByRole('button');
@@ -74,9 +84,9 @@ ruleTester.run(RULE_NAME, rule, {
     {
       code: `
         import { render } from '@testing-library/react';
-        
+
         const setup = () => render(<SomeComponent />);
-        
+
         test('should not report render result called "view" from wrapping function', async () => {
           const view = setup();
           await view.findByRole('button');
@@ -87,7 +97,7 @@ ruleTester.run(RULE_NAME, rule, {
       code: `
         import { screen } from '@testing-library/react';
         import { customRender } from 'test-utils';
-        
+
         test('should not report straight destructured render result from custom render', () => {
           const { unmount } = customRender(<SomeComponent />);
           const button = screen.getByText('some button');
@@ -98,7 +108,7 @@ ruleTester.run(RULE_NAME, rule, {
     {
       code: `
         import { customRender } from 'test-utils';
-        
+
         test('should not report render result called "view" from custom render', async () => {
           const view = customRender();
           await view.findByRole('button');
@@ -109,7 +119,7 @@ ruleTester.run(RULE_NAME, rule, {
     {
       code: `
         import { customRender } from 'test-utils';
-        
+
         test('should not report render result called "utils" from custom render', async () => {
           const utils = customRender();
           await utils.findByRole('button');
@@ -120,7 +130,7 @@ ruleTester.run(RULE_NAME, rule, {
     {
       code: `
         import { render } from '@testing-library/react';
-        
+
         const setup = () => {
           // this one must have a valid name
           const view = render(<SomeComponent />);
@@ -139,7 +149,7 @@ ruleTester.run(RULE_NAME, rule, {
       code: `
         import { render as testingLibraryRender } from '@testing-library/react';
         import { render } from '@somewhere/else'
-        
+
         const setup = () => render(<SomeComponent />);
 
         test('aggressive reporting disabled - should not report nested render not related to TL', () => {
@@ -156,7 +166,7 @@ ruleTester.run(RULE_NAME, rule, {
       code: `
         import { customRender as myRender } from 'test-utils';
         import { customRender } from 'non-related'
-        
+
         const setup = () => {
           return customRender(<SomeComponent />);
         };
@@ -177,7 +187,7 @@ ruleTester.run(RULE_NAME, rule, {
       code: `
         import { customRender as myRender } from 'test-utils';
         import { render } from 'non-related'
-        
+
         const setup = () => {
           return render(<SomeComponent />);
         };
@@ -198,7 +208,27 @@ ruleTester.run(RULE_NAME, rule, {
     {
       code: `
         import { render } from '@testing-library/react';
-        
+
+        test('should report straight render result called "wrapper"', async () => {
+          const wrapper = render(<SomeComponent />);
+          await wrapper.findByRole('button');
+        });
+      `,
+      errors: [
+        {
+          messageId: 'renderResultNamingConvention',
+          data: {
+            renderResultName: 'wrapper',
+          },
+          line: 5,
+          column: 17,
+        },
+      ],
+    },
+    {
+      code: `
+        import { render } from '@marko/testing-library';
+
         test('should report straight render result called "wrapper"', async () => {
           const wrapper = render(<SomeComponent />);
           await wrapper.findByRole('button');
@@ -218,7 +248,7 @@ ruleTester.run(RULE_NAME, rule, {
     {
       code: `
         import * as RTL from '@testing-library/react';
-        
+
         test('should report straight render result called "wrapper" from wildcard import', () => {
           const wrapper = RTL.render(<SomeComponent />);
           const button = wrapper.getByText('some button');
@@ -238,7 +268,7 @@ ruleTester.run(RULE_NAME, rule, {
     {
       code: `
         import { render } from '@testing-library/react';
-        
+
         test('should report straight render result called "component"', async () => {
           const component = render(<SomeComponent />);
           await component.findByRole('button');
@@ -258,7 +288,7 @@ ruleTester.run(RULE_NAME, rule, {
     {
       code: `
         import { render } from '@testing-library/react';
-        
+
         test('should report straight render result called "notValidName"', async () => {
           const notValidName = render(<SomeComponent />);
           await notValidName.findByRole('button');
@@ -275,7 +305,7 @@ ruleTester.run(RULE_NAME, rule, {
     {
       code: `
         import { render as testingLibraryRender } from '@testing-library/react';
-        
+
         test('should report renamed render result called "wrapper"', async () => {
           const wrapper = testingLibraryRender(<SomeComponent />);
           await wrapper.findByRole('button');
@@ -295,7 +325,7 @@ ruleTester.run(RULE_NAME, rule, {
     {
       code: `
         import { render } from '@testing-library/react';
-        
+
         const setup = () => {
           // this one must have a valid name
           const wrapper = render(<SomeComponent />);
@@ -323,7 +353,7 @@ ruleTester.run(RULE_NAME, rule, {
       settings: { 'testing-library/utils-module': 'test-utils' },
       code: `
         import { render } from '@testing-library/react';
-        
+
         const setup = () => render(<SomeComponent />);
 
         test('aggressive reporting disabled - should report nested render from TL package', () => {
@@ -346,7 +376,7 @@ ruleTester.run(RULE_NAME, rule, {
       settings: { 'testing-library/utils-module': 'test-utils' },
       code: `
         import { render } from 'test-utils';
-        
+
         function setup() {
           doSomethingElse();
           return render(<SomeComponent />)
@@ -454,7 +484,7 @@ ruleTester.run(RULE_NAME, rule, {
     {
       code: `
         import { render as testingLibraryRender } from '@testing-library/react';
-        
+
         const setup = () => {
           return testingLibraryRender(<SomeComponent />);
         };
@@ -479,7 +509,7 @@ ruleTester.run(RULE_NAME, rule, {
       settings: { 'testing-library/utils-module': 'test-utils' },
       code: `
         import { render as testingLibraryRender } from '@testing-library/react';
-        
+
         const setup = () => {
           return testingLibraryRender(<SomeComponent />);
         };
@@ -509,7 +539,7 @@ ruleTester.run(RULE_NAME, rule, {
       },
       code: `
         import { customRender as myRender } from 'test-utils';
-        
+
         const setup = () => {
           return myRender(<SomeComponent />);
         };
