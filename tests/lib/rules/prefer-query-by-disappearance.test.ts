@@ -17,6 +17,14 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
+        import { screen } from '@marko/testing-library';
+
+        const button = screen.getByRole('button')
+        await waitForElementToBeRemoved(button)
+      `,
+    },
+    {
+      code: `
         import { screen } from '@testing-library/react';
 
         const callback = () => screen.getByRole('button')
@@ -210,6 +218,20 @@ ruleTester.run(RULE_NAME, rule, {
     {
       code: `
         import { screen, waitForElementToBeRemoved } from '@testing-library/react';
+
+        await waitForElementToBeRemoved(() => screen.getByText("hello"))
+      `,
+      errors: [
+        {
+          messageId: 'preferQueryByDisappearance',
+          line: 4,
+          column: 41,
+        },
+      ],
+    },
+    {
+      code: `
+        import { screen, waitForElementToBeRemoved } from '@marko/testing-library';
 
         await waitForElementToBeRemoved(() => screen.getByText("hello"))
       `,
