@@ -74,11 +74,11 @@ ruleTester.run(RULE_NAME, rule, {
         {
           messageId: 'noDomImportFramework',
           data: {
-            module: 'marko-testing-library',
+            module: '@marko/testing-library',
           },
         },
       ],
-      output: `import { fireEvent } from "marko-testing-library"`,
+      output: `import { fireEvent } from "@marko/testing-library"`,
     },
     // Single quote or double quotes should not be replaced
     {
