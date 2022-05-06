@@ -2,6 +2,17 @@ name: Bug Report
 description: File a bug report
 labels: [bug]
 body:
+  - type: dropdown
+    id: read_troubleshooting
+    attributes:
+      label: Have you read the Troubleshooting section?
+      description: Please confirm you have read our Troubleshooting section before reporting a new bug
+      options:
+        - 'Yes'
+        - 'No'
+    validations:
+      required: true
+
   - type: input
     id: plugin_version
     attributes:
