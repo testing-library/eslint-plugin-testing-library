@@ -4,7 +4,7 @@ This document outlines some processes that the maintainers should stick to.
 
 There are 3 types of issues that can be created:
 
-- `"bug`
+- `"bug"`
 - `"new rule"`
 - `"enhancement"`
 
@@ -43,4 +43,4 @@ They'll be considered inactive if they match all the following conditions:
   - `"enhancement"`: there is a proposal for an enhancement that no one could handle
   - `"invalid"`: something is wrong with the issue/PR and the author didn't take care of it
 
-When flagged as a stale issue or PR, they'll be definitely closed after 7 more days of inactivity. Issues and PRs with the following labels are excluded tho: `"pinned"`, `"security"`, and "`triage"`. Use the first one if you need to exclude an issue or PR from being closed for whatever reason even if the inactive criteria is matched.
+When flagged as a stale issue or PR, they'll be definitely closed after 7 more days of inactivity. Issues and PRs with the following labels are excluded: `"pinned"`, `"security"`, and "`triage"`. Use the first one if you need to exclude an issue or PR from being closed for whatever reason even if the inactive criteria is matched.
