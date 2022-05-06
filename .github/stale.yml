@@ -5,7 +5,7 @@ daysUntilClose: 7
 # Only issues or pull requests with all of these labels are checked if stale
 onlyLabels:
   - 'awaiting response'
-  - 'new role'
+  - 'new rule'
   - enhancement
   - invalid
 # Issues with these labels will never be considered stale
