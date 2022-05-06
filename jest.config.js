@@ -1,10 +1,8 @@
-/** @type {import('@jest/types').Config.InitialOptions} */
-const config = {
+module.exports = {
   testMatch: ['**/tests/**/*.test.ts'],
   transform: {
     '^.+\\.tsx?$': 'ts-jest',
   },
-  reporters: ['default', 'github-actions'],
   coverageThreshold: {
     global: {
       branches: 90,
@@ -14,5 +12,3 @@ const config = {
     },
   },
 };
-
-module.exports = config;
