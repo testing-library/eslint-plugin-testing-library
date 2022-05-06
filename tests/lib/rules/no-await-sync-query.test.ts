@@ -18,7 +18,7 @@ ruleTester.run(RULE_NAME, rule, {
     })),
     // custom sync queries without await are valid
     `() => {
-      const element = getByIcon('search')
+      const element = await getByIcon('search')
     }
     `,
     `() => {
