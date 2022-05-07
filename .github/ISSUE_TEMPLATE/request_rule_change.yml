@@ -1,6 +1,6 @@
 name: Request a rule change
 description: Request a rule change for the eslint-plugin-testing-library.
-labels: [enhancement]
+labels: ['enhancement', 'triage']
 body:
   - type: input
     id: what_rule_do_you_want_to_change

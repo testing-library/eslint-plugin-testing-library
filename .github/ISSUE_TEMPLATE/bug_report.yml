@@ -1,6 +1,6 @@
 name: Bug Report
 description: File a bug report
-labels: [bug]
+labels: ['bug', 'triage']
 body:
   - type: dropdown
     id: read_troubleshooting
