@@ -1,8 +1,8 @@
 ## Checks
 
 - [ ] I have read the [contributing guidelines](https://github.com/testing-library/eslint-plugin-testing-library/blob/main/CONTRIBUTING.md).
-- [ ] If some rule is added/updated/removed, I've regenerated the rules list.
-- [ ] If some rule meta info is changed, I've regenerated the plugin shared configs.
+- [ ] If some rule is added/updated/removed, I've regenerated the rules list (`npm run generate:rules-list`)
+- [ ] If some rule meta info is changed, I've regenerated the plugin shared configs (`npm run generate:configs`)
 
 ## Changes
 

@@ -2,6 +2,17 @@ name: Bug Report
 description: File a bug report
 labels: [bug]
 body:
+  - type: dropdown
+    id: read_troubleshooting
+    attributes:
+      label: Have you read the Troubleshooting section?
+      description: Please confirm you have read our Troubleshooting section before reporting a new bug
+      options:
+        - 'Yes'
+        - 'No'
+    validations:
+      required: true
+
   - type: input
     id: plugin_version
     attributes:
@@ -32,8 +43,8 @@ body:
   - type: input
     id: npm_yarn_version
     attributes:
-      label: npm/yarn version
-      description: Tell us whether you use npm or yarn as your package manager, and what version.
+      label: package manager and version
+      description: Tell us package manager you are using, and what version.
       placeholder: npm 6.14.13
     validations:
       required: true
@@ -60,7 +71,7 @@ body:
     id: steps_to_reproduce
     attributes:
       label: Steps to reproduce
-      description: Give us a ordered list of the steps to reproduce the problem.
+      description: Give us an ordered list of the steps to reproduce the problem.
       placeholder: |
         1. Go to ...
         2. Do ....
@@ -81,7 +92,7 @@ body:
     id: eslint_config
     attributes:
       label: ESLint configuration
-      description: Copy/paste your ESLint configuration into this field.
+      description: Copy/paste your ESLint configuration relevant for this plugin into this field.
       placeholder: 'Tip: you can find your ESLint configuration in the `.eslintrc` file.'
     validations:
       required: true
@@ -90,7 +101,7 @@ body:
     id: rule_affected
     attributes:
       label: Rule(s) affected
-      description: Tell us what `eslint-pluging-testing-library` rule(s) are affected by this bug.
+      description: Tell us what `eslint-plugin-testing-library` rule(s) are affected by this bug.
       placeholder: 'Tip: check your `.eslintrc` for rules.'
     validations:
       required: true
