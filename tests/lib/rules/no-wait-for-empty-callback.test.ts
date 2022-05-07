@@ -99,6 +99,26 @@ ruleTester.run(RULE_NAME, rule, {
         ({
           settings: { 'testing-library/utils-module': 'test-utils' },
           code: `
+        import { ${m} } from '@marko/testing-library';
+        ${m}(() => {});
+      `,
+          errors: [
+            {
+              line: 3,
+              column: 16 + m.length,
+              messageId: 'noWaitForEmptyCallback',
+              data: {
+                methodName: m,
+              },
+            },
+          ],
+        } as const)
+    ),
+    ...ALL_WAIT_METHODS.map(
+      (m) =>
+        ({
+          settings: { 'testing-library/utils-module': 'test-utils' },
+          code: `
         import { ${m} as renamedAsyncUtil } from 'test-utils';
         renamedAsyncUtil(() => {});
       `,
