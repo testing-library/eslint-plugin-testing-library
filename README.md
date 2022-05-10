@@ -433,4 +433,4 @@ This project follows the [all-contributors](https://github.com/all-contributors/
 [angular-badge]: https://img.shields.io/badge/-Angular-black?style=flat-square&logo=angular&logoColor=white&labelColor=DD0031&color=black
 [react-badge]: https://img.shields.io/badge/-React-black?style=flat-square&logo=react&logoColor=white&labelColor=61DAFB&color=black
 [vue-badge]: https://img.shields.io/badge/-Vue-black?style=flat-square&logo=vue.js&logoColor=white&labelColor=4FC08D&color=black
-[marko-badge]: https://img.shields.io/badge/-Marko-black?style=flat-square&logo=marko&logoColor=white&labelColor=04BFC2&color=black
+[marko-badge]: https://img.shields.io/badge/-Marko-black?style=flat-square&logo=marko&logoColor=white&labelColor=2596BE&color=black
