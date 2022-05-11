@@ -492,6 +492,16 @@
         "code",
         "test"
       ]
+    },
+    {
+      "login": "PrashantAshok",
+      "name": "Prashant Ashok",
+      "avatar_url": "https://avatars.githubusercontent.com/u/5200733?v=4",
+      "profile": "https://github.com/PrashantAshok",
+      "contributions": [
+        "code",
+        "test"
+      ]
     }
   ],
   "contributorsPerLine": 7,
