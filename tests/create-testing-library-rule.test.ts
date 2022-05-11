@@ -10,7 +10,7 @@ ruleTester.run(RULE_NAME, rule, {
       code: `
       // case: nothing related to Testing Library at all
       import { shallow } from 'enzyme';
-      
+
       const wrapper = shallow(<MyComponent />);
       `,
     },
@@ -18,7 +18,7 @@ ruleTester.run(RULE_NAME, rule, {
       code: `
       // case: nothing related to Testing Library at all (require version)
       const { shallow } = require('enzyme');
-      
+
       const wrapper = shallow(<MyComponent />);
       `,
     },
@@ -26,7 +26,7 @@ ruleTester.run(RULE_NAME, rule, {
       code: `
       // case: render imported from other than custom module
       import { render } from '@somewhere/else'
-      
+
       const utils = render();
       `,
       settings: {
@@ -37,7 +37,7 @@ ruleTester.run(RULE_NAME, rule, {
       code: `
       // case: render imported from other than custom module (require version)
       const { render } = require('@somewhere/else')
-      
+
       const utils = render();
       `,
       settings: {
@@ -116,7 +116,7 @@ ruleTester.run(RULE_NAME, rule, {
       code: `
       // case: aggressive render enabled - method not containing "render"
       import { somethingElse } from '@somewhere/else'
-      
+
       const utils = somethingElse()
       `,
     },
@@ -125,7 +125,7 @@ ruleTester.run(RULE_NAME, rule, {
       code: `
       // case: aggressive render disabled - method not matching valid render
       import { customRender } from '@somewhere/else'
-      
+
       const utils = customRender()
       `,
     },
@@ -134,7 +134,7 @@ ruleTester.run(RULE_NAME, rule, {
       code: `
       // case: aggressive render enabled, but module disabled - not coming from TL
       import { render } from 'somewhere-else'
-      
+
       const utils = render()
       `,
     },
@@ -157,7 +157,7 @@ ruleTester.run(RULE_NAME, rule, {
       // case: aggressive module disabled and render coming from non-related module
       import * as somethingElse from '@somewhere/else'
       import { render } from '@testing-library/react'
-      
+
       // somethingElse.render is not coming from any module related to TL
       const utils = somethingElse.render()
       `,
@@ -169,7 +169,7 @@ ruleTester.run(RULE_NAME, rule, {
       code: `
       // case: aggressive render disabled - method not matching custom-renders
       import { renderWithProviders } from '@somewhere/else'
-      
+
       const utils = renderWithProviders()
       `,
     },
@@ -180,7 +180,7 @@ ruleTester.run(RULE_NAME, rule, {
       code: `
       // case: aggressive render switched off
       import { renderWithProviders } from '@somewhere/else'
-      
+
       const utils = renderWithProviders()
       `,
     },
@@ -372,7 +372,7 @@ ruleTester.run(RULE_NAME, rule, {
       import { render } from 'other-utils'
       import { somethingElse } from 'another-module'
       const foo = require('bar')
-      
+
       const utils = render()
       renderWithRedux()
       getBySomethingElse('foo')
@@ -392,7 +392,7 @@ ruleTester.run(RULE_NAME, rule, {
       import { render } from 'other-utils'
       import { somethingElse } from 'another-module'
       const foo = require('bar')
-      
+
       const utils = render()
       renderWithRedux()
       getBySomethingElse('foo')
@@ -407,13 +407,13 @@ ruleTester.run(RULE_NAME, rule, {
 
     `// edge case when setting jest-dom up in jest config file - using require
     require('@testing-library/jest-dom')
-    
+
     foo()
     `,
 
     `// edge case when setting jest-dom up in jest config file - using import
     import '@testing-library/jest-dom'
-    
+
     foo()
     `,
   ],
@@ -431,7 +431,7 @@ ruleTester.run(RULE_NAME, rule, {
       // case: render imported from any module by default (aggressive reporting)
       import { render } from '@somewhere/else'
       import { somethingElse } from 'another-module'
-      
+
       const utils = render();
       `,
       errors: [
@@ -448,7 +448,24 @@ ruleTester.run(RULE_NAME, rule, {
       import { render } from '@testing-library/react'
       import { somethingElse } from 'another-module'
       const foo = require('bar')
-      
+
+      const utils = render();
+      `,
+      errors: [
+        {
+          line: 7,
+          column: 21,
+          messageId: 'renderError',
+        },
+      ],
+    },
+    {
+      code: `
+      // case: render imported from Testing Library module
+      import { render } from '@marko/testing-library'
+      import { somethingElse } from 'another-module'
+      const foo = require('bar')
+
       const utils = render();
       `,
       errors: [
@@ -465,7 +482,7 @@ ruleTester.run(RULE_NAME, rule, {
       const { render } = require('@testing-library/react')
       import { somethingElse } from 'another-module'
       const foo = require('bar')
-      
+
       const utils = render();
       `,
       errors: [
@@ -482,7 +499,7 @@ ruleTester.run(RULE_NAME, rule, {
       import { render } from 'test-utils'
       import { somethingElse } from 'another-module'
       const foo = require('bar')
-      
+
       const utils = render();
       `,
       settings: {
@@ -502,7 +519,7 @@ ruleTester.run(RULE_NAME, rule, {
       const { render } = require('test-utils')
       import { somethingElse } from 'another-module'
       const foo = require('bar')
-      
+
       const utils = render();
       `,
       settings: {
@@ -523,7 +540,7 @@ ruleTester.run(RULE_NAME, rule, {
       import { render } from '@testing-library/react'
       import { somethingElse } from 'another-module'
       const foo = require('bar')
-      
+
       const utils = render();
       `,
       settings: {
@@ -544,7 +561,7 @@ ruleTester.run(RULE_NAME, rule, {
       const { render } = require('@testing-library/react')
       import { somethingElse } from 'another-module'
       const foo = require('bar')
-      
+
       const utils = render();
       `,
       settings: {
@@ -622,7 +639,7 @@ ruleTester.run(RULE_NAME, rule, {
       code: `
       // case: aggressive render enabled - Testing Library render
       import { render } from '@testing-library/react'
-      
+
       const utils = render()
       `,
       errors: [{ line: 5, column: 21, messageId: 'renderError' }],
@@ -631,7 +648,7 @@ ruleTester.run(RULE_NAME, rule, {
       code: `
       // case: aggressive render enabled - Testing Library render wildcard imported
       import * as rtl from '@testing-library/react'
-      
+
       const utils = rtl.render()
       `,
       errors: [{ line: 5, column: 25, messageId: 'renderError' }],
@@ -640,7 +657,7 @@ ruleTester.run(RULE_NAME, rule, {
       code: `
       // case: aggressive render enabled - any method containing "render"
       import { someRender } from '@somewhere/else'
-      
+
       const utils = someRender()
       `,
       errors: [{ line: 5, column: 21, messageId: 'renderError' }],
@@ -650,7 +667,7 @@ ruleTester.run(RULE_NAME, rule, {
       code: `
       // case: aggressive render disabled - Testing Library render
       import { render } from '@testing-library/react'
-      
+
       const utils = render()
       `,
       errors: [{ line: 5, column: 21, messageId: 'renderError' }],
@@ -662,7 +679,7 @@ ruleTester.run(RULE_NAME, rule, {
       code: `
       // case: aggressive render disabled - valid custom render
       import { customRender } from 'test-utils'
-      
+
       const utils = customRender()
       `,
       errors: [{ line: 5, column: 21, messageId: 'renderError' }],
@@ -674,7 +691,7 @@ ruleTester.run(RULE_NAME, rule, {
       code: `
       // case: aggressive render disabled - default render from custom module
       import { render } from 'test-utils'
-      
+
       const utils = render()
       `,
       errors: [{ line: 5, column: 21, messageId: 'renderError' }],
@@ -684,7 +701,7 @@ ruleTester.run(RULE_NAME, rule, {
       code: `
       // case: aggressive module disabled and render wildcard-imported from related module
       import * as rtl from '@testing-library/react'
-      
+
       const utils = rtl.render()
       `,
       errors: [{ line: 5, column: 25, messageId: 'renderError' }],
@@ -698,7 +715,7 @@ ruleTester.run(RULE_NAME, rule, {
       import { render } from 'test-utils'
       import { somethingElse } from 'another-module'
       const foo = require('bar')
-      
+
       const utils = render();
       `,
       errors: [{ line: 7, column: 21, messageId: 'renderError' }],
@@ -777,7 +794,7 @@ ruleTester.run(RULE_NAME, rule, {
         'testing-library/utils-module': 'test-utils',
       },
       code: `
-        // case: aggressive reporting disabled - waitFor from wildcard import related to TL 
+        // case: aggressive reporting disabled - waitFor from wildcard import related to TL
         import * as tl from 'test-utils'
         tl.waitFor(() => {})
       `,
@@ -993,13 +1010,13 @@ ruleTester.run(RULE_NAME, rule, {
       // case: aggressive reporting disabled - matching all custom settings
       import { renderWithRedux, waitFor, screen } from 'test-utils'
       import { findByComplexText } from 'custom-queries'
-      
+
       const { getByRole, getAllByIcon } = renderWithRedux()
       const el = getByRole('button')
       const iconButtons = getAllByIcon('search')
       waitFor(() => {})
       findByComplexText('foo')
-      
+
       `,
       errors: [
         { line: 6, column: 43, messageId: 'renderError' },
@@ -1024,7 +1041,7 @@ ruleTester.run(RULE_NAME, rule, {
       // case: built-in utils reported when all aggressive reporting completely switched off
       import { render, screen, waitFor } from '@testing-library/react';
       import userEvent from '@testing-library/user-event'
-      
+
       const utils = render();
       const el = utils.getByText('foo');
       screen.findByRole('button');

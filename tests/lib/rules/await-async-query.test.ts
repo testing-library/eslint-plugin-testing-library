@@ -14,21 +14,27 @@ const ruleTester = createRuleTester();
 interface TestCode {
   code: string;
   isAsync?: boolean;
+  testingFramework: string;
 }
 
-function createTestCode({ code, isAsync = true }: TestCode) {
+function createTestCode({
+  code,
+  isAsync = true,
+  testingFramework = '@testing-library/react',
+}: TestCode) {
   return `
-    import { render } from '@testing-library/react'
-    test("An example test",${isAsync ? ' async ' : ' '}() => {
-      ${code}
-    })
-  `;
+      import { render } from '${testingFramework}'
+      test("An example test",${isAsync ? ' async ' : ' '}() => {
+        ${code}
+      })
+    `;
 }
 
 interface TestCaseParams {
   isAsync?: boolean;
   combinations?: string[];
   errors?: TSESLint.TestCaseError<'asyncQueryWrapper' | 'awaitAsyncQuery'>[];
+  testingFramework?: string;
 }
 
 function createTestCase(
@@ -40,15 +46,19 @@ function createTestCase(
   {
     combinations = ALL_ASYNC_COMBINATIONS_TO_TEST,
     isAsync,
+    testingFramework = '',
   }: TestCaseParams = {}
 ) {
   return combinations.map((query) => {
     const test = getTest(query);
 
     return typeof test === 'string'
-      ? { code: createTestCode({ code: test, isAsync }), errors: [] }
+      ? {
+          code: createTestCode({ code: test, isAsync, testingFramework }),
+          errors: [],
+        }
       : {
-          code: createTestCode({ code: test.code, isAsync }),
+          code: createTestCode({ code: test.code, isAsync, testingFramework }),
           errors: test.errors,
         };
   });
@@ -74,6 +84,11 @@ ruleTester.run(RULE_NAME, rule, {
 
     // async screen queries declaration are valid
     ...createTestCase((query) => `await screen.${query}('foo')`),
+
+    // async @marko/testing-library screen queries declaration are valid
+    ...createTestCase((query) => `await screen.${query}('foo')`, {
+      testingFramework: '@marko/testing-library',
+    }),
 
     // async queries are valid with await operator
     ...createTestCase(
@@ -121,7 +136,7 @@ ruleTester.run(RULE_NAME, rule, {
     ...createTestCase(
       (query) => `
         doSomething()
-        
+
         await Promise.all([
           ${query}('foo'),
           ${query}('bar'),
@@ -133,7 +148,7 @@ ruleTester.run(RULE_NAME, rule, {
     ...createTestCase(
       (query) => `
         doSomething()
-        
+
         Promise.all([
           ${query}('foo'),
           ${query}('bar'),
@@ -145,7 +160,7 @@ ruleTester.run(RULE_NAME, rule, {
     ...createTestCase(
       (query) => `
         doSomething()
-        
+
         await Promise.allSettled([
           ${query}('foo'),
           ${query}('bar'),
@@ -157,7 +172,7 @@ ruleTester.run(RULE_NAME, rule, {
     ...createTestCase(
       (query) => `
         doSomething()
-        
+
         Promise.allSettled([
           ${query}('foo'),
           ${query}('bar'),
@@ -281,19 +296,19 @@ ruleTester.run(RULE_NAME, rule, {
     `// issue #359
       import { render, screen } from 'mocks/test-utils'
       import userEvent from '@testing-library/user-event'
-      
+
       const testData = {
         name: 'John Doe',
         email: 'john@doe.com',
         password: 'extremeSecret',
       }
-      
+
       const selectors = {
         username: () => screen.findByRole('textbox', { name: /username/i }),
         email: () => screen.findByRole('textbox', { name: /e-mail/i }),
         password: () => screen.findByLabelText(/password/i),
       }
-      
+
       test('this is a valid case', async () => {
         render(<SomeComponent />)
         userEvent.type(await selectors.username(), testData.name)
@@ -315,6 +330,20 @@ ruleTester.run(RULE_NAME, rule, {
         ({
           code: `// async queries without await operator or then method are not valid
       import { render } from '@testing-library/react'
+
+      test("An example test", async () => {
+        doSomething()
+        const foo = ${query}('foo')
+      });
+      `,
+          errors: [{ messageId: 'awaitAsyncQuery', line: 6, column: 21 }],
+        } as const)
+    ),
+    ...ALL_ASYNC_COMBINATIONS_TO_TEST.map(
+      (query) =>
+        ({
+          code: `// async queries for @marko/testing-library without await operator or then method are not valid
+      import { render } from '@marko/testing-library'
 
       test("An example test", async () => {
         doSomething()
@@ -483,19 +512,19 @@ ruleTester.run(RULE_NAME, rule, {
       code: `// similar to issue #359 but forcing an error in no-awaited wrapper
       import { render, screen } from 'mocks/test-utils'
       import userEvent from '@testing-library/user-event'
-      
+
       const testData = {
         name: 'John Doe',
         email: 'john@doe.com',
         password: 'extremeSecret',
       }
-      
+
       const selectors = {
         username: () => screen.findByRole('textbox', { name: /username/i }),
         email: () => screen.findByRole('textbox', { name: /e-mail/i }),
         password: () => screen.findByLabelText(/password/i),
       }
-      
+
       test('this is a valid case', async () => {
         render(<SomeComponent />)
         userEvent.type(selectors.username(), testData.name) // <-- unhandled here

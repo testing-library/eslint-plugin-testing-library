@@ -21,6 +21,7 @@ ruleTester.run(RULE_NAME, rule, {
     'const { fireEvent } = require("@testing-library/react")',
     'require("react-testing-library")',
     'require("@testing-library/react")',
+    'require("@marko/testing-library")',
     {
       code: 'import { fireEvent } from "test-utils"',
       settings: { 'testing-library/utils-module': 'test-utils' },
@@ -65,6 +66,19 @@ ruleTester.run(RULE_NAME, rule, {
         },
       ],
       output: `import { fireEvent } from "react-testing-library"`,
+    },
+    {
+      code: 'import { fireEvent } from "dom-testing-library"',
+      options: ['marko'],
+      errors: [
+        {
+          messageId: 'noDomImportFramework',
+          data: {
+            module: '@marko/testing-library',
+          },
+        },
+      ],
+      output: `import { fireEvent } from "@marko/testing-library"`,
     },
     // Single quote or double quotes should not be replaced
     {

@@ -23,6 +23,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
         angular: ['error', 'angular'],
         react: ['error', 'react'],
         vue: ['error', 'vue'],
+        marko: ['error', 'marko'],
       },
     },
     messages: {
@@ -46,7 +47,11 @@ export default createTestingLibraryRule<Options, MessageIds>({
       moduleName: string
     ) {
       if (framework) {
-        const correctModuleName = moduleName.replace('dom', framework);
+        // marko TL is called @marko/testing-library
+        const correctModuleName =
+          framework === 'marko'
+            ? moduleName.replace('dom-', `@${framework}/`)
+            : moduleName.replace('dom', framework);
         context.report({
           node,
           messageId: 'noDomImportFramework',

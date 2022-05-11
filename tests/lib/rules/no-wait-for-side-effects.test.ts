@@ -7,13 +7,19 @@ ruleTester.run(RULE_NAME, rule, {
   valid: [
     {
       code: `
-        import { waitFor } from '@testing-library/react';  
+        import { waitFor } from '@testing-library/react';
         await waitFor(() => expect(a).toEqual('a'))
       `,
     },
     {
       code: `
-        import { waitFor } from '@testing-library/react';  
+        import { waitFor } from '@marko/testing-library';
+        await waitFor(() => expect(a).toEqual('a'))
+      `,
+    },
+    {
+      code: `
+        import { waitFor } from '@testing-library/react';
         await waitFor(function() {
           expect(a).toEqual('a')
         })
@@ -21,7 +27,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import { waitFor } from '@testing-library/react';  
+        import { waitFor } from '@testing-library/react';
         await waitFor(() => {
           console.log('testing-library')
           expect(b).toEqual('b')
@@ -30,7 +36,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import { waitFor } from '@testing-library/react';  
+        import { waitFor } from '@testing-library/react';
         await waitFor(function() {
           console.log('testing-library')
           expect(b).toEqual('b')
@@ -39,19 +45,19 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import { waitFor } from '@testing-library/react';  
+        import { waitFor } from '@testing-library/react';
         await waitFor(() => {})
       `,
     },
     {
       code: `
-        import { waitFor } from '@testing-library/react';  
+        import { waitFor } from '@testing-library/react';
         await waitFor(function() {})
       `,
     },
     {
       code: `
-        import { waitFor } from '@testing-library/react';  
+        import { waitFor } from '@testing-library/react';
         await waitFor(() => {
           // testing
         })
@@ -59,7 +65,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import { waitFor } from '@testing-library/react';  
+        import { waitFor } from '@testing-library/react';
         await waitFor(function() {
           // testing
         })
@@ -67,7 +73,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import { waitFor } from '@testing-library/react';  
+        import { waitFor } from '@testing-library/react';
         fireEvent.keyDown(input, {key: 'ArrowDown'})
         await waitFor(() => {
           expect(b).toEqual('b')
@@ -76,7 +82,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import { waitFor } from '@testing-library/react';  
+        import { waitFor } from '@testing-library/react';
         fireEvent.keyDown(input, {key: 'ArrowDown'})
         await waitFor(function() {
           expect(b).toEqual('b')
@@ -85,7 +91,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import { waitFor } from '@testing-library/react';  
+        import { waitFor } from '@testing-library/react';
         userEvent.click(button)
         await waitFor(function() {
           expect(b).toEqual('b')
@@ -95,7 +101,7 @@ ruleTester.run(RULE_NAME, rule, {
     {
       settings: { 'testing-library/utils-module': 'test-utils' },
       code: `
-        import { waitFor } from 'somewhere-else';  
+        import { waitFor } from 'somewhere-else';
         await waitFor(function() {
           fireEvent.keyDown(input, {key: 'ArrowDown'})
           expect(b).toEqual('b')
@@ -105,12 +111,12 @@ ruleTester.run(RULE_NAME, rule, {
     {
       code: `
         import { waitFor } from '@testing-library/react';
-        
+
         anotherFunction(() => {
           fireEvent.keyDown(input, {key: 'ArrowDown'});
           userEvent.click(button);
         });
-        
+
         test('side effects in functions other than waitFor are valid', () => {
           fireEvent.keyDown(input, {key: 'ArrowDown'})
           userEvent.click(button)
@@ -307,6 +313,13 @@ ruleTester.run(RULE_NAME, rule, {
     {
       code: `
         import { waitFor } from '@testing-library/react';
+        await waitFor(() => render(<App />))
+      `,
+      errors: [{ line: 3, column: 29, messageId: 'noSideEffectsWaitFor' }],
+    },
+    {
+      code: `
+        import { waitFor } from '@marko/testing-library';
         await waitFor(() => render(<App />))
       `,
       errors: [{ line: 3, column: 29, messageId: 'noSideEffectsWaitFor' }],
@@ -541,7 +554,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import { waitFor, fireEvent as renamedFireEvent } from '@testing-library/react';  
+        import { waitFor, fireEvent as renamedFireEvent } from '@testing-library/react';
         await waitFor(() => {
           renamedFireEvent.keyDown(input, {key: 'ArrowDown'})
         })
@@ -551,7 +564,7 @@ ruleTester.run(RULE_NAME, rule, {
     {
       settings: { 'testing-library/utils-module': '~/test-utils' },
       code: `
-        import { waitFor, fireEvent } from '~/test-utils';  
+        import { waitFor, fireEvent } from '~/test-utils';
         await waitFor(() => {
           fireEvent.keyDown(input, {key: 'ArrowDown'})
         })
@@ -560,7 +573,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import { waitFor } from '@testing-library/react';  
+        import { waitFor } from '@testing-library/react';
         await waitFor(() => {
           expect(b).toEqual('b')
           fireEvent.keyDown(input, {key: 'ArrowDown'})
@@ -570,7 +583,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import { waitFor } from '@testing-library/react';  
+        import { waitFor } from '@testing-library/react';
         await waitFor(() => {
           fireEvent.keyDown(input, {key: 'ArrowDown'})
           expect(b).toEqual('b')
@@ -580,7 +593,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import { waitFor } from '@testing-library/react';  
+        import { waitFor } from '@testing-library/react';
         await waitFor(function() {
           fireEvent.keyDown(input, {key: 'ArrowDown'})
         })
@@ -589,7 +602,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import { waitFor } from '@testing-library/react';  
+        import { waitFor } from '@testing-library/react';
         await waitFor(function() {
           expect(b).toEqual('b')
           fireEvent.keyDown(input, {key: 'ArrowDown'})
@@ -599,7 +612,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import { waitFor } from '@testing-library/react';  
+        import { waitFor } from '@testing-library/react';
         await waitFor(function() {
           fireEvent.keyDown(input, {key: 'ArrowDown'})
           expect(b).toEqual('b')
@@ -627,7 +640,7 @@ ruleTester.run(RULE_NAME, rule, {
     {
       code: `
         import { waitFor } from '@testing-library/react';
-        import renamedUserEvent from '@testing-library/user-event'  
+        import renamedUserEvent from '@testing-library/user-event'
         await waitFor(() => {
           renamedUserEvent.click(button)
         })
@@ -638,7 +651,7 @@ ruleTester.run(RULE_NAME, rule, {
       settings: { 'testing-library/utils-module': '~/test-utils' },
       code: `
         import { waitFor } from '~/test-utils';
-        import userEvent from '@testing-library/user-event'  
+        import userEvent from '@testing-library/user-event'
         await waitFor(() => {
           userEvent.click();
         })
@@ -647,7 +660,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import { waitFor } from '@testing-library/react';  
+        import { waitFor } from '@testing-library/react';
         await waitFor(() => {
           expect(b).toEqual('b')
           userEvent.click(button)
@@ -657,7 +670,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import { waitFor } from '@testing-library/react';  
+        import { waitFor } from '@testing-library/react';
         await waitFor(() => {
           userEvent.click(button)
           expect(b).toEqual('b')
@@ -667,7 +680,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import { waitFor } from '@testing-library/react';  
+        import { waitFor } from '@testing-library/react';
         await waitFor(function() {
           userEvent.click(button)
         })
@@ -676,7 +689,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import { waitFor } from '@testing-library/react';  
+        import { waitFor } from '@testing-library/react';
         await waitFor(function() {
           expect(b).toEqual('b')
           userEvent.click(button)
@@ -686,7 +699,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import { waitFor } from '@testing-library/react';  
+        import { waitFor } from '@testing-library/react';
         await waitFor(function() {
           userEvent.click(button)
           expect(b).toEqual('b')
@@ -701,7 +714,7 @@ ruleTester.run(RULE_NAME, rule, {
         import { waitFor, fireEvent as renamedFireEvent, screen } from '~/test-utils';
         import userEvent from '@testing-library/user-event'
         import { fireEvent } from 'somewhere-else'
-          
+
         test('check all mixed', async () => {
           const button = await screen.findByRole('button')
           await waitFor(() => {

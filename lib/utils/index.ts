@@ -23,6 +23,7 @@ const LIBRARY_MODULES = [
   '@testing-library/preact',
   '@testing-library/vue',
   '@testing-library/svelte',
+  '@marko/testing-library',
 ];
 
 const SYNC_QUERIES_VARIANTS = ['getBy', 'getAllBy', 'queryBy', 'queryAllBy'];

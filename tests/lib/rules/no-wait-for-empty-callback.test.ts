@@ -47,6 +47,14 @@ ruleTester.run(RULE_NAME, rule, {
         waitFor(() => {})
       `,
     },
+    {
+      settings: { 'testing-library/utils-module': 'test-utils' },
+      code: `
+        import { waitFor as renamedWaitFor } from '@marko/testing-library'
+        import { waitFor } from 'somewhere-else'
+        waitFor(() => {})
+      `,
+    },
   ],
 
   invalid: [
@@ -72,6 +80,26 @@ ruleTester.run(RULE_NAME, rule, {
           settings: { 'testing-library/utils-module': 'test-utils' },
           code: `
         import { ${m} } from 'test-utils';
+        ${m}(() => {});
+      `,
+          errors: [
+            {
+              line: 3,
+              column: 16 + m.length,
+              messageId: 'noWaitForEmptyCallback',
+              data: {
+                methodName: m,
+              },
+            },
+          ],
+        } as const)
+    ),
+    ...ALL_WAIT_METHODS.map(
+      (m) =>
+        ({
+          settings: { 'testing-library/utils-module': 'test-utils' },
+          code: `
+        import { ${m} } from '@marko/testing-library';
         ${m}(() => {});
       `,
           errors: [

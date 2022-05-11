@@ -120,6 +120,67 @@ const validTestCases: ValidTestCase[] = [
     `,
   },
   {
+    code: `// case: Marko TL act wrapping non-Marko TL calls
+    import { act } from '@marko/testing-library'
+
+    test('valid case', async () => {
+      act(() => {
+        stuffThatDoesNotUseRTL();
+      });
+
+      act(function() {
+        a = stuffThatDoesNotUseRTL();
+      });
+
+      act(function() {
+        a = await stuffThatDoesNotUseRTL();
+      });
+
+      await act(async () => {
+        await stuffThatDoesNotUseRTL();
+      });
+
+      await act(async () => {
+        await stuffThatDoesNotUseRTL;
+      });
+
+      await act(() => stuffThatDoesNotUseRTL);
+
+      act(() => stuffThatDoesNotUseRTL);
+
+      act(() => {
+        return stuffThatDoesNotUseRTL
+      });
+
+      act(async function() {
+        await stuffThatDoesNotUseRTL;
+      });
+
+      await act(async function() {
+        await stuffThatDoesNotUseRTL;
+      });
+
+      act(async function() {
+        return stuffThatDoesNotUseRTL;
+      });
+
+      act(function() {
+        stuffThatDoesNotUseRTL();
+        const a = foo();
+      });
+
+      act(function() {
+        return stuffThatDoesNotUseRTL();
+      });
+
+      act(() => stuffThatDoesNotUseRTL());
+
+      act(() => stuffThatDoesNotUseRTL()).then(() => {})
+      act(stuffThatDoesNotUseRTL().then(() => {}))
+    });
+    `,
+  },
+  {
     code: `// case: RTU act wrapping non-RTL
       import { act } from 'react-dom/test-utils'
 
@@ -242,6 +303,86 @@ const invalidTestCases: InvalidTestCase[] = [
   {
     code: `// case: RTL act wrapping RTL calls - callbacks with body (BlockStatement)
       import { act, fireEvent, screen, render, waitFor, waitForElementToBeRemoved } from '@testing-library/react'
+      import userEvent from '@testing-library/user-event'
+
+      test('invalid case', async () => {
+        act(() => {
+          fireEvent.click(el);
+        });
+
+        await act(async () => {
+          waitFor(() => {});
+        });
+
+        await act(async () => {
+          waitForElementToBeRemoved(el);
+        });
+
+        act(function() {
+          const blah = screen.getByText('blah');
+        });
+
+        act(function() {
+          render(something);
+        });
+
+        await act(() => {
+          const button = findByRole('button')
+        });
+
+        act(() => {
+          userEvent.click(el)
+        });
+
+        act(() => {
+          waitFor();
+          const element = screen.getByText('blah');
+          userEvent.click(element)
+        });
+      });
+      `,
+    errors: [
+      { messageId: 'noUnnecessaryActTestingLibraryUtil', line: 6, column: 9 },
+      {
+        messageId: 'noUnnecessaryActTestingLibraryUtil',
+        line: 10,
+        column: 15,
+      },
+      {
+        messageId: 'noUnnecessaryActTestingLibraryUtil',
+        line: 14,
+        column: 15,
+      },
+      {
+        messageId: 'noUnnecessaryActTestingLibraryUtil',
+        line: 18,
+        column: 9,
+      },
+      {
+        messageId: 'noUnnecessaryActTestingLibraryUtil',
+        line: 22,
+        column: 9,
+      },
+      {
+        messageId: 'noUnnecessaryActTestingLibraryUtil',
+        line: 26,
+        column: 15,
+      },
+      {
+        messageId: 'noUnnecessaryActTestingLibraryUtil',
+        line: 30,
+        column: 9,
+      },
+      {
+        messageId: 'noUnnecessaryActTestingLibraryUtil',
+        line: 34,
+        column: 9,
+      },
+    ],
+  },
+  {
+    code: `// case: Marko TL act wrapping Marko TL calls - callbacks with body (BlockStatement)
+      import { act, fireEvent, screen, render, waitFor, waitForElementToBeRemoved } from '@marko/testing-library'
       import userEvent from '@testing-library/user-event'
 
       test('invalid case', async () => {

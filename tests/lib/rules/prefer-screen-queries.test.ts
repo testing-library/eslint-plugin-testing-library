@@ -271,6 +271,26 @@ ruleTester.run(RULE_NAME, rule, {
         ({
           settings: { 'testing-library/utils-module': 'test-utils' },
           code: `
+        import { render as testingLibraryRender} from '@marko/testing-library'
+        const { ${queryMethod} } = testingLibraryRender(foo)
+        ${queryMethod}()`,
+          errors: [
+            {
+              line: 4,
+              column: 9,
+              messageId: 'preferScreenQueries',
+              data: {
+                name: queryMethod,
+              },
+            },
+          ],
+        } as const)
+    ),
+    ...ALL_QUERIES_COMBINATIONS.map(
+      (queryMethod) =>
+        ({
+          settings: { 'testing-library/utils-module': 'test-utils' },
+          code: `
         import { render } from 'test-utils'
         const { ${queryMethod} } = render(foo)
         ${queryMethod}()`,
@@ -416,16 +436,16 @@ ruleTester.run(RULE_NAME, rule, {
     {
       code: ` // issue #367 - example A
       import { render } from '@testing-library/react';
-      
+
       function setup() {
         return render(<div />);
       }
-      
+
       it('foo', async () => {
         const { getByText } = await setup();
         expect(getByText('foo')).toBeInTheDocument();
       });
-      
+
       it('bar', () => {
         const { getByText } = setup();
         expect(getByText('foo')).toBeInTheDocument();
@@ -453,16 +473,16 @@ ruleTester.run(RULE_NAME, rule, {
     {
       code: ` // issue #367 - example B
       import { render } from '@testing-library/react';
-      
+
       function setup() {
         return render(<div />);
       }
-      
+
       it('foo', () => {
         const { getByText } = setup();
         expect(getByText('foo')).toBeInTheDocument();
       });
-      
+
       it('bar', () => {
         const results = setup();
         const { getByText } = results;
