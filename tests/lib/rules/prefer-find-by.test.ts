@@ -14,6 +14,11 @@ import { createRuleTester } from '../test-utils';
 
 const ruleTester = createRuleTester();
 
+const SUPPORTED_TESTING_FRAMEWORKS = [
+  '@testing-library/foo',
+  '@marko/testing-library',
+];
+
 function buildFindByMethod(queryMethod: string) {
   return `${getFindByQueryVariant(queryMethod)}${queryMethod.split('By')[1]}`;
 }
@@ -35,7 +40,7 @@ function createScenario<
 }
 
 ruleTester.run(RULE_NAME, rule, {
-  valid: [
+  valid: SUPPORTED_TESTING_FRAMEWORKS.flatMap((testingFramework) => [
     ...ASYNC_QUERIES_COMBINATIONS.map((queryMethod) => ({
       code: `
         it('tests', async () => {
@@ -46,7 +51,7 @@ ruleTester.run(RULE_NAME, rule, {
     })),
     ...ASYNC_QUERIES_COMBINATIONS.map((queryMethod) => ({
       code: `
-        import {screen} from '@testing-library/foo';
+        import {screen} from '${testingFramework}';
         it('tests', async () => {
           const submitButton = await screen.${queryMethod}('foo')
         })
@@ -54,7 +59,7 @@ ruleTester.run(RULE_NAME, rule, {
     })),
     ...SYNC_QUERIES_COMBINATIONS.map((queryMethod) => ({
       code: `
-        import {waitForElementToBeRemoved} from '@testing-library/foo';
+        import {waitForElementToBeRemoved} from '${testingFramework}';
         it('tests', async () => {
           await waitForElementToBeRemoved(() => ${queryMethod}(baz))
         })
@@ -62,7 +67,7 @@ ruleTester.run(RULE_NAME, rule, {
     })),
     ...SYNC_QUERIES_COMBINATIONS.map((queryMethod) => ({
       code: `
-        import {waitFor} from '@testing-library/foo';
+        import {waitFor} from '${testingFramework}';
         it('tests', async () => {
           await waitFor(function() {
             return ${queryMethod}('baz', { name: 'foo' })
@@ -72,7 +77,7 @@ ruleTester.run(RULE_NAME, rule, {
     })),
     {
       code: `
-        import {waitFor} from '@testing-library/foo';
+        import {waitFor} from '${testingFramework}';
         it('tests', async () => {
           await waitFor(() => myCustomFunction())
         })
@@ -80,7 +85,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import {waitFor} from '@testing-library/foo';
+        import {waitFor} from '${testingFramework}';
         it('tests', async () => {
           await waitFor(customFunctionReference)
         })
@@ -88,7 +93,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-      import {waitForElementToBeRemoved} from '@testing-library/foo';
+      import {waitForElementToBeRemoved} from '${testingFramework}';
       it('tests', async () => {
         const { container } = render()
         await waitForElementToBeRemoved(container.querySelector('foo'))
@@ -97,7 +102,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     ...SYNC_QUERIES_COMBINATIONS.map((queryMethod) => ({
       code: `
-        import {waitFor} from '@testing-library/foo';
+        import {waitFor} from '${testingFramework}';
         it('tests', async () => {
           await waitFor(() => {
             foo()
@@ -108,7 +113,7 @@ ruleTester.run(RULE_NAME, rule, {
     })),
     ...SYNC_QUERIES_COMBINATIONS.map((queryMethod) => ({
       code: `
-        import {screen, waitFor} from '@testing-library/foo';
+        import {screen, waitFor} from '${testingFramework}';
         it('tests', async () => {
           await waitFor(() => expect(screen.${queryMethod}('baz')).toBeDisabled());
         })
@@ -116,7 +121,7 @@ ruleTester.run(RULE_NAME, rule, {
     })),
     ...SYNC_QUERIES_COMBINATIONS.map((queryMethod) => ({
       code: `
-        import {screen, waitFor} from '@testing-library/foo';
+        import {screen, waitFor} from '${testingFramework}';
         it('tests', async () => {
           const { ${queryMethod} } = render()
           await waitFor(() => expect(${queryMethod}('baz')).toBeDisabled());
@@ -125,7 +130,7 @@ ruleTester.run(RULE_NAME, rule, {
     })),
     ...SYNC_QUERIES_COMBINATIONS.map((queryMethod) => ({
       code: `
-        import {waitFor} from '@testing-library/foo';
+        import {waitFor} from '${testingFramework}';
         it('tests', async () => {
           await waitFor(() => expect(screen.${queryMethod}('baz')).not.toBeInTheDocument());
         })
@@ -133,7 +138,7 @@ ruleTester.run(RULE_NAME, rule, {
     })),
     ...SYNC_QUERIES_COMBINATIONS.map((queryMethod) => ({
       code: `
-        import {waitFor} from '@testing-library/foo';
+        import {waitFor} from '${testingFramework}';
         it('tests', async () => {
           const { ${queryMethod} } = render()
           await waitFor(() => expect(${queryMethod}('baz')).not.toBeInTheDocument());
@@ -142,7 +147,7 @@ ruleTester.run(RULE_NAME, rule, {
     })),
     {
       code: `
-        import {waitFor} from '@testing-library/foo';
+        import {waitFor} from '${testingFramework}';
         it('tests', async () => {
           await waitFor();
           await wait();
@@ -151,7 +156,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import {screen, waitFor} from '@testing-library/foo';
+        import {screen, waitFor} from '${testingFramework}';
         it('tests', async () => {
           await waitFor(() => expect(screen.querySelector('baz')).toBeInTheDocument());
         })
@@ -159,18 +164,18 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import {waitFor} from '@testing-library/foo';
+        import {waitFor} from '${testingFramework}';
         it('tests', async () => {
           const { container } = render()
           await waitFor(() => expect(container.querySelector('baz')).toBeInTheDocument());
         })
       `,
     },
-  ],
-  invalid: [
+  ]),
+  invalid: SUPPORTED_TESTING_FRAMEWORKS.flatMap((testingFramework) => [
     ...createScenario((waitMethod: string, queryMethod: string) => ({
       code: `
-          import {${waitMethod}, screen} from '@testing-library/foo';
+          import {${waitMethod}, screen} from '${testingFramework}';
           it('tests', async () => {
             const submitButton = await ${waitMethod}(() => screen.${queryMethod}('foo', { name: 'baz' }))
           })
@@ -187,7 +192,7 @@ ruleTester.run(RULE_NAME, rule, {
         },
       ],
       output: `
-          import {${waitMethod}, screen} from '@testing-library/foo';
+          import {${waitMethod}, screen} from '${testingFramework}';
           it('tests', async () => {
             const submitButton = await screen.${buildFindByMethod(
               queryMethod
@@ -200,7 +205,7 @@ ruleTester.run(RULE_NAME, rule, {
       (waitMethod: string) =>
         ({
           code: `
-          import {${waitMethod}} from '@testing-library/foo';
+          import {${waitMethod}} from '${testingFramework}';
           const { getByText, queryByLabelText, findAllByRole } = customRender()
           it('tests', async () => {
             const submitButton = await ${waitMethod}(() => getByText('baz', { name: 'button' }))
@@ -218,7 +223,7 @@ ruleTester.run(RULE_NAME, rule, {
             },
           ],
           output: `
-          import {${waitMethod}} from '@testing-library/foo';
+          import {${waitMethod}} from '${testingFramework}';
           const { getByText, queryByLabelText, findAllByRole, findByText } = customRender()
           it('tests', async () => {
             const submitButton = await findByText('baz', { name: 'button' })
@@ -231,7 +236,7 @@ ruleTester.run(RULE_NAME, rule, {
       (waitMethod: string) =>
         ({
           code: `
-          import {${waitMethod}} from '@testing-library/foo';
+          import {${waitMethod}} from '${testingFramework}';
           const { getAllByRole, findAllByRole } = customRender()
           it('tests', async () => {
             const submitButton = await ${waitMethod}(() => getAllByRole('baz', { name: 'button' }))
@@ -249,7 +254,7 @@ ruleTester.run(RULE_NAME, rule, {
             },
           ],
           output: `
-          import {${waitMethod}} from '@testing-library/foo';
+          import {${waitMethod}} from '${testingFramework}';
           const { getAllByRole, findAllByRole } = customRender()
           it('tests', async () => {
             const submitButton = await findAllByRole('baz', { name: 'button' })
@@ -300,7 +305,7 @@ ruleTester.run(RULE_NAME, rule, {
       (waitMethod: string) =>
         ({
           code: `
-          import {${waitMethod},render} from '@testing-library/foo';
+          import {${waitMethod},render} from '${testingFramework}';
           it('tests', async () => {
             const { getByCustomQuery } = render()
             const submitButton = await ${waitMethod}(() => getByCustomQuery('baz'))
@@ -318,7 +323,7 @@ ruleTester.run(RULE_NAME, rule, {
             },
           ],
           output: `
-          import {${waitMethod},render} from '@testing-library/foo';
+          import {${waitMethod},render} from '${testingFramework}';
           it('tests', async () => {
             const { getByCustomQuery } = render()
             const submitButton = await ${waitMethod}(() => getByCustomQuery('baz'))
@@ -331,7 +336,7 @@ ruleTester.run(RULE_NAME, rule, {
       (waitMethod: string) =>
         ({
           code: `
-          import {${waitMethod},render,screen} from '@testing-library/foo';
+          import {${waitMethod},render,screen} from '${testingFramework}';
           it('tests', async () => {
             const { getByCustomQuery } = render()
             const submitButton = await ${waitMethod}(() => screen.getByCustomQuery('baz'))
@@ -349,7 +354,7 @@ ruleTester.run(RULE_NAME, rule, {
             },
           ],
           output: `
-          import {${waitMethod},render,screen} from '@testing-library/foo';
+          import {${waitMethod},render,screen} from '${testingFramework}';
           it('tests', async () => {
             const { getByCustomQuery } = render()
             const submitButton = await ${waitMethod}(() => screen.getByCustomQuery('baz'))
@@ -360,7 +365,7 @@ ruleTester.run(RULE_NAME, rule, {
     // presence matchers
     ...createScenario((waitMethod: string, queryMethod: string) => ({
       code: `
-        import {${waitMethod}} from '@testing-library/foo';
+        import {${waitMethod}} from '${testingFramework}';
         it('tests', async () => {
           const { ${queryMethod} } = render()
           const submitButton = await ${waitMethod}(() => ${queryMethod}('foo', { name: 'baz' }))
@@ -378,7 +383,7 @@ ruleTester.run(RULE_NAME, rule, {
         },
       ],
       output: `
-        import {${waitMethod}} from '@testing-library/foo';
+        import {${waitMethod}} from '${testingFramework}';
         it('tests', async () => {
           const { ${queryMethod}, ${buildFindByMethod(queryMethod)} } = render()
           const submitButton = await ${buildFindByMethod(
@@ -389,7 +394,7 @@ ruleTester.run(RULE_NAME, rule, {
     })),
     ...createScenario((waitMethod: string, queryMethod: string) => ({
       code: `
-        import {${waitMethod}} from '@testing-library/foo';
+        import {${waitMethod}} from '${testingFramework}';
         it('tests', async () => {
           const { ${queryMethod} } = render()
           const submitButton = await ${waitMethod}(() => expect(${queryMethod}('foo', { name: 'baz' })).toBeInTheDocument())
@@ -407,7 +412,7 @@ ruleTester.run(RULE_NAME, rule, {
         },
       ],
       output: `
-        import {${waitMethod}} from '@testing-library/foo';
+        import {${waitMethod}} from '${testingFramework}';
         it('tests', async () => {
           const { ${queryMethod}, ${buildFindByMethod(queryMethod)} } = render()
           const submitButton = await ${buildFindByMethod(
@@ -418,7 +423,7 @@ ruleTester.run(RULE_NAME, rule, {
     })),
     ...createScenario((waitMethod: string, queryMethod: string) => ({
       code: `
-        import {${waitMethod}} from '@testing-library/foo';
+        import {${waitMethod}} from '${testingFramework}';
         it('tests', async () => {
           const { ${queryMethod} } = render()
           const submitButton = await ${waitMethod}(() => expect(${queryMethod}('foo', { name: 'baz' })).toBeDefined())
@@ -436,7 +441,7 @@ ruleTester.run(RULE_NAME, rule, {
         },
       ],
       output: `
-        import {${waitMethod}} from '@testing-library/foo';
+        import {${waitMethod}} from '${testingFramework}';
         it('tests', async () => {
           const { ${queryMethod}, ${buildFindByMethod(queryMethod)} } = render()
           const submitButton = await ${buildFindByMethod(
@@ -447,7 +452,7 @@ ruleTester.run(RULE_NAME, rule, {
     })),
     ...createScenario((waitMethod: string, queryMethod: string) => ({
       code: `
-        import {${waitMethod}} from '@testing-library/foo';
+        import {${waitMethod}} from '${testingFramework}';
         it('tests', async () => {
           const { ${queryMethod} } = render()
           const submitButton = await ${waitMethod}(() => expect(${queryMethod}('foo', { name: 'baz' })).not.toBeNull())
@@ -465,7 +470,7 @@ ruleTester.run(RULE_NAME, rule, {
         },
       ],
       output: `
-        import {${waitMethod}} from '@testing-library/foo';
+        import {${waitMethod}} from '${testingFramework}';
         it('tests', async () => {
           const { ${queryMethod}, ${buildFindByMethod(queryMethod)} } = render()
           const submitButton = await ${buildFindByMethod(
@@ -476,7 +481,7 @@ ruleTester.run(RULE_NAME, rule, {
     })),
     ...createScenario((waitMethod: string, queryMethod: string) => ({
       code: `
-        import {${waitMethod}} from '@testing-library/foo';
+        import {${waitMethod}} from '${testingFramework}';
         it('tests', async () => {
           const {${queryMethod}} = render()
           const submitButton = await ${waitMethod}(() => expect(${queryMethod}('foo', { name: 'baz' })).not.toBeNull())
@@ -494,7 +499,7 @@ ruleTester.run(RULE_NAME, rule, {
         },
       ],
       output: `
-        import {${waitMethod}} from '@testing-library/foo';
+        import {${waitMethod}} from '${testingFramework}';
         it('tests', async () => {
           const {${queryMethod}, ${buildFindByMethod(queryMethod)}} = render()
           const submitButton = await ${buildFindByMethod(
@@ -505,7 +510,7 @@ ruleTester.run(RULE_NAME, rule, {
     })),
     ...createScenario((waitMethod: string, queryMethod: string) => ({
       code: `
-        import {${waitMethod}} from '@testing-library/foo';
+        import {${waitMethod}} from '${testingFramework}';
         it('tests', async () => {
           const { ${queryMethod} } = render()
           const submitButton = await ${waitMethod}(() => expect(${queryMethod}('foo', { name: 'baz' })).toBeTruthy())
@@ -523,7 +528,7 @@ ruleTester.run(RULE_NAME, rule, {
         },
       ],
       output: `
-        import {${waitMethod}} from '@testing-library/foo';
+        import {${waitMethod}} from '${testingFramework}';
         it('tests', async () => {
           const { ${queryMethod}, ${buildFindByMethod(queryMethod)} } = render()
           const submitButton = await ${buildFindByMethod(
@@ -534,7 +539,7 @@ ruleTester.run(RULE_NAME, rule, {
     })),
     ...createScenario((waitMethod: string, queryMethod: string) => ({
       code: `
-        import {${waitMethod}} from '@testing-library/foo';
+        import {${waitMethod}} from '${testingFramework}';
         it('tests', async () => {
           const { ${queryMethod} } = render()
           const submitButton = await ${waitMethod}(() => expect(${queryMethod}('foo', { name: 'baz' })).not.toBeFalsy())
@@ -552,7 +557,7 @@ ruleTester.run(RULE_NAME, rule, {
         },
       ],
       output: `
-        import {${waitMethod}} from '@testing-library/foo';
+        import {${waitMethod}} from '${testingFramework}';
         it('tests', async () => {
           const { ${queryMethod}, ${buildFindByMethod(queryMethod)} } = render()
           const submitButton = await ${buildFindByMethod(
@@ -563,7 +568,7 @@ ruleTester.run(RULE_NAME, rule, {
     })),
     ...createScenario((waitMethod: string, queryMethod: string) => ({
       code: `
-          import {${waitMethod}} from '@testing-library/foo';
+          import {${waitMethod}} from '${testingFramework}';
           it('tests', async () => {
             const submitButton = await ${waitMethod}(() => expect(screen.${queryMethod}('foo', { name: 'baz' })).toBeInTheDocument())
           })
@@ -580,7 +585,7 @@ ruleTester.run(RULE_NAME, rule, {
         },
       ],
       output: `
-          import {${waitMethod}} from '@testing-library/foo';
+          import {${waitMethod}} from '${testingFramework}';
           it('tests', async () => {
             const submitButton = await screen.${buildFindByMethod(
               queryMethod
@@ -590,7 +595,7 @@ ruleTester.run(RULE_NAME, rule, {
     })),
     ...createScenario((waitMethod: string, queryMethod: string) => ({
       code: `
-          import {${waitMethod}} from '@testing-library/foo';
+          import {${waitMethod}} from '${testingFramework}';
           it('tests', async () => {
             const submitButton = await ${waitMethod}(() => expect(screen.${queryMethod}('foo', { name: 'baz' })).toBeDefined())
           })
@@ -607,7 +612,7 @@ ruleTester.run(RULE_NAME, rule, {
         },
       ],
       output: `
-          import {${waitMethod}} from '@testing-library/foo';
+          import {${waitMethod}} from '${testingFramework}';
           it('tests', async () => {
             const submitButton = await screen.${buildFindByMethod(
               queryMethod
@@ -617,7 +622,7 @@ ruleTester.run(RULE_NAME, rule, {
     })),
     ...createScenario((waitMethod: string, queryMethod: string) => ({
       code: `
-          import {${waitMethod}} from '@testing-library/foo';
+          import {${waitMethod}} from '${testingFramework}';
           it('tests', async () => {
             const submitButton = await ${waitMethod}(() => expect(screen.${queryMethod}('foo', { name: 'baz' })).not.toBeNull())
           })
@@ -634,7 +639,7 @@ ruleTester.run(RULE_NAME, rule, {
         },
       ],
       output: `
-          import {${waitMethod}} from '@testing-library/foo';
+          import {${waitMethod}} from '${testingFramework}';
           it('tests', async () => {
             const submitButton = await screen.${buildFindByMethod(
               queryMethod
@@ -644,7 +649,7 @@ ruleTester.run(RULE_NAME, rule, {
     })),
     ...createScenario((waitMethod: string, queryMethod: string) => ({
       code: `
-          import {${waitMethod}} from '@testing-library/foo';
+          import {${waitMethod}} from '${testingFramework}';
           it('tests', async () => {
             const submitButton = await ${waitMethod}(() => expect(screen.${queryMethod}('foo', { name: 'baz' })).toBeTruthy())
           })
@@ -661,7 +666,7 @@ ruleTester.run(RULE_NAME, rule, {
         },
       ],
       output: `
-          import {${waitMethod}} from '@testing-library/foo';
+          import {${waitMethod}} from '${testingFramework}';
           it('tests', async () => {
             const submitButton = await screen.${buildFindByMethod(
               queryMethod
@@ -671,7 +676,7 @@ ruleTester.run(RULE_NAME, rule, {
     })),
     ...createScenario((waitMethod: string, queryMethod: string) => ({
       code: `
-          import {${waitMethod}} from '@testing-library/foo';
+          import {${waitMethod}} from '${testingFramework}';
           it('tests', async () => {
             const submitButton = await ${waitMethod}(() => expect(screen.${queryMethod}('foo', { name: 'baz' })).not.toBeFalsy())
           })
@@ -688,7 +693,7 @@ ruleTester.run(RULE_NAME, rule, {
         },
       ],
       output: `
-          import {${waitMethod}} from '@testing-library/foo';
+          import {${waitMethod}} from '${testingFramework}';
           it('tests', async () => {
             const submitButton = await screen.${buildFindByMethod(
               queryMethod
@@ -696,5 +701,5 @@ ruleTester.run(RULE_NAME, rule, {
           })
         `,
     })),
-  ],
+  ]),
 });

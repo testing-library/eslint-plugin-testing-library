@@ -5,6 +5,11 @@ import { createRuleTester } from '../test-utils';
 
 const ruleTester = createRuleTester();
 
+const SUPPORTED_TESTING_FRAMEWORKS = [
+  '@testing-library/react',
+  '@marko/testing-library',
+];
+
 ruleTester.run(RULE_NAME, rule, {
   valid: [
     {
@@ -29,28 +34,17 @@ ruleTester.run(RULE_NAME, rule, {
         })
       `,
     },
-    {
+    ...SUPPORTED_TESTING_FRAMEWORKS.map((testingFramework) => ({
       settings: { 'testing-library/utils-module': 'test-utils' },
       code: `// Aggressive Reporting disabled - waitFor renamed
-        import { waitFor as renamedWaitFor } from '@testing-library/react'
+        import { waitFor as renamedWaitFor } from '${testingFramework}'
         import { waitFor } from 'somewhere-else'
         await waitFor(() => {
           expect(a).toEqual('a')
           expect(b).toEqual('b')
         })
       `,
-    },
-    {
-      settings: { 'testing-library/utils-module': 'test-utils' },
-      code: `// Aggressive Reporting disabled - waitFor renamed
-        import { waitFor as renamedWaitFor } from '@marko/testing-library'
-        import { waitFor } from 'somewhere-else'
-        await waitFor(() => {
-          expect(a).toEqual('a')
-          expect(b).toEqual('b')
-        })
-      `,
-    },
+    })),
     // this needs to be check by other rule
     {
       code: `
@@ -114,32 +108,22 @@ ruleTester.run(RULE_NAME, rule, {
         { line: 4, column: 11, messageId: 'noWaitForMultipleAssertion' },
       ],
     },
-    {
-      settings: { 'testing-library/utils-module': 'test-utils' },
-      code: `// Aggressive Reporting disabled
-        import { waitFor } from '@testing-library/react'
+    ...SUPPORTED_TESTING_FRAMEWORKS.map(
+      (testingFramework) =>
+        ({
+          settings: { 'testing-library/utils-module': 'test-utils' },
+          code: `// Aggressive Reporting disabled
+        import { waitFor } from '${testingFramework}'
         await waitFor(() => {
           expect(a).toEqual('a')
           expect(b).toEqual('b')
         })
       `,
-      errors: [
-        { line: 5, column: 11, messageId: 'noWaitForMultipleAssertion' },
-      ],
-    },
-    {
-      settings: { 'testing-library/utils-module': 'test-utils' },
-      code: `// Aggressive Reporting disabled
-        import { waitFor } from '@marko/testing-library'
-        await waitFor(() => {
-          expect(a).toEqual('a')
-          expect(b).toEqual('b')
-        })
-      `,
-      errors: [
-        { line: 5, column: 11, messageId: 'noWaitForMultipleAssertion' },
-      ],
-    },
+          errors: [
+            { line: 5, column: 11, messageId: 'noWaitForMultipleAssertion' },
+          ],
+        } as const)
+    ),
     {
       settings: { 'testing-library/utils-module': 'test-utils' },
       code: `// Aggressive Reporting disabled

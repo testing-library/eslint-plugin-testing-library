@@ -4,6 +4,10 @@ import { createRuleTester } from '../test-utils';
 const ruleTester = createRuleTester();
 
 const ALL_WAIT_METHODS = ['waitFor', 'waitForElementToBeRemoved'];
+const SUPPORTED_TESTING_FRAMEWORKS = [
+  '@testing-library/react',
+  '@marko/testing-library',
+];
 
 ruleTester.run(RULE_NAME, rule, {
   valid: [
@@ -39,22 +43,14 @@ ruleTester.run(RULE_NAME, rule, {
         waitFor(() => {})
       `,
     },
-    {
+    ...SUPPORTED_TESTING_FRAMEWORKS.map((testingFramework) => ({
       settings: { 'testing-library/utils-module': 'test-utils' },
       code: `
-        import { waitFor as renamedWaitFor } from '@testing-library/react'
+        import { waitFor as renamedWaitFor } from '${testingFramework}'
         import { waitFor } from 'somewhere-else'
         waitFor(() => {})
       `,
-    },
-    {
-      settings: { 'testing-library/utils-module': 'test-utils' },
-      code: `
-        import { waitFor as renamedWaitFor } from '@marko/testing-library'
-        import { waitFor } from 'somewhere-else'
-        waitFor(() => {})
-      `,
-    },
+    })),
   ],
 
   invalid: [
@@ -94,25 +90,26 @@ ruleTester.run(RULE_NAME, rule, {
           ],
         } as const)
     ),
-    ...ALL_WAIT_METHODS.map(
-      (m) =>
-        ({
-          settings: { 'testing-library/utils-module': 'test-utils' },
-          code: `
-        import { ${m} } from '@marko/testing-library';
+    ...SUPPORTED_TESTING_FRAMEWORKS.flatMap((testingFramework) =>
+      ALL_WAIT_METHODS.map(
+        (m) =>
+          ({
+            code: `
+        import { ${m} } from '${testingFramework}';
         ${m}(() => {});
       `,
-          errors: [
-            {
-              line: 3,
-              column: 16 + m.length,
-              messageId: 'noWaitForEmptyCallback',
-              data: {
-                methodName: m,
+            errors: [
+              {
+                line: 3,
+                column: 16 + m.length,
+                messageId: 'noWaitForEmptyCallback',
+                data: {
+                  methodName: m,
+                },
               },
-            },
-          ],
-        } as const)
+            ],
+          } as const)
+      )
     ),
     ...ALL_WAIT_METHODS.map(
       (m) =>

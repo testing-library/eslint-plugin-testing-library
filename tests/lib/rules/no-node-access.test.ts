@@ -3,18 +3,23 @@ import { createRuleTester } from '../test-utils';
 
 const ruleTester = createRuleTester();
 
+const SUPPORTED_TESTING_FRAMEWORKS = [
+  '@testing-library/react',
+  '@marko/testing-library',
+];
+
 ruleTester.run(RULE_NAME, rule, {
-  valid: [
+  valid: SUPPORTED_TESTING_FRAMEWORKS.flatMap((testingFramework) => [
     {
       code: `
-        import { screen } from '@testing-library/react';
+        import { screen } from '${testingFramework}';
 
         const buttonText = screen.getByText('submit');
       `,
     },
     {
       code: `
-        import { screen } from '@testing-library/react';
+        import { screen } from '${testingFramework}';
 
         const { getByText } = screen
         const firstChild = getByText('submit');
@@ -23,7 +28,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import { screen } from '@testing-library/react';
+        import { screen } from '${testingFramework}';
 
         const firstChild = screen.getByText('submit');
         expect(firstChild).toBeInTheDocument()
@@ -31,15 +36,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import { screen } from '@marko/testing-library';
-
-        const firstChild = screen.getByText('submit');
-        expect(firstChild).toBeInTheDocument()
-      `,
-    },
-    {
-      code: `
-        import { screen } from '@testing-library/react';
+        import { screen } from '${testingFramework}';
 
         const { getByText } = screen;
         const button = getByRole('button');
@@ -48,7 +45,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import { render, within } from '@testing-library/react';
+        import { render, within } from '${testingFramework}';
 
         const { getByLabelText } = render(<MyComponent />);
         const signInModal = getByLabelText('Sign In');
@@ -89,8 +86,8 @@ ruleTester.run(RULE_NAME, rule, {
       expect(closestButton).toBeInTheDocument();
       `,
     },
-  ],
-  invalid: [
+  ]),
+  invalid: SUPPORTED_TESTING_FRAMEWORKS.flatMap((testingFramework) => [
     {
       settings: {
         'testing-library/utils-module': 'test-utils',
@@ -105,7 +102,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import { screen } from '@testing-library/react';
+        import { screen } from '${testingFramework}';
 
         const button = document.getElementById('submit-btn').closest('button');
       `,
@@ -124,26 +121,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import { screen } from '@marko/testing-library';
-
-        const button = document.getElementById('submit-btn').closest('button');
-      `,
-      errors: [
-        {
-          line: 4,
-          column: 33,
-          messageId: 'noNodeAccess',
-        },
-        {
-          line: 4,
-          column: 62,
-          messageId: 'noNodeAccess',
-        },
-      ],
-    },
-    {
-      code: `
-        import { screen } from '@testing-library/react';
+        import { screen } from '${testingFramework}';
 
         document.getElementById('submit-btn');
       `,
@@ -157,7 +135,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import { screen } from '@testing-library/react';
+        import { screen } from '${testingFramework}';
 
         screen.getByText('submit').closest('button');
       `,
@@ -172,7 +150,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import { screen } from '@testing-library/react';
+        import { screen } from '${testingFramework}';
 
         expect(screen.getByText('submit').closest('button').textContent).toBe('Submit');
       `,
@@ -186,7 +164,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import { render } from '@testing-library/react';
+        import { render } from '${testingFramework}';
 
         const { getByText } = render(<Example />)
         getByText('submit').closest('button');
@@ -195,7 +173,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import { screen } from '@testing-library/react';
+        import { screen } from '${testingFramework}';
 
         const buttons = screen.getAllByRole('button');
         const childA = buttons[1].firstChild;
@@ -219,7 +197,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import { screen } from '@testing-library/react';
+        import { screen } from '${testingFramework}';
 
         const buttonText = screen.getByText('submit');
         const button = buttonText.closest('button');
@@ -228,7 +206,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import { render } from '@testing-library/react';
+        import { render } from '${testingFramework}';
 
         const { getByText } = render(<Example />)
         const buttonText = getByText('submit');
@@ -244,7 +222,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import { render } from '@testing-library/react';
+        import { render } from '${testingFramework}';
 
         const { getByText } = render(<Example />)
         const button = getByText('submit').closest('button');
@@ -253,7 +231,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import { screen } from '@testing-library/react';
+        import { screen } from '${testingFramework}';
 
         function getExampleDOM() {
             const container = document.createElement('div');
@@ -283,7 +261,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import { screen } from '@testing-library/react';
+        import { screen } from '${testingFramework}';
 
         function getExampleDOM() {
             const container = document.createElement('div');
@@ -311,5 +289,5 @@ ruleTester.run(RULE_NAME, rule, {
         },
       ],
     },
-  ],
+  ]),
 });

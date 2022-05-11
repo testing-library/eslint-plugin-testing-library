@@ -442,40 +442,26 @@ ruleTester.run(RULE_NAME, rule, {
         },
       ],
     },
-    {
-      code: `
+    ...['@testing-library/react', '@marko/testing-library'].map(
+      (testingFramework) =>
+        ({
+          code: `
       // case: render imported from Testing Library module
-      import { render } from '@testing-library/react'
+      import { render } from '${testingFramework}'
       import { somethingElse } from 'another-module'
       const foo = require('bar')
 
       const utils = render();
       `,
-      errors: [
-        {
-          line: 7,
-          column: 21,
-          messageId: 'renderError',
-        },
-      ],
-    },
-    {
-      code: `
-      // case: render imported from Testing Library module
-      import { render } from '@marko/testing-library'
-      import { somethingElse } from 'another-module'
-      const foo = require('bar')
-
-      const utils = render();
-      `,
-      errors: [
-        {
-          line: 7,
-          column: 21,
-          messageId: 'renderError',
-        },
-      ],
-    },
+          errors: [
+            {
+              line: 7,
+              column: 21,
+              messageId: 'renderError',
+            },
+          ],
+        } as const)
+    ),
     {
       code: `
       // case: render imported from Testing Library module (require version)

@@ -3,6 +3,11 @@ import { createRuleTester } from '../test-utils';
 
 const ruleTester = createRuleTester();
 
+const SUPPORTED_TESTING_FRAMEWORKS = [
+  '@testing-library/react',
+  '@marko/testing-library',
+];
+
 ruleTester.run(RULE_NAME, rule, {
   valid: [
     {
@@ -48,24 +53,18 @@ ruleTester.run(RULE_NAME, rule, {
         expect(firstChild).toBeDefined();
       `,
     },
-    {
-      settings: { 'testing-library/utils-module': 'test-utils' },
-      code: `
-        import { render as renamed } from '@testing-library/react'
-        import { render } from 'somewhere-else'
-        const { container } = render(<Example />);
-        const button = container.querySelector('.btn-primary');
-      `,
-    },
-    {
-      settings: { 'testing-library/utils-module': 'test-utils' },
-      code: `
-        import { render as renamed } from '@marko/testing-library'
-        import { render } from 'somewhere-else'
-        const { container } = render(<Example />);
-        const button = container.querySelector('.btn-primary');
-      `,
-    },
+    ...SUPPORTED_TESTING_FRAMEWORKS.map(
+      (testingFramework) =>
+        ({
+          settings: { 'testing-library/utils-module': 'test-utils' },
+          code: `
+          import { render as renamed } from '${testingFramework}'
+          import { render } from 'somewhere-else'
+          const { container } = render(<Example />);
+          const button = container.querySelector('.btn-primary');
+        `,
+        } as const)
+    ),
     {
       settings: {
         'testing-library/custom-renders': ['customRender', 'renderWithRedux'],
@@ -106,57 +105,45 @@ ruleTester.run(RULE_NAME, rule, {
         },
       ],
     },
-    {
-      settings: { 'testing-library/utils-module': 'test-utils' },
-      code: `
-        import { render as testingRender } from '@testing-library/react'
+    ...SUPPORTED_TESTING_FRAMEWORKS.map(
+      (testingFramework) =>
+        ({
+          settings: { 'testing-library/utils-module': 'test-utils' },
+          code: `
+        import { render as testingRender } from '${testingFramework}'
         const { container: renamed } = testingRender(<Example />);
         const button = renamed.querySelector('.btn-primary');
       `,
-      errors: [
-        {
-          line: 4,
-          column: 24,
-          messageId: 'noContainer',
-        },
-      ],
-    },
-    {
-      settings: { 'testing-library/utils-module': 'test-utils' },
-      code: `
-        import { render } from '@testing-library/react'
+          errors: [
+            {
+              line: 4,
+              column: 24,
+              messageId: 'noContainer',
+            },
+          ],
+        } as const)
+    ),
+    ...SUPPORTED_TESTING_FRAMEWORKS.map(
+      (testingFramework) =>
+        ({
+          settings: { 'testing-library/utils-module': 'test-utils' },
+          code: `
+        import { render } from '${testingFramework}'
 
         const setup = () => render(<Example />)
 
         const { container } = setup()
         const button = container.querySelector('.btn-primary');
       `,
-      errors: [
-        {
-          line: 7,
-          column: 24,
-          messageId: 'noContainer',
-        },
-      ],
-    },
-    {
-      settings: { 'testing-library/utils-module': 'test-utils' },
-      code: `
-        import { render } from '@marko/testing-library'
-
-        const setup = () => render(<Example />)
-
-        const { container } = setup()
-        const button = container.querySelector('.btn-primary');
-      `,
-      errors: [
-        {
-          line: 7,
-          column: 24,
-          messageId: 'noContainer',
-        },
-      ],
-    },
+          errors: [
+            {
+              line: 7,
+              column: 24,
+              messageId: 'noContainer',
+            },
+          ],
+        } as const)
+    ),
     {
       code: `
         const { container } = render(<Example />);
@@ -209,21 +196,24 @@ ruleTester.run(RULE_NAME, rule, {
         },
       ],
     },
-    {
-      settings: { 'testing-library/utils-module': 'test-utils' },
-      code: `
-        import { render } from '@testing-library/react'
+    ...SUPPORTED_TESTING_FRAMEWORKS.map(
+      (testingFramework) =>
+        ({
+          settings: { 'testing-library/utils-module': 'test-utils' },
+          code: `
+        import { render } from '${testingFramework}'
         const { container: { querySelector } } = render(<Example />);
         querySelector('foo');
       `,
-      errors: [
-        {
-          line: 4,
-          column: 9,
-          messageId: 'noContainer',
-        },
-      ],
-    },
+          errors: [
+            {
+              line: 4,
+              column: 9,
+              messageId: 'noContainer',
+            },
+          ],
+        } as const)
+    ),
     {
       settings: {
         'testing-library/custom-renders': ['customRender', 'renderWithRedux'],
