@@ -3,101 +3,102 @@ import { createRuleTester } from '../test-utils';
 
 const ruleTester = createRuleTester();
 
+const SUPPORTED_TESTING_FRAMEWORKS = [
+  '@testing-library/react',
+  '@marko/testing-library',
+];
+
 ruleTester.run(RULE_NAME, rule, {
   valid: [
-    {
-      code: `
-        import { waitFor } from '@testing-library/react';
-        await waitFor(() => expect(a).toEqual('a'))
-      `,
-    },
-    {
-      code: `
-        import { waitFor } from '@marko/testing-library';
-        await waitFor(() => expect(a).toEqual('a'))
-      `,
-    },
-    {
-      code: `
-        import { waitFor } from '@testing-library/react';
-        await waitFor(function() {
-          expect(a).toEqual('a')
-        })
-      `,
-    },
-    {
-      code: `
-        import { waitFor } from '@testing-library/react';
-        await waitFor(() => {
-          console.log('testing-library')
-          expect(b).toEqual('b')
-        })
-      `,
-    },
-    {
-      code: `
-        import { waitFor } from '@testing-library/react';
-        await waitFor(function() {
-          console.log('testing-library')
-          expect(b).toEqual('b')
-        })
-      `,
-    },
-    {
-      code: `
-        import { waitFor } from '@testing-library/react';
-        await waitFor(() => {})
-      `,
-    },
-    {
-      code: `
-        import { waitFor } from '@testing-library/react';
-        await waitFor(function() {})
-      `,
-    },
-    {
-      code: `
-        import { waitFor } from '@testing-library/react';
-        await waitFor(() => {
-          // testing
-        })
-      `,
-    },
-    {
-      code: `
-        import { waitFor } from '@testing-library/react';
-        await waitFor(function() {
-          // testing
-        })
-      `,
-    },
-    {
-      code: `
-        import { waitFor } from '@testing-library/react';
-        fireEvent.keyDown(input, {key: 'ArrowDown'})
-        await waitFor(() => {
-          expect(b).toEqual('b')
-        })
-      `,
-    },
-    {
-      code: `
-        import { waitFor } from '@testing-library/react';
-        fireEvent.keyDown(input, {key: 'ArrowDown'})
-        await waitFor(function() {
-          expect(b).toEqual('b')
-        })
-      `,
-    },
-    {
-      code: `
-        import { waitFor } from '@testing-library/react';
-        userEvent.click(button)
-        await waitFor(function() {
-          expect(b).toEqual('b')
-        })
-      `,
-    },
+    ...SUPPORTED_TESTING_FRAMEWORKS.flatMap((testingFramework) => [
+      {
+        code: `
+          import { waitFor } from '${testingFramework}';
+          await waitFor(() => expect(a).toEqual('a'))
+        `,
+      },
+      {
+        code: `
+          import { waitFor } from '${testingFramework}';
+          await waitFor(function() {
+            expect(a).toEqual('a')
+          })
+        `,
+      },
+      {
+        code: `
+          import { waitFor } from '${testingFramework}';
+          await waitFor(() => {
+            console.log('testing-library')
+            expect(b).toEqual('b')
+          })
+        `,
+      },
+      {
+        code: `
+          import { waitFor } from '${testingFramework}';
+          await waitFor(function() {
+            console.log('testing-library')
+            expect(b).toEqual('b')
+          })
+        `,
+      },
+      {
+        code: `
+          import { waitFor } from '${testingFramework}';
+          await waitFor(() => {})
+        `,
+      },
+      {
+        code: `
+          import { waitFor } from '${testingFramework}';
+          await waitFor(function() {})
+        `,
+      },
+      {
+        code: `
+          import { waitFor } from '${testingFramework}';
+          await waitFor(() => {
+            // testing
+          })
+        `,
+      },
+      {
+        code: `
+          import { waitFor } from '${testingFramework}';
+          await waitFor(function() {
+            // testing
+          })
+        `,
+      },
+      {
+        code: `
+          import { waitFor } from '${testingFramework}';
+          fireEvent.keyDown(input, {key: 'ArrowDown'})
+          await waitFor(() => {
+            expect(b).toEqual('b')
+          })
+        `,
+      },
+      {
+        code: `
+          import { waitFor } from '${testingFramework}';
+          fireEvent.keyDown(input, {key: 'ArrowDown'})
+          await waitFor(function() {
+            expect(b).toEqual('b')
+          })
+        `,
+      },
+      {
+        code: `
+          import { waitFor } from '${testingFramework}';
+          userEvent.click(button)
+          await waitFor(function() {
+            expect(b).toEqual('b')
+          })
+        `,
+      },
+    ]),
     {
       settings: { 'testing-library/utils-module': 'test-utils' },
       code: `
@@ -108,9 +109,9 @@ ruleTester.run(RULE_NAME, rule, {
         })
       `,
     },
-    {
+    ...SUPPORTED_TESTING_FRAMEWORKS.map((testingFramework) => ({
       code: `
-        import { waitFor } from '@testing-library/react';
+        import { waitFor } from '${testingFramework}';
 
         anotherFunction(() => {
           fireEvent.keyDown(input, {key: 'ArrowDown'});
@@ -123,7 +124,7 @@ ruleTester.run(RULE_NAME, rule, {
           expect(b).toEqual('b')
         });
       `,
-    },
+    })),
     {
       settings: { 'testing-library/utils-module': 'test-utils' },
       code: `
@@ -171,14 +172,14 @@ ruleTester.run(RULE_NAME, rule, {
         await waitFor(() => fireEvent.keyDown(input, {key: 'ArrowDown'}))
       `,
     },
-    {
+    ...SUPPORTED_TESTING_FRAMEWORKS.map((testingFramework) => ({
       settings: { 'testing-library/utils-module': 'test-utils' },
       code: `
         import { waitFor } from 'somewhere-else';
-        import { userEvent } from '@testing-library/react';
+        import { userEvent } from '${testingFramework}';
         await waitFor(() => userEvent.click(button))
       `,
-    },
+    })),
     {
       settings: { 'testing-library/utils-module': '~/test-utils' },
       code: `
@@ -220,42 +221,44 @@ ruleTester.run(RULE_NAME, rule, {
         await waitFor(() => render(<App />))
       `,
     },
-    {
-      settings: { 'testing-library/utils-module': '~/test-utils' },
-      code: `
-        import { waitFor } from '@testing-library/react';
-        import { render } from 'somewhere-else';
-        await waitFor(() => render(<App />))
-      `,
-    },
-    {
-      settings: { 'testing-library/custom-renders': ['renderHelper'] },
-      code: `
-        import { waitFor } from '@testing-library/react';
-        import { renderWrapper } from 'somewhere-else';
-        await waitFor(() => renderWrapper(<App />))
-      `,
-    },
-    {
-      settings: { 'testing-library/custom-renders': ['renderHelper'] },
-      code: `
-        import { waitFor } from '@testing-library/react';
-        import { renderWrapper } from 'somewhere-else';
-        await waitFor(() => {
-          renderWrapper(<App />)
-        })
-      `,
-    },
-    {
-      settings: { 'testing-library/custom-renders': ['renderHelper'] },
-      code: `
-        import { waitFor } from '@testing-library/react';
-        import { renderWrapper } from 'somewhere-else';
-        await waitFor(() => {
-          const { container } = renderWrapper(<App />)
-        })
-      `,
-    },
+    ...SUPPORTED_TESTING_FRAMEWORKS.flatMap((testingFramework) => [
+      {
+        settings: { 'testing-library/utils-module': '~/test-utils' },
+        code: `
+          import { waitFor } from '${testingFramework}';
+          import { render } from 'somewhere-else';
+          await waitFor(() => render(<App />))
+        `,
+      },
+      {
+        settings: { 'testing-library/custom-renders': ['renderHelper'] },
+        code: `
+          import { waitFor } from '${testingFramework}';
+          import { renderWrapper } from 'somewhere-else';
+          await waitFor(() => renderWrapper(<App />))
+        `,
+      },
+      {
+        settings: { 'testing-library/custom-renders': ['renderHelper'] },
+        code: `
+          import { waitFor } from '${testingFramework}';
+          import { renderWrapper } from 'somewhere-else';
+          await waitFor(() => {
+            renderWrapper(<App />)
+          })
+        `,
+      },
+      {
+        settings: { 'testing-library/custom-renders': ['renderHelper'] },
+        code: `
+          import { waitFor } from '${testingFramework}';
+          import { renderWrapper } from 'somewhere-else';
+          await waitFor(() => {
+            const { container } = renderWrapper(<App />)
+          })
+        `,
+      },
+    ]),
     {
       settings: { 'testing-library/utils-module': 'test-utils' },
       code: `
@@ -275,23 +278,25 @@ ruleTester.run(RULE_NAME, rule, {
         })
       `,
     },
-    {
-      settings: { 'testing-library/custom-renders': ['renderHelper'] },
-      code: `
-        import { waitFor } from '@testing-library/react';
-        import { renderWrapper } from 'somewhere-else';
-        await waitFor(() => {
-          renderWrapper(<App />)
-        })
-      `,
-    },
-    {
-      settings: { 'testing-library/custom-renders': ['renderHelper'] },
-      code: `
-        import { waitFor } from '@testing-library/react';
-        await waitFor(() => result = renderWrapper(<App />))
-      `,
-    },
+    ...SUPPORTED_TESTING_FRAMEWORKS.flatMap((testingFramework) => [
+      {
+        settings: { 'testing-library/custom-renders': ['renderHelper'] },
+        code: `
+          import { waitFor } from '${testingFramework}';
+          import { renderWrapper } from 'somewhere-else';
+          await waitFor(() => {
+            renderWrapper(<App />)
+          })
+        `,
+      },
+      {
+        settings: { 'testing-library/custom-renders': ['renderHelper'] },
+        code: `
+          import { waitFor } from '${testingFramework}';
+          await waitFor(() => result = renderWrapper(<App />))
+        `,
+      },
+    ]),
     {
       settings: { 'testing-library/utils-module': 'test-utils' },
       code: `
@@ -310,133 +315,128 @@ ruleTester.run(RULE_NAME, rule, {
   ],
   invalid: [
     // render
-    {
-      code: `
-        import { waitFor } from '@testing-library/react';
+    ...SUPPORTED_TESTING_FRAMEWORKS.flatMap((testingFramework) => [
+      {
+        code: `
+        import { waitFor } from '${testingFramework}';
         await waitFor(() => render(<App />))
       `,
-      errors: [{ line: 3, column: 29, messageId: 'noSideEffectsWaitFor' }],
-    },
-    {
-      code: `
-        import { waitFor } from '@marko/testing-library';
-        await waitFor(() => render(<App />))
-      `,
-      errors: [{ line: 3, column: 29, messageId: 'noSideEffectsWaitFor' }],
-    },
-    {
-      code: `
-        import { waitFor } from '@testing-library/react';
+        errors: [{ line: 3, column: 29, messageId: 'noSideEffectsWaitFor' }],
+      } as const,
+      {
+        code: `
+        import { waitFor } from '${testingFramework}';
         await waitFor(function() {
           render(<App />)
         })
       `,
-      errors: [{ line: 4, column: 11, messageId: 'noSideEffectsWaitFor' }],
-    },
-    {
-      code: `
-        import { waitFor } from '@testing-library/react';
+        errors: [{ line: 4, column: 11, messageId: 'noSideEffectsWaitFor' }],
+      } as const,
+      {
+        code: `
+        import { waitFor } from '${testingFramework}';
         await waitFor(function() {
           const { container } = renderHelper(<App />)
         })
       `,
-      errors: [{ line: 4, column: 11, messageId: 'noSideEffectsWaitFor' }],
-    },
-    {
-      settings: { 'testing-library/custom-renders': ['renderHelper'] },
-      code: `
-        import { waitFor } from '@testing-library/react';
+        errors: [{ line: 4, column: 11, messageId: 'noSideEffectsWaitFor' }],
+      } as const,
+      {
+        settings: { 'testing-library/custom-renders': ['renderHelper'] },
+        code: `
+        import { waitFor } from '${testingFramework}';
         import { renderHelper } from 'somewhere-else';
         await waitFor(() => renderHelper(<App />))
       `,
-      errors: [{ line: 4, column: 29, messageId: 'noSideEffectsWaitFor' }],
-    },
-    {
-      settings: { 'testing-library/custom-renders': ['renderHelper'] },
-      code: `
-        import { waitFor } from '@testing-library/react';
+        errors: [{ line: 4, column: 29, messageId: 'noSideEffectsWaitFor' }],
+      } as const,
+      {
+        settings: { 'testing-library/custom-renders': ['renderHelper'] },
+        code: `
+        import { waitFor } from '${testingFramework}';
         import { renderHelper } from 'somewhere-else';
         await waitFor(() => {
           renderHelper(<App />)
         })
       `,
-      errors: [{ line: 5, column: 11, messageId: 'noSideEffectsWaitFor' }],
-    },
-    {
-      settings: { 'testing-library/custom-renders': ['renderHelper'] },
-      code: `
-        import { waitFor } from '@testing-library/react';
+        errors: [{ line: 5, column: 11, messageId: 'noSideEffectsWaitFor' }],
+      } as const,
+      {
+        settings: { 'testing-library/custom-renders': ['renderHelper'] },
+        code: `
+        import { waitFor } from '${testingFramework}';
         import { renderHelper } from 'somewhere-else';
         await waitFor(() => {
           const { container } = renderHelper(<App />)
         })
       `,
-      errors: [{ line: 5, column: 11, messageId: 'noSideEffectsWaitFor' }],
-    },
-    {
-      settings: { 'testing-library/custom-renders': ['renderHelper'] },
-      code: `
-        import { waitFor } from '@testing-library/react';
+        errors: [{ line: 5, column: 11, messageId: 'noSideEffectsWaitFor' }],
+      } as const,
+      {
+        settings: { 'testing-library/custom-renders': ['renderHelper'] },
+        code: `
+        import { waitFor } from '${testingFramework}';
         import { renderHelper } from 'somewhere-else';
         let container;
         await waitFor(() => {
           ({ container } = renderHelper(<App />))
         })
       `,
-      errors: [{ line: 6, column: 11, messageId: 'noSideEffectsWaitFor' }],
-    },
-    {
-      code: `
-        import { waitFor } from '@testing-library/react';
+        errors: [{ line: 6, column: 11, messageId: 'noSideEffectsWaitFor' }],
+      } as const,
+      {
+        code: `
+        import { waitFor } from '${testingFramework}';
         await waitFor(() => result = render(<App />))
       `,
-      errors: [{ line: 3, column: 29, messageId: 'noSideEffectsWaitFor' }],
-    },
-    {
-      code: `
-        import { waitFor } from '@testing-library/react';
+        errors: [{ line: 3, column: 29, messageId: 'noSideEffectsWaitFor' }],
+      } as const,
+      {
+        code: `
+        import { waitFor } from '${testingFramework}';
         await waitFor(() => (a = 5, result = render(<App />)))
       `,
-      errors: [{ line: 3, column: 30, messageId: 'noSideEffectsWaitFor' }],
-    },
-    {
-      code: `
-        import { waitFor } from '@testing-library/react';
+        errors: [{ line: 3, column: 30, messageId: 'noSideEffectsWaitFor' }],
+      } as const,
+      {
+        code: `
+        import { waitFor } from '${testingFramework}';
         const { rerender } = render(<App />)
         await waitFor(() => rerender(<App />))
       `,
-      errors: [{ line: 4, column: 29, messageId: 'noSideEffectsWaitFor' }],
-    },
-    {
-      code: `
-        import { waitFor, render } from '@testing-library/react';
+        errors: [{ line: 4, column: 29, messageId: 'noSideEffectsWaitFor' }],
+      } as const,
+      {
+        code: `
+        import { waitFor, render } from '${testingFramework}';
         await waitFor(() => render(<App />))
       `,
-      errors: [{ line: 3, column: 29, messageId: 'noSideEffectsWaitFor' }],
-    },
-    {
-      code: `
-        import { waitFor } from '@testing-library/react';
+        errors: [{ line: 3, column: 29, messageId: 'noSideEffectsWaitFor' }],
+      } as const,
+      {
+        code: `
+        import { waitFor } from '${testingFramework}';
         const { rerender } = render(<App />)
         await waitFor(() => rerender(<App />))
       `,
-      errors: [{ line: 4, column: 29, messageId: 'noSideEffectsWaitFor' }],
-    },
-    {
-      code: `
-        import { waitFor } from '@testing-library/react';
+        errors: [{ line: 4, column: 29, messageId: 'noSideEffectsWaitFor' }],
+      } as const,
+      {
+        code: `
+        import { waitFor } from '${testingFramework}';
         await waitFor(() => renderHelper(<App />))
       `,
-      errors: [{ line: 3, column: 29, messageId: 'noSideEffectsWaitFor' }],
-    },
-    {
-      code: `
-        import { waitFor } from '@testing-library/react';
+        errors: [{ line: 3, column: 29, messageId: 'noSideEffectsWaitFor' }],
+      } as const,
+      {
+        code: `
+        import { waitFor } from '${testingFramework}';
         import { render } from 'somewhere-else';
         await waitFor(() => render(<App />))
       `,
-      errors: [{ line: 4, column: 29, messageId: 'noSideEffectsWaitFor' }],
-    },
+        errors: [{ line: 4, column: 29, messageId: 'noSideEffectsWaitFor' }],
+      } as const,
+    ]),
     {
       settings: { 'testing-library/utils-module': '~/test-utils' },
       code: `
@@ -445,96 +445,101 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [{ line: 3, column: 29, messageId: 'noSideEffectsWaitFor' }],
     },
-    {
-      settings: { 'testing-library/custom-renders': ['renderWrapper'] },
-      code: `
-        import { waitFor } from '@testing-library/react';
+    ...SUPPORTED_TESTING_FRAMEWORKS.flatMap((testingFramework) => [
+      {
+        settings: { 'testing-library/custom-renders': ['renderWrapper'] },
+        code: `
+        import { waitFor } from '${testingFramework}';
         import { renderWrapper } from 'somewhere-else';
         await waitFor(() => renderWrapper(<App />))
       `,
-      errors: [{ line: 4, column: 29, messageId: 'noSideEffectsWaitFor' }],
-    },
-    {
-      code: `
-        import { waitFor } from '@testing-library/react';
+        errors: [{ line: 4, column: 29, messageId: 'noSideEffectsWaitFor' }],
+      } as const,
+      {
+        code: `
+        import { waitFor } from '${testingFramework}';
         await waitFor(() => {
           render(<App />)
         })
       `,
-      errors: [{ line: 4, column: 11, messageId: 'noSideEffectsWaitFor' }],
-    },
-    {
-      code: `
-        import { waitFor } from '@testing-library/react';
+        errors: [{ line: 4, column: 11, messageId: 'noSideEffectsWaitFor' }],
+      } as const,
+      {
+        code: `
+        import { waitFor } from '${testingFramework}';
         await waitFor(() => {
           const { container } = render(<App />)
         })
       `,
-      errors: [{ line: 4, column: 11, messageId: 'noSideEffectsWaitFor' }],
-    },
-    {
-      code: `
-        import { waitFor } from '@testing-library/react';
+        errors: [{ line: 4, column: 11, messageId: 'noSideEffectsWaitFor' }],
+      } as const,
+      {
+        code: `
+        import { waitFor } from '${testingFramework}';
         await waitFor(() => {
           result = render(<App />)
         })
       `,
-      errors: [{ line: 4, column: 11, messageId: 'noSideEffectsWaitFor' }],
-    },
-    {
-      code: `
-        import { waitFor } from '@testing-library/react';
+        errors: [{ line: 4, column: 11, messageId: 'noSideEffectsWaitFor' }],
+      } as const,
+      {
+        code: `
+        import { waitFor } from '${testingFramework}';
         await waitFor(() => {
           const a = 5,
           { container } = render(<App />)
         })
       `,
-      errors: [{ line: 4, column: 11, messageId: 'noSideEffectsWaitFor' }],
-    },
-    {
-      code: `
-        import { waitFor } from '@testing-library/react';
+        errors: [{ line: 4, column: 11, messageId: 'noSideEffectsWaitFor' }],
+      } as const,
+      {
+        code: `
+        import { waitFor } from '${testingFramework}';
         const { rerender } = render(<App />)
         await waitFor(() => {
           rerender(<App />)
         })
       `,
-      errors: [{ line: 5, column: 11, messageId: 'noSideEffectsWaitFor' }],
-    },
-    {
-      code: `
-        import { waitFor } from '@testing-library/react';
+        errors: [{ line: 5, column: 11, messageId: 'noSideEffectsWaitFor' }],
+      } as const,
+      {
+        code: `
+        import { waitFor } from '${testingFramework}';
         await waitFor(() => {
           render(<App />)
           fireEvent.keyDown(input, {key: 'ArrowDown'})
         })
       `,
-      errors: [
-        { line: 4, column: 11, messageId: 'noSideEffectsWaitFor' },
-        { line: 5, column: 11, messageId: 'noSideEffectsWaitFor' },
-      ],
-    },
-    {
-      code: `
-        import { waitFor } from '@testing-library/react';
+        errors: [
+          { line: 4, column: 11, messageId: 'noSideEffectsWaitFor' },
+          { line: 5, column: 11, messageId: 'noSideEffectsWaitFor' },
+        ],
+      } as const,
+      {
+        code: `
+        import { waitFor } from '${testingFramework}';
         await waitFor(() => {
           render(<App />)
           userEvent.click(button)
         })
       `,
-      errors: [
-        { line: 4, column: 11, messageId: 'noSideEffectsWaitFor' },
-        { line: 5, column: 11, messageId: 'noSideEffectsWaitFor' },
-      ],
-    },
+        errors: [
+          { line: 4, column: 11, messageId: 'noSideEffectsWaitFor' },
+          { line: 5, column: 11, messageId: 'noSideEffectsWaitFor' },
+        ],
+      } as const,
+    ]),
     // fireEvent
-    {
-      code: `
-        import { waitFor } from '@testing-library/react';
+    ...SUPPORTED_TESTING_FRAMEWORKS.map(
+      (testingFramework) =>
+        ({
+          code: `
+        import { waitFor } from '${testingFramework}';
         await waitFor(() => fireEvent.keyDown(input, {key: 'ArrowDown'}))
       `,
-      errors: [{ line: 3, column: 29, messageId: 'noSideEffectsWaitFor' }],
-    },
+          errors: [{ line: 3, column: 29, messageId: 'noSideEffectsWaitFor' }],
+        } as const)
+    ),
     {
       settings: { 'testing-library/utils-module': '~/test-utils' },
       code: `
@@ -543,24 +548,26 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [{ line: 3, column: 29, messageId: 'noSideEffectsWaitFor' }],
     },
-    {
-      code: `
-        import { waitFor } from '@testing-library/react';
+    ...SUPPORTED_TESTING_FRAMEWORKS.flatMap((testingFramework) => [
+      {
+        code: `
+        import { waitFor } from '${testingFramework}';
         await waitFor(() => {
           fireEvent.keyDown(input, {key: 'ArrowDown'})
         })
       `,
-      errors: [{ line: 4, column: 11, messageId: 'noSideEffectsWaitFor' }],
-    },
-    {
-      code: `
-        import { waitFor, fireEvent as renamedFireEvent } from '@testing-library/react';
+        errors: [{ line: 4, column: 11, messageId: 'noSideEffectsWaitFor' }],
+      } as const,
+      {
+        code: `
+        import { waitFor, fireEvent as renamedFireEvent } from '${testingFramework}';
         await waitFor(() => {
           renamedFireEvent.keyDown(input, {key: 'ArrowDown'})
         })
       `,
-      errors: [{ line: 4, column: 11, messageId: 'noSideEffectsWaitFor' }],
-    },
+        errors: [{ line: 4, column: 11, messageId: 'noSideEffectsWaitFor' }],
+      } as const,
+    ]),
     {
       settings: { 'testing-library/utils-module': '~/test-utils' },
       code: `
@@ -571,82 +578,86 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [{ line: 4, column: 11, messageId: 'noSideEffectsWaitFor' }],
     },
-    {
-      code: `
-        import { waitFor } from '@testing-library/react';
+    ...SUPPORTED_TESTING_FRAMEWORKS.flatMap((testingFramework) => [
+      {
+        code: `
+        import { waitFor } from '${testingFramework}';
         await waitFor(() => {
           expect(b).toEqual('b')
           fireEvent.keyDown(input, {key: 'ArrowDown'})
         })
       `,
-      errors: [{ line: 5, column: 11, messageId: 'noSideEffectsWaitFor' }],
-    },
-    {
-      code: `
-        import { waitFor } from '@testing-library/react';
+        errors: [{ line: 5, column: 11, messageId: 'noSideEffectsWaitFor' }],
+      } as const,
+      {
+        code: `
+        import { waitFor } from '${testingFramework}';
         await waitFor(() => {
           fireEvent.keyDown(input, {key: 'ArrowDown'})
           expect(b).toEqual('b')
         })
       `,
-      errors: [{ line: 4, column: 11, messageId: 'noSideEffectsWaitFor' }],
-    },
-    {
-      code: `
-        import { waitFor } from '@testing-library/react';
+        errors: [{ line: 4, column: 11, messageId: 'noSideEffectsWaitFor' }],
+      } as const,
+      {
+        code: `
+        import { waitFor } from '${testingFramework}';
         await waitFor(function() {
           fireEvent.keyDown(input, {key: 'ArrowDown'})
         })
       `,
-      errors: [{ line: 4, column: 11, messageId: 'noSideEffectsWaitFor' }],
-    },
-    {
-      code: `
-        import { waitFor } from '@testing-library/react';
+        errors: [{ line: 4, column: 11, messageId: 'noSideEffectsWaitFor' }],
+      } as const,
+      {
+        code: `
+        import { waitFor } from '${testingFramework}';
         await waitFor(function() {
           expect(b).toEqual('b')
           fireEvent.keyDown(input, {key: 'ArrowDown'})
         })
       `,
-      errors: [{ line: 5, column: 11, messageId: 'noSideEffectsWaitFor' }],
-    },
-    {
-      code: `
-        import { waitFor } from '@testing-library/react';
+        errors: [{ line: 5, column: 11, messageId: 'noSideEffectsWaitFor' }],
+      } as const,
+      {
+        code: `
+        import { waitFor } from '${testingFramework}';
         await waitFor(function() {
           fireEvent.keyDown(input, {key: 'ArrowDown'})
           expect(b).toEqual('b')
         })
       `,
-      errors: [{ line: 4, column: 11, messageId: 'noSideEffectsWaitFor' }],
-    },
+        errors: [{ line: 4, column: 11, messageId: 'noSideEffectsWaitFor' }],
+      } as const,
+    ]),
     // userEvent
-    {
-      code: `
-        import { waitFor } from '@testing-library/react';
+    ...SUPPORTED_TESTING_FRAMEWORKS.flatMap((testingFramework) => [
+      {
+        code: `
+        import { waitFor } from '${testingFramework}';
         await waitFor(() => userEvent.click(button))
       `,
-      errors: [{ line: 3, column: 29, messageId: 'noSideEffectsWaitFor' }],
-    },
-    {
-      code: `
-        import { waitFor } from '@testing-library/react';
+        errors: [{ line: 3, column: 29, messageId: 'noSideEffectsWaitFor' }],
+      } as const,
+      {
+        code: `
+        import { waitFor } from '${testingFramework}';
         await waitFor(() => {
           userEvent.click(button)
         })
       `,
-      errors: [{ line: 4, column: 11, messageId: 'noSideEffectsWaitFor' }],
-    },
-    {
-      code: `
-        import { waitFor } from '@testing-library/react';
+        errors: [{ line: 4, column: 11, messageId: 'noSideEffectsWaitFor' }],
+      } as const,
+      {
+        code: `
+        import { waitFor } from '${testingFramework}';
         import renamedUserEvent from '@testing-library/user-event'
         await waitFor(() => {
           renamedUserEvent.click(button)
         })
       `,
-      errors: [{ line: 5, column: 11, messageId: 'noSideEffectsWaitFor' }],
-    },
+        errors: [{ line: 5, column: 11, messageId: 'noSideEffectsWaitFor' }],
+      } as const,
+    ]),
     {
       settings: { 'testing-library/utils-module': '~/test-utils' },
       code: `
@@ -658,55 +669,57 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [{ line: 5, column: 11, messageId: 'noSideEffectsWaitFor' }],
     },
-    {
-      code: `
-        import { waitFor } from '@testing-library/react';
+    ...SUPPORTED_TESTING_FRAMEWORKS.flatMap((testingFramework) => [
+      {
+        code: `
+        import { waitFor } from '${testingFramework}';
         await waitFor(() => {
           expect(b).toEqual('b')
           userEvent.click(button)
         })
       `,
-      errors: [{ line: 5, column: 11, messageId: 'noSideEffectsWaitFor' }],
-    },
-    {
-      code: `
-        import { waitFor } from '@testing-library/react';
+        errors: [{ line: 5, column: 11, messageId: 'noSideEffectsWaitFor' }],
+      } as const,
+      {
+        code: `
+        import { waitFor } from '${testingFramework}';
         await waitFor(() => {
           userEvent.click(button)
           expect(b).toEqual('b')
         })
       `,
-      errors: [{ line: 4, column: 11, messageId: 'noSideEffectsWaitFor' }],
-    },
-    {
-      code: `
-        import { waitFor } from '@testing-library/react';
+        errors: [{ line: 4, column: 11, messageId: 'noSideEffectsWaitFor' }],
+      } as const,
+      {
+        code: `
+        import { waitFor } from '${testingFramework}';
         await waitFor(function() {
           userEvent.click(button)
         })
       `,
-      errors: [{ line: 4, column: 11, messageId: 'noSideEffectsWaitFor' }],
-    },
-    {
-      code: `
-        import { waitFor } from '@testing-library/react';
+        errors: [{ line: 4, column: 11, messageId: 'noSideEffectsWaitFor' }],
+      } as const,
+      {
+        code: `
+        import { waitFor } from '${testingFramework}';
         await waitFor(function() {
           expect(b).toEqual('b')
           userEvent.click(button)
         })
       `,
-      errors: [{ line: 5, column: 11, messageId: 'noSideEffectsWaitFor' }],
-    },
-    {
-      code: `
-        import { waitFor } from '@testing-library/react';
+        errors: [{ line: 5, column: 11, messageId: 'noSideEffectsWaitFor' }],
+      } as const,
+      {
+        code: `
+        import { waitFor } from '${testingFramework}';
         await waitFor(function() {
           userEvent.click(button)
           expect(b).toEqual('b')
         })
       `,
-      errors: [{ line: 4, column: 11, messageId: 'noSideEffectsWaitFor' }],
-    },
+        errors: [{ line: 4, column: 11, messageId: 'noSideEffectsWaitFor' }],
+      } as const,
+    ]),
 
     {
       settings: { 'testing-library/utils-module': 'test-utils' },

@@ -5,11 +5,16 @@ import { createRuleTester } from '../test-utils';
 
 const ruleTester = createRuleTester();
 
+const SUPPORTED_TESTING_FRAMEWORKS = [
+  '@testing-library/react',
+  '@marko/testing-library',
+];
+
 ruleTester.run(RULE_NAME, rule, {
-  valid: [
+  valid: SUPPORTED_TESTING_FRAMEWORKS.flatMap((testingFramework) => [
     {
       code: `
-        import { screen } from '@testing-library/react';
+        import { screen } from '${testingFramework}';
 
         const button = screen.getByRole('button')
         await waitForElementToBeRemoved(button)
@@ -17,15 +22,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import { screen } from '@marko/testing-library';
-
-        const button = screen.getByRole('button')
-        await waitForElementToBeRemoved(button)
-      `,
-    },
-    {
-      code: `
-        import { screen } from '@testing-library/react';
+        import { screen } from '${testingFramework}';
 
         const callback = () => screen.getByRole('button')
         await waitForElementToBeRemoved(callback)
@@ -33,14 +30,14 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import { screen } from '@testing-library/react';
+        import { screen } from '${testingFramework}';
 
         await waitForElementToBeRemoved(() => screen.queryByText("hello"))
       `,
     },
     {
       code: `
-        import { screen } from '@testing-library/react';
+        import { screen } from '${testingFramework}';
 
         await waitForElementToBeRemoved(() => {
           screen.queryByText("hello")
@@ -49,7 +46,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import { screen } from '@testing-library/react';
+        import { screen } from '${testingFramework}';
 
         await waitForElementToBeRemoved(() => {
           otherCode()
@@ -59,7 +56,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import { screen } from '@testing-library/react';
+        import { screen } from '${testingFramework}';
 
         await waitForElementToBeRemoved(() => {
           otherCode()
@@ -69,7 +66,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import { screen } from '@testing-library/react';
+        import { screen } from '${testingFramework}';
 
         await waitForElementToBeRemoved(() => {
           return screen.queryByText("hello")
@@ -78,7 +75,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import { screen } from '@testing-library/react';
+        import { screen } from '${testingFramework}';
 
         await waitForElementToBeRemoved(function() {
           screen.queryByText("hello")
@@ -87,7 +84,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import { screen } from '@testing-library/react';
+        import { screen } from '${testingFramework}';
 
         await waitForElementToBeRemoved(function() {
           otherCode()
@@ -97,7 +94,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import { screen } from '@testing-library/react';
+        import { screen } from '${testingFramework}';
 
         await waitForElementToBeRemoved(function() {
           return screen.queryByText('hey')
@@ -106,7 +103,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import { screen } from '@testing-library/react';
+        import { screen } from '${testingFramework}';
 
         await waitForElementToBeRemoved(function() {
           otherCode()
@@ -116,14 +113,14 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import { screen } from '@testing-library/react';
+        import { screen } from '${testingFramework}';
 
         await waitForElementToBeRemoved(screen.queryByText("hello"))
       `,
     },
     {
       code: `
-        import { screen } from '@testing-library/react';
+        import { screen } from '${testingFramework}';
 
         const { queryByText } = screen
         await waitForElementToBeRemoved(queryByText("hello"))
@@ -131,7 +128,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import { screen } from '@testing-library/react';
+        import { screen } from '${testingFramework}';
 
         const { queryByText } = screen
         await waitForElementToBeRemoved(() => queryByText("hello"))
@@ -139,7 +136,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import { screen } from '@testing-library/react';
+        import { screen } from '${testingFramework}';
 
         const { queryByText } = screen
         await waitForElementToBeRemoved(() => {
@@ -149,7 +146,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import { screen } from '@testing-library/react';
+        import { screen } from '${testingFramework}';
 
         const { queryByText } = screen
         await waitForElementToBeRemoved(() => {
@@ -159,7 +156,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import { render } from '@testing-library/react';
+        import { render } from '${testingFramework}';
 
         const { queryByText } = render(<App />)
         await waitForElementToBeRemoved(() => {
@@ -169,7 +166,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import { render } from '@testing-library/react';
+        import { render } from '${testingFramework}';
 
         const { queryByText } = render(<App />)
         await waitForElementToBeRemoved(() => {
@@ -179,7 +176,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import { render } from '@testing-library/react';
+        import { render } from '${testingFramework}';
 
         const { queryByText } = render(<App />)
         await waitForElementToBeRemoved(() => queryByText("hello"))
@@ -187,7 +184,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import { render } from '@testing-library/react';
+        import { render } from '${testingFramework}';
 
         const { queryByText } = render(<App />)
         await waitForElementToBeRemoved(queryByText("hello"))
@@ -195,7 +192,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import { render } from '@testing-library/react';
+        import { render } from '${testingFramework}';
 
         const { queryByText } = render(<App />)
         await waitForElementToBeRemoved(function() {
@@ -205,7 +202,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import { render } from '@testing-library/react';
+        import { render } from '${testingFramework}';
 
         const { queryByText } = render(<App />)
         await waitForElementToBeRemoved(function() {
@@ -213,11 +210,11 @@ ruleTester.run(RULE_NAME, rule, {
         })
       `,
     },
-  ],
-  invalid: [
+  ]),
+  invalid: SUPPORTED_TESTING_FRAMEWORKS.flatMap((testingFramework) => [
     {
       code: `
-        import { screen, waitForElementToBeRemoved } from '@testing-library/react';
+        import { screen, waitForElementToBeRemoved } from '${testingFramework}';
 
         await waitForElementToBeRemoved(() => screen.getByText("hello"))
       `,
@@ -245,7 +242,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import { screen, waitForElementToBeRemoved } from '@testing-library/react';
+        import { screen, waitForElementToBeRemoved } from '${testingFramework}';
 
         await waitForElementToBeRemoved(() => screen.findByText("hello"))
       `,
@@ -259,7 +256,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import { screen, waitForElementToBeRemoved } from '@testing-library/react';
+        import { screen, waitForElementToBeRemoved } from '${testingFramework}';
 
         await waitForElementToBeRemoved(() => {
           screen.getByText("hello")
@@ -275,7 +272,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import { screen, waitForElementToBeRemoved } from '@testing-library/react';
+        import { screen, waitForElementToBeRemoved } from '${testingFramework}';
 
         await waitForElementToBeRemoved(() => {
           screen.findByText("hello")
@@ -291,7 +288,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import { screen, waitForElementToBeRemoved } from '@testing-library/react';
+        import { screen, waitForElementToBeRemoved } from '${testingFramework}';
 
         await waitForElementToBeRemoved(() => {
           return screen.getByText("hello")
@@ -307,7 +304,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import { screen, waitForElementToBeRemoved } from '@testing-library/react';
+        import { screen, waitForElementToBeRemoved } from '${testingFramework}';
 
         await waitForElementToBeRemoved(() => {
           return screen.findByText("hello")
@@ -323,7 +320,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import { screen, waitForElementToBeRemoved } from '@testing-library/react';
+        import { screen, waitForElementToBeRemoved } from '${testingFramework}';
 
         await waitForElementToBeRemoved(screen.getByText("hello"))
       `,
@@ -337,7 +334,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import { screen, waitForElementToBeRemoved } from '@testing-library/react';
+        import { screen, waitForElementToBeRemoved } from '${testingFramework}';
 
         await waitForElementToBeRemoved(screen.findByText("hello"))
       `,
@@ -351,7 +348,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import { screen } from '@testing-library/react';
+        import { screen } from '${testingFramework}';
 
         await waitForElementToBeRemoved(function() {
           return screen.getByText('hey')
@@ -367,7 +364,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import { screen } from '@testing-library/react';
+        import { screen } from '${testingFramework}';
 
         await waitForElementToBeRemoved(function() {
           return screen.findByText('hey')
@@ -383,7 +380,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import { screen } from '@testing-library/react';
+        import { screen } from '${testingFramework}';
 
         await waitForElementToBeRemoved(function() {
           screen.getByText('hey')
@@ -399,7 +396,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import { screen } from '@testing-library/react';
+        import { screen } from '${testingFramework}';
 
         await waitForElementToBeRemoved(function() {
           screen.findByText('hey')
@@ -415,7 +412,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import { screen } from '@testing-library/react';
+        import { screen } from '${testingFramework}';
 
         const { getByText } = screen
         await waitForElementToBeRemoved(function() {
@@ -432,7 +429,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import { render } from '@testing-library/react';
+        import { render } from '${testingFramework}';
 
         const { getByText } = render(<App />)
         await waitForElementToBeRemoved(function() {
@@ -449,7 +446,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import { screen } from '@testing-library/react';
+        import { screen } from '${testingFramework}';
 
         const { findByText } = screen
         await waitForElementToBeRemoved(function() {
@@ -466,7 +463,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import { render } from '@testing-library/react';
+        import { render } from '${testingFramework}';
 
         const { findByText } = render
         await waitForElementToBeRemoved(function() {
@@ -483,7 +480,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import { screen } from '@testing-library/react';
+        import { screen } from '${testingFramework}';
 
         const { getByText } = screen
         await waitForElementToBeRemoved(function() {
@@ -500,7 +497,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import { render } from '@testing-library/react';
+        import { render } from '${testingFramework}';
 
         const { getByText } = render(<App />)
         await waitForElementToBeRemoved(function() {
@@ -517,7 +514,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import { screen } from '@testing-library/react';
+        import { screen } from '${testingFramework}';
 
         const { findByText } = screen
         await waitForElementToBeRemoved(function() {
@@ -534,7 +531,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import { render } from '@testing-library/react';
+        import { render } from '${testingFramework}';
 
         const { findByText } = render(<App />)
         await waitForElementToBeRemoved(function() {
@@ -551,7 +548,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import { screen } from '@testing-library/react';
+        import { screen } from '${testingFramework}';
 
         const { getByText } = screen
         await waitForElementToBeRemoved(() => {
@@ -568,7 +565,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import { render } from '@testing-library/react';
+        import { render } from '${testingFramework}';
 
         const { getByText } = render(<App />)
         await waitForElementToBeRemoved(() => {
@@ -585,7 +582,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import { screen } from '@testing-library/react';
+        import { screen } from '${testingFramework}';
 
         const { findByText } = screen
         await waitForElementToBeRemoved(() => {
@@ -602,7 +599,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import { screen } from '@testing-library/react';
+        import { screen } from '${testingFramework}';
 
         const { findByText } = render(<App />)
         await waitForElementToBeRemoved(() => {
@@ -619,7 +616,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import { screen } from '@testing-library/react';
+        import { screen } from '${testingFramework}';
 
         const { getByText } = screen
         await waitForElementToBeRemoved(() => {
@@ -636,7 +633,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import { render } from '@testing-library/react';
+        import { render } from '${testingFramework}';
 
         const { getByText } = render(<App />)
         await waitForElementToBeRemoved(() => {
@@ -653,7 +650,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import { screen } from '@testing-library/react';
+        import { screen } from '${testingFramework}';
 
         const { findByText } = screen
         await waitForElementToBeRemoved(() => {
@@ -670,7 +667,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import { render } from '@testing-library/react';
+        import { render } from '${testingFramework}';
 
         const { findByText } = render(<App />)
         await waitForElementToBeRemoved(() => {
@@ -687,7 +684,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import { screen } from '@testing-library/react';
+        import { screen } from '${testingFramework}';
 
         const { findByText } = screen
         await waitForElementToBeRemoved(() => findByText('hey'))
@@ -702,7 +699,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import { render } from '@testing-library/react';
+        import { render } from '${testingFramework}';
 
         const { findByText } = render(<App />)
         await waitForElementToBeRemoved(() => findByText('hey'))
@@ -717,7 +714,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import { screen } from '@testing-library/react';
+        import { screen } from '${testingFramework}';
 
         const { getByText } = screen
         await waitForElementToBeRemoved(getByText('hey'))
@@ -732,7 +729,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import { render } from '@testing-library/react';
+        import { render } from '${testingFramework}';
 
         const { getByText } = render(<App />)
         await waitForElementToBeRemoved(getByText('hey'))
@@ -747,7 +744,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import { screen } from '@testing-library/react';
+        import { screen } from '${testingFramework}';
 
         const { findByText } = screen
         await waitForElementToBeRemoved(findByText('hey'))
@@ -762,7 +759,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import { render } from '@testing-library/react';
+        import { render } from '${testingFramework}';
 
         const { findByText } = render(<App />)
         await waitForElementToBeRemoved(findByText('hey'))
@@ -775,5 +772,5 @@ ruleTester.run(RULE_NAME, rule, {
         },
       ],
     },
-  ],
+  ]),
 });

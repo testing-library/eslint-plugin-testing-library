@@ -7,6 +7,11 @@ import { createRuleTester } from '../test-utils';
 
 const ruleTester = createRuleTester();
 
+const SUPPORTED_TESTING_FRAMEWORKS = [
+  '@testing-library/react',
+  '@marko/testing-library',
+];
+
 ruleTester.run(RULE_NAME, rule, {
   valid: [
     // sync queries without await are valid
@@ -225,28 +230,19 @@ ruleTester.run(RULE_NAME, rule, {
 
     // sync query awaited and related to testing library module
     // with custom module setting is not valid
-    {
-      settings: { 'testing-library/utils-module': 'test-utils' },
-      code: `
-      import { screen } from '@testing-library/react'
+    ...SUPPORTED_TESTING_FRAMEWORKS.map(
+      (testingFramework) =>
+        ({
+          settings: { 'testing-library/utils-module': 'test-utils' },
+          code: `
+      import { screen } from '${testingFramework}'
       () => {
         const element = await screen.getByRole('button')
       }
       `,
-      errors: [{ messageId: 'noAwaitSyncQuery', line: 4, column: 38 }],
-    },
-    // sync query awaited and related to testing library module
-    // with custom module setting is not valid
-    {
-      settings: { 'testing-library/utils-module': 'test-utils' },
-      code: `
-      import { screen } from '@marko/testing-library'
-      () => {
-        const element = await screen.getByRole('button')
-      }
-      `,
-      errors: [{ messageId: 'noAwaitSyncQuery', line: 4, column: 38 }],
-    },
+          errors: [{ messageId: 'noAwaitSyncQuery', line: 4, column: 38 }],
+        } as const)
+    ),
     // sync query awaited and related to custom module is not valid
     {
       settings: { 'testing-library/utils-module': 'test-utils' },

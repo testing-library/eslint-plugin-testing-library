@@ -11,6 +11,11 @@ import { createRuleTester } from '../test-utils';
 
 const ruleTester = createRuleTester();
 
+const SUPPORTED_TESTING_FRAMEWORKS = [
+  '@testing-library/react',
+  '@marko/testing-library',
+];
+
 interface TestCode {
   code: string;
   isAsync?: boolean;
@@ -325,33 +330,21 @@ ruleTester.run(RULE_NAME, rule, {
   ],
 
   invalid: [
-    ...ALL_ASYNC_COMBINATIONS_TO_TEST.map(
-      (query) =>
-        ({
-          code: `// async queries without await operator or then method are not valid
-      import { render } from '@testing-library/react'
+    ...SUPPORTED_TESTING_FRAMEWORKS.flatMap((testingFramework) =>
+      ALL_ASYNC_COMBINATIONS_TO_TEST.map(
+        (query) =>
+          ({
+            code: `// async queries without await operator or then method are not valid
+      import { render } from '${testingFramework}'
 
       test("An example test", async () => {
         doSomething()
         const foo = ${query}('foo')
       });
       `,
-          errors: [{ messageId: 'awaitAsyncQuery', line: 6, column: 21 }],
-        } as const)
-    ),
-    ...ALL_ASYNC_COMBINATIONS_TO_TEST.map(
-      (query) =>
-        ({
-          code: `// async queries for @marko/testing-library without await operator or then method are not valid
-      import { render } from '@marko/testing-library'
-
-      test("An example test", async () => {
-        doSomething()
-        const foo = ${query}('foo')
-      });
-      `,
-          errors: [{ messageId: 'awaitAsyncQuery', line: 6, column: 21 }],
-        } as const)
+            errors: [{ messageId: 'awaitAsyncQuery', line: 6, column: 21 }],
+          } as const)
+      )
     ),
     ...ALL_ASYNC_COMBINATIONS_TO_TEST.map(
       (query) =>

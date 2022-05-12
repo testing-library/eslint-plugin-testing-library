@@ -3,6 +3,11 @@ import { createRuleTester } from '../test-utils';
 
 const ruleTester = createRuleTester();
 
+const SUPPORTED_TESTING_FRAMEWORKS = [
+  '@testing-library/react',
+  '@marko/testing-library',
+];
+
 ruleTester.run(RULE_NAME, rule, {
   valid: [
     {
@@ -149,10 +154,10 @@ ruleTester.run(RULE_NAME, rule, {
       debug()
       `,
     },
-    {
+    ...SUPPORTED_TESTING_FRAMEWORKS.map((testingFramework) => ({
       settings: { 'testing-library/utils-module': 'test-utils' },
       code: `
-      import { render as testingRender } from '@testing-library/react'
+      import { render as testingRender } from '${testingFramework}'
       import { render } from 'somewhere-else'
 
       const { debug } = render(element)
@@ -160,23 +165,11 @@ ruleTester.run(RULE_NAME, rule, {
       somethingElse()
       debug()
       `,
-    },
-    {
+    })),
+    ...SUPPORTED_TESTING_FRAMEWORKS.map((testingFramework) => ({
       settings: { 'testing-library/utils-module': 'test-utils' },
       code: `
-      import { render as testingRender } from '@marko/testing-library'
-      import { render } from 'somewhere-else'
-
-      const { debug } = render(element)
-
-      somethingElse()
-      debug()
-      `,
-    },
-    {
-      settings: { 'testing-library/utils-module': 'test-utils' },
-      code: `
-      import { render as testingRender } from '@testing-library/react'
+      import { render as testingRender } from '${testingFramework}'
       import { render } from 'somewhere-else'
 
       const { debug } = render(element)
@@ -185,11 +178,14 @@ ruleTester.run(RULE_NAME, rule, {
       somethingElse()
       debug()
       `,
-    },
+    })),
 
-    `// cover edge case for https://github.com/testing-library/eslint-plugin-testing-library/issues/306
-    thing.method.lastCall.args[0]();
-    `,
+    {
+      code: `
+      // cover edge case for https://github.com/testing-library/eslint-plugin-testing-library/issues/306
+      thing.method.lastCall.args[0]();
+      `,
+    },
   ],
 
   invalid: [
@@ -595,30 +591,21 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [{ line: 7, column: 7, messageId: 'noDebug' }],
     },
-    {
-      settings: { 'testing-library/utils-module': 'test-utils' },
-      code: `
-      import { render } from '@testing-library/react'
+    ...SUPPORTED_TESTING_FRAMEWORKS.map(
+      (testingFramework) =>
+        ({
+          settings: { 'testing-library/utils-module': 'test-utils' },
+          code: `
+      import { render } from '${testingFramework}'
 
       const { debug } = render(element)
 
       somethingElse()
       debug()
       `,
-      errors: [{ line: 7, column: 7, messageId: 'noDebug' }],
-    },
-    {
-      settings: { 'testing-library/utils-module': 'test-utils' },
-      code: `
-      import { render } from '@marko/testing-library'
-
-      const { debug } = render(element)
-
-      somethingElse()
-      debug()
-      `,
-      errors: [{ line: 7, column: 7, messageId: 'noDebug' }],
-    },
+          errors: [{ line: 7, column: 7, messageId: 'noDebug' }],
+        } as const)
+    ),
     {
       settings: { 'testing-library/utils-module': 'test-utils' },
       code: `
@@ -631,18 +618,21 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [{ line: 7, column: 7, messageId: 'noDebug' }],
     },
-    {
-      settings: { 'testing-library/utils-module': 'test-utils' },
-      code: `
-      import { render } from '@testing-library/react'
+    ...SUPPORTED_TESTING_FRAMEWORKS.map(
+      (testingFramework) =>
+        ({
+          settings: { 'testing-library/utils-module': 'test-utils' },
+          code: `
+      import { render } from '${testingFramework}'
 
       const utils = render(element)
 
       somethingElse()
       utils.debug()
       `,
-      errors: [{ line: 7, column: 13, messageId: 'noDebug' }],
-    },
+          errors: [{ line: 7, column: 13, messageId: 'noDebug' }],
+        } as const)
+    ),
     {
       settings: {
         'testing-library/utils-module': 'test-utils',
@@ -658,10 +648,12 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       errors: [{ line: 7, column: 7, messageId: 'noDebug' }],
     },
-    {
-      settings: { 'testing-library/utils-module': 'test-utils' },
-      code: `
-      import { render } from '@testing-library/react'
+    ...SUPPORTED_TESTING_FRAMEWORKS.map(
+      (testingFramework) =>
+        ({
+          settings: { 'testing-library/utils-module': 'test-utils' },
+          code: `
+      import { render } from '${testingFramework}'
 
       const utils = render(element)
       const { debug: renamedDestructuredDebug } = console
@@ -674,7 +666,8 @@ ruleTester.run(RULE_NAME, rule, {
       utils.debug()
       renamedDestructuredDebug('foo')
       `,
-      errors: [{ line: 12, column: 13, messageId: 'noDebug' }],
-    },
+          errors: [{ line: 12, column: 13, messageId: 'noDebug' }],
+        } as const)
+    ),
   ],
 });

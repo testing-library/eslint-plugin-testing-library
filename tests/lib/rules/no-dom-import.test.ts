@@ -3,25 +3,30 @@ import { createRuleTester } from '../test-utils';
 
 const ruleTester = createRuleTester();
 
+const SUPPORTED_TESTING_FRAMEWORKS = [
+  'react-testing-library',
+  '@testing-library/react',
+  '@marko/testing-library',
+];
+
 ruleTester.run(RULE_NAME, rule, {
   valid: [
     'import { foo } from "foo"',
     'import "foo"',
-    'import { fireEvent } from "react-testing-library"',
-    'import * as testing from "react-testing-library"',
-    'import { fireEvent } from "@testing-library/react"',
-    'import * as testing from "@testing-library/react"',
-    'import "react-testing-library"',
-    'import "@testing-library/react"',
+    ...SUPPORTED_TESTING_FRAMEWORKS.flatMap((testingFramework) => [
+      `import { fireEvent } from "${testingFramework}"`,
+      `import * as testing from "${testingFramework}"`,
+      `import "${testingFramework}"`,
+    ]),
     'const { foo } = require("foo")',
     'require("foo")',
     'require("")',
     'require()',
-    'const { fireEvent } = require("react-testing-library")',
-    'const { fireEvent } = require("@testing-library/react")',
-    'require("react-testing-library")',
-    'require("@testing-library/react")',
-    'require("@marko/testing-library")',
+    ...SUPPORTED_TESTING_FRAMEWORKS.flatMap((testingFramework) => [
+      `const { fireEvent } = require("${testingFramework}")`,
+      `const { fireEvent: testing } = require("${testingFramework}")`,
+      `require("${testingFramework}")`,
+    ]),
     {
       code: 'import { fireEvent } from "test-utils"',
       settings: { 'testing-library/utils-module': 'test-utils' },

@@ -4,52 +4,59 @@ import { createRuleTester } from '../test-utils';
 
 const ruleTester = createRuleTester();
 
+const SUPPORTED_TESTING_FRAMEWORKS = [
+  '@testing-library/dom',
+  '@marko/testing-library',
+];
+
 ruleTester.run(RULE_NAME, rule, {
   valid: [
-    ...ASYNC_UTILS.map((asyncUtil) => ({
-      code: `
-        import { ${asyncUtil} } from '@testing-library/dom';
-        test('snapshot calls outside of ${asyncUtil} are valid', () => {
-          expect(foo).toMatchSnapshot()
-          await ${asyncUtil}(() => expect(foo).toBeDefined())
-          expect(foo).toMatchInlineSnapshot()
-        })
-      `,
-    })),
-    ...ASYNC_UTILS.map((asyncUtil) => ({
-      code: `
-        import { ${asyncUtil} } from '@testing-library/dom';
-        test('snapshot calls outside of ${asyncUtil} are valid', () => {
-          expect(foo).toMatchSnapshot()
-          await ${asyncUtil}(() => {
-              expect(foo).toBeDefined()
+    ...SUPPORTED_TESTING_FRAMEWORKS.flatMap((testingFramework) => [
+      ...ASYNC_UTILS.map((asyncUtil) => ({
+        code: `
+          import { ${asyncUtil} } from '${testingFramework}';
+          test('snapshot calls outside of ${asyncUtil} are valid', () => {
+            expect(foo).toMatchSnapshot()
+            await ${asyncUtil}(() => expect(foo).toBeDefined())
+            expect(foo).toMatchInlineSnapshot()
           })
-          expect(foo).toMatchInlineSnapshot()
-        })
-      `,
-    })),
-    ...ASYNC_UTILS.map((asyncUtil) => ({
-      code: `
-        import * as asyncUtils from '@testing-library/dom';
-        test('snapshot calls outside of ${asyncUtil} are valid', () => {
-          expect(foo).toMatchSnapshot()
-          await asyncUtils.${asyncUtil}(() => expect(foo).toBeDefined())
-          expect(foo).toMatchInlineSnapshot()
-        })
-      `,
-    })),
-    ...ASYNC_UTILS.map((asyncUtil) => ({
-      code: `
-        import * as asyncUtils from '@testing-library/dom';
-        test('snapshot calls outside of ${asyncUtil} are valid', () => {
-          expect(foo).toMatchSnapshot()
-          await asyncUtils.${asyncUtil}(() => {
-              expect(foo).toBeDefined()
+        `,
+      })),
+      ...ASYNC_UTILS.map((asyncUtil) => ({
+        code: `
+          import { ${asyncUtil} } from '${testingFramework}';
+          test('snapshot calls outside of ${asyncUtil} are valid', () => {
+            expect(foo).toMatchSnapshot()
+            await ${asyncUtil}(() => {
+                expect(foo).toBeDefined()
+            })
+            expect(foo).toMatchInlineSnapshot()
           })
-          expect(foo).toMatchInlineSnapshot()
-        })
-      `,
-    })),
+        `,
+      })),
+      ...ASYNC_UTILS.map((asyncUtil) => ({
+        code: `
+          import * as asyncUtils from '${testingFramework}';
+          test('snapshot calls outside of ${asyncUtil} are valid', () => {
+            expect(foo).toMatchSnapshot()
+            await asyncUtils.${asyncUtil}(() => expect(foo).toBeDefined())
+            expect(foo).toMatchInlineSnapshot()
+          })
+        `,
+      })),
+      ...ASYNC_UTILS.map((asyncUtil) => ({
+        code: `
+          import * as asyncUtils from '${testingFramework}';
+          test('snapshot calls outside of ${asyncUtil} are valid', () => {
+            expect(foo).toMatchSnapshot()
+            await asyncUtils.${asyncUtil}(() => {
+                expect(foo).toBeDefined()
+            })
+            expect(foo).toMatchInlineSnapshot()
+          })
+        `,
+      })),
+    ]),
     ...ASYNC_UTILS.map((asyncUtil) => ({
       settings: {
         'testing-library/utils-module': 'test-utils',
@@ -151,12 +158,12 @@ ruleTester.run(RULE_NAME, rule, {
       `,
     })),
   ],
-  invalid: [
+  invalid: SUPPORTED_TESTING_FRAMEWORKS.flatMap((testingFramework) => [
     ...ASYNC_UTILS.map(
       (asyncUtil) =>
         ({
           code: `
-        import { ${asyncUtil} } from '@testing-library/dom';
+        import { ${asyncUtil} } from '${testingFramework}';
         test('snapshot calls within ${asyncUtil} are not valid', async () => {
           await ${asyncUtil}(() => expect(foo).toMatchSnapshot());
         });
@@ -175,7 +182,7 @@ ruleTester.run(RULE_NAME, rule, {
       (asyncUtil) =>
         ({
           code: `
-        import { ${asyncUtil} } from '@testing-library/dom';
+        import { ${asyncUtil} } from '${testingFramework}';
         test('snapshot calls within ${asyncUtil} are not valid', async () => {
           await ${asyncUtil}(() => {
               expect(foo).toMatchSnapshot()
@@ -196,7 +203,7 @@ ruleTester.run(RULE_NAME, rule, {
       (asyncUtil) =>
         ({
           code: `
-        import * as asyncUtils from '@testing-library/dom';
+        import * as asyncUtils from '${testingFramework}';
         test('snapshot calls within ${asyncUtil} are not valid', async () => {
           await asyncUtils.${asyncUtil}(() => expect(foo).toMatchSnapshot());
         });
@@ -215,7 +222,7 @@ ruleTester.run(RULE_NAME, rule, {
       (asyncUtil) =>
         ({
           code: `
-        import * as asyncUtils from '@testing-library/dom';
+        import * as asyncUtils from '${testingFramework}';
         test('snapshot calls within ${asyncUtil} are not valid', async () => {
           await asyncUtils.${asyncUtil}(() => {
               expect(foo).toMatchSnapshot()
@@ -236,7 +243,7 @@ ruleTester.run(RULE_NAME, rule, {
       (asyncUtil) =>
         ({
           code: `
-        import { ${asyncUtil} } from '@testing-library/dom';
+        import { ${asyncUtil} } from '${testingFramework}';
         test('snapshot calls within ${asyncUtil} are not valid', async () => {
           await ${asyncUtil}(() => expect(foo).toMatchInlineSnapshot());
         });
@@ -255,7 +262,7 @@ ruleTester.run(RULE_NAME, rule, {
       (asyncUtil) =>
         ({
           code: `
-        import { ${asyncUtil} } from '@testing-library/dom';
+        import { ${asyncUtil} } from '${testingFramework}';
         test('snapshot calls within ${asyncUtil} are not valid', async () => {
           await ${asyncUtil}(() => {
               expect(foo).toMatchInlineSnapshot()
@@ -276,7 +283,7 @@ ruleTester.run(RULE_NAME, rule, {
       (asyncUtil) =>
         ({
           code: `
-        import * as asyncUtils from '@testing-library/dom';
+        import * as asyncUtils from '${testingFramework}';
         test('snapshot calls within ${asyncUtil} are not valid', async () => {
           await asyncUtils.${asyncUtil}(() => expect(foo).toMatchInlineSnapshot());
         });
@@ -295,7 +302,7 @@ ruleTester.run(RULE_NAME, rule, {
       (asyncUtil) =>
         ({
           code: `
-        import * as asyncUtils from '@testing-library/dom';
+        import * as asyncUtils from '${testingFramework}';
         test('snapshot calls within ${asyncUtil} are not valid', async () => {
           await asyncUtils.${asyncUtil}(() => {
               expect(foo).toMatchInlineSnapshot()
@@ -312,5 +319,5 @@ ruleTester.run(RULE_NAME, rule, {
           ],
         } as const)
     ),
-  ],
+  ]),
 });

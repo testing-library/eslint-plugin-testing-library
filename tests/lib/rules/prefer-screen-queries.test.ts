@@ -8,6 +8,11 @@ import { createRuleTester } from '../test-utils';
 
 const ruleTester = createRuleTester();
 
+const SUPPORTED_TESTING_FRAMEWORKS = [
+  '@testing-library/react',
+  '@marko/testing-library',
+];
+
 const CUSTOM_QUERY_COMBINATIONS = combineQueries(ALL_QUERIES_VARIANTS, [
   'ByIcon',
 ]);
@@ -44,40 +49,42 @@ ruleTester.run(RULE_NAME, rule, {
         myWithinVariable.${queryMethod}('baz')
       `,
     })),
-    ...CUSTOM_QUERY_COMBINATIONS.map(
-      (query) => `
-      import { render } from '@testing-library/react'
-      import { ${query} } from 'custom-queries'
-
-      test("imported custom queries, since they can't be used through screen", () => {
-        render(foo)
-        ${query}('bar')
-      })
-    `
-    ),
-    ...CUSTOM_QUERY_COMBINATIONS.map(
-      (query) => `
-      import { render } from '@testing-library/react'
-
-      test("render-returned custom queries, since they can't be used through screen", () => {
-        const { ${query} } = render(foo)
-        ${query}('bar')
-      })
-    `
-    ),
-    ...CUSTOM_QUERY_COMBINATIONS.map((query) => ({
-      settings: {
-        'testing-library/custom-queries': [query, 'ByComplexText'],
-      },
-      code: `
-      import { render } from '@testing-library/react'
-
-      test("custom queries + custom-queries setting, since they can't be used through screen", () => {
-        const { ${query} } = render(foo)
-        ${query}('bar')
-      })
-    `,
-    })),
+    ...SUPPORTED_TESTING_FRAMEWORKS.flatMap((testingFramework) => [
+      ...CUSTOM_QUERY_COMBINATIONS.map((query) => ({
+        code: `
+          import { render } from '${testingFramework}'
+          import { ${query} } from 'custom-queries'
+    
+          test("imported custom queries, since they can't be used through screen", () => {
+            render(foo)
+            ${query}('bar')
+          })
+        `,
+      })),
+      ...CUSTOM_QUERY_COMBINATIONS.map((query) => ({
+        code: `
+          import { render } from '${testingFramework}'
+    
+          test("render-returned custom queries, since they can't be used through screen", () => {
+            const { ${query} } = render(foo)
+            ${query}('bar')
+          })
+        `,
+      })),
+      ...CUSTOM_QUERY_COMBINATIONS.map((query) => ({
+        settings: {
+          'testing-library/custom-queries': [query, 'ByComplexText'],
+        },
+        code: `
+          import { render } from '${testingFramework}'
+    
+          test("custom queries + custom-queries setting, since they can't be used through screen", () => {
+            const { ${query} } = render(foo)
+            ${query}('bar')
+          })
+        `,
+      })),
+    ]),
     {
       code: `
         const screen = render(baz);
@@ -246,45 +253,27 @@ ruleTester.run(RULE_NAME, rule, {
           ],
         } as const)
     ),
-    ...ALL_QUERIES_COMBINATIONS.map(
-      (queryMethod) =>
-        ({
-          settings: { 'testing-library/utils-module': 'test-utils' },
-          code: `
-        import { render as testingLibraryRender} from '@testing-library/react'
+    ...SUPPORTED_TESTING_FRAMEWORKS.flatMap((testingFramework) =>
+      ALL_QUERIES_COMBINATIONS.map(
+        (queryMethod) =>
+          ({
+            settings: { 'testing-library/utils-module': 'test-utils' },
+            code: `
+        import { render as testingLibraryRender} from '${testingFramework}'
         const { ${queryMethod} } = testingLibraryRender(foo)
         ${queryMethod}()`,
-          errors: [
-            {
-              line: 4,
-              column: 9,
-              messageId: 'preferScreenQueries',
-              data: {
-                name: queryMethod,
+            errors: [
+              {
+                line: 4,
+                column: 9,
+                messageId: 'preferScreenQueries',
+                data: {
+                  name: queryMethod,
+                },
               },
-            },
-          ],
-        } as const)
-    ),
-    ...ALL_QUERIES_COMBINATIONS.map(
-      (queryMethod) =>
-        ({
-          settings: { 'testing-library/utils-module': 'test-utils' },
-          code: `
-        import { render as testingLibraryRender} from '@marko/testing-library'
-        const { ${queryMethod} } = testingLibraryRender(foo)
-        ${queryMethod}()`,
-          errors: [
-            {
-              line: 4,
-              column: 9,
-              messageId: 'preferScreenQueries',
-              data: {
-                name: queryMethod,
-              },
-            },
-          ],
-        } as const)
+            ],
+          } as const)
+      )
     ),
     ...ALL_QUERIES_COMBINATIONS.map(
       (queryMethod) =>
@@ -433,9 +422,10 @@ ruleTester.run(RULE_NAME, rule, {
           ],
         } as const)
     ),
-    {
-      code: ` // issue #367 - example A
-      import { render } from '@testing-library/react';
+    ...SUPPORTED_TESTING_FRAMEWORKS.flatMap((testingFramework) => [
+      {
+        code: ` // issue #367 - example A
+      import { render } from '${testingFramework}';
 
       function setup() {
         return render(<div />);
@@ -451,28 +441,28 @@ ruleTester.run(RULE_NAME, rule, {
         expect(getByText('foo')).toBeInTheDocument();
       });
       `,
-      errors: [
-        {
-          messageId: 'preferScreenQueries',
-          line: 10,
-          column: 16,
-          data: {
-            name: 'getByText',
+        errors: [
+          {
+            messageId: 'preferScreenQueries',
+            line: 10,
+            column: 16,
+            data: {
+              name: 'getByText',
+            },
           },
-        },
-        {
-          messageId: 'preferScreenQueries',
-          line: 15,
-          column: 16,
-          data: {
-            name: 'getByText',
+          {
+            messageId: 'preferScreenQueries',
+            line: 15,
+            column: 16,
+            data: {
+              name: 'getByText',
+            },
           },
-        },
-      ],
-    },
-    {
-      code: ` // issue #367 - example B
-      import { render } from '@testing-library/react';
+        ],
+      } as const,
+      {
+        code: ` // issue #367 - example B
+      import { render } from '${testingFramework}';
 
       function setup() {
         return render(<div />);
@@ -489,24 +479,25 @@ ruleTester.run(RULE_NAME, rule, {
         expect(getByText('foo')).toBe('foo');
       });
       `,
-      errors: [
-        {
-          messageId: 'preferScreenQueries',
-          line: 10,
-          column: 16,
-          data: {
-            name: 'getByText',
+        errors: [
+          {
+            messageId: 'preferScreenQueries',
+            line: 10,
+            column: 16,
+            data: {
+              name: 'getByText',
+            },
           },
-        },
-        {
-          messageId: 'preferScreenQueries',
-          line: 16,
-          column: 16,
-          data: {
-            name: 'getByText',
+          {
+            messageId: 'preferScreenQueries',
+            line: 16,
+            column: 16,
+            data: {
+              name: 'getByText',
+            },
           },
-        },
-      ],
-    },
+        ],
+      } as const,
+    ]),
   ],
 });

@@ -4,21 +4,25 @@ import { createRuleTester } from '../test-utils';
 
 const ruleTester = createRuleTester();
 
+const SUPPORTED_TESTING_FRAMEWORKS = [
+  '@testing-library/dom',
+  '@marko/testing-library',
+];
+
 ruleTester.run(RULE_NAME, rule, {
-  valid: [
+  valid: SUPPORTED_TESTING_FRAMEWORKS.flatMap((testingFramework) => [
     ...ASYNC_UTILS.map((asyncUtil) => ({
       code: `
-        import { ${asyncUtil} } from '@testing-library/dom';
+        import { ${asyncUtil} } from '${testingFramework}';
         test('${asyncUtil} util directly waited with await operator is valid', async () => {
           doSomethingElse();
           await ${asyncUtil}(() => getByLabelText('email'));
         });
       `,
     })),
-
     ...ASYNC_UTILS.map((asyncUtil) => ({
       code: `
-        import { ${asyncUtil} } from '@testing-library/dom';
+        import { ${asyncUtil} } from '${testingFramework}';
         test('${asyncUtil} util promise saved in var and waited with await operator is valid', async () => {
           doSomethingElse();
           const aPromise = ${asyncUtil}(() => getByLabelText('email'));
@@ -26,20 +30,18 @@ ruleTester.run(RULE_NAME, rule, {
         });
       `,
     })),
-
     ...ASYNC_UTILS.map((asyncUtil) => ({
       code: `
-        import { ${asyncUtil} } from '@testing-library/dom';
+        import { ${asyncUtil} } from '${testingFramework}';
         test('${asyncUtil} util directly chained with then is valid', () => {
           doSomethingElse();
           ${asyncUtil}(() => getByLabelText('email')).then(() => { console.log('done') });
         });
       `,
     })),
-
     ...ASYNC_UTILS.map((asyncUtil) => ({
       code: `
-        import { ${asyncUtil} } from '@testing-library/dom';
+        import { ${asyncUtil} } from '${testingFramework}';
         test('${asyncUtil} util promise saved in var and chained with then is valid', () => {
           doSomethingElse();
           const aPromise = ${asyncUtil}(() => getByLabelText('email'));
@@ -47,10 +49,9 @@ ruleTester.run(RULE_NAME, rule, {
         });
       `,
     })),
-
     ...ASYNC_UTILS.map((asyncUtil) => ({
       code: `
-        import { ${asyncUtil} } from '@testing-library/dom';
+        import { ${asyncUtil} } from '${testingFramework}';
         test('${asyncUtil} util directly returned in arrow function is valid', async () => {
           const makeCustomWait = () =>
             ${asyncUtil}(() =>
@@ -59,10 +60,9 @@ ruleTester.run(RULE_NAME, rule, {
         });
       `,
     })),
-
     ...ASYNC_UTILS.map((asyncUtil) => ({
       code: `
-        import { ${asyncUtil} } from '@testing-library/dom';
+        import { ${asyncUtil} } from '${testingFramework}';
         test('${asyncUtil} util explicitly returned in arrow function is valid', async () => {
           const makeCustomWait = () => {
             return ${asyncUtil}(() =>
@@ -72,10 +72,9 @@ ruleTester.run(RULE_NAME, rule, {
         });
       `,
     })),
-
     ...ASYNC_UTILS.map((asyncUtil) => ({
       code: `
-        import { ${asyncUtil} } from '@testing-library/dom';
+        import { ${asyncUtil} } from '${testingFramework}';
         test('${asyncUtil} util returned in regular function is valid', async () => {
           function makeCustomWait() {
             return ${asyncUtil}(() =>
@@ -85,10 +84,9 @@ ruleTester.run(RULE_NAME, rule, {
         });
       `,
     })),
-
     ...ASYNC_UTILS.map((asyncUtil) => ({
       code: `
-        import { ${asyncUtil} } from '@testing-library/dom';
+        import { ${asyncUtil} } from '${testingFramework}';
         test('${asyncUtil} util promise saved in var and returned in function is valid', async () => {
           const makeCustomWait = () => {
             const aPromise =  ${asyncUtil}(() =>
@@ -132,7 +130,7 @@ ruleTester.run(RULE_NAME, rule, {
     })),
     ...ASYNC_UTILS.map((asyncUtil) => ({
       code: `
-        import { ${asyncUtil} } from '@testing-library/dom';
+        import { ${asyncUtil} } from '${testingFramework}';
         test('${asyncUtil} util used in with Promise.all() is valid', async () => {
           await Promise.all([
             ${asyncUtil}(callback1),
@@ -143,7 +141,7 @@ ruleTester.run(RULE_NAME, rule, {
     })),
     ...ASYNC_UTILS.map((asyncUtil) => ({
       code: `
-        import { ${asyncUtil} } from '@testing-library/dom';
+        import { ${asyncUtil} } from '${testingFramework}';
         test('${asyncUtil} util used in with Promise.all() with an await is valid', async () => {
           await Promise.all([
             await ${asyncUtil}(callback1),
@@ -154,7 +152,7 @@ ruleTester.run(RULE_NAME, rule, {
     })),
     ...ASYNC_UTILS.map((asyncUtil) => ({
       code: `
-        import { ${asyncUtil} } from '@testing-library/dom';
+        import { ${asyncUtil} } from '${testingFramework}';
         test('${asyncUtil} util used in with Promise.all() with ".then" is valid', async () => {
           Promise.all([
             ${asyncUtil}(callback1),
@@ -165,7 +163,7 @@ ruleTester.run(RULE_NAME, rule, {
     })),
     {
       code: `
-        import { waitFor, waitForElementToBeRemoved } from '@testing-library/dom';
+        import { waitFor, waitForElementToBeRemoved } from '${testingFramework}';
         test('combining different async methods with Promise.all does not throw an error', async () => {
           await Promise.all([
             waitFor(() => getByLabelText('email')),
@@ -176,7 +174,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        import { waitForElementToBeRemoved } from '@testing-library/dom';
+        import { waitForElementToBeRemoved } from '${testingFramework}';
         test('waitForElementToBeRemoved receiving element rather than callback is valid', async () => {
           doSomethingElse();
           const emailInput = getByLabelText('email');
@@ -186,7 +184,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     ...ASYNC_UTILS.map((asyncUtil) => ({
       code: `
-        import { ${asyncUtil} } from '@testing-library/dom';
+        import { ${asyncUtil} } from '${testingFramework}';
         test('${asyncUtil} util used in Promise.allSettled + await expression is valid', async () => {
           await Promise.allSettled([
             ${asyncUtil}(callback1),
@@ -197,7 +195,7 @@ ruleTester.run(RULE_NAME, rule, {
     })),
     ...ASYNC_UTILS.map((asyncUtil) => ({
       code: `
-        import { ${asyncUtil} } from '@testing-library/dom';
+        import { ${asyncUtil} } from '${testingFramework}';
         test('${asyncUtil} util used in Promise.allSettled + then method is valid', async () => {
           Promise.allSettled([
             ${asyncUtil}(callback1),
@@ -208,7 +206,7 @@ ruleTester.run(RULE_NAME, rule, {
     })),
     ...ASYNC_UTILS.map((asyncUtil) => ({
       code: `
-        import { ${asyncUtil} } from '@testing-library/dom';
+        import { ${asyncUtil} } from '${testingFramework}';
         
         function waitForSomethingAsync() {
           return ${asyncUtil}(() => somethingAsync())
@@ -230,23 +228,24 @@ ruleTester.run(RULE_NAME, rule, {
       })
       `,
     },
-
-    // edge case for coverage
-    // valid async query usage without any function defined
-    // so there is no innermost function scope found
-    `
-    import { waitFor } from '@testing-library/dom';
-    test('edge case for no innermost function scope', () => {
-      const foo = waitFor
-    })
-    `,
-  ],
-  invalid: [
+    {
+      // edge case for coverage
+      // valid async query usage without any function defined
+      // so there is no innermost function scope found
+      code: `
+        import { waitFor } from '${testingFramework}';
+        test('edge case for no innermost function scope', () => {
+          const foo = waitFor
+        })
+      `,
+    },
+  ]),
+  invalid: SUPPORTED_TESTING_FRAMEWORKS.flatMap((testingFramework) => [
     ...ASYNC_UTILS.map(
       (asyncUtil) =>
         ({
           code: `
-        import { ${asyncUtil} } from '@testing-library/dom';
+        import { ${asyncUtil} } from '${testingFramework}';
         test('${asyncUtil} util not waited is invalid', () => {
           doSomethingElse();
           ${asyncUtil}(() => getByLabelText('email'));
@@ -266,7 +265,7 @@ ruleTester.run(RULE_NAME, rule, {
       (asyncUtil) =>
         ({
           code: `
-        import { ${asyncUtil} } from '@testing-library/dom';
+        import { ${asyncUtil} } from '${testingFramework}';
         test('${asyncUtil} util not waited is invalid', () => {
           doSomethingElse();
           const el = ${asyncUtil}(() => getByLabelText('email'));
@@ -286,7 +285,7 @@ ruleTester.run(RULE_NAME, rule, {
       (asyncUtil) =>
         ({
           code: `
-        import * as asyncUtil from '@testing-library/dom';
+        import * as asyncUtil from '${testingFramework}';
         test('asyncUtil.${asyncUtil} util not handled is invalid', () => {
           doSomethingElse();
           asyncUtil.${asyncUtil}(() => getByLabelText('email'));
@@ -306,7 +305,7 @@ ruleTester.run(RULE_NAME, rule, {
       (asyncUtil) =>
         ({
           code: `
-        import { ${asyncUtil} } from '@testing-library/dom';
+        import { ${asyncUtil} } from '${testingFramework}';
         test('${asyncUtil} util promise saved not handled is invalid', () => {
           doSomethingElse();
           const aPromise = ${asyncUtil}(() => getByLabelText('email'));
@@ -326,7 +325,7 @@ ruleTester.run(RULE_NAME, rule, {
       (asyncUtil) =>
         ({
           code: `
-        import { ${asyncUtil} } from '@testing-library/dom';
+        import { ${asyncUtil} } from '${testingFramework}';
         test('several ${asyncUtil} utils not handled are invalid', () => {
           const aPromise = ${asyncUtil}(() => getByLabelText('username'));
           doSomethingElse(aPromise);
@@ -353,7 +352,7 @@ ruleTester.run(RULE_NAME, rule, {
       (asyncUtil) =>
         ({
           code: `
-        import { ${asyncUtil}, render } from '@testing-library/dom';
+        import { ${asyncUtil}, render } from '${testingFramework}';
         
         function waitForSomethingAsync() {
           return ${asyncUtil}(() => somethingAsync())
@@ -400,7 +399,7 @@ ruleTester.run(RULE_NAME, rule, {
       (asyncUtil) =>
         ({
           code: `
-        import { ${asyncUtil}, render } from '@testing-library/dom';
+        import { ${asyncUtil}, render } from '${testingFramework}';
         
         function waitForSomethingAsync() {
           return ${asyncUtil}(() => somethingAsync())
@@ -443,5 +442,5 @@ ruleTester.run(RULE_NAME, rule, {
           ],
         } as const)
     ),
-  ],
+  ]),
 });

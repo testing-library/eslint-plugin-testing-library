@@ -29,8 +29,13 @@ const enableStrict = <T extends TestCase>(array: T[]): T[] =>
 /**
  * - AGR stands for Aggressive Reporting
  * - RTL stands for React Testing Library (@testing-library/react)
+ * - Marko TL stands for Marko Testing Library (@marko/testing-library)
  * - RTU stands for React Test Utils (react-dom/test-utils)
  */
+const SUPPORTED_TESTING_FRAMEWORKS = [
+  ['@testing-library/react', 'RTL'],
+  ['@marko/testing-library', 'Marko TL'],
+];
 
 const validNonStrictTestCases: ValidTestCase[] = [
   {
@@ -58,9 +63,9 @@ const validNonStrictTestCases: ValidTestCase[] = [
 ];
 
 const validTestCases: ValidTestCase[] = [
-  {
-    code: `// case: RTL act wrapping non-RTL calls
-    import { act } from '@testing-library/react'
+  ...SUPPORTED_TESTING_FRAMEWORKS.map(([testingFramework, shortName]) => ({
+    code: `// case: ${shortName} act wrapping non-${shortName} calls
+    import { act } from '${testingFramework}'
 
     test('valid case', async () => {
       act(() => {
@@ -118,68 +123,7 @@ const validTestCases: ValidTestCase[] = [
       act(stuffThatDoesNotUseRTL().then(() => {}))
     });
     `,
-  },
-  {
-    code: `// case: Marko TL act wrapping non-Marko TL calls
-    import { act } from '@marko/testing-library'
-
-    test('valid case', async () => {
-      act(() => {
-        stuffThatDoesNotUseRTL();
-      });
-
-      act(function() {
-        a = stuffThatDoesNotUseRTL();
-      });
-
-      act(function() {
-        a = await stuffThatDoesNotUseRTL();
-      });
-
-      await act(async () => {
-        await stuffThatDoesNotUseRTL();
-      });
-
-      await act(async () => {
-        await stuffThatDoesNotUseRTL;
-      });
-
-      await act(() => stuffThatDoesNotUseRTL);
-
-      act(() => stuffThatDoesNotUseRTL);
-
-      act(() => {
-        return stuffThatDoesNotUseRTL
-      });
-
-      act(async function() {
-        await stuffThatDoesNotUseRTL;
-      });
-
-      await act(async function() {
-        await stuffThatDoesNotUseRTL;
-      });
-
-      act(async function() {
-        return stuffThatDoesNotUseRTL;
-      });
-
-      act(function() {
-        stuffThatDoesNotUseRTL();
-        const a = foo();
-      });
-
-      act(function() {
-        return stuffThatDoesNotUseRTL();
-      });
-
-      act(() => stuffThatDoesNotUseRTL());
-
-      act(() => stuffThatDoesNotUseRTL()).then(() => {})
-      act(stuffThatDoesNotUseRTL().then(() => {}))
-    });
-    `,
-  },
+  })),
   {
     code: `// case: RTU act wrapping non-RTL
       import { act } from 'react-dom/test-utils'
@@ -205,12 +149,12 @@ const validTestCases: ValidTestCase[] = [
       });
       `,
   },
-  {
+  ...SUPPORTED_TESTING_FRAMEWORKS.map(([testingFramework, shortName]) => ({
     settings: {
       'testing-library/utils-module': 'test-utils',
     },
-    code: `// case: RTL act wrapping non-RTL - AGR disabled
-      import { act } from '@testing-library/react'
+    code: `// case: ${shortName} act wrapping non-${shortName} - AGR disabled
+      import { act } from '${testingFramework}'
       import { waitFor } from 'somewhere-else'
 
       test('valid case', async () => {
@@ -233,15 +177,15 @@ const validTestCases: ValidTestCase[] = [
         act(() => waitFor());
       });
       `,
-  },
+  })),
 
-  {
+  ...SUPPORTED_TESTING_FRAMEWORKS.map(([testingFramework, shortName]) => ({
     settings: {
       'testing-library/utils-module': 'test-utils',
     },
-    code: `// case: non-RTL act wrapping RTL - AGR disabled
+    code: `// case: non-${shortName} act wrapping ${shortName} - AGR disabled
       import { act } from 'somewhere-else'
-      import { waitFor } from '@testing-library/react'
+      import { waitFor } from '${testingFramework}'
 
       test('valid case', async () => {
         act(() => {
@@ -267,13 +211,14 @@ const validTestCases: ValidTestCase[] = [
         act(function() {})
       });
       `,
-  },
+  })),
 ];
 
-const invalidStrictTestCases: InvalidTestCase[] = [
-  {
-    code: `// case: RTL act wrapping both RTL and non-RTL calls with strict option
-      import { act, render } from '@testing-library/react'
+const invalidStrictTestCases: InvalidTestCase[] =
+  SUPPORTED_TESTING_FRAMEWORKS.flatMap(([testingFramework, shortName]) => [
+    {
+      code: `// case: ${shortName} act wrapping both ${shortName} and non-${shortName} calls with strict option
+      import { act, render } from '${testingFramework}'
 
       await act(async () => {
         userEvent.click(screen.getByText("Submit"))
@@ -284,25 +229,27 @@ const invalidStrictTestCases: InvalidTestCase[] = [
         flushPromises()
       })
       `,
-    errors: [
-      {
-        messageId: 'noUnnecessaryActTestingLibraryUtil',
-        line: 4,
-        column: 13,
-      },
-      {
-        messageId: 'noUnnecessaryActTestingLibraryUtil',
-        line: 8,
-        column: 7,
-      },
-    ],
-  },
-];
+      errors: [
+        {
+          messageId: 'noUnnecessaryActTestingLibraryUtil',
+          line: 4,
+          column: 13,
+        },
+        {
+          messageId: 'noUnnecessaryActTestingLibraryUtil',
+          line: 8,
+          column: 7,
+        },
+      ],
+    },
+  ]);
 
 const invalidTestCases: InvalidTestCase[] = [
-  {
-    code: `// case: RTL act wrapping RTL calls - callbacks with body (BlockStatement)
-      import { act, fireEvent, screen, render, waitFor, waitForElementToBeRemoved } from '@testing-library/react'
+  ...SUPPORTED_TESTING_FRAMEWORKS.map(
+    ([testingFramework, shortName]) =>
+      ({
+        code: `// case: ${shortName} act wrapping ${shortName} calls - callbacks with body (BlockStatement)
+      import { act, fireEvent, screen, render, waitFor, waitForElementToBeRemoved } from '${testingFramework}'
       import userEvent from '@testing-library/user-event'
 
       test('invalid case', async () => {
@@ -341,125 +288,50 @@ const invalidTestCases: InvalidTestCase[] = [
         });
       });
       `,
-    errors: [
-      { messageId: 'noUnnecessaryActTestingLibraryUtil', line: 6, column: 9 },
-      {
-        messageId: 'noUnnecessaryActTestingLibraryUtil',
-        line: 10,
-        column: 15,
-      },
-      {
-        messageId: 'noUnnecessaryActTestingLibraryUtil',
-        line: 14,
-        column: 15,
-      },
-      {
-        messageId: 'noUnnecessaryActTestingLibraryUtil',
-        line: 18,
-        column: 9,
-      },
-      {
-        messageId: 'noUnnecessaryActTestingLibraryUtil',
-        line: 22,
-        column: 9,
-      },
-      {
-        messageId: 'noUnnecessaryActTestingLibraryUtil',
-        line: 26,
-        column: 15,
-      },
-      {
-        messageId: 'noUnnecessaryActTestingLibraryUtil',
-        line: 30,
-        column: 9,
-      },
-      {
-        messageId: 'noUnnecessaryActTestingLibraryUtil',
-        line: 34,
-        column: 9,
-      },
-    ],
-  },
-  {
-    code: `// case: Marko TL act wrapping Marko TL calls - callbacks with body (BlockStatement)
-      import { act, fireEvent, screen, render, waitFor, waitForElementToBeRemoved } from '@marko/testing-library'
-      import userEvent from '@testing-library/user-event'
-
-      test('invalid case', async () => {
-        act(() => {
-          fireEvent.click(el);
-        });
-
-        await act(async () => {
-          waitFor(() => {});
-        });
-
-        await act(async () => {
-          waitForElementToBeRemoved(el);
-        });
-
-        act(function() {
-          const blah = screen.getByText('blah');
-        });
-
-        act(function() {
-          render(something);
-        });
-
-        await act(() => {
-          const button = findByRole('button')
-        });
-
-        act(() => {
-          userEvent.click(el)
-        });
-
-        act(() => {
-          waitFor();
-          const element = screen.getByText('blah');
-          userEvent.click(element)
-        });
-      });
-      `,
-    errors: [
-      { messageId: 'noUnnecessaryActTestingLibraryUtil', line: 6, column: 9 },
-      {
-        messageId: 'noUnnecessaryActTestingLibraryUtil',
-        line: 10,
-        column: 15,
-      },
-      {
-        messageId: 'noUnnecessaryActTestingLibraryUtil',
-        line: 14,
-        column: 15,
-      },
-      {
-        messageId: 'noUnnecessaryActTestingLibraryUtil',
-        line: 18,
-        column: 9,
-      },
-      {
-        messageId: 'noUnnecessaryActTestingLibraryUtil',
-        line: 22,
-        column: 9,
-      },
-      {
-        messageId: 'noUnnecessaryActTestingLibraryUtil',
-        line: 26,
-        column: 15,
-      },
-      {
-        messageId: 'noUnnecessaryActTestingLibraryUtil',
-        line: 30,
-        column: 9,
-      },
-      {
-        messageId: 'noUnnecessaryActTestingLibraryUtil',
-        line: 34,
-        column: 9,
-      },
-    ],
-  },
+        errors: [
+          {
+            messageId: 'noUnnecessaryActTestingLibraryUtil',
+            line: 6,
+            column: 9,
+          },
+          {
+            messageId: 'noUnnecessaryActTestingLibraryUtil',
+            line: 10,
+            column: 15,
+          },
+          {
+            messageId: 'noUnnecessaryActTestingLibraryUtil',
+            line: 14,
+            column: 15,
+          },
+          {
+            messageId: 'noUnnecessaryActTestingLibraryUtil',
+            line: 18,
+            column: 9,
+          },
+          {
+            messageId: 'noUnnecessaryActTestingLibraryUtil',
+            line: 22,
+            column: 9,
+          },
+          {
+            messageId: 'noUnnecessaryActTestingLibraryUtil',
+            line: 26,
+            column: 15,
+          },
+          {
+            messageId: 'noUnnecessaryActTestingLibraryUtil',
+            line: 30,
+            column: 9,
+          },
+          {
+            messageId: 'noUnnecessaryActTestingLibraryUtil',
+            line: 34,
+            column: 9,
+          },
+        ],
+      } as const)
+  ),
   {
     settings: {
       'testing-library/utils-module': 'test-utils',

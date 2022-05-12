@@ -3,42 +3,52 @@ import { createRuleTester } from '../test-utils';
 
 const ruleTester = createRuleTester();
 
+const SUPPORTED_TESTING_FRAMEWORKS = [
+  '@testing-library/foo',
+  '@marko/testing-library',
+];
+
 ruleTester.run(RULE_NAME, rule, {
   valid: [
-    {
-      code: `
-        import {fireEvent} from '@testing-library/foo';
-        
-        fireEvent.click(screen.getByRole('button'))
-      `,
-    },
-    {
-      code: `
-        import {fireEvent} from '@testing-library/foo';
-
-        fireEvent.click(queryByRole('button'))`,
-    },
-    {
-      code: `
-        import {fireEvent} from '@testing-library/foo';
-
-        fireEvent.click(someRef)`,
-    },
-    {
-      code: `
-        import {fireEvent} from '@testing-library/foo';
-        
-        fireEvent.click(await screen.findByRole('button'))
-      `,
-    },
-    {
-      code: `
-        import {fireEvent} from '@testing-library/foo'
-
-        const elementPromise = screen.findByRole('button')
-        const button = await elementPromise
-        fireEvent.click(button)`,
-    },
+    ...SUPPORTED_TESTING_FRAMEWORKS.flatMap((testingFramework) => [
+      {
+        code: `
+          import {fireEvent} from '${testingFramework}';
+          
+          fireEvent.click(screen.getByRole('button'))
+        `,
+      },
+      {
+        code: `
+          import {fireEvent} from '${testingFramework}';
+  
+          fireEvent.click(queryByRole('button'))
+        `,
+      },
+      {
+        code: `
+          import {fireEvent} from '${testingFramework}';
+  
+          fireEvent.click(someRef)
+        `,
+      },
+      {
+        code: `
+          import {fireEvent} from '${testingFramework}';
+          
+          fireEvent.click(await screen.findByRole('button'))
+        `,
+      },
+      {
+        code: `
+          import {fireEvent} from '${testingFramework}'
+  
+          const elementPromise = screen.findByRole('button')
+          const button = await elementPromise
+          fireEvent.click(button)
+        `,
+      },
+    ]),
     {
       settings: {
         'testing-library/utils-module': 'test-utils',
@@ -85,91 +95,93 @@ ruleTester.run(RULE_NAME, rule, {
         },
       ],
     },
-    {
-      code: `
-        import {fireEvent} from '@testing-library/foo';
+    ...SUPPORTED_TESTING_FRAMEWORKS.flatMap((testingFramework) => [
+      {
+        code: `
+        import {fireEvent} from '${testingFramework}';
 
         const promise = new Promise();
         fireEvent.click(promise)`,
-      errors: [
-        {
-          messageId: 'noPromiseInFireEvent',
-          line: 5,
-          column: 25,
-          endColumn: 32,
-        },
-      ],
-    },
-    {
-      code: `
-        import {fireEvent} from '@testing-library/foo'
+        errors: [
+          {
+            messageId: 'noPromiseInFireEvent',
+            line: 5,
+            column: 25,
+            endColumn: 32,
+          },
+        ],
+      } as const,
+      {
+        code: `
+        import {fireEvent} from '${testingFramework}'
 
         const elementPromise = screen.findByRole('button')
         fireEvent.click(elementPromise)`,
-      errors: [
-        {
-          messageId: 'noPromiseInFireEvent',
-          line: 5,
-          column: 25,
-          endColumn: 39,
-        },
-      ],
-    },
-    {
-      code: `
-        import {fireEvent} from '@testing-library/foo';
+        errors: [
+          {
+            messageId: 'noPromiseInFireEvent',
+            line: 5,
+            column: 25,
+            endColumn: 39,
+          },
+        ],
+      } as const,
+      {
+        code: `
+        import {fireEvent} from '${testingFramework}';
 
         fireEvent.click(screen.findByRole('button'))`,
-      errors: [
-        {
-          messageId: 'noPromiseInFireEvent',
-          line: 4,
-          column: 25,
-          endColumn: 52,
-        },
-      ],
-    },
-    {
-      code: `
-        import {fireEvent} from '@testing-library/foo';
+        errors: [
+          {
+            messageId: 'noPromiseInFireEvent',
+            line: 4,
+            column: 25,
+            endColumn: 52,
+          },
+        ],
+      } as const,
+      {
+        code: `
+        import {fireEvent} from '${testingFramework}';
 
         fireEvent.click(findByText('submit'))`,
-      errors: [
-        {
-          messageId: 'noPromiseInFireEvent',
-          line: 4,
-          column: 25,
-          endColumn: 45,
-        },
-      ],
-    },
-    {
-      code: `
-        import {fireEvent} from '@testing-library/foo';
+        errors: [
+          {
+            messageId: 'noPromiseInFireEvent',
+            line: 4,
+            column: 25,
+            endColumn: 45,
+          },
+        ],
+      } as const,
+      {
+        code: `
+        import {fireEvent} from '${testingFramework}';
 
         fireEvent.click(Promise('foo'))`,
-      errors: [
-        {
-          messageId: 'noPromiseInFireEvent',
-          line: 4,
-          column: 25,
-          endColumn: 39,
-        },
-      ],
-    },
-    {
-      code: `
-        import {fireEvent} from '@testing-library/foo';
+        errors: [
+          {
+            messageId: 'noPromiseInFireEvent',
+            line: 4,
+            column: 25,
+            endColumn: 39,
+          },
+        ],
+      } as const,
+      {
+        code: `
+        import {fireEvent} from '${testingFramework}';
 
         fireEvent.click(new Promise('foo'))`,
-      errors: [
-        {
-          messageId: 'noPromiseInFireEvent',
-          line: 4,
-          column: 25,
-          endColumn: 43,
-        },
-      ],
-    },
+        errors: [
+          {
+            messageId: 'noPromiseInFireEvent',
+            line: 4,
+            column: 25,
+            endColumn: 43,
+          },
+        ],
+      } as const,
+    ]),
   ],
 });
