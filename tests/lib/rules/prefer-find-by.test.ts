@@ -16,6 +16,7 @@ const ruleTester = createRuleTester();
 
 const SUPPORTED_TESTING_FRAMEWORKS = [
   '@testing-library/foo',
+  '@testing-library/dom',
   '@marko/testing-library',
 ];
 

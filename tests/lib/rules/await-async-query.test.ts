@@ -12,6 +12,7 @@ import { createRuleTester } from '../test-utils';
 const ruleTester = createRuleTester();
 
 const SUPPORTED_TESTING_FRAMEWORKS = [
+  '@testing-library/dom',
   '@testing-library/react',
   '@marko/testing-library',
 ];
