@@ -6,6 +6,7 @@ const ruleTester = createRuleTester();
 const ALL_WAIT_METHODS = ['waitFor', 'waitForElementToBeRemoved'];
 const SUPPORTED_TESTING_FRAMEWORKS = [
   '@testing-library/dom',
+  '@testing-library/angular',
   '@testing-library/react',
   '@marko/testing-library',
 ];

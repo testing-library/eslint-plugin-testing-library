@@ -12,6 +12,14 @@ const DOM_TESTING_LIBRARY_MODULES = [
   '@testing-library/dom',
 ];
 
+const correctModuleNameByFramework = {
+  angular: '@testing-library/angular', // ATL is *always* called `@testing-library/angular`
+  marko: '@marko/testing-library', // Marko TL is called `@marko/testing-library`
+};
+const getCorrectModuleName = (moduleName: string, framework: string): string =>
+  correctModuleNameByFramework[framework] ||
+  moduleName.replace('dom', framework);
+
 export default createTestingLibraryRule<Options, MessageIds>({
   name: RULE_NAME,
   meta: {
@@ -33,11 +41,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
         'import from DOM Testing Library is restricted, import from {{module}} instead',
     },
     fixable: 'code',
-    schema: [
-      {
-        type: 'string',
-      },
-    ],
+    schema: [{ type: 'string' }],
   },
   defaultOptions: [''],
 
@@ -46,42 +50,36 @@ export default createTestingLibraryRule<Options, MessageIds>({
       node: TSESTree.CallExpression | TSESTree.ImportDeclaration,
       moduleName: string
     ) {
-      if (framework) {
-        // marko TL is called @marko/testing-library
-        const correctModuleName =
-          framework === 'marko'
-            ? moduleName.replace('dom-', `@${framework}/`)
-            : moduleName.replace('dom', framework);
-        context.report({
-          node,
-          messageId: 'noDomImportFramework',
-          data: {
-            module: correctModuleName,
-          },
-          fix(fixer) {
-            if (isCallExpression(node)) {
-              const name = node.arguments[0] as TSESTree.Literal;
-
-              // Replace the module name with the raw module name as we can't predict which punctuation the user is going to use
-              return fixer.replaceText(
-                name,
-                name.raw.replace(moduleName, correctModuleName)
-              );
-            } else {
-              const name = node.source;
-              return fixer.replaceText(
-                name,
-                name.raw.replace(moduleName, correctModuleName)
-              );
-            }
-          },
-        });
-      } else {
-        context.report({
+      if (!framework) {
+        return context.report({
           node,
           messageId: 'noDomImport',
         });
       }
+
+      const correctModuleName = getCorrectModuleName(moduleName, framework);
+      context.report({
+        data: { module: correctModuleName },
+        fix(fixer) {
+          if (isCallExpression(node)) {
+            const name = node.arguments[0] as TSESTree.Literal;
+
+            // Replace the module name with the raw module name as we can't predict which punctuation the user is going to use
+            return fixer.replaceText(
+              name,
+              name.raw.replace(moduleName, correctModuleName)
+            );
+          } else {
+            const name = node.source;
+            return fixer.replaceText(
+              name,
+              name.raw.replace(moduleName, correctModuleName)
+            );
+          }
+        },
+        messageId: 'noDomImportFramework',
+        node,
+      });
     }
 
     return {
