@@ -6,6 +6,7 @@ const ruleTester = createRuleTester();
 const SUPPORTED_TESTING_FRAMEWORKS = [
   '@testing-library/angular',
   '@testing-library/react',
+  '@testing-library/vue',
   '@marko/testing-library',
 ];
 
