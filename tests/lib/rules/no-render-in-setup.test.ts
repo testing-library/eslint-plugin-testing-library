@@ -8,6 +8,7 @@ const SUPPORTED_TESTING_FRAMEWORKS = [
   '@testing-library/foo',
   '@testing-library/angular',
   '@testing-library/react',
+  '@testing-library/vue',
   '@marko/testing-library',
 ];
 
