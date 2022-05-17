@@ -88,6 +88,13 @@ const FIRE_EVENT_FUNCTIONS = [
   'gotPointerCapture',
   'lostPointerCapture',
 ];
+const SUPPORTED_TESTING_FRAMEWORKS = [
+  '@testing-library/dom',
+  '@testing-library/angular',
+  '@testing-library/react',
+  '@testing-library/vue',
+  '@marko/testing-library',
+];
 const USER_EVENT_SYNC_FUNCTIONS = [
   'clear',
   'click',
@@ -168,15 +175,17 @@ ruleTester.run(RULE_NAME, rule, {
     },
 
     // valid tests for fire-event when only user-event set in eventModules
-    ...FIRE_EVENT_FUNCTIONS.map((func) => ({
-      code: `
-        import { fireEvent } from '@testing-library/framework';
-        test('should not report fireEvent.${func} sync event awaited', async() => {
-          await fireEvent.${func}('foo');
-        });
-      `,
-      options: [{ eventModules: ['user-event'] }],
-    })),
+    ...SUPPORTED_TESTING_FRAMEWORKS.flatMap((testingFramework) =>
+      FIRE_EVENT_FUNCTIONS.map((func) => ({
+        code: `
+          import { fireEvent } from '${testingFramework}';
+          test('should not report fireEvent.${func} sync event awaited', async() => {
+            await fireEvent.${func}('foo');
+          });
+        `,
+        options: [{ eventModules: ['user-event'] }],
+      }))
+    ),
 
     // valid tests for user-event when only fire-event set in eventModules
     ...USER_EVENT_SYNC_FUNCTIONS.map((func) => ({
@@ -192,24 +201,26 @@ ruleTester.run(RULE_NAME, rule, {
 
   invalid: [
     // sync fireEvent methods with await operator are not valid
-    ...FIRE_EVENT_FUNCTIONS.map(
-      (func) =>
-        ({
-          code: `
-        import { fireEvent } from '@testing-library/framework';
+    ...SUPPORTED_TESTING_FRAMEWORKS.flatMap((testingFramework) =>
+      FIRE_EVENT_FUNCTIONS.map(
+        (func) =>
+          ({
+            code: `
+        import { fireEvent } from '${testingFramework}';
         test('should report fireEvent.${func} sync event awaited', async() => {
           await fireEvent.${func}('foo');
         });
       `,
-          errors: [
-            {
-              line: 4,
-              column: 17,
-              messageId: 'noAwaitSyncEvents',
-              data: { name: `fireEvent.${func}` },
-            },
-          ],
-        } as const)
+            errors: [
+              {
+                line: 4,
+                column: 17,
+                messageId: 'noAwaitSyncEvents',
+                data: { name: `fireEvent.${func}` },
+              },
+            ],
+          } as const)
+      )
     ),
     // sync userEvent sync methods with await operator are not valid
     ...USER_EVENT_SYNC_FUNCTIONS.map(
@@ -234,25 +245,27 @@ ruleTester.run(RULE_NAME, rule, {
 
     // sync fireEvent methods with await operator are not valid
     // when only fire-event set in eventModules
-    ...FIRE_EVENT_FUNCTIONS.map(
-      (func) =>
-        ({
-          code: `
-        import { fireEvent } from '@testing-library/framework';
+    ...SUPPORTED_TESTING_FRAMEWORKS.flatMap((testingFramework) =>
+      FIRE_EVENT_FUNCTIONS.map(
+        (func) =>
+          ({
+            code: `
+        import { fireEvent } from '${testingFramework}';
         test('should report fireEvent.${func} sync event awaited', async() => {
           await fireEvent.${func}('foo');
         });
       `,
-          options: [{ eventModules: ['fire-event'] }],
-          errors: [
-            {
-              line: 4,
-              column: 17,
-              messageId: 'noAwaitSyncEvents',
-              data: { name: `fireEvent.${func}` },
-            },
-          ],
-        } as const)
+            options: [{ eventModules: ['fire-event'] }],
+            errors: [
+              {
+                line: 4,
+                column: 17,
+                messageId: 'noAwaitSyncEvents',
+                data: { name: `fireEvent.${func}` },
+              },
+            ],
+          } as const)
+      )
     ),
     // sync userEvent sync methods with await operator are not valid
     // when only fire-event set in eventModules
