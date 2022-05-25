@@ -31,7 +31,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
       awaitFireEvent:
         'Promise returned from `fireEvent.{{ name }}` must be handled',
       fireEventWrapper:
-        'Promise returned from `fireEvent.{{ wrapperName }}` wrapper over fire event method must be handled',
+        'Promise returned from `{{ name }}` wrapper over fire event method must be handled',
     },
     schema: [],
   },
