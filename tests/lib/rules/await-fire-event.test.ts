@@ -344,7 +344,7 @@ ruleTester.run(RULE_NAME, rule, {
               line: 9,
               column: 9,
               messageId: 'fireEventWrapper',
-              data: { name: fireEventMethod },
+              data: { name: 'triggerEvent' },
             },
           ],
         } as const)
