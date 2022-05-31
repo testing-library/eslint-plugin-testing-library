@@ -85,23 +85,23 @@ One way of restricting ESLint config by file patterns is by using [ESLint `overr
 
 Assuming you are using the same pattern for your test files as [Jest by default](https://jestjs.io/docs/configuration#testmatch-arraystring), the following config would run `eslint-plugin-testing-library` only against your test files:
 
-```javascript
+```json5
 // .eslintrc
 {
   // 1) Here we have our usual config which applies to the whole project, so we don't put testing-library preset here.
-  "extends": ["airbnb", "plugin:prettier/recommended"],
+  extends: ['airbnb', 'plugin:prettier/recommended'],
 
-  // 2) We load eslint-plugin-testing-library globally with other ESLint plugins.
-  "plugins": ["react-hooks", "testing-library"],
+  // 2) We load other plugins than eslint-plugin-testing-library globally if we want to.
+  plugins: ['react-hooks'],
 
-  "overrides": [
+  overrides: [
     {
-      // 3) Now we enable eslint-plugin-testing-library rules or preset only for matching files!
-      "files": ["**/__tests__/**/*.[jt]s?(x)", "**/?(*.)+(spec|test).[jt]s?(x)"],
-      "extends": ["plugin:testing-library/react"]
+      // 3) Now we enable eslint-plugin-testing-library rules or preset only for matching testing files!
+      files: ['**/__tests__/**/*.[jt]s?(x)', '**/?(*.)+(spec|test).[jt]s?(x)'],
+      extends: ['plugin:testing-library/react'],
     },
   ],
-};
+}
 ```
 
 #### ESLint Cascading and Hierarchy
@@ -115,15 +115,17 @@ You can find more info about enabled rules in the [Supported Rules section](#sup
 
 Since each one of these configurations is aimed at a particular Testing Library package, they are not extendable between them, so you should use only one of them at once per `.eslintrc` file. For example, if you want to enable recommended configuration for React, you don't need to combine it somehow with DOM one:
 
-```json
+```json5
 // ❌ Don't do this
 {
-  "extends": ["plugin:testing-library/dom", "plugin:testing-library/react"]
+  extends: ['plugin:testing-library/dom', 'plugin:testing-library/react'],
 }
+```
 
-// ✅ Do just this instead
+```json5
+// ✅ Just do this instead
 {
-  "extends": ["plugin:testing-library/react"]
+  extends: ['plugin:testing-library/react'],
 }
 ```
 
@@ -248,12 +250,12 @@ If you are sure about configuring the settings, these are the options available:
 
 The name of your custom utility file from where you re-export everything from the Testing Library package, or `"off"` to switch related Aggressive Reporting mechanism off. Relates to [Aggressive Imports Reporting](docs/migration-guides/v4.md#imports).
 
-```json
+```json5
 // .eslintrc
 {
-  "settings": {
-    "testing-library/utils-module": "my-custom-test-utility-file"
-  }
+  settings: {
+    'testing-library/utils-module': 'my-custom-test-utility-file',
+  },
 }
 ```
 
@@ -263,12 +265,12 @@ The name of your custom utility file from where you re-export everything from th
 
 A list of function names that are valid as Testing Library custom renders, or `"off"` to switch related Aggressive Reporting mechanism off. Relates to [Aggressive Renders Reporting](docs/migration-guides/v4.md#renders).
 
-```json
+```json5
 // .eslintrc
 {
-  "settings": {
-    "testing-library/custom-renders": ["display", "renderWithProviders"]
-  }
+  settings: {
+    'testing-library/custom-renders': ['display', 'renderWithProviders'],
+  },
 }
 ```
 
@@ -278,12 +280,12 @@ A list of function names that are valid as Testing Library custom renders, or `"
 
 A list of query names/patterns that are valid as Testing Library custom queries, or `"off"` to switch related Aggressive Reporting mechanism off. Relates to [Aggressive Reporting - Queries](docs/migration-guides/v4.md#queries)
 
-```json
+```json5
 // .eslintrc
 {
-  "settings": {
-    "testing-library/custom-queries": ["ByIcon", "getByComplexText"]
-  }
+  settings: {
+    'testing-library/custom-queries': ['ByIcon', 'getByComplexText'],
+  },
 }
 ```
 
@@ -293,14 +295,14 @@ A list of query names/patterns that are valid as Testing Library custom queries,
 
 Since each Shared Setting is related to one Aggressive Reporting mechanism, and they accept `"off"` to opt out of that mechanism, you can switch the entire feature off by doing:
 
-```json
+```json5
 // .eslintrc
 {
-  "settings": {
-    "testing-library/utils-module": "off",
-    "testing-library/custom-renders": "off",
-    "testing-library/custom-queries": "off"
-  }
+  settings: {
+    'testing-library/utils-module': 'off',
+    'testing-library/custom-renders': 'off',
+    'testing-library/custom-queries': 'off',
+  },
 }
 ```
 
