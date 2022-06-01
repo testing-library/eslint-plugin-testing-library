@@ -4,7 +4,7 @@ import type { TestingLibraryRuleMetaDocs } from '../../lib/utils';
 import { configBadges, emojiKey, RulesList, writeRulesList } from './utils';
 
 export const createRuleLink = (ruleName: string): string =>
-  `[\`testing-library/${ruleName}\`](./docs/rules/${ruleName}.md)`;
+  `[\`${ruleName}\`](./docs/rules/${ruleName}.md)`;
 
 export const generateConfigBadges = (
   recommendedConfig: TestingLibraryRuleMetaDocs<unknown[]>['recommendedConfig']

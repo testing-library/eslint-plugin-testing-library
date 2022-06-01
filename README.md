@@ -85,23 +85,23 @@ One way of restricting ESLint config by file patterns is by using [ESLint `overr
 
 Assuming you are using the same pattern for your test files as [Jest by default](https://jestjs.io/docs/configuration#testmatch-arraystring), the following config would run `eslint-plugin-testing-library` only against your test files:
 
-```javascript
+```json5
 // .eslintrc
 {
   // 1) Here we have our usual config which applies to the whole project, so we don't put testing-library preset here.
-  "extends": ["airbnb", "plugin:prettier/recommended"],
+  extends: ['airbnb', 'plugin:prettier/recommended'],
 
-  // 2) We load eslint-plugin-testing-library globally with other ESLint plugins.
-  "plugins": ["react-hooks", "testing-library"],
+  // 2) We load other plugins than eslint-plugin-testing-library globally if we want to.
+  plugins: ['react-hooks'],
 
-  "overrides": [
+  overrides: [
     {
-      // 3) Now we enable eslint-plugin-testing-library rules or preset only for matching files!
-      "files": ["**/__tests__/**/*.[jt]s?(x)", "**/?(*.)+(spec|test).[jt]s?(x)"],
-      "extends": ["plugin:testing-library/react"]
+      // 3) Now we enable eslint-plugin-testing-library rules or preset only for matching testing files!
+      files: ['**/__tests__/**/*.[jt]s?(x)', '**/?(*.)+(spec|test).[jt]s?(x)'],
+      extends: ['plugin:testing-library/react'],
     },
   ],
-};
+}
 ```
 
 #### ESLint Cascading and Hierarchy
@@ -115,15 +115,17 @@ You can find more info about enabled rules in the [Supported Rules section](#sup
 
 Since each one of these configurations is aimed at a particular Testing Library package, they are not extendable between them, so you should use only one of them at once per `.eslintrc` file. For example, if you want to enable recommended configuration for React, you don't need to combine it somehow with DOM one:
 
-```json
+```json5
 // ❌ Don't do this
 {
-  "extends": ["plugin:testing-library/dom", "plugin:testing-library/react"]
+  extends: ['plugin:testing-library/dom', 'plugin:testing-library/react'],
 }
+```
 
-// ✅ Do just this instead
+```json5
+// ✅ Just do this instead
 {
-  "extends": ["plugin:testing-library/react"]
+  extends: ['plugin:testing-library/react'],
 }
 ```
 
@@ -194,41 +196,43 @@ To enable this configuration use the `extends` property in your
 
 ## Supported Rules
 
+> Remember that all rules from this plugin are prefixed by `"testing-library/"`
+
 <!-- RULES-LIST:START -->
 
 **Key**: 🔧 = fixable
 
 **Configurations**: ![dom-badge][] = dom, ![angular-badge][] = angular, ![react-badge][] = react, ![vue-badge][] = vue, ![marko-badge][] = marko
 
-| Name                                                                                                 | Description                                                                                  | 🔧  | Included in configurations                                                         |
-| ---------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- | --- | ---------------------------------------------------------------------------------- |
-| [`testing-library/await-async-query`](./docs/rules/await-async-query.md)                             | Enforce promises from async queries to be handled                                            |     | ![dom-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] ![marko-badge][] |
-| [`testing-library/await-async-utils`](./docs/rules/await-async-utils.md)                             | Enforce promises from async utils to be awaited properly                                     |     | ![dom-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] ![marko-badge][] |
-| [`testing-library/await-fire-event`](./docs/rules/await-fire-event.md)                               | Enforce promises from `fireEvent` methods to be handled                                      |     | ![vue-badge][] ![marko-badge][]                                                    |
-| [`testing-library/consistent-data-testid`](./docs/rules/consistent-data-testid.md)                   | Ensures consistent usage of `data-testid`                                                    |     |                                                                                    |
-| [`testing-library/no-await-sync-events`](./docs/rules/no-await-sync-events.md)                       | Disallow unnecessary `await` for sync events                                                 |     |                                                                                    |
-| [`testing-library/no-await-sync-query`](./docs/rules/no-await-sync-query.md)                         | Disallow unnecessary `await` for sync queries                                                |     | ![dom-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] ![marko-badge][] |
-| [`testing-library/no-container`](./docs/rules/no-container.md)                                       | Disallow the use of `container` methods                                                      |     | ![angular-badge][] ![react-badge][] ![vue-badge][] ![marko-badge][]                |
-| [`testing-library/no-debugging-utils`](./docs/rules/no-debugging-utils.md)                           | Disallow the use of debugging utilities like `debug`                                         |     | ![angular-badge][] ![react-badge][] ![vue-badge][] ![marko-badge][]                |
-| [`testing-library/no-dom-import`](./docs/rules/no-dom-import.md)                                     | Disallow importing from DOM Testing Library                                                  | 🔧  | ![angular-badge][] ![react-badge][] ![vue-badge][] ![marko-badge][]                |
-| [`testing-library/no-global-regexp-flag-in-query`](./docs/rules/no-global-regexp-flag-in-query.md)   | Disallow the use of the global RegExp flag (/g) in queries                                   | 🔧  |                                                                                    |
-| [`testing-library/no-manual-cleanup`](./docs/rules/no-manual-cleanup.md)                             | Disallow the use of `cleanup`                                                                |     |                                                                                    |
-| [`testing-library/no-node-access`](./docs/rules/no-node-access.md)                                   | Disallow direct Node access                                                                  |     | ![angular-badge][] ![react-badge][] ![vue-badge][] ![marko-badge][]                |
-| [`testing-library/no-promise-in-fire-event`](./docs/rules/no-promise-in-fire-event.md)               | Disallow the use of promises passed to a `fireEvent` method                                  |     | ![dom-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] ![marko-badge][] |
-| [`testing-library/no-render-in-setup`](./docs/rules/no-render-in-setup.md)                           | Disallow the use of `render` in testing frameworks setup functions                           |     | ![angular-badge][] ![react-badge][] ![vue-badge][] ![marko-badge][]                |
-| [`testing-library/no-unnecessary-act`](./docs/rules/no-unnecessary-act.md)                           | Disallow wrapping Testing Library utils or empty callbacks in `act`                          |     | ![react-badge][] ![marko-badge][]                                                  |
-| [`testing-library/no-wait-for-empty-callback`](./docs/rules/no-wait-for-empty-callback.md)           | Disallow empty callbacks for `waitFor` and `waitForElementToBeRemoved`                       |     | ![dom-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] ![marko-badge][] |
-| [`testing-library/no-wait-for-multiple-assertions`](./docs/rules/no-wait-for-multiple-assertions.md) | Disallow the use of multiple `expect` calls inside `waitFor`                                 |     | ![dom-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] ![marko-badge][] |
-| [`testing-library/no-wait-for-side-effects`](./docs/rules/no-wait-for-side-effects.md)               | Disallow the use of side effects in `waitFor`                                                |     | ![dom-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] ![marko-badge][] |
-| [`testing-library/no-wait-for-snapshot`](./docs/rules/no-wait-for-snapshot.md)                       | Ensures no snapshot is generated inside of a `waitFor` call                                  |     | ![dom-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] ![marko-badge][] |
-| [`testing-library/prefer-explicit-assert`](./docs/rules/prefer-explicit-assert.md)                   | Suggest using explicit assertions rather than standalone queries                             |     |                                                                                    |
-| [`testing-library/prefer-find-by`](./docs/rules/prefer-find-by.md)                                   | Suggest using `find(All)By*` query instead of `waitFor` + `get(All)By*` to wait for elements | 🔧  | ![dom-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] ![marko-badge][] |
-| [`testing-library/prefer-presence-queries`](./docs/rules/prefer-presence-queries.md)                 | Ensure appropriate `get*`/`query*` queries are used with their respective matchers           |     | ![dom-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] ![marko-badge][] |
-| [`testing-library/prefer-query-by-disappearance`](./docs/rules/prefer-query-by-disappearance.md)     | Suggest using `queryBy*` queries when waiting for disappearance                              |     | ![dom-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] ![marko-badge][] |
-| [`testing-library/prefer-screen-queries`](./docs/rules/prefer-screen-queries.md)                     | Suggest using `screen` while querying                                                        |     | ![dom-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] ![marko-badge][] |
-| [`testing-library/prefer-user-event`](./docs/rules/prefer-user-event.md)                             | Suggest using `userEvent` over `fireEvent` for simulating user interactions                  |     |                                                                                    |
-| [`testing-library/prefer-wait-for`](./docs/rules/prefer-wait-for.md)                                 | Use `waitFor` instead of deprecated wait methods                                             | 🔧  |                                                                                    |
-| [`testing-library/render-result-naming-convention`](./docs/rules/render-result-naming-convention.md) | Enforce a valid naming for return value from `render`                                        |     | ![angular-badge][] ![react-badge][] ![vue-badge][] ![marko-badge][]                |
+| Name                                                                                 | Description                                                                                  | 🔧  | Included in configurations                                                         |
+| ------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------- | --- | ---------------------------------------------------------------------------------- |
+| [`await-async-query`](./docs/rules/await-async-query.md)                             | Enforce promises from async queries to be handled                                            |     | ![dom-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] ![marko-badge][] |
+| [`await-async-utils`](./docs/rules/await-async-utils.md)                             | Enforce promises from async utils to be awaited properly                                     |     | ![dom-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] ![marko-badge][] |
+| [`await-fire-event`](./docs/rules/await-fire-event.md)                               | Enforce promises from `fireEvent` methods to be handled                                      |     | ![vue-badge][] ![marko-badge][]                                                    |
+| [`consistent-data-testid`](./docs/rules/consistent-data-testid.md)                   | Ensures consistent usage of `data-testid`                                                    |     |                                                                                    |
+| [`no-await-sync-events`](./docs/rules/no-await-sync-events.md)                       | Disallow unnecessary `await` for sync events                                                 |     |                                                                                    |
+| [`no-await-sync-query`](./docs/rules/no-await-sync-query.md)                         | Disallow unnecessary `await` for sync queries                                                |     | ![dom-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] ![marko-badge][] |
+| [`no-container`](./docs/rules/no-container.md)                                       | Disallow the use of `container` methods                                                      |     | ![angular-badge][] ![react-badge][] ![vue-badge][] ![marko-badge][]                |
+| [`no-debugging-utils`](./docs/rules/no-debugging-utils.md)                           | Disallow the use of debugging utilities like `debug`                                         |     | ![angular-badge][] ![react-badge][] ![vue-badge][] ![marko-badge][]                |
+| [`no-dom-import`](./docs/rules/no-dom-import.md)                                     | Disallow importing from DOM Testing Library                                                  | 🔧  | ![angular-badge][] ![react-badge][] ![vue-badge][] ![marko-badge][]                |
+| [`no-global-regexp-flag-in-query`](./docs/rules/no-global-regexp-flag-in-query.md)   | Disallow the use of the global RegExp flag (/g) in queries                                   | 🔧  |                                                                                    |
+| [`no-manual-cleanup`](./docs/rules/no-manual-cleanup.md)                             | Disallow the use of `cleanup`                                                                |     |                                                                                    |
+| [`no-node-access`](./docs/rules/no-node-access.md)                                   | Disallow direct Node access                                                                  |     | ![angular-badge][] ![react-badge][] ![vue-badge][] ![marko-badge][]                |
+| [`no-promise-in-fire-event`](./docs/rules/no-promise-in-fire-event.md)               | Disallow the use of promises passed to a `fireEvent` method                                  |     | ![dom-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] ![marko-badge][] |
+| [`no-render-in-setup`](./docs/rules/no-render-in-setup.md)                           | Disallow the use of `render` in testing frameworks setup functions                           |     | ![angular-badge][] ![react-badge][] ![vue-badge][] ![marko-badge][]                |
+| [`no-unnecessary-act`](./docs/rules/no-unnecessary-act.md)                           | Disallow wrapping Testing Library utils or empty callbacks in `act`                          |     | ![react-badge][] ![marko-badge][]                                                  |
+| [`no-wait-for-empty-callback`](./docs/rules/no-wait-for-empty-callback.md)           | Disallow empty callbacks for `waitFor` and `waitForElementToBeRemoved`                       |     | ![dom-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] ![marko-badge][] |
+| [`no-wait-for-multiple-assertions`](./docs/rules/no-wait-for-multiple-assertions.md) | Disallow the use of multiple `expect` calls inside `waitFor`                                 |     | ![dom-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] ![marko-badge][] |
+| [`no-wait-for-side-effects`](./docs/rules/no-wait-for-side-effects.md)               | Disallow the use of side effects in `waitFor`                                                |     | ![dom-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] ![marko-badge][] |
+| [`no-wait-for-snapshot`](./docs/rules/no-wait-for-snapshot.md)                       | Ensures no snapshot is generated inside of a `waitFor` call                                  |     | ![dom-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] ![marko-badge][] |
+| [`prefer-explicit-assert`](./docs/rules/prefer-explicit-assert.md)                   | Suggest using explicit assertions rather than standalone queries                             |     |                                                                                    |
+| [`prefer-find-by`](./docs/rules/prefer-find-by.md)                                   | Suggest using `find(All)By*` query instead of `waitFor` + `get(All)By*` to wait for elements | 🔧  | ![dom-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] ![marko-badge][] |
+| [`prefer-presence-queries`](./docs/rules/prefer-presence-queries.md)                 | Ensure appropriate `get*`/`query*` queries are used with their respective matchers           |     | ![dom-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] ![marko-badge][] |
+| [`prefer-query-by-disappearance`](./docs/rules/prefer-query-by-disappearance.md)     | Suggest using `queryBy*` queries when waiting for disappearance                              |     | ![dom-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] ![marko-badge][] |
+| [`prefer-screen-queries`](./docs/rules/prefer-screen-queries.md)                     | Suggest using `screen` while querying                                                        |     | ![dom-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] ![marko-badge][] |
+| [`prefer-user-event`](./docs/rules/prefer-user-event.md)                             | Suggest using `userEvent` over `fireEvent` for simulating user interactions                  |     |                                                                                    |
+| [`prefer-wait-for`](./docs/rules/prefer-wait-for.md)                                 | Use `waitFor` instead of deprecated wait methods                                             | 🔧  |                                                                                    |
+| [`render-result-naming-convention`](./docs/rules/render-result-naming-convention.md) | Enforce a valid naming for return value from `render`                                        |     | ![angular-badge][] ![react-badge][] ![vue-badge][] ![marko-badge][]                |
 
 <!-- RULES-LIST:END -->
 
@@ -248,12 +252,12 @@ If you are sure about configuring the settings, these are the options available:
 
 The name of your custom utility file from where you re-export everything from the Testing Library package, or `"off"` to switch related Aggressive Reporting mechanism off. Relates to [Aggressive Imports Reporting](docs/migration-guides/v4.md#imports).
 
-```json
+```json5
 // .eslintrc
 {
-  "settings": {
-    "testing-library/utils-module": "my-custom-test-utility-file"
-  }
+  settings: {
+    'testing-library/utils-module': 'my-custom-test-utility-file',
+  },
 }
 ```
 
@@ -263,12 +267,12 @@ The name of your custom utility file from where you re-export everything from th
 
 A list of function names that are valid as Testing Library custom renders, or `"off"` to switch related Aggressive Reporting mechanism off. Relates to [Aggressive Renders Reporting](docs/migration-guides/v4.md#renders).
 
-```json
+```json5
 // .eslintrc
 {
-  "settings": {
-    "testing-library/custom-renders": ["display", "renderWithProviders"]
-  }
+  settings: {
+    'testing-library/custom-renders': ['display', 'renderWithProviders'],
+  },
 }
 ```
 
@@ -278,12 +282,12 @@ A list of function names that are valid as Testing Library custom renders, or `"
 
 A list of query names/patterns that are valid as Testing Library custom queries, or `"off"` to switch related Aggressive Reporting mechanism off. Relates to [Aggressive Reporting - Queries](docs/migration-guides/v4.md#queries)
 
-```json
+```json5
 // .eslintrc
 {
-  "settings": {
-    "testing-library/custom-queries": ["ByIcon", "getByComplexText"]
-  }
+  settings: {
+    'testing-library/custom-queries': ['ByIcon', 'getByComplexText'],
+  },
 }
 ```
 
@@ -293,14 +297,14 @@ A list of query names/patterns that are valid as Testing Library custom queries,
 
 Since each Shared Setting is related to one Aggressive Reporting mechanism, and they accept `"off"` to opt out of that mechanism, you can switch the entire feature off by doing:
 
-```json
+```json5
 // .eslintrc
 {
-  "settings": {
-    "testing-library/utils-module": "off",
-    "testing-library/custom-renders": "off",
-    "testing-library/custom-queries": "off"
-  }
+  settings: {
+    'testing-library/utils-module': 'off',
+    'testing-library/custom-renders': 'off',
+    'testing-library/custom-queries': 'off',
+  },
 }
 ```
 
