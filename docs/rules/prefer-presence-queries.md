@@ -61,10 +61,10 @@ test('some test', async () => {
 
 ## Options
 
-| Option     | Required | Default | Details                                                                                                                                                      |
-| ---------- | -------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `presence` | No       | `true`  | If enabled, this rule will ensure `getBy*` is used to validate whether an element is present. If disabled, `queryBy*` will be accepted for presence queries. |
-| `absence`  | No       | `true`  | If enabled, this rule will ensure `queryBy*` is used to validate whether an element is absent. If disabled, `getBy*` will be accepted for absence queries.   |
+| Option     | Required | Default | Details                                                                                                                                                                                                                                                                                                                                                                            |
+| ---------- | -------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `presence` | No       | `true`  | If enabled, this rule will ensure `getBy*` is used to validate whether an element is present. If disabled, `queryBy*` will be accepted for presence queries. _Note: using this option is not recommended. It is workaround for false positives that should eventually be [fixed](https://github.com/testing-library/eslint-plugin-testing-library/issues/518) in this repository._ |
+| `absence`  | No       | `true`  | If enabled, this rule will ensure `queryBy*` is used to validate whether an element is absent. If disabled, `getBy*` will be accepted for absence queries. _Note: using this option is not recommended. It is workaround for false positives that should eventually be [fixed](https://github.com/testing-library/eslint-plugin-testing-library/issues/518) in this repository._   |
 
 ## Example
 
