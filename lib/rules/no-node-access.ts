@@ -5,7 +5,7 @@ import { ALL_RETURNING_NODES } from '../utils';
 
 export const RULE_NAME = 'no-node-access';
 export type MessageIds = 'noNodeAccess';
-type Options = [];
+export type Options = [{ allowContainerFirstChild: boolean }];
 
 export default createTestingLibraryRule<Options, MessageIds>({
   name: RULE_NAME,
@@ -25,11 +25,24 @@ export default createTestingLibraryRule<Options, MessageIds>({
       noNodeAccess:
         'Avoid direct Node access. Prefer using the methods from Testing Library.',
     },
-    schema: [],
+    schema: [
+      {
+        type: 'object',
+        properties: {
+          allowContainerFirstChild: {
+            type: 'boolean',
+          },
+        },
+      },
+    ],
   },
-  defaultOptions: [],
+  defaultOptions: [
+    {
+      allowContainerFirstChild: false,
+    },
+  ],
 
-  create(context, _, helpers) {
+  create(context, [{ allowContainerFirstChild = false }], helpers) {
     function showErrorForNodeAccess(node: TSESTree.MemberExpression) {
       // This rule is so aggressive that can cause tons of false positives outside test files when Aggressive Reporting
       // is enabled. Because of that, this rule will skip this mechanism and report only if some Testing Library package
@@ -42,6 +55,10 @@ export default createTestingLibraryRule<Options, MessageIds>({
         ASTUtils.isIdentifier(node.property) &&
         ALL_RETURNING_NODES.includes(node.property.name)
       ) {
+        if (allowContainerFirstChild && node.property.name === 'firstChild') {
+          return;
+        }
+
         context.report({
           node,
           loc: node.property.loc.start,
