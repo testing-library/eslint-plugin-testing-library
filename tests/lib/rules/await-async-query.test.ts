@@ -222,7 +222,7 @@ ruleTester.run(RULE_NAME, rule, {
         expect(wrappedQuery(${query}("foo"))).resolves.toBe("bar")
       `
     ),
-      // async queries with toResolve matchers are valid
+    // async queries with toResolve matchers are valid
     ...createTestCase(
       (query) => `
         expect(${query}("foo")).toResolve()
