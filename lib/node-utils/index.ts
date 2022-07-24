@@ -479,6 +479,7 @@ export function hasClosestExpectResolvesRejects(node: TSESTree.Node): boolean {
     return (
       ASTUtils.isIdentifier(expectMatcher) &&
       (expectMatcher.name === 'resolves' || expectMatcher.name === 'rejects')
+      (expectMatcher.name === 'toResolve' || expectMatcher.name === 'toReject')
     );
   }
 
