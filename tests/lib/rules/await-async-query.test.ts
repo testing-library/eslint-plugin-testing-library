@@ -222,12 +222,27 @@ ruleTester.run(RULE_NAME, rule, {
         expect(wrappedQuery(${query}("foo"))).resolves.toBe("bar")
       `
     ),
+      // async queries with toResolve matchers are valid
+    ...createTestCase(
+      (query) => `
+        expect(${query}("foo")).toResolve()
+        expect(wrappedQuery(${query}("foo"))).toResolve()
+      `
+    ),
 
     // async queries with rejects matchers are valid
     ...createTestCase(
       (query) => `
         expect(${query}("foo")).rejects.toBe("bar")
         expect(wrappedQuery(${query}("foo"))).rejects.toBe("bar")
+      `
+    ),
+
+    // async queries with toReject matchers are valid
+    ...createTestCase(
+      (query) => `
+        expect(${query}("foo")).toReject()
+        expect(wrappedQuery(${query}("foo"))).toReject()
       `
     ),
 
