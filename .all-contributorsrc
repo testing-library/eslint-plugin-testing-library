@@ -512,6 +512,17 @@
         "code",
         "test"
       ]
+    },
+    {
+      "login": "Semigradsky",
+      "name": "Dmitry Semigradsky",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1198848?v=4",
+      "profile": "https://semigradsky.dev/",
+      "contributions": [
+        "code",
+        "test",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,
