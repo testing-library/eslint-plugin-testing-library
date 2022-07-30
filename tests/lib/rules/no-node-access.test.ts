@@ -1,7 +1,11 @@
-import rule, { RULE_NAME } from '../../../lib/rules/no-node-access';
+import type { TSESLint } from '@typescript-eslint/utils';
+
+import rule, { RULE_NAME, Options } from '../../../lib/rules/no-node-access';
 import { createRuleTester } from '../test-utils';
 
 const ruleTester = createRuleTester();
+
+type ValidTestCase = TSESLint.ValidTestCase<Options>;
 
 const SUPPORTED_TESTING_FRAMEWORKS = [
   '@testing-library/angular',
@@ -11,51 +15,52 @@ const SUPPORTED_TESTING_FRAMEWORKS = [
 ];
 
 ruleTester.run(RULE_NAME, rule, {
-  valid: SUPPORTED_TESTING_FRAMEWORKS.flatMap((testingFramework) => [
-    {
-      code: `
+  valid: SUPPORTED_TESTING_FRAMEWORKS.flatMap<ValidTestCase>(
+    (testingFramework) => [
+      {
+        code: `
         import { screen } from '${testingFramework}';
 
         const buttonText = screen.getByText('submit');
       `,
-    },
-    {
-      code: `
+      },
+      {
+        code: `
         import { screen } from '${testingFramework}';
 
         const { getByText } = screen
         const firstChild = getByText('submit');
         expect(firstChild).toBeInTheDocument()
       `,
-    },
-    {
-      code: `
+      },
+      {
+        code: `
         import { screen } from '${testingFramework}';
 
         const firstChild = screen.getByText('submit');
         expect(firstChild).toBeInTheDocument()
       `,
-    },
-    {
-      code: `
+      },
+      {
+        code: `
         import { screen } from '${testingFramework}';
 
         const { getByText } = screen;
         const button = getByRole('button');
         expect(button).toHaveTextContent('submit');
       `,
-    },
-    {
-      code: `
+      },
+      {
+        code: `
         import { render, within } from '${testingFramework}';
 
         const { getByLabelText } = render(<MyComponent />);
         const signInModal = getByLabelText('Sign In');
         within(signInModal).getByPlaceholderText('Username');
       `,
-    },
-    {
-      code: `
+      },
+      {
+        code: `
       // case: code not related to testing library at all
       ReactDOM.render(
         <CommProvider useDsa={false}>
@@ -70,25 +75,36 @@ ruleTester.run(RULE_NAME, rule, {
         document.getElementById('root')
       );
       `,
-    },
-    {
-      settings: {
-        'testing-library/utils-module': 'test-utils',
       },
-      code: `
+      {
+        settings: {
+          'testing-library/utils-module': 'test-utils',
+        },
+        code: `
       // case: custom module set but not imported (aggressive reporting limited)
       const closestButton = document.getElementById('submit-btn').closest('button');
       expect(closestButton).toBeInTheDocument();
       `,
-    },
-    {
-      code: `
+      },
+      {
+        code: `
       // case: without importing TL (aggressive reporting skipped)
       const closestButton = document.getElementById('submit-btn')
       expect(closestButton).toBeInTheDocument();
       `,
-    },
-  ]),
+      },
+      {
+        options: [{ allowContainerFirstChild: true }],
+        code: `
+        import { render } from '${testingFramework}';
+
+        const { container } = render(<MyComponent />)
+
+        expect(container.firstChild).toMatchSnapshot()
+      `,
+      },
+    ]
+  ),
   invalid: SUPPORTED_TESTING_FRAMEWORKS.flatMap((testingFramework) => [
     {
       settings: {
@@ -287,6 +303,23 @@ ruleTester.run(RULE_NAME, rule, {
           // error points to `previousSibling`
           line: 19,
           column: 45,
+          messageId: 'noNodeAccess',
+        },
+      ],
+    },
+    {
+      code: `
+        import { render } from '${testingFramework}';
+
+        const { container } = render(<MyComponent />)
+
+        expect(container.firstChild).toMatchSnapshot()
+      `,
+      errors: [
+        {
+          // error points to `firstChild`
+          line: 6,
+          column: 26,
           messageId: 'noNodeAccess',
         },
       ],
