@@ -1,5 +1,11 @@
 This document outlines some processes that the maintainers should stick to.
 
+## Node.js version
+
+We will try to stick to the same range of [Node.js versions supported by ESLint](https://github.com/eslint/eslint#installation-and-usage) as much as possible.
+
+For local development and CI, we will use the Maintenance LTS version (specified in `.nvmrc` file).
+
 ## Issues Process
 
 There are 3 types of issues that can be created:
