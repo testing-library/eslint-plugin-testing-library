@@ -26,28 +26,28 @@ Examples of **incorrect** code for this rule:
 
 ```js
 test('something incorrectly', async () => {
-  // ...
-  waitFor(() => {});
+	// ...
+	waitFor(() => {});
 
-  const [usernameElement, passwordElement] = waitFor(
-    () => [
-      getByLabelText(container, 'username'),
-      getByLabelText(container, 'password'),
-    ],
-    { container }
-  );
+	const [usernameElement, passwordElement] = waitFor(
+		() => [
+			getByLabelText(container, 'username'),
+			getByLabelText(container, 'password'),
+		],
+		{ container }
+	);
 
-  waitFor(() => {}, { timeout: 100 });
+	waitFor(() => {}, { timeout: 100 });
 
-  waitForElementToBeRemoved(() => document.querySelector('div.getOuttaHere'));
+	waitForElementToBeRemoved(() => document.querySelector('div.getOuttaHere'));
 
-  // wrap an async util within a function...
-  const makeCustomWait = () => {
-    return waitForElementToBeRemoved(() =>
-      document.querySelector('div.getOuttaHere')
-    );
-  };
-  makeCustomWait(); // ...but not handling promise from it is incorrect
+	// wrap an async util within a function...
+	const makeCustomWait = () => {
+		return waitForElementToBeRemoved(() =>
+			document.querySelector('div.getOuttaHere')
+		);
+	};
+	makeCustomWait(); // ...but not handling promise from it is incorrect
 });
 ```
 
@@ -55,36 +55,36 @@ Examples of **correct** code for this rule:
 
 ```js
 test('something correctly', async () => {
-  // ...
-  // `await` operator is correct
-  await waitFor(() => getByLabelText('email'));
+	// ...
+	// `await` operator is correct
+	await waitFor(() => getByLabelText('email'));
 
-  const [usernameElement, passwordElement] = await waitFor(
-    () => [
-      getByLabelText(container, 'username'),
-      getByLabelText(container, 'password'),
-    ],
-    { container }
-  );
+	const [usernameElement, passwordElement] = await waitFor(
+		() => [
+			getByLabelText(container, 'username'),
+			getByLabelText(container, 'password'),
+		],
+		{ container }
+	);
 
-  // `then` chained method is correct
-  waitFor(() => {}, { timeout: 100 })
-    .then(() => console.log('DOM changed!'))
-    .catch((err) => console.log(`Error you need to deal with: ${err}`));
+	// `then` chained method is correct
+	waitFor(() => {}, { timeout: 100 })
+		.then(() => console.log('DOM changed!'))
+		.catch((err) => console.log(`Error you need to deal with: ${err}`));
 
-  // wrap an async util within a function...
-  const makeCustomWait = () => {
-    return waitForElementToBeRemoved(() =>
-      document.querySelector('div.getOuttaHere')
-    );
-  };
-  await makeCustomWait(); // ...and handling promise from it is correct
+	// wrap an async util within a function...
+	const makeCustomWait = () => {
+		return waitForElementToBeRemoved(() =>
+			document.querySelector('div.getOuttaHere')
+		);
+	};
+	await makeCustomWait(); // ...and handling promise from it is correct
 
-  // using Promise.all combining the methods
-  await Promise.all([
-    waitFor(() => getByLabelText('email')),
-    waitForElementToBeRemoved(() => document.querySelector('div.getOuttaHere')),
-  ]);
+	// using Promise.all combining the methods
+	await Promise.all([
+		waitFor(() => getByLabelText('email')),
+		waitForElementToBeRemoved(() => document.querySelector('div.getOuttaHere')),
+	]);
 });
 ```
 

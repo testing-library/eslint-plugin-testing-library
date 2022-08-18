@@ -22,11 +22,11 @@ Example of **incorrect** code for this rule:
 ```js
 // ❌ wrapping things related to Testing Library in `act` is incorrect
 import {
-  act,
-  render,
-  screen,
-  waitFor,
-  fireEvent,
+	act,
+	render,
+	screen,
+	waitFor,
+	fireEvent,
 } from '@testing-library/react';
 // ^ act imported from 'react-dom/test-utils' will be reported too
 import userEvent from '@testing-library/user-event';
@@ -34,7 +34,7 @@ import userEvent from '@testing-library/user-event';
 // ...
 
 act(() => {
-  render(<Example />);
+	render(<Example />);
 });
 
 await act(async () => waitFor(() => {}));
@@ -42,11 +42,11 @@ await act(async () => waitFor(() => {}));
 act(() => screen.getByRole('button'));
 
 act(() => {
-  fireEvent.click(element);
+	fireEvent.click(element);
 });
 
 act(() => {
-  userEvent.click(element);
+	userEvent.click(element);
 });
 ```
 
@@ -73,7 +73,7 @@ import { stuffThatDoesNotUseRTL } from 'somwhere-else';
 // ...
 
 act(() => {
-  stuffThatDoesNotUseRTL();
+	stuffThatDoesNotUseRTL();
 });
 ```
 
@@ -83,8 +83,8 @@ import { act, screen } from '@testing-library/react';
 import { stuffThatDoesNotUseRTL } from 'somwhere-else';
 
 await act(async () => {
-  await screen.findByRole('button');
-  stuffThatDoesNotUseRTL();
+	await screen.findByRole('button');
+	stuffThatDoesNotUseRTL();
 });
 ```
 
@@ -107,8 +107,8 @@ import { act, screen } from '@testing-library/react';
 import { stuffThatDoesNotUseRTL } from 'somwhere-else';
 
 await act(async () => {
-  await screen.findByRole('button');
-  stuffThatDoesNotUseRTL();
+	await screen.findByRole('button');
+	stuffThatDoesNotUseRTL();
 });
 ```
 

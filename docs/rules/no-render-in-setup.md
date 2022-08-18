@@ -8,15 +8,15 @@ Examples of **incorrect** code for this rule:
 
 ```js
 beforeEach(() => {
-  render(<MyComponent />);
+	render(<MyComponent />);
 });
 
 it('Should have foo', () => {
-  expect(screen.getByText('foo')).toBeInTheDocument();
+	expect(screen.getByText('foo')).toBeInTheDocument();
 });
 
 it('Should have bar', () => {
-  expect(screen.getByText('bar')).toBeInTheDocument();
+	expect(screen.getByText('bar')).toBeInTheDocument();
 });
 ```
 
@@ -24,29 +24,29 @@ it('Should have bar', () => {
 const setup = () => render(<MyComponent />);
 
 beforeEach(() => {
-  setup();
+	setup();
 });
 
 it('Should have foo', () => {
-  expect(screen.getByText('foo')).toBeInTheDocument();
+	expect(screen.getByText('foo')).toBeInTheDocument();
 });
 
 it('Should have bar', () => {
-  expect(screen.getByText('bar')).toBeInTheDocument();
+	expect(screen.getByText('bar')).toBeInTheDocument();
 });
 ```
 
 ```js
 beforeAll(() => {
-  render(<MyComponent />);
+	render(<MyComponent />);
 });
 
 it('Should have foo', () => {
-  expect(screen.getByText('foo')).toBeInTheDocument();
+	expect(screen.getByText('foo')).toBeInTheDocument();
 });
 
 it('Should have bar', () => {
-  expect(screen.getByText('bar')).toBeInTheDocument();
+	expect(screen.getByText('bar')).toBeInTheDocument();
 });
 ```
 
@@ -54,9 +54,9 @@ Examples of **correct** code for this rule:
 
 ```js
 it('Should have foo and bar', () => {
-  render(<MyComponent />);
-  expect(screen.getByText('foo')).toBeInTheDocument();
-  expect(screen.getByText('bar')).toBeInTheDocument();
+	render(<MyComponent />);
+	expect(screen.getByText('foo')).toBeInTheDocument();
+	expect(screen.getByText('bar')).toBeInTheDocument();
 });
 ```
 
@@ -64,13 +64,13 @@ it('Should have foo and bar', () => {
 const setup = () => render(<MyComponent />);
 
 beforeEach(() => {
-  // other stuff...
+	// other stuff...
 });
 
 it('Should have foo and bar', () => {
-  setup();
-  expect(screen.getByText('foo')).toBeInTheDocument();
-  expect(screen.getByText('bar')).toBeInTheDocument();
+	setup();
+	expect(screen.getByText('foo')).toBeInTheDocument();
+	expect(screen.getByText('bar')).toBeInTheDocument();
 });
 ```
 

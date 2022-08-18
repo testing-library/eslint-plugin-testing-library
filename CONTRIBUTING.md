@@ -118,10 +118,10 @@ If you wish to run a single test while developing locally, add `only: true` to t
 
 ```javascript
 valid: [
-  {
-    only: true,
-    code: `...`,
-  },
+	{
+		only: true,
+		code: `...`,
+	},
 ];
 ```
 
@@ -137,9 +137,9 @@ Since the plugin will report differently depending on which Testing Library pack
   import { render } from '@testing-library/react';
 
   test('should report invalid render usage', () => {
-    // the following line is the actual code you needed to test your rule,
-    // but everything else helps finding edge cases and makes it more robust.
-    const wrapper = render(<Component />);
+  	// the following line is the actual code you needed to test your rule,
+  	// but everything else helps finding edge cases and makes it more robust.
+  	const wrapper = render(<Component />);
   });
   ```
 

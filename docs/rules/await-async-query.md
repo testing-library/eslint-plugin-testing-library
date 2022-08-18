@@ -79,8 +79,8 @@ await Promise.all([findByText('my button'), findByText('something else')]);
 ```js
 // several promises handled `Promise.allSettled` is correct
 await Promise.allSettled([
-  findByText('my button'),
-  findByText('something else'),
+	findByText('my button'),
+	findByText('something else'),
 ]);
 ```
 

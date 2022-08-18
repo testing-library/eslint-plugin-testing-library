@@ -58,7 +58,7 @@ Add `testing-library` to the plugins section of your `.eslintrc` configuration f
 
 ```json
 {
-  "plugins": ["testing-library"]
+	"plugins": ["testing-library"]
 }
 ```
 
@@ -66,12 +66,12 @@ Then configure the rules you want to use within `rules` property of your `.eslin
 
 ```json
 {
-  "rules": {
-    "testing-library/await-async-query": "error",
-    "testing-library/no-await-sync-query": "error",
-    "testing-library/no-debugging-utils": "warn",
-    "testing-library/no-dom-import": "off"
-  }
+	"rules": {
+		"testing-library/await-async-query": "error",
+		"testing-library/no-await-sync-query": "error",
+		"testing-library/no-debugging-utils": "warn",
+		"testing-library/no-dom-import": "off"
+	}
 }
 ```
 
@@ -88,19 +88,19 @@ Assuming you are using the same pattern for your test files as [Jest by default]
 ```json5
 // .eslintrc
 {
-  // 1) Here we have our usual config which applies to the whole project, so we don't put testing-library preset here.
-  extends: ['airbnb', 'plugin:prettier/recommended'],
+	// 1) Here we have our usual config which applies to the whole project, so we don't put testing-library preset here.
+	extends: ['airbnb', 'plugin:prettier/recommended'],
 
-  // 2) We load other plugins than eslint-plugin-testing-library globally if we want to.
-  plugins: ['react-hooks'],
+	// 2) We load other plugins than eslint-plugin-testing-library globally if we want to.
+	plugins: ['react-hooks'],
 
-  overrides: [
-    {
-      // 3) Now we enable eslint-plugin-testing-library rules or preset only for matching testing files!
-      files: ['**/__tests__/**/*.[jt]s?(x)', '**/?(*.)+(spec|test).[jt]s?(x)'],
-      extends: ['plugin:testing-library/react'],
-    },
-  ],
+	overrides: [
+		{
+			// 3) Now we enable eslint-plugin-testing-library rules or preset only for matching testing files!
+			files: ['**/__tests__/**/*.[jt]s?(x)', '**/?(*.)+(spec|test).[jt]s?(x)'],
+			extends: ['plugin:testing-library/react'],
+		},
+	],
 }
 ```
 
@@ -118,14 +118,14 @@ Since each one of these configurations is aimed at a particular Testing Library 
 ```json5
 // ❌ Don't do this
 {
-  extends: ['plugin:testing-library/dom', 'plugin:testing-library/react'],
+	extends: ['plugin:testing-library/dom', 'plugin:testing-library/react'],
 }
 ```
 
 ```json5
 // ✅ Just do this instead
 {
-  extends: ['plugin:testing-library/react'],
+	extends: ['plugin:testing-library/react'],
 }
 ```
 
@@ -138,7 +138,7 @@ To enable this configuration use the `extends` property in your
 
 ```json
 {
-  "extends": ["plugin:testing-library/dom"]
+	"extends": ["plugin:testing-library/dom"]
 }
 ```
 
@@ -151,7 +151,7 @@ To enable this configuration use the `extends` property in your
 
 ```json
 {
-  "extends": ["plugin:testing-library/angular"]
+	"extends": ["plugin:testing-library/angular"]
 }
 ```
 
@@ -164,7 +164,7 @@ To enable this configuration use the `extends` property in your
 
 ```json
 {
-  "extends": ["plugin:testing-library/react"]
+	"extends": ["plugin:testing-library/react"]
 }
 ```
 
@@ -177,7 +177,7 @@ To enable this configuration use the `extends` property in your
 
 ```json
 {
-  "extends": ["plugin:testing-library/vue"]
+	"extends": ["plugin:testing-library/vue"]
 }
 ```
 
@@ -190,7 +190,7 @@ To enable this configuration use the `extends` property in your
 
 ```json
 {
-  "extends": ["plugin:testing-library/marko"]
+	"extends": ["plugin:testing-library/marko"]
 }
 ```
 
@@ -255,9 +255,9 @@ The name of your custom utility file from where you re-export everything from th
 ```json5
 // .eslintrc
 {
-  settings: {
-    'testing-library/utils-module': 'my-custom-test-utility-file',
-  },
+	settings: {
+		'testing-library/utils-module': 'my-custom-test-utility-file',
+	},
 }
 ```
 
@@ -270,9 +270,9 @@ A list of function names that are valid as Testing Library custom renders, or `"
 ```json5
 // .eslintrc
 {
-  settings: {
-    'testing-library/custom-renders': ['display', 'renderWithProviders'],
-  },
+	settings: {
+		'testing-library/custom-renders': ['display', 'renderWithProviders'],
+	},
 }
 ```
 
@@ -285,9 +285,9 @@ A list of query names/patterns that are valid as Testing Library custom queries,
 ```json5
 // .eslintrc
 {
-  settings: {
-    'testing-library/custom-queries': ['ByIcon', 'getByComplexText'],
-  },
+	settings: {
+		'testing-library/custom-queries': ['ByIcon', 'getByComplexText'],
+	},
 }
 ```
 
@@ -300,11 +300,11 @@ Since each Shared Setting is related to one Aggressive Reporting mechanism, and 
 ```json5
 // .eslintrc
 {
-  settings: {
-    'testing-library/utils-module': 'off',
-    'testing-library/custom-renders': 'off',
-    'testing-library/custom-queries': 'off',
-  },
+	settings: {
+		'testing-library/utils-module': 'off',
+		'testing-library/custom-renders': 'off',
+		'testing-library/custom-queries': 'off',
+	},
 }
 ```
 

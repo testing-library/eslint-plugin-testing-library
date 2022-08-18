@@ -12,28 +12,28 @@ Examples of **incorrect** code for this rule
 ```js
 // arrow functions with one statement, using screen and any sync query method
 const submitButton = await waitFor(() =>
-  screen.getByRole('button', { name: /submit/i })
+	screen.getByRole('button', { name: /submit/i })
 );
 const submitButton = await waitFor(() =>
-  screen.getAllByTestId('button', { name: /submit/i })
+	screen.getAllByTestId('button', { name: /submit/i })
 );
 
 // arrow functions with one statement, calling any sync query method
 const submitButton = await waitFor(() =>
-  queryByLabel('button', { name: /submit/i })
+	queryByLabel('button', { name: /submit/i })
 );
 
 const submitButton = await waitFor(() =>
-  queryAllByText('button', { name: /submit/i })
+	queryAllByText('button', { name: /submit/i })
 );
 
 // arrow functions with one statement, calling any sync query method with presence assertion
 const submitButton = await waitFor(() =>
-  expect(queryByLabel('button', { name: /submit/i })).toBeInTheDocument()
+	expect(queryByLabel('button', { name: /submit/i })).toBeInTheDocument()
 );
 
 const submitButton = await waitFor(() =>
-  expect(queryByLabel('button', { name: /submit/i })).not.toBeFalsy()
+	expect(queryByLabel('button', { name: /submit/i })).not.toBeFalsy()
 );
 ```
 
@@ -51,21 +51,21 @@ await waitForElementToBeRemoved(document.querySelector('foo'));
 
 // using waitFor with a function
 await waitFor(function () {
-  foo();
-  return getByText('name');
+	foo();
+	return getByText('name');
 });
 
 // passing a reference of a function
 function myCustomFunction() {
-  foo();
-  return getByText('name');
+	foo();
+	return getByText('name');
 }
 await waitFor(myCustomFunction);
 
 // using waitFor with an arrow function with a code block
 await waitFor(() => {
-  baz();
-  return queryAllByText('foo');
+	baz();
+	return queryAllByText('foo');
 });
 
 // using a custom arrow function

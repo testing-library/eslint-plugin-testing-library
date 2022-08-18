@@ -10,13 +10,13 @@ Examples of **incorrect** code for this rule:
 
 ```js
 const foo = async () => {
-  await waitFor(() => {});
-  await waitFor(function () {});
-  await waitFor(noop);
+	await waitFor(() => {});
+	await waitFor(function () {});
+	await waitFor(noop);
 
-  await waitForElementToBeRemoved(() => {});
-  await waitForElementToBeRemoved(function () {});
-  await waitForElementToBeRemoved(noop);
+	await waitForElementToBeRemoved(() => {});
+	await waitForElementToBeRemoved(function () {});
+	await waitForElementToBeRemoved(noop);
 };
 ```
 
@@ -24,14 +24,14 @@ Examples of **correct** code for this rule:
 
 ```js
 const foo = async () => {
-  await waitFor(() => {
-    screen.getByText(/submit/i);
-  });
+	await waitFor(() => {
+		screen.getByText(/submit/i);
+	});
 
-  const submit = screen.getByText(/submit/i);
-  await waitForElementToBeRemoved(() => submit);
-  // or
-  await waitForElementToBeRemoved(submit);
+	const submit = screen.getByText(/submit/i);
+	await waitForElementToBeRemoved(() => submit);
+	// or
+	await waitForElementToBeRemoved(submit);
 };
 ```
 

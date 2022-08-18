@@ -41,16 +41,16 @@ You can control which debugging utils are checked for with the `utilsToCheckFor`
 
 ```json
 {
-  "testing-library/no-debugging-utils": [
-    "error",
-    {
-      "utilsToCheckFor": {
-        "debug": false,
-        "logRoles": true,
-        "logDOM": true
-      }
-    }
-  ]
+	"testing-library/no-debugging-utils": [
+		"error",
+		{
+			"utilsToCheckFor": {
+				"debug": false,
+				"logRoles": true,
+				"logDOM": true
+			}
+		}
+	]
 }
 ```
 

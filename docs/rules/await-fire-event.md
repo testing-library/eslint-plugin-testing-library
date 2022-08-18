@@ -24,7 +24,7 @@ fireEvent.blur(getByLabelText('username'));
 
 // wrap a fireEvent method within a function...
 function triggerEvent() {
-  return fireEvent.click(button);
+	return fireEvent.click(button);
 }
 triggerEvent(); // ...but not handling promise from it is incorrect too
 ```
@@ -38,7 +38,7 @@ await fireEvent.blur(getByLabelText('username'));
 
 // `then` method is correct
 fireEvent.click(getByText('Click me')).then(() => {
-  // ...
+	// ...
 });
 
 // return the promise within a function is correct too!
@@ -46,14 +46,14 @@ const clickMeArrowFn = () => fireEvent.click(getByText('Click me'));
 
 // wrap a fireEvent method within a function...
 function triggerEvent() {
-  return fireEvent.click(button);
+	return fireEvent.click(button);
 }
 await triggerEvent(); // ...and handling promise from it is correct also
 
 // using `Promise.all` or `Promise.allSettled` with an array of promises is valid
 await Promise.all([
-  fireEvent.focus(getByLabelText('username')),
-  fireEvent.blur(getByLabelText('username')),
+	fireEvent.focus(getByLabelText('username')),
+	fireEvent.blur(getByLabelText('username')),
 ]);
 ```
 
