@@ -1,22 +1,22 @@
 import rule, {
-  RULE_NAME,
+	RULE_NAME,
 } from '../../../lib/rules/render-result-naming-convention';
 import { createRuleTester } from '../test-utils';
 
 const ruleTester = createRuleTester();
 
 const SUPPORTED_TESTING_FRAMEWORKS = [
-  '@testing-library/angular',
-  '@testing-library/react',
-  '@testing-library/vue',
-  '@marko/testing-library',
+	'@testing-library/angular',
+	'@testing-library/react',
+	'@testing-library/vue',
+	'@marko/testing-library',
 ];
 
 ruleTester.run(RULE_NAME, rule, {
-  valid: [
-    ...SUPPORTED_TESTING_FRAMEWORKS.flatMap((testingFramework) => [
-      {
-        code: `
+	valid: [
+		...SUPPORTED_TESTING_FRAMEWORKS.flatMap((testingFramework) => [
+			{
+				code: `
           import { render } from '${testingFramework}';
   
           test('should not report straight destructured render result', () => {
@@ -24,9 +24,9 @@ ruleTester.run(RULE_NAME, rule, {
             const button = getByText('some button');
           });
         `,
-      },
-      {
-        code: `
+			},
+			{
+				code: `
           import * as RTL from '${testingFramework}';
   
           test('should not report straight destructured render result from wildcard import', () => {
@@ -34,9 +34,9 @@ ruleTester.run(RULE_NAME, rule, {
             const button = getByText('some button');
           });
         `,
-      },
-      {
-        code: `
+			},
+			{
+				code: `
           import { render } from '${testingFramework}';
   
           test('should not report straight render result called "utils"', async () => {
@@ -44,9 +44,9 @@ ruleTester.run(RULE_NAME, rule, {
             await utils.findByRole('button');
           });
         `,
-      },
-      {
-        code: `
+			},
+			{
+				code: `
           import { render } from '${testingFramework}';
   
           test('should not report straight render result called "view"', async () => {
@@ -54,9 +54,9 @@ ruleTester.run(RULE_NAME, rule, {
             await view.findByRole('button');
           });
         `,
-      },
-      {
-        code: `
+			},
+			{
+				code: `
           import { render } from '${testingFramework}';
   
           const setup = () => render(<SomeComponent />);
@@ -66,9 +66,9 @@ ruleTester.run(RULE_NAME, rule, {
             const button = getByText('some button');
           });
         `,
-      },
-      {
-        code: `
+			},
+			{
+				code: `
           import { render } from '${testingFramework}';
   
           const setup = () => render(<SomeComponent />);
@@ -78,9 +78,9 @@ ruleTester.run(RULE_NAME, rule, {
             await utils.findByRole('button');
           });
         `,
-      },
-      {
-        code: `
+			},
+			{
+				code: `
           import { render } from '${testingFramework}';
   
           const setup = () => render(<SomeComponent />);
@@ -90,9 +90,9 @@ ruleTester.run(RULE_NAME, rule, {
             await view.findByRole('button');
           });
         `,
-      },
-      {
-        code: `
+			},
+			{
+				code: `
           import { screen } from '${testingFramework}';
           import { customRender } from 'test-utils';
   
@@ -101,11 +101,11 @@ ruleTester.run(RULE_NAME, rule, {
             const button = screen.getByText('some button');
           });
         `,
-        settings: { 'testing-library/custom-renders': ['customRender'] },
-      },
-    ]),
-    {
-      code: `
+				settings: { 'testing-library/custom-renders': ['customRender'] },
+			},
+		]),
+		{
+			code: `
         import { customRender } from 'test-utils';
 
         test('should not report render result called "view" from custom render', async () => {
@@ -113,10 +113,10 @@ ruleTester.run(RULE_NAME, rule, {
           await view.findByRole('button');
         });
       `,
-      settings: { 'testing-library/custom-renders': ['customRender'] },
-    },
-    {
-      code: `
+			settings: { 'testing-library/custom-renders': ['customRender'] },
+		},
+		{
+			code: `
         import { customRender } from 'test-utils';
 
         test('should not report render result called "utils" from custom render', async () => {
@@ -124,11 +124,11 @@ ruleTester.run(RULE_NAME, rule, {
           await utils.findByRole('button');
         });
       `,
-      settings: { 'testing-library/custom-renders': ['customRender'] },
-    },
-    ...SUPPORTED_TESTING_FRAMEWORKS.flatMap((testingFramework) => [
-      {
-        code: `
+			settings: { 'testing-library/custom-renders': ['customRender'] },
+		},
+		...SUPPORTED_TESTING_FRAMEWORKS.flatMap((testingFramework) => [
+			{
+				code: `
         import { render } from '${testingFramework}';
 
         const setup = () => {
@@ -143,10 +143,10 @@ ruleTester.run(RULE_NAME, rule, {
           await wrapper.findByRole('button');
         });
       `,
-      },
-      {
-        settings: { 'testing-library/utils-module': 'test-utils' },
-        code: `
+			},
+			{
+				settings: { 'testing-library/utils-module': 'test-utils' },
+				code: `
         import { render as testingLibraryRender } from '${testingFramework}';
         import { render } from '@somewhere/else'
 
@@ -157,14 +157,14 @@ ruleTester.run(RULE_NAME, rule, {
           const button = wrapper.getByText('some button');
         });
       `,
-      },
-    ]),
-    {
-      settings: {
-        'testing-library/utils-module': 'test-utils',
-        'testing-library/custom-renders': ['customRender'],
-      },
-      code: `
+			},
+		]),
+		{
+			settings: {
+				'testing-library/utils-module': 'test-utils',
+				'testing-library/custom-renders': ['customRender'],
+			},
+			code: `
         import { customRender as myRender } from 'test-utils';
         import { customRender } from 'non-related'
 
@@ -179,13 +179,13 @@ ruleTester.run(RULE_NAME, rule, {
           await wrapper.findByRole('button');
         });
       `,
-    },
-    {
-      settings: {
-        'testing-library/utils-module': 'off',
-        'testing-library/custom-renders': 'off',
-      },
-      code: `
+		},
+		{
+			settings: {
+				'testing-library/utils-module': 'off',
+				'testing-library/custom-renders': 'off',
+			},
+			code: `
         import { customRender as myRender } from 'test-utils';
         import { render } from 'non-related'
 
@@ -203,12 +203,12 @@ ruleTester.run(RULE_NAME, rule, {
           await wrapper1.findByRole('button');
         });
       `,
-    },
-  ],
-  invalid: [
-    ...SUPPORTED_TESTING_FRAMEWORKS.flatMap((testingFramework) => [
-      {
-        code: `
+		},
+	],
+	invalid: [
+		...SUPPORTED_TESTING_FRAMEWORKS.flatMap((testingFramework) => [
+			{
+				code: `
         import { render } from '${testingFramework}';
 
         test('should report straight render result called "wrapper"', async () => {
@@ -216,19 +216,19 @@ ruleTester.run(RULE_NAME, rule, {
           await wrapper.findByRole('button');
         });
       `,
-        errors: [
-          {
-            messageId: 'renderResultNamingConvention',
-            data: {
-              renderResultName: 'wrapper',
-            },
-            line: 5,
-            column: 17,
-          },
-        ],
-      } as const,
-      {
-        code: `
+				errors: [
+					{
+						messageId: 'renderResultNamingConvention',
+						data: {
+							renderResultName: 'wrapper',
+						},
+						line: 5,
+						column: 17,
+					},
+				],
+			} as const,
+			{
+				code: `
         import * as RTL from '${testingFramework}';
 
         test('should report straight render result called "wrapper" from wildcard import', () => {
@@ -236,19 +236,19 @@ ruleTester.run(RULE_NAME, rule, {
           const button = wrapper.getByText('some button');
         });
       `,
-        errors: [
-          {
-            messageId: 'renderResultNamingConvention',
-            data: {
-              renderResultName: 'wrapper',
-            },
-            line: 5,
-            column: 17,
-          },
-        ],
-      } as const,
-      {
-        code: `
+				errors: [
+					{
+						messageId: 'renderResultNamingConvention',
+						data: {
+							renderResultName: 'wrapper',
+						},
+						line: 5,
+						column: 17,
+					},
+				],
+			} as const,
+			{
+				code: `
         import { render } from '${testingFramework}';
 
         test('should report straight render result called "component"', async () => {
@@ -256,19 +256,19 @@ ruleTester.run(RULE_NAME, rule, {
           await component.findByRole('button');
         });
       `,
-        errors: [
-          {
-            messageId: 'renderResultNamingConvention',
-            data: {
-              renderResultName: 'component',
-            },
-            line: 5,
-            column: 17,
-          },
-        ],
-      } as const,
-      {
-        code: `
+				errors: [
+					{
+						messageId: 'renderResultNamingConvention',
+						data: {
+							renderResultName: 'component',
+						},
+						line: 5,
+						column: 17,
+					},
+				],
+			} as const,
+			{
+				code: `
         import { render } from '${testingFramework}';
 
         test('should report straight render result called "notValidName"', async () => {
@@ -276,16 +276,16 @@ ruleTester.run(RULE_NAME, rule, {
           await notValidName.findByRole('button');
         });
       `,
-        errors: [
-          {
-            messageId: 'renderResultNamingConvention',
-            line: 5,
-            column: 17,
-          },
-        ],
-      } as const,
-      {
-        code: `
+				errors: [
+					{
+						messageId: 'renderResultNamingConvention',
+						line: 5,
+						column: 17,
+					},
+				],
+			} as const,
+			{
+				code: `
         import { render as testingLibraryRender } from '${testingFramework}';
 
         test('should report renamed render result called "wrapper"', async () => {
@@ -293,19 +293,19 @@ ruleTester.run(RULE_NAME, rule, {
           await wrapper.findByRole('button');
         });
       `,
-        errors: [
-          {
-            messageId: 'renderResultNamingConvention',
-            data: {
-              renderResultName: 'wrapper',
-            },
-            line: 5,
-            column: 17,
-          },
-        ],
-      } as const,
-      {
-        code: `
+				errors: [
+					{
+						messageId: 'renderResultNamingConvention',
+						data: {
+							renderResultName: 'wrapper',
+						},
+						line: 5,
+						column: 17,
+					},
+				],
+			} as const,
+			{
+				code: `
         import { render } from '${testingFramework}';
 
         const setup = () => {
@@ -320,20 +320,20 @@ ruleTester.run(RULE_NAME, rule, {
           await wrapper.findByRole('button');
         });
       `,
-        errors: [
-          {
-            messageId: 'renderResultNamingConvention',
-            data: {
-              renderResultName: 'wrapper',
-            },
-            line: 6,
-            column: 17,
-          },
-        ],
-      } as const,
-      {
-        settings: { 'testing-library/utils-module': 'test-utils' },
-        code: `
+				errors: [
+					{
+						messageId: 'renderResultNamingConvention',
+						data: {
+							renderResultName: 'wrapper',
+						},
+						line: 6,
+						column: 17,
+					},
+				],
+			} as const,
+			{
+				settings: { 'testing-library/utils-module': 'test-utils' },
+				code: `
         import { render } from '${testingFramework}';
 
         const setup = () => render(<SomeComponent />);
@@ -343,21 +343,21 @@ ruleTester.run(RULE_NAME, rule, {
           const button = wrapper.getByText('some button');
         });
       `,
-        errors: [
-          {
-            messageId: 'renderResultNamingConvention',
-            data: {
-              renderResultName: 'wrapper',
-            },
-            line: 7,
-            column: 17,
-          },
-        ],
-      } as const,
-    ]),
-    {
-      settings: { 'testing-library/utils-module': 'test-utils' },
-      code: `
+				errors: [
+					{
+						messageId: 'renderResultNamingConvention',
+						data: {
+							renderResultName: 'wrapper',
+						},
+						line: 7,
+						column: 17,
+					},
+				],
+			} as const,
+		]),
+		{
+			settings: { 'testing-library/utils-module': 'test-utils' },
+			code: `
         import { render } from 'test-utils';
 
         function setup() {
@@ -370,19 +370,19 @@ ruleTester.run(RULE_NAME, rule, {
           const button = wrapper.getByText('some button');
         });
       `,
-      errors: [
-        {
-          messageId: 'renderResultNamingConvention',
-          data: {
-            renderResultName: 'wrapper',
-          },
-          line: 10,
-          column: 17,
-        },
-      ],
-    },
-    {
-      code: `
+			errors: [
+				{
+					messageId: 'renderResultNamingConvention',
+					data: {
+						renderResultName: 'wrapper',
+					},
+					line: 10,
+					column: 17,
+				},
+			],
+		},
+		{
+			code: `
         import { customRender } from 'test-utils';
 
         test('should report from custom render function ', () => {
@@ -390,20 +390,20 @@ ruleTester.run(RULE_NAME, rule, {
           const button = wrapper.getByText('some button');
         });
       `,
-      settings: { 'testing-library/custom-renders': ['customRender'] },
-      errors: [
-        {
-          messageId: 'renderResultNamingConvention',
-          data: {
-            renderResultName: 'wrapper',
-          },
-          line: 5,
-          column: 17,
-        },
-      ],
-    },
-    {
-      code: `
+			settings: { 'testing-library/custom-renders': ['customRender'] },
+			errors: [
+				{
+					messageId: 'renderResultNamingConvention',
+					data: {
+						renderResultName: 'wrapper',
+					},
+					line: 5,
+					column: 17,
+				},
+			],
+		},
+		{
+			code: `
         import { render } from '@foo/bar';
 
         test('aggressive reporting - should report from render not related to testing library', () => {
@@ -411,19 +411,19 @@ ruleTester.run(RULE_NAME, rule, {
           const button = wrapper.getByText('some button');
         });
       `,
-      errors: [
-        {
-          messageId: 'renderResultNamingConvention',
-          data: {
-            renderResultName: 'wrapper',
-          },
-          line: 5,
-          column: 17,
-        },
-      ],
-    },
-    {
-      code: `
+			errors: [
+				{
+					messageId: 'renderResultNamingConvention',
+					data: {
+						renderResultName: 'wrapper',
+					},
+					line: 5,
+					column: 17,
+				},
+			],
+		},
+		{
+			code: `
         import * as RTL from '@foo/bar';
 
         test('aggressive reporting - should report from wildcard render not imported from testing library', () => {
@@ -431,19 +431,19 @@ ruleTester.run(RULE_NAME, rule, {
           const button = wrapper.getByText('some button');
         });
       `,
-      errors: [
-        {
-          messageId: 'renderResultNamingConvention',
-          data: {
-            renderResultName: 'wrapper',
-          },
-          line: 5,
-          column: 17,
-        },
-      ],
-    },
-    {
-      code: `
+			errors: [
+				{
+					messageId: 'renderResultNamingConvention',
+					data: {
+						renderResultName: 'wrapper',
+					},
+					line: 5,
+					column: 17,
+				},
+			],
+		},
+		{
+			code: `
         function render() {
           return 'whatever';
         }
@@ -453,20 +453,20 @@ ruleTester.run(RULE_NAME, rule, {
           const button = wrapper.getByText('some button');
         });
       `,
-      errors: [
-        {
-          messageId: 'renderResultNamingConvention',
-          data: {
-            renderResultName: 'wrapper',
-          },
-          line: 7,
-          column: 17,
-        },
-      ],
-    },
-    ...SUPPORTED_TESTING_FRAMEWORKS.flatMap((testingFramework) => [
-      {
-        code: `
+			errors: [
+				{
+					messageId: 'renderResultNamingConvention',
+					data: {
+						renderResultName: 'wrapper',
+					},
+					line: 7,
+					column: 17,
+				},
+			],
+		},
+		...SUPPORTED_TESTING_FRAMEWORKS.flatMap((testingFramework) => [
+			{
+				code: `
         import { render as testingLibraryRender } from '${testingFramework}';
 
         const setup = () => {
@@ -478,20 +478,20 @@ ruleTester.run(RULE_NAME, rule, {
           await wrapper.findByRole('button');
         });
       `,
-        errors: [
-          {
-            messageId: 'renderResultNamingConvention',
-            data: {
-              renderResultName: 'wrapper',
-            },
-            line: 9,
-            column: 17,
-          },
-        ],
-      } as const,
-      {
-        settings: { 'testing-library/utils-module': 'test-utils' },
-        code: `
+				errors: [
+					{
+						messageId: 'renderResultNamingConvention',
+						data: {
+							renderResultName: 'wrapper',
+						},
+						line: 9,
+						column: 17,
+					},
+				],
+			} as const,
+			{
+				settings: { 'testing-library/utils-module': 'test-utils' },
+				code: `
         import { render as testingLibraryRender } from '${testingFramework}';
 
         const setup = () => {
@@ -505,24 +505,24 @@ ruleTester.run(RULE_NAME, rule, {
           await wrapper.findByRole('button');
         });
       `,
-        errors: [
-          {
-            messageId: 'renderResultNamingConvention',
-            data: {
-              renderResultName: 'wrapper',
-            },
-            line: 11,
-            column: 17,
-          },
-        ],
-      } as const,
-    ]),
-    {
-      settings: {
-        'testing-library/utils-module': 'test-utils',
-        'testing-library/custom-renders': ['customRender'],
-      },
-      code: `
+				errors: [
+					{
+						messageId: 'renderResultNamingConvention',
+						data: {
+							renderResultName: 'wrapper',
+						},
+						line: 11,
+						column: 17,
+					},
+				],
+			} as const,
+		]),
+		{
+			settings: {
+				'testing-library/utils-module': 'test-utils',
+				'testing-library/custom-renders': ['customRender'],
+			},
+			code: `
         import { customRender as myRender } from 'test-utils';
 
         const setup = () => {
@@ -536,16 +536,16 @@ ruleTester.run(RULE_NAME, rule, {
           await wrapper.findByRole('button');
         });
       `,
-      errors: [
-        {
-          messageId: 'renderResultNamingConvention',
-          data: {
-            renderResultName: 'wrapper',
-          },
-          line: 11,
-          column: 17,
-        },
-      ],
-    },
-  ],
+			errors: [
+				{
+					messageId: 'renderResultNamingConvention',
+					data: {
+						renderResultName: 'wrapper',
+					},
+					line: 11,
+					column: 17,
+				},
+			],
+		},
+	],
 });

@@ -1,8 +1,0 @@
-{
-  "*.{js,ts}": [
-    "eslint --max-warnings 0 --fix",
-    "prettier --write",
-    "jest --findRelatedTests"
-  ],
-  "*.{json,md,yml}": ["prettier --write"]
-}

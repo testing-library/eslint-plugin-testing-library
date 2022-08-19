@@ -65,7 +65,7 @@ This rule has an option in case you want to tell the user which framework to use
 
 ```json
 {
-  "testing-library/no-dom-import": ["error", "react"]
+	"testing-library/no-dom-import": ["error", "react"]
 }
 ```
 

@@ -22,24 +22,24 @@ Examples of **incorrect** code for this rule:
 
 ```js
 const foo = async () => {
-  // ...
-  await fireEvent.click(button);
-  // ...
+	// ...
+	await fireEvent.click(button);
+	// ...
 };
 
 const bar = async () => {
-  // ...
-  // userEvent prior to v14
-  await userEvent.tab();
-  // ...
+	// ...
+	// userEvent prior to v14
+	await userEvent.tab();
+	// ...
 };
 
 const baz = async () => {
-  // ...
-  // userEvent prior to v14
-  await userEvent.type(textInput, 'abc');
-  await userEvent.keyboard('abc');
-  // ...
+	// ...
+	// userEvent prior to v14
+	await userEvent.type(textInput, 'abc');
+	await userEvent.keyboard('abc');
+	// ...
 };
 ```
 
@@ -47,35 +47,35 @@ Examples of **correct** code for this rule:
 
 ```js
 const foo = () => {
-  // ...
-  fireEvent.click(button);
-  // ...
+	// ...
+	fireEvent.click(button);
+	// ...
 };
 
 const bar = () => {
-  // ...
-  userEvent.tab();
-  // ...
+	// ...
+	userEvent.tab();
+	// ...
 };
 
 const baz = async () => {
-  // await userEvent.type only with delay option
-  await userEvent.type(textInput, 'abc', { delay: 1000 });
-  userEvent.type(textInput, '123');
+	// await userEvent.type only with delay option
+	await userEvent.type(textInput, 'abc', { delay: 1000 });
+	userEvent.type(textInput, '123');
 
-  // same for userEvent.keyboard
-  await userEvent.keyboard(textInput, 'abc', { delay: 1000 });
-  userEvent.keyboard('123');
-  // ...
+	// same for userEvent.keyboard
+	await userEvent.keyboard(textInput, 'abc', { delay: 1000 });
+	userEvent.keyboard('123');
+	// ...
 };
 
 const qux = async () => {
-  // userEvent v14
-  await userEvent.tab();
-  await userEvent.click(button);
-  await userEvent.type(textInput, 'abc');
-  await userEvent.keyboard('abc');
-  // ...
+	// userEvent v14
+	await userEvent.tab();
+	await userEvent.click(button);
+	await userEvent.type(textInput, 'abc');
+	await userEvent.keyboard('abc');
+	// ...
 };
 ```
 
@@ -93,12 +93,12 @@ Example:
 
 ```json
 {
-  "testing-library/no-await-sync-events": [
-    "error",
-    {
-      "eventModules": ["fire-event", "user-event"]
-    }
-  ]
+	"testing-library/no-await-sync-events": [
+		"error",
+		{
+			"eventModules": ["fire-event", "user-event"]
+		}
+	]
 }
 ```
 

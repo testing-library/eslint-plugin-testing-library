@@ -16,21 +16,21 @@ Examples of **incorrect** code for this rule:
 
 ```js
 test('some test', () => {
-  render(<App />);
+	render(<App />);
 
-  // check element is present with `queryBy*`
-  expect(screen.queryByText('button')).toBeInTheDocument();
-  expect(screen.queryAllByText('button')[0]).toBeTruthy();
-  expect(screen.queryByText('button')).not.toBeNull();
-  expect(screen.queryAllByText('button')[2]).not.toBeNull();
-  expect(screen.queryByText('button')).not.toBeFalsy();
+	// check element is present with `queryBy*`
+	expect(screen.queryByText('button')).toBeInTheDocument();
+	expect(screen.queryAllByText('button')[0]).toBeTruthy();
+	expect(screen.queryByText('button')).not.toBeNull();
+	expect(screen.queryAllByText('button')[2]).not.toBeNull();
+	expect(screen.queryByText('button')).not.toBeFalsy();
 
-  // check element is NOT present with `getBy*`
-  expect(screen.getByText('loading')).not.toBeInTheDocument();
-  expect(screen.getAllByText('loading')[1]).not.toBeTruthy();
-  expect(screen.getByText('loading')).toBeNull();
-  expect(screen.getAllByText('loading')[3]).toBeNull();
-  expect(screen.getByText('loading')).toBeFalsy();
+	// check element is NOT present with `getBy*`
+	expect(screen.getByText('loading')).not.toBeInTheDocument();
+	expect(screen.getAllByText('loading')[1]).not.toBeTruthy();
+	expect(screen.getByText('loading')).toBeNull();
+	expect(screen.getAllByText('loading')[3]).toBeNull();
+	expect(screen.getByText('loading')).toBeFalsy();
 });
 ```
 
@@ -38,24 +38,24 @@ Examples of **correct** code for this rule:
 
 ```js
 test('some test', async () => {
-  render(<App />);
-  // check element is present with `getBy*`
-  expect(screen.getByText('button')).toBeInTheDocument();
-  expect(screen.getAllByText('button')[9]).toBeTruthy();
-  expect(screen.getByText('button')).not.toBeNull();
-  expect(screen.getAllByText('button')[7]).not.toBeNull();
-  expect(screen.getByText('button')).not.toBeFalsy();
+	render(<App />);
+	// check element is present with `getBy*`
+	expect(screen.getByText('button')).toBeInTheDocument();
+	expect(screen.getAllByText('button')[9]).toBeTruthy();
+	expect(screen.getByText('button')).not.toBeNull();
+	expect(screen.getAllByText('button')[7]).not.toBeNull();
+	expect(screen.getByText('button')).not.toBeFalsy();
 
-  // check element is NOT present with `queryBy*`
-  expect(screen.queryByText('loading')).not.toBeInTheDocument();
-  expect(screen.queryAllByText('loading')[8]).not.toBeTruthy();
-  expect(screen.queryByText('loading')).toBeNull();
-  expect(screen.queryAllByText('loading')[6]).toBeNull();
-  expect(screen.queryByText('loading')).toBeFalsy();
+	// check element is NOT present with `queryBy*`
+	expect(screen.queryByText('loading')).not.toBeInTheDocument();
+	expect(screen.queryAllByText('loading')[8]).not.toBeTruthy();
+	expect(screen.queryByText('loading')).toBeNull();
+	expect(screen.queryAllByText('loading')[6]).toBeNull();
+	expect(screen.queryByText('loading')).toBeFalsy();
 
-  // `findBy*` queries are out of the scope for this rule
-  const button = await screen.findByText('submit');
-  expect(button).toBeInTheDocument();
+	// `findBy*` queries are out of the scope for this rule
+	const button = await screen.findByText('submit');
+	expect(button).toBeInTheDocument();
 });
 ```
 
@@ -70,13 +70,13 @@ test('some test', async () => {
 
 ```json
 {
-  "testing-library/prefer-presence-queries": [
-    2,
-    {
-      "presence": true,
-      "absence": false
-    }
-  ]
+	"testing-library/prefer-presence-queries": [
+		2,
+		{
+			"presence": true,
+			"absence": false
+		}
+	]
 }
 ```
 

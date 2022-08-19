@@ -1,57 +1,57 @@
 import {
-  AST_NODE_TYPES,
-  ASTUtils,
-  TSESLint,
-  TSESLintScope,
-  TSESTree,
+	AST_NODE_TYPES,
+	ASTUtils,
+	TSESLint,
+	TSESLintScope,
+	TSESTree,
 } from '@typescript-eslint/utils';
 
 import {
-  isArrayExpression,
-  isArrowFunctionExpression,
-  isAssignmentExpression,
-  isBlockStatement,
-  isCallExpression,
-  isExpressionStatement,
-  isImportDeclaration,
-  isImportNamespaceSpecifier,
-  isImportSpecifier,
-  isLiteral,
-  isMemberExpression,
-  isObjectPattern,
-  isProperty,
-  isReturnStatement,
-  isVariableDeclaration,
+	isArrayExpression,
+	isArrowFunctionExpression,
+	isAssignmentExpression,
+	isBlockStatement,
+	isCallExpression,
+	isExpressionStatement,
+	isImportDeclaration,
+	isImportNamespaceSpecifier,
+	isImportSpecifier,
+	isLiteral,
+	isMemberExpression,
+	isObjectPattern,
+	isProperty,
+	isReturnStatement,
+	isVariableDeclaration,
 } from './is-node-of-type';
 
 export * from './is-node-of-type';
 
 const ValidLeftHandSideExpressions = [
-  AST_NODE_TYPES.CallExpression,
-  AST_NODE_TYPES.ClassExpression,
-  AST_NODE_TYPES.ClassDeclaration,
-  AST_NODE_TYPES.FunctionExpression,
-  AST_NODE_TYPES.Literal,
-  AST_NODE_TYPES.TemplateLiteral,
-  AST_NODE_TYPES.MemberExpression,
-  AST_NODE_TYPES.ArrayExpression,
-  AST_NODE_TYPES.ArrayPattern,
-  AST_NODE_TYPES.ClassExpression,
-  AST_NODE_TYPES.FunctionExpression,
-  AST_NODE_TYPES.Identifier,
-  AST_NODE_TYPES.JSXElement,
-  AST_NODE_TYPES.JSXFragment,
-  AST_NODE_TYPES.JSXOpeningElement,
-  AST_NODE_TYPES.MetaProperty,
-  AST_NODE_TYPES.ObjectExpression,
-  AST_NODE_TYPES.ObjectPattern,
-  AST_NODE_TYPES.Super,
-  AST_NODE_TYPES.ThisExpression,
-  AST_NODE_TYPES.TSNullKeyword,
-  AST_NODE_TYPES.TaggedTemplateExpression,
-  AST_NODE_TYPES.TSNonNullExpression,
-  AST_NODE_TYPES.TSAsExpression,
-  AST_NODE_TYPES.ArrowFunctionExpression,
+	AST_NODE_TYPES.CallExpression,
+	AST_NODE_TYPES.ClassExpression,
+	AST_NODE_TYPES.ClassDeclaration,
+	AST_NODE_TYPES.FunctionExpression,
+	AST_NODE_TYPES.Literal,
+	AST_NODE_TYPES.TemplateLiteral,
+	AST_NODE_TYPES.MemberExpression,
+	AST_NODE_TYPES.ArrayExpression,
+	AST_NODE_TYPES.ArrayPattern,
+	AST_NODE_TYPES.ClassExpression,
+	AST_NODE_TYPES.FunctionExpression,
+	AST_NODE_TYPES.Identifier,
+	AST_NODE_TYPES.JSXElement,
+	AST_NODE_TYPES.JSXFragment,
+	AST_NODE_TYPES.JSXOpeningElement,
+	AST_NODE_TYPES.MetaProperty,
+	AST_NODE_TYPES.ObjectExpression,
+	AST_NODE_TYPES.ObjectPattern,
+	AST_NODE_TYPES.Super,
+	AST_NODE_TYPES.ThisExpression,
+	AST_NODE_TYPES.TSNullKeyword,
+	AST_NODE_TYPES.TaggedTemplateExpression,
+	AST_NODE_TYPES.TSNonNullExpression,
+	AST_NODE_TYPES.TSAsExpression,
+	AST_NODE_TYPES.ArrowFunctionExpression,
 ];
 
 /**
@@ -60,105 +60,105 @@ const ValidLeftHandSideExpressions = [
  * @param shouldRestrictInnerScope - If true, CallExpression must belong to innermost scope of given node
  */
 export function findClosestCallExpressionNode(
-  node: TSESTree.Node | null | undefined,
-  shouldRestrictInnerScope = false
+	node: TSESTree.Node | null | undefined,
+	shouldRestrictInnerScope = false
 ): TSESTree.CallExpression | null {
-  if (isCallExpression(node)) {
-    return node;
-  }
+	if (isCallExpression(node)) {
+		return node;
+	}
 
-  if (!node || !node.parent) {
-    return null;
-  }
+	if (!node || !node.parent) {
+		return null;
+	}
 
-  if (
-    shouldRestrictInnerScope &&
-    !ValidLeftHandSideExpressions.includes(node.parent.type)
-  ) {
-    return null;
-  }
+	if (
+		shouldRestrictInnerScope &&
+		!ValidLeftHandSideExpressions.includes(node.parent.type)
+	) {
+		return null;
+	}
 
-  return findClosestCallExpressionNode(node.parent, shouldRestrictInnerScope);
+	return findClosestCallExpressionNode(node.parent, shouldRestrictInnerScope);
 }
 
 export function findClosestVariableDeclaratorNode(
-  node: TSESTree.Node | undefined
+	node: TSESTree.Node | undefined
 ): TSESTree.VariableDeclarator | null {
-  if (!node) {
-    return null;
-  }
+	if (!node) {
+		return null;
+	}
 
-  if (ASTUtils.isVariableDeclarator(node)) {
-    return node;
-  }
+	if (ASTUtils.isVariableDeclarator(node)) {
+		return node;
+	}
 
-  return findClosestVariableDeclaratorNode(node.parent);
+	return findClosestVariableDeclaratorNode(node.parent);
 }
 
 /**
  * TODO: remove this one in favor of {@link findClosestCallExpressionNode}
  */
 export function findClosestCallNode(
-  node: TSESTree.Node,
-  name: string
+	node: TSESTree.Node,
+	name: string
 ): TSESTree.CallExpression | null {
-  if (!node.parent) {
-    return null;
-  }
+	if (!node.parent) {
+		return null;
+	}
 
-  if (
-    isCallExpression(node) &&
-    ASTUtils.isIdentifier(node.callee) &&
-    node.callee.name === name
-  ) {
-    return node;
-  } else {
-    return findClosestCallNode(node.parent, name);
-  }
+	if (
+		isCallExpression(node) &&
+		ASTUtils.isIdentifier(node.callee) &&
+		node.callee.name === name
+	) {
+		return node;
+	} else {
+		return findClosestCallNode(node.parent, name);
+	}
 }
 
 export function hasThenProperty(node: TSESTree.Node): boolean {
-  return (
-    isMemberExpression(node) &&
-    ASTUtils.isIdentifier(node.property) &&
-    node.property.name === 'then'
-  );
+	return (
+		isMemberExpression(node) &&
+		ASTUtils.isIdentifier(node.property) &&
+		node.property.name === 'then'
+	);
 }
 
 export function hasChainedThen(node: TSESTree.Node): boolean {
-  const parent = node.parent;
+	const parent = node.parent;
 
-  // wait(...).then(...)
-  if (isCallExpression(parent) && parent.parent) {
-    return hasThenProperty(parent.parent);
-  }
+	// wait(...).then(...)
+	if (isCallExpression(parent) && parent.parent) {
+		return hasThenProperty(parent.parent);
+	}
 
-  // promise.then(...)
-  return !!parent && hasThenProperty(parent);
+	// promise.then(...)
+	return !!parent && hasThenProperty(parent);
 }
 
 export function isPromiseIdentifier(
-  node: TSESTree.Node
+	node: TSESTree.Node
 ): node is TSESTree.Identifier & { name: 'Promise' } {
-  return ASTUtils.isIdentifier(node) && node.name === 'Promise';
+	return ASTUtils.isIdentifier(node) && node.name === 'Promise';
 }
 
 export function isPromiseAll(node: TSESTree.CallExpression): boolean {
-  return (
-    isMemberExpression(node.callee) &&
-    isPromiseIdentifier(node.callee.object) &&
-    ASTUtils.isIdentifier(node.callee.property) &&
-    node.callee.property.name === 'all'
-  );
+	return (
+		isMemberExpression(node.callee) &&
+		isPromiseIdentifier(node.callee.object) &&
+		ASTUtils.isIdentifier(node.callee.property) &&
+		node.callee.property.name === 'all'
+	);
 }
 
 export function isPromiseAllSettled(node: TSESTree.CallExpression): boolean {
-  return (
-    isMemberExpression(node.callee) &&
-    isPromiseIdentifier(node.callee.object) &&
-    ASTUtils.isIdentifier(node.callee.property) &&
-    node.callee.property.name === 'allSettled'
-  );
+	return (
+		isMemberExpression(node.callee) &&
+		isPromiseIdentifier(node.callee.object) &&
+		ASTUtils.isIdentifier(node.callee.property) &&
+		node.callee.property.name === 'allSettled'
+	);
 }
 
 /**
@@ -166,19 +166,19 @@ export function isPromiseAllSettled(node: TSESTree.CallExpression): boolean {
  * array expression.
  */
 export function isPromisesArrayResolved(node: TSESTree.Node): boolean {
-  const closestCallExpression = findClosestCallExpressionNode(node, true);
+	const closestCallExpression = findClosestCallExpressionNode(node, true);
 
-  if (!closestCallExpression) {
-    return false;
-  }
+	if (!closestCallExpression) {
+		return false;
+	}
 
-  return (
-    !!closestCallExpression.parent &&
-    isArrayExpression(closestCallExpression.parent) &&
-    isCallExpression(closestCallExpression.parent.parent) &&
-    (isPromiseAll(closestCallExpression.parent.parent) ||
-      isPromiseAllSettled(closestCallExpression.parent.parent))
-  );
+	return (
+		!!closestCallExpression.parent &&
+		isArrayExpression(closestCallExpression.parent) &&
+		isCallExpression(closestCallExpression.parent.parent) &&
+		(isPromiseAll(closestCallExpression.parent.parent) ||
+			isPromiseAllSettled(closestCallExpression.parent.parent))
+	);
 }
 
 /**
@@ -193,106 +193,106 @@ export function isPromisesArrayResolved(node: TSESTree.Node): boolean {
  * - has `resolves` or `rejects` jest methods
  */
 export function isPromiseHandled(nodeIdentifier: TSESTree.Identifier): boolean {
-  const closestCallExpressionNode = findClosestCallExpressionNode(
-    nodeIdentifier,
-    true
-  );
+	const closestCallExpressionNode = findClosestCallExpressionNode(
+		nodeIdentifier,
+		true
+	);
 
-  const suspiciousNodes = [nodeIdentifier, closestCallExpressionNode].filter(
-    Boolean
-  );
+	const suspiciousNodes = [nodeIdentifier, closestCallExpressionNode].filter(
+		Boolean
+	);
 
-  for (const node of suspiciousNodes) {
-    if (!node || !node.parent) {
-      continue;
-    }
-    if (ASTUtils.isAwaitExpression(node.parent)) {
-      return true;
-    }
+	for (const node of suspiciousNodes) {
+		if (!node || !node.parent) {
+			continue;
+		}
+		if (ASTUtils.isAwaitExpression(node.parent)) {
+			return true;
+		}
 
-    if (
-      isArrowFunctionExpression(node.parent) ||
-      isReturnStatement(node.parent)
-    ) {
-      return true;
-    }
+		if (
+			isArrowFunctionExpression(node.parent) ||
+			isReturnStatement(node.parent)
+		) {
+			return true;
+		}
 
-    if (hasClosestExpectResolvesRejects(node.parent)) {
-      return true;
-    }
+		if (hasClosestExpectResolvesRejects(node.parent)) {
+			return true;
+		}
 
-    if (hasChainedThen(node)) {
-      return true;
-    }
+		if (hasChainedThen(node)) {
+			return true;
+		}
 
-    if (isPromisesArrayResolved(node)) {
-      return true;
-    }
-  }
+		if (isPromisesArrayResolved(node)) {
+			return true;
+		}
+	}
 
-  return false;
+	return false;
 }
 
 export function getVariableReferences(
-  context: TSESLint.RuleContext<string, []>,
-  node: TSESTree.Node
+	context: TSESLint.RuleContext<string, []>,
+	node: TSESTree.Node
 ): TSESLint.Scope.Reference[] {
-  if (ASTUtils.isVariableDeclarator(node)) {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    return context.getDeclaredVariables(node)[0]?.references?.slice(1) ?? [];
-  }
+	if (ASTUtils.isVariableDeclarator(node)) {
+		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+		return context.getDeclaredVariables(node)[0]?.references?.slice(1) ?? [];
+	}
 
-  return [];
+	return [];
 }
 
 interface InnermostFunctionScope extends TSESLintScope.FunctionScope {
-  block:
-    | TSESTree.ArrowFunctionExpression
-    | TSESTree.FunctionDeclaration
-    | TSESTree.FunctionExpression;
+	block:
+		| TSESTree.ArrowFunctionExpression
+		| TSESTree.FunctionDeclaration
+		| TSESTree.FunctionExpression;
 }
 
 export function getInnermostFunctionScope(
-  context: TSESLint.RuleContext<string, unknown[]>,
-  asyncQueryNode: TSESTree.Identifier
+	context: TSESLint.RuleContext<string, unknown[]>,
+	asyncQueryNode: TSESTree.Identifier
 ): InnermostFunctionScope | null {
-  const innermostScope = ASTUtils.getInnermostScope(
-    context.getScope(),
-    asyncQueryNode
-  );
+	const innermostScope = ASTUtils.getInnermostScope(
+		context.getScope(),
+		asyncQueryNode
+	);
 
-  if (
-    innermostScope.type === 'function' &&
-    ASTUtils.isFunction(innermostScope.block)
-  ) {
-    return innermostScope as unknown as InnermostFunctionScope;
-  }
+	if (
+		innermostScope.type === 'function' &&
+		ASTUtils.isFunction(innermostScope.block)
+	) {
+		return innermostScope as unknown as InnermostFunctionScope;
+	}
 
-  return null;
+	return null;
 }
 
 export function getFunctionReturnStatementNode(
-  functionNode:
-    | TSESTree.ArrowFunctionExpression
-    | TSESTree.FunctionDeclaration
-    | TSESTree.FunctionExpression
+	functionNode:
+		| TSESTree.ArrowFunctionExpression
+		| TSESTree.FunctionDeclaration
+		| TSESTree.FunctionExpression
 ): TSESTree.Node | null {
-  if (isBlockStatement(functionNode.body)) {
-    // regular function or arrow function with block
-    const returnStatementNode = functionNode.body.body.find((statement) =>
-      isReturnStatement(statement)
-    ) as TSESTree.ReturnStatement | undefined;
+	if (isBlockStatement(functionNode.body)) {
+		// regular function or arrow function with block
+		const returnStatementNode = functionNode.body.body.find((statement) =>
+			isReturnStatement(statement)
+		) as TSESTree.ReturnStatement | undefined;
 
-    if (!returnStatementNode) {
-      return null;
-    }
-    return returnStatementNode.argument;
-  } else if (functionNode.expression) {
-    // arrow function with implicit return
-    return functionNode.body;
-  }
+		if (!returnStatementNode) {
+			return null;
+		}
+		return returnStatementNode.argument;
+	} else if (functionNode.expression) {
+		// arrow function with implicit return
+		return functionNode.body;
+	}
 
-  return null;
+	return null;
 }
 
 /**
@@ -306,25 +306,25 @@ export function getFunctionReturnStatementNode(
  *  it will return `rtl` identifier node
  */
 export function getPropertyIdentifierNode(
-  node: TSESTree.Node
+	node: TSESTree.Node
 ): TSESTree.Identifier | null {
-  if (ASTUtils.isIdentifier(node)) {
-    return node;
-  }
+	if (ASTUtils.isIdentifier(node)) {
+		return node;
+	}
 
-  if (isMemberExpression(node)) {
-    return getPropertyIdentifierNode(node.object);
-  }
+	if (isMemberExpression(node)) {
+		return getPropertyIdentifierNode(node.object);
+	}
 
-  if (isCallExpression(node)) {
-    return getPropertyIdentifierNode(node.callee);
-  }
+	if (isCallExpression(node)) {
+		return getPropertyIdentifierNode(node.callee);
+	}
 
-  if (isExpressionStatement(node)) {
-    return getPropertyIdentifierNode(node.expression);
-  }
+	if (isExpressionStatement(node)) {
+		return getPropertyIdentifierNode(node.expression);
+	}
 
-  return null;
+	return null;
 }
 
 /**
@@ -338,25 +338,25 @@ export function getPropertyIdentifierNode(
  *  it will return `getByRole` identifier
  */
 export function getDeepestIdentifierNode(
-  node: TSESTree.Node
+	node: TSESTree.Node
 ): TSESTree.Identifier | null {
-  if (ASTUtils.isIdentifier(node)) {
-    return node;
-  }
+	if (ASTUtils.isIdentifier(node)) {
+		return node;
+	}
 
-  if (isMemberExpression(node) && ASTUtils.isIdentifier(node.property)) {
-    return node.property;
-  }
+	if (isMemberExpression(node) && ASTUtils.isIdentifier(node.property)) {
+		return node.property;
+	}
 
-  if (isCallExpression(node)) {
-    return getDeepestIdentifierNode(node.callee);
-  }
+	if (isCallExpression(node)) {
+		return getDeepestIdentifierNode(node.callee);
+	}
 
-  if (ASTUtils.isAwaitExpression(node)) {
-    return getDeepestIdentifierNode(node.argument);
-  }
+	if (ASTUtils.isAwaitExpression(node)) {
+		return getDeepestIdentifierNode(node.argument);
+	}
 
-  return null;
+	return null;
 }
 
 /**
@@ -370,96 +370,96 @@ export function getDeepestIdentifierNode(
  *  it will return `rtl` node
  */
 export function getReferenceNode(
-  node:
-    | TSESTree.CallExpression
-    | TSESTree.Identifier
-    | TSESTree.MemberExpression
+	node:
+		| TSESTree.CallExpression
+		| TSESTree.Identifier
+		| TSESTree.MemberExpression
 ): TSESTree.CallExpression | TSESTree.Identifier | TSESTree.MemberExpression {
-  if (
-    node.parent &&
-    (isMemberExpression(node.parent) || isCallExpression(node.parent))
-  ) {
-    return getReferenceNode(node.parent);
-  }
+	if (
+		node.parent &&
+		(isMemberExpression(node.parent) || isCallExpression(node.parent))
+	) {
+		return getReferenceNode(node.parent);
+	}
 
-  return node;
+	return node;
 }
 
 export function getFunctionName(
-  node:
-    | TSESTree.ArrowFunctionExpression
-    | TSESTree.FunctionDeclaration
-    | TSESTree.FunctionExpression
+	node:
+		| TSESTree.ArrowFunctionExpression
+		| TSESTree.FunctionDeclaration
+		| TSESTree.FunctionExpression
 ): string {
-  return (
-    ASTUtils.getFunctionNameWithKind(node)
-      .match(/('\w+')/g)?.[0]
-      .replace(/'/g, '') ?? ''
-  );
+	return (
+		ASTUtils.getFunctionNameWithKind(node)
+			.match(/('\w+')/g)?.[0]
+			.replace(/'/g, '') ?? ''
+	);
 }
 
 // TODO: extract into types file?
 export type ImportModuleNode =
-  | TSESTree.CallExpression
-  | TSESTree.ImportDeclaration;
+	| TSESTree.CallExpression
+	| TSESTree.ImportDeclaration;
 
 export function getImportModuleName(
-  node: ImportModuleNode | null | undefined
+	node: ImportModuleNode | null | undefined
 ): string | undefined {
-  // import node of shape: import { foo } from 'bar'
-  if (isImportDeclaration(node) && typeof node.source.value === 'string') {
-    return node.source.value;
-  }
+	// import node of shape: import { foo } from 'bar'
+	if (isImportDeclaration(node) && typeof node.source.value === 'string') {
+		return node.source.value;
+	}
 
-  // import node of shape: const { foo } = require('bar')
-  if (
-    isCallExpression(node) &&
-    isLiteral(node.arguments[0]) &&
-    typeof node.arguments[0].value === 'string'
-  ) {
-    return node.arguments[0].value;
-  }
+	// import node of shape: const { foo } = require('bar')
+	if (
+		isCallExpression(node) &&
+		isLiteral(node.arguments[0]) &&
+		typeof node.arguments[0].value === 'string'
+	) {
+		return node.arguments[0].value;
+	}
 
-  return undefined;
+	return undefined;
 }
 
 type AssertNodeInfo = {
-  matcher: string | null;
-  isNegated: boolean;
+	matcher: string | null;
+	isNegated: boolean;
 };
 /**
  * Extracts matcher info from MemberExpression node representing an assert.
  */
 export function getAssertNodeInfo(
-  node: TSESTree.MemberExpression
+	node: TSESTree.MemberExpression
 ): AssertNodeInfo {
-  const emptyInfo = { matcher: null, isNegated: false } as AssertNodeInfo;
+	const emptyInfo = { matcher: null, isNegated: false } as AssertNodeInfo;
 
-  if (
-    !isCallExpression(node.object) ||
-    !ASTUtils.isIdentifier(node.object.callee)
-  ) {
-    return emptyInfo;
-  }
+	if (
+		!isCallExpression(node.object) ||
+		!ASTUtils.isIdentifier(node.object.callee)
+	) {
+		return emptyInfo;
+	}
 
-  if (node.object.callee.name !== 'expect') {
-    return emptyInfo;
-  }
+	if (node.object.callee.name !== 'expect') {
+		return emptyInfo;
+	}
 
-  let matcher = ASTUtils.getPropertyName(node);
-  const isNegated = matcher === 'not';
-  if (isNegated) {
-    matcher =
-      node.parent && isMemberExpression(node.parent)
-        ? ASTUtils.getPropertyName(node.parent)
-        : null;
-  }
+	let matcher = ASTUtils.getPropertyName(node);
+	const isNegated = matcher === 'not';
+	if (isNegated) {
+		matcher =
+			node.parent && isMemberExpression(node.parent)
+				? ASTUtils.getPropertyName(node.parent)
+				: null;
+	}
 
-  if (!matcher) {
-    return emptyInfo;
-  }
+	if (!matcher) {
+		return emptyInfo;
+	}
 
-  return { matcher, isNegated };
+	return { matcher, isNegated };
 }
 
 /**
@@ -468,115 +468,115 @@ export function getAssertNodeInfo(
  *
  */
 export function hasClosestExpectResolvesRejects(node: TSESTree.Node): boolean {
-  if (
-    isCallExpression(node) &&
-    ASTUtils.isIdentifier(node.callee) &&
-    node.parent &&
-    isMemberExpression(node.parent) &&
-    node.callee.name === 'expect'
-  ) {
-    const expectMatcher = node.parent.property;
-    return (
-      ASTUtils.isIdentifier(expectMatcher) &&
-      (expectMatcher.name === 'resolves' || expectMatcher.name === 'rejects')
-    );
-  }
+	if (
+		isCallExpression(node) &&
+		ASTUtils.isIdentifier(node.callee) &&
+		node.parent &&
+		isMemberExpression(node.parent) &&
+		node.callee.name === 'expect'
+	) {
+		const expectMatcher = node.parent.property;
+		return (
+			ASTUtils.isIdentifier(expectMatcher) &&
+			(expectMatcher.name === 'resolves' || expectMatcher.name === 'rejects')
+		);
+	}
 
-  if (!node.parent) {
-    return false;
-  }
+	if (!node.parent) {
+		return false;
+	}
 
-  return hasClosestExpectResolvesRejects(node.parent);
+	return hasClosestExpectResolvesRejects(node.parent);
 }
 
 /**
  * Gets the Function node which returns the given Identifier.
  */
 export function getInnermostReturningFunction(
-  context: TSESLint.RuleContext<string, unknown[]>,
-  node: TSESTree.Identifier
+	context: TSESLint.RuleContext<string, unknown[]>,
+	node: TSESTree.Identifier
 ):
-  | TSESTree.ArrowFunctionExpression
-  | TSESTree.FunctionDeclaration
-  | TSESTree.FunctionExpression
-  | undefined {
-  const functionScope = getInnermostFunctionScope(context, node);
+	| TSESTree.ArrowFunctionExpression
+	| TSESTree.FunctionDeclaration
+	| TSESTree.FunctionExpression
+	| undefined {
+	const functionScope = getInnermostFunctionScope(context, node);
 
-  if (!functionScope) {
-    return undefined;
-  }
+	if (!functionScope) {
+		return undefined;
+	}
 
-  const returnStatementNode = getFunctionReturnStatementNode(
-    functionScope.block
-  );
+	const returnStatementNode = getFunctionReturnStatementNode(
+		functionScope.block
+	);
 
-  if (!returnStatementNode) {
-    return undefined;
-  }
+	if (!returnStatementNode) {
+		return undefined;
+	}
 
-  const returnStatementIdentifier =
-    getDeepestIdentifierNode(returnStatementNode);
+	const returnStatementIdentifier =
+		getDeepestIdentifierNode(returnStatementNode);
 
-  if (returnStatementIdentifier?.name !== node.name) {
-    return undefined;
-  }
+	if (returnStatementIdentifier?.name !== node.name) {
+		return undefined;
+	}
 
-  return functionScope.block;
+	return functionScope.block;
 }
 
 export function hasImportMatch(
-  importNode: TSESTree.Identifier | TSESTree.ImportClause,
-  identifierName: string
+	importNode: TSESTree.Identifier | TSESTree.ImportClause,
+	identifierName: string
 ): boolean {
-  if (ASTUtils.isIdentifier(importNode)) {
-    return importNode.name === identifierName;
-  }
+	if (ASTUtils.isIdentifier(importNode)) {
+		return importNode.name === identifierName;
+	}
 
-  return importNode.local.name === identifierName;
+	return importNode.local.name === identifierName;
 }
 
 export function getStatementCallExpression(
-  statement: TSESTree.Statement
+	statement: TSESTree.Statement
 ): TSESTree.CallExpression | undefined {
-  if (isExpressionStatement(statement)) {
-    const { expression } = statement;
-    if (isCallExpression(expression)) {
-      return expression;
-    }
+	if (isExpressionStatement(statement)) {
+		const { expression } = statement;
+		if (isCallExpression(expression)) {
+			return expression;
+		}
 
-    if (
-      ASTUtils.isAwaitExpression(expression) &&
-      isCallExpression(expression.argument)
-    ) {
-      return expression.argument;
-    }
+		if (
+			ASTUtils.isAwaitExpression(expression) &&
+			isCallExpression(expression.argument)
+		) {
+			return expression.argument;
+		}
 
-    if (isAssignmentExpression(expression)) {
-      if (isCallExpression(expression.right)) {
-        return expression.right;
-      }
+		if (isAssignmentExpression(expression)) {
+			if (isCallExpression(expression.right)) {
+				return expression.right;
+			}
 
-      if (
-        ASTUtils.isAwaitExpression(expression.right) &&
-        isCallExpression(expression.right.argument)
-      ) {
-        return expression.right.argument;
-      }
-    }
-  }
+			if (
+				ASTUtils.isAwaitExpression(expression.right) &&
+				isCallExpression(expression.right.argument)
+			) {
+				return expression.right.argument;
+			}
+		}
+	}
 
-  if (isReturnStatement(statement) && isCallExpression(statement.argument)) {
-    return statement.argument;
-  }
+	if (isReturnStatement(statement) && isCallExpression(statement.argument)) {
+		return statement.argument;
+	}
 
-  if (isVariableDeclaration(statement)) {
-    for (const declaration of statement.declarations) {
-      if (isCallExpression(declaration.init)) {
-        return declaration.init;
-      }
-    }
-  }
-  return undefined;
+	if (isVariableDeclaration(statement)) {
+		for (const declaration of statement.declarations) {
+			if (isCallExpression(declaration.init)) {
+				return declaration.init;
+			}
+		}
+	}
+	return undefined;
 }
 
 /**
@@ -589,60 +589,60 @@ export function getStatementCallExpression(
  * If node given is not a function, `false` will be returned.
  */
 export function isEmptyFunction(node: TSESTree.Node): boolean | undefined {
-  if (ASTUtils.isFunction(node) && isBlockStatement(node.body)) {
-    return node.body.body.length === 0;
-  }
+	if (ASTUtils.isFunction(node) && isBlockStatement(node.body)) {
+		return node.body.body.length === 0;
+	}
 
-  return false;
+	return false;
 }
 
 /**
  * Finds the import specifier matching a given name for a given import module node.
  */
 export function findImportSpecifier(
-  specifierName: string,
-  node: ImportModuleNode
+	specifierName: string,
+	node: ImportModuleNode
 ): TSESTree.Identifier | TSESTree.ImportClause | undefined {
-  if (isImportDeclaration(node)) {
-    const namedExport = node.specifiers.find((n) => {
-      return (
-        isImportSpecifier(n) &&
-        [n.imported.name, n.local.name].includes(specifierName)
-      );
-    });
+	if (isImportDeclaration(node)) {
+		const namedExport = node.specifiers.find((n) => {
+			return (
+				isImportSpecifier(n) &&
+				[n.imported.name, n.local.name].includes(specifierName)
+			);
+		});
 
-    // it is "import { foo [as alias] } from 'baz'"
-    if (namedExport) {
-      return namedExport;
-    }
+		// it is "import { foo [as alias] } from 'baz'"
+		if (namedExport) {
+			return namedExport;
+		}
 
-    // it could be "import * as rtl from 'baz'"
-    return node.specifiers.find((n) => isImportNamespaceSpecifier(n));
-  } else {
-    if (!ASTUtils.isVariableDeclarator(node.parent)) {
-      return undefined;
-    }
-    const requireNode = node.parent;
+		// it could be "import * as rtl from 'baz'"
+		return node.specifiers.find((n) => isImportNamespaceSpecifier(n));
+	} else {
+		if (!ASTUtils.isVariableDeclarator(node.parent)) {
+			return undefined;
+		}
+		const requireNode = node.parent;
 
-    if (ASTUtils.isIdentifier(requireNode.id)) {
-      // this is const rtl = require('foo')
-      return requireNode.id;
-    }
+		if (ASTUtils.isIdentifier(requireNode.id)) {
+			// this is const rtl = require('foo')
+			return requireNode.id;
+		}
 
-    // this should be const { something } = require('foo')
-    if (!isObjectPattern(requireNode.id)) {
-      return undefined;
-    }
+		// this should be const { something } = require('foo')
+		if (!isObjectPattern(requireNode.id)) {
+			return undefined;
+		}
 
-    const property = requireNode.id.properties.find(
-      (n) =>
-        isProperty(n) &&
-        ASTUtils.isIdentifier(n.key) &&
-        n.key.name === specifierName
-    );
-    if (!property) {
-      return undefined;
-    }
-    return (property as TSESTree.Property).key as TSESTree.Identifier;
-  }
+		const property = requireNode.id.properties.find(
+			(n) =>
+				isProperty(n) &&
+				ASTUtils.isIdentifier(n.key) &&
+				n.key.name === specifierName
+		);
+		if (!property) {
+			return undefined;
+		}
+		return (property as TSESTree.Property).key as TSESTree.Identifier;
+	}
 }

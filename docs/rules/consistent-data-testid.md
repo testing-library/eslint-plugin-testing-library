@@ -37,22 +37,22 @@ const baz = (props) => <div>...</div>;
 
 ```json
 {
-  "testing-library/consistent-data-testid": [
-    2,
-    {
-      "testIdPattern": "^TestId(__[A-Z]*)?$"
-    }
-  ]
+	"testing-library/consistent-data-testid": [
+		2,
+		{
+			"testIdPattern": "^TestId(__[A-Z]*)?$"
+		}
+	]
 }
 ```
 
 ```json
 {
-  "testing-library/consistent-data-testid": [
-    2,
-    {
-      "testIdAttribute": ["data-testid", "testId"]
-    }
-  ]
+	"testing-library/consistent-data-testid": [
+		2,
+		{
+			"testIdAttribute": ["data-testid", "testId"]
+		}
+	]
 }
 ```
