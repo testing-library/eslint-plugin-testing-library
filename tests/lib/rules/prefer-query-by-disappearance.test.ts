@@ -225,7 +225,7 @@ ruleTester.run(RULE_NAME, rule, {
 				{
 					messageId: 'preferQueryByDisappearance',
 					line: 4,
-					column: 41,
+					column: 54,
 				},
 			],
 		},
@@ -239,7 +239,7 @@ ruleTester.run(RULE_NAME, rule, {
 				{
 					messageId: 'preferQueryByDisappearance',
 					line: 4,
-					column: 41,
+					column: 54,
 				},
 			],
 		},
@@ -253,7 +253,7 @@ ruleTester.run(RULE_NAME, rule, {
 				{
 					messageId: 'preferQueryByDisappearance',
 					line: 4,
-					column: 41,
+					column: 54,
 				},
 			],
 		},
@@ -268,8 +268,8 @@ ruleTester.run(RULE_NAME, rule, {
 			errors: [
 				{
 					messageId: 'preferQueryByDisappearance',
-					line: 4,
-					column: 41,
+					line: 5,
+					column: 18,
 				},
 			],
 		},
@@ -284,8 +284,8 @@ ruleTester.run(RULE_NAME, rule, {
 			errors: [
 				{
 					messageId: 'preferQueryByDisappearance',
-					line: 4,
-					column: 41,
+					line: 5,
+					column: 18,
 				},
 			],
 		},
@@ -300,8 +300,8 @@ ruleTester.run(RULE_NAME, rule, {
 			errors: [
 				{
 					messageId: 'preferQueryByDisappearance',
-					line: 4,
-					column: 41,
+					line: 5,
+					column: 25,
 				},
 			],
 		},
@@ -316,8 +316,8 @@ ruleTester.run(RULE_NAME, rule, {
 			errors: [
 				{
 					messageId: 'preferQueryByDisappearance',
-					line: 4,
-					column: 41,
+					line: 5,
+					column: 25,
 				},
 			],
 		},
@@ -331,7 +331,7 @@ ruleTester.run(RULE_NAME, rule, {
 				{
 					messageId: 'preferQueryByDisappearance',
 					line: 4,
-					column: 41,
+					column: 48,
 				},
 			],
 		},
@@ -345,7 +345,7 @@ ruleTester.run(RULE_NAME, rule, {
 				{
 					messageId: 'preferQueryByDisappearance',
 					line: 4,
-					column: 41,
+					column: 48,
 				},
 			],
 		},
@@ -360,8 +360,8 @@ ruleTester.run(RULE_NAME, rule, {
 			errors: [
 				{
 					messageId: 'preferQueryByDisappearance',
-					line: 4,
-					column: 41,
+					line: 5,
+					column: 25,
 				},
 			],
 		},
@@ -376,8 +376,8 @@ ruleTester.run(RULE_NAME, rule, {
 			errors: [
 				{
 					messageId: 'preferQueryByDisappearance',
-					line: 4,
-					column: 41,
+					line: 5,
+					column: 25,
 				},
 			],
 		},
@@ -392,8 +392,8 @@ ruleTester.run(RULE_NAME, rule, {
 			errors: [
 				{
 					messageId: 'preferQueryByDisappearance',
-					line: 4,
-					column: 41,
+					line: 5,
+					column: 18,
 				},
 			],
 		},
@@ -408,8 +408,8 @@ ruleTester.run(RULE_NAME, rule, {
 			errors: [
 				{
 					messageId: 'preferQueryByDisappearance',
-					line: 4,
-					column: 41,
+					line: 5,
+					column: 18,
 				},
 			],
 		},
@@ -425,8 +425,8 @@ ruleTester.run(RULE_NAME, rule, {
 			errors: [
 				{
 					messageId: 'preferQueryByDisappearance',
-					line: 5,
-					column: 41,
+					line: 6,
+					column: 11,
 				},
 			],
 		},
@@ -442,8 +442,8 @@ ruleTester.run(RULE_NAME, rule, {
 			errors: [
 				{
 					messageId: 'preferQueryByDisappearance',
-					line: 5,
-					column: 41,
+					line: 6,
+					column: 11,
 				},
 			],
 		},
@@ -459,8 +459,8 @@ ruleTester.run(RULE_NAME, rule, {
 			errors: [
 				{
 					messageId: 'preferQueryByDisappearance',
-					line: 5,
-					column: 41,
+					line: 6,
+					column: 11,
 				},
 			],
 		},
@@ -476,8 +476,8 @@ ruleTester.run(RULE_NAME, rule, {
 			errors: [
 				{
 					messageId: 'preferQueryByDisappearance',
-					line: 5,
-					column: 41,
+					line: 6,
+					column: 11,
 				},
 			],
 		},
@@ -493,8 +493,8 @@ ruleTester.run(RULE_NAME, rule, {
 			errors: [
 				{
 					messageId: 'preferQueryByDisappearance',
-					line: 5,
-					column: 41,
+					line: 6,
+					column: 18,
 				},
 			],
 		},
@@ -510,8 +510,8 @@ ruleTester.run(RULE_NAME, rule, {
 			errors: [
 				{
 					messageId: 'preferQueryByDisappearance',
-					line: 5,
-					column: 41,
+					line: 6,
+					column: 18,
 				},
 			],
 		},
@@ -527,8 +527,8 @@ ruleTester.run(RULE_NAME, rule, {
 			errors: [
 				{
 					messageId: 'preferQueryByDisappearance',
-					line: 5,
-					column: 41,
+					line: 6,
+					column: 18,
 				},
 			],
 		},
@@ -544,8 +544,8 @@ ruleTester.run(RULE_NAME, rule, {
 			errors: [
 				{
 					messageId: 'preferQueryByDisappearance',
-					line: 5,
-					column: 41,
+					line: 6,
+					column: 18,
 				},
 			],
 		},
@@ -561,8 +561,8 @@ ruleTester.run(RULE_NAME, rule, {
 			errors: [
 				{
 					messageId: 'preferQueryByDisappearance',
-					line: 5,
-					column: 41,
+					line: 6,
+					column: 18,
 				},
 			],
 		},
@@ -578,8 +578,8 @@ ruleTester.run(RULE_NAME, rule, {
 			errors: [
 				{
 					messageId: 'preferQueryByDisappearance',
-					line: 5,
-					column: 41,
+					line: 6,
+					column: 18,
 				},
 			],
 		},
@@ -595,8 +595,8 @@ ruleTester.run(RULE_NAME, rule, {
 			errors: [
 				{
 					messageId: 'preferQueryByDisappearance',
-					line: 5,
-					column: 41,
+					line: 6,
+					column: 18,
 				},
 			],
 		},
@@ -612,8 +612,8 @@ ruleTester.run(RULE_NAME, rule, {
 			errors: [
 				{
 					messageId: 'preferQueryByDisappearance',
-					line: 5,
-					column: 41,
+					line: 6,
+					column: 18,
 				},
 			],
 		},
@@ -629,8 +629,8 @@ ruleTester.run(RULE_NAME, rule, {
 			errors: [
 				{
 					messageId: 'preferQueryByDisappearance',
-					line: 5,
-					column: 41,
+					line: 6,
+					column: 11,
 				},
 			],
 		},
@@ -646,8 +646,8 @@ ruleTester.run(RULE_NAME, rule, {
 			errors: [
 				{
 					messageId: 'preferQueryByDisappearance',
-					line: 5,
-					column: 41,
+					line: 6,
+					column: 11,
 				},
 			],
 		},
@@ -663,8 +663,8 @@ ruleTester.run(RULE_NAME, rule, {
 			errors: [
 				{
 					messageId: 'preferQueryByDisappearance',
-					line: 5,
-					column: 41,
+					line: 6,
+					column: 11,
 				},
 			],
 		},
@@ -680,8 +680,8 @@ ruleTester.run(RULE_NAME, rule, {
 			errors: [
 				{
 					messageId: 'preferQueryByDisappearance',
-					line: 5,
-					column: 41,
+					line: 6,
+					column: 11,
 				},
 			],
 		},
@@ -696,7 +696,7 @@ ruleTester.run(RULE_NAME, rule, {
 				{
 					messageId: 'preferQueryByDisappearance',
 					line: 5,
-					column: 41,
+					column: 47,
 				},
 			],
 		},
@@ -711,7 +711,7 @@ ruleTester.run(RULE_NAME, rule, {
 				{
 					messageId: 'preferQueryByDisappearance',
 					line: 5,
-					column: 41,
+					column: 47,
 				},
 			],
 		},

@@ -50,7 +50,15 @@ export default createTestingLibraryRule<Options, MessageIds>({
 			return helpers.isAsyncUtil(identifierNode, ['waitForElementToBeRemoved']);
 		}
 
-		function isReportableExpression(node: TSESTree.LeftHandSideExpression) {
+		/**
+		 * Checks if a node is a query node and starts with "get" or "find".
+		 *
+		 * @param {TSESTree.LeftHandSideExpression} node - Node to be tested
+		 * @returns {Boolean} True if node should be reported and reports it with `context.report()`. False if node should not be reported.
+		 */
+		function isReportableExpression(
+			node: TSESTree.LeftHandSideExpression
+		): boolean {
 			const argumentProperty = isMemberExpression(node)
 				? getPropertyIdentifierNode(node.property)
 				: getPropertyIdentifierNode(node);
@@ -59,13 +67,20 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				return false;
 			}
 
-			return (
+			if (
 				helpers.isGetQueryVariant(argumentProperty) ||
 				helpers.isFindQueryVariant(argumentProperty)
-			);
+			) {
+				context.report({
+					node: argumentProperty,
+					messageId: 'preferQueryByDisappearance',
+				});
+				return true;
+			}
+			return false;
 		}
 
-		function isNonCallbackViolation(node: TSESTree.CallExpressionArgument) {
+		function checkNonCallbackViolation(node: TSESTree.CallExpressionArgument) {
 			if (!isCallExpression(node)) {
 				return false;
 			}
@@ -107,7 +122,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 			return isReturnViolation(statement) || isNonReturnViolation(statement);
 		}
 
-		function isFunctionExpressionViolation(
+		function checkFunctionExpressionViolation(
 			node: TSESTree.CallExpressionArgument
 		) {
 			if (!isFunctionExpression(node)) {
@@ -148,7 +163,9 @@ export default createTestingLibraryRule<Options, MessageIds>({
 			return isReportableExpression(node.body.callee);
 		}
 
-		function isArrowFunctionViolation(node: TSESTree.CallExpressionArgument) {
+		function checkArrowFunctionViolation(
+			node: TSESTree.CallExpressionArgument
+		) {
 			return (
 				isArrowFunctionBodyViolation(node) ||
 				isArrowFunctionImplicitReturnViolation(node)
@@ -162,18 +179,9 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
 			const argumentNode = node.arguments[0];
 
-			if (
-				!isNonCallbackViolation(argumentNode) &&
-				!isArrowFunctionViolation(argumentNode) &&
-				!isFunctionExpressionViolation(argumentNode)
-			) {
-				return;
-			}
-
-			context.report({
-				node: argumentNode,
-				messageId: 'preferQueryByDisappearance',
-			});
+			checkNonCallbackViolation(argumentNode);
+			checkArrowFunctionViolation(argumentNode);
+			checkFunctionExpressionViolation(argumentNode);
 		}
 
 		return {
