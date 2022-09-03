@@ -50,7 +50,13 @@ export default createTestingLibraryRule<Options, MessageIds>({
 			return helpers.isAsyncUtil(identifierNode, ['waitForElementToBeRemoved']);
 		}
 
-		function isReportableExpression(node: TSESTree.LeftHandSideExpression) {
+		/**
+		 * Checks if node is reportable (starts with "get" or "find") and if it is, reports it with `context.report()`.
+		 *
+		 * @param {TSESTree.LeftHandSideExpression} node - Node to be tested
+		 * @returns {Boolean} Boolean indicating if expression was reported
+		 */
+		function reportExpression(node: TSESTree.LeftHandSideExpression): boolean {
 			const argumentProperty = isMemberExpression(node)
 				? getPropertyIdentifierNode(node.property)
 				: getPropertyIdentifierNode(node);
@@ -59,13 +65,20 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				return false;
 			}
 
-			return (
+			if (
 				helpers.isGetQueryVariant(argumentProperty) ||
 				helpers.isFindQueryVariant(argumentProperty)
-			);
+			) {
+				context.report({
+					node: argumentProperty,
+					messageId: 'preferQueryByDisappearance',
+				});
+				return true;
+			}
+			return false;
 		}
 
-		function isNonCallbackViolation(node: TSESTree.CallExpressionArgument) {
+		function checkNonCallbackViolation(node: TSESTree.CallExpressionArgument) {
 			if (!isCallExpression(node)) {
 				return false;
 			}
@@ -77,7 +90,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				return false;
 			}
 
-			return isReportableExpression(node.callee);
+			return reportExpression(node.callee);
 		}
 
 		function isReturnViolation(node: TSESTree.Statement) {
@@ -85,7 +98,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				return false;
 			}
 
-			return isReportableExpression(node.argument.callee);
+			return reportExpression(node.argument.callee);
 		}
 
 		function isNonReturnViolation(node: TSESTree.Statement) {
@@ -100,14 +113,14 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				return false;
 			}
 
-			return isReportableExpression(node.expression.callee);
+			return reportExpression(node.expression.callee);
 		}
 
 		function isStatementViolation(statement: TSESTree.Statement) {
 			return isReturnViolation(statement) || isNonReturnViolation(statement);
 		}
 
-		function isFunctionExpressionViolation(
+		function checkFunctionExpressionViolation(
 			node: TSESTree.CallExpressionArgument
 		) {
 			if (!isFunctionExpression(node)) {
@@ -145,10 +158,12 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				return false;
 			}
 
-			return isReportableExpression(node.body.callee);
+			return reportExpression(node.body.callee);
 		}
 
-		function isArrowFunctionViolation(node: TSESTree.CallExpressionArgument) {
+		function checkArrowFunctionViolation(
+			node: TSESTree.CallExpressionArgument
+		) {
 			return (
 				isArrowFunctionBodyViolation(node) ||
 				isArrowFunctionImplicitReturnViolation(node)
@@ -162,18 +177,9 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
 			const argumentNode = node.arguments[0];
 
-			if (
-				!isNonCallbackViolation(argumentNode) &&
-				!isArrowFunctionViolation(argumentNode) &&
-				!isFunctionExpressionViolation(argumentNode)
-			) {
-				return;
-			}
-
-			context.report({
-				node: argumentNode,
-				messageId: 'preferQueryByDisappearance',
-			});
+			checkNonCallbackViolation(argumentNode);
+			checkArrowFunctionViolation(argumentNode);
+			checkFunctionExpressionViolation(argumentNode);
 		}
 
 		return {
