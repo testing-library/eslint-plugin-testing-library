@@ -51,14 +51,12 @@ export default createTestingLibraryRule<Options, MessageIds>({
 		}
 
 		/**
-		 * Checks if a node is a query node and starts with "get" or "find".
+		 * Checks if node is reportable (starts with "get" or "find") and if it is, reports it with `context.report()`.
 		 *
 		 * @param {TSESTree.LeftHandSideExpression} node - Node to be tested
-		 * @returns {Boolean} True if node should be reported and reports it with `context.report()`. False if node should not be reported.
+		 * @returns {Boolean} Boolean indicating if expression was reported
 		 */
-		function isReportableExpression(
-			node: TSESTree.LeftHandSideExpression
-		): boolean {
+		function reportExpression(node: TSESTree.LeftHandSideExpression): boolean {
 			const argumentProperty = isMemberExpression(node)
 				? getPropertyIdentifierNode(node.property)
 				: getPropertyIdentifierNode(node);
@@ -92,7 +90,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				return false;
 			}
 
-			return isReportableExpression(node.callee);
+			return reportExpression(node.callee);
 		}
 
 		function isReturnViolation(node: TSESTree.Statement) {
@@ -100,7 +98,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				return false;
 			}
 
-			return isReportableExpression(node.argument.callee);
+			return reportExpression(node.argument.callee);
 		}
 
 		function isNonReturnViolation(node: TSESTree.Statement) {
@@ -115,7 +113,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				return false;
 			}
 
-			return isReportableExpression(node.expression.callee);
+			return reportExpression(node.expression.callee);
 		}
 
 		function isStatementViolation(statement: TSESTree.Statement) {
@@ -160,7 +158,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				return false;
 			}
 
-			return isReportableExpression(node.body.callee);
+			return reportExpression(node.body.callee);
 		}
 
 		function checkArrowFunctionViolation(
