@@ -523,6 +523,16 @@
         "test",
         "doc"
       ]
+    },
+    {
+      "login": "sjarva",
+      "name": "Senja",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1133238?v=4",
+      "profile": "https://github.com/sjarva",
+      "contributions": [
+        "code",
+        "test"
+      ]
     }
   ],
   "contributorsPerLine": 7,
