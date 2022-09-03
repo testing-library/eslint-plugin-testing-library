@@ -408,6 +408,9 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <td align="center"><a href="https://github.com/IvanAprea"><img src="https://avatars.githubusercontent.com/u/54630721?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Ivan Aprea</b></sub></a><br /><a href="https://github.com/testing-library/eslint-plugin-testing-library/commits?author=IvanAprea" title="Code">💻</a> <a href="https://github.com/testing-library/eslint-plugin-testing-library/commits?author=IvanAprea" title="Tests">⚠️</a></td>
     <td align="center"><a href="https://semigradsky.dev/"><img src="https://avatars.githubusercontent.com/u/1198848?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Dmitry Semigradsky</b></sub></a><br /><a href="https://github.com/testing-library/eslint-plugin-testing-library/commits?author=Semigradsky" title="Code">💻</a> <a href="https://github.com/testing-library/eslint-plugin-testing-library/commits?author=Semigradsky" title="Tests">⚠️</a> <a href="https://github.com/testing-library/eslint-plugin-testing-library/commits?author=Semigradsky" title="Documentation">📖</a></td>
   </tr>
+  <tr>
+    <td align="center"><a href="https://github.com/sjarva"><img src="https://avatars.githubusercontent.com/u/1133238?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Senja</b></sub></a><br /><a href="https://github.com/testing-library/eslint-plugin-testing-library/commits?author=sjarva" title="Code">💻</a> <a href="https://github.com/testing-library/eslint-plugin-testing-library/commits?author=sjarva" title="Tests">⚠️</a></td>
+  </tr>
 </table>
 
 <!-- markdownlint-restore -->
