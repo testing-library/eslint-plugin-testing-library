@@ -151,6 +151,28 @@ ruleTester.run(RULE_NAME, rule, {
       `,
 		},
 		{
+			code: `async() => {
+		const delay = 10
+        await userEvent.keyboard('foo', {delay})
+      }
+      `,
+		},
+		{
+			code: `async() => {
+		const delay = 10
+        await userEvent.type(element, text, {delay})
+      }
+      `,
+		},
+		{
+			code: `async() => {
+		let delay = 0
+        delay = 10
+        await userEvent.type(element, text, {delay})
+      }
+      `,
+		},
+		{
 			settings: { 'testing-library/utils-module': 'test-utils' },
 			code: `
         import { fireEvent } from 'somewhere-else';
@@ -366,6 +388,57 @@ ruleTester.run(RULE_NAME, rule, {
 					column: 17,
 					messageId: 'noAwaitSyncEvents',
 					data: { name: 'renamedUserEvent.keyboard' },
+				},
+			],
+		},
+		{
+			code: `async() => {
+          const delay = 0
+          await userEvent.type('foo', { delay });
+        }
+      `,
+			errors: [
+				{
+					line: 3,
+					column: 17,
+					messageId: 'noAwaitSyncEvents',
+					data: { name: 'userEvent.type' },
+				},
+			],
+		},
+		{
+			code: `async() => {
+          const delay = 0
+		  const somethingElse = true
+		  const skipHover = true
+          await userEvent.type('foo', { delay, skipHover });
+        }
+      `,
+			errors: [
+				{
+					line: 5,
+					column: 17,
+					messageId: 'noAwaitSyncEvents',
+					data: { name: 'userEvent.type' },
+				},
+			],
+		},
+		{
+			code: `async() => {
+		  let delay = 0
+		  const somethingElse = true
+		  const skipHover = true
+		  delay = 15
+		  delay = 0
+          await userEvent.type('foo', { delay, skipHover });
+        }
+      `,
+			errors: [
+				{
+					line: 7,
+					column: 17,
+					messageId: 'noAwaitSyncEvents',
+					data: { name: 'userEvent.type' },
 				},
 			],
 		},
