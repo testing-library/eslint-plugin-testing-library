@@ -56,6 +56,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
 	create(context, [options], helpers) {
 		const { eventModules = VALID_EVENT_MODULES } = options;
+		let hasDelayDeclarationOrAssignmentGTZero: boolean;
 
 		// userEvent.type() and userEvent.keyboard() are exceptions, which returns a
 		// Promise. But it is only necessary to wait when delay option other than 0
@@ -63,6 +64,30 @@ export default createTestingLibraryRule<Options, MessageIds>({
 		//  - userEvent.type(element, 'abc', {delay: 1234})
 		//  - userEvent.keyboard('abc', {delay: 1234})
 		return {
+			VariableDeclaration(node: TSESTree.VariableDeclaration) {
+				// Case delay has been declared outside of call expression's arguments
+				// Let's save the info if it is greater than zero
+				hasDelayDeclarationOrAssignmentGTZero = node.declarations.some(
+					(property) =>
+						ASTUtils.isIdentifier(property.id) &&
+						property.id.name === 'delay' &&
+						isLiteral(property.init) &&
+						property.init.value &&
+						property.init.value > 0
+				);
+			},
+			AssignmentExpression(node: TSESTree.AssignmentExpression) {
+				// Case delay has been assigned or re-assigned outside of call expression's arguments
+				// Let's save the info if it is greater than zero
+				if (
+					ASTUtils.isIdentifier(node.left) &&
+					node.left.name === 'delay' &&
+					isLiteral(node.right) &&
+					node.right.value !== null
+				) {
+					hasDelayDeclarationOrAssignmentGTZero = node.right.value > 0;
+				}
+			},
 			'AwaitExpression > CallExpression'(node: TSESTree.CallExpression) {
 				const simulateEventFunctionIdentifier = getDeepestIdentifierNode(node);
 
@@ -91,7 +116,20 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
 				const lastArg = node.arguments[node.arguments.length - 1];
 
-				const hasDelay =
+				// Checking if there's a delay property
+				// Note: delay's value may have declared or assigned somewhere else (as a variable declaration or as an assignment expression)
+				// or right after this (as a literal)
+				const hasDelayProperty =
+					isObjectExpression(lastArg) &&
+					lastArg.properties.some(
+						(property) =>
+							isProperty(property) &&
+							ASTUtils.isIdentifier(property.key) &&
+							property.key.name === 'delay'
+					);
+
+				// In case delay's value has been declared as a literal
+				const hasDelayLiteralGTZero =
 					isObjectExpression(lastArg) &&
 					lastArg.properties.some(
 						(property) =>
@@ -107,7 +145,8 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
 				if (
 					USER_EVENT_ASYNC_EXCEPTIONS.includes(simulateEventFunctionName) &&
-					hasDelay
+					hasDelayProperty &&
+					(hasDelayDeclarationOrAssignmentGTZero || hasDelayLiteralGTZero)
 				) {
 					return;
 				}
