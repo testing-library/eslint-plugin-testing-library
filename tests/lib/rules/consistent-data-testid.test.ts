@@ -200,6 +200,67 @@ const validTestCases: ValidTestCase[] = [
         `,
 		options: [{ testIdPattern: 'somethingElse' }],
 	},
+	// To fix issue 509, https://github.com/testing-library/eslint-plugin-testing-library/issues/509
+	// Gatsby.js ja Next.js use square brackets in filenames to create dynamic routes
+	{
+		code: `
+            import React from 'react';
+            
+            const TestComponent = props => {
+              return (
+                <div data-testid="__CoolStuff">
+                  Hello
+                </div>
+              )
+            };
+          `,
+		options: [
+			{
+				testIdPattern: '^{fileName}(__([A-Z]+[a-z]*?)+)*$',
+			},
+		],
+		filename: '/my/cool/file/path/[client-only].js',
+	},
+	{
+		code: `
+            import React from 'react';
+            
+            const TestComponent = props => {
+              return (
+                <div data-testid="__CoolStuff">
+                  Hello
+                </div>
+              )
+            };
+          `,
+		options: [
+			{
+				// should work if given the {fileName} placeholder
+				testIdPattern: '^{fileName}(__([A-Z]+[a-z]*?)+)*$',
+			},
+		],
+		filename: '/my/cool/file/path/[...wildcard].js',
+	},
+	{
+		code: `
+            import React from 'react';
+            
+            const TestComponent = props => {
+              return (
+                <div data-testid="__CoolStuff">
+                  Hello
+                </div>
+              )
+            };
+          `,
+		options: [
+			{
+				// should work also if not given the {fileName} placeholder
+				testIdPattern: '^(__([A-Z]+[a-z]*?)+)*$',
+			},
+		],
+		filename: '/my/cool/file/path/[...wildcard].js',
+	},
 ];
 const invalidTestCases: InvalidTestCase[] = [
 	{
