@@ -531,7 +531,8 @@
       "profile": "https://github.com/sjarva",
       "contributions": [
         "code",
-        "test"
+        "test",
+        "doc"
       ]
     }
   ],
