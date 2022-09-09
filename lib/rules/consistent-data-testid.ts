@@ -74,6 +74,12 @@ export default createTestingLibraryRule<Options, MessageIds>({
 		function getFileNameData() {
 			const splitPath = getFilename().split('/');
 			const fileNameWithExtension = splitPath.pop() ?? '';
+			if (
+				fileNameWithExtension.includes('[') ||
+				fileNameWithExtension.includes(']')
+			) {
+				return { fileName: undefined };
+			}
 			const parent = splitPath.pop();
 			const fileName = fileNameWithExtension.split('.').shift();
 
