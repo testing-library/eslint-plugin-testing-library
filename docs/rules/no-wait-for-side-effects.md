@@ -74,6 +74,15 @@ Examples of **correct** code for this rule:
   });
 
   // or
+  userEvent.click(button);
+  await waitFor(function() {
+    expect(b).toEqual('b');
+  }).then(() => {
+    // Outside of waitFor, e.g. inside a .then() side effects are allowed
+    fireEvent.click(button);
+  });
+
+  // or
   render(<App />)
   await waitFor(() => {
     expect(b).toEqual('b');

@@ -1,4 +1,4 @@
-import { TSESTree } from '@typescript-eslint/utils';
+import { ASTUtils, TSESTree } from '@typescript-eslint/utils';
 
 import { createTestingLibraryRule } from '../create-testing-library-rule';
 import {
@@ -8,6 +8,7 @@ import {
 	isAssignmentExpression,
 	isCallExpression,
 	isSequenceExpression,
+	isMemberExpression,
 } from '../node-utils';
 
 export const RULE_NAME = 'no-wait-for-side-effects';
@@ -54,6 +55,27 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				!!callExpressionIdentifier &&
 				helpers.isAsyncUtil(callExpressionIdentifier, ['waitFor'])
 			);
+		}
+
+		function isCallerThen(
+			node:
+				| TSESTree.AssignmentExpression
+				| TSESTree.BlockStatement
+				| TSESTree.CallExpression
+				| TSESTree.SequenceExpression
+		): boolean {
+			if (!node.parent) {
+				return false;
+			}
+
+			const callExpressionNode = node.parent.parent as TSESTree.CallExpression;
+
+			const test =
+				isMemberExpression(callExpressionNode.callee) &&
+				ASTUtils.isIdentifier(callExpressionNode.callee.property) &&
+				callExpressionNode.callee.property.name === 'then';
+
+			return test;
 		}
 
 		function isRenderInVariableDeclaration(node: TSESTree.Node) {
@@ -134,6 +156,10 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
 		function reportSideEffects(node: TSESTree.BlockStatement) {
 			if (!isCallerWaitFor(node)) {
+				return;
+			}
+
+			if (isCallerThen(node)) {
 				return;
 			}
 
