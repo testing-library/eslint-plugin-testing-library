@@ -739,7 +739,7 @@ ruleTester.run(RULE_NAME, rule, {
 				// Issue #500, https://github.com/testing-library/eslint-plugin-testing-library/issues/500
 				code: `
         import { waitFor } from '${testingFramework}';
-        await waitFor(function() {
+        waitFor(function() {
           userEvent.click(button)
           expect(b).toEqual('b')
         }).then(() => {
