@@ -106,7 +106,7 @@ ruleTester.run(RULE_NAME, rule, {
 				code: `
           import { waitFor } from '${testingFramework}';
           userEvent.click(button)
-          await waitFor(function() {
+          waitFor(function() {
             expect(b).toEqual('b')
           }).then(() => {
             // Side effects are allowed inside .then()
@@ -753,7 +753,7 @@ ruleTester.run(RULE_NAME, rule, {
 				// Issue #500, https://github.com/testing-library/eslint-plugin-testing-library/issues/500
 				code: `
         import { waitFor } from '${testingFramework}';
-        await waitFor(function() {
+        waitFor(function() {
           userEvent.click(button)
           expect(b).toEqual('b')
         }).then(() => {
