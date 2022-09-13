@@ -1,4 +1,4 @@
-import { ASTUtils, TSESTree } from '@typescript-eslint/utils';
+import { TSESTree } from '@typescript-eslint/utils';
 
 import { createTestingLibraryRule } from '../create-testing-library-rule';
 import {
@@ -8,7 +8,7 @@ import {
 	isAssignmentExpression,
 	isCallExpression,
 	isSequenceExpression,
-	isMemberExpression,
+	hasThenProperty,
 } from '../node-utils';
 
 export const RULE_NAME = 'no-wait-for-side-effects';
@@ -70,12 +70,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
 			const callExpressionNode = node.parent.parent as TSESTree.CallExpression;
 
-			const test =
-				isMemberExpression(callExpressionNode.callee) &&
-				ASTUtils.isIdentifier(callExpressionNode.callee.property) &&
-				callExpressionNode.callee.property.name === 'then';
-
-			return test;
+			return hasThenProperty(callExpressionNode.callee);
 		}
 
 		function isRenderInVariableDeclaration(node: TSESTree.Node) {
