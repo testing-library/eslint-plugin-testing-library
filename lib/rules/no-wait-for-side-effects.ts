@@ -8,6 +8,7 @@ import {
 	isAssignmentExpression,
 	isCallExpression,
 	isSequenceExpression,
+	hasThenProperty,
 } from '../node-utils';
 
 export const RULE_NAME = 'no-wait-for-side-effects';
@@ -54,6 +55,22 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				!!callExpressionIdentifier &&
 				helpers.isAsyncUtil(callExpressionIdentifier, ['waitFor'])
 			);
+		}
+
+		function isCallerThen(
+			node:
+				| TSESTree.AssignmentExpression
+				| TSESTree.BlockStatement
+				| TSESTree.CallExpression
+				| TSESTree.SequenceExpression
+		): boolean {
+			if (!node.parent) {
+				return false;
+			}
+
+			const callExpressionNode = node.parent.parent as TSESTree.CallExpression;
+
+			return hasThenProperty(callExpressionNode.callee);
 		}
 
 		function isRenderInVariableDeclaration(node: TSESTree.Node) {
@@ -134,6 +151,10 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
 		function reportSideEffects(node: TSESTree.BlockStatement) {
 			if (!isCallerWaitFor(node)) {
+				return;
+			}
+
+			if (isCallerThen(node)) {
 				return;
 			}
 

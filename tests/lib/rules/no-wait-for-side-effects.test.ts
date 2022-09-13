@@ -101,6 +101,19 @@ ruleTester.run(RULE_NAME, rule, {
           })
         `,
 			},
+			{
+				// Issue #500, https://github.com/testing-library/eslint-plugin-testing-library/issues/500
+				code: `
+          import { waitFor } from '${testingFramework}';
+          userEvent.click(button)
+          waitFor(function() {
+            expect(b).toEqual('b')
+          }).then(() => {
+            // Side effects are allowed inside .then()
+            userEvent.click(button);
+          })
+        `,
+			},
 		]),
 		{
 			settings: { 'testing-library/utils-module': 'test-utils' },
@@ -721,6 +734,41 @@ ruleTester.run(RULE_NAME, rule, {
         })
       `,
 				errors: [{ line: 4, column: 11, messageId: 'noSideEffectsWaitFor' }],
+			} as const,
+			{
+				// Issue #500, https://github.com/testing-library/eslint-plugin-testing-library/issues/500
+				code: `
+        import { waitFor } from '${testingFramework}';
+        waitFor(function() {
+          userEvent.click(button)
+          expect(b).toEqual('b')
+        }).then(() => {
+          userEvent.click(button) // Side effects are allowed inside .then()
+          expect(b).toEqual('b') 
+        })
+      `,
+				errors: [{ line: 4, column: 11, messageId: 'noSideEffectsWaitFor' }],
+			} as const,
+			{
+				// Issue #500, https://github.com/testing-library/eslint-plugin-testing-library/issues/500
+				code: `
+        import { waitFor } from '${testingFramework}';
+        waitFor(function() {
+          userEvent.click(button)
+          expect(b).toEqual('b')
+        }).then(() => {
+          userEvent.click(button) // Side effects are allowed inside .then()
+          expect(b).toEqual('b')
+          await waitFor(() => {
+            fireEvent.keyDown(input, {key: 'ArrowDown'}) // But not if there is a another waitFor with side effects inside the .then()
+            expect(b).toEqual('b')
+          })
+        })
+      `,
+				errors: [
+					{ line: 4, column: 11, messageId: 'noSideEffectsWaitFor' },
+					{ line: 10, column: 13, messageId: 'noSideEffectsWaitFor' },
+				],
 			} as const,
 		]),
 
