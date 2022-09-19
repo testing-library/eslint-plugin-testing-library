@@ -231,7 +231,6 @@ To enable this configuration use the `extends` property in your
 | [`prefer-query-by-disappearance`](./docs/rules/prefer-query-by-disappearance.md)     | Suggest using `queryBy*` queries when waiting for disappearance                              |     | ![dom-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] ![marko-badge][] |
 | [`prefer-screen-queries`](./docs/rules/prefer-screen-queries.md)                     | Suggest using `screen` while querying                                                        |     | ![dom-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] ![marko-badge][] |
 | [`prefer-user-event`](./docs/rules/prefer-user-event.md)                             | Suggest using `userEvent` over `fireEvent` for simulating user interactions                  |     |                                                                                    |
-| [`prefer-wait-for`](./docs/rules/prefer-wait-for.md)                                 | Use `waitFor` instead of deprecated wait methods                                             | 🔧  |                                                                                    |
 | [`render-result-naming-convention`](./docs/rules/render-result-naming-convention.md) | Enforce a valid naming for return value from `render`                                        |     | ![angular-badge][] ![react-badge][] ![vue-badge][] ![marko-badge][]                |
 
 <!-- RULES-LIST:END -->
