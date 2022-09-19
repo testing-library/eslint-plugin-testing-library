@@ -7,7 +7,7 @@ body:
     attributes:
       label: Name for new rule
       description: Suggest a name for the new rule that follows the [rule naming conventions](https://github.com/testing-library/eslint-plugin-testing-library/blob/main/CONTRIBUTING.md#rule-naming-conventions).
-      placeholder: prefer-wait-for
+      placeholder: prefer-find-by
     validations:
       required: true
 
