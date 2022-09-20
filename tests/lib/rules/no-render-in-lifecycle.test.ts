@@ -1,4 +1,4 @@
-import rule, { RULE_NAME } from '../../../lib/rules/no-render-in-setup';
+import rule, { RULE_NAME } from '../../../lib/rules/no-render-in-lifecycle';
 import { TESTING_FRAMEWORK_SETUP_HOOKS } from '../../../lib/utils';
 import { createRuleTester } from '../test-utils';
 
