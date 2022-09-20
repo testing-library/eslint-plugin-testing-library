@@ -1,4 +1,4 @@
-# Disallow the use of `render` in setup functions (`testing-library/no-render-in-setup`)
+# Disallow the use of `render` in setup functions (`testing-library/no-render-in-lifecycle`)
 
 ## Rule Details
 
@@ -77,5 +77,5 @@ it('Should have foo and bar', () => {
 If you would like to allow the use of `render` (or a custom render function) in _either_ `beforeAll` or `beforeEach`, this can be configured using the option `allowTestingFrameworkSetupHook`. This may be useful if you have configured your tests to [skip auto cleanup](https://testing-library.com/docs/react-testing-library/setup#skipping-auto-cleanup). `allowTestingFrameworkSetupHook` is an enum that accepts either `"beforeAll"` or `"beforeEach"`.
 
 ```
-   "testing-library/no-render-in-setup": ["error", {"allowTestingFrameworkSetupHook": "beforeAll"}],
+   "testing-library/no-render-in-lifecycle": ["error", {"allowTestingFrameworkSetupHook": "beforeAll"}],
 ```
