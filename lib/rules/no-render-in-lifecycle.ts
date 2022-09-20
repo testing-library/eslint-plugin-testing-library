@@ -9,7 +9,7 @@ import {
 } from '../node-utils';
 import { TESTING_FRAMEWORK_SETUP_HOOKS } from '../utils';
 
-export const RULE_NAME = 'no-render-in-setup';
+export const RULE_NAME = 'no-render-in-lifecycle';
 export type MessageIds = 'noRenderInSetup';
 type Options = [
 	{
