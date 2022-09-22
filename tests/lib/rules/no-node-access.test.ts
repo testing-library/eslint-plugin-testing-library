@@ -324,5 +324,22 @@ ruleTester.run(RULE_NAME, rule, {
 				},
 			],
 		},
+		{
+			code: `
+        import { render } from '${testingFramework}';
+
+        const { container } = render(<ul><li>item</li><li>item</li></ul>)
+
+        expect(container.childElementCount).toBe(2)
+      `,
+			errors: [
+				{
+					// error points to `childElementCount`
+					line: 6,
+					column: 26,
+					messageId: 'noNodeAccess',
+				},
+			],
+		},
 	]),
 });
