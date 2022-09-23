@@ -411,6 +411,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     </tr>
     <tr>
       <td align="center"><a href="https://github.com/sjarva"><img src="https://avatars.githubusercontent.com/u/1133238?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Senja</b></sub></a><br /><a href="https://github.com/testing-library/eslint-plugin-testing-library/commits?author=sjarva" title="Code">💻</a> <a href="https://github.com/testing-library/eslint-plugin-testing-library/commits?author=sjarva" title="Tests">⚠️</a> <a href="https://github.com/testing-library/eslint-plugin-testing-library/commits?author=sjarva" title="Documentation">📖</a></td>
+      <td align="center"><a href="https://dbrno.vercel.app"><img src="https://avatars.githubusercontent.com/u/106157862?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Breno Cota</b></sub></a><br /><a href="https://github.com/testing-library/eslint-plugin-testing-library/commits?author=brenocota-hotmart" title="Code">💻</a> <a href="https://github.com/testing-library/eslint-plugin-testing-library/commits?author=brenocota-hotmart" title="Tests">⚠️</a></td>
     </tr>
   </tbody>
 </table>
