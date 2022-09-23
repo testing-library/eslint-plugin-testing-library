@@ -83,6 +83,7 @@ const TESTING_FRAMEWORK_SETUP_HOOKS = ['beforeEach', 'beforeAll'];
 const PROPERTIES_RETURNING_NODES = [
 	'activeElement',
 	'children',
+	'childElementCount',
 	'firstChild',
 	'firstElementChild',
 	'fullscreenElement',
