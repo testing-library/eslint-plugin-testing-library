@@ -59,6 +59,13 @@ export default createTestingLibraryRule<Options, MessageIds>({
 					return;
 				}
 
+				if (
+					ASTUtils.isIdentifier(node.object) &&
+					node.object.name === 'props'
+				) {
+					return;
+				}
+
 				context.report({
 					node,
 					loc: node.property.loc.start,
