@@ -203,5 +203,17 @@ ruleTester.run(RULE_NAME, rule, {
 			code: 'require("@testing-library/dom")',
 			errors: [{ messageId: 'noDomImport' }],
 		},
+		{
+			code: `
+			require("@testing-library/dom");
+			require("@testing-library/react");`,
+			errors: [{ line: 2, messageId: 'noDomImport' }],
+		},
+		{
+			code: `
+			import { render } from '@testing-library/react';
+			import { screen } from '@testing-library/dom';`,
+			errors: [{ line: 3, messageId: 'noDomImport' }],
+		},
 	],
 });
