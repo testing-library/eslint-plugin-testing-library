@@ -105,5 +105,4 @@ Example:
 ## Notes
 
 - Since `user-event` v14 all its methods are async, so you should disable reporting them by setting the `eventModules` to just `"fire-event"` so `user-event` methods are not reported.
-- There is another rule `await-fire-event`, which is only in Vue Testing
-  Library. Please do not confuse with this rule.
+- There is another rule `await-async-event`, which is for awaiting async events for `user-event` v14 or `fire-event` only in Vue Testing Library. Please do not confuse with this rule.
