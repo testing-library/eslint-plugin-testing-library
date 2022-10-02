@@ -1,4 +1,4 @@
-import { ASTUtils, TSESTree } from '@typescript-eslint/utils';
+import { ASTUtils, TSESLint, TSESTree } from '@typescript-eslint/utils';
 
 import { createTestingLibraryRule } from '../create-testing-library-rule';
 import {
@@ -6,6 +6,7 @@ import {
 	getFunctionName,
 	getInnermostReturningFunction,
 	getVariableReferences,
+	isMemberExpression,
 	isPromiseHandled,
 } from '../node-utils';
 import { EVENTS_SIMULATORS } from '../utils';
@@ -41,6 +42,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 			awaitAsyncEventWrapper:
 				'Promise returned from `{{ name }}` wrapper over async event method must be handled',
 		},
+		fixable: 'code',
 		schema: [
 			{
 				type: 'object',
@@ -76,16 +78,23 @@ export default createTestingLibraryRule<Options, MessageIds>({
 	create(context, [options], helpers) {
 		const functionWrappersNames: string[] = [];
 
-		function reportUnhandledNode(
-			node: TSESTree.Identifier,
-			closestCallExpressionNode: TSESTree.CallExpression,
-			messageId: MessageIds = 'awaitAsyncEvent'
-		): void {
+		function reportUnhandledNode({
+			node,
+			closestCallExpression,
+			messageId = 'awaitAsyncEvent',
+			fix,
+		}: {
+			node: TSESTree.Identifier;
+			closestCallExpression: TSESTree.CallExpression;
+			messageId?: MessageIds;
+			fix?: TSESLint.ReportFixFunction;
+		}): void {
 			if (!isPromiseHandled(node)) {
 				context.report({
-					node: closestCallExpressionNode.callee,
+					node: closestCallExpression.callee,
 					messageId,
 					data: { name: node.name },
+					fix,
 				});
 			}
 		}
@@ -128,14 +137,24 @@ export default createTestingLibraryRule<Options, MessageIds>({
 					);
 
 					if (references.length === 0) {
-						reportUnhandledNode(node, closestCallExpression);
+						reportUnhandledNode({
+							node,
+							closestCallExpression,
+							fix: (fixer) => {
+								if (isMemberExpression(node.parent)) {
+									return fixer.insertTextBefore(node.parent, 'await ');
+								}
+
+								return null;
+							},
+						});
 					} else {
 						for (const reference of references) {
 							if (ASTUtils.isIdentifier(reference.identifier)) {
-								reportUnhandledNode(
-									reference.identifier,
-									closestCallExpression
-								);
+								reportUnhandledNode({
+									node: reference.identifier,
+									closestCallExpression,
+								});
 							}
 						}
 					}
@@ -151,11 +170,14 @@ export default createTestingLibraryRule<Options, MessageIds>({
 						return;
 					}
 
-					reportUnhandledNode(
+					reportUnhandledNode({
 						node,
 						closestCallExpression,
-						'awaitAsyncEventWrapper'
-					);
+						messageId: 'awaitAsyncEventWrapper',
+						fix: (fixer) => {
+							return fixer.insertTextBefore(node, 'await ');
+						},
+					});
 				}
 			},
 		};

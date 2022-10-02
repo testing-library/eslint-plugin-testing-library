@@ -359,6 +359,12 @@ ruleTester.run(RULE_NAME, rule, {
 							},
 						],
 						options: [{ eventModule: 'fireEvent' }],
+						output: `
+      import { fireEvent } from '${testingFramework}'
+      test('unhandled promise from event method is invalid', async () => {
+        await fireEvent.${eventMethod}(getByLabelText('username'))
+      })
+      `,
 					} as const)
 			),
 			...FIRE_EVENT_ASYNC_FUNCTIONS.map(
@@ -380,6 +386,12 @@ ruleTester.run(RULE_NAME, rule, {
 							},
 						],
 						options: [{ eventModule: 'fireEvent' }],
+						output: `
+      import { fireEvent as testingLibraryFireEvent } from '${testingFramework}'
+      test('unhandled promise from aliased event method is invalid', async () => {
+        await testingLibraryFireEvent.${eventMethod}(getByLabelText('username'))
+      })
+      `,
 					} as const)
 			),
 			...FIRE_EVENT_ASYNC_FUNCTIONS.map(
@@ -401,6 +413,12 @@ ruleTester.run(RULE_NAME, rule, {
 							},
 						],
 						options: [{ eventModule: 'fireEvent' }],
+						output: `
+      import * as testingLibrary from '${testingFramework}'
+      test('unhandled promise from wildcard imported event method is invalid', async () => {
+        await testingLibrary.fireEvent.${eventMethod}(getByLabelText('username'))
+      })
+      `,
 					} as const)
 			),
 			...FIRE_EVENT_ASYNC_FUNCTIONS.map(
@@ -428,6 +446,13 @@ ruleTester.run(RULE_NAME, rule, {
 							},
 						],
 						options: [{ eventModule: 'fireEvent' }],
+						output: `
+      import { fireEvent } from '${testingFramework}'
+      test('several unhandled promises from event methods is invalid', async () => {
+        await fireEvent.${eventMethod}(getByLabelText('username'))
+        await fireEvent.${eventMethod}(getByLabelText('username'))
+      })
+      `,
 					} as const)
 			),
 			...FIRE_EVENT_ASYNC_FUNCTIONS.map(
@@ -451,6 +476,12 @@ ruleTester.run(RULE_NAME, rule, {
 							},
 						],
 						options: [{ eventModule: 'fireEvent' }],
+						output: `
+      import { fireEvent } from '${testingFramework}'
+      test('unhandled promise from event method with aggressive reporting opted-out is invalid', async () => {
+        await fireEvent.${eventMethod}(getByLabelText('username'))
+      })
+      `,
 					} as const)
 			),
 			...FIRE_EVENT_ASYNC_FUNCTIONS.map(
@@ -476,6 +507,14 @@ ruleTester.run(RULE_NAME, rule, {
 							},
 						],
 						options: [{ eventModule: 'fireEvent' }],
+						output: `
+      import { fireEvent } from 'test-utils'
+      test(
+      'unhandled promise from event method imported from custom module with aggressive reporting opted-out is invalid',
+      () => {
+        await fireEvent.${eventMethod}(getByLabelText('username'))
+      })
+      `,
 					} as const)
 			),
 			...FIRE_EVENT_ASYNC_FUNCTIONS.map(
@@ -501,6 +540,14 @@ ruleTester.run(RULE_NAME, rule, {
 							},
 						],
 						options: [{ eventModule: 'fireEvent' }],
+						output: `
+      import { fireEvent } from '${testingFramework}'
+      test(
+      'unhandled promise from event method imported from default module with aggressive reporting opted-out is invalid',
+      () => {
+        await fireEvent.${eventMethod}(getByLabelText('username'))
+      })
+      `,
 					} as const)
 			),
 
@@ -524,6 +571,14 @@ ruleTester.run(RULE_NAME, rule, {
 							},
 						],
 						options: [{ eventModule: 'fireEvent' }],
+						output: `
+      import { fireEvent } from '${testingFramework}'
+      test(
+      'unhandled promise from event method kept in a var is invalid',
+      () => {
+        const promise = await fireEvent.${eventMethod}(getByLabelText('username'))
+      })
+      `,
 					} as const)
 			),
 			...FIRE_EVENT_ASYNC_FUNCTIONS.map(
@@ -549,6 +604,17 @@ ruleTester.run(RULE_NAME, rule, {
 							},
 						],
 						options: [{ eventModule: 'fireEvent' }],
+						output: `
+      import { fireEvent } from '${testingFramework}'
+      test('unhandled promise returned from function wrapping event method is invalid', () => {
+        function triggerEvent() {
+          doSomething()
+          return fireEvent.${eventMethod}(getByLabelText('username'))
+        }
+
+        await triggerEvent()
+      })
+      `,
 					} as const)
 			),
 		]),
@@ -572,6 +638,12 @@ ruleTester.run(RULE_NAME, rule, {
 							},
 						],
 						options: [{ eventModule: 'userEvent' }],
+						output: `
+      import userEvent from '${testingFramework}'
+      test('unhandled promise from event method is invalid', async () => {
+        await userEvent.${eventMethod}(getByLabelText('username'))
+      })
+      `,
 					} as const)
 			),
 			...USER_EVENT_ASYNC_FUNCTIONS.map(
@@ -593,6 +665,12 @@ ruleTester.run(RULE_NAME, rule, {
 							},
 						],
 						options: [{ eventModule: 'userEvent' }],
+						output: `
+      import testingLibraryUserEvent from '${testingFramework}'
+      test('unhandled promise imported from alternate name event method is invalid', async () => {
+        await testingLibraryUserEvent.${eventMethod}(getByLabelText('username'))
+      })
+      `,
 					} as const)
 			),
 			...USER_EVENT_ASYNC_FUNCTIONS.map(
@@ -620,6 +698,13 @@ ruleTester.run(RULE_NAME, rule, {
 							},
 						],
 						options: [{ eventModule: 'userEvent' }],
+						output: `
+      import userEvent from '${testingFramework}'
+      test('several unhandled promises from event methods is invalid', async () => {
+        await userEvent.${eventMethod}(getByLabelText('username'))
+        await userEvent.${eventMethod}(getByLabelText('username'))
+      })
+      `,
 					} as const)
 			),
 			...USER_EVENT_ASYNC_FUNCTIONS.map(
@@ -642,6 +727,14 @@ ruleTester.run(RULE_NAME, rule, {
 							},
 						],
 						options: [{ eventModule: 'userEvent' }],
+						output: `
+      import userEvent from '${testingFramework}'
+      test(
+      'unhandled promise from event method kept in a var is invalid',
+      () => {
+        const promise = await userEvent.${eventMethod}(getByLabelText('username'))
+      })
+      `,
 					} as const)
 			),
 			...USER_EVENT_ASYNC_FUNCTIONS.map(
@@ -667,6 +760,17 @@ ruleTester.run(RULE_NAME, rule, {
 							},
 						],
 						options: [{ eventModule: 'userEvent' }],
+						output: `
+      import userEvent from '${testingFramework}'
+      test('unhandled promise returned from function wrapping event method is invalid', () => {
+        function triggerEvent() {
+          doSomething()
+          return userEvent.${eventMethod}(getByLabelText('username'))
+        }
+
+        await triggerEvent()
+      })
+      `,
 					} as const)
 			),
 		]),
@@ -674,7 +778,7 @@ ruleTester.run(RULE_NAME, rule, {
 			code: `
       import userEvent from '${USER_EVENT_ASYNC_FRAMEWORKS[0]}'
       import { fireEvent } from '${FIRE_EVENT_ASYNC_FRAMEWORKS[0]}'
-			test('unhandled promises from multiple event modules', async () => {
+      test('unhandled promises from multiple event modules', async () => {
         fireEvent.click(getByLabelText('username'))
         userEvent.click(getByLabelText('username'))
       })
@@ -694,6 +798,14 @@ ruleTester.run(RULE_NAME, rule, {
 				},
 			],
 			options: [{ eventModule: ['userEvent', 'fireEvent'] }] as Options,
+			output: `
+      import userEvent from '${USER_EVENT_ASYNC_FRAMEWORKS[0]}'
+      import { fireEvent } from '${FIRE_EVENT_ASYNC_FRAMEWORKS[0]}'
+      test('unhandled promises from multiple event modules', async () => {
+        await fireEvent.click(getByLabelText('username'))
+        await userEvent.click(getByLabelText('username'))
+      })
+      `,
 		},
 		{
 			code: `
@@ -712,6 +824,14 @@ ruleTester.run(RULE_NAME, rule, {
 					data: { name: 'click' },
 				},
 			],
+			output: `
+      import userEvent from '${USER_EVENT_ASYNC_FRAMEWORKS[0]}'
+      import { fireEvent } from '${FIRE_EVENT_ASYNC_FRAMEWORKS[0]}'
+			test('unhandled promise from userEvent relying on default options', async () => {
+        fireEvent.click(getByLabelText('username'))
+        await userEvent.click(getByLabelText('username'))
+      })
+      `,
 		},
 	],
 });
