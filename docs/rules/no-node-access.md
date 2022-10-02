@@ -46,7 +46,7 @@ within(signinModal).getByPlaceholderText('Username');
 ```
 
 ```js
-import { screen } from '${testingFramework}';
+import { screen } from '@testing-library/react';
 
 function ComponentA(props) {
 	// props.children is not reported
