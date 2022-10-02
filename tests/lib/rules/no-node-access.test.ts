@@ -77,6 +77,41 @@ ruleTester.run(RULE_NAME, rule, {
       `,
 			},
 			{
+				code: `// issue #386 examples, props.children should not be reported
+				import { screen } from '${testingFramework}';
+				jest.mock('@/some/path', () => ({
+					someProperty: jest.fn((props) => props.children),
+				  }));
+				`,
+			},
+			{
+				code: `// issue #386 examples
+				import { screen } from '${testingFramework}';
+				function ComponentA(props) {
+					if (props.children) {
+					  // ...
+					}
+
+					return <div>{props.children}</div>
+				  }
+				`,
+			},
+			{
+				code: `/* related to issue #386 fix
+				* now all node accessing properties (listed in lib/utils/index.ts, in PROPERTIES_RETURNING_NODES)
+				* will not be reported by this rule because anything props.something won't be reported.
+				*/ 
+				import { screen } from '${testingFramework}';
+				function ComponentA(props) {
+					if (props.firstChild) {
+					  // ...
+					}
+
+					return <div>{props.nextSibling}</div>
+				  }
+				`,
+			},
+			{
 				settings: {
 					'testing-library/utils-module': 'test-utils',
 				},

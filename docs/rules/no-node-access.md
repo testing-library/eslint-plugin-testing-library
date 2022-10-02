@@ -46,6 +46,17 @@ within(signinModal).getByPlaceholderText('Username');
 ```
 
 ```js
+import { screen } from '@testing-library/react';
+
+function ComponentA(props) {
+	// props.children is not reported
+	return <div>{props.children}</div>;
+}
+
+render(<ComponentA />);
+```
+
+```js
 // If is not importing a testing-library package
 
 document.getElementById('submit-btn').closest('button');
