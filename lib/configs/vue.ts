@@ -5,9 +5,12 @@
 export = {
 	plugins: ['testing-library'],
 	rules: {
+		'testing-library/await-async-event': [
+			'error',
+			{ eventModule: ['fireEvent', 'userEvent'] },
+		],
 		'testing-library/await-async-query': 'error',
 		'testing-library/await-async-utils': 'error',
-		'testing-library/await-fire-event': 'error',
 		'testing-library/no-await-sync-query': 'error',
 		'testing-library/no-container': 'error',
 		'testing-library/no-debugging-utils': 'error',

@@ -7,6 +7,12 @@ Object {
       "testing-library",
     ],
     "rules": Object {
+      "testing-library/await-async-event": Array [
+        "error",
+        Object {
+          "eventModule": "userEvent",
+        },
+      ],
       "testing-library/await-async-query": "error",
       "testing-library/await-async-utils": "error",
       "testing-library/no-await-sync-query": "error",
@@ -35,6 +41,12 @@ Object {
       "testing-library",
     ],
     "rules": Object {
+      "testing-library/await-async-event": Array [
+        "error",
+        Object {
+          "eventModule": "userEvent",
+        },
+      ],
       "testing-library/await-async-query": "error",
       "testing-library/await-async-utils": "error",
       "testing-library/no-await-sync-query": "error",
@@ -54,9 +66,17 @@ Object {
       "testing-library",
     ],
     "rules": Object {
+      "testing-library/await-async-event": Array [
+        "error",
+        Object {
+          "eventModule": Array [
+            "fireEvent",
+            "userEvent",
+          ],
+        },
+      ],
       "testing-library/await-async-query": "error",
       "testing-library/await-async-utils": "error",
-      "testing-library/await-fire-event": "error",
       "testing-library/no-await-sync-query": "error",
       "testing-library/no-container": "error",
       "testing-library/no-debugging-utils": "error",
@@ -84,6 +104,12 @@ Object {
       "testing-library",
     ],
     "rules": Object {
+      "testing-library/await-async-event": Array [
+        "error",
+        Object {
+          "eventModule": "userEvent",
+        },
+      ],
       "testing-library/await-async-query": "error",
       "testing-library/await-async-utils": "error",
       "testing-library/no-await-sync-query": "error",
@@ -113,9 +139,17 @@ Object {
       "testing-library",
     ],
     "rules": Object {
+      "testing-library/await-async-event": Array [
+        "error",
+        Object {
+          "eventModule": Array [
+            "fireEvent",
+            "userEvent",
+          ],
+        },
+      ],
       "testing-library/await-async-query": "error",
       "testing-library/await-async-utils": "error",
-      "testing-library/await-fire-event": "error",
       "testing-library/no-await-sync-query": "error",
       "testing-library/no-container": "error",
       "testing-library/no-debugging-utils": "error",

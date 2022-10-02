@@ -234,7 +234,7 @@ export function isPromiseHandled(nodeIdentifier: TSESTree.Identifier): boolean {
 }
 
 export function getVariableReferences(
-	context: TSESLint.RuleContext<string, []>,
+	context: TSESLint.RuleContext<string, unknown[]>,
 	node: TSESTree.Node
 ): TSESLint.Scope.Reference[] {
 	if (ASTUtils.isVariableDeclarator(node)) {
