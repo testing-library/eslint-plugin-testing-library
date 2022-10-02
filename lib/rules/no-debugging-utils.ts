@@ -29,10 +29,10 @@ export default createTestingLibraryRule<Options, MessageIds>({
 			description: 'Disallow the use of debugging utilities like `debug`',
 			recommendedConfig: {
 				dom: false,
-				angular: 'error',
-				react: 'error',
-				vue: 'error',
-				marko: 'error',
+				angular: 'warn',
+				react: 'warn',
+				vue: 'warn',
+				marko: 'warn',
 			},
 		},
 		messages: {
