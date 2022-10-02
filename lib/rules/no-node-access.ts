@@ -14,7 +14,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 		docs: {
 			description: 'Disallow direct Node access',
 			recommendedConfig: {
-				dom: false,
+				dom: 'error',
 				angular: 'error',
 				react: 'error',
 				vue: 'error',
