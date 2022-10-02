@@ -1,7 +1,7 @@
 import { TSESTree } from '@typescript-eslint/utils';
 
 import { createTestingLibraryRule } from '../create-testing-library-rule';
-import { isCallExpression } from '../node-utils';
+import { isCallExpression, getImportModuleName } from '../node-utils';
 
 export const RULE_NAME = 'no-dom-import';
 export type MessageIds = 'noDomImport' | 'noDomImportFramework';
@@ -84,22 +84,22 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
 		return {
 			'Program:exit'() {
-				const importName = helpers.getTestingLibraryImportName();
-				const importNode = helpers.getTestingLibraryImportNode();
+				let importName: string | undefined;
+				const allImportNodes = helpers.getAllTestingLibraryImportNodes();
 
-				if (!importNode) {
-					return;
-				}
+				allImportNodes.forEach((importNode) => {
+					importName = getImportModuleName(importNode);
 
-				const domModuleName = DOM_TESTING_LIBRARY_MODULES.find(
-					(module) => module === importName
-				);
+					const domModuleName = DOM_TESTING_LIBRARY_MODULES.find(
+						(module) => module === importName
+					);
 
-				if (!domModuleName) {
-					return;
-				}
+					if (!domModuleName) {
+						return;
+					}
 
-				report(importNode, domModuleName);
+					report(importNode, domModuleName);
+				});
 			},
 		};
 	},

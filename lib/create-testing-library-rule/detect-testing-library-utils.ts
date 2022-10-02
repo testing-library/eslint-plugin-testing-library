@@ -54,6 +54,7 @@ export type EnhancedRuleCreate<
 
 // Helpers methods
 type GetTestingLibraryImportNodeFn = () => ImportModuleNode | null;
+type GetTestingLibraryImportNodesFn = () => ImportModuleNode[];
 type GetCustomModuleImportNodeFn = () => ImportModuleNode | null;
 type GetTestingLibraryImportNameFn = () => string | undefined;
 type GetCustomModuleImportNameFn = () => string | undefined;
@@ -95,6 +96,7 @@ type IsNodeComingFromTestingLibraryFn = (
 
 export interface DetectionHelpers {
 	getTestingLibraryImportNode: GetTestingLibraryImportNodeFn;
+	getAllTestingLibraryImportNodes: GetTestingLibraryImportNodesFn;
 	getCustomModuleImportNode: GetCustomModuleImportNodeFn;
 	getTestingLibraryImportName: GetTestingLibraryImportNameFn;
 	getCustomModuleImportName: GetCustomModuleImportNameFn;
@@ -158,7 +160,7 @@ export function detectTestingLibraryUtils<
 		context: TestingLibraryContext<TOptions, TMessageIds>,
 		optionsWithDefault: Readonly<TOptions>
 	): TSESLint.RuleListener => {
-		let importedTestingLibraryNode: ImportModuleNode | null = null;
+		const importedTestingLibraryNodes: ImportModuleNode[] = [];
 		let importedCustomModuleNode: ImportModuleNode | null = null;
 		let importedUserEventLibraryNode: ImportModuleNode | null = null;
 		let importedReactDomTestUtilsNode: ImportModuleNode | null = null;
@@ -299,15 +301,20 @@ export function detectTestingLibraryUtils<
 
 		// Helpers for Testing Library detection.
 		const getTestingLibraryImportNode: GetTestingLibraryImportNodeFn = () => {
-			return importedTestingLibraryNode;
+			return importedTestingLibraryNodes[0];
 		};
+
+		const getAllTestingLibraryImportNodes: GetTestingLibraryImportNodesFn =
+			() => {
+				return importedTestingLibraryNodes;
+			};
 
 		const getCustomModuleImportNode: GetCustomModuleImportNodeFn = () => {
 			return importedCustomModuleNode;
 		};
 
 		const getTestingLibraryImportName: GetTestingLibraryImportNameFn = () => {
-			return getImportModuleName(importedTestingLibraryNode);
+			return getImportModuleName(importedTestingLibraryNodes[0]);
 		};
 
 		const getCustomModuleImportName: GetCustomModuleImportNameFn = () => {
@@ -331,7 +338,7 @@ export function detectTestingLibraryUtils<
 			isStrict = false
 		) => {
 			const isSomeModuleImported =
-				!!importedTestingLibraryNode || !!importedCustomModuleNode;
+				importedTestingLibraryNodes.length !== 0 || !!importedCustomModuleNode;
 
 			return (
 				(!isStrict && isAggressiveModuleReportingEnabled()) ||
@@ -945,6 +952,7 @@ export function detectTestingLibraryUtils<
 
 		const helpers: DetectionHelpers = {
 			getTestingLibraryImportNode,
+			getAllTestingLibraryImportNodes,
 			getCustomModuleImportNode,
 			getTestingLibraryImportName,
 			getCustomModuleImportName,
@@ -989,12 +997,9 @@ export function detectTestingLibraryUtils<
 					return;
 				}
 				// check only if testing library import not found yet so we avoid
-				// to override importedTestingLibraryNode after it's found
-				if (
-					!importedTestingLibraryNode &&
-					/testing-library/g.test(node.source.value)
-				) {
-					importedTestingLibraryNode = node;
+				// to override importedTestingLibraryNodes after it's found
+				if (/testing-library/g.test(node.source.value)) {
+					importedTestingLibraryNodes.push(node);
 				}
 
 				// check only if custom module import not found yet so we avoid
@@ -1035,7 +1040,6 @@ export function detectTestingLibraryUtils<
 				const { arguments: args } = callExpression;
 
 				if (
-					!importedTestingLibraryNode &&
 					args.some(
 						(arg) =>
 							isLiteral(arg) &&
@@ -1043,7 +1047,7 @@ export function detectTestingLibraryUtils<
 							/testing-library/g.test(arg.value)
 					)
 				) {
-					importedTestingLibraryNode = callExpression;
+					importedTestingLibraryNodes.push(callExpression);
 				}
 
 				const customModule = getCustomModule();
