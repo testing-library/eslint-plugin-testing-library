@@ -21,11 +21,11 @@ export default createTestingLibraryRule<Options, MessageIds>({
 		docs: {
 			description: 'Disallow the use of the global RegExp flag (/g) in queries',
 			recommendedConfig: {
-				dom: false,
-				angular: false,
-				react: false,
-				vue: false,
-				marko: false,
+				dom: 'error',
+				angular: 'error',
+				react: 'error',
+				vue: 'error',
+				marko: 'error',
 			},
 		},
 		messages: {
