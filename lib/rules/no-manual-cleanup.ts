@@ -28,8 +28,8 @@ export default createTestingLibraryRule<Options, MessageIds>({
 			recommendedConfig: {
 				dom: false,
 				angular: false,
-				react: false,
-				vue: false,
+				react: 'error',
+				vue: 'error',
 				marko: false,
 			},
 		},
