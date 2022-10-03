@@ -17,7 +17,7 @@ Object {
       "testing-library/await-async-utils": "error",
       "testing-library/no-await-sync-query": "error",
       "testing-library/no-container": "error",
-      "testing-library/no-debugging-utils": "error",
+      "testing-library/no-debugging-utils": "warn",
       "testing-library/no-dom-import": Array [
         "error",
         "angular",
@@ -82,7 +82,7 @@ Object {
       "testing-library/await-async-utils": "error",
       "testing-library/no-await-sync-query": "error",
       "testing-library/no-container": "error",
-      "testing-library/no-debugging-utils": "error",
+      "testing-library/no-debugging-utils": "warn",
       "testing-library/no-dom-import": Array [
         "error",
         "marko",
@@ -118,7 +118,7 @@ Object {
       "testing-library/await-async-utils": "error",
       "testing-library/no-await-sync-query": "error",
       "testing-library/no-container": "error",
-      "testing-library/no-debugging-utils": "error",
+      "testing-library/no-debugging-utils": "warn",
       "testing-library/no-dom-import": Array [
         "error",
         "react",
@@ -158,7 +158,7 @@ Object {
       "testing-library/await-async-utils": "error",
       "testing-library/no-await-sync-query": "error",
       "testing-library/no-container": "error",
-      "testing-library/no-debugging-utils": "error",
+      "testing-library/no-debugging-utils": "warn",
       "testing-library/no-dom-import": Array [
         "error",
         "vue",
