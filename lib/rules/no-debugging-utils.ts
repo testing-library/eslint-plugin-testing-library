@@ -13,13 +13,21 @@ import {
 } from '../node-utils';
 import { DEBUG_UTILS } from '../utils';
 
-type DebugUtilsToCheckFor = Partial<
-	Record<typeof DEBUG_UTILS[number], boolean>
->;
+type DebugUtilsToCheckForConfig = Record<typeof DEBUG_UTILS[number], boolean>;
+type DebugUtilsToCheckFor = Partial<DebugUtilsToCheckForConfig>;
 
 export const RULE_NAME = 'no-debugging-utils';
 export type MessageIds = 'noDebug';
 type Options = [{ utilsToCheckFor?: DebugUtilsToCheckFor }];
+
+const defaultUtilsToCheckFor: DebugUtilsToCheckForConfig = {
+	debug: true,
+	logTestingPlaygroundURL: true,
+	prettyDOM: true,
+	logRoles: true,
+	logDOM: true,
+	prettyFormat: true,
+};
 
 export default createTestingLibraryRule<Options, MessageIds>({
 	name: RULE_NAME,
@@ -60,9 +68,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 			},
 		],
 	},
-	defaultOptions: [
-		{ utilsToCheckFor: { debug: true, logTestingPlaygroundURL: true } },
-	],
+	defaultOptions: [{ utilsToCheckFor: defaultUtilsToCheckFor }],
 
 	create(context, [{ utilsToCheckFor = {} }], helpers) {
 		const suspiciousDebugVariableNames: string[] = [];
