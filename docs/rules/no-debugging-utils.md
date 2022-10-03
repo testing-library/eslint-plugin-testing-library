@@ -13,7 +13,7 @@ This rule supports disallowing the following debugging utilities:
 - `logDOM`
 - `prettyFormat`
 
-By default, only `debug` and `logTestingPlaygroundURL` are disallowed.
+By default, all are disallowed.
 
 Examples of **incorrect** code for this rule:
 

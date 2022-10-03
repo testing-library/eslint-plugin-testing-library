@@ -448,7 +448,6 @@ ruleTester.run(RULE_NAME, rule, {
         import { screen } from '@testing-library/dom'
         screen.logTestingPlaygroundURL()
       `,
-			options: [{ utilsToCheckFor: { logTestingPlaygroundURL: true } }],
 			errors: [
 				{
 					line: 3,
@@ -462,7 +461,6 @@ ruleTester.run(RULE_NAME, rule, {
         import { logRoles } from '@testing-library/dom'
         logRoles(document.createElement('nav'))
       `,
-			options: [{ utilsToCheckFor: { logRoles: true } }],
 			errors: [
 				{
 					line: 3,
@@ -476,7 +474,6 @@ ruleTester.run(RULE_NAME, rule, {
         import { screen } from '@testing-library/dom'
         screen.logTestingPlaygroundURL()
       `,
-			options: [{ utilsToCheckFor: { logRoles: true } }],
 			errors: [
 				{
 					line: 3,
@@ -490,7 +487,6 @@ ruleTester.run(RULE_NAME, rule, {
         import { screen } from '@testing-library/dom'
         screen.logTestingPlaygroundURL()
       `,
-			options: [{ utilsToCheckFor: { debug: false } }],
 			errors: [
 				{
 					line: 3,
