@@ -67,7 +67,7 @@ Then configure the rules you want to use within `rules` property of your `.eslin
 ```json
 {
 	"rules": {
-		"testing-library/await-async-query": "error",
+		"testing-library/await-async-queries": "error",
 		"testing-library/no-await-sync-queries": "error",
 		"testing-library/no-debugging-utils": "warn",
 		"testing-library/no-dom-import": "off"
@@ -207,7 +207,7 @@ To enable this configuration use the `extends` property in your
 | Name                                                                                 | Description                                                                                  | 🔧  | Included in configurations                                                         |
 | ------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------- | --- | ---------------------------------------------------------------------------------- |
 | [`await-async-event`](./docs/rules/await-async-event.md)                             | Enforce promises from async event methods are handled                                        | 🔧  | ![dom-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] ![marko-badge][] |
-| [`await-async-query`](./docs/rules/await-async-query.md)                             | Enforce promises from async queries to be handled                                            |     | ![dom-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] ![marko-badge][] |
+| [`await-async-queries`](./docs/rules/await-async-queries.md)                         | Enforce promises from async queries to be handled                                            |     | ![dom-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] ![marko-badge][] |
 | [`await-async-utils`](./docs/rules/await-async-utils.md)                             | Enforce promises from async utils to be awaited properly                                     |     | ![dom-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] ![marko-badge][] |
 | [`consistent-data-testid`](./docs/rules/consistent-data-testid.md)                   | Ensures consistent usage of `data-testid`                                                    |     |                                                                                    |
 | [`no-await-sync-events`](./docs/rules/no-await-sync-events.md)                       | Disallow unnecessary `await` for sync events                                                 |     |                                                                                    |
