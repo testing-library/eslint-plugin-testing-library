@@ -68,7 +68,7 @@ Then configure the rules you want to use within `rules` property of your `.eslin
 {
 	"rules": {
 		"testing-library/await-async-query": "error",
-		"testing-library/no-await-sync-query": "error",
+		"testing-library/no-await-sync-queries": "error",
 		"testing-library/no-debugging-utils": "warn",
 		"testing-library/no-dom-import": "off"
 	}
@@ -211,7 +211,7 @@ To enable this configuration use the `extends` property in your
 | [`await-async-utils`](./docs/rules/await-async-utils.md)                             | Enforce promises from async utils to be awaited properly                                     |     | ![dom-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] ![marko-badge][] |
 | [`consistent-data-testid`](./docs/rules/consistent-data-testid.md)                   | Ensures consistent usage of `data-testid`                                                    |     |                                                                                    |
 | [`no-await-sync-events`](./docs/rules/no-await-sync-events.md)                       | Disallow unnecessary `await` for sync events                                                 |     |                                                                                    |
-| [`no-await-sync-query`](./docs/rules/no-await-sync-query.md)                         | Disallow unnecessary `await` for sync queries                                                |     | ![dom-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] ![marko-badge][] |
+| [`no-await-sync-queries`](./docs/rules/no-await-sync-queries.md)                     | Disallow unnecessary `await` for sync queries                                                |     | ![dom-badge][] ![angular-badge][] ![react-badge][] ![vue-badge][] ![marko-badge][] |
 | [`no-container`](./docs/rules/no-container.md)                                       | Disallow the use of `container` methods                                                      |     | ![angular-badge][] ![react-badge][] ![vue-badge][] ![marko-badge][]                |
 | [`no-debugging-utils`](./docs/rules/no-debugging-utils.md)                           | Disallow the use of debugging utilities like `debug`                                         |     | ![angular-badge][] ![react-badge][] ![vue-badge][] ![marko-badge][]                |
 | [`no-dom-import`](./docs/rules/no-dom-import.md)                                     | Disallow importing from DOM Testing Library                                                  | 🔧  | ![angular-badge][] ![react-badge][] ![vue-badge][] ![marko-badge][]                |

@@ -1,4 +1,4 @@
-import rule, { RULE_NAME } from '../../../lib/rules/no-await-sync-query';
+import rule, { RULE_NAME } from '../../../lib/rules/no-await-sync-queries';
 import {
 	SYNC_QUERIES_COMBINATIONS,
 	ASYNC_QUERIES_COMBINATIONS,
