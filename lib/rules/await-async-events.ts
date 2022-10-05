@@ -11,7 +11,7 @@ import {
 } from '../node-utils';
 import { EVENTS_SIMULATORS } from '../utils';
 
-export const RULE_NAME = 'await-async-event';
+export const RULE_NAME = 'await-async-events';
 export type MessageIds = 'awaitAsyncEvent' | 'awaitAsyncEventWrapper';
 const FIRE_EVENT_NAME = 'fireEvent';
 const USER_EVENT_NAME = 'userEvent';

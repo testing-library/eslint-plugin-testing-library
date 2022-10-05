@@ -1,4 +1,7 @@
-import rule, { Options, RULE_NAME } from '../../../lib/rules/await-async-event';
+import rule, {
+	Options,
+	RULE_NAME,
+} from '../../../lib/rules/await-async-events';
 import { createRuleTester } from '../test-utils';
 
 const ruleTester = createRuleTester();

@@ -1,4 +1,4 @@
-# Enforce promises from async event methods are handled (`testing-library/await-async-event`)
+# Enforce promises from async event methods are handled (`testing-library/await-async-events`)
 
 Ensure that promises returned by `userEvent` (v14+) async methods or `fireEvent` (only Vue and Marko) async methods are handled properly.
 
@@ -102,7 +102,7 @@ await Promise.all([
 
 ```json
 {
-	"testing-library/await-async-event": [
+	"testing-library/await-async-events": [
 		2,
 		{
 			"eventModule": "userEvent"
@@ -113,7 +113,7 @@ await Promise.all([
 
 ```json
 {
-	"testing-library/await-async-event": [
+	"testing-library/await-async-events": [
 		2,
 		{
 			"eventModule": "fireEvent"
@@ -124,7 +124,7 @@ await Promise.all([
 
 ```json
 {
-	"testing-library/await-async-event": [
+	"testing-library/await-async-events": [
 		2,
 		{
 			"eventModule": ["fireEvent", "userEvent"]
