@@ -49,8 +49,9 @@ $ yarn add --dev eslint-plugin-testing-library
 
 You can find detailed guides for migrating `eslint-plugin-testing-library` in the [migration guide docs](docs/migration-guides):
 
-- [Migrate guide for v4](docs/migration-guides/v4.md)
-- [Migrate guide for v5](docs/migration-guides/v5.md)
+- [Migration guide for v4](docs/migration-guides/v4.md)
+- [Migration guide for v5](docs/migration-guides/v5.md)
+- [Migration guide for v6](docs/migration-guides/v6.md)
 
 ## Usage
 
