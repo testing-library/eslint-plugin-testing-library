@@ -7,7 +7,7 @@ Object {
       "testing-library",
     ],
     "rules": Object {
-      "testing-library/await-async-event": Array [
+      "testing-library/await-async-events": Array [
         "error",
         Object {
           "eventModule": "userEvent",
@@ -43,7 +43,7 @@ Object {
       "testing-library",
     ],
     "rules": Object {
-      "testing-library/await-async-event": Array [
+      "testing-library/await-async-events": Array [
         "error",
         Object {
           "eventModule": "userEvent",
@@ -71,7 +71,7 @@ Object {
       "testing-library",
     ],
     "rules": Object {
-      "testing-library/await-async-event": Array [
+      "testing-library/await-async-events": Array [
         "error",
         Object {
           "eventModule": Array [
@@ -110,7 +110,7 @@ Object {
       "testing-library",
     ],
     "rules": Object {
-      "testing-library/await-async-event": Array [
+      "testing-library/await-async-events": Array [
         "error",
         Object {
           "eventModule": "userEvent",
@@ -148,7 +148,7 @@ Object {
       "testing-library",
     ],
     "rules": Object {
-      "testing-library/await-async-event": Array [
+      "testing-library/await-async-events": Array [
         "error",
         Object {
           "eventModule": Array [

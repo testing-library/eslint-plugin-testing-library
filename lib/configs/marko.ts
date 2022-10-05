@@ -5,7 +5,7 @@
 export = {
 	plugins: ['testing-library'],
 	rules: {
-		'testing-library/await-async-event': [
+		'testing-library/await-async-events': [
 			'error',
 			{ eventModule: ['fireEvent', 'userEvent'] },
 		],
