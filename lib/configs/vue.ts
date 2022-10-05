@@ -9,7 +9,7 @@ export = {
 			'error',
 			{ eventModule: ['fireEvent', 'userEvent'] },
 		],
-		'testing-library/await-async-query': 'error',
+		'testing-library/await-async-queries': 'error',
 		'testing-library/await-async-utils': 'error',
 		'testing-library/no-await-sync-queries': 'error',
 		'testing-library/no-container': 'error',
