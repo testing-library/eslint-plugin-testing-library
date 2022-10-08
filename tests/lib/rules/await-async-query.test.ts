@@ -330,6 +330,11 @@ ruleTester.run(RULE_NAME, rule, {
 		// valid async query usage without any function defined
 		// so there is no innermost function scope found
 		`const element = await findByRole('button')`,
+
+		// edge case for files using
+		// findByType or findAllByType
+		// from react-test-renderer
+		`const example = findByType('div')`,
 	],
 
 	invalid: [

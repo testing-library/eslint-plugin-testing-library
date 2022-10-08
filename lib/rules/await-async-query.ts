@@ -52,7 +52,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 			CallExpression(node) {
 				const identifierNode = getDeepestIdentifierNode(node);
 
-				if (!identifierNode) {
+				if (!identifierNode || identifierNode.name.endsWith('Type')) {
 					return;
 				}
 
