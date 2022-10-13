@@ -13,6 +13,8 @@ import {
 	isBlockStatement,
 	isCallExpression,
 	isExpressionStatement,
+	isFunctionExpression,
+	isFunctionDeclaration,
 	isImportDeclaration,
 	isImportNamespaceSpecifier,
 	isImportSpecifier,
@@ -93,6 +95,28 @@ export function findClosestVariableDeclaratorNode(
 	}
 
 	return findClosestVariableDeclaratorNode(node.parent);
+}
+
+export function findClosestFunctionExpressionNode(
+	node: TSESTree.Node | undefined
+):
+	| TSESTree.ArrowFunctionExpression
+	| TSESTree.FunctionExpression
+	| TSESTree.FunctionDeclaration
+	| null {
+	if (!node) {
+		return null;
+	}
+
+	if (
+		isArrowFunctionExpression(node) ||
+		isFunctionExpression(node) ||
+		isFunctionDeclaration(node)
+	) {
+		return node;
+	}
+
+	return findClosestFunctionExpressionNode(node.parent);
 }
 
 /**

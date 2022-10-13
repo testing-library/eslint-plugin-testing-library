@@ -3,6 +3,7 @@ import { ASTUtils, TSESLint, TSESTree } from '@typescript-eslint/utils';
 import { createTestingLibraryRule } from '../create-testing-library-rule';
 import {
 	findClosestCallExpressionNode,
+	findClosestFunctionExpressionNode,
 	getFunctionName,
 	getInnermostReturningFunction,
 	getVariableReferences,
@@ -142,7 +143,28 @@ export default createTestingLibraryRule<Options, MessageIds>({
 							closestCallExpression,
 							fix: (fixer) => {
 								if (isMemberExpression(node.parent)) {
-									return fixer.insertTextBefore(node.parent, 'await ');
+									const functionExpression =
+										findClosestFunctionExpressionNode(node);
+
+									if (functionExpression) {
+										const memberExpressionFixer = fixer.insertTextBefore(
+											node.parent,
+											'await '
+										);
+
+										if (functionExpression.async) {
+											return memberExpressionFixer;
+										} else {
+											// Mutate the actual node so if other nodes exist in this
+											// function expression body they don't also try to fix it.
+											functionExpression.async = true;
+
+											return [
+												memberExpressionFixer,
+												fixer.insertTextBefore(functionExpression, 'async '),
+											];
+										}
+									}
 								}
 
 								return null;
@@ -175,7 +197,27 @@ export default createTestingLibraryRule<Options, MessageIds>({
 						closestCallExpression,
 						messageId: 'awaitAsyncEventWrapper',
 						fix: (fixer) => {
-							return fixer.insertTextBefore(node, 'await ');
+							const functionExpression =
+								findClosestFunctionExpressionNode(node);
+
+							if (functionExpression) {
+								const nodeFixer = fixer.insertTextBefore(node, 'await ');
+
+								if (functionExpression.async) {
+									return nodeFixer;
+								} else {
+									// Mutate the actual node so if other nodes exist in this
+									// function expression body they don't also try to fix it.
+									functionExpression.async = true;
+
+									return [
+										nodeFixer,
+										fixer.insertTextBefore(functionExpression, 'async '),
+									];
+								}
+							}
+
+							return null;
 						},
 					});
 				}
