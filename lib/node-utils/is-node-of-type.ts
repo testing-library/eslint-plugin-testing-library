@@ -59,3 +59,6 @@ export const isReturnStatement = ASTUtils.isNodeOfType(
 export const isFunctionExpression = ASTUtils.isNodeOfType(
 	AST_NODE_TYPES.FunctionExpression
 );
+export const isFunctionDeclaration = ASTUtils.isNodeOfType(
+	AST_NODE_TYPES.FunctionDeclaration
+);

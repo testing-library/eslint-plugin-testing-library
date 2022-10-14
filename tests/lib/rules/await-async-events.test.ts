@@ -348,7 +348,7 @@ ruleTester.run(RULE_NAME, rule, {
 					({
 						code: `
       import { fireEvent } from '${testingFramework}'
-      test('unhandled promise from event method is invalid', async () => {
+      test('unhandled promise from event method is invalid', () => {
         fireEvent.${eventMethod}(getByLabelText('username'))
       })
       `,
@@ -367,6 +367,64 @@ ruleTester.run(RULE_NAME, rule, {
       test('unhandled promise from event method is invalid', async () => {
         await fireEvent.${eventMethod}(getByLabelText('username'))
       })
+      `,
+					} as const)
+			),
+			...FIRE_EVENT_ASYNC_FUNCTIONS.map(
+				(eventMethod) =>
+					({
+						code: `
+      import { fireEvent } from '${testingFramework}'
+
+      fireEvent.${eventMethod}(getByLabelText('username'))
+      `,
+						errors: [
+							{
+								line: 4,
+								column: 7,
+								endColumn: 17 + eventMethod.length,
+								messageId: 'awaitAsyncEvent',
+								data: { name: eventMethod },
+							},
+						],
+						options: [{ eventModule: 'fireEvent' }],
+						output: `
+      import { fireEvent } from '${testingFramework}'
+
+      fireEvent.${eventMethod}(getByLabelText('username'))
+      `,
+					} as const)
+			),
+			...FIRE_EVENT_ASYNC_FUNCTIONS.map(
+				(eventMethod) =>
+					({
+						code: `
+      import { fireEvent } from '${testingFramework}'
+
+      function run() {
+        fireEvent.${eventMethod}(getByLabelText('username'))
+      }
+
+      test('should handle external function', run)
+      `,
+						errors: [
+							{
+								line: 5,
+								column: 9,
+								endColumn: 19 + eventMethod.length,
+								messageId: 'awaitAsyncEvent',
+								data: { name: eventMethod },
+							},
+						],
+						options: [{ eventModule: 'fireEvent' }],
+						output: `
+      import { fireEvent } from '${testingFramework}'
+
+      async function run() {
+        await fireEvent.${eventMethod}(getByLabelText('username'))
+      }
+
+      test('should handle external function', run)
       `,
 					} as const)
 			),
@@ -429,7 +487,7 @@ ruleTester.run(RULE_NAME, rule, {
 					({
 						code: `
       import { fireEvent } from '${testingFramework}'
-      test('several unhandled promises from event methods is invalid', async () => {
+      test('several unhandled promises from event methods is invalid', async function() {
         fireEvent.${eventMethod}(getByLabelText('username'))
         fireEvent.${eventMethod}(getByLabelText('username'))
       })
@@ -451,7 +509,7 @@ ruleTester.run(RULE_NAME, rule, {
 						options: [{ eventModule: 'fireEvent' }],
 						output: `
       import { fireEvent } from '${testingFramework}'
-      test('several unhandled promises from event methods is invalid', async () => {
+      test('several unhandled promises from event methods is invalid', async function() {
         await fireEvent.${eventMethod}(getByLabelText('username'))
         await fireEvent.${eventMethod}(getByLabelText('username'))
       })
@@ -466,7 +524,7 @@ ruleTester.run(RULE_NAME, rule, {
 						},
 						code: `
       import { fireEvent } from '${testingFramework}'
-      test('unhandled promise from event method with aggressive reporting opted-out is invalid', async () => {
+      test('unhandled promise from event method with aggressive reporting opted-out is invalid', function() {
         fireEvent.${eventMethod}(getByLabelText('username'))
       })
       `,
@@ -481,7 +539,7 @@ ruleTester.run(RULE_NAME, rule, {
 						options: [{ eventModule: 'fireEvent' }],
 						output: `
       import { fireEvent } from '${testingFramework}'
-      test('unhandled promise from event method with aggressive reporting opted-out is invalid', async () => {
+      test('unhandled promise from event method with aggressive reporting opted-out is invalid', async function() {
         await fireEvent.${eventMethod}(getByLabelText('username'))
       })
       `,
@@ -514,7 +572,7 @@ ruleTester.run(RULE_NAME, rule, {
       import { fireEvent } from 'test-utils'
       test(
       'unhandled promise from event method imported from custom module with aggressive reporting opted-out is invalid',
-      () => {
+      async () => {
         await fireEvent.${eventMethod}(getByLabelText('username'))
       })
       `,
@@ -547,7 +605,7 @@ ruleTester.run(RULE_NAME, rule, {
       import { fireEvent } from '${testingFramework}'
       test(
       'unhandled promise from event method imported from default module with aggressive reporting opted-out is invalid',
-      () => {
+      async () => {
         await fireEvent.${eventMethod}(getByLabelText('username'))
       })
       `,
@@ -578,7 +636,7 @@ ruleTester.run(RULE_NAME, rule, {
       import { fireEvent } from '${testingFramework}'
       test(
       'unhandled promise from event method kept in a var is invalid',
-      () => {
+      async () => {
         const promise = await fireEvent.${eventMethod}(getByLabelText('username'))
       })
       `,
@@ -609,7 +667,7 @@ ruleTester.run(RULE_NAME, rule, {
 						options: [{ eventModule: 'fireEvent' }],
 						output: `
       import { fireEvent } from '${testingFramework}'
-      test('unhandled promise returned from function wrapping event method is invalid', () => {
+      test('unhandled promise returned from function wrapping event method is invalid', async () => {
         function triggerEvent() {
           doSomething()
           return fireEvent.${eventMethod}(getByLabelText('username'))
@@ -620,6 +678,40 @@ ruleTester.run(RULE_NAME, rule, {
       `,
 					} as const)
 			),
+			...FIRE_EVENT_ASYNC_FUNCTIONS.map(
+				(eventMethod) =>
+					({
+						code: `
+      import { fireEvent } from '${testingFramework}'
+
+      function triggerEvent() {
+        doSomething()
+        return fireEvent.${eventMethod}(getByLabelText('username'))
+      }
+
+      triggerEvent()
+      `,
+						errors: [
+							{
+								line: 9,
+								column: 7,
+								messageId: 'awaitAsyncEventWrapper',
+								data: { name: 'triggerEvent' },
+							},
+						],
+						options: [{ eventModule: 'fireEvent' }],
+						output: `
+      import { fireEvent } from '${testingFramework}'
+
+      function triggerEvent() {
+        doSomething()
+        return fireEvent.${eventMethod}(getByLabelText('username'))
+      }
+
+      triggerEvent()
+      `,
+					} as const)
+			),
 		]),
 		...USER_EVENT_ASYNC_FRAMEWORKS.flatMap((testingFramework) => [
 			...USER_EVENT_ASYNC_FUNCTIONS.map(
@@ -627,7 +719,7 @@ ruleTester.run(RULE_NAME, rule, {
 					({
 						code: `
       import userEvent from '${testingFramework}'
-      test('unhandled promise from event method is invalid', async () => {
+      test('unhandled promise from event method is invalid', () => {
         userEvent.${eventMethod}(getByLabelText('username'))
       })
       `,
@@ -653,8 +745,33 @@ ruleTester.run(RULE_NAME, rule, {
 				(eventMethod) =>
 					({
 						code: `
+      import userEvent from '${testingFramework}'
+			
+      userEvent.${eventMethod}(getByLabelText('username'))
+      `,
+						errors: [
+							{
+								line: 4,
+								column: 7,
+								endColumn: 17 + eventMethod.length,
+								messageId: 'awaitAsyncEvent',
+								data: { name: eventMethod },
+							},
+						],
+						options: [{ eventModule: 'userEvent' }],
+						output: `
+      import userEvent from '${testingFramework}'
+			
+      userEvent.${eventMethod}(getByLabelText('username'))
+      `,
+					} as const)
+			),
+			...USER_EVENT_ASYNC_FUNCTIONS.map(
+				(eventMethod) =>
+					({
+						code: `
       import testingLibraryUserEvent from '${testingFramework}'
-      test('unhandled promise imported from alternate name event method is invalid', async () => {
+      test('unhandled promise imported from alternate name event method is invalid', () => {
         testingLibraryUserEvent.${eventMethod}(getByLabelText('username'))
       })
       `,
@@ -681,7 +798,7 @@ ruleTester.run(RULE_NAME, rule, {
 					({
 						code: `
       import userEvent from '${testingFramework}'
-      test('several unhandled promises from event methods is invalid', async () => {
+      test('several unhandled promises from event methods is invalid', () => {
         userEvent.${eventMethod}(getByLabelText('username'))
         userEvent.${eventMethod}(getByLabelText('username'))
       })
@@ -734,7 +851,7 @@ ruleTester.run(RULE_NAME, rule, {
       import userEvent from '${testingFramework}'
       test(
       'unhandled promise from event method kept in a var is invalid',
-      () => {
+      async () => {
         const promise = await userEvent.${eventMethod}(getByLabelText('username'))
       })
       `,
@@ -745,7 +862,7 @@ ruleTester.run(RULE_NAME, rule, {
 					({
 						code: `
       import userEvent from '${testingFramework}'
-      test('unhandled promise returned from function wrapping event method is invalid', () => {
+      test('unhandled promise returned from function wrapping event method is invalid', function() {
         function triggerEvent() {
           doSomething()
           return userEvent.${eventMethod}(getByLabelText('username'))
@@ -765,7 +882,7 @@ ruleTester.run(RULE_NAME, rule, {
 						options: [{ eventModule: 'userEvent' }],
 						output: `
       import userEvent from '${testingFramework}'
-      test('unhandled promise returned from function wrapping event method is invalid', () => {
+      test('unhandled promise returned from function wrapping event method is invalid', async function() {
         function triggerEvent() {
           doSomething()
           return userEvent.${eventMethod}(getByLabelText('username'))
@@ -776,12 +893,46 @@ ruleTester.run(RULE_NAME, rule, {
       `,
 					} as const)
 			),
+			...USER_EVENT_ASYNC_FUNCTIONS.map(
+				(eventMethod) =>
+					({
+						code: `
+      import userEvent from '${testingFramework}'
+
+      function triggerEvent() {
+        doSomething()
+        return userEvent.${eventMethod}(getByLabelText('username'))
+      }
+
+      triggerEvent()
+      `,
+						errors: [
+							{
+								line: 9,
+								column: 7,
+								messageId: 'awaitAsyncEventWrapper',
+								data: { name: 'triggerEvent' },
+							},
+						],
+						options: [{ eventModule: 'userEvent' }],
+						output: `
+      import userEvent from '${testingFramework}'
+
+      function triggerEvent() {
+        doSomething()
+        return userEvent.${eventMethod}(getByLabelText('username'))
+      }
+
+      triggerEvent()
+      `,
+					} as const)
+			),
 		]),
 		{
 			code: `
       import userEvent from '${USER_EVENT_ASYNC_FRAMEWORKS[0]}'
       import { fireEvent } from '${FIRE_EVENT_ASYNC_FRAMEWORKS[0]}'
-      test('unhandled promises from multiple event modules', async () => {
+      test('unhandled promises from multiple event modules', () => {
         fireEvent.click(getByLabelText('username'))
         userEvent.click(getByLabelText('username'))
       })
@@ -814,7 +965,7 @@ ruleTester.run(RULE_NAME, rule, {
 			code: `
       import userEvent from '${USER_EVENT_ASYNC_FRAMEWORKS[0]}'
       import { fireEvent } from '${FIRE_EVENT_ASYNC_FRAMEWORKS[0]}'
-			test('unhandled promise from userEvent relying on default options', async () => {
+			test('unhandled promise from userEvent relying on default options', async function() {
         fireEvent.click(getByLabelText('username'))
         userEvent.click(getByLabelText('username'))
       })
@@ -830,7 +981,7 @@ ruleTester.run(RULE_NAME, rule, {
 			output: `
       import userEvent from '${USER_EVENT_ASYNC_FRAMEWORKS[0]}'
       import { fireEvent } from '${FIRE_EVENT_ASYNC_FRAMEWORKS[0]}'
-			test('unhandled promise from userEvent relying on default options', async () => {
+			test('unhandled promise from userEvent relying on default options', async function() {
         fireEvent.click(getByLabelText('username'))
         await userEvent.click(getByLabelText('username'))
       })
