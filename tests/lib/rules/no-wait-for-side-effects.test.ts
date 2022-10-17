@@ -795,5 +795,25 @@ ruleTester.run(RULE_NAME, rule, {
 				{ line: 12, column: 13, messageId: 'noSideEffectsWaitFor' },
 			],
 		},
+		// side effects (userEvent, fireEvent or render) in variable declarations
+		...SUPPORTED_TESTING_FRAMEWORKS.flatMap((testingFramework) => [
+			{
+				// Issue #368, https://github.com/testing-library/eslint-plugin-testing-library/issues/368
+				code: `
+        import { waitFor } from '${testingFramework}';
+        import userEvent from '@testing-library/user-event'
+        await waitFor(() => {
+          const a = userEvent.click(button);
+          const b = fireEvent.click(button);
+          const wrapper = render(<App />);
+        })
+        `,
+				errors: [
+					{ line: 5, column: 11, messageId: 'noSideEffectsWaitFor' },
+					{ line: 6, column: 11, messageId: 'noSideEffectsWaitFor' },
+					{ line: 7, column: 11, messageId: 'noSideEffectsWaitFor' },
+				],
+			} as const,
+		]),
 	],
 });
