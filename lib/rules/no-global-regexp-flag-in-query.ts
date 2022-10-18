@@ -37,7 +37,13 @@ export default createTestingLibraryRule<Options, MessageIds>({
 	},
 	defaultOptions: [],
 	create(context, _, helpers) {
-		function report(literalNode: TSESTree.Node) {
+		/**
+		 * Checks if node is reportable (has a regex that contains 'g') and if it is, reports it with `context.report()`.
+		 *
+		 * @param literalNode Literal node under to be
+		 * @returns {Boolean} indicatinf if literal was reported
+		 */
+		function reportLiteralWithRegex(literalNode: TSESTree.Node) {
 			if (
 				isLiteral(literalNode) &&
 				'regex' in literalNode &&
@@ -85,7 +91,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
 				const [firstArg, secondArg] = getArguments(identifierNode);
 
-				const firstArgumentHasError = report(firstArg);
+				const firstArgumentHasError = reportLiteralWithRegex(firstArg);
 				if (firstArgumentHasError) {
 					return;
 				}
@@ -100,7 +106,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 					) as TSESTree.Property | undefined;
 
 					if (namePropertyNode) {
-						report(namePropertyNode.value);
+						reportLiteralWithRegex(namePropertyNode.value);
 					}
 				}
 			},
