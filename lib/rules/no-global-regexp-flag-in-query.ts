@@ -82,7 +82,37 @@ export default createTestingLibraryRule<Options, MessageIds>({
 			return [];
 		}
 
+		// Helper array to store variable nodes that have a literal with regex
+		// e.g. `const countRegExp = /count/gi` will be store here
+		const variableNodesWithRegexs: TSESTree.VariableDeclarator[] = [];
+
+		function hasRegexInVariable(
+			identifier: TSESTree.Identifier
+		): TSESTree.VariableDeclarator | undefined {
+			return variableNodesWithRegexs.find((varNode) => {
+				if (
+					ASTUtils.isVariableDeclarator(varNode) &&
+					ASTUtils.isIdentifier(varNode.id)
+				) {
+					return varNode.id.name === identifier.name;
+				}
+				return undefined;
+			});
+		}
+
 		return {
+			// internal helper function, helps store all variables with regex to `variableNodesWithRegexs`
+			// could potentially be refactored to using context.getDeclaredVariables()
+			VariableDeclarator(node: TSESTree.Node) {
+				if (
+					ASTUtils.isVariableDeclarator(node) &&
+					isLiteral(node.init) &&
+					'regex' in node.init &&
+					node.init.regex.flags.includes('g')
+				) {
+					variableNodesWithRegexs.push(node);
+				}
+			},
 			CallExpression(node) {
 				const identifierNode = getDeepestIdentifierNode(node);
 				if (!identifierNode || !helpers.isQuery(identifierNode)) {
@@ -94,6 +124,39 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				const firstArgumentHasError = reportLiteralWithRegex(firstArg);
 				if (firstArgumentHasError) {
 					return;
+				}
+
+				// Case issue #592: a variable that has a regex is passed to testing library query
+
+				if (ASTUtils.isIdentifier(firstArg)) {
+					const regexVariableNode = hasRegexInVariable(firstArg);
+					if (regexVariableNode !== undefined) {
+						context.report({
+							node: firstArg,
+							messageId: 'noGlobalRegExpFlagInQuery',
+							fix(fixer) {
+								if (
+									ASTUtils.isVariableDeclarator(regexVariableNode) &&
+									isLiteral(regexVariableNode.init) &&
+									'regex' in regexVariableNode.init &&
+									regexVariableNode.init.regex.flags.includes('g')
+								) {
+									const splitter = regexVariableNode.init.raw.lastIndexOf('/');
+									const raw = regexVariableNode.init.raw.substring(0, splitter);
+									const flags = regexVariableNode.init.raw.substring(
+										splitter + 1
+									);
+									const flagsWithoutGlobal = flags.replace('g', '');
+
+									return fixer.replaceText(
+										regexVariableNode.init,
+										`${raw}/${flagsWithoutGlobal}`
+									);
+								}
+								return null;
+							},
+						});
+					}
 				}
 
 				if (isObjectExpression(secondArg)) {
