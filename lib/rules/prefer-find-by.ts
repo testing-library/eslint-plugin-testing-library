@@ -5,6 +5,7 @@ import {
 	isArrowFunctionExpression,
 	isCallExpression,
 	isMemberExpression,
+	isObjectExpression,
 	isObjectPattern,
 	isProperty,
 } from '../node-utils';
@@ -366,6 +367,13 @@ export default createTestingLibraryRule<Options, MessageIds>({
 						return;
 					}
 
+					// if there is a second argument to AwaitExpression, it is the options
+					const waitOptions = node.arguments[1];
+					let waitOptionsSourceCode = '';
+					if (isObjectExpression(waitOptions)) {
+						waitOptionsSourceCode = `, ${sourceCode.getText(waitOptions)}`;
+					}
+
 					const queryVariant = getFindByQueryVariant(fullQueryMethod);
 					const callArguments = getQueryArguments(argument.body);
 					const queryMethod = fullQueryMethod.split('By')[1];
@@ -389,7 +397,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 							}
 							const newCode = `${caller}.${queryVariant}${queryMethod}(${callArguments
 								.map((callArgNode) => sourceCode.getText(callArgNode))
-								.join(', ')})`;
+								.join(', ')}${waitOptionsSourceCode})`;
 							return fixer.replaceText(node, newCode);
 						},
 					});
