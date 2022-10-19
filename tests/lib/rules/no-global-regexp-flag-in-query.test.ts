@@ -196,5 +196,29 @@ ruleTester.run(RULE_NAME, rule, {
         import { within } from '@testing-library/dom'
         within(element).queryAllByText(/hello/i)`,
 		},
+		{
+			code: `
+			const countRegExp = /count/gm
+			const anotherRegExp = /something/mgi
+			expect(screen.getByText(countRegExp)).toBeInTheDocument()
+			expect(screen.getByAllText(anotherRegExp)).toBeInTheDocument()`,
+			errors: [
+				{
+					messageId: 'noGlobalRegExpFlagInQuery',
+					line: 4,
+					column: 28,
+				},
+				{
+					messageId: 'noGlobalRegExpFlagInQuery',
+					line: 5,
+					column: 31,
+				},
+			],
+			output: `
+			const countRegExp = /count/m
+			const anotherRegExp = /something/mi
+			expect(screen.getByText(countRegExp)).toBeInTheDocument()
+			expect(screen.getByAllText(anotherRegExp)).toBeInTheDocument()`,
+		},
 	],
 });
