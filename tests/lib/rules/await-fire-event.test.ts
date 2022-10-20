@@ -36,6 +36,38 @@ ruleTester.run(RULE_NAME, rule, {
 		...COMMON_FIRE_EVENT_METHODS.map((fireEventMethod) => ({
 			code: `
         import { fireEvent } from '${testingFramework}'
+        test('promise .resolves from fire event method is valid', async () => {
+          expect(fireEvent.${fireEventMethod}(getByLabelText('username'))).resolves.toBe("bar")
+        })
+        `,
+		})),
+		...COMMON_FIRE_EVENT_METHODS.map((fireEventMethod) => ({
+			code: `
+        import { fireEvent } from '${testingFramework}'
+        test('wrapped promise .resolves from fire event method is valid', async () => {
+          expect(wrapper(fireEvent.${fireEventMethod}(getByLabelText('username')))).resolves.toBe("bar")
+        })
+        `,
+		})),
+		...COMMON_FIRE_EVENT_METHODS.map((fireEventMethod) => ({
+			code: `
+        import { fireEvent } from '${testingFramework}'
+        test('promise .toResolve() from fire event method is valid', async () => {
+          expect(fireEvent.${fireEventMethod}(getByLabelText('username'))).toResolve()
+        })
+        `,
+		})),
+		...COMMON_FIRE_EVENT_METHODS.map((fireEventMethod) => ({
+			code: `
+        import { fireEvent } from '${testingFramework}'
+        test('promise .toResolve() from fire event method is valid', async () => {
+          expect(wrapper(fireEvent.${fireEventMethod}(getByLabelText('username')))).toResolve()
+        })
+        `,
+		})),
+		...COMMON_FIRE_EVENT_METHODS.map((fireEventMethod) => ({
+			code: `
+        import { fireEvent } from '${testingFramework}'
         test('await several promises from fire event methods is valid', async () => {
           await fireEvent.${fireEventMethod}(getByLabelText('username'))
           await fireEvent.${fireEventMethod}(getByLabelText('username'))

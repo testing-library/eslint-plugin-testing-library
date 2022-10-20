@@ -7,6 +7,14 @@ properly.
 
 This rule aims to prevent users from forgetting to handle promise returned from `fireEvent`
 methods.
+The promise will be considered as handled when:
+
+- using the `await` operator
+- wrapped within `Promise.all` or `Promise.allSettled` methods
+- chaining the `then` method
+- chaining `resolves` or `rejects` from jest
+- chaining `toResolve()` or `toReject()` from [jest-extended](https://github.com/jest-community/jest-extended#promise)
+- it's returned from a function (in this case, that particular function will be analyzed by this rule too)
 
 > ⚠️ `fireEvent` methods are async only on following Testing Library packages:
 >
@@ -55,6 +63,12 @@ await Promise.all([
 	fireEvent.focus(getByLabelText('username')),
 	fireEvent.blur(getByLabelText('username')),
 ]);
+
+// Using jest resolves or rejects
+expect(fireEvent.focus(getByLabelText('username'))).resolves.toBeUndefined();
+
+// Using jest-extended a toResolve/toReject matcher is also correct
+expect(waitFor(() => getByLabelText('email'))).toResolve();
 ```
 
 ## When Not To Use It

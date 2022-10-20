@@ -20,6 +20,7 @@ problems in the tests. The promise will be considered as handled when:
 - wrapped within `Promise.all` or `Promise.allSettled` methods
 - chaining the `then` method
 - chaining `resolves` or `rejects` from jest
+- chaining `toResolve()` or `toReject()` from [jest-extended](https://github.com/jest-community/jest-extended#promise)
 - it's returned from a function (in this case, that particular function will be analyzed by this rule too)
 
 Examples of **incorrect** code for this rule:
@@ -85,6 +86,12 @@ test('something correctly', async () => {
 		waitFor(() => getByLabelText('email')),
 		waitForElementToBeRemoved(() => document.querySelector('div.getOuttaHere')),
 	]);
+
+	// Using jest resolves or rejects
+	expect(waitFor(() => getByLabelText('email'))).resolves.toBeUndefined();
+
+	// Using jest-extended a toResolve/toReject matcher is also correct
+	expect(waitFor(() => getByLabelText('email'))).toResolve();
 });
 ```
 
