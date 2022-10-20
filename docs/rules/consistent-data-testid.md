@@ -28,31 +28,35 @@ const baz = (props) => <div>...</div>;
 
 ## Options
 
-| Option            | Required | Default       | Details                                                                                                                                                                                                                                                                       | Example                                               |
-| ----------------- | -------- | ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------- |
-| `testIdPattern`   | Yes      | None          | A regex used to validate the format of the `data-testid` value. `{fileName}` can optionally be used as a placeholder and will be substituted with the name of the file OR the name of the files parent directory in the case when the file name is `index.js`                 | `^{fileName}(\_\_([A-Z]+[a-z]_?)+)_\$`                |
-| `testIdAttribute` | No       | `data-testid` | A string (or array of strings) used to specify the attribute used for querying by ID. This is only required if data-testid has been explicitly overridden in the [RTL configuration](https://testing-library.com/docs/dom-testing-library/api-queries#overriding-data-testid) | `data-my-test-attribute`, `["data-testid", "testId"]` |
+| Option            | Required | Default       | Details                                                                                                                                                                                                                                                                                                                                                                               | Example                                               |
+| ----------------- | -------- | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------- |
+| `testIdPattern`   | Yes      | None          | A regex used to validate the format of the `data-testid` value. `{fileName}` can optionally be used as a placeholder and will be substituted with the name of the file OR the name of the files parent directory in the case when the file name is `index.js` OR empty string in the case of dynamically changing routes (that contain square brackets) with `Gatsby.js` or `Next.js` | `^{fileName}(\_\_([A-Z]+[a-z]_?)+)_\$`                |
+| `testIdAttribute` | No       | `data-testid` | A string (or array of strings) used to specify the attribute used for querying by ID. This is only required if data-testid has been explicitly overridden in the [RTL configuration](https://testing-library.com/docs/dom-testing-library/api-queries#overriding-data-testid)                                                                                                         | `data-my-test-attribute`, `["data-testid", "testId"]` |
 
 ## Example
 
 ```json
 {
-  "testing-library/consistent-data-testid": [
-    2,
-    {
-      "testIdPattern": "^TestId(__[A-Z]*)?$"
-    }
-  ]
+	"testing-library/consistent-data-testid": [
+		2,
+		{
+			"testIdPattern": "^TestId(__[A-Z]*)?$"
+		}
+	]
 }
 ```
 
 ```json
 {
-  "testing-library/consistent-data-testid": [
-    2,
-    {
-      "testIdAttribute": ["data-testid", "testId"]
-    }
-  ]
+	"testing-library/consistent-data-testid": [
+		2,
+		{
+			"testIdAttribute": ["data-testid", "testId"]
+		}
+	]
 }
 ```
+
+## Notes
+
+- If you are using Gatsby.js's [client-only routes](https://www.gatsbyjs.com/docs/reference/routing/file-system-route-api/#syntax-client-only-routes) or Next.js's [dynamic routes](https://nextjs.org/docs/routing/dynamic-routes) and therefore have square brackets (`[]`) in the filename (e.g. `../path/to/[component].js`), the `{fileName}` placeholder will be replaced with an empty string. This is because a linter cannot know what the dynamic content will be at run time.

@@ -46,9 +46,39 @@ within(signinModal).getByPlaceholderText('Username');
 ```
 
 ```js
+import { screen } from '@testing-library/react';
+
+function ComponentA(props) {
+	// props.children is not reported
+	return <div>{props.children}</div>;
+}
+
+render(<ComponentA />);
+```
+
+```js
 // If is not importing a testing-library package
 
 document.getElementById('submit-btn').closest('button');
+```
+
+## Options
+
+This rule has one option:
+
+- `allowContainerFirstChild`: **disabled by default**. When we have container
+  with rendered content then the easiest way to access content itself is [by using
+  `firstChild` property](https://testing-library.com/docs/react-testing-library/api/#container-1). Use this option in cases when this is hardly avoidable.
+
+  ```js
+  "testing-library/no-node-access": ["error", {"allowContainerFirstChild": true}]
+  ```
+
+Correct:
+
+```jsx
+const { container } = render(<MyComponent />);
+expect(container.firstChild).toMatchSnapshot();
 ```
 
 ## Further Reading

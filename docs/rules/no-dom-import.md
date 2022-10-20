@@ -32,6 +32,11 @@ import { fireEvent } from '@testing-library/dom';
 ```
 
 ```js
+import { render } from '@testing-library/react'; // Okay, no error
+import { screen } from '@testing-library/dom'; // Error, unnecessary import from @testing-library/dom
+```
+
+```js
 const { fireEvent } = require('dom-testing-library');
 ```
 
@@ -65,7 +70,7 @@ This rule has an option in case you want to tell the user which framework to use
 
 ```json
 {
-  "testing-library/no-dom-import": ["error", "react"]
+	"testing-library/no-dom-import": ["error", "react"]
 }
 ```
 

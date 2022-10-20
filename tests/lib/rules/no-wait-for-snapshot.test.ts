@@ -5,18 +5,18 @@ import { createRuleTester } from '../test-utils';
 const ruleTester = createRuleTester();
 
 const SUPPORTED_TESTING_FRAMEWORKS = [
-  '@testing-library/dom',
-  '@testing-library/angular',
-  '@testing-library/react',
-  '@testing-library/vue',
-  '@marko/testing-library',
+	'@testing-library/dom',
+	'@testing-library/angular',
+	'@testing-library/react',
+	'@testing-library/vue',
+	'@marko/testing-library',
 ];
 
 ruleTester.run(RULE_NAME, rule, {
-  valid: [
-    ...SUPPORTED_TESTING_FRAMEWORKS.flatMap((testingFramework) => [
-      ...ASYNC_UTILS.map((asyncUtil) => ({
-        code: `
+	valid: [
+		...SUPPORTED_TESTING_FRAMEWORKS.flatMap((testingFramework) => [
+			...ASYNC_UTILS.map((asyncUtil) => ({
+				code: `
           import { ${asyncUtil} } from '${testingFramework}';
           test('snapshot calls outside of ${asyncUtil} are valid', () => {
             expect(foo).toMatchSnapshot()
@@ -24,9 +24,9 @@ ruleTester.run(RULE_NAME, rule, {
             expect(foo).toMatchInlineSnapshot()
           })
         `,
-      })),
-      ...ASYNC_UTILS.map((asyncUtil) => ({
-        code: `
+			})),
+			...ASYNC_UTILS.map((asyncUtil) => ({
+				code: `
           import { ${asyncUtil} } from '${testingFramework}';
           test('snapshot calls outside of ${asyncUtil} are valid', () => {
             expect(foo).toMatchSnapshot()
@@ -36,9 +36,9 @@ ruleTester.run(RULE_NAME, rule, {
             expect(foo).toMatchInlineSnapshot()
           })
         `,
-      })),
-      ...ASYNC_UTILS.map((asyncUtil) => ({
-        code: `
+			})),
+			...ASYNC_UTILS.map((asyncUtil) => ({
+				code: `
           import * as asyncUtils from '${testingFramework}';
           test('snapshot calls outside of ${asyncUtil} are valid', () => {
             expect(foo).toMatchSnapshot()
@@ -46,9 +46,9 @@ ruleTester.run(RULE_NAME, rule, {
             expect(foo).toMatchInlineSnapshot()
           })
         `,
-      })),
-      ...ASYNC_UTILS.map((asyncUtil) => ({
-        code: `
+			})),
+			...ASYNC_UTILS.map((asyncUtil) => ({
+				code: `
           import * as asyncUtils from '${testingFramework}';
           test('snapshot calls outside of ${asyncUtil} are valid', () => {
             expect(foo).toMatchSnapshot()
@@ -58,24 +58,24 @@ ruleTester.run(RULE_NAME, rule, {
             expect(foo).toMatchInlineSnapshot()
           })
         `,
-      })),
-    ]),
-    ...ASYNC_UTILS.map((asyncUtil) => ({
-      settings: {
-        'testing-library/utils-module': 'test-utils',
-      },
-      code: `
+			})),
+		]),
+		...ASYNC_UTILS.map((asyncUtil) => ({
+			settings: {
+				'testing-library/utils-module': 'test-utils',
+			},
+			code: `
         import { ${asyncUtil} } from 'some-other-library';
         test('aggressive reporting disabled - snapshot calls within ${asyncUtil} not related to Testing Library are valid', async () => {
           await ${asyncUtil}(() => expect(foo).toMatchSnapshot());
         });
       `,
-    })),
-    ...ASYNC_UTILS.map((asyncUtil) => ({
-      settings: {
-        'testing-library/utils-module': 'test-utils',
-      },
-      code: `
+		})),
+		...ASYNC_UTILS.map((asyncUtil) => ({
+			settings: {
+				'testing-library/utils-module': 'test-utils',
+			},
+			code: `
         import { ${asyncUtil} } from 'some-other-library';
         test('(alt) aggressive reporting disabled - snapshot calls within ${asyncUtil} not related to Testing Library are valid', async () => {
           await ${asyncUtil}(() => {
@@ -84,23 +84,23 @@ ruleTester.run(RULE_NAME, rule, {
           });
         });
       `,
-    })),
-    ...ASYNC_UTILS.map((asyncUtil) => ({
-      settings: {
-        'testing-library/utils-module': 'test-utils',
-      },
-      code: `
+		})),
+		...ASYNC_UTILS.map((asyncUtil) => ({
+			settings: {
+				'testing-library/utils-module': 'test-utils',
+			},
+			code: `
         import * as asyncUtils from 'some-other-library';
         test('aggressive reporting disabled - snapshot calls within ${asyncUtil} from wildcard import not related to Testing Library are valid', async () => {
           await asyncUtils.${asyncUtil}(() => expect(foo).toMatchSnapshot());
         });
       `,
-    })),
-    ...ASYNC_UTILS.map((asyncUtil) => ({
-      settings: {
-        'testing-library/utils-module': 'test-utils',
-      },
-      code: `
+		})),
+		...ASYNC_UTILS.map((asyncUtil) => ({
+			settings: {
+				'testing-library/utils-module': 'test-utils',
+			},
+			code: `
         import * as asyncUtils from 'some-other-library';
         test('(alt) aggressive reporting disabled - snapshot calls within ${asyncUtil} from wildcard import not related to Testing Library are valid', async () => {
           await asyncUtils.${asyncUtil}(() => {
@@ -109,23 +109,23 @@ ruleTester.run(RULE_NAME, rule, {
           });
         });
       `,
-    })),
-    ...ASYNC_UTILS.map((asyncUtil) => ({
-      settings: {
-        'testing-library/utils-module': 'test-utils',
-      },
-      code: `
+		})),
+		...ASYNC_UTILS.map((asyncUtil) => ({
+			settings: {
+				'testing-library/utils-module': 'test-utils',
+			},
+			code: `
         import { ${asyncUtil} } from 'some-other-library';
         test('aggressive reporting disabled - inline snapshot calls within ${asyncUtil} import not related to Testing Library are valid', async () => {
           await ${asyncUtil}(() => expect(foo).toMatchInlineSnapshot());
         });
       `,
-    })),
-    ...ASYNC_UTILS.map((asyncUtil) => ({
-      settings: {
-        'testing-library/utils-module': 'test-utils',
-      },
-      code: `
+		})),
+		...ASYNC_UTILS.map((asyncUtil) => ({
+			settings: {
+				'testing-library/utils-module': 'test-utils',
+			},
+			code: `
         import { ${asyncUtil} } from 'some-other-library';
         test('(alt) aggressive reporting disabled - inline snapshot calls within ${asyncUtil} import not related to Testing Library are valid', async () => {
           await ${asyncUtil}(() => {
@@ -134,23 +134,23 @@ ruleTester.run(RULE_NAME, rule, {
           });
         });
       `,
-    })),
-    ...ASYNC_UTILS.map((asyncUtil) => ({
-      settings: {
-        'testing-library/utils-module': 'test-utils',
-      },
-      code: `
+		})),
+		...ASYNC_UTILS.map((asyncUtil) => ({
+			settings: {
+				'testing-library/utils-module': 'test-utils',
+			},
+			code: `
         import * as asyncUtils from 'some-other-library';
         test('aggressive reporting disabled - inline snapshot calls within ${asyncUtil} from wildcard import not related to Testing Library are valid', async () => {
           await asyncUtils.${asyncUtil}(() => expect(foo).toMatchInlineSnapshot());
         });
       `,
-    })),
-    ...ASYNC_UTILS.map((asyncUtil) => ({
-      settings: {
-        'testing-library/utils-module': 'test-utils',
-      },
-      code: `
+		})),
+		...ASYNC_UTILS.map((asyncUtil) => ({
+			settings: {
+				'testing-library/utils-module': 'test-utils',
+			},
+			code: `
         import * as asyncUtils from 'some-other-library';
         test('(alt) aggressive reporting disabled - inline snapshot calls within ${asyncUtil} from wildcard import not related to Testing Library are valid', async () => {
           await asyncUtils.${asyncUtil}(() => {
@@ -159,32 +159,32 @@ ruleTester.run(RULE_NAME, rule, {
           });
         });
       `,
-    })),
-  ],
-  invalid: SUPPORTED_TESTING_FRAMEWORKS.flatMap((testingFramework) => [
-    ...ASYNC_UTILS.map(
-      (asyncUtil) =>
-        ({
-          code: `
+		})),
+	],
+	invalid: SUPPORTED_TESTING_FRAMEWORKS.flatMap((testingFramework) => [
+		...ASYNC_UTILS.map(
+			(asyncUtil) =>
+				({
+					code: `
         import { ${asyncUtil} } from '${testingFramework}';
         test('snapshot calls within ${asyncUtil} are not valid', async () => {
           await ${asyncUtil}(() => expect(foo).toMatchSnapshot());
         });
       `,
-          errors: [
-            {
-              line: 4,
-              messageId: 'noWaitForSnapshot',
-              data: { name: asyncUtil },
-              column: 36 + asyncUtil.length,
-            },
-          ],
-        } as const)
-    ),
-    ...ASYNC_UTILS.map(
-      (asyncUtil) =>
-        ({
-          code: `
+					errors: [
+						{
+							line: 4,
+							messageId: 'noWaitForSnapshot',
+							data: { name: asyncUtil },
+							column: 36 + asyncUtil.length,
+						},
+					],
+				} as const)
+		),
+		...ASYNC_UTILS.map(
+			(asyncUtil) =>
+				({
+					code: `
         import { ${asyncUtil} } from '${testingFramework}';
         test('snapshot calls within ${asyncUtil} are not valid', async () => {
           await ${asyncUtil}(() => {
@@ -192,39 +192,39 @@ ruleTester.run(RULE_NAME, rule, {
           });
         });
       `,
-          errors: [
-            {
-              line: 5,
-              messageId: 'noWaitForSnapshot',
-              data: { name: asyncUtil },
-              column: 27,
-            },
-          ],
-        } as const)
-    ),
-    ...ASYNC_UTILS.map(
-      (asyncUtil) =>
-        ({
-          code: `
+					errors: [
+						{
+							line: 5,
+							messageId: 'noWaitForSnapshot',
+							data: { name: asyncUtil },
+							column: 27,
+						},
+					],
+				} as const)
+		),
+		...ASYNC_UTILS.map(
+			(asyncUtil) =>
+				({
+					code: `
         import * as asyncUtils from '${testingFramework}';
         test('snapshot calls within ${asyncUtil} are not valid', async () => {
           await asyncUtils.${asyncUtil}(() => expect(foo).toMatchSnapshot());
         });
       `,
-          errors: [
-            {
-              line: 4,
-              messageId: 'noWaitForSnapshot',
-              data: { name: asyncUtil },
-              column: 47 + asyncUtil.length,
-            },
-          ],
-        } as const)
-    ),
-    ...ASYNC_UTILS.map(
-      (asyncUtil) =>
-        ({
-          code: `
+					errors: [
+						{
+							line: 4,
+							messageId: 'noWaitForSnapshot',
+							data: { name: asyncUtil },
+							column: 47 + asyncUtil.length,
+						},
+					],
+				} as const)
+		),
+		...ASYNC_UTILS.map(
+			(asyncUtil) =>
+				({
+					code: `
         import * as asyncUtils from '${testingFramework}';
         test('snapshot calls within ${asyncUtil} are not valid', async () => {
           await asyncUtils.${asyncUtil}(() => {
@@ -232,39 +232,39 @@ ruleTester.run(RULE_NAME, rule, {
           });
         });
       `,
-          errors: [
-            {
-              line: 5,
-              messageId: 'noWaitForSnapshot',
-              data: { name: asyncUtil },
-              column: 27,
-            },
-          ],
-        } as const)
-    ),
-    ...ASYNC_UTILS.map(
-      (asyncUtil) =>
-        ({
-          code: `
+					errors: [
+						{
+							line: 5,
+							messageId: 'noWaitForSnapshot',
+							data: { name: asyncUtil },
+							column: 27,
+						},
+					],
+				} as const)
+		),
+		...ASYNC_UTILS.map(
+			(asyncUtil) =>
+				({
+					code: `
         import { ${asyncUtil} } from '${testingFramework}';
         test('snapshot calls within ${asyncUtil} are not valid', async () => {
           await ${asyncUtil}(() => expect(foo).toMatchInlineSnapshot());
         });
       `,
-          errors: [
-            {
-              line: 4,
-              messageId: 'noWaitForSnapshot',
-              data: { name: asyncUtil },
-              column: 36 + asyncUtil.length,
-            },
-          ],
-        } as const)
-    ),
-    ...ASYNC_UTILS.map(
-      (asyncUtil) =>
-        ({
-          code: `
+					errors: [
+						{
+							line: 4,
+							messageId: 'noWaitForSnapshot',
+							data: { name: asyncUtil },
+							column: 36 + asyncUtil.length,
+						},
+					],
+				} as const)
+		),
+		...ASYNC_UTILS.map(
+			(asyncUtil) =>
+				({
+					code: `
         import { ${asyncUtil} } from '${testingFramework}';
         test('snapshot calls within ${asyncUtil} are not valid', async () => {
           await ${asyncUtil}(() => {
@@ -272,39 +272,39 @@ ruleTester.run(RULE_NAME, rule, {
           });
         });
       `,
-          errors: [
-            {
-              line: 5,
-              messageId: 'noWaitForSnapshot',
-              data: { name: asyncUtil },
-              column: 27,
-            },
-          ],
-        } as const)
-    ),
-    ...ASYNC_UTILS.map(
-      (asyncUtil) =>
-        ({
-          code: `
+					errors: [
+						{
+							line: 5,
+							messageId: 'noWaitForSnapshot',
+							data: { name: asyncUtil },
+							column: 27,
+						},
+					],
+				} as const)
+		),
+		...ASYNC_UTILS.map(
+			(asyncUtil) =>
+				({
+					code: `
         import * as asyncUtils from '${testingFramework}';
         test('snapshot calls within ${asyncUtil} are not valid', async () => {
           await asyncUtils.${asyncUtil}(() => expect(foo).toMatchInlineSnapshot());
         });
       `,
-          errors: [
-            {
-              line: 4,
-              messageId: 'noWaitForSnapshot',
-              data: { name: asyncUtil },
-              column: 47 + asyncUtil.length,
-            },
-          ],
-        } as const)
-    ),
-    ...ASYNC_UTILS.map(
-      (asyncUtil) =>
-        ({
-          code: `
+					errors: [
+						{
+							line: 4,
+							messageId: 'noWaitForSnapshot',
+							data: { name: asyncUtil },
+							column: 47 + asyncUtil.length,
+						},
+					],
+				} as const)
+		),
+		...ASYNC_UTILS.map(
+			(asyncUtil) =>
+				({
+					code: `
         import * as asyncUtils from '${testingFramework}';
         test('snapshot calls within ${asyncUtil} are not valid', async () => {
           await asyncUtils.${asyncUtil}(() => {
@@ -312,15 +312,15 @@ ruleTester.run(RULE_NAME, rule, {
           });
         });
       `,
-          errors: [
-            {
-              line: 5,
-              messageId: 'noWaitForSnapshot',
-              data: { name: asyncUtil },
-              column: 27,
-            },
-          ],
-        } as const)
-    ),
-  ]),
+					errors: [
+						{
+							line: 5,
+							messageId: 'noWaitForSnapshot',
+							data: { name: asyncUtil },
+							column: 27,
+						},
+					],
+				} as const)
+		),
+	]),
 });

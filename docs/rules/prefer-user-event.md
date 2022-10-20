@@ -70,14 +70,14 @@ An example looks like this
 
 ```json
 {
-  "rules": {
-    "prefer-user-event": [
-      "error",
-      {
-        "allowedMethods": ["click", "change"]
-      }
-    ]
-  }
+	"rules": {
+		"prefer-user-event": [
+			"error",
+			{
+				"allowedMethods": ["click", "change"]
+			}
+		]
+	}
 }
 ```
 

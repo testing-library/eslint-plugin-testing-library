@@ -5,26 +5,26 @@ import { createRuleTester } from '../test-utils';
 const ruleTester = createRuleTester();
 
 const SUPPORTED_TESTING_FRAMEWORKS = [
-  '@testing-library/dom',
-  '@testing-library/angular',
-  '@testing-library/react',
-  '@testing-library/vue',
-  '@marko/testing-library',
+	'@testing-library/dom',
+	'@testing-library/angular',
+	'@testing-library/react',
+	'@testing-library/vue',
+	'@marko/testing-library',
 ];
 
 ruleTester.run(RULE_NAME, rule, {
-  valid: SUPPORTED_TESTING_FRAMEWORKS.flatMap((testingFramework) => [
-    ...ASYNC_UTILS.map((asyncUtil) => ({
-      code: `
+	valid: SUPPORTED_TESTING_FRAMEWORKS.flatMap((testingFramework) => [
+		...ASYNC_UTILS.map((asyncUtil) => ({
+			code: `
         import { ${asyncUtil} } from '${testingFramework}';
         test('${asyncUtil} util directly waited with await operator is valid', async () => {
           doSomethingElse();
           await ${asyncUtil}(() => getByLabelText('email'));
         });
       `,
-    })),
-    ...ASYNC_UTILS.map((asyncUtil) => ({
-      code: `
+		})),
+		...ASYNC_UTILS.map((asyncUtil) => ({
+			code: `
         import { ${asyncUtil} } from '${testingFramework}';
         test('${asyncUtil} util promise saved in var and waited with await operator is valid', async () => {
           doSomethingElse();
@@ -32,18 +32,18 @@ ruleTester.run(RULE_NAME, rule, {
           await aPromise;
         });
       `,
-    })),
-    ...ASYNC_UTILS.map((asyncUtil) => ({
-      code: `
+		})),
+		...ASYNC_UTILS.map((asyncUtil) => ({
+			code: `
         import { ${asyncUtil} } from '${testingFramework}';
         test('${asyncUtil} util directly chained with then is valid', () => {
           doSomethingElse();
           ${asyncUtil}(() => getByLabelText('email')).then(() => { console.log('done') });
         });
       `,
-    })),
-    ...ASYNC_UTILS.map((asyncUtil) => ({
-      code: `
+		})),
+		...ASYNC_UTILS.map((asyncUtil) => ({
+			code: `
         import { ${asyncUtil} } from '${testingFramework}';
         test('${asyncUtil} util promise saved in var and chained with then is valid', () => {
           doSomethingElse();
@@ -51,9 +51,9 @@ ruleTester.run(RULE_NAME, rule, {
           aPromise.then(() => { console.log('done') });
         });
       `,
-    })),
-    ...ASYNC_UTILS.map((asyncUtil) => ({
-      code: `
+		})),
+		...ASYNC_UTILS.map((asyncUtil) => ({
+			code: `
         import { ${asyncUtil} } from '${testingFramework}';
         test('${asyncUtil} util directly returned in arrow function is valid', async () => {
           const makeCustomWait = () =>
@@ -62,9 +62,9 @@ ruleTester.run(RULE_NAME, rule, {
             );
         });
       `,
-    })),
-    ...ASYNC_UTILS.map((asyncUtil) => ({
-      code: `
+		})),
+		...ASYNC_UTILS.map((asyncUtil) => ({
+			code: `
         import { ${asyncUtil} } from '${testingFramework}';
         test('${asyncUtil} util explicitly returned in arrow function is valid', async () => {
           const makeCustomWait = () => {
@@ -74,9 +74,9 @@ ruleTester.run(RULE_NAME, rule, {
           };
         });
       `,
-    })),
-    ...ASYNC_UTILS.map((asyncUtil) => ({
-      code: `
+		})),
+		...ASYNC_UTILS.map((asyncUtil) => ({
+			code: `
         import { ${asyncUtil} } from '${testingFramework}';
         test('${asyncUtil} util returned in regular function is valid', async () => {
           function makeCustomWait() {
@@ -86,9 +86,9 @@ ruleTester.run(RULE_NAME, rule, {
           }
         });
       `,
-    })),
-    ...ASYNC_UTILS.map((asyncUtil) => ({
-      code: `
+		})),
+		...ASYNC_UTILS.map((asyncUtil) => ({
+			code: `
         import { ${asyncUtil} } from '${testingFramework}';
         test('${asyncUtil} util promise saved in var and returned in function is valid', async () => {
           const makeCustomWait = () => {
@@ -102,12 +102,12 @@ ruleTester.run(RULE_NAME, rule, {
           };
         });
       `,
-    })),
-    ...ASYNC_UTILS.map((asyncUtil) => ({
-      settings: {
-        'testing-library/utils-module': 'test-utils',
-      },
-      code: `
+		})),
+		...ASYNC_UTILS.map((asyncUtil) => ({
+			settings: {
+				'testing-library/utils-module': 'test-utils',
+			},
+			code: `
         import { ${asyncUtil} } from 'some-other-library';
         test(
         'aggressive reporting disabled - util "${asyncUtil}" which is not related to testing library is valid',
@@ -116,12 +116,12 @@ ruleTester.run(RULE_NAME, rule, {
           ${asyncUtil}();
         });
       `,
-    })),
-    ...ASYNC_UTILS.map((asyncUtil) => ({
-      settings: {
-        'testing-library/utils-module': 'test-utils',
-      },
-      code: `
+		})),
+		...ASYNC_UTILS.map((asyncUtil) => ({
+			settings: {
+				'testing-library/utils-module': 'test-utils',
+			},
+			code: `
         import * as asyncUtils from 'some-other-library';
         test(
         'aggressive reporting disabled - util "asyncUtils.${asyncUtil}" which is not related to testing library is valid',
@@ -130,9 +130,9 @@ ruleTester.run(RULE_NAME, rule, {
           asyncUtils.${asyncUtil}();
         });
       `,
-    })),
-    ...ASYNC_UTILS.map((asyncUtil) => ({
-      code: `
+		})),
+		...ASYNC_UTILS.map((asyncUtil) => ({
+			code: `
         import { ${asyncUtil} } from '${testingFramework}';
         test('${asyncUtil} util used in with Promise.all() is valid', async () => {
           await Promise.all([
@@ -141,9 +141,9 @@ ruleTester.run(RULE_NAME, rule, {
           ]);
         });
       `,
-    })),
-    ...ASYNC_UTILS.map((asyncUtil) => ({
-      code: `
+		})),
+		...ASYNC_UTILS.map((asyncUtil) => ({
+			code: `
         import { ${asyncUtil} } from '${testingFramework}';
         test('${asyncUtil} util used in with Promise.all() with an await is valid', async () => {
           await Promise.all([
@@ -152,9 +152,9 @@ ruleTester.run(RULE_NAME, rule, {
           ]);
         });
       `,
-    })),
-    ...ASYNC_UTILS.map((asyncUtil) => ({
-      code: `
+		})),
+		...ASYNC_UTILS.map((asyncUtil) => ({
+			code: `
         import { ${asyncUtil} } from '${testingFramework}';
         test('${asyncUtil} util used in with Promise.all() with ".then" is valid', async () => {
           Promise.all([
@@ -163,9 +163,9 @@ ruleTester.run(RULE_NAME, rule, {
           ]).then(() => console.log('foo'));
         });
       `,
-    })),
-    {
-      code: `
+		})),
+		{
+			code: `
         import { waitFor, waitForElementToBeRemoved } from '${testingFramework}';
         test('combining different async methods with Promise.all does not throw an error', async () => {
           await Promise.all([
@@ -174,9 +174,9 @@ ruleTester.run(RULE_NAME, rule, {
           ])
         });
       `,
-    },
-    {
-      code: `
+		},
+		{
+			code: `
         import { waitForElementToBeRemoved } from '${testingFramework}';
         test('waitForElementToBeRemoved receiving element rather than callback is valid', async () => {
           doSomethingElse();
@@ -184,9 +184,9 @@ ruleTester.run(RULE_NAME, rule, {
           await waitForElementToBeRemoved(emailInput);
         });
       `,
-    },
-    ...ASYNC_UTILS.map((asyncUtil) => ({
-      code: `
+		},
+		...ASYNC_UTILS.map((asyncUtil) => ({
+			code: `
         import { ${asyncUtil} } from '${testingFramework}';
         test('${asyncUtil} util used in Promise.allSettled + await expression is valid', async () => {
           await Promise.allSettled([
@@ -195,9 +195,9 @@ ruleTester.run(RULE_NAME, rule, {
           ]);
         });
       `,
-    })),
-    ...ASYNC_UTILS.map((asyncUtil) => ({
-      code: `
+		})),
+		...ASYNC_UTILS.map((asyncUtil) => ({
+			code: `
         import { ${asyncUtil} } from '${testingFramework}';
         test('${asyncUtil} util used in Promise.allSettled + then method is valid', async () => {
           Promise.allSettled([
@@ -206,9 +206,9 @@ ruleTester.run(RULE_NAME, rule, {
           ]).then(() => {})
         });
       `,
-    })),
-    ...ASYNC_UTILS.map((asyncUtil) => ({
-      code: `
+		})),
+		...ASYNC_UTILS.map((asyncUtil) => ({
+			code: `
         import { ${asyncUtil} } from '${testingFramework}';
         
         function waitForSomethingAsync() {
@@ -219,9 +219,9 @@ ruleTester.run(RULE_NAME, rule, {
           await waitForSomethingAsync()
         });
       `,
-    })),
-    {
-      code: `
+		})),
+		{
+			code: `
       test('using unrelated promises with Promise.all is valid', async () => {
         Promise.all([
           waitForNotRelatedToTestingLibrary(),
@@ -230,104 +230,104 @@ ruleTester.run(RULE_NAME, rule, {
         ])
       })
       `,
-    },
-    {
-      // edge case for coverage
-      // valid async query usage without any function defined
-      // so there is no innermost function scope found
-      code: `
+		},
+		{
+			// edge case for coverage
+			// valid async query usage without any function defined
+			// so there is no innermost function scope found
+			code: `
         import { waitFor } from '${testingFramework}';
         test('edge case for no innermost function scope', () => {
           const foo = waitFor
         })
       `,
-    },
-  ]),
-  invalid: SUPPORTED_TESTING_FRAMEWORKS.flatMap((testingFramework) => [
-    ...ASYNC_UTILS.map(
-      (asyncUtil) =>
-        ({
-          code: `
+		},
+	]),
+	invalid: SUPPORTED_TESTING_FRAMEWORKS.flatMap((testingFramework) => [
+		...ASYNC_UTILS.map(
+			(asyncUtil) =>
+				({
+					code: `
         import { ${asyncUtil} } from '${testingFramework}';
         test('${asyncUtil} util not waited is invalid', () => {
           doSomethingElse();
           ${asyncUtil}(() => getByLabelText('email'));
         });
       `,
-          errors: [
-            {
-              line: 5,
-              column: 11,
-              messageId: 'awaitAsyncUtil',
-              data: { name: asyncUtil },
-            },
-          ],
-        } as const)
-    ),
-    ...ASYNC_UTILS.map(
-      (asyncUtil) =>
-        ({
-          code: `
+					errors: [
+						{
+							line: 5,
+							column: 11,
+							messageId: 'awaitAsyncUtil',
+							data: { name: asyncUtil },
+						},
+					],
+				} as const)
+		),
+		...ASYNC_UTILS.map(
+			(asyncUtil) =>
+				({
+					code: `
         import { ${asyncUtil} } from '${testingFramework}';
         test('${asyncUtil} util not waited is invalid', () => {
           doSomethingElse();
           const el = ${asyncUtil}(() => getByLabelText('email'));
         });
       `,
-          errors: [
-            {
-              line: 5,
-              column: 22,
-              messageId: 'awaitAsyncUtil',
-              data: { name: asyncUtil },
-            },
-          ],
-        } as const)
-    ),
-    ...ASYNC_UTILS.map(
-      (asyncUtil) =>
-        ({
-          code: `
+					errors: [
+						{
+							line: 5,
+							column: 22,
+							messageId: 'awaitAsyncUtil',
+							data: { name: asyncUtil },
+						},
+					],
+				} as const)
+		),
+		...ASYNC_UTILS.map(
+			(asyncUtil) =>
+				({
+					code: `
         import * as asyncUtil from '${testingFramework}';
         test('asyncUtil.${asyncUtil} util not handled is invalid', () => {
           doSomethingElse();
           asyncUtil.${asyncUtil}(() => getByLabelText('email'));
         });
       `,
-          errors: [
-            {
-              line: 5,
-              column: 21,
-              messageId: 'awaitAsyncUtil',
-              data: { name: asyncUtil },
-            },
-          ],
-        } as const)
-    ),
-    ...ASYNC_UTILS.map(
-      (asyncUtil) =>
-        ({
-          code: `
+					errors: [
+						{
+							line: 5,
+							column: 21,
+							messageId: 'awaitAsyncUtil',
+							data: { name: asyncUtil },
+						},
+					],
+				} as const)
+		),
+		...ASYNC_UTILS.map(
+			(asyncUtil) =>
+				({
+					code: `
         import { ${asyncUtil} } from '${testingFramework}';
         test('${asyncUtil} util promise saved not handled is invalid', () => {
           doSomethingElse();
           const aPromise = ${asyncUtil}(() => getByLabelText('email'));
         });
       `,
-          errors: [
-            {
-              line: 5,
-              column: 28,
-              messageId: 'awaitAsyncUtil',
-              data: { name: asyncUtil },
-            },
-          ],
-        } as const)
-    ),
-    ...ASYNC_UTILS.map(
-      (asyncUtil) =>
-        ({
-          code: `
+					errors: [
+						{
+							line: 5,
+							column: 28,
+							messageId: 'awaitAsyncUtil',
+							data: { name: asyncUtil },
+						},
+					],
+				} as const)
+		),
+		...ASYNC_UTILS.map(
+			(asyncUtil) =>
+				({
+					code: `
         import { ${asyncUtil} } from '${testingFramework}';
         test('several ${asyncUtil} utils not handled are invalid', () => {
           const aPromise = ${asyncUtil}(() => getByLabelText('username'));
@@ -335,26 +335,26 @@ ruleTester.run(RULE_NAME, rule, {
           ${asyncUtil}(() => getByLabelText('email'));
         });
       `,
-          errors: [
-            {
-              line: 4,
-              column: 28,
-              messageId: 'awaitAsyncUtil',
-              data: { name: asyncUtil },
-            },
-            {
-              line: 6,
-              column: 11,
-              messageId: 'awaitAsyncUtil',
-              data: { name: asyncUtil },
-            },
-          ],
-        } as const)
-    ),
-    ...ASYNC_UTILS.map(
-      (asyncUtil) =>
-        ({
-          code: `
+					errors: [
+						{
+							line: 4,
+							column: 28,
+							messageId: 'awaitAsyncUtil',
+							data: { name: asyncUtil },
+						},
+						{
+							line: 6,
+							column: 11,
+							messageId: 'awaitAsyncUtil',
+							data: { name: asyncUtil },
+						},
+					],
+				} as const)
+		),
+		...ASYNC_UTILS.map(
+			(asyncUtil) =>
+				({
+					code: `
         import { ${asyncUtil}, render } from '${testingFramework}';
         
         function waitForSomethingAsync() {
@@ -366,20 +366,20 @@ ruleTester.run(RULE_NAME, rule, {
           waitForSomethingAsync()
         });
       `,
-          errors: [
-            {
-              messageId: 'asyncUtilWrapper',
-              line: 10,
-              column: 11,
-              data: { name: 'waitForSomethingAsync' },
-            },
-          ],
-        } as const)
-    ),
-    ...ASYNC_UTILS.map(
-      (asyncUtil) =>
-        ({
-          code: `
+					errors: [
+						{
+							messageId: 'asyncUtilWrapper',
+							line: 10,
+							column: 11,
+							data: { name: 'waitForSomethingAsync' },
+						},
+					],
+				} as const)
+		),
+		...ASYNC_UTILS.map(
+			(asyncUtil) =>
+				({
+					code: `
         import { ${asyncUtil} } from 'some-other-library';
         test(
         'aggressive reporting - util "${asyncUtil}" which is not related to testing library is invalid',
@@ -388,20 +388,20 @@ ruleTester.run(RULE_NAME, rule, {
           ${asyncUtil}();
         });
       `,
-          errors: [
-            {
-              line: 7,
-              column: 11,
-              messageId: 'awaitAsyncUtil',
-              data: { name: asyncUtil },
-            },
-          ],
-        } as const)
-    ),
-    ...ASYNC_UTILS.map(
-      (asyncUtil) =>
-        ({
-          code: `
+					errors: [
+						{
+							line: 7,
+							column: 11,
+							messageId: 'awaitAsyncUtil',
+							data: { name: asyncUtil },
+						},
+					],
+				} as const)
+		),
+		...ASYNC_UTILS.map(
+			(asyncUtil) =>
+				({
+					code: `
         import { ${asyncUtil}, render } from '${testingFramework}';
         
         function waitForSomethingAsync() {
@@ -413,20 +413,20 @@ ruleTester.run(RULE_NAME, rule, {
           const el = waitForSomethingAsync()
         });
       `,
-          errors: [
-            {
-              messageId: 'asyncUtilWrapper',
-              line: 10,
-              column: 22,
-              data: { name: 'waitForSomethingAsync' },
-            },
-          ],
-        } as const)
-    ),
-    ...ASYNC_UTILS.map(
-      (asyncUtil) =>
-        ({
-          code: `
+					errors: [
+						{
+							messageId: 'asyncUtilWrapper',
+							line: 10,
+							column: 22,
+							data: { name: 'waitForSomethingAsync' },
+						},
+					],
+				} as const)
+		),
+		...ASYNC_UTILS.map(
+			(asyncUtil) =>
+				({
+					code: `
         import * as asyncUtils from 'some-other-library';
         test(
         'aggressive reporting - util "asyncUtils.${asyncUtil}" which is not related to testing library is invalid',
@@ -435,15 +435,15 @@ ruleTester.run(RULE_NAME, rule, {
           asyncUtils.${asyncUtil}();
         });
       `,
-          errors: [
-            {
-              line: 7,
-              column: 22,
-              messageId: 'awaitAsyncUtil',
-              data: { name: asyncUtil },
-            },
-          ],
-        } as const)
-    ),
-  ]),
+					errors: [
+						{
+							line: 7,
+							column: 22,
+							messageId: 'awaitAsyncUtil',
+							data: { name: asyncUtil },
+						},
+					],
+				} as const)
+		),
+	]),
 });

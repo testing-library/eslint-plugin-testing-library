@@ -512,6 +512,38 @@
         "code",
         "test"
       ]
+    },
+    {
+      "login": "Semigradsky",
+      "name": "Dmitry Semigradsky",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1198848?v=4",
+      "profile": "https://semigradsky.dev/",
+      "contributions": [
+        "code",
+        "test",
+        "doc"
+      ]
+    },
+    {
+      "login": "sjarva",
+      "name": "Senja",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1133238?v=4",
+      "profile": "https://github.com/sjarva",
+      "contributions": [
+        "code",
+        "test",
+        "doc"
+      ]
+    },
+    {
+      "login": "brenocota-hotmart",
+      "name": "Breno Cota",
+      "avatar_url": "https://avatars.githubusercontent.com/u/106157862?v=4",
+      "profile": "https://dbrno.vercel.app",
+      "contributions": [
+        "code",
+        "test"
+      ]
     }
   ],
   "contributorsPerLine": 7,

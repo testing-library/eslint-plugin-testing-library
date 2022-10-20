@@ -4,164 +4,186 @@ import { createRuleTester } from '../test-utils';
 const ruleTester = createRuleTester();
 
 const FIRE_EVENT_FUNCTIONS = [
-  'copy',
-  'cut',
-  'paste',
-  'compositionEnd',
-  'compositionStart',
-  'compositionUpdate',
-  'keyDown',
-  'keyPress',
-  'keyUp',
-  'focus',
-  'blur',
-  'focusIn',
-  'focusOut',
-  'change',
-  'input',
-  'invalid',
-  'submit',
-  'reset',
-  'click',
-  'contextMenu',
-  'dblClick',
-  'drag',
-  'dragEnd',
-  'dragEnter',
-  'dragExit',
-  'dragLeave',
-  'dragOver',
-  'dragStart',
-  'drop',
-  'mouseDown',
-  'mouseEnter',
-  'mouseLeave',
-  'mouseMove',
-  'mouseOut',
-  'mouseOver',
-  'mouseUp',
-  'popState',
-  'select',
-  'touchCancel',
-  'touchEnd',
-  'touchMove',
-  'touchStart',
-  'scroll',
-  'wheel',
-  'abort',
-  'canPlay',
-  'canPlayThrough',
-  'durationChange',
-  'emptied',
-  'encrypted',
-  'ended',
-  'loadedData',
-  'loadedMetadata',
-  'loadStart',
-  'pause',
-  'play',
-  'playing',
-  'progress',
-  'rateChange',
-  'seeked',
-  'seeking',
-  'stalled',
-  'suspend',
-  'timeUpdate',
-  'volumeChange',
-  'waiting',
-  'load',
-  'error',
-  'animationStart',
-  'animationEnd',
-  'animationIteration',
-  'transitionEnd',
-  'doubleClick',
-  'pointerOver',
-  'pointerEnter',
-  'pointerDown',
-  'pointerMove',
-  'pointerUp',
-  'pointerCancel',
-  'pointerOut',
-  'pointerLeave',
-  'gotPointerCapture',
-  'lostPointerCapture',
+	'copy',
+	'cut',
+	'paste',
+	'compositionEnd',
+	'compositionStart',
+	'compositionUpdate',
+	'keyDown',
+	'keyPress',
+	'keyUp',
+	'focus',
+	'blur',
+	'focusIn',
+	'focusOut',
+	'change',
+	'input',
+	'invalid',
+	'submit',
+	'reset',
+	'click',
+	'contextMenu',
+	'dblClick',
+	'drag',
+	'dragEnd',
+	'dragEnter',
+	'dragExit',
+	'dragLeave',
+	'dragOver',
+	'dragStart',
+	'drop',
+	'mouseDown',
+	'mouseEnter',
+	'mouseLeave',
+	'mouseMove',
+	'mouseOut',
+	'mouseOver',
+	'mouseUp',
+	'popState',
+	'select',
+	'touchCancel',
+	'touchEnd',
+	'touchMove',
+	'touchStart',
+	'scroll',
+	'wheel',
+	'abort',
+	'canPlay',
+	'canPlayThrough',
+	'durationChange',
+	'emptied',
+	'encrypted',
+	'ended',
+	'loadedData',
+	'loadedMetadata',
+	'loadStart',
+	'pause',
+	'play',
+	'playing',
+	'progress',
+	'rateChange',
+	'seeked',
+	'seeking',
+	'stalled',
+	'suspend',
+	'timeUpdate',
+	'volumeChange',
+	'waiting',
+	'load',
+	'error',
+	'animationStart',
+	'animationEnd',
+	'animationIteration',
+	'transitionEnd',
+	'doubleClick',
+	'pointerOver',
+	'pointerEnter',
+	'pointerDown',
+	'pointerMove',
+	'pointerUp',
+	'pointerCancel',
+	'pointerOut',
+	'pointerLeave',
+	'gotPointerCapture',
+	'lostPointerCapture',
 ];
 const SUPPORTED_TESTING_FRAMEWORKS = [
-  '@testing-library/dom',
-  '@testing-library/angular',
-  '@testing-library/react',
-  '@testing-library/vue',
-  '@marko/testing-library',
+	'@testing-library/dom',
+	'@testing-library/angular',
+	'@testing-library/react',
+	'@testing-library/vue',
+	'@marko/testing-library',
 ];
 const USER_EVENT_SYNC_FUNCTIONS = [
-  'clear',
-  'click',
-  'dblClick',
-  'selectOptions',
-  'deselectOptions',
-  'upload',
-  // 'type',
-  // 'keyboard',
-  'tab',
-  'paste',
-  'hover',
-  'unhover',
+	'clear',
+	'click',
+	'dblClick',
+	'selectOptions',
+	'deselectOptions',
+	'upload',
+	// 'type',
+	// 'keyboard',
+	'tab',
+	'paste',
+	'hover',
+	'unhover',
 ];
 
 ruleTester.run(RULE_NAME, rule, {
-  valid: [
-    // sync fireEvents methods without await are valid
-    ...FIRE_EVENT_FUNCTIONS.map((func) => ({
-      code: `() => {
+	valid: [
+		// sync fireEvents methods without await are valid
+		...FIRE_EVENT_FUNCTIONS.map((func) => ({
+			code: `() => {
         fireEvent.${func}('foo')
       }
       `,
-    })),
-    // sync userEvent methods without await are valid
-    ...USER_EVENT_SYNC_FUNCTIONS.map((func) => ({
-      code: `() => {
+		})),
+		// sync userEvent methods without await are valid
+		...USER_EVENT_SYNC_FUNCTIONS.map((func) => ({
+			code: `() => {
         userEvent.${func}('foo')
       }
       `,
-    })),
-    {
-      code: `() => {
+		})),
+		{
+			code: `() => {
         userEvent.type(element, 'foo')
       }
       `,
-    },
-    {
-      code: `() => {
+		},
+		{
+			code: `() => {
         userEvent.keyboard('foo')
       }
       `,
-    },
-    {
-      code: `() => {
+		},
+		{
+			code: `() => {
         await userEvent.type(element, 'bar', {delay: 1234})
       }
       `,
-    },
-    {
-      code: `() => {
+		},
+		{
+			code: `() => {
         await userEvent.keyboard('foo', {delay: 1234})
       }
       `,
-    },
-    {
-      settings: { 'testing-library/utils-module': 'test-utils' },
-      code: `
+		},
+		{
+			code: `async() => {
+		const delay = 10
+        await userEvent.keyboard('foo', {delay})
+      }
+      `,
+		},
+		{
+			code: `async() => {
+		const delay = 10
+        await userEvent.type(element, text, {delay})
+      }
+      `,
+		},
+		{
+			code: `async() => {
+		let delay = 0
+        delay = 10
+        await userEvent.type(element, text, {delay})
+      }
+      `,
+		},
+		{
+			settings: { 'testing-library/utils-module': 'test-utils' },
+			code: `
         import { fireEvent } from 'somewhere-else';
         test('should not report fireEvent.click() not related to Testing Library', async() => {
           await fireEvent.click('foo');
         });
       `,
-    },
-    {
-      settings: { 'testing-library/utils-module': 'test-utils' },
-      code: `
+		},
+		{
+			settings: { 'testing-library/utils-module': 'test-utils' },
+			code: `
         import { fireEvent as renamedFireEvent } from 'somewhere-else';
         import renamedUserEvent from '@testing-library/user-event';
         import { fireEvent, userEvent } from 'somewhere-else'
@@ -172,173 +194,173 @@ ruleTester.run(RULE_NAME, rule, {
           await userEvent.keyboard('foo', { delay: 5 });
         });
       `,
-    },
+		},
 
-    // valid tests for fire-event when only user-event set in eventModules
-    ...SUPPORTED_TESTING_FRAMEWORKS.flatMap((testingFramework) =>
-      FIRE_EVENT_FUNCTIONS.map((func) => ({
-        code: `
+		// valid tests for fire-event when only user-event set in eventModules
+		...SUPPORTED_TESTING_FRAMEWORKS.flatMap((testingFramework) =>
+			FIRE_EVENT_FUNCTIONS.map((func) => ({
+				code: `
           import { fireEvent } from '${testingFramework}';
           test('should not report fireEvent.${func} sync event awaited', async() => {
             await fireEvent.${func}('foo');
           });
         `,
-        options: [{ eventModules: ['user-event'] }],
-      }))
-    ),
+				options: [{ eventModules: ['user-event'] }],
+			}))
+		),
 
-    // valid tests for user-event when only fire-event set in eventModules
-    ...USER_EVENT_SYNC_FUNCTIONS.map((func) => ({
-      code: `
+		// valid tests for user-event when only fire-event set in eventModules
+		...USER_EVENT_SYNC_FUNCTIONS.map((func) => ({
+			code: `
         import userEvent from '@testing-library/user-event';
         test('should not report userEvent.${func} sync event awaited', async() => {
           await userEvent.${func}('foo');
         });
       `,
-      options: [{ eventModules: ['fire-event'] }],
-    })),
-  ],
+			options: [{ eventModules: ['fire-event'] }],
+		})),
+	],
 
-  invalid: [
-    // sync fireEvent methods with await operator are not valid
-    ...SUPPORTED_TESTING_FRAMEWORKS.flatMap((testingFramework) =>
-      FIRE_EVENT_FUNCTIONS.map(
-        (func) =>
-          ({
-            code: `
+	invalid: [
+		// sync fireEvent methods with await operator are not valid
+		...SUPPORTED_TESTING_FRAMEWORKS.flatMap((testingFramework) =>
+			FIRE_EVENT_FUNCTIONS.map(
+				(func) =>
+					({
+						code: `
         import { fireEvent } from '${testingFramework}';
         test('should report fireEvent.${func} sync event awaited', async() => {
           await fireEvent.${func}('foo');
         });
       `,
-            errors: [
-              {
-                line: 4,
-                column: 17,
-                messageId: 'noAwaitSyncEvents',
-                data: { name: `fireEvent.${func}` },
-              },
-            ],
-          } as const)
-      )
-    ),
-    // sync userEvent sync methods with await operator are not valid
-    ...USER_EVENT_SYNC_FUNCTIONS.map(
-      (func) =>
-        ({
-          code: `
+						errors: [
+							{
+								line: 4,
+								column: 17,
+								messageId: 'noAwaitSyncEvents',
+								data: { name: `fireEvent.${func}` },
+							},
+						],
+					} as const)
+			)
+		),
+		// sync userEvent sync methods with await operator are not valid
+		...USER_EVENT_SYNC_FUNCTIONS.map(
+			(func) =>
+				({
+					code: `
         import userEvent from '@testing-library/user-event';
         test('should report userEvent.${func} sync event awaited', async() => {
           await userEvent.${func}('foo');
         });
       `,
-          errors: [
-            {
-              line: 4,
-              column: 17,
-              messageId: 'noAwaitSyncEvents',
-              data: { name: `userEvent.${func}` },
-            },
-          ],
-        } as const)
-    ),
+					errors: [
+						{
+							line: 4,
+							column: 17,
+							messageId: 'noAwaitSyncEvents',
+							data: { name: `userEvent.${func}` },
+						},
+					],
+				} as const)
+		),
 
-    // sync fireEvent methods with await operator are not valid
-    // when only fire-event set in eventModules
-    ...SUPPORTED_TESTING_FRAMEWORKS.flatMap((testingFramework) =>
-      FIRE_EVENT_FUNCTIONS.map(
-        (func) =>
-          ({
-            code: `
+		// sync fireEvent methods with await operator are not valid
+		// when only fire-event set in eventModules
+		...SUPPORTED_TESTING_FRAMEWORKS.flatMap((testingFramework) =>
+			FIRE_EVENT_FUNCTIONS.map(
+				(func) =>
+					({
+						code: `
         import { fireEvent } from '${testingFramework}';
         test('should report fireEvent.${func} sync event awaited', async() => {
           await fireEvent.${func}('foo');
         });
       `,
-            options: [{ eventModules: ['fire-event'] }],
-            errors: [
-              {
-                line: 4,
-                column: 17,
-                messageId: 'noAwaitSyncEvents',
-                data: { name: `fireEvent.${func}` },
-              },
-            ],
-          } as const)
-      )
-    ),
-    // sync userEvent sync methods with await operator are not valid
-    // when only fire-event set in eventModules
-    ...USER_EVENT_SYNC_FUNCTIONS.map(
-      (func) =>
-        ({
-          code: `
+						options: [{ eventModules: ['fire-event'] }],
+						errors: [
+							{
+								line: 4,
+								column: 17,
+								messageId: 'noAwaitSyncEvents',
+								data: { name: `fireEvent.${func}` },
+							},
+						],
+					} as const)
+			)
+		),
+		// sync userEvent sync methods with await operator are not valid
+		// when only fire-event set in eventModules
+		...USER_EVENT_SYNC_FUNCTIONS.map(
+			(func) =>
+				({
+					code: `
         import userEvent from '@testing-library/user-event';
         test('should report userEvent.${func} sync event awaited', async() => {
           await userEvent.${func}('foo');
         });
       `,
-          options: [{ eventModules: ['user-event'] }],
-          errors: [
-            {
-              line: 4,
-              column: 17,
-              messageId: 'noAwaitSyncEvents',
-              data: { name: `userEvent.${func}` },
-            },
-          ],
-        } as const)
-    ),
+					options: [{ eventModules: ['user-event'] }],
+					errors: [
+						{
+							line: 4,
+							column: 17,
+							messageId: 'noAwaitSyncEvents',
+							data: { name: `userEvent.${func}` },
+						},
+					],
+				} as const)
+		),
 
-    {
-      code: `
+		{
+			code: `
         import userEvent from '@testing-library/user-event';
         test('should report async events without delay awaited', async() => {
           await userEvent.type('foo', 'bar');
           await userEvent.keyboard('foo');
         });
       `,
-      errors: [
-        {
-          line: 4,
-          column: 17,
-          messageId: 'noAwaitSyncEvents',
-          data: { name: 'userEvent.type' },
-        },
-        {
-          line: 5,
-          column: 17,
-          messageId: 'noAwaitSyncEvents',
-          data: { name: 'userEvent.keyboard' },
-        },
-      ],
-    },
-    {
-      code: `
+			errors: [
+				{
+					line: 4,
+					column: 17,
+					messageId: 'noAwaitSyncEvents',
+					data: { name: 'userEvent.type' },
+				},
+				{
+					line: 5,
+					column: 17,
+					messageId: 'noAwaitSyncEvents',
+					data: { name: 'userEvent.keyboard' },
+				},
+			],
+		},
+		{
+			code: `
         import userEvent from '@testing-library/user-event';
         test('should report async events with 0 delay awaited', async() => {
           await userEvent.type('foo', 'bar', { delay: 0 });
           await userEvent.keyboard('foo', { delay: 0 });
         });
       `,
-      errors: [
-        {
-          line: 4,
-          column: 17,
-          messageId: 'noAwaitSyncEvents',
-          data: { name: 'userEvent.type' },
-        },
-        {
-          line: 5,
-          column: 17,
-          messageId: 'noAwaitSyncEvents',
-          data: { name: 'userEvent.keyboard' },
-        },
-      ],
-    },
-    {
-      settings: { 'testing-library/utils-module': 'test-utils' },
-      code: `
+			errors: [
+				{
+					line: 4,
+					column: 17,
+					messageId: 'noAwaitSyncEvents',
+					data: { name: 'userEvent.type' },
+				},
+				{
+					line: 5,
+					column: 17,
+					messageId: 'noAwaitSyncEvents',
+					data: { name: 'userEvent.keyboard' },
+				},
+			],
+		},
+		{
+			settings: { 'testing-library/utils-module': 'test-utils' },
+			code: `
         import { fireEvent as renamedFireEvent } from 'test-utils';
         import renamedUserEvent from '@testing-library/user-event';
         
@@ -348,26 +370,77 @@ ruleTester.run(RULE_NAME, rule, {
           await renamedUserEvent.keyboard('foo', { delay: 0 });
         });
       `,
-      errors: [
-        {
-          line: 6,
-          column: 17,
-          messageId: 'noAwaitSyncEvents',
-          data: { name: 'renamedFireEvent.click' },
-        },
-        {
-          line: 7,
-          column: 17,
-          messageId: 'noAwaitSyncEvents',
-          data: { name: 'renamedUserEvent.type' },
-        },
-        {
-          line: 8,
-          column: 17,
-          messageId: 'noAwaitSyncEvents',
-          data: { name: 'renamedUserEvent.keyboard' },
-        },
-      ],
-    },
-  ],
+			errors: [
+				{
+					line: 6,
+					column: 17,
+					messageId: 'noAwaitSyncEvents',
+					data: { name: 'renamedFireEvent.click' },
+				},
+				{
+					line: 7,
+					column: 17,
+					messageId: 'noAwaitSyncEvents',
+					data: { name: 'renamedUserEvent.type' },
+				},
+				{
+					line: 8,
+					column: 17,
+					messageId: 'noAwaitSyncEvents',
+					data: { name: 'renamedUserEvent.keyboard' },
+				},
+			],
+		},
+		{
+			code: `async() => {
+          const delay = 0
+          await userEvent.type('foo', { delay });
+        }
+      `,
+			errors: [
+				{
+					line: 3,
+					column: 17,
+					messageId: 'noAwaitSyncEvents',
+					data: { name: 'userEvent.type' },
+				},
+			],
+		},
+		{
+			code: `async() => {
+          const delay = 0
+		  const somethingElse = true
+		  const skipHover = true
+          await userEvent.type('foo', { delay, skipHover });
+        }
+      `,
+			errors: [
+				{
+					line: 5,
+					column: 17,
+					messageId: 'noAwaitSyncEvents',
+					data: { name: 'userEvent.type' },
+				},
+			],
+		},
+		{
+			code: `async() => {
+		  let delay = 0
+		  const somethingElse = true
+		  const skipHover = true
+		  delay = 15
+		  delay = 0
+          await userEvent.type('foo', { delay, skipHover });
+        }
+      `,
+			errors: [
+				{
+					line: 7,
+					column: 17,
+					messageId: 'noAwaitSyncEvents',
+					data: { name: 'userEvent.type' },
+				},
+			],
+		},
+	],
 });

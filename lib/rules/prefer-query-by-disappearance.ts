@@ -2,14 +2,14 @@ import { TSESTree } from '@typescript-eslint/utils';
 
 import { createTestingLibraryRule } from '../create-testing-library-rule';
 import {
-  getPropertyIdentifierNode,
-  isArrowFunctionExpression,
-  isCallExpression,
-  isMemberExpression,
-  isFunctionExpression,
-  isExpressionStatement,
-  isReturnStatement,
-  isBlockStatement,
+	getPropertyIdentifierNode,
+	isArrowFunctionExpression,
+	isCallExpression,
+	isMemberExpression,
+	isFunctionExpression,
+	isExpressionStatement,
+	isReturnStatement,
+	isBlockStatement,
 } from '../node-utils';
 
 export const RULE_NAME = 'prefer-query-by-disappearance';
@@ -17,167 +17,173 @@ type MessageIds = 'preferQueryByDisappearance';
 type Options = [];
 
 export default createTestingLibraryRule<Options, MessageIds>({
-  name: RULE_NAME,
-  meta: {
-    type: 'problem',
-    docs: {
-      description:
-        'Suggest using `queryBy*` queries when waiting for disappearance',
-      recommendedConfig: {
-        dom: 'error',
-        angular: 'error',
-        react: 'error',
-        vue: 'error',
-        marko: 'error',
-      },
-    },
-    messages: {
-      preferQueryByDisappearance:
-        'Prefer using queryBy* when waiting for disappearance',
-    },
-    schema: [],
-  },
-  defaultOptions: [],
+	name: RULE_NAME,
+	meta: {
+		type: 'problem',
+		docs: {
+			description:
+				'Suggest using `queryBy*` queries when waiting for disappearance',
+			recommendedConfig: {
+				dom: 'error',
+				angular: 'error',
+				react: 'error',
+				vue: 'error',
+				marko: 'error',
+			},
+		},
+		messages: {
+			preferQueryByDisappearance:
+				'Prefer using queryBy* when waiting for disappearance',
+		},
+		schema: [],
+	},
+	defaultOptions: [],
 
-  create(context, _, helpers) {
-    function isWaitForElementToBeRemoved(node: TSESTree.CallExpression) {
-      const identifierNode = getPropertyIdentifierNode(node);
+	create(context, _, helpers) {
+		function isWaitForElementToBeRemoved(node: TSESTree.CallExpression) {
+			const identifierNode = getPropertyIdentifierNode(node);
 
-      if (!identifierNode) {
-        return false;
-      }
+			if (!identifierNode) {
+				return false;
+			}
 
-      return helpers.isAsyncUtil(identifierNode, ['waitForElementToBeRemoved']);
-    }
+			return helpers.isAsyncUtil(identifierNode, ['waitForElementToBeRemoved']);
+		}
 
-    function isReportableExpression(node: TSESTree.LeftHandSideExpression) {
-      const argumentProperty = isMemberExpression(node)
-        ? getPropertyIdentifierNode(node.property)
-        : getPropertyIdentifierNode(node);
+		/**
+		 * Checks if node is reportable (starts with "get" or "find") and if it is, reports it with `context.report()`.
+		 *
+		 * @param {TSESTree.LeftHandSideExpression} node - Node to be tested
+		 * @returns {Boolean} Boolean indicating if expression was reported
+		 */
+		function reportExpression(node: TSESTree.LeftHandSideExpression): boolean {
+			const argumentProperty = isMemberExpression(node)
+				? getPropertyIdentifierNode(node.property)
+				: getPropertyIdentifierNode(node);
 
-      if (!argumentProperty) {
-        return false;
-      }
+			if (!argumentProperty) {
+				return false;
+			}
 
-      return (
-        helpers.isGetQueryVariant(argumentProperty) ||
-        helpers.isFindQueryVariant(argumentProperty)
-      );
-    }
+			if (
+				helpers.isGetQueryVariant(argumentProperty) ||
+				helpers.isFindQueryVariant(argumentProperty)
+			) {
+				context.report({
+					node: argumentProperty,
+					messageId: 'preferQueryByDisappearance',
+				});
+				return true;
+			}
+			return false;
+		}
 
-    function isNonCallbackViolation(node: TSESTree.CallExpressionArgument) {
-      if (!isCallExpression(node)) {
-        return false;
-      }
+		function checkNonCallbackViolation(node: TSESTree.CallExpressionArgument) {
+			if (!isCallExpression(node)) {
+				return false;
+			}
 
-      if (
-        !isMemberExpression(node.callee) &&
-        !getPropertyIdentifierNode(node.callee)
-      ) {
-        return false;
-      }
+			if (
+				!isMemberExpression(node.callee) &&
+				!getPropertyIdentifierNode(node.callee)
+			) {
+				return false;
+			}
 
-      return isReportableExpression(node.callee);
-    }
+			return reportExpression(node.callee);
+		}
 
-    function isReturnViolation(node: TSESTree.Statement) {
-      if (!isReturnStatement(node) || !isCallExpression(node.argument)) {
-        return false;
-      }
+		function isReturnViolation(node: TSESTree.Statement) {
+			if (!isReturnStatement(node) || !isCallExpression(node.argument)) {
+				return false;
+			}
 
-      return isReportableExpression(node.argument.callee);
-    }
+			return reportExpression(node.argument.callee);
+		}
 
-    function isNonReturnViolation(node: TSESTree.Statement) {
-      if (!isExpressionStatement(node) || !isCallExpression(node.expression)) {
-        return false;
-      }
+		function isNonReturnViolation(node: TSESTree.Statement) {
+			if (!isExpressionStatement(node) || !isCallExpression(node.expression)) {
+				return false;
+			}
 
-      if (
-        !isMemberExpression(node.expression.callee) &&
-        !getPropertyIdentifierNode(node.expression.callee)
-      ) {
-        return false;
-      }
+			if (
+				!isMemberExpression(node.expression.callee) &&
+				!getPropertyIdentifierNode(node.expression.callee)
+			) {
+				return false;
+			}
 
-      return isReportableExpression(node.expression.callee);
-    }
+			return reportExpression(node.expression.callee);
+		}
 
-    function isStatementViolation(statement: TSESTree.Statement) {
-      return isReturnViolation(statement) || isNonReturnViolation(statement);
-    }
+		function isStatementViolation(statement: TSESTree.Statement) {
+			return isReturnViolation(statement) || isNonReturnViolation(statement);
+		}
 
-    function isFunctionExpressionViolation(
-      node: TSESTree.CallExpressionArgument
-    ) {
-      if (!isFunctionExpression(node)) {
-        return false;
-      }
+		function checkFunctionExpressionViolation(
+			node: TSESTree.CallExpressionArgument
+		) {
+			if (!isFunctionExpression(node)) {
+				return false;
+			}
 
-      return node.body.body.some((statement) =>
-        isStatementViolation(statement)
-      );
-    }
+			return node.body.body.some((statement) =>
+				isStatementViolation(statement)
+			);
+		}
 
-    function isArrowFunctionBodyViolation(
-      node: TSESTree.CallExpressionArgument
-    ) {
-      if (!isArrowFunctionExpression(node) || !isBlockStatement(node.body)) {
-        return false;
-      }
+		function isArrowFunctionBodyViolation(
+			node: TSESTree.CallExpressionArgument
+		) {
+			if (!isArrowFunctionExpression(node) || !isBlockStatement(node.body)) {
+				return false;
+			}
 
-      return node.body.body.some((statement) =>
-        isStatementViolation(statement)
-      );
-    }
+			return node.body.body.some((statement) =>
+				isStatementViolation(statement)
+			);
+		}
 
-    function isArrowFunctionImplicitReturnViolation(
-      node: TSESTree.CallExpressionArgument
-    ) {
-      if (!isArrowFunctionExpression(node) || !isCallExpression(node.body)) {
-        return false;
-      }
+		function isArrowFunctionImplicitReturnViolation(
+			node: TSESTree.CallExpressionArgument
+		) {
+			if (!isArrowFunctionExpression(node) || !isCallExpression(node.body)) {
+				return false;
+			}
 
-      if (
-        !isMemberExpression(node.body.callee) &&
-        !getPropertyIdentifierNode(node.body.callee)
-      ) {
-        return false;
-      }
+			if (
+				!isMemberExpression(node.body.callee) &&
+				!getPropertyIdentifierNode(node.body.callee)
+			) {
+				return false;
+			}
 
-      return isReportableExpression(node.body.callee);
-    }
+			return reportExpression(node.body.callee);
+		}
 
-    function isArrowFunctionViolation(node: TSESTree.CallExpressionArgument) {
-      return (
-        isArrowFunctionBodyViolation(node) ||
-        isArrowFunctionImplicitReturnViolation(node)
-      );
-    }
+		function checkArrowFunctionViolation(
+			node: TSESTree.CallExpressionArgument
+		) {
+			return (
+				isArrowFunctionBodyViolation(node) ||
+				isArrowFunctionImplicitReturnViolation(node)
+			);
+		}
 
-    function check(node: TSESTree.CallExpression) {
-      if (!isWaitForElementToBeRemoved(node)) {
-        return;
-      }
+		function check(node: TSESTree.CallExpression) {
+			if (!isWaitForElementToBeRemoved(node)) {
+				return;
+			}
 
-      const argumentNode = node.arguments[0];
+			const argumentNode = node.arguments[0];
 
-      if (
-        !isNonCallbackViolation(argumentNode) &&
-        !isArrowFunctionViolation(argumentNode) &&
-        !isFunctionExpressionViolation(argumentNode)
-      ) {
-        return;
-      }
+			checkNonCallbackViolation(argumentNode);
+			checkArrowFunctionViolation(argumentNode);
+			checkFunctionExpressionViolation(argumentNode);
+		}
 
-      context.report({
-        node: argumentNode,
-        messageId: 'preferQueryByDisappearance',
-      });
-    }
-
-    return {
-      CallExpression: check,
-    };
-  },
+		return {
+			CallExpression: check,
+		};
+	},
 });

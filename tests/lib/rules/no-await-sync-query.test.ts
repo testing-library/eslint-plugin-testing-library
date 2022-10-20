@@ -1,102 +1,102 @@
 import rule, { RULE_NAME } from '../../../lib/rules/no-await-sync-query';
 import {
-  SYNC_QUERIES_COMBINATIONS,
-  ASYNC_QUERIES_COMBINATIONS,
+	SYNC_QUERIES_COMBINATIONS,
+	ASYNC_QUERIES_COMBINATIONS,
 } from '../../../lib/utils';
 import { createRuleTester } from '../test-utils';
 
 const ruleTester = createRuleTester();
 
 const SUPPORTED_TESTING_FRAMEWORKS = [
-  '@testing-library/dom',
-  '@testing-library/angular',
-  '@testing-library/react',
-  '@testing-library/vue',
-  '@marko/testing-library',
+	'@testing-library/dom',
+	'@testing-library/angular',
+	'@testing-library/react',
+	'@testing-library/vue',
+	'@marko/testing-library',
 ];
 
 ruleTester.run(RULE_NAME, rule, {
-  valid: [
-    // sync queries without await are valid
-    ...SYNC_QUERIES_COMBINATIONS.map((query) => ({
-      code: `() => {
+	valid: [
+		// sync queries without await are valid
+		...SYNC_QUERIES_COMBINATIONS.map((query) => ({
+			code: `() => {
         const element = ${query}('foo')
       }
       `,
-    })),
-    // custom sync queries without await are valid
-    `() => {
+		})),
+		// custom sync queries without await are valid
+		`() => {
       const element = getByIcon('search')
     }
     `,
-    `() => {
+		`() => {
       const element = queryByIcon('search')
     }
     `,
-    `() => {
+		`() => {
       const element = getAllByIcon('search')
     }
     `,
-    `() => {
+		`() => {
       const element = queryAllByIcon('search')
     }
     `,
-    `async () => {
+		`async () => {
       await waitFor(() => {
         getByText('search');
       });
     }
     `,
 
-    // awaited custom sync query not matching custom-queries setting is valid
-    {
-      settings: {
-        'testing-library/custom-queries': ['queryByIcon', 'ByComplexText'],
-      },
-      code: `
+		// awaited custom sync query not matching custom-queries setting is valid
+		{
+			settings: {
+				'testing-library/custom-queries': ['queryByIcon', 'ByComplexText'],
+			},
+			code: `
       test('A valid example test', async () => {
         const element = await getByIcon('search')
       })
       `,
-    },
+		},
 
-    // sync queries without await inside assert are valid
-    ...SYNC_QUERIES_COMBINATIONS.map((query) => ({
-      code: `() => {
+		// sync queries without await inside assert are valid
+		...SYNC_QUERIES_COMBINATIONS.map((query) => ({
+			code: `() => {
         expect(${query}('foo')).toBeEnabled()
       }
       `,
-    })),
+		})),
 
-    // async queries with await operator are valid
-    ...ASYNC_QUERIES_COMBINATIONS.map((query) => ({
-      code: `async () => {
+		// async queries with await operator are valid
+		...ASYNC_QUERIES_COMBINATIONS.map((query) => ({
+			code: `async () => {
         const element = await ${query}('foo')
       }
       `,
-    })),
+		})),
 
-    // async queries with then method are valid
-    ...ASYNC_QUERIES_COMBINATIONS.map((query) => ({
-      code: `() => {
+		// async queries with then method are valid
+		...ASYNC_QUERIES_COMBINATIONS.map((query) => ({
+			code: `() => {
         ${query}('foo').then(() => {});
       }
       `,
-    })),
+		})),
 
-    // sync query awaited but not related to custom module is invalid but not reported
-    {
-      settings: { 'testing-library/utils-module': 'test-utils' },
-      code: `
+		// sync query awaited but not related to custom module is invalid but not reported
+		{
+			settings: { 'testing-library/utils-module': 'test-utils' },
+			code: `
       import { screen } from 'somewhere-else'
       () => {
         const element = await screen.getByRole('button')
       }
       `,
-    },
+		},
 
-    // https://github.com/testing-library/eslint-plugin-testing-library/issues/276
-    `
+		// https://github.com/testing-library/eslint-plugin-testing-library/issues/276
+		`
     // sync query within call expression but not part of the callee
     const chooseElementFromSomewhere = async (text, getAllByLabelText) => {
       const someElement = getAllByLabelText(text)[0].parentElement;
@@ -107,7 +107,7 @@ ruleTester.run(RULE_NAME, rule, {
     await chooseElementFromSomewhere('someTextToUseInAQuery', getAllByLabelText);
     `,
 
-    `// edge case for coverage:
+		`// edge case for coverage:
      // valid use case without call expression
      // so there is no innermost function scope found
      await test('edge case for no innermost function scope', () => {
@@ -115,160 +115,160 @@ ruleTester.run(RULE_NAME, rule, {
     })
     `,
 
-    `// edge case for coverage: CallExpression without deepest Identifier
+		`// edge case for coverage: CallExpression without deepest Identifier
      await someList[0]();
     `,
 
-    `// element is removed
+		`// element is removed
     test('movie title no longer present in DOM', async () => {
       await waitForElementToBeRemoved(() => queryByText('the mummy'))
     })
     `,
-  ],
+	],
 
-  invalid: [
-    // sync queries with await operator are not valid
-    ...SYNC_QUERIES_COMBINATIONS.map(
-      (query) =>
-        ({
-          code: `async () => {
+	invalid: [
+		// sync queries with await operator are not valid
+		...SYNC_QUERIES_COMBINATIONS.map(
+			(query) =>
+				({
+					code: `async () => {
         const element = await ${query}('foo')
       }
       `,
-          errors: [
-            {
-              messageId: 'noAwaitSyncQuery',
-              line: 2,
-              column: 31,
-            },
-          ],
-        } as const)
-    ),
-    // custom sync queries with await operator are not valid
-    {
-      code: `
+					errors: [
+						{
+							messageId: 'noAwaitSyncQuery',
+							line: 2,
+							column: 31,
+						},
+					],
+				} as const)
+		),
+		// custom sync queries with await operator are not valid
+		{
+			code: `
       async () => {
         const element = await getByIcon('search')
       }
       `,
-      errors: [{ messageId: 'noAwaitSyncQuery', line: 3, column: 31 }],
-    },
-    {
-      code: `
+			errors: [{ messageId: 'noAwaitSyncQuery', line: 3, column: 31 }],
+		},
+		{
+			code: `
       async () => {
         const element = await queryByIcon('search')
       }
       `,
-      errors: [{ messageId: 'noAwaitSyncQuery', line: 3, column: 31 }],
-    },
-    {
-      code: `
+			errors: [{ messageId: 'noAwaitSyncQuery', line: 3, column: 31 }],
+		},
+		{
+			code: `
       async () => {
         const element = await screen.getAllByIcon('search')
       }
       `,
-      errors: [{ messageId: 'noAwaitSyncQuery', line: 3, column: 38 }],
-    },
-    {
-      code: `
+			errors: [{ messageId: 'noAwaitSyncQuery', line: 3, column: 38 }],
+		},
+		{
+			code: `
       async () => {
         const element = await screen.queryAllByIcon('search')
       }
       `,
-      errors: [{ messageId: 'noAwaitSyncQuery', line: 3, column: 38 }],
-    },
-    // sync queries with await operator inside assert are not valid
-    ...SYNC_QUERIES_COMBINATIONS.map(
-      (query) =>
-        ({
-          code: `async () => {
+			errors: [{ messageId: 'noAwaitSyncQuery', line: 3, column: 38 }],
+		},
+		// sync queries with await operator inside assert are not valid
+		...SYNC_QUERIES_COMBINATIONS.map(
+			(query) =>
+				({
+					code: `async () => {
         expect(await ${query}('foo')).toBeEnabled()
       }
       `,
-          errors: [
-            {
-              messageId: 'noAwaitSyncQuery',
-              line: 2,
-              column: 22,
-            },
-          ],
-        } as const)
-    ),
+					errors: [
+						{
+							messageId: 'noAwaitSyncQuery',
+							line: 2,
+							column: 22,
+						},
+					],
+				} as const)
+		),
 
-    // sync queries in screen with await operator are not valid
-    ...SYNC_QUERIES_COMBINATIONS.map(
-      (query) =>
-        ({
-          code: `async () => {
+		// sync queries in screen with await operator are not valid
+		...SYNC_QUERIES_COMBINATIONS.map(
+			(query) =>
+				({
+					code: `async () => {
         const element = await screen.${query}('foo')
       }
       `,
-          errors: [
-            {
-              messageId: 'noAwaitSyncQuery',
-              line: 2,
-              column: 38,
-            },
-          ],
-        } as const)
-    ),
+					errors: [
+						{
+							messageId: 'noAwaitSyncQuery',
+							line: 2,
+							column: 38,
+						},
+					],
+				} as const)
+		),
 
-    // sync queries in screen with await operator inside assert are not valid
-    ...SYNC_QUERIES_COMBINATIONS.map(
-      (query) =>
-        ({
-          code: `async () => {
+		// sync queries in screen with await operator inside assert are not valid
+		...SYNC_QUERIES_COMBINATIONS.map(
+			(query) =>
+				({
+					code: `async () => {
         expect(await screen.${query}('foo')).toBeEnabled()
       }
       `,
-          errors: [
-            {
-              messageId: 'noAwaitSyncQuery',
-              line: 2,
-              column: 29,
-            },
-          ],
-        } as const)
-    ),
+					errors: [
+						{
+							messageId: 'noAwaitSyncQuery',
+							line: 2,
+							column: 29,
+						},
+					],
+				} as const)
+		),
 
-    // sync query awaited and related to testing library module
-    // with custom module setting is not valid
-    ...SUPPORTED_TESTING_FRAMEWORKS.map(
-      (testingFramework) =>
-        ({
-          settings: { 'testing-library/utils-module': 'test-utils' },
-          code: `
+		// sync query awaited and related to testing library module
+		// with custom module setting is not valid
+		...SUPPORTED_TESTING_FRAMEWORKS.map(
+			(testingFramework) =>
+				({
+					settings: { 'testing-library/utils-module': 'test-utils' },
+					code: `
       import { screen } from '${testingFramework}'
       () => {
         const element = await screen.getByRole('button')
       }
       `,
-          errors: [{ messageId: 'noAwaitSyncQuery', line: 4, column: 38 }],
-        } as const)
-    ),
-    // sync query awaited and related to custom module is not valid
-    {
-      settings: { 'testing-library/utils-module': 'test-utils' },
-      code: `
+					errors: [{ messageId: 'noAwaitSyncQuery', line: 4, column: 38 }],
+				} as const)
+		),
+		// sync query awaited and related to custom module is not valid
+		{
+			settings: { 'testing-library/utils-module': 'test-utils' },
+			code: `
       import { screen } from 'test-utils'
       () => {
         const element = await screen.getByRole('button')
       }
       `,
-      errors: [{ messageId: 'noAwaitSyncQuery', line: 4, column: 38 }],
-    },
+			errors: [{ messageId: 'noAwaitSyncQuery', line: 4, column: 38 }],
+		},
 
-    // awaited custom sync query matching custom-queries setting is invalid
-    {
-      settings: {
-        'testing-library/custom-queries': ['queryByIcon', 'ByComplexText'],
-      },
-      code: `
+		// awaited custom sync query matching custom-queries setting is invalid
+		{
+			settings: {
+				'testing-library/custom-queries': ['queryByIcon', 'ByComplexText'],
+			},
+			code: `
       test('A valid example test', async () => {
         const element = await queryByIcon('search')
       })
       `,
-      errors: [{ messageId: 'noAwaitSyncQuery', line: 3, column: 31 }],
-    },
-  ],
+			errors: [{ messageId: 'noAwaitSyncQuery', line: 3, column: 31 }],
+		},
+	],
 });
