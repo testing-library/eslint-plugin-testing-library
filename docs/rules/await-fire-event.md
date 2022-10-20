@@ -16,7 +16,6 @@ The promise will be considered as handled when:
 - chaining `toResolve()` or `toReject()` from [jest-extended](https://github.com/jest-community/jest-extended#promise)
 - it's returned from a function (in this case, that particular function will be analyzed by this rule too)
 
-
 > ⚠️ `fireEvent` methods are async only on following Testing Library packages:
 >
 > - `@testing-library/vue` (supported by this plugin)
@@ -65,12 +64,11 @@ await Promise.all([
 	fireEvent.blur(getByLabelText('username')),
 ]);
 
+// Using jest resolves or rejects
+expect(fireEvent.focus(getByLabelText('username'))).resolves.toBeUndefined();
 
-  // Using jest resolves or rejects
-  expect(fireEvent.focus(getByLabelText('username'))).resolves.toBeUndefined();
-  
-  // Using jest-extended a toResolve/toReject matcher is also correct
-  expect(waitFor(() => getByLabelText('email'))).toResolve();
+// Using jest-extended a toResolve/toReject matcher is also correct
+expect(waitFor(() => getByLabelText('email'))).toResolve();
 ```
 
 ## When Not To Use It

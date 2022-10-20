@@ -92,7 +92,6 @@ test('something correctly', async () => {
 
 	// Using jest-extended a toResolve/toReject matcher is also correct
 	expect(waitFor(() => getByLabelText('email'))).toResolve();
-
 });
 ```
 

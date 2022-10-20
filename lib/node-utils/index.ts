@@ -464,10 +464,10 @@ export function getAssertNodeInfo(
 }
 
 const matcherNamesHandlePromise = [
-  'resolves',
-  'rejects',
-  'toResolve',
-  'toReject',
+	'resolves',
+	'rejects',
+	'toResolve',
+	'toReject',
 ];
 
 /**

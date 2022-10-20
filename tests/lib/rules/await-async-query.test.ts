@@ -221,14 +221,14 @@ ruleTester.run(RULE_NAME, rule, {
         expect(${query}("foo")).resolves.toBe("bar")
         expect(wrappedQuery(${query}("foo"))).resolves.toBe("bar")
       `
-    ),
-    // async queries with toResolve matchers are valid
-    ...createTestCase(
-      (query) => `
+		),
+		// async queries with toResolve matchers are valid
+		...createTestCase(
+			(query) => `
         expect(${query}("foo")).toResolve()
         expect(wrappedQuery(${query}("foo"))).toResolve()
       `
-    ),
+		),
 
 		// async queries with rejects matchers are valid
 		...createTestCase(
@@ -238,13 +238,13 @@ ruleTester.run(RULE_NAME, rule, {
       `
 		),
 
-    // async queries with toReject matchers are valid
-    ...createTestCase(
-      (query) => `
+		// async queries with toReject matchers are valid
+		...createTestCase(
+			(query) => `
         expect(${query}("foo")).toReject()
         expect(wrappedQuery(${query}("foo"))).toReject()
       `
-    ),
+		),
 
 		// unresolved async queries with aggressive reporting opted-out are valid
 		...ALL_ASYNC_COMBINATIONS_TO_TEST.map((query) => ({
