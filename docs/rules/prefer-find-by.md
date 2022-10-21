@@ -1,11 +1,11 @@
 # Suggest using `findBy*` methods instead of the `waitFor` + `getBy` queries (`testing-library/prefer-find-by`)
 
-findBy* queries are a simple combination of getBy* queries and waitFor. The findBy\* queries accept the waitFor options as the last argument. (i.e. screen.findByText('text', queryOptions, waitForOptions))
+`findBy*` queries are a simple combination of `getBy*` queries and `waitFor`. The `findBy*` queries accept the `waitFor` options as the last argument. (i.e. `screen.findByText('text', queryOptions, waitForOptions)`)
 
 ## Rule details
 
 This rule aims to use `findBy*` or `findAllBy*` queries to wait for elements, rather than using `waitFor`, or the deprecated methods `waitForElement` and `wait`.
-This rule analyzes those cases where `waitFor` is used with just one query method, in the form of an arrow function with only one statement (that is, without a block of statements). Given the callback could be more complex, this rule does not consider function callbacks or arrow functions with blocks of code
+This rule analyzes those cases where `waitFor` is used with just one query method, in the form of an arrow function with only one statement (that is, without a block of statements). Given the callback could be more complex, this rule does not consider function callbacks or arrow functions with blocks of code.
 
 Examples of **incorrect** code for this rule
 
@@ -78,7 +78,7 @@ await waitFor(() => expect(getAllByText('bar')).toBeDisabled());
 
 ## When Not To Use It
 
-- Not encouraging use of findBy shortcut from testing library best practices
+- Not encouraging use of `findBy` shortcut from testing library best practices
 
 ## Further Reading
 

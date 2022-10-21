@@ -704,5 +704,28 @@ ruleTester.run(RULE_NAME, rule, {
           })
         `,
 		})),
+		// Issue #579, https://github.com/testing-library/eslint-plugin-testing-library/issues/579
+		// findBy can have two sets of options: await screen.findByText('text', queryOptions, waitForOptions)
+		...createScenario((waitMethod: string, queryMethod: string) => ({
+			code: `import {${waitMethod}} from '${testingFramework}';
+		  const button = await ${waitMethod}(() => screen.${queryMethod}('Count is: 0'), { timeout: 100, interval: 200 })
+        `,
+			errors: [
+				{
+					messageId: 'preferFindBy',
+					data: {
+						queryVariant: getFindByQueryVariant(queryMethod),
+						queryMethod: queryMethod.split('By')[1],
+						prevQuery: queryMethod,
+						waitForMethodName: waitMethod,
+					},
+				},
+			],
+			output: `import {${waitMethod}} from '${testingFramework}';
+		  const button = await screen.${buildFindByMethod(
+				queryMethod
+			)}('Count is: 0', { timeout: 100, interval: 200 })
+        `,
+		})),
 	]),
 });
