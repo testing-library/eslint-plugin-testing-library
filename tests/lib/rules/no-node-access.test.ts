@@ -143,25 +143,6 @@ ruleTester.run(RULE_NAME, rule, {
 				code: `
 				import { render } from '@testing-library/react';
 				
-				function Wrapper(props) {
-					// this should NOT be reported
-					if (props.children) {
-					  // ...
-					}
-				  
-					// this should NOT be reported
-					return <div className="wrapper-class">{props.children}</div>
-				  };
-	
-				render(<Wrapper><SomeComponent /></Wrapper>);
-				expect(screen.getByText('SomeComponent')).toBeInTheDocument();
-				`,
-			},
-			{
-				// Example from discussions in issue #386
-				code: `
-				import { render } from '@testing-library/react';
-				
 				function Wrapper({ children }) {
 					// this should NOT be reported
 					if (children) {
