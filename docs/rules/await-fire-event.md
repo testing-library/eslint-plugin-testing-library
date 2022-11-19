@@ -1,4 +1,8 @@
-# Enforce promises from fire event methods to be handled (`testing-library/await-fire-event`)
+# Enforce promises from `fireEvent` methods to be handled (`testing-library/await-fire-event`)
+
+💼 This rule is enabled in the following configs: `marko`, `vue`.
+
+<!-- end auto-generated rule header -->
 
 Ensure that promises returned by `fireEvent` methods are handled
 properly.

@@ -1,5 +1,9 @@
 # Disallow direct Node access (`testing-library/no-node-access`)
 
+💼 This rule is enabled in the following configs: `angular`, `marko`, `react`, `vue`.
+
+<!-- end auto-generated rule header -->
+
 The Testing Library already provides methods for querying DOM elements.
 
 ## Rule Details

@@ -1,5 +1,9 @@
 # Use `waitFor` instead of deprecated wait methods (`testing-library/prefer-wait-for`)
 
+🔧 This rule is automatically fixable by the [`--fix` CLI option](https://eslint.org/docs/latest/user-guide/command-line-interface#--fix).
+
+<!-- end auto-generated rule header -->
+
 `dom-testing-library` v7 released a new async util called `waitFor` which satisfies the use cases of `wait`, `waitForElement`, and `waitForDomChange` making them deprecated.
 
 ## Rule Details

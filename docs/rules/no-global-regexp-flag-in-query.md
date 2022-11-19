@@ -1,5 +1,9 @@
 # Disallow the use of the global RegExp flag (/g) in queries (`testing-library/no-global-regexp-flag-in-query`)
 
+🔧 This rule is automatically fixable by the [`--fix` CLI option](https://eslint.org/docs/latest/user-guide/command-line-interface#--fix).
+
+<!-- end auto-generated rule header -->
+
 Ensure that there are no global RegExp flags used when using queries.
 
 ## Rule Details

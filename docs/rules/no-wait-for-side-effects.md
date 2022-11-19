@@ -1,4 +1,8 @@
-# Disallow the use of side effects inside `waitFor` (`testing-library/no-wait-for-side-effects`)
+# Disallow the use of side effects in `waitFor` (`testing-library/no-wait-for-side-effects`)
+
+💼 This rule is enabled in the following configs: `angular`, `dom`, `marko`, `react`, `vue`.
+
+<!-- end auto-generated rule header -->
 
 ## Rule Details
 

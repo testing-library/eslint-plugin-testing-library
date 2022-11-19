@@ -1,4 +1,6 @@
-# Enforces consistent naming for the data-testid attribute (`testing-library/consistent-data-testid`)
+# Ensures consistent usage of `data-testid` (`testing-library/consistent-data-testid`)
+
+<!-- end auto-generated rule header -->
 
 Ensure `data-testid` values match a provided regex. This rule is un-opinionated, and requires configuration.
 
