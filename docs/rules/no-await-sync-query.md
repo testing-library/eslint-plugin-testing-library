@@ -1,5 +1,9 @@
 # Disallow unnecessary `await` for sync queries (`testing-library/no-await-sync-query`)
 
+💼 This rule is enabled in the following configs: `angular`, `dom`, `marko`, `react`, `vue`.
+
+<!-- end auto-generated rule header -->
+
 Ensure that sync queries are not awaited unnecessarily.
 
 ## Rule Details

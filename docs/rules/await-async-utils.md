@@ -1,4 +1,8 @@
-# Enforce promises from async utils to be handled (`testing-library/await-async-utils`)
+# Enforce promises from async utils to be awaited properly (`testing-library/await-async-utils`)
+
+💼 This rule is enabled in the following configs: `angular`, `dom`, `marko`, `react`, `vue`.
+
+<!-- end auto-generated rule header -->
 
 Ensure that promises returned by async utils are handled properly.
 

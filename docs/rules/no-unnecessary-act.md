@@ -1,5 +1,9 @@
 # Disallow wrapping Testing Library utils or empty callbacks in `act` (`testing-library/no-unnecessary-act`)
 
+💼 This rule is enabled in the following configs: `marko`, `react`.
+
+<!-- end auto-generated rule header -->
+
 > ⚠️ The `act` method is only available on the following Testing Library packages:
 >
 > - `@testing-library/react` (supported by this plugin)

@@ -1,5 +1,9 @@
 # Disallow the use of promises passed to a `fireEvent` method (`testing-library/no-promise-in-fire-event`)
 
+💼 This rule is enabled in the following configs: `angular`, `dom`, `marko`, `react`, `vue`.
+
+<!-- end auto-generated rule header -->
+
 Methods from `fireEvent` expect to receive a DOM element. Passing a promise will end up in an error, so it must be prevented.
 
 Examples of **incorrect** code for this rule:

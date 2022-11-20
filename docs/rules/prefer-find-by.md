@@ -1,4 +1,10 @@
-# Suggest using `findBy*` methods instead of the `waitFor` + `getBy` queries (`testing-library/prefer-find-by`)
+# Suggest using `find(All)By*` query instead of `waitFor` + `get(All)By*` to wait for elements (`testing-library/prefer-find-by`)
+
+💼 This rule is enabled in the following configs: `angular`, `dom`, `marko`, `react`, `vue`.
+
+🔧 This rule is automatically fixable by the [`--fix` CLI option](https://eslint.org/docs/latest/user-guide/command-line-interface#--fix).
+
+<!-- end auto-generated rule header -->
 
 `findBy*` queries are a simple combination of `getBy*` queries and `waitFor`. The `findBy*` queries accept the `waitFor` options as the last argument. (i.e. `screen.findByText('text', queryOptions, waitForOptions)`)
 

@@ -1,4 +1,6 @@
-# Suggest using `userEvent` library instead of `fireEvent` for simulating user interaction (`testing-library/prefer-user-event`)
+# Suggest using `userEvent` over `fireEvent` for simulating user interactions (`testing-library/prefer-user-event`)
+
+<!-- end auto-generated rule header -->
 
 From
 [testing-library/dom-testing-library#107](https://github.com/testing-library/dom-testing-library/issues/107):

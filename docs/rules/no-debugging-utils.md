@@ -1,4 +1,8 @@
-# Disallow the use of debugging utilities (`testing-library/no-debugging-utils`)
+# Disallow the use of debugging utilities like `debug` (`testing-library/no-debugging-utils`)
+
+💼 This rule is enabled in the following configs: `angular`, `marko`, `react`, `vue`.
+
+<!-- end auto-generated rule header -->
 
 Just like `console.log` statements pollutes the browser's output, debug statements also pollutes the tests if one of your teammates forgot to remove it. `debug` statements should be used when you actually want to debug your tests but should not be pushed to the codebase.
 
@@ -36,6 +40,8 @@ screen.debug();
 const { screen } = require('@testing-library/react');
 screen.debug();
 ```
+
+## Options
 
 You can control which debugging utils are checked for with the `utilsToCheckFor` option:
 

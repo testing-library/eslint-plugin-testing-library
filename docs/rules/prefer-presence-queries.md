@@ -1,4 +1,8 @@
-# Enforce specific queries when checking element is present or not (`testing-library/prefer-presence-queries`)
+# Ensure appropriate `get*`/`query*` queries are used with their respective matchers (`testing-library/prefer-presence-queries`)
+
+💼 This rule is enabled in the following configs: `angular`, `dom`, `marko`, `react`, `vue`.
+
+<!-- end auto-generated rule header -->
 
 The (DOM) Testing Library allows to query DOM elements using different types of queries such as `get*` and `query*`. Using `get*` throws an error in case the element is not found, while `query*` returns null instead of throwing (or empty array for `queryAllBy*` ones). These differences are useful in some situations:
 

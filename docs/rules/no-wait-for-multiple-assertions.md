@@ -1,4 +1,8 @@
-# Disallow the use of multiple expect inside `waitFor` (`testing-library/no-wait-for-multiple-assertions`)
+# Disallow the use of multiple `expect` calls inside `waitFor` (`testing-library/no-wait-for-multiple-assertions`)
+
+💼 This rule is enabled in the following configs: `angular`, `dom`, `marko`, `react`, `vue`.
+
+<!-- end auto-generated rule header -->
 
 ## Rule Details
 

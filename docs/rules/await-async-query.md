@@ -1,5 +1,9 @@
 # Enforce promises from async queries to be handled (`testing-library/await-async-query`)
 
+💼 This rule is enabled in the following configs: `angular`, `dom`, `marko`, `react`, `vue`.
+
+<!-- end auto-generated rule header -->
+
 Ensure that promises returned by async queries are handled properly.
 
 ## Rule Details
