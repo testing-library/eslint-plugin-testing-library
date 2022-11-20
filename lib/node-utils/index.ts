@@ -67,7 +67,7 @@ export function findClosestCallExpressionNode(
 		return node;
 	}
 
-	if (!node || !node.parent) {
+	if (!node?.parent) {
 		return null;
 	}
 
@@ -204,7 +204,7 @@ export function isPromiseHandled(nodeIdentifier: TSESTree.Identifier): boolean {
 	);
 
 	for (const node of suspiciousNodes) {
-		if (!node || !node.parent) {
+		if (!node?.parent) {
 			continue;
 		}
 		if (ASTUtils.isAwaitExpression(node.parent)) {
