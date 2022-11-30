@@ -8,6 +8,10 @@
 
 This rule disallows the usage of `render` (or a custom render function) in testing framework setup functions (`beforeEach` and `beforeAll`) in favor of moving `render` closer to test assertions.
 
+This rule reduces the amount of variable mutation, in particular avoiding nesting `beforeEach` functions. According to Kent C. Dodds, that results in vastly simpler test maintenance.
+
+For more background on the origin and rationale for this best practice, read Kent C. Dodds's [Avoid Nesting when you're Testing](https://kentcdodds.com/blog/avoid-nesting-when-youre-testing).
+
 Examples of **incorrect** code for this rule:
 
 ```js
