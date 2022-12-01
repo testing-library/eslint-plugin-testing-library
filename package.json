@@ -62,7 +62,7 @@
 		"eslint": "^8.28.0",
 		"eslint-config-kentcdodds": "^20.4.0",
 		"eslint-config-prettier": "^8.5.0",
-		"eslint-doc-generator": "^0.25.0",
+		"eslint-doc-generator": "^1.0.0",
 		"eslint-plugin-import": "^2.26.0",
 		"eslint-plugin-jest": "^27.1.5",
 		"eslint-plugin-jest-formatting": "^3.1.0",
