@@ -565,6 +565,15 @@
         "doc",
         "tool"
       ]
+    },
+    {
+      "login": "theredspoon",
+      "name": "Nim G",
+      "avatar_url": "https://avatars.githubusercontent.com/u/20975696?v=4",
+      "profile": "https://github.com/theredspoon",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,
