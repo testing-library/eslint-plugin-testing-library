@@ -345,6 +345,32 @@ ruleTester.run(RULE_NAME, rule, {
 		// valid async query usage without any function defined
 		// so there is no innermost function scope found
 		`const element = await findByRole('button')`,
+
+		// react-test-renderer provided `findBy*` queries should be ignored
+		// https://github.com/testing-library/eslint-plugin-testing-library/issues/673
+		{
+			code: `// issue #673
+      test('this is a valid case', async () => {
+        const screen = renderContainer()
+
+        const syncCall = screen.getByRole('button')
+        const asyncCall = await screen.findByRole('button')
+
+        const syncCall2 = () => { return screen.getByRole('button') }
+        const asyncCall2 = async () => screen.findByRole('button')
+
+        const thing1 = await screen.findByText('foo')
+        const thing2 = screen.getByText('foo').findByProps({ testID: 'bar' })
+        const thing3 = (await screen.thing.findByText('foo')).findByProps({ testID: 'bar' })
+        const thing3a = syncCall.findByProps({ testID: 'bar' })
+        const thing3b = asyncCall.findByProps({ testID: 'bar' })
+        const thing3a2 = syncCall2().findByProps({ testID: 'bar' })
+        const thing3b2 = (await asyncCall2()).findByProps({ testID: 'bar' })
+        const thing4 = screen.getAllByText('foo')[0].findByProps({ testID: 'bar' })
+        const thing5 = screen.getAllByText('foo').filter(value => true)[0].findByProps({ testID: 'bar' })
+      })
+    `,
+		},
 	],
 
 	invalid: [
