@@ -18,7 +18,6 @@ module.exports = {
 		],
 
 		// Import
-		'import/no-import-module-exports': 'off',
 		'import/order': [
 			'warn',
 			{
