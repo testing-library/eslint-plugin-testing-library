@@ -1,6 +1,6 @@
 # Disallow the use of debugging utilities like `debug` (`testing-library/no-debugging-utils`)
 
-💼 This rule is enabled in the following configs: `angular`, `marko`, `react`, `vue`.
+⚠️ This rule _warns_ in the following configs: `angular`, `marko`, `react`, `vue`.
 
 <!-- end auto-generated rule header -->
 

@@ -1,5 +1,7 @@
 # Disallow unnecessary `await` for sync events (`testing-library/no-await-sync-events`)
 
+💼 This rule is enabled in the following configs: `angular`, `dom`, `react`.
+
 <!-- end auto-generated rule header -->
 
 Ensure that sync simulated events are not awaited unnecessarily.

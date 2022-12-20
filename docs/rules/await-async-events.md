@@ -1,5 +1,11 @@
 # Enforce promises from async event methods are handled (`testing-library/await-async-events`)
 
+💼 This rule is enabled in the following configs: `angular`, `dom`, `marko`, `react`, `vue`.
+
+🔧 This rule is automatically fixable by the [`--fix` CLI option](https://eslint.org/docs/latest/user-guide/command-line-interface#--fix).
+
+<!-- end auto-generated rule header -->
+
 Ensure that promises returned by `userEvent` (v14+) async methods or `fireEvent` (only Vue and Marko) async methods are handled properly.
 
 ## Rule Details
