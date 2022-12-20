@@ -1,23 +1,11 @@
 {
-	"env": {
-		"commonjs": true,
-		"es6": true,
-		"node": true,
-		"jest/globals": true
-	},
 	"extends": [
 		"kentcdodds",
-		"plugin:@typescript-eslint/eslint-recommended",
 		"plugin:@typescript-eslint/recommended",
 		"prettier",
 		"plugin:jest/recommended",
 		"plugin:jest-formatting/recommended"
 	],
-	"plugins": ["@typescript-eslint", "jest", "jest-formatting"],
-	"globals": {
-		"Atomics": "readonly",
-		"SharedArrayBuffer": "readonly"
-	},
 	"parser": "@typescript-eslint/parser",
 	"parserOptions": {
 		"project": "./tsconfig.eslint.json"
