@@ -1,5 +1,9 @@
 # Suggest using `queryBy*` queries when waiting for disappearance (`testing-library/prefer-query-by-disappearance`)
 
+💼 This rule is enabled in the following configs: `angular`, `dom`, `marko`, `react`, `vue`.
+
+<!-- end auto-generated rule header -->
+
 ## Rule Details
 
 This rule enforces using `queryBy*` queries when waiting for disappearance with `waitForElementToBeRemoved`.

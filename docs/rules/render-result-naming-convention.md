@@ -1,5 +1,9 @@
 # Enforce a valid naming for return value from `render` (`testing-library/render-result-naming-convention`)
 
+💼 This rule is enabled in the following configs: `angular`, `marko`, `react`, `vue`.
+
+<!-- end auto-generated rule header -->
+
 > The name `wrapper` is old cruft from `enzyme` and we don't need that here. The return value from `render` is not "wrapping" anything. It's simply a collection of utilities that you should actually not often need anyway.
 
 ## Rule Details

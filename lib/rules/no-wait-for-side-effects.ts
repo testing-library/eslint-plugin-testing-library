@@ -120,6 +120,40 @@ export default createTestingLibraryRule<Options, MessageIds>({
 			return node.expressions.some(isRenderInAssignmentExpression);
 		}
 
+		/**
+		 * Checks if there are side effects in variable declarations.
+		 *
+		 * For example, these variable declarations have side effects:
+		 * const a = userEvent.doubleClick(button);
+		 * const b = fireEvent.click(button);
+		 * const wrapper = render(<Component />);
+		 *
+		 * @param node
+		 * @returns {Boolean} Boolean indicating if variable declarataion has side effects
+		 */
+		function isSideEffectInVariableDeclaration(
+			node: TSESTree.VariableDeclaration
+		): boolean {
+			return node.declarations.some((declaration) => {
+				if (isCallExpression(declaration.init)) {
+					const test = getPropertyIdentifierNode(declaration.init);
+
+					if (!test) {
+						return false;
+					}
+
+					return (
+						helpers.isFireEventUtil(test) ||
+						helpers.isUserEventUtil(test) ||
+						helpers.isRenderUtil(test)
+					);
+				}
+				return false;
+			});
+
+			return false;
+		}
+
 		function getSideEffectNodes(
 			body: TSESTree.Node[]
 		): TSESTree.ExpressionStatement[] {
@@ -131,6 +165,13 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				if (
 					isRenderInVariableDeclaration(node) ||
 					isRenderInExpressionStatement(node)
+				) {
+					return true;
+				}
+
+				if (
+					isVariableDeclaration(node) &&
+					isSideEffectInVariableDeclaration(node)
 				) {
 					return true;
 				}

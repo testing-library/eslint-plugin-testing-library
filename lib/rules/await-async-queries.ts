@@ -65,7 +65,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 						true
 					);
 
-					if (!closestCallExpressionNode || !closestCallExpressionNode.parent) {
+					if (!closestCallExpressionNode?.parent) {
 						return;
 					}
 

@@ -1,8 +1,16 @@
-# Disallow the use of `render` in setup functions (`testing-library/no-render-in-lifecycle`)
+# Disallow the use of `render` in testing frameworks setup functions (`testing-library/no-render-in-lifecycle`)
+
+💼 This rule is enabled in the following configs: `angular`, `marko`, `react`, `vue`.
+
+<!-- end auto-generated rule header -->
 
 ## Rule Details
 
 This rule disallows the usage of `render` (or a custom render function) in testing framework setup functions (`beforeEach` and `beforeAll`) in favor of moving `render` closer to test assertions.
+
+This rule reduces the amount of variable mutation, in particular avoiding nesting `beforeEach` functions. According to Kent C. Dodds, that results in vastly simpler test maintenance.
+
+For more background on the origin and rationale for this best practice, read Kent C. Dodds's [Avoid Nesting when you're Testing](https://kentcdodds.com/blog/avoid-nesting-when-youre-testing).
 
 Examples of **incorrect** code for this rule:
 
@@ -73,6 +81,8 @@ it('Should have foo and bar', () => {
 	expect(screen.getByText('bar')).toBeInTheDocument();
 });
 ```
+
+## Options
 
 If you would like to allow the use of `render` (or a custom render function) in _either_ `beforeAll` or `beforeEach`, this can be configured using the option `allowTestingFrameworkSetupHook`. This may be useful if you have configured your tests to [skip auto cleanup](https://testing-library.com/docs/react-testing-library/setup#skipping-auto-cleanup). `allowTestingFrameworkSetupHook` is an enum that accepts either `"beforeAll"` or `"beforeEach"`.
 

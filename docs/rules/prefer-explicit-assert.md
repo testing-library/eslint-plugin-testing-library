@@ -1,4 +1,6 @@
-# Suggest using explicit assertions rather than just `getBy*` queries (`testing-library/prefer-explicit-assert`)
+# Suggest using explicit assertions rather than standalone queries (`testing-library/prefer-explicit-assert`)
+
+<!-- end auto-generated rule header -->
 
 Testing Library `getBy*` queries throw an error if the element is not
 found. Some users like this behavior to use the query itself as an

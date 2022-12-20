@@ -45,6 +45,24 @@ ruleTester.run(RULE_NAME, rule, {
 		...ASYNC_UTILS.map((asyncUtil) => ({
 			code: `
         import { ${asyncUtil} } from '${testingFramework}';
+        test('${asyncUtil} util expect chained with .resolves is valid', () => {
+          doSomethingElse();
+          expect(${asyncUtil}(() => getByLabelText('email'))).resolves.toBe("foo");
+        });
+      `,
+		})),
+		...ASYNC_UTILS.map((asyncUtil) => ({
+			code: `
+        import { ${asyncUtil} } from '${testingFramework}';
+        test('${asyncUtil} util expect chained with .toResolve is valid', () => {
+          doSomethingElse();
+          expect(${asyncUtil}(() => getByLabelText('email'))).toResolve();
+        });
+      `,
+		})),
+		...ASYNC_UTILS.map((asyncUtil) => ({
+			code: `
+        import { ${asyncUtil} } from '${testingFramework}';
         test('${asyncUtil} util promise saved in var and chained with then is valid', () => {
           doSomethingElse();
           const aPromise = ${asyncUtil}(() => getByLabelText('email'));

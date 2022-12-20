@@ -1,4 +1,8 @@
-# Ensures no snapshot is generated inside a `waitFor` call (`testing-library/no-wait-for-snapshot`)
+# Ensures no snapshot is generated inside of a `waitFor` call (`testing-library/no-wait-for-snapshot`)
+
+💼 This rule is enabled in the following configs: `angular`, `dom`, `marko`, `react`, `vue`.
+
+<!-- end auto-generated rule header -->
 
 Ensure that no calls to `toMatchSnapshot` or `toMatchInlineSnapshot` are made from within a `waitFor` method (or any of the other async utility methods).
 

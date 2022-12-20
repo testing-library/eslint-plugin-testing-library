@@ -1,5 +1,9 @@
 # Suggest using `screen` while querying (`testing-library/prefer-screen-queries`)
 
+💼 This rule is enabled in the following configs: `angular`, `dom`, `marko`, `react`, `vue`.
+
+<!-- end auto-generated rule header -->
+
 ## Rule Details
 
 DOM Testing Library (and other Testing Library frameworks built on top of it) exports a `screen` object which has every query (and a `debug` method). This works better with autocomplete and makes each test a little simpler to write and maintain.

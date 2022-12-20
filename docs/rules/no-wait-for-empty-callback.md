@@ -1,4 +1,8 @@
-# Empty callbacks inside `waitFor` and `waitForElementToBeRemoved` are not preferred (`testing-library/no-wait-for-empty-callback`)
+# Disallow empty callbacks for `waitFor` and `waitForElementToBeRemoved` (`testing-library/no-wait-for-empty-callback`)
+
+💼 This rule is enabled in the following configs: `angular`, `dom`, `marko`, `react`, `vue`.
+
+<!-- end auto-generated rule header -->
 
 ## Rule Details
 

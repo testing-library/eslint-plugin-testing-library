@@ -1,5 +1,7 @@
 # Disallow unnecessary `await` for sync events (`testing-library/no-await-sync-events`)
 
+<!-- end auto-generated rule header -->
+
 Ensure that sync simulated events are not awaited unnecessarily.
 
 ## Rule Details

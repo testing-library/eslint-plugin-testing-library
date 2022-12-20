@@ -69,7 +69,7 @@ export function findClosestCallExpressionNode(
 		return node;
 	}
 
-	if (!node || !node.parent) {
+	if (!node?.parent) {
 		return null;
 	}
 
@@ -215,6 +215,7 @@ export function isPromisesArrayResolved(node: TSESTree.Node): boolean {
  * - it's chained with the `then` method
  * - it's returned from a function
  * - has `resolves` or `rejects` jest methods
+ * - has `toResolve` or `toReject` jest-extended matchers
  */
 export function isPromiseHandled(nodeIdentifier: TSESTree.Identifier): boolean {
 	const closestCallExpressionNode = findClosestCallExpressionNode(
@@ -227,7 +228,7 @@ export function isPromiseHandled(nodeIdentifier: TSESTree.Identifier): boolean {
 	);
 
 	for (const node of suspiciousNodes) {
-		if (!node || !node.parent) {
+		if (!node?.parent) {
 			continue;
 		}
 		if (ASTUtils.isAwaitExpression(node.parent)) {
@@ -486,9 +487,17 @@ export function getAssertNodeInfo(
 	return { matcher, isNegated };
 }
 
+const matcherNamesHandlePromise = [
+	'resolves',
+	'rejects',
+	'toResolve',
+	'toReject',
+];
+
 /**
  * Determines whether a node belongs to an async assertion
- * fulfilled by `resolves` or `rejects` properties.
+ * fulfilled by `resolves` or `rejects` properties or
+ *  by `toResolve` or `toReject` jest-extended matchers
  *
  */
 export function hasClosestExpectResolvesRejects(node: TSESTree.Node): boolean {
@@ -502,7 +511,7 @@ export function hasClosestExpectResolvesRejects(node: TSESTree.Node): boolean {
 		const expectMatcher = node.parent.property;
 		return (
 			ASTUtils.isIdentifier(expectMatcher) &&
-			(expectMatcher.name === 'resolves' || expectMatcher.name === 'rejects')
+			matcherNamesHandlePromise.includes(expectMatcher.name)
 		);
 	}
 
