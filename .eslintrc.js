@@ -2,10 +2,9 @@ module.exports = {
 	root: true,
 	extends: [
 		'kentcdodds',
-		'plugin:@typescript-eslint/recommended',
-		'prettier',
 		'plugin:jest/recommended',
 		'plugin:jest-formatting/recommended',
+		'prettier',
 	],
 	rules: {
 		// Base
@@ -36,8 +35,13 @@ module.exports = {
 			files: ['**/*.ts?(x)'],
 			parser: '@typescript-eslint/parser',
 			parserOptions: {
-				project: './tsconfig.eslint.json',
+				tsconfigRootDir: __dirname,
+				project: ['./tsconfig.eslint.json'],
 			},
+			extends: [
+				'plugin:@typescript-eslint/recommended',
+				'plugin:@typescript-eslint/recommended-requiring-type-checking',
+			],
 			rules: {
 				'@typescript-eslint/explicit-function-return-type': 'off',
 				'@typescript-eslint/no-unused-vars': [
