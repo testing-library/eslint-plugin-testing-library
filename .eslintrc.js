@@ -12,7 +12,12 @@ module.exports = {
 		'no-restricted-imports': [
 			'error',
 			{
-				patterns: ['@typescript-eslint/utils/dist/*'],
+				patterns: [
+					{
+						group: ['@typescript-eslint/utils/dist/*'],
+						message: 'Import from `@typescript-eslint/utils` instead.',
+					},
+				],
 			},
 		],
 
