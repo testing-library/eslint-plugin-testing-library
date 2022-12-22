@@ -67,6 +67,7 @@ it('should export configs that refer to actual rules', () => {
 		expect(rule.startsWith(ruleNamePrefix)).toBe(true);
 		expect(ruleNames).toContain(ruleName);
 
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-return
 		expect(() => require(`../lib/rules/${ruleName}`)).not.toThrow();
 	});
 });

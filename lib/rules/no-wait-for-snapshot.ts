@@ -68,7 +68,9 @@ export default createTestingLibraryRule<Options, MessageIds>({
 		}
 
 		return {
-			[`Identifier[name=${SNAPSHOT_REGEXP}]`](node: TSESTree.Identifier) {
+			[`Identifier[name=${String(SNAPSHOT_REGEXP)}]`](
+				node: TSESTree.Identifier
+			) {
 				const closestAsyncUtil = getClosestAsyncUtil(node);
 				if (closestAsyncUtil === null) {
 					return;
