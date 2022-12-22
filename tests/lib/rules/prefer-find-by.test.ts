@@ -146,7 +146,6 @@ ruleTester.run(RULE_NAME, rule, {
         import {waitFor} from '${testingFramework}';
         it('tests', async () => {
           await waitFor();
-          await wait();
         })
       `,
 		},

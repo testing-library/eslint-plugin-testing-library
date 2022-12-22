@@ -73,7 +73,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
 		/**
 		 * Reports the invalid usage of wait* plus getBy/QueryBy methods and automatically fixes the scenario
-		 * @param node - The CallExpresion node that contains the wait* method
+		 * @param node - The CallExpression node that contains the waitFor method
 		 * @param replacementParams - Object with info for error message and autofix:
 		 * @param replacementParams.queryVariant - The variant method used to query: findBy/findAllBy.
 		 * @param replacementParams.prevQuery - The query originally used inside `waitFor`
