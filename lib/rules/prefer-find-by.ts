@@ -330,7 +330,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 			'AwaitExpression > CallExpression'(node: TSESTree.CallExpression) {
 				if (
 					!ASTUtils.isIdentifier(node.callee) ||
-					!helpers.isAsyncUtil(node.callee)
+					!helpers.isAsyncUtil(node.callee, ['waitFor'])
 				) {
 					return;
 				}
