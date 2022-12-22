@@ -10,7 +10,7 @@
 
 ## Rule details
 
-This rule aims to use `findBy*` or `findAllBy*` queries to wait for elements, rather than using `waitFor`, or the deprecated methods `waitForElement` and `wait`.
+This rule aims to use `findBy*` or `findAllBy*` queries to wait for elements, rather than using `waitFor`.
 This rule analyzes those cases where `waitFor` is used with just one query method, in the form of an arrow function with only one statement (that is, without a block of statements). Given the callback could be more complex, this rule does not consider function callbacks or arrow functions with blocks of code.
 
 Examples of **incorrect** code for this rule

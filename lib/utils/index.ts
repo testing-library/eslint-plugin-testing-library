@@ -59,13 +59,7 @@ const ALL_QUERIES_COMBINATIONS = [
 	...ASYNC_QUERIES_COMBINATIONS,
 ];
 
-const ASYNC_UTILS = [
-	'waitFor',
-	'waitForElementToBeRemoved',
-	'wait',
-	'waitForElement',
-	'waitForDomChange',
-] as const;
+const ASYNC_UTILS = ['waitFor', 'waitForElementToBeRemoved'] as const;
 
 const DEBUG_UTILS = [
 	'debug',

@@ -1,4 +1,4 @@
-<div align="center">
+align="center">
 <a href="https://eslint.org/">
 <img width="150" height="150" src="https://raw.githubusercontent.com/eslint/eslint/main/docs/src/static/favicon.png">
 </a>

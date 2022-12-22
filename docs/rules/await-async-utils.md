@@ -10,11 +10,8 @@ Ensure that promises returned by async utils are handled properly.
 
 Testing library provides several utilities for dealing with asynchronous code. These are useful to wait for an element until certain criteria or situation happens. The available async utils are:
 
-- `waitFor` _(introduced since dom-testing-library v7)_
+- `waitFor`
 - `waitForElementToBeRemoved`
-- `wait` _(**deprecated** since dom-testing-library v7)_
-- `waitForElement` _(**deprecated** since dom-testing-library v7)_
-- `waitForDomChange` _(**deprecated** since dom-testing-library v7)_
 
 This rule aims to prevent users from forgetting to handle the returned
 promise from async utils, which could lead to

@@ -14,8 +14,6 @@ export const RULE_NAME = 'prefer-find-by';
 export type MessageIds = 'preferFindBy';
 type Options = [];
 
-export const WAIT_METHODS = ['waitFor', 'waitForElement', 'wait'] as const;
-
 export function getFindByQueryVariant(
 	queryMethod: string
 ): 'findAllBy' | 'findBy' {
@@ -63,7 +61,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 		},
 		messages: {
 			preferFindBy:
-				'Prefer `{{queryVariant}}{{queryMethod}}` query over using `{{waitForMethodName}}` + `{{prevQuery}}`',
+				'Prefer `{{queryVariant}}{{queryMethod}}` query over using `waitFor` + `{{prevQuery}}`',
 		},
 		fixable: 'code',
 		schema: [],
@@ -80,7 +78,6 @@ export default createTestingLibraryRule<Options, MessageIds>({
 		 * @param replacementParams.queryVariant - The variant method used to query: findBy/findAllBy.
 		 * @param replacementParams.prevQuery - The query originally used inside `waitFor`
 		 * @param replacementParams.queryMethod - Suffix string to build the query method (the query-part that comes after the "By"): LabelText, Placeholder, Text, Role, Title, etc.
-		 * @param replacementParams.waitForMethodName - wait for method used: waitFor/wait/waitForElement
 		 * @param replacementParams.fix - Function that applies the fix to correct the code
 		 */
 		function reportInvalidUsage(
@@ -89,12 +86,10 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				queryVariant: 'findAllBy' | 'findBy';
 				queryMethod: string;
 				prevQuery: string;
-				waitForMethodName: string;
 				fix: TSESLint.ReportFixFunction;
 			}
 		) {
-			const { queryMethod, queryVariant, prevQuery, waitForMethodName, fix } =
-				replacementParams;
+			const { queryMethod, queryVariant, prevQuery, fix } = replacementParams;
 			context.report({
 				node,
 				messageId: 'preferFindBy',
@@ -102,7 +97,6 @@ export default createTestingLibraryRule<Options, MessageIds>({
 					queryVariant,
 					queryMethod,
 					prevQuery,
-					waitForMethodName,
 				},
 				fix,
 			});
@@ -336,7 +330,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 			'AwaitExpression > CallExpression'(node: TSESTree.CallExpression) {
 				if (
 					!ASTUtils.isIdentifier(node.callee) ||
-					!helpers.isAsyncUtil(node.callee, WAIT_METHODS)
+					!helpers.isAsyncUtil(node.callee)
 				) {
 					return;
 				}
@@ -349,8 +343,6 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				) {
 					return;
 				}
-
-				const waitForMethodName = node.callee.name;
 
 				// ensure here it's one of the sync methods that we are calling
 				if (isScreenSyncQuery(argument)) {
@@ -386,7 +378,6 @@ export default createTestingLibraryRule<Options, MessageIds>({
 						queryMethod,
 						queryVariant,
 						prevQuery: fullQueryMethod,
-						waitForMethodName,
 						fix(fixer) {
 							const property = (
 								(argument.body as TSESTree.CallExpression)
@@ -423,7 +414,6 @@ export default createTestingLibraryRule<Options, MessageIds>({
 					queryMethod,
 					queryVariant,
 					prevQuery: fullQueryMethod,
-					waitForMethodName,
 					fix(fixer) {
 						// we know from above callee is an Identifier
 						if (
