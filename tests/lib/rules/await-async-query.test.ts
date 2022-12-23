@@ -341,6 +341,12 @@ ruleTester.run(RULE_NAME, rule, {
       })
     `,
 
+		// https://github.com/testing-library/eslint-plugin-testing-library/issues/671
+		`// issue #671
+		
+		const elements = root.findAllByType('div')
+		`,
+
 		// edge case for coverage
 		// valid async query usage without any function defined
 		// so there is no innermost function scope found

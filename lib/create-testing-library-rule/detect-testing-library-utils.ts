@@ -133,6 +133,14 @@ const FIRE_EVENT_NAME = 'fireEvent';
 const CREATE_EVENT_NAME = 'createEvent';
 const USER_EVENT_NAME = 'userEvent';
 const RENDER_NAME = 'render';
+const EXCLUDED_FIND_BY_QUERIES = [
+	//react-test-renderer utils
+	'findByType',
+	'findByProps',
+	'findAll',
+	'findAllByType',
+	'findAllByProps',
+];
 
 export type DetectionOptions = {
 	/**
@@ -389,7 +397,11 @@ export function detectTestingLibraryUtils<
 		 * Determines whether a given node is `find*` query variant or not.
 		 */
 		const isFindQueryVariant: IsFindQueryVariantFn = (node) => {
-			return isQuery(node) && node.name.startsWith('find');
+			return (
+				isQuery(node) &&
+				node.name.startsWith('find') &&
+				!EXCLUDED_FIND_BY_QUERIES.includes(node.name)
+			);
 		};
 
 		/**
