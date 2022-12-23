@@ -1,7 +1,7 @@
 {
 	"name": "eslint-plugin-testing-library",
 	"version": "0.0.0-semantically-released",
-	"description": "ESLint rules for Testing Library",
+	"description": "ESLint plugin to follow best practices and anticipate common mistakes when writing tests with Testing Library",
 	"keywords": [
 		"eslint",
 		"eslintplugin",
