@@ -63,7 +63,7 @@ each rule has three files named with its identifier (e.g. `no-debugging-utils`):
 
 Additionally, you need to do a couple of extra things:
 
-- Run `npm run generate:rules-list` to include your rule in the "Supported Rules" table within the [README.md](./README.md)
+- Run `npm run gen:rules-doc` to include your rule in the "Supported Rules" table within the [README.md](./README.md)
 
 ### Custom rule creator
 
@@ -99,7 +99,7 @@ If you need some check related to Testing Library which is not available in any 
 - pass it through `helpers`
 - write some generic test within `fake-rule.ts`, which is a dumb rule to be able to test all enhanced behavior from our custom Rule Creator.
 
-Take also into account that we're using our own `recommendedConfig` meta instead of the default `recommended` one. This is done so that our tools can automatically generate (`npm run generate:configs`) our configs.
+Take also into account that we're using our own `recommendedConfig` meta instead of the default `recommended` one. This is done so that our tools can automatically generate (`npm run gen:configs`) our configs.
 
 ## Updating existing rules
 

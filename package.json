@@ -28,9 +28,9 @@
 	"scripts": {
 		"build": "tsc",
 		"postbuild": "cpy README.md ./dist && cpy package.json ./dist && cpy LICENSE ./dist",
-		"docs:gen": "run-p \"docs:gen:*\"",
-		"docs:gen:configs": "ts-node tools/generate-configs",
-		"docs:gen:rules-list": "npm run build && npm run rule-doc-generator && npm run format",
+		"generate:all": "run-p \"gen:*\"",
+		"gen:configs": "ts-node tools/generate-configs",
+		"gen:rules-doc": "npm run build && npm run rule-doc-generator",
 		"format": "npm run prettier-base -- --write",
 		"format:check": "npm run prettier-base -- --check",
 		"lint": "eslint . --max-warnings 0 --ext .js,.ts",
