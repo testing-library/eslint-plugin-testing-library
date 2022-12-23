@@ -38,8 +38,6 @@ The following will be run on every commit:
 - Check all tests are passing
 - Check commit message is following [Conventional Commit specification](https://www.conventionalcommits.org/en/v1.0.0/)
 
-If you ever need to update a snapshot, you can run `npm run test:update`
-
 ## Rule naming conventions
 
 Based on [ESLint's Rule Naming Conventions](https://eslint.org/docs/developer-guide/working-with-rules#rule-naming-conventions), you must follow these rules:
