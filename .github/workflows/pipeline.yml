@@ -3,14 +3,13 @@ name: Pipeline
 on:
   push:
     branches:
-      # semantic-release valid branches, excluding all-contributors
+      # semantic-release valid branches
       - '+([0-9])?(.{+([0-9]),x}).x'
       - 'main'
       - 'next'
       - 'next-major'
       - 'beta'
       - 'alpha'
-      - '!all-contributors/**'
   pull_request:
     types: [opened, synchronize]
 
