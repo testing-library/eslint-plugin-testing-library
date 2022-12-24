@@ -419,7 +419,11 @@ export function detectTestingLibraryUtils<
 		};
 
 		const isCustomQuery: IsCustomQueryFn = (node) => {
-			return isQuery(node) && !ALL_QUERIES_COMBINATIONS.includes(node.name);
+			return (
+				isQuery(node) &&
+				!ALL_QUERIES_COMBINATIONS.includes(node.name) &&
+				!EXCLUDED_FIND_BY_QUERIES.includes(node.name)
+			);
 		};
 
 		const isBuiltInQuery = (node: TSESTree.Identifier): boolean => {

@@ -401,6 +401,16 @@ ruleTester.run(RULE_NAME, rule, {
       `,
 		},
 
+		// `react-test-renderer` utils starting with "find" shouldn't be reported as queries
+		// https://github.com/testing-library/eslint-plugin-testing-library/issues/673
+		`// issue #673
+		findByType('foo');
+		findByProps('foo');
+		findAll('foo');
+		findAllByType('foo');
+		findAllByProps('foo');
+		`,
+
 		// Weird edge cases
 		`(window as any).__THING = false;`,
 		`thing.method.lastCall.args[0]();`,
