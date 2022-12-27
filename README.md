@@ -3,7 +3,7 @@
     <img width="150" height="150" src="https://raw.githubusercontent.com/eslint/eslint/main/docs/src/static/favicon.png">
   </a>
   <a href="https://testing-library.com/">
-  <img width="150" height="150" src="https://raw.githubusercontent.com/testing-library/dom-testing-library/master/other/octopus.png">
+    <img width="150" height="150" src="https://raw.githubusercontent.com/testing-library/dom-testing-library/master/other/octopus.png">
   </a>
 
   <h1>eslint-plugin-testing-library</h1>
