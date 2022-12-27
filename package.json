@@ -26,6 +26,7 @@
 	},
 	"main": "index.js",
 	"scripts": {
+		"prebuild": "del-cli dist",
 		"build": "tsc",
 		"postbuild": "cpy README.md ./dist && cpy package.json ./dist && cpy LICENSE ./dist",
 		"generate-all": "run-p \"generate:*\"",
@@ -58,6 +59,7 @@
 		"@typescript-eslint/eslint-plugin": "^5.43.0",
 		"@typescript-eslint/parser": "^5.43.0",
 		"cpy-cli": "^4.2.0",
+		"del-cli": "^5.0.0",
 		"eslint": "^8.28.0",
 		"eslint-config-kentcdodds": "^20.4.0",
 		"eslint-config-prettier": "^8.5.0",
