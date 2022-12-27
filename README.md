@@ -1,10 +1,10 @@
 <div align="center">
   <a href="https://eslint.org/">
-  <img width="150" height="150" src="https://raw.githubusercontent.com/eslint/eslint/main/docs/src/static/favicon.png">
+    <img width="150" height="150" src="https://raw.githubusercontent.com/eslint/eslint/main/docs/src/static/favicon.png">
   </a>
   <a href="https://testing-library.com/">
-<img width="150" height="150" src="https://raw.githubusercontent.com/testing-library/dom-testing-library/master/other/octopus.png">
-</a>
+  <img width="150" height="150" src="https://raw.githubusercontent.com/testing-library/dom-testing-library/master/other/octopus.png">
+  </a>
 
   <h1>eslint-plugin-testing-library</h1>
   <p>ESLint plugin to follow best practices and anticipate common mistakes when writing tests with Testing Library</p>
