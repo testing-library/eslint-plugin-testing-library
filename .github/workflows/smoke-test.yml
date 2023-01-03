@@ -11,17 +11,23 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Use Node
+        uses: actions/setup-node@v3
         with:
           node-version-file: '.nvmrc'
-          cache: 'npm'
+
       - run: |
           npm install
           npm run build
+
       - run: npm link
         working-directory: ./dist
+
       - run: npm link eslint-plugin-testing-library
+
       - uses: AriPerkkio/eslint-remote-tester-run-action@v3
         with:
           issue-title: 'Results of weekly scheduled smoke test'
