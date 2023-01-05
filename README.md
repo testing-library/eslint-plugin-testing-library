@@ -5,6 +5,7 @@
   <a href="https://testing-library.com/">
     <img width="150" height="150" src="https://raw.githubusercontent.com/testing-library/dom-testing-library/master/other/octopus.png">
   </a>
+
   <h1>eslint-plugin-testing-library</h1>
   <p>ESLint plugin to follow best practices and anticipate common mistakes when writing tests with Testing Library</p>
 </div>
@@ -222,7 +223,6 @@ To enable this configuration use the `extends` property in your
 | [no-promise-in-fire-event](docs/rules/no-promise-in-fire-event.md)               | Disallow the use of promises passed to a `fireEvent` method                                  | ![badge-angular][] ![badge-dom][] ![badge-marko][] ![badge-react][] ![badge-vue][] |                                                                     |     |
 | [no-render-in-lifecycle](docs/rules/no-render-in-lifecycle.md)                   | Disallow the use of `render` in testing frameworks setup functions                           | ![badge-angular][] ![badge-marko][] ![badge-react][] ![badge-vue][]                |                                                                     |     |
 | [no-unnecessary-act](docs/rules/no-unnecessary-act.md)                           | Disallow wrapping Testing Library utils or empty callbacks in `act`                          | ![badge-marko][] ![badge-react][]                                                  |                                                                     |     |
-| [no-wait-for-empty-callback](docs/rules/no-wait-for-empty-callback.md)           | Disallow empty callbacks for `waitFor` and `waitForElementToBeRemoved`                       | ![badge-angular][] ![badge-dom][] ![badge-marko][] ![badge-react][] ![badge-vue][] |                                                                     |     |
 | [no-wait-for-multiple-assertions](docs/rules/no-wait-for-multiple-assertions.md) | Disallow the use of multiple `expect` calls inside `waitFor`                                 | ![badge-angular][] ![badge-dom][] ![badge-marko][] ![badge-react][] ![badge-vue][] |                                                                     |     |
 | [no-wait-for-side-effects](docs/rules/no-wait-for-side-effects.md)               | Disallow the use of side effects in `waitFor`                                                | ![badge-angular][] ![badge-dom][] ![badge-marko][] ![badge-react][] ![badge-vue][] |                                                                     |     |
 | [no-wait-for-snapshot](docs/rules/no-wait-for-snapshot.md)                       | Ensures no snapshot is generated inside of a `waitFor` call                                  | ![badge-angular][] ![badge-dom][] ![badge-marko][] ![badge-react][] ![badge-vue][] |                                                                     |     |
