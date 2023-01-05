@@ -1,7 +1,7 @@
 {
 	"name": "eslint-plugin-testing-library",
 	"version": "0.0.0-semantically-released",
-	"description": "ESLint rules for Testing Library",
+	"description": "ESLint plugin to follow best practices and anticipate common mistakes when writing tests with Testing Library",
 	"keywords": [
 		"eslint",
 		"eslintplugin",
@@ -21,16 +21,17 @@
 	"license": "MIT",
 	"author": {
 		"name": "Mario Beltrán Alarcón",
-		"email": "belco90@gmail.com",
+		"email": "me@mario.dev",
 		"url": "https://mario.dev/"
 	},
 	"main": "index.js",
 	"scripts": {
+		"prebuild": "del-cli dist",
 		"build": "tsc",
 		"postbuild": "cpy README.md ./dist && cpy package.json ./dist && cpy LICENSE ./dist",
-		"docs:gen": "run-p \"docs:gen:*\"",
-		"docs:gen:configs": "ts-node tools/generate-configs",
-		"docs:gen:rules-list": "npm run build && npm run rule-doc-generator && npm run format",
+		"generate-all": "run-p \"generate:*\"",
+		"generate:configs": "ts-node tools/generate-configs",
+		"generate:rules-doc": "npm run build && npm run rule-doc-generator",
 		"format": "npm run prettier-base -- --write",
 		"format:check": "npm run prettier-base -- --check",
 		"lint": "eslint . --max-warnings 0 --ext .js,.ts",
@@ -41,7 +42,6 @@
 		"semantic-release": "semantic-release",
 		"test": "jest",
 		"test:ci": "jest --ci --coverage",
-		"test:update": "npm run test -- --u",
 		"test:watch": "npm run test -- --watch",
 		"type-check": "tsc --noEmit"
 	},
@@ -59,6 +59,7 @@
 		"@typescript-eslint/eslint-plugin": "^5.43.0",
 		"@typescript-eslint/parser": "^5.43.0",
 		"cpy-cli": "^4.2.0",
+		"del-cli": "^5.0.0",
 		"eslint": "^8.28.0",
 		"eslint-config-kentcdodds": "^20.4.0",
 		"eslint-config-prettier": "^8.5.0",
