@@ -151,13 +151,16 @@ export default createTestingLibraryRule<Options, MessageIds>({
 					return;
 				}
 
+				const eventModuleName = getPropertyIdentifierNode(node)?.name;
+				const eventFullName = eventModuleName
+					? `${eventModuleName}.${simulateEventFunctionName}`
+					: simulateEventFunctionName;
+
 				context.report({
 					node,
 					messageId: 'noAwaitSyncEvents',
 					data: {
-						name: `${
-							getPropertyIdentifierNode(node)?.name
-						}.${simulateEventFunctionName}`,
+						name: eventFullName,
 					},
 				});
 			},
