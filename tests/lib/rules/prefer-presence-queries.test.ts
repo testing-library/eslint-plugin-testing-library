@@ -837,6 +837,9 @@ ruleTester.run(RULE_NAME, rule, {
      // right after clicking submit button it disappears
      expect(submitButton).not.toBeInTheDocument()
     `,
+		`// checking absence on getBy* inside a within with queryBy* outside the within
+	 expect(within(screen.getByRole("button")).queryByText("Hello")).not.toBeInTheDocument()
+	`,
 	],
 	invalid: [
 		// cases: asserting absence incorrectly with `getBy*` queries
