@@ -59,6 +59,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 		return {
 			'CallExpression Identifier'(node: TSESTree.Identifier) {
 				const expectCallNode = findClosestCallNode(node, 'expect');
+				const withinCallNode = findClosestCallNode(node, 'within');
 
 				if (!expectCallNode || !isMemberExpression(expectCallNode.parent)) {
 					return;
@@ -79,9 +80,18 @@ export default createTestingLibraryRule<Options, MessageIds>({
 					return;
 				}
 
-				if (presence && isPresenceAssert && !isPresenceQuery) {
+				if (
+					presence &&
+					(withinCallNode || isPresenceAssert) &&
+					!isPresenceQuery
+				) {
 					context.report({ node, messageId: 'wrongPresenceQuery' });
-				} else if (absence && isAbsenceAssert && isPresenceQuery) {
+				} else if (
+					!withinCallNode &&
+					absence &&
+					isAbsenceAssert &&
+					isPresenceQuery
+				) {
 					context.report({ node, messageId: 'wrongAbsenceQuery' });
 				}
 			},

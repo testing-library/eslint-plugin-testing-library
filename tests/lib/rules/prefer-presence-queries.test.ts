@@ -837,6 +837,12 @@ ruleTester.run(RULE_NAME, rule, {
      // right after clicking submit button it disappears
      expect(submitButton).not.toBeInTheDocument()
     `,
+		`// checking absence on getBy* inside a within with queryBy* outside the within
+	 expect(within(screen.getByRole("button")).queryByText("Hello")).not.toBeInTheDocument()
+	`,
+		`// checking presence on getBy* inside a within with getBy* outside the within
+	 expect(within(screen.getByRole("button")).getByText("Hello")).toBeInTheDocument()
+	`,
 	],
 	invalid: [
 		// cases: asserting absence incorrectly with `getBy*` queries
@@ -1198,6 +1204,48 @@ ruleTester.run(RULE_NAME, rule, {
       expect(getByRole("button")).not.toBeInTheDocument()
       `,
 			errors: [{ line: 4, column: 14, messageId: 'wrongAbsenceQuery' }],
+		},
+		{
+			code: `
+	  // case: asserting within check does still work with improper outer clause
+	  expect(within(screen.getByRole("button")).getByText("Hello")).not.toBeInTheDocument()`,
+			errors: [{ line: 3, column: 46, messageId: 'wrongAbsenceQuery' }],
+		},
+		{
+			code: `
+	  // case: asserting within check does still work with improper outer clause
+	  expect(within(screen.getByRole("button")).queryByText("Hello")).toBeInTheDocument()`,
+			errors: [{ line: 3, column: 46, messageId: 'wrongPresenceQuery' }],
+		},
+		{
+			code: `
+	  // case: asserting within check does still work with improper outer clause and improper inner clause
+	  expect(within(screen.queryByRole("button")).getByText("Hello")).not.toBeInTheDocument()`,
+			errors: [
+				{ line: 3, column: 25, messageId: 'wrongPresenceQuery' },
+				{ line: 3, column: 48, messageId: 'wrongAbsenceQuery' },
+			],
+		},
+		{
+			code: `
+	  // case: asserting within check does still work with proper outer clause and improper inner clause
+	  expect(within(screen.queryByRole("button")).queryByText("Hello")).not.toBeInTheDocument()`,
+			errors: [{ line: 3, column: 25, messageId: 'wrongPresenceQuery' }],
+		},
+		{
+			code: `
+	  // case: asserting within check does still work with proper outer clause and improper inner clause
+	  expect(within(screen.queryByRole("button")).getByText("Hello")).toBeInTheDocument()`,
+			errors: [{ line: 3, column: 25, messageId: 'wrongPresenceQuery' }],
+		},
+		{
+			code: `
+	  // case: asserting within check does still work with improper outer clause and improper inner clause
+	  expect(within(screen.queryByRole("button")).queryByText("Hello")).toBeInTheDocument()`,
+			errors: [
+				{ line: 3, column: 25, messageId: 'wrongPresenceQuery' },
+				{ line: 3, column: 48, messageId: 'wrongPresenceQuery' },
+			],
 		},
 	],
 });
