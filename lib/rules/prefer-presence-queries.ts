@@ -59,6 +59,12 @@ export default createTestingLibraryRule<Options, MessageIds>({
 		return {
 			'CallExpression Identifier'(node: TSESTree.Identifier) {
 				const expectCallNode = findClosestCallNode(node, 'expect');
+				const withinCallNode = findClosestCallNode(node, 'within');
+
+				if (withinCallNode) {
+					//Ignore false-positives where our query is inside a within
+					return;
+				}
 
 				if (!expectCallNode || !isMemberExpression(expectCallNode.parent)) {
 					return;
