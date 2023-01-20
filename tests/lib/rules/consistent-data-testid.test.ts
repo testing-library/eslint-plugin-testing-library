@@ -283,6 +283,7 @@ const invalidTestCases: InvalidTestCase[] = [
 					attr: 'data-testid',
 					value: 'Awesome__CoolStuff',
 					regex: '/error/',
+					message: '',
 				},
 			},
 		],
@@ -312,6 +313,7 @@ const invalidTestCases: InvalidTestCase[] = [
 					attr: 'data-testid',
 					value: 'Nope',
 					regex: '/matchMe/',
+					message: '',
 				},
 			},
 		],
@@ -342,6 +344,7 @@ const invalidTestCases: InvalidTestCase[] = [
 					attr: 'my-custom-attr',
 					value: 'WrongComponent__cool',
 					regex: '/^Parent(__([A-Z]+[a-z]*?)+)*$/',
+					message: '',
 				},
 			},
 		],
@@ -380,6 +383,7 @@ const invalidTestCases: InvalidTestCase[] = [
 					attr: 'another-custom-attr',
 					value: 'wrong',
 					regex: '/^right$/',
+					message: '',
 				},
 			},
 		],
@@ -409,6 +413,38 @@ const invalidTestCases: InvalidTestCase[] = [
 					attr: 'data-testid',
 					value: 'WrongComponent__cool',
 					regex: '/^Parent(__([A-Z]+[a-z]*?)+)*$/',
+					message: '',
+				},
+			},
+		],
+	},
+	{
+		code: `
+            import React from 'react';
+            
+            const TestComponent = props => {
+              return (
+                <div data-testid="snake_case_value">
+                  Hello
+                </div>
+              )
+            };
+          `,
+		options: [
+			{
+				testIdPattern: '^([a-z][a-z0-9]*)(-[a-z0-9]+)*$', //kebab-case
+				customMessage: 'Please use kebab-cased data-testid values.',
+			},
+		],
+		filename: '/my/cool/__tests__/Parent/index.js',
+		errors: [
+			{
+				messageId: 'consistentDataTestIdCustomMessage',
+				data: {
+					attr: 'data-testid',
+					value: 'snake_case_value',
+					regex: '^([a-z][a-z0-9]*)(-[a-z0-9]+)*$',
+					message: 'Please use kebab-cased data-testid values.',
 				},
 			},
 		],
