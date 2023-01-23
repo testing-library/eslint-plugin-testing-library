@@ -58,7 +58,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 						],
 					},
 					customMessage: {
-						default: '',
+						default: undefined,
 						type: 'string',
 					},
 				},
@@ -69,7 +69,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 		{
 			testIdPattern: '',
 			testIdAttribute: 'data-testid',
-			customMessage: '',
+			customMessage: undefined,
 		},
 	],
 	detectionOptions: {
@@ -111,10 +111,6 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
 		function getErrorMessageId(): MessageIds {
 			if (customMessage === undefined) {
-				return 'consistentDataTestId';
-			}
-
-			if (customMessage === '') {
 				return 'consistentDataTestId';
 			}
 
