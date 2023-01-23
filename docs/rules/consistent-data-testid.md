@@ -34,6 +34,7 @@ const baz = (props) => <div>...</div>;
 | ----------------- | -------- | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------- |
 | `testIdPattern`   | Yes      | None          | A regex used to validate the format of the `data-testid` value. `{fileName}` can optionally be used as a placeholder and will be substituted with the name of the file OR the name of the files parent directory in the case when the file name is `index.js` OR empty string in the case of dynamically changing routes (that contain square brackets) with `Gatsby.js` or `Next.js` | `^{fileName}(\_\_([A-Z]+[a-z]_?)+)_\$`                |
 | `testIdAttribute` | No       | `data-testid` | A string (or array of strings) used to specify the attribute used for querying by ID. This is only required if data-testid has been explicitly overridden in the [RTL configuration](https://testing-library.com/docs/dom-testing-library/api-queries#overriding-data-testid)                                                                                                         | `data-my-test-attribute`, `["data-testid", "testId"]` |
+| `customMessage`   | No       | `undefined`   | A string used to display a custom message whenever warnings/errors are reported.                                                                                                                                                                                                                                                                                                      | `A custom message`                                    |
 
 ## Example
 
@@ -54,6 +55,17 @@ const baz = (props) => <div>...</div>;
 		2,
 		{
 			"testIdAttribute": ["data-testid", "testId"]
+		}
+	]
+}
+```
+
+```json
+{
+	"testing-library/consistent-data-testid": [
+		2,
+		{
+			"customMessage": "A custom message"
 		}
 	]
 }

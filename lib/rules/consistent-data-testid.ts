@@ -2,11 +2,14 @@ import { createTestingLibraryRule } from '../create-testing-library-rule';
 import { isJSXAttribute, isLiteral } from '../node-utils';
 
 export const RULE_NAME = 'consistent-data-testid';
-export type MessageIds = 'consistentDataTestId';
+export type MessageIds =
+	| 'consistentDataTestId'
+	| 'consistentDataTestIdCustomMessage';
 export type Options = [
 	{
 		testIdAttribute?: string[] | string;
 		testIdPattern: string;
+		customMessage?: string;
 	}
 ];
 
@@ -28,6 +31,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 		},
 		messages: {
 			consistentDataTestId: '`{{attr}}` "{{value}}" should match `{{regex}}`',
+			consistentDataTestIdCustomMessage: '`{{message}}`',
 		},
 		schema: [
 			{
@@ -53,6 +57,10 @@ export default createTestingLibraryRule<Options, MessageIds>({
 							},
 						],
 					},
+					customMessage: {
+						default: undefined,
+						type: 'string',
+					},
 				},
 			},
 		],
@@ -61,6 +69,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 		{
 			testIdPattern: '',
 			testIdAttribute: 'data-testid',
+			customMessage: undefined,
 		},
 	],
 	detectionOptions: {
@@ -69,7 +78,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
 	create: (context, [options]) => {
 		const { getFilename } = context;
-		const { testIdPattern, testIdAttribute: attr } = options;
+		const { testIdPattern, testIdAttribute: attr, customMessage } = options;
 
 		function getFileNameData() {
 			const splitPath = getFilename().split('/');
@@ -100,6 +109,14 @@ export default createTestingLibraryRule<Options, MessageIds>({
 			}
 		}
 
+		function getErrorMessageId(): MessageIds {
+			if (customMessage === undefined) {
+				return 'consistentDataTestId';
+			}
+
+			return 'consistentDataTestIdCustomMessage';
+		}
+
 		return {
 			JSXIdentifier: (node) => {
 				if (
@@ -118,11 +135,12 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				if (value && typeof value === 'string' && !regex.test(value)) {
 					context.report({
 						node,
-						messageId: 'consistentDataTestId',
+						messageId: getErrorMessageId(),
 						data: {
 							attr: node.name,
 							value,
 							regex,
+							message: customMessage,
 						},
 					});
 				}
