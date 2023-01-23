@@ -419,7 +419,7 @@ const invalidTestCases: InvalidTestCase[] = [
 		],
 	},
 	{
-		code: `
+		code: ` // test for custom message
             import React from 'react';
             
             const TestComponent = props => {
