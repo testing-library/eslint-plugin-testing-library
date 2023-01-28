@@ -260,6 +260,54 @@ ruleTester.run(RULE_NAME, rule, {
         })
       `,
 		},
+		{
+			code: `
+        function setup() {
+          const utils = render(<MyComponent />);
+        
+          const waitForLoadComplete = () => {
+            return waitForElementToBeRemoved(screen.queryByRole('progressbar'));
+          };
+        
+          return { waitForLoadComplete, ...utils };
+        }
+
+        test('destructuring an async function wrapper & handling it later is valid', () => {
+          const { user, waitForLoadComplete } = setup();
+          await waitForLoadComplete();
+
+          const myAlias = waitForLoadComplete;
+          await myAlias();
+
+          const { ...clone } = setup();
+          await clone.waitForLoadComplete();
+
+          const { waitForLoadComplete: myAlias } = setup();
+          await myAlias();
+
+          await setup().waitForLoadComplete();
+        });
+      `,
+		},
+
+		{
+			code: `
+        function setup() {
+          const utils = render(<MyComponent />);
+        
+          const waitForLoadComplete = () => {
+            return waitForElementToBeRemoved(screen.queryByRole('progressbar'));
+          };
+        
+          return { waitForLoadComplete, ...utils };
+        }
+
+        test('destructuring an async function wrapper & handling it later is valid', () => {
+          const { user, ...rest } = setup();
+          await rest.waitForLoadComplete();
+        });
+      `,
+		},
 	]),
 	invalid: SUPPORTED_TESTING_FRAMEWORKS.flatMap((testingFramework) => [
 		...ASYNC_UTILS.map(
@@ -441,6 +489,7 @@ ruleTester.run(RULE_NAME, rule, {
 					],
 				} as const)
 		),
+
 		...ASYNC_UTILS.map(
 			(asyncUtil) =>
 				({
@@ -463,5 +512,140 @@ ruleTester.run(RULE_NAME, rule, {
 					],
 				} as const)
 		),
+
+		{
+			code: `
+        function setup() {
+          const utils = render(<MyComponent />);
+        
+          const waitForLoadComplete = () => {
+            return waitForElementToBeRemoved(screen.queryByRole('progressbar'));
+          };
+        
+          return { waitForLoadComplete, ...utils };
+        }
+
+        test('destructuring an async function wrapper & handling it later is valid', () => {
+          const { user, waitForLoadComplete } = setup();
+          waitForLoadComplete();
+        });
+      `,
+			errors: [
+				{
+					line: 14,
+					column: 11,
+					messageId: 'asyncUtilWrapper',
+					data: { name: 'waitForLoadComplete' },
+				},
+			],
+		},
+
+		{
+			code: `
+        function setup() {
+          const utils = render(<MyComponent />);
+        
+          const waitForLoadComplete = () => {
+            return waitForElementToBeRemoved(screen.queryByRole('progressbar'));
+          };
+        
+          return { waitForLoadComplete, ...utils };
+        }
+
+        test('destructuring an async function wrapper & handling it later is valid', () => {
+          const { user, waitForLoadComplete } = setup();
+          const myAlias = waitForLoadComplete;
+          myAlias();
+        });
+      `,
+			errors: [
+				{
+					line: 15,
+					column: 11,
+					messageId: 'asyncUtilWrapper',
+					data: { name: 'myAlias' },
+				},
+			],
+		},
+
+		{
+			code: `
+        function setup() {
+          const utils = render(<MyComponent />);
+        
+          const waitForLoadComplete = () => {
+            return waitForElementToBeRemoved(screen.queryByRole('progressbar'));
+          };
+        
+          return { waitForLoadComplete, ...utils };
+        }
+
+        test('destructuring an async function wrapper & handling it later is valid', () => {
+          const { ...clone } = setup();
+          clone.waitForLoadComplete();
+        });
+      `,
+			errors: [
+				{
+					line: 14,
+					column: 17,
+					messageId: 'asyncUtilWrapper',
+					data: { name: 'waitForLoadComplete' },
+				},
+			],
+		},
+
+		{
+			code: `
+        function setup() {
+          const utils = render(<MyComponent />);
+        
+          const waitForLoadComplete = () => {
+            return waitForElementToBeRemoved(screen.queryByRole('progressbar'));
+          };
+        
+          return { waitForLoadComplete, ...utils };
+        }
+
+        test('destructuring an async function wrapper & handling it later is valid', () => {
+          const { waitForLoadComplete: myAlias } = setup();
+          myAlias();
+        });
+      `,
+			errors: [
+				{
+					line: 14,
+					column: 11,
+					messageId: 'asyncUtilWrapper',
+					data: { name: 'myAlias' },
+				},
+			],
+		},
+
+		{
+			code: `
+        function setup() {
+          const utils = render(<MyComponent />);
+        
+          const waitForLoadComplete = () => {
+            return waitForElementToBeRemoved(screen.queryByRole('progressbar'));
+          };
+        
+          return { waitForLoadComplete, ...utils };
+        }
+
+        test('destructuring an async function wrapper & handling it later is valid', () => {
+          setup().waitForLoadComplete();
+        });
+      `,
+			errors: [
+				{
+					line: 13,
+					column: 19,
+					messageId: 'asyncUtilWrapper',
+					data: { name: 'waitForLoadComplete' },
+				},
+			],
+		},
 	]),
 });
