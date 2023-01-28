@@ -72,91 +72,77 @@ export default createTestingLibraryRule<Options, MessageIds>({
 			}
 		}
 
-		const isDestructuredPropertyIdentifier = (node: TSESTree.Node): boolean => {
-			return (
-				ASTUtils.isIdentifier(node) && isObjectPattern(node.parent?.parent)
-			);
-		};
+		// Either we report the async util directly, or a wrapper/alias name for it
+		const getMessageId = (node: TSESTree.Identifier): MessageIds => {
+			if (helpers.isAsyncUtil(node)) {
+				return 'awaitAsyncUtil';
+			}
 
-		const isVariableDeclaratorInitializer = (node: TSESTree.Node): boolean => {
-			return ASTUtils.isVariableDeclarator(node.parent);
+			return 'asyncUtilWrapper';
 		};
 
 		return {
 			VariableDeclarator(node: TSESTree.VariableDeclarator) {
 				if (isObjectPattern(node.id)) {
 					detectDestructuredAsyncUtilWrapperAliases(node.id);
-					return;
 				}
 
-				if (
+				const isAssigningKnownAsyncFunctionWrapper =
 					ASTUtils.isIdentifier(node.id) &&
 					ASTUtils.isIdentifier(node.init) &&
-					functionWrappersNames.includes(node.init.name)
-				) {
-					functionWrappersNames.push(node.id.name);
+					functionWrappersNames.includes(node.init.name);
+
+				if (isAssigningKnownAsyncFunctionWrapper) {
+					functionWrappersNames.push((node.id as TSESTree.Identifier).name);
 				}
 			},
 			'CallExpression Identifier'(node: TSESTree.Identifier) {
+				const isAsyncUtilOrKnownAliasAroundIt =
+					helpers.isAsyncUtil(node) ||
+					functionWrappersNames.includes(node.name);
+				if (!isAsyncUtilOrKnownAliasAroundIt) {
+					return;
+				}
+
+				// detect async query used within wrapper function for later analysis
 				if (helpers.isAsyncUtil(node)) {
-					// detect async query used within wrapper function for later analysis
 					detectAsyncUtilWrapper(node);
+				}
 
-					const closestCallExpression = findClosestCallExpressionNode(
-						node,
-						true
-					);
+				const closestCallExpression = findClosestCallExpressionNode(node, true);
 
-					if (!closestCallExpression?.parent) {
-						return;
+				if (!closestCallExpression?.parent) {
+					return;
+				}
+
+				const references = getVariableReferences(
+					context,
+					closestCallExpression.parent
+				);
+
+				if (references.length === 0) {
+					if (!isPromiseHandled(node)) {
+						context.report({
+							node,
+							messageId: getMessageId(node),
+							data: {
+								name: node.name,
+							},
+						});
 					}
-
-					const references = getVariableReferences(
-						context,
-						closestCallExpression.parent
-					);
-
-					if (references.length === 0) {
-						if (!isPromiseHandled(node)) {
+				} else {
+					for (const reference of references) {
+						const referenceNode = reference.identifier as TSESTree.Identifier;
+						if (!isPromiseHandled(referenceNode)) {
 							context.report({
 								node,
-								messageId: 'awaitAsyncUtil',
+								messageId: getMessageId(node),
 								data: {
 									name: node.name,
 								},
 							});
+							return;
 						}
-					} else {
-						for (const reference of references) {
-							const referenceNode = reference.identifier as TSESTree.Identifier;
-							if (!isPromiseHandled(referenceNode)) {
-								context.report({
-									node,
-									messageId: 'awaitAsyncUtil',
-									data: {
-										name: node.name,
-									},
-								});
-								return;
-							}
-						}
-					}
-
-					return;
-				}
-
-				if (
-					functionWrappersNames.includes(node.name) &&
-					!isDestructuredPropertyIdentifier(node) &&
-					!isVariableDeclaratorInitializer(node)
-				) {
-					// check async queries used within a wrapper previously detected
-					if (!isPromiseHandled(node)) {
-						context.report({
-							node,
-							messageId: 'asyncUtilWrapper',
-							data: { name: node.name },
-						});
 					}
 				}
 			},
