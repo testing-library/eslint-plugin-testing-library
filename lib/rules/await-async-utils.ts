@@ -50,6 +50,11 @@ export default createTestingLibraryRule<Options, MessageIds>({
 			}
 		}
 
+		/*
+			Example:
+			`const { myAsyncWrapper: myRenamedValue } = someObject`;
+			Detects `myRenamedValue` and adds it to the known async wrapper names.
+		 */
 		function detectDestructuredAsyncUtilWrapperAliases(
 			node: TSESTree.ObjectPattern
 		) {
