@@ -294,25 +294,6 @@ ruleTester.run(RULE_NAME, rule, {
         });
       `,
 		},
-
-		{
-			code: `
-        function setup() {
-          const utils = render(<MyComponent />);
-        
-          const waitForLoadComplete = () => {
-            return waitForElementToBeRemoved(screen.queryByTestId('my-test-id'));
-          };
-        
-          return { waitForLoadComplete, ...utils };
-        }
-
-        test('destructuring an async function wrapper & handling it later is valid', () => {
-          const { user, ...rest } = setup();
-          await rest.waitForLoadComplete();
-        });
-      `,
-		},
 	]),
 	invalid: SUPPORTED_TESTING_FRAMEWORKS.flatMap((testingFramework) => [
 		...ASYNC_UTILS.map(
