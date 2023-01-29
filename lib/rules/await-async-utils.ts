@@ -97,6 +97,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 			VariableDeclarator(node: TSESTree.VariableDeclarator) {
 				if (isObjectPattern(node.id)) {
 					detectDestructuredAsyncUtilWrapperAliases(node.id);
+					return;
 				}
 
 				const isAssigningKnownAsyncFunctionWrapper =
