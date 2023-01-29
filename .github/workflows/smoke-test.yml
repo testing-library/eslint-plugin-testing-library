@@ -14,19 +14,23 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+
       - name: Use Node
         uses: actions/setup-node@v3
         with:
           node-version-file: '.nvmrc'
+          cache: 'pnpm'
 
       - run: |
-          npm install
-          npm run build
+          pnpm install
+          pnpm build
 
-      - run: npm link
+      - run: pnpm link --global
         working-directory: ./dist
 
-      - run: npm link eslint-plugin-testing-library
+      - run: pnpm link eslint-plugin-testing-library
 
       - uses: AriPerkkio/eslint-remote-tester-run-action@v3
         with:
