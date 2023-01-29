@@ -266,7 +266,7 @@ ruleTester.run(RULE_NAME, rule, {
           const utils = render(<MyComponent />);
         
           const waitForLoadComplete = () => {
-            return waitForElementToBeRemoved(screen.queryByRole('progressbar'));
+            return waitForElementToBeRemoved(screen.queryByTestId('my-test-id'));
           };
         
           return { waitForLoadComplete, ...utils };
@@ -277,13 +277,18 @@ ruleTester.run(RULE_NAME, rule, {
           await waitForLoadComplete();
 
           const myAlias = waitForLoadComplete;
+          const myOtherAlias = myAlias;
           await myAlias();
+          await myOtherAlias();
 
           const { ...clone } = setup();
           await clone.waitForLoadComplete();
 
-          const { waitForLoadComplete: myAlias } = setup();
-          await myAlias();
+          const { waitForLoadComplete: myDestructuredAlias } = setup();
+          await myDestructuredAlias();
+          
+          const { user, ...rest } = setup();
+          await rest.waitForLoadComplete();
 
           await setup().waitForLoadComplete();
         });
@@ -296,7 +301,7 @@ ruleTester.run(RULE_NAME, rule, {
           const utils = render(<MyComponent />);
         
           const waitForLoadComplete = () => {
-            return waitForElementToBeRemoved(screen.queryByRole('progressbar'));
+            return waitForElementToBeRemoved(screen.queryByTestId('my-test-id'));
           };
         
           return { waitForLoadComplete, ...utils };
@@ -519,13 +524,13 @@ ruleTester.run(RULE_NAME, rule, {
           const utils = render(<MyComponent />);
         
           const waitForLoadComplete = () => {
-            return waitForElementToBeRemoved(screen.queryByRole('progressbar'));
+            return waitForElementToBeRemoved(screen.queryByTestId('my-test-id'));
           };
         
           return { waitForLoadComplete, ...utils };
         }
 
-        test('destructuring an async function wrapper & handling it later is valid', () => {
+        test('unhandled promise from destructed property of async function wrapper is invalid', () => {
           const { user, waitForLoadComplete } = setup();
           waitForLoadComplete();
         });
@@ -546,13 +551,13 @@ ruleTester.run(RULE_NAME, rule, {
           const utils = render(<MyComponent />);
         
           const waitForLoadComplete = () => {
-            return waitForElementToBeRemoved(screen.queryByRole('progressbar'));
+            return waitForElementToBeRemoved(screen.queryByTestId('my-test-id'));
           };
         
           return { waitForLoadComplete, ...utils };
         }
 
-        test('destructuring an async function wrapper & handling it later is valid', () => {
+        test('unhandled promise from assigning async function wrapper is invalid', () => {
           const { user, waitForLoadComplete } = setup();
           const myAlias = waitForLoadComplete;
           myAlias();
@@ -574,13 +579,13 @@ ruleTester.run(RULE_NAME, rule, {
           const utils = render(<MyComponent />);
         
           const waitForLoadComplete = () => {
-            return waitForElementToBeRemoved(screen.queryByRole('progressbar'));
+            return waitForElementToBeRemoved(screen.queryByTestId('my-test-id'));
           };
         
           return { waitForLoadComplete, ...utils };
         }
 
-        test('destructuring an async function wrapper & handling it later is valid', () => {
+        test('unhandled promise from rest element with async wrapper function member is invalid', () => {
           const { ...clone } = setup();
           clone.waitForLoadComplete();
         });
@@ -601,13 +606,13 @@ ruleTester.run(RULE_NAME, rule, {
           const utils = render(<MyComponent />);
         
           const waitForLoadComplete = () => {
-            return waitForElementToBeRemoved(screen.queryByRole('progressbar'));
+            return waitForElementToBeRemoved(screen.queryByTestId('my-test-id'));
           };
         
           return { waitForLoadComplete, ...utils };
         }
 
-        test('destructuring an async function wrapper & handling it later is valid', () => {
+        test('unhandled promise from destructured property alias is invalid', () => {
           const { waitForLoadComplete: myAlias } = setup();
           myAlias();
         });
@@ -628,13 +633,13 @@ ruleTester.run(RULE_NAME, rule, {
           const utils = render(<MyComponent />);
         
           const waitForLoadComplete = () => {
-            return waitForElementToBeRemoved(screen.queryByRole('progressbar'));
+            return waitForElementToBeRemoved(screen.queryByTestId('my-test-id'));
           };
         
           return { waitForLoadComplete, ...utils };
         }
 
-        test('destructuring an async function wrapper & handling it later is valid', () => {
+        test('unhandled promise from object member with async wrapper value is invalid', () => {
           setup().waitForLoadComplete();
         });
       `,
@@ -644,6 +649,33 @@ ruleTester.run(RULE_NAME, rule, {
 					column: 19,
 					messageId: 'asyncUtilWrapper',
 					data: { name: 'waitForLoadComplete' },
+				},
+			],
+		},
+
+		{
+			code: `
+        function setup() {
+          const utils = render(<MyComponent />);
+        
+          const waitForLoadComplete = () => {
+            return waitForElementToBeRemoved(screen.queryByTestId('my-test-id'));
+          };
+        
+          return { waitForLoadComplete, ...utils };
+        }
+
+        test('unhandled promise from object member with async wrapper value is invalid', () => {
+          const myAlias = setup().waitForLoadComplete;
+          myAlias();
+        });
+      `,
+			errors: [
+				{
+					line: 14,
+					column: 11,
+					messageId: 'asyncUtilWrapper',
+					data: { name: 'myAlias' },
 				},
 			],
 		},

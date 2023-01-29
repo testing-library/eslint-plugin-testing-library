@@ -3,6 +3,7 @@ import { TSESTree, ASTUtils } from '@typescript-eslint/utils';
 import { createTestingLibraryRule } from '../create-testing-library-rule';
 import {
 	findClosestCallExpressionNode,
+	getDeepestIdentifierNode,
 	getFunctionName,
 	getInnermostReturningFunction,
 	getVariableReferences,
@@ -72,7 +73,10 @@ export default createTestingLibraryRule<Options, MessageIds>({
 			}
 		}
 
-		// Either we report the async util directly, or a wrapper/alias name for it
+		/*
+			Either we report a direct usage of an async util or a usage of a wrapper
+			around an async util
+		 */
 		const getMessageId = (node: TSESTree.Identifier): MessageIds => {
 			if (helpers.isAsyncUtil(node)) {
 				return 'awaitAsyncUtil';
@@ -89,8 +93,10 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
 				const isAssigningKnownAsyncFunctionWrapper =
 					ASTUtils.isIdentifier(node.id) &&
-					ASTUtils.isIdentifier(node.init) &&
-					functionWrappersNames.includes(node.init.name);
+					node.init !== null &&
+					functionWrappersNames.includes(
+						getDeepestIdentifierNode(node.init)?.name ?? ''
+					);
 
 				if (isAssigningKnownAsyncFunctionWrapper) {
 					functionWrappersNames.push((node.id as TSESTree.Identifier).name);
