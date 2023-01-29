@@ -11,8 +11,11 @@ Tweaking ESLint rules is mostly about traversing through the AST. [AST Explorer]
 
 1. Fork this repository
 2. Clone your forked repository
-3. Run `npm install` to install corresponding dependencies
-4. Create a branch for your PR named like `pr/your-branch-name` (you can do this through git CLI with `git checkout -b pr/your-branch-name`)
+3. Make sure you have the right version of [pnpm](https://pnpm.io/) installed with one of these options:
+   1. Using Node [corepack built-in feature](https://nodejs.org/docs/latest-v16.x/api/corepack.html#enabling-the-feature) with `corepack enable`
+   2. [Installing pnpm manually](https://pnpm.io/installation) with a version supported as indicated in the `engines.pnpm` field of our `package.json`
+4. Run `pnpm install` to install corresponding dependencies
+5. Create a branch for your PR named like `pr/your-branch-name` (you can do this through git CLI with `git checkout -b pr/your-branch-name`)
 
 > Tip: Keep your `main` branch pointing at the original repository and make
 > pull requests from branches on your fork. To do this, run:
@@ -63,7 +66,7 @@ each rule has three files named with its identifier (e.g. `no-debugging-utils`):
 
 Additionally, you need to do a couple of extra things:
 
-- Run `npm run generate:rules-doc` to include your rule in the "Supported Rules" table within the [README.md](./README.md)
+- Run `pnpm generate:rules-doc` to include your rule in the "Supported Rules" table within the [README.md](./README.md)
 
 ### Custom rule creator
 
@@ -99,7 +102,7 @@ If you need some check related to Testing Library which is not available in any 
 - pass it through `helpers`
 - write some generic test within `fake-rule.ts`, which is a dumb rule to be able to test all enhanced behavior from our custom Rule Creator.
 
-Take also into account that we're using our own `recommendedConfig` meta instead of the default `recommended` one. This is done so that our tools can automatically generate (`npm run generate:configs`) our configs.
+Take also into account that we're using our own `recommendedConfig` meta instead of the default `recommended` one. This is done so that our tools can automatically generate (`pnpm generate:configs`) our configs.
 
 ## Updating existing rules
 
