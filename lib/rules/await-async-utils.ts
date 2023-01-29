@@ -66,7 +66,10 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				}
 
 				if (functionWrappersNames.includes(property.key.name)) {
-					if (property.value.name !== property.key.name) {
+					const isDestructuredAsyncWrapperPropertyRenamed =
+						property.key.name !== property.value.name;
+
+					if (isDestructuredAsyncWrapperPropertyRenamed) {
 						functionWrappersNames.push(property.value.name);
 					}
 				}
