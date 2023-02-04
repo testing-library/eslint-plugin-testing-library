@@ -116,7 +116,12 @@ const ALL_RETURNING_NODES = [
 	...METHODS_RETURNING_NODES,
 ];
 
-const PRESENCE_MATCHERS = ['toBeInTheDocument', 'toBeTruthy', 'toBeDefined'];
+const PRESENCE_MATCHERS = [
+	'toBeInTheDocument',
+	'toBeVisible',
+	'toBeTruthy',
+	'toBeDefined',
+];
 const ABSENCE_MATCHERS = ['toBeNull', 'toBeFalsy'];
 
 export {
