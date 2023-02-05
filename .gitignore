@@ -67,7 +67,6 @@ yarn-error.log
 # Yarn Integrity file
 .yarn-integrity
 
-# these cause more harm than good
-# when working with contributors
-package-lock.json
+# Ignore locks other than npm
+pnpm-lock.yaml
 yarn.lock
