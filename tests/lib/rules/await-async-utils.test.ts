@@ -260,6 +260,40 @@ ruleTester.run(RULE_NAME, rule, {
         })
       `,
 		},
+		...ASYNC_UTILS.map((asyncUtil) => ({
+			code: `
+        function setup() {
+          const utils = render(<MyComponent />);
+        
+          const waitForAsyncUtil = () => {
+            return ${asyncUtil}(screen.queryByTestId('my-test-id'));
+          };
+        
+          return { waitForAsyncUtil, ...utils };
+        }
+
+        test('destructuring an async function wrapper & handling it later is valid', () => {
+          const { user, waitForAsyncUtil } = setup();
+          await waitForAsyncUtil();
+
+          const myAlias = waitForAsyncUtil;
+          const myOtherAlias = myAlias;
+          await myAlias();
+          await myOtherAlias();
+
+          const { ...clone } = setup();
+          await clone.waitForAsyncUtil();
+
+          const { waitForAsyncUtil: myDestructuredAlias } = setup();
+          await myDestructuredAlias();
+          
+          const { user, ...rest } = setup();
+          await rest.waitForAsyncUtil();
+
+          await setup().waitForAsyncUtil();
+        });
+      `,
+		})),
 	]),
 	invalid: SUPPORTED_TESTING_FRAMEWORKS.flatMap((testingFramework) => [
 		...ASYNC_UTILS.map(
@@ -441,6 +475,7 @@ ruleTester.run(RULE_NAME, rule, {
 					],
 				} as const)
 		),
+
 		...ASYNC_UTILS.map(
 			(asyncUtil) =>
 				({
@@ -459,6 +494,180 @@ ruleTester.run(RULE_NAME, rule, {
 							column: 22,
 							messageId: 'awaitAsyncUtil',
 							data: { name: asyncUtil },
+						},
+					],
+				} as const)
+		),
+		...ASYNC_UTILS.map(
+			(asyncUtil) =>
+				({
+					code: `
+        function setup() {
+          const utils = render(<MyComponent />);
+        
+          const waitForAsyncUtil = () => {
+            return ${asyncUtil}(screen.queryByTestId('my-test-id'));
+          };
+        
+          return { waitForAsyncUtil, ...utils };
+        }
+
+        test('unhandled promise from destructed property of async function wrapper is invalid', () => {
+          const { user, waitForAsyncUtil } = setup();
+          waitForAsyncUtil();
+        });
+      `,
+					errors: [
+						{
+							line: 14,
+							column: 11,
+							messageId: 'asyncUtilWrapper',
+							data: { name: 'waitForAsyncUtil' },
+						},
+					],
+				} as const)
+		),
+		...ASYNC_UTILS.map(
+			(asyncUtil) =>
+				({
+					code: `
+        function setup() {
+          const utils = render(<MyComponent />);
+        
+          const waitForAsyncUtil = () => {
+            return ${asyncUtil}(screen.queryByTestId('my-test-id'));
+          };
+        
+          return { waitForAsyncUtil, ...utils };
+        }
+
+        test('unhandled promise from destructed property of async function wrapper is invalid', () => {
+          const { user, waitForAsyncUtil } = setup();
+          const myAlias = waitForAsyncUtil;
+          myAlias();
+        });
+      `,
+					errors: [
+						{
+							line: 15,
+							column: 11,
+							messageId: 'asyncUtilWrapper',
+							data: { name: 'myAlias' },
+						},
+					],
+				} as const)
+		),
+		...ASYNC_UTILS.map(
+			(asyncUtil) =>
+				({
+					code: `
+        function setup() {
+          const utils = render(<MyComponent />);
+        
+          const waitForAsyncUtil = () => {
+            return ${asyncUtil}(screen.queryByTestId('my-test-id'));
+          };
+        
+          return { waitForAsyncUtil, ...utils };
+        }
+
+        test('unhandled promise from destructed property of async function wrapper is invalid', () => {
+          const { ...clone } = setup();
+          clone.waitForAsyncUtil();
+        });
+      `,
+					errors: [
+						{
+							line: 14,
+							column: 17,
+							messageId: 'asyncUtilWrapper',
+							data: { name: 'waitForAsyncUtil' },
+						},
+					],
+				} as const)
+		),
+		...ASYNC_UTILS.map(
+			(asyncUtil) =>
+				({
+					code: `
+        function setup() {
+          const utils = render(<MyComponent />);
+        
+          const waitForAsyncUtil = () => {
+            return ${asyncUtil}(screen.queryByTestId('my-test-id'));
+          };
+        
+          return { waitForAsyncUtil, ...utils };
+        }
+
+        test('unhandled promise from destructed property of async function wrapper is invalid', () => {
+          const { waitForAsyncUtil: myAlias } = setup();
+          myAlias();
+        });
+      `,
+					errors: [
+						{
+							line: 14,
+							column: 11,
+							messageId: 'asyncUtilWrapper',
+							data: { name: 'myAlias' },
+						},
+					],
+				} as const)
+		),
+		...ASYNC_UTILS.map(
+			(asyncUtil) =>
+				({
+					code: `
+        function setup() {
+          const utils = render(<MyComponent />);
+        
+          const waitForAsyncUtil = () => {
+            return ${asyncUtil}(screen.queryByTestId('my-test-id'));
+          };
+        
+          return { waitForAsyncUtil, ...utils };
+        }
+
+        test('unhandled promise from destructed property of async function wrapper is invalid', () => {
+          setup().waitForAsyncUtil();
+        });
+      `,
+					errors: [
+						{
+							line: 13,
+							column: 19,
+							messageId: 'asyncUtilWrapper',
+							data: { name: 'waitForAsyncUtil' },
+						},
+					],
+				} as const)
+		),
+		...ASYNC_UTILS.map(
+			(asyncUtil) =>
+				({
+					code: `
+        function setup() {
+          const utils = render(<MyComponent />);
+        
+          const waitForAsyncUtil = () => {
+            return ${asyncUtil}(screen.queryByTestId('my-test-id'));
+          };
+        
+          return { waitForAsyncUtil, ...utils };
+        }
+
+        test('unhandled promise from destructed property of async function wrapper is invalid', () => {
+          const myAlias = setup().waitForAsyncUtil;
+          myAlias();
+        });
+      `,
+					errors: [
+						{
+							line: 14,
+							column: 11,
+							messageId: 'asyncUtilWrapper',
+							data: { name: 'myAlias' },
 						},
 					],
 				} as const)
