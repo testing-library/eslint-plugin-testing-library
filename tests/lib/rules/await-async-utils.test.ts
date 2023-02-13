@@ -294,6 +294,38 @@ ruleTester.run(RULE_NAME, rule, {
         });
       `,
 		})),
+		...ASYNC_UTILS.map((asyncUtil) => ({
+			code: `
+          import React from 'react';
+          import { render, act } from '@testing-library/react';
+          
+          const doWithAct = async (timeout) => {
+            await act(async () => await ${asyncUtil}(screen.getByTestId('my-test')));
+          };
+          
+          describe('Component', () => {
+            const mock = jest.fn();
+          
+            it('test', async () => {
+              let Component = () => {
+                mock(1);
+                return <div />;
+              };
+              render(<Component />);
+          
+              await doWithAct(500);
+          
+              const myNumberTestVar = 1;
+              const myBooleanTestVar = false;
+              const myArrayTestVar = [1, 2];
+              const myStringTestVar = 'hello world';
+              const myObjectTestVar = { hello: 'world' };
+
+              expect(mock).toHaveBeenCalledWith(myNumberTestVar);
+            });
+          });
+      `,
+		})),
 	]),
 	invalid: SUPPORTED_TESTING_FRAMEWORKS.flatMap((testingFramework) => [
 		...ASYNC_UTILS.map(
