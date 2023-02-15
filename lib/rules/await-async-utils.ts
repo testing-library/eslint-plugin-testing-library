@@ -44,10 +44,16 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
 		function detectAsyncUtilWrapper(node: TSESTree.Identifier) {
 			const innerFunction = getInnermostReturningFunction(context, node);
-
-			if (innerFunction) {
-				functionWrappersNames.push(getFunctionName(innerFunction));
+			if (!innerFunction) {
+				return;
 			}
+
+			const functionName = getFunctionName(innerFunction);
+			if (functionName.length === 0) {
+				return;
+			}
+
+			functionWrappersNames.push(functionName);
 		}
 
 		/*
