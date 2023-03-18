@@ -1,4 +1,4 @@
-import type { TSESLint } from '@typescript-eslint/utils';
+import { type TSESLint } from '@typescript-eslint/utils';
 
 import rule, { RULE_NAME, Options } from '../../../lib/rules/no-node-access';
 import { createRuleTester } from '../test-utils';
