@@ -85,6 +85,10 @@ type IsDebugUtilFn = (
 	validNames?: ReadonlyArray<(typeof DEBUG_UTILS)[number]>
 ) => boolean;
 type IsPresenceAssertFn = (node: TSESTree.MemberExpression) => boolean;
+type IsMatchingAssertFn = (
+	node: TSESTree.MemberExpression,
+	matcherName: string
+) => boolean;
 type IsAbsenceAssertFn = (node: TSESTree.MemberExpression) => boolean;
 type CanReportErrorsFn = () => boolean;
 type FindImportedTestingLibraryUtilSpecifierFn = (
@@ -122,6 +126,7 @@ export interface DetectionHelpers {
 	isActUtil: (node: TSESTree.Identifier) => boolean;
 	isPresenceAssert: IsPresenceAssertFn;
 	isAbsenceAssert: IsAbsenceAssertFn;
+	isMatchingAssert: IsMatchingAssertFn;
 	canReportErrors: CanReportErrorsFn;
 	findImportedTestingLibraryUtilSpecifier: FindImportedTestingLibraryUtilSpecifierFn;
 	isNodeComingFromTestingLibrary: IsNodeComingFromTestingLibraryFn;
@@ -819,6 +824,16 @@ export function detectTestingLibraryUtils<
 				: ABSENCE_MATCHERS.includes(matcher);
 		};
 
+		const isMatchingAssert: IsMatchingAssertFn = (node, matcherName) => {
+			const { matcher } = getAssertNodeInfo(node);
+
+			if (!matcher) {
+				return false;
+			}
+
+			return matcher === matcherName;
+		};
+
 		/**
 		 * Finds the import util specifier related to Testing Library for a given name.
 		 */
@@ -977,6 +992,7 @@ export function detectTestingLibraryUtils<
 			isDebugUtil,
 			isActUtil,
 			isPresenceAssert,
+			isMatchingAssert,
 			isAbsenceAssert,
 			canReportErrors,
 			findImportedTestingLibraryUtilSpecifier,
