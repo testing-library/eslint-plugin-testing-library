@@ -23,54 +23,34 @@ type RuleInvalidTestCase = TSESLint.InvalidTestCase<MessageIds, Options>;
 type AssertionFnParams = {
 	query: string;
 	matcher: string;
-	includeDefaultOptionsCase?: boolean;
 	options: Options;
 };
 
 const getValidAssertions = ({
 	query,
 	matcher,
-	includeDefaultOptionsCase = true,
 	options,
 }: AssertionFnParams): RuleValidTestCase[] => {
 	const code = `expect(${query}('Hello'))${matcher}`;
 	const screenCode = `expect(screen.${query}('Hello'))${matcher}`;
 	return [
-		...(includeDefaultOptionsCase
-			? [
-					{
-						name: `${code} with default options`,
-						code,
-					},
-			  ]
-			: []),
+		{
+			name: `${code} with default options of empty validEntries`,
+			code,
+		},
 		{
 			name: `${code} with provided options`,
 			code,
 			options,
 		},
 		{
-			name: `${code} with no validEntries`,
-			code,
-			options: [{ validEntries: [] }],
+			name: `${screenCode} with default options of empty validEntries`,
+			code: screenCode,
 		},
-		...(includeDefaultOptionsCase
-			? [
-					{
-						name: `${screenCode} with default options`,
-						code,
-					},
-			  ]
-			: []),
 		{
 			name: `${screenCode} with provided options`,
 			code: screenCode,
 			options,
-		},
-		{
-			name: `${screenCode} with no validEntries`,
-			code: screenCode,
-			options: [{ validEntries: [] }],
 		},
 	];
 };
@@ -78,7 +58,6 @@ const getValidAssertions = ({
 const getInvalidAssertions = ({
 	query,
 	matcher,
-	includeDefaultOptionsCase = true,
 	options,
 }: AssertionFnParams): RuleInvalidTestCase[] => {
 	const code = `expect(${query}('Hello'))${matcher}`;
@@ -90,22 +69,6 @@ const getInvalidAssertions = ({
 		},
 	] = options;
 	return [
-		...(includeDefaultOptionsCase
-			? [
-					{
-						name: `${code} with default options`,
-						code,
-						errors: [
-							{
-								messageId,
-								line: 1,
-								column: 8,
-								data: { query: validEntry.query, matcher: validEntry.matcher },
-							},
-						],
-					},
-			  ]
-			: []),
 		{
 			name: `${code} with provided options`,
 			code,
@@ -119,22 +82,6 @@ const getInvalidAssertions = ({
 				},
 			],
 		},
-		...(includeDefaultOptionsCase
-			? [
-					{
-						name: `${screenCode} with default options`,
-						code: screenCode,
-						errors: [
-							{
-								messageId,
-								line: 1,
-								column: 15,
-								data: { query: validEntry.query, matcher: validEntry.matcher },
-							},
-						],
-					},
-			  ]
-			: []),
 		{
 			name: `${screenCode} with provided options`,
 			code: screenCode,
@@ -247,7 +194,6 @@ ruleTester.run(RULE_NAME, rule, {
 				...getValidAssertions({
 					query: queryName,
 					matcher: '.toBeVisible()',
-					includeDefaultOptionsCase: false,
 					options: [
 						{ validEntries: [{ query: 'query', matcher: 'toBeVisible' }] },
 					],
@@ -255,7 +201,6 @@ ruleTester.run(RULE_NAME, rule, {
 				...getValidAssertions({
 					query: queryName,
 					matcher: '.toBeHelloWorld()',
-					includeDefaultOptionsCase: false,
 					options: [
 						{ validEntries: [{ query: 'query', matcher: 'toBeVisible' }] },
 					],
@@ -263,7 +208,6 @@ ruleTester.run(RULE_NAME, rule, {
 				...getValidAssertions({
 					query: queryName,
 					matcher: '.not.toBeVisible()',
-					includeDefaultOptionsCase: false,
 					options: [
 						{ validEntries: [{ query: 'query', matcher: 'toBeVisible' }] },
 					],
@@ -271,7 +215,6 @@ ruleTester.run(RULE_NAME, rule, {
 				...getValidAssertions({
 					query: queryName,
 					matcher: '.not.toBeHelloWorld()',
-					includeDefaultOptionsCase: false,
 					options: [
 						{ validEntries: [{ query: 'query', matcher: 'toBeVisible' }] },
 					],
@@ -293,7 +236,6 @@ ruleTester.run(RULE_NAME, rule, {
 				...getValidAssertions({
 					query: queryName,
 					matcher: '.toBeVisible()',
-					includeDefaultOptionsCase: false,
 					options: [
 						{ validEntries: [{ query: 'query', matcher: 'toBeVisible' }] },
 					],
@@ -301,7 +243,6 @@ ruleTester.run(RULE_NAME, rule, {
 				...getValidAssertions({
 					query: queryName,
 					matcher: '.toBeHelloWorld()',
-					includeDefaultOptionsCase: false,
 					options: [
 						{ validEntries: [{ query: 'query', matcher: 'toBeVisible' }] },
 					],
@@ -309,7 +250,6 @@ ruleTester.run(RULE_NAME, rule, {
 				...getValidAssertions({
 					query: queryName,
 					matcher: '.not.toBeVisible()',
-					includeDefaultOptionsCase: false,
 					options: [
 						{ validEntries: [{ query: 'query', matcher: 'toBeVisible' }] },
 					],
@@ -317,7 +257,6 @@ ruleTester.run(RULE_NAME, rule, {
 				...getValidAssertions({
 					query: queryName,
 					matcher: '.not.toBeHelloWorld()',
-					includeDefaultOptionsCase: false,
 					options: [
 						{ validEntries: [{ query: 'query', matcher: 'toBeVisible' }] },
 					],
@@ -371,7 +310,6 @@ ruleTester.run(RULE_NAME, rule, {
 				...getInvalidAssertions({
 					query: queryName,
 					matcher: '.toBeHelloWorld()',
-					includeDefaultOptionsCase: false,
 					options: [
 						{ validEntries: [{ query: 'query', matcher: 'toBeHelloWorld' }] },
 					],
@@ -386,7 +324,6 @@ ruleTester.run(RULE_NAME, rule, {
 				...getInvalidAssertions({
 					query: queryName,
 					matcher: '.toBeHelloWorld()',
-					includeDefaultOptionsCase: false,
 					options: [
 						{ validEntries: [{ query: 'query', matcher: 'toBeHelloWorld' }] },
 					],
@@ -425,6 +362,7 @@ ruleTester.run(RULE_NAME, rule, {
 		// cases: indexing into an `AllBy` result within the expectation
 		{
 			code: 'expect(screen.queryAllByText("button")[1]).toBeVisible()',
+			options: [{ validEntries: [{ query: 'get', matcher: 'toBeVisible' }] }],
 			errors: [
 				{
 					messageId: 'wrongQueryForMatcher',
@@ -439,6 +377,7 @@ ruleTester.run(RULE_NAME, rule, {
 				// case: asserting presence incorrectly with custom queryBy* query
 				expect(queryByCustomQuery("button")).toBeVisible()
 		  `,
+			options: [{ validEntries: [{ query: 'get', matcher: 'toBeVisible' }] }],
 			errors: [
 				{
 					messageId: 'wrongQueryForMatcher',

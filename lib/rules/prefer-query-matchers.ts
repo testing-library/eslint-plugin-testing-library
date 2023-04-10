@@ -58,7 +58,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 	},
 	defaultOptions: [
 		{
-			validEntries: [{ query: 'get', matcher: 'toBeVisible' }],
+			validEntries: [],
 		},
 	],
 
