@@ -69,7 +69,7 @@ type IsCustomQueryFn = (node: TSESTree.Identifier) => boolean;
 type IsBuiltInQueryFn = (node: TSESTree.Identifier) => boolean;
 type IsAsyncUtilFn = (
 	node: TSESTree.Identifier,
-	validNames?: readonly typeof ASYNC_UTILS[number][]
+	validNames?: readonly (typeof ASYNC_UTILS)[number][]
 ) => boolean;
 type IsFireEventMethodFn = (node: TSESTree.Identifier) => boolean;
 type IsUserEventMethodFn = (node: TSESTree.Identifier) => boolean;
@@ -82,7 +82,7 @@ type IsRenderVariableDeclaratorFn = (
 ) => boolean;
 type IsDebugUtilFn = (
 	identifierNode: TSESTree.Identifier,
-	validNames?: ReadonlyArray<typeof DEBUG_UTILS[number]>
+	validNames?: ReadonlyArray<(typeof DEBUG_UTILS)[number]>
 ) => boolean;
 type IsPresenceAssertFn = (node: TSESTree.MemberExpression) => boolean;
 type IsAbsenceAssertFn = (node: TSESTree.MemberExpression) => boolean;
