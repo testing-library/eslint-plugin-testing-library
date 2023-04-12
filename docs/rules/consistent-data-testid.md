@@ -38,37 +38,37 @@ const baz = (props) => <div>...</div>;
 
 ## Example
 
-```json
-{
-	"testing-library/consistent-data-testid": [
-		2,
-		{
-			"testIdPattern": "^TestId(__[A-Z]*)?$"
-		}
-	]
-}
+```js
+module.exports = {
+	rules: {
+		'testing-library/consistent-data-testid': [
+			'error',
+			{ testIdPattern: '^TestId(__[A-Z]*)?$' },
+		],
+	},
+};
 ```
 
-```json
-{
-	"testing-library/consistent-data-testid": [
-		2,
-		{
-			"testIdAttribute": ["data-testid", "testId"]
-		}
-	]
-}
+```js
+module.exports = {
+	rules: {
+		'testing-library/consistent-data-testid': [
+			'error',
+			{ testIdAttribute: ['data-testid', 'testId'] },
+		],
+	},
+};
 ```
 
-```json
-{
-	"testing-library/consistent-data-testid": [
-		2,
-		{
-			"customMessage": "A custom message"
-		}
-	]
-}
+```js
+module.exports = {
+	rules: {
+		'testing-library/consistent-data-testid': [
+			'error',
+			{ customMessage: 'A custom message' },
+		],
+	},
+};
 ```
 
 ## Notes
