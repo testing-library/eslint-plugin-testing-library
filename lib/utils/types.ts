@@ -33,4 +33,4 @@ export const SUPPORTED_TESTING_FRAMEWORKS = [
 	'marko',
 ] as const;
 export type SupportedTestingFramework =
-	typeof SUPPORTED_TESTING_FRAMEWORKS[number];
+	(typeof SUPPORTED_TESTING_FRAMEWORKS)[number];
