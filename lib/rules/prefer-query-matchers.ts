@@ -43,7 +43,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 							properties: {
 								query: {
 									type: 'string',
-									enum: ['get', 'query']
+									enum: ['get', 'query'],
 								},
 								matcher: {
 									type: 'string',
