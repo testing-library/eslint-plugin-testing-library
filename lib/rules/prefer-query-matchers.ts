@@ -21,11 +21,11 @@ export default createTestingLibraryRule<Options, MessageIds>({
 			description:
 				'Ensure the configured `get*`/`query*` query is used with the corresponding matchers',
 			recommendedConfig: {
-				dom: 'error',
-				angular: 'error',
-				react: 'error',
-				vue: 'error',
-				marko: 'error',
+				dom: false,
+				angular: false,
+				react: false,
+				vue: false,
+				marko: false,
 			},
 		},
 		messages: {
