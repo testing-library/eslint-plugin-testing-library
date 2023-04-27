@@ -14,15 +14,16 @@ on:
   pull_request:
     types: [opened, synchronize]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   code_validation:
     name: Code Validation
     runs-on: ubuntu-latest
 
     steps:
-      - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.11.0
-
       - name: Checkout
         uses: actions/checkout@v3
 
@@ -59,9 +60,6 @@ jobs:
         eslint: [7.5, 7, 8]
 
     steps:
-      - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.11.0
-
       - name: Checkout
         uses: actions/checkout@v3
 
@@ -91,9 +89,6 @@ jobs:
       github.ref) && github.event_name == 'push' }}
 
     steps:
-      - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.11.0
-
       - name: Checkout
         uses: actions/checkout@v3
 
