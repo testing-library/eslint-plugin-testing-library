@@ -14,7 +14,7 @@ import {
 import { DEBUG_UTILS } from '../utils';
 
 type DebugUtilsToCheckFor = Partial<
-	Record<typeof DEBUG_UTILS[number], boolean>
+	Record<(typeof DEBUG_UTILS)[number], boolean>
 >;
 
 export const RULE_NAME = 'no-debugging-utils';
@@ -153,7 +153,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
 				const isDebugUtil = helpers.isDebugUtil(
 					callExpressionIdentifier,
-					utilsToReport as Array<typeof DEBUG_UTILS[number]>
+					utilsToReport as Array<(typeof DEBUG_UTILS)[number]>
 				);
 				const isDeclaredDebugVariable = suspiciousDebugVariableNames.includes(
 					callExpressionIdentifier.name
