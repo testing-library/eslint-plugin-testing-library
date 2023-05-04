@@ -72,16 +72,15 @@ test('some test', async () => {
 
 ## Example
 
-```json
-{
-	"testing-library/prefer-presence-queries": [
-		2,
-		{
-			"presence": true,
-			"absence": false
-		}
-	]
-}
+```js
+module.exports = {
+	rules: {
+		'testing-library/prefer-presence-queries': [
+			'error',
+			{ absence: false, presence: true },
+		],
+	},
+};
 ```
 
 ## Further Reading

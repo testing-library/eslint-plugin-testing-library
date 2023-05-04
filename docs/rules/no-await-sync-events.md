@@ -93,15 +93,15 @@ This option gives you more granular control of which event modules you want to r
 
 Example:
 
-```json
-{
-	"testing-library/no-await-sync-events": [
-		"error",
-		{
-			"eventModules": ["fire-event", "user-event"]
-		}
-	]
-}
+```js
+module.exports = {
+	rules: {
+		'testing-library/no-await-sync-events': [
+			'error',
+			{ eventModules: ['fire-event', 'user-event'] },
+		],
+	},
+};
 ```
 
 ## Notes

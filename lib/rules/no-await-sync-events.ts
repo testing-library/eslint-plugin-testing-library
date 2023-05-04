@@ -15,7 +15,7 @@ const VALID_EVENT_MODULES = ['fire-event', 'user-event'] as const;
 export const RULE_NAME = 'no-await-sync-events';
 export type MessageIds = 'noAwaitSyncEvents';
 type Options = [
-	{ eventModules?: readonly typeof VALID_EVENT_MODULES[number][] }
+	{ eventModules?: readonly (typeof VALID_EVENT_MODULES)[number][] }
 ];
 
 export default createTestingLibraryRule<Options, MessageIds>({

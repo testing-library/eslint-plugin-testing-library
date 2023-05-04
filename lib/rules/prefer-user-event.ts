@@ -25,7 +25,7 @@ export const UserEventMethods = [
 	'unhover',
 	'paste',
 ] as const;
-type UserEventMethodsType = typeof UserEventMethods[number];
+type UserEventMethodsType = (typeof UserEventMethods)[number];
 
 // maps fireEvent methods to userEvent. Those not found here, do not have an equivalent (yet)
 export const MAPPING_TO_USER_EVENT: Record<string, UserEventMethodsType[]> = {
