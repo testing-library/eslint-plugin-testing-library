@@ -70,17 +70,14 @@ This rule allows to exclude specific functions with an equivalent in `userEvent`
 The configuration consists of an array of strings with the names of fireEvents methods to be excluded.  
 An example looks like this
 
-```json
-{
-	"rules": {
-		"prefer-user-event": [
-			"error",
-			{
-				"allowedMethods": ["click", "change"]
-			}
-		]
-	}
-}
+```js
+module.exports = {
+	rules: {
+		rules: {
+			'prefer-user-event': ['error', { allowedMethods: ['click', 'change'] }],
+		},
+	},
+};
 ```
 
 With this configuration example, the following use cases are considered valid
