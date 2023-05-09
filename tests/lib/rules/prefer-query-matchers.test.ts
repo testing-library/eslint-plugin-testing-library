@@ -26,30 +26,39 @@ type AssertionFnParams = {
 	options: Options;
 };
 
+const wrapExpectInTest = (expectStatement: string) => `
+import { render, screen } from '@testing-library/react'
+
+test('a fake test', () => {
+  render(<Component />)
+
+  ${expectStatement}
+})`;
+
 const getValidAssertions = ({
 	query,
 	matcher,
 	options,
 }: AssertionFnParams): RuleValidTestCase[] => {
-	const code = `expect(${query}('Hello'))${matcher}`;
-	const screenCode = `expect(screen.${query}('Hello'))${matcher}`;
+	const expectStatement = `expect(${query}('Hello'))${matcher}`;
+	const expectScreenStatement = `expect(screen.${query}('Hello'))${matcher}`;
 	return [
 		{
-			name: `${code} with default options of empty validEntries`,
-			code,
+			name: `${expectStatement} with default options of empty validEntries`,
+			code: wrapExpectInTest(expectStatement),
 		},
 		{
-			name: `${code} with provided options`,
-			code,
+			name: `${expectStatement} with provided options`,
+			code: wrapExpectInTest(expectStatement),
 			options,
 		},
 		{
-			name: `${screenCode} with default options of empty validEntries`,
-			code: screenCode,
+			name: `${expectScreenStatement} with default options of empty validEntries`,
+			code: wrapExpectInTest(expectScreenStatement),
 		},
 		{
-			name: `${screenCode} with provided options`,
-			code: screenCode,
+			name: `${expectScreenStatement} with provided options`,
+			code: wrapExpectInTest(expectScreenStatement),
 			options,
 		},
 	];
@@ -60,8 +69,8 @@ const getInvalidAssertions = ({
 	matcher,
 	options,
 }: AssertionFnParams): RuleInvalidTestCase[] => {
-	const code = `expect(${query}('Hello'))${matcher}`;
-	const screenCode = `expect(screen.${query}('Hello'))${matcher}`;
+	const expectStatement = `expect(${query}('Hello'))${matcher}`;
+	const expectScreenStatement = `expect(screen.${query}('Hello'))${matcher}`;
 	const messageId: MessageIds = 'wrongQueryForMatcher';
 	const [
 		{
@@ -70,27 +79,27 @@ const getInvalidAssertions = ({
 	] = options;
 	return [
 		{
-			name: `${code} with provided options`,
-			code,
+			name: `${expectStatement} with provided options`,
+			code: wrapExpectInTest(expectStatement),
 			options,
 			errors: [
 				{
 					messageId,
-					line: 1,
-					column: 8,
+					line: 7,
+					column: 10,
 					data: { query: validEntry.query, matcher: validEntry.matcher },
 				},
 			],
 		},
 		{
-			name: `${screenCode} with provided options`,
-			code: screenCode,
+			name: `${expectScreenStatement} with provided options`,
+			code: wrapExpectInTest(expectScreenStatement),
 			options,
 			errors: [
 				{
 					messageId,
-					line: 1,
-					column: 15,
+					line: 7,
+					column: 17,
 					data: { query: validEntry.query, matcher: validEntry.matcher },
 				},
 			],
