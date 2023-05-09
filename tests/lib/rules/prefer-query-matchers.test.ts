@@ -44,20 +44,20 @@ const getValidAssertions = ({
 	const expectScreenStatement = `expect(screen.${query}('Hello'))${matcher}`;
 	return [
 		{
-			name: `${expectStatement} with default options of empty validEntries`,
+			// name: `${expectStatement} with default options of empty validEntries`,
 			code: wrapExpectInTest(expectStatement),
 		},
 		{
-			name: `${expectStatement} with provided options`,
+			// name: `${expectStatement} with provided options`,
 			code: wrapExpectInTest(expectStatement),
 			options,
 		},
 		{
-			name: `${expectScreenStatement} with default options of empty validEntries`,
+			// name: `${expectScreenStatement} with default options of empty validEntries`,
 			code: wrapExpectInTest(expectScreenStatement),
 		},
 		{
-			name: `${expectScreenStatement} with provided options`,
+			// name: `${expectScreenStatement} with provided options`,
 			code: wrapExpectInTest(expectScreenStatement),
 			options,
 		},
@@ -79,7 +79,7 @@ const getInvalidAssertions = ({
 	] = options;
 	return [
 		{
-			name: `${expectStatement} with provided options`,
+			// name: `${expectStatement} with provided options`,
 			code: wrapExpectInTest(expectStatement),
 			options,
 			errors: [
@@ -92,7 +92,7 @@ const getInvalidAssertions = ({
 			],
 		},
 		{
-			name: `${expectScreenStatement} with provided options`,
+			// name: `${expectScreenStatement} with provided options`,
 			code: wrapExpectInTest(expectScreenStatement),
 			options,
 			errors: [
