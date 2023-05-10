@@ -585,6 +585,18 @@
         "code",
         "test"
       ]
+    },
+    {
+      "login": "CodingItWrong",
+      "name": "Josh Justice",
+      "avatar_url": "https://avatars.githubusercontent.com/u/15832198?v=4",
+      "profile": "https://codingitwrong.com",
+      "contributions": [
+        "code",
+        "test",
+        "doc",
+        "ideas"
+      ]
     }
   ],
   "contributorsPerLine": 7,
