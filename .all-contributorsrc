@@ -597,6 +597,17 @@
         "doc",
         "ideas"
       ]
+    },
+    {
+      "login": "obsoke",
+      "name": "Dale Karp",
+      "avatar_url": "https://avatars.githubusercontent.com/u/389851?v=4",
+      "profile": "https://dale.io",
+      "contributions": [
+        "code",
+        "test",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,
