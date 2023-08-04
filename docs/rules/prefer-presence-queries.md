@@ -44,6 +44,7 @@ Examples of **correct** code for this rule:
 ```js
 test('some test', async () => {
 	render(<App />);
+
 	// check element is present with `getBy*`
 	expect(screen.getByText('button')).toBeInTheDocument();
 	expect(screen.getAllByText('button')[9]).toBeTruthy();
