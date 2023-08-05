@@ -16,7 +16,7 @@ export const RULE_NAME = 'await-async-events';
 export type MessageIds = 'awaitAsyncEvent' | 'awaitAsyncEventWrapper';
 const FIRE_EVENT_NAME = 'fireEvent';
 const USER_EVENT_NAME = 'userEvent';
-type EventModules = typeof EVENTS_SIMULATORS[number];
+type EventModules = (typeof EVENTS_SIMULATORS)[number];
 export type Options = [
 	{
 		eventModule: EventModules | EventModules[];
