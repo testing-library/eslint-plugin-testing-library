@@ -608,8 +608,19 @@
         "test",
         "doc"
       ]
+    },
+    {
+      "login": "nathanmmiller",
+      "name": "Nathan",
+      "avatar_url": "https://avatars.githubusercontent.com/u/37555055?v=4",
+      "profile": "https://github.com/nathanmmiller",
+      "contributions": [
+        "code",
+        "test"
+      ]
     }
   ],
   "contributorsPerLine": 7,
-  "skipCi": true
+  "skipCi": true,
+  "commitType": "docs"
 }

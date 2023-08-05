@@ -420,6 +420,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     </tr>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://dale.io"><img src="https://avatars.githubusercontent.com/u/389851?v=4?s=100" width="100px;" alt="Dale Karp"/><br /><sub><b>Dale Karp</b></sub></a><br /><a href="https://github.com/testing-library/eslint-plugin-testing-library/commits?author=obsoke" title="Code">💻</a> <a href="https://github.com/testing-library/eslint-plugin-testing-library/commits?author=obsoke" title="Tests">⚠️</a> <a href="https://github.com/testing-library/eslint-plugin-testing-library/commits?author=obsoke" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/nathanmmiller"><img src="https://avatars.githubusercontent.com/u/37555055?v=4?s=100" width="100px;" alt="Nathan"/><br /><sub><b>Nathan</b></sub></a><br /><a href="https://github.com/testing-library/eslint-plugin-testing-library/commits?author=nathanmmiller" title="Code">💻</a> <a href="https://github.com/testing-library/eslint-plugin-testing-library/commits?author=nathanmmiller" title="Tests">⚠️</a></td>
     </tr>
   </tbody>
 </table>
