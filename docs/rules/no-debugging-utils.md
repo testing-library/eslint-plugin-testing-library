@@ -45,19 +45,21 @@ screen.debug();
 
 You can control which debugging utils are checked for with the `utilsToCheckFor` option:
 
-```json
-{
-	"testing-library/no-debugging-utils": [
-		"error",
-		{
-			"utilsToCheckFor": {
-				"debug": false,
-				"logRoles": true,
-				"logDOM": true
-			}
-		}
-	]
-}
+```js
+module.exports = {
+	rules: {
+		'testing-library/no-debugging-utils': [
+			'error',
+			{
+				utilsToCheckFor: {
+					debug: false,
+					logRoles: true,
+					logDOM: true,
+				},
+			},
+		],
+	},
+};
 ```
 
 ## Further Reading

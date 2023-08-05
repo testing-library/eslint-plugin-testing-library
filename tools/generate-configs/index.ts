@@ -1,4 +1,4 @@
-import type { LinterConfigRules } from '../../lib/configs';
+import { type LinterConfigRules } from '../../lib/configs';
 import rules from '../../lib/rules';
 import {
 	SUPPORTED_TESTING_FRAMEWORKS,

@@ -13,7 +13,7 @@ import {
 } from '../node-utils';
 import { DEBUG_UTILS } from '../utils';
 
-type DebugUtilsToCheckForConfig = Record<typeof DEBUG_UTILS[number], boolean>;
+type DebugUtilsToCheckForConfig = Record<(typeof DEBUG_UTILS)[number], boolean>;
 type DebugUtilsToCheckFor = Partial<DebugUtilsToCheckForConfig>;
 
 export const RULE_NAME = 'no-debugging-utils';
@@ -159,7 +159,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
 				const isDebugUtil = helpers.isDebugUtil(
 					callExpressionIdentifier,
-					utilsToReport as Array<typeof DEBUG_UTILS[number]>
+					utilsToReport as Array<(typeof DEBUG_UTILS)[number]>
 				);
 				const isDeclaredDebugVariable = suspiciousDebugVariableNames.includes(
 					callExpressionIdentifier.name

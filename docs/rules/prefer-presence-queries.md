@@ -13,7 +13,7 @@ The (DOM) Testing Library allows to query DOM elements using different types of 
 
 This rule fires whenever:
 
-- `queryBy*` or `queryAllBy*` are used to assert element **is** present with `.toBeInTheDocument()`, `toBeTruthy()` or `.toBeDefined()` matchers or negated matchers from case below.
+- `queryBy*` or `queryAllBy*` are used to assert element **is** present with `.toBeInTheDocument()`, `toBeTruthy()` or `.toBeDefined()` matchers or negated matchers from case below, or when used inside a `within()` clause.
 - `getBy*` or `getAllBy*` are used to assert element **is not** present with `.toBeNull()` or `.toBeFalsy()` matchers or negated matchers from case above.
 
 Examples of **incorrect** code for this rule:
@@ -28,6 +28,7 @@ test('some test', () => {
 	expect(screen.queryByText('button')).not.toBeNull();
 	expect(screen.queryAllByText('button')[2]).not.toBeNull();
 	expect(screen.queryByText('button')).not.toBeFalsy();
+	...(within(screen.queryByText('button')))...
 
 	// check element is NOT present with `getBy*`
 	expect(screen.getByText('loading')).not.toBeInTheDocument();
@@ -43,12 +44,14 @@ Examples of **correct** code for this rule:
 ```js
 test('some test', async () => {
 	render(<App />);
+
 	// check element is present with `getBy*`
 	expect(screen.getByText('button')).toBeInTheDocument();
 	expect(screen.getAllByText('button')[9]).toBeTruthy();
 	expect(screen.getByText('button')).not.toBeNull();
 	expect(screen.getAllByText('button')[7]).not.toBeNull();
 	expect(screen.getByText('button')).not.toBeFalsy();
+	...(within(screen.getByText('button')))...
 
 	// check element is NOT present with `queryBy*`
 	expect(screen.queryByText('loading')).not.toBeInTheDocument();
@@ -72,16 +75,15 @@ test('some test', async () => {
 
 ## Example
 
-```json
-{
-	"testing-library/prefer-presence-queries": [
-		2,
-		{
-			"presence": true,
-			"absence": false
-		}
-	]
-}
+```js
+module.exports = {
+	rules: {
+		'testing-library/prefer-presence-queries': [
+			'error',
+			{ absence: false, presence: true },
+		],
+	},
+};
 ```
 
 ## Further Reading

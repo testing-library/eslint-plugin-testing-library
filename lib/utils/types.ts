@@ -1,4 +1,4 @@
-import type { TSESLint } from '@typescript-eslint/utils';
+import { type TSESLint } from '@typescript-eslint/utils';
 
 type RecommendedConfig<TOptions extends readonly unknown[]> =
 	| TSESLint.RuleMetaDataDocs['recommended']
@@ -33,4 +33,4 @@ export const SUPPORTED_TESTING_FRAMEWORKS = [
 	'marko',
 ] as const;
 export type SupportedTestingFramework =
-	typeof SUPPORTED_TESTING_FRAMEWORKS[number];
+	(typeof SUPPORTED_TESTING_FRAMEWORKS)[number];

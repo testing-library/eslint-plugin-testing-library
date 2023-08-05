@@ -3,7 +3,7 @@ import { resolve } from 'path';
 
 import plugin from '../lib';
 
-const numberOfRules = 25;
+const numberOfRules = 28;
 const ruleNames = Object.keys(plugin.rules);
 
 // eslint-disable-next-line jest/expect-expect

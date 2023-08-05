@@ -3,15 +3,20 @@ name: Pipeline
 on:
   push:
     branches:
-      # semantic-release valid branches
+      # semantic-release valid branches and all-contributors branches
       - '+([0-9])?(.{+([0-9]),x}).x'
       - 'main'
       - 'next'
       - 'next-major'
       - 'beta'
       - 'alpha'
+      - 'all-contributors/**'
   pull_request:
     types: [opened, synchronize]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   code_validation:
@@ -19,9 +24,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.11.0
-
       - name: Checkout
         uses: actions/checkout@v3
 
@@ -58,9 +60,6 @@ jobs:
         eslint: [7.5, 7, 8]
 
     steps:
-      - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.11.0
-
       - name: Checkout
         uses: actions/checkout@v3
 
@@ -90,9 +89,6 @@ jobs:
       github.ref) && github.event_name == 'push' }}
 
     steps:
-      - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.11.0
-
       - name: Checkout
         uses: actions/checkout@v3
 

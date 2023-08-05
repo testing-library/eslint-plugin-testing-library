@@ -74,10 +74,12 @@ This rule has an option in case you want to tell the user which framework to use
 
 ### Example
 
-```json
-{
-	"testing-library/no-dom-import": ["error", "react"]
-}
+```js
+module.exports = {
+	rules: {
+		'testing-library/no-dom-import': ['error', 'react'],
+	},
+};
 ```
 
 With the configuration above, if the user imports from `@testing-library/dom` or `dom-testing-library` instead of the used framework, ESLint will tell the user to import from `@testing-library/react` or `react-testing-library`.
