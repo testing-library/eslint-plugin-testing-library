@@ -30,6 +30,7 @@
 		"build": "tsc",
 		"postbuild": "cpy README.md ./dist && cpy package.json ./dist && cpy LICENSE ./dist",
 		"generate-all": "run-p \"generate:*\"",
+		"generate-all:check": "npm run generate-all && git diff --exit-code",
 		"generate:configs": "ts-node tools/generate-configs",
 		"generate:rules-doc": "npm run build && npm run rule-doc-generator",
 		"format": "npm run prettier-base -- --write",
