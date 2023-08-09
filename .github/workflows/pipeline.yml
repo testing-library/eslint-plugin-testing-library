@@ -54,6 +54,7 @@ jobs:
     runs-on: ubuntu-latest
 
     strategy:
+      fail-fast: false
       matrix:
         # The .x indicates "the most recent one"
         node: [19.x, 18.x, 17.x, 16.x, 14.x, 14.17.0, 12.x, 12.22.0]
