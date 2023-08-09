@@ -42,7 +42,7 @@
 		"lint:fix": "npm run lint -- --fix",
 		"prepare": "is-ci || husky install",
 		"prettier-base": "prettier . --ignore-unknown --cache --loglevel warn",
-		"rule-doc-generator": "eslint-doc-generator --path-rule-list \"../README.md\" --path-rule-doc \"../docs/rules/{name}.md\" --url-rule-doc \"docs/rules/{name}.md\" dist/",
+		"rule-doc-generator": "eslint-doc-generator",
 		"semantic-release": "semantic-release",
 		"test": "jest",
 		"test:ci": "jest --ci --coverage",
