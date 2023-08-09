@@ -102,7 +102,7 @@ jobs:
       - name: Build package
         run: npm run build
 
-      - name: Release new version to NPM
+      - name: Release the new version to NPM
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
