@@ -81,9 +81,9 @@ jobs:
     needs: [code_validation, tests]
     runs-on: ubuntu-latest
     if:
-      ${{ github.repository == 'testing-library/eslint-plugin-testing-library' &&
-      contains('refs/heads/main,refs/heads/beta,refs/heads/next,refs/heads/alpha',
-      github.ref) && github.event_name == 'push' }}
+      ${{ github.event.pull_request.head.repo.full_name == github.event.pull_request.base.repo.full_name &&
+      contains('refs/heads/main,refs/heads/beta,refs/heads/next,refs/heads/alpha', github.ref) &&
+      github.event_name == 'push' }}
 
     steps:
       - name: Checkout
