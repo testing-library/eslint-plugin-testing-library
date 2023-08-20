@@ -29,14 +29,6 @@ const bar = async () => {
 	await waitFor(() => expect(container).toMatchInlineSnapshot());
 	// ...
 };
-
-const baz = async () => {
-	// ...
-	await wait(() => {
-		expect(container).toMatchSnapshot();
-	});
-	// ...
-};
 ```
 
 Examples of **correct** code for this rule:

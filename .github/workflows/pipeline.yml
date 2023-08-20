@@ -105,5 +105,5 @@ jobs:
       - name: Release the new version to NPM
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_AUTOMATION_TOKEN }}
         run: npx semantic-release

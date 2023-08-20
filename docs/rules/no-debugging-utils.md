@@ -1,6 +1,6 @@
 # Disallow the use of debugging utilities like `debug` (`testing-library/no-debugging-utils`)
 
-💼 This rule is enabled in the following configs: `angular`, `marko`, `react`, `vue`.
+⚠️ This rule _warns_ in the following configs: `angular`, `marko`, `react`, `vue`.
 
 <!-- end auto-generated rule header -->
 
@@ -17,7 +17,7 @@ This rule supports disallowing the following debugging utilities:
 - `logDOM`
 - `prettyFormat`
 
-By default, only `debug` and `logTestingPlaygroundURL` are disallowed.
+By default, all are disallowed.
 
 Examples of **incorrect** code for this rule:
 

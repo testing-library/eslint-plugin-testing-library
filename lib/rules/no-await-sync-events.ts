@@ -25,9 +25,9 @@ export default createTestingLibraryRule<Options, MessageIds>({
 		docs: {
 			description: 'Disallow unnecessary `await` for sync events',
 			recommendedConfig: {
-				dom: false,
-				angular: false,
-				react: false,
+				dom: 'error',
+				angular: 'error',
+				react: 'error',
 				vue: false,
 				marko: false,
 			},

@@ -1,5 +1,7 @@
 # Disallow the use of `cleanup` (`testing-library/no-manual-cleanup`)
 
+💼 This rule is enabled in the following configs: `react`, `vue`.
+
 <!-- end auto-generated rule header -->
 
 `cleanup` is performed automatically if the testing framework you're using supports the `afterEach` global (like mocha, Jest, and Jasmine). In this case, it's unnecessary to do manual cleanups after each test unless you skip the auto-cleanup with environment variables such as `RTL_SKIP_AUTO_CLEANUP` for React.

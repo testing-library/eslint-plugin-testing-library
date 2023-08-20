@@ -3,7 +3,7 @@ import { TSESTree } from '@typescript-eslint/utils';
 import { createTestingLibraryRule } from '../create-testing-library-rule';
 import { getDeepestIdentifierNode } from '../node-utils';
 
-export const RULE_NAME = 'no-await-sync-query';
+export const RULE_NAME = 'no-await-sync-queries';
 export type MessageIds = 'noAwaitSyncQuery';
 type Options = [];
 

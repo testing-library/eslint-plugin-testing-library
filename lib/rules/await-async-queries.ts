@@ -10,7 +10,7 @@ import {
 	isPromiseHandled,
 } from '../node-utils';
 
-export const RULE_NAME = 'await-async-query';
+export const RULE_NAME = 'await-async-queries';
 export type MessageIds = 'asyncQueryWrapper' | 'awaitAsyncQuery';
 type Options = [];
 
