@@ -219,6 +219,16 @@ ruleTester.run(RULE_NAME, rule, {
       `,
 			options: [{ eventModules: ['fire-event'] }],
 		})),
+
+		// valid tests for user-event with default options (user-event disabled)
+		...USER_EVENT_SYNC_FUNCTIONS.map((func) => ({
+			code: `
+        import userEvent from '@testing-library/user-event';
+        test('should not report userEvent.${func} by default', async() => {
+          await userEvent.${func}('foo');
+        });
+      `,
+		})),
 	],
 
 	invalid: [
@@ -254,6 +264,7 @@ ruleTester.run(RULE_NAME, rule, {
           await userEvent.${func}('foo');
         });
       `,
+					options: [{ eventModules: 'user-event' }],
 					errors: [
 						{
 							line: 4,
@@ -277,7 +288,6 @@ ruleTester.run(RULE_NAME, rule, {
           await fireEvent.${func}('foo');
         });
       `,
-						options: [{ eventModules: ['fire-event'] }],
 						errors: [
 							{
 								line: 4,
@@ -289,8 +299,7 @@ ruleTester.run(RULE_NAME, rule, {
 					} as const)
 			)
 		),
-		// sync userEvent sync methods with await operator are not valid
-		// when only fire-event set in eventModules
+
 		...USER_EVENT_SYNC_FUNCTIONS.map(
 			(func) =>
 				({
@@ -320,6 +329,7 @@ ruleTester.run(RULE_NAME, rule, {
           await userEvent.keyboard('foo');
         });
       `,
+			options: [{ eventModules: ['user-event'] }],
 			errors: [
 				{
 					line: 4,
@@ -343,6 +353,7 @@ ruleTester.run(RULE_NAME, rule, {
           await userEvent.keyboard('foo', { delay: 0 });
         });
       `,
+			options: [{ eventModules: ['user-event'] }],
 			errors: [
 				{
 					line: 4,
@@ -370,6 +381,7 @@ ruleTester.run(RULE_NAME, rule, {
           await renamedUserEvent.keyboard('foo', { delay: 0 });
         });
       `,
+			options: [{ eventModules: ['user-event', 'fire-event'] }],
 			errors: [
 				{
 					line: 6,
@@ -397,6 +409,7 @@ ruleTester.run(RULE_NAME, rule, {
           await userEvent.type('foo', { delay });
         }
       `,
+			options: [{ eventModules: ['user-event'] }],
 			errors: [
 				{
 					line: 3,
@@ -414,6 +427,7 @@ ruleTester.run(RULE_NAME, rule, {
           await userEvent.type('foo', { delay, skipHover });
         }
       `,
+			options: [{ eventModules: ['user-event'] }],
 			errors: [
 				{
 					line: 5,
@@ -433,6 +447,7 @@ ruleTester.run(RULE_NAME, rule, {
           await userEvent.type('foo', { delay, skipHover });
         }
       `,
+			options: [{ eventModules: ['user-event'] }],
 			errors: [
 				{
 					line: 7,
