@@ -34,6 +34,7 @@
 		"prebuild": "del-cli dist",
 		"build": "tsc",
 		"generate-all": "run-p \"generate:*\"",
+		"generate-all:check": "npm run generate-all && git diff --exit-code",
 		"generate:configs": "ts-node tools/generate-configs",
 		"generate:rules-doc": "npm run build && npm run rule-doc-generator",
 		"format": "npm run prettier-base -- --write",
