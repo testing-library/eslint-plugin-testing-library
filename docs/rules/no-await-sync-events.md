@@ -4,7 +4,7 @@
 
 <!-- end auto-generated rule header -->
 
-Ensure that sync simulated events are not awaited unnecessarily.
+Ensure that sync events are not awaited unnecessarily.
 
 ## Rule Details
 
@@ -21,6 +21,12 @@ Some examples of simulating events not returning any Promise are:
 - `userEvent.hover` (prior to `user-event` v14)
 
 This rule aims to prevent users from waiting for those function calls.
+
+> ⚠️ `fire-event` methods are async only on following Testing Library packages:
+>
+> - `@testing-library/vue` (supported by this plugin)
+> - `@testing-library/svelte` (not supported yet by this plugin)
+> - `@marko/testing-library` (supported by this plugin)
 
 Examples of **incorrect** code for this rule:
 
@@ -87,13 +93,9 @@ const qux = async () => {
 
 This rule provides the following options:
 
-- `eventModules`: array of strings. The possibilities are: `"fire-event"` and `"user-event"`. Defaults to `["fire-event", "user-event"]`
+- `eventModules`: string, or array of strings. Defines which event module should be linted for sync event methods. The possibilities are: `"fire-event"` and `"user-event"`. Defaults to `"fire-event"`.
 
-### `eventModules`
-
-This option gives you more granular control of which event modules you want to report, so you can choose to only report methods from either `fire-event`, `user-event` or both.
-
-Example:
+### Example:
 
 ```js
 module.exports = {
@@ -106,7 +108,11 @@ module.exports = {
 };
 ```
 
+## When Not To Use It
+
+- `"fire-event"` option: should be disabled only for those Testing Library packages where fire-event methods are async.
+- `"user-event"` option: should be disabled only if using v14 or greater.
+
 ## Notes
 
-- Since `user-event` v14 all its methods are async, so you should disable reporting them by setting the `eventModules` to just `"fire-event"` so `user-event` methods are not reported.
-- There is another rule `await-async-events`, which is for awaiting async events for `user-event` v14 or `fire-event` only in Vue Testing Library. Please do not confuse with this rule.
+There is another rule `await-async-events`, which is for awaiting async events for `user-event` v14 or `fire-event` only in Testing Library packages with async methods. Please do not confuse with this rule.
