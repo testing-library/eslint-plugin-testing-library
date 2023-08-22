@@ -11,7 +11,10 @@ export = {
 		],
 		'testing-library/await-async-queries': 'error',
 		'testing-library/await-async-utils': 'error',
-		'testing-library/no-await-sync-events': 'error',
+		'testing-library/no-await-sync-events': [
+			'error',
+			{ eventModules: 'fire-event' },
+		],
 		'testing-library/no-await-sync-queries': 'error',
 		'testing-library/no-global-regexp-flag-in-query': 'error',
 		'testing-library/no-node-access': 'error',
