@@ -26,7 +26,10 @@ jobs:
       fail-fast: false
       matrix:
         validation_script:
-          ['lint', 'type-check', 'format:check', 'generate-all:check']
+          - lint
+          - 'type-check
+          - 'format:check'
+          - 'generate-all:check'
 
     steps:
       - name: Checkout
