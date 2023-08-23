@@ -264,7 +264,7 @@ ruleTester.run(RULE_NAME, rule, {
           await userEvent.${func}('foo');
         });
       `,
-					options: [{ eventModules: 'user-event' }],
+					options: [{ eventModules: ['user-event'] }],
 					errors: [
 						{
 							line: 4,

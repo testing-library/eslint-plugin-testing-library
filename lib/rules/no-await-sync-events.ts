@@ -18,7 +18,7 @@ export const RULE_NAME = 'no-await-sync-events';
 export type MessageIds = 'noAwaitSyncEvents';
 
 type ValidEventModules = (typeof VALID_EVENT_MODULES)[number];
-type EventModulesOptions = ReadonlyArray<ValidEventModules> | ValidEventModules;
+type EventModulesOptions = ReadonlyArray<ValidEventModules>;
 type Options = [{ eventModules?: EventModulesOptions }];
 
 function getEnabledEventModules(
@@ -27,9 +27,8 @@ function getEnabledEventModules(
 	if (typeof eventModulesOption === 'undefined') {
 		// This should match the default option
 		return [FIRE_EVENT_OPTION];
-	} else if (typeof eventModulesOption === 'string') {
-		return [eventModulesOption];
 	}
+
 	return eventModulesOption;
 }
 
@@ -40,9 +39,9 @@ export default createTestingLibraryRule<Options, MessageIds>({
 		docs: {
 			description: 'Disallow unnecessary `await` for sync events',
 			recommendedConfig: {
-				dom: ['error', { eventModules: 'fire-event' }],
-				angular: ['error', { eventModules: 'fire-event' }],
-				react: ['error', { eventModules: 'fire-event' }],
+				dom: ['error', { eventModules: ['fire-event'] }],
+				angular: ['error', { eventModules: ['fire-event'] }],
+				react: ['error', { eventModules: ['fire-event'] }],
 				vue: false,
 				marko: false,
 			},
@@ -56,22 +55,17 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				type: 'object',
 				properties: {
 					eventModules: {
-						default: FIRE_EVENT_OPTION,
-						oneOf: [
-							{ type: 'string', enum: VALID_EVENT_MODULES },
-							{
-								type: 'array',
-								itmes: { type: 'string', enum: VALID_EVENT_MODULES },
-								minItems: 1,
-							},
-						],
+						type: 'array',
+						itmes: { type: 'string', enum: VALID_EVENT_MODULES },
+						minItems: 1,
+						default: [FIRE_EVENT_OPTION],
 					},
 				},
 				additionalProperties: false,
 			},
 		],
 	},
-	defaultOptions: [{ eventModules: FIRE_EVENT_OPTION }],
+	defaultOptions: [{ eventModules: [FIRE_EVENT_OPTION] }],
 
 	create(context, [options], helpers) {
 		const { eventModules = VALID_EVENT_MODULES } = options;

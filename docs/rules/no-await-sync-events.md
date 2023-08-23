@@ -93,7 +93,7 @@ const qux = async () => {
 
 This rule provides the following options:
 
-- `eventModules`: string, or array of strings. Defines which event module should be linted for sync event methods. The possibilities are: `"fire-event"` and `"user-event"`. Defaults to `"fire-event"`.
+- `eventModules`: array of strings. Defines which event module should be linted for sync event methods. The possibilities are: `"fire-event"` and `"user-event"`. Defaults to `["fire-event"]`.
 
 ### Example:
 
