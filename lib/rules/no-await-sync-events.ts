@@ -56,7 +56,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				properties: {
 					eventModules: {
 						type: 'array',
-						itmes: { type: 'string', enum: VALID_EVENT_MODULES },
+						items: { type: 'string', enum: VALID_EVENT_MODULES },
 						minItems: 1,
 						default: [FIRE_EVENT_OPTION],
 					},
