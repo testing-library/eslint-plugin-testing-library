@@ -13,6 +13,7 @@ const USER_EVENT_ASYNC_EXCEPTIONS: string[] = ['type', 'keyboard'];
 const FIRE_EVENT_OPTION = 'fire-event' as const;
 const USER_EVENT_OPTION = 'user-event' as const;
 const VALID_EVENT_MODULES = [FIRE_EVENT_OPTION, USER_EVENT_OPTION];
+const DEFAULT_EVENT_MODULES = [FIRE_EVENT_OPTION];
 
 export const RULE_NAME = 'no-await-sync-events';
 export type MessageIds = 'noAwaitSyncEvents';
@@ -24,12 +25,7 @@ type Options = [{ eventModules?: EventModulesOptions }];
 function getEnabledEventModules(
 	eventModulesOption?: EventModulesOptions | undefined
 ): ReadonlyArray<ValidEventModules> {
-	if (typeof eventModulesOption === 'undefined') {
-		// This should match the default option
-		return [FIRE_EVENT_OPTION];
-	}
-
-	return eventModulesOption;
+	return eventModulesOption ?? DEFAULT_EVENT_MODULES;
 }
 
 export default createTestingLibraryRule<Options, MessageIds>({
@@ -39,9 +35,9 @@ export default createTestingLibraryRule<Options, MessageIds>({
 		docs: {
 			description: 'Disallow unnecessary `await` for sync events',
 			recommendedConfig: {
-				dom: ['error', { eventModules: ['fire-event'] }],
-				angular: ['error', { eventModules: ['fire-event'] }],
-				react: ['error', { eventModules: ['fire-event'] }],
+				dom: ['error', { eventModules: DEFAULT_EVENT_MODULES }],
+				angular: ['error', { eventModules: DEFAULT_EVENT_MODULES }],
+				react: ['error', { eventModules: DEFAULT_EVENT_MODULES }],
 				vue: false,
 				marko: false,
 			},
@@ -58,14 +54,14 @@ export default createTestingLibraryRule<Options, MessageIds>({
 						type: 'array',
 						items: { type: 'string', enum: VALID_EVENT_MODULES },
 						minItems: 1,
-						default: [FIRE_EVENT_OPTION],
+						default: DEFAULT_EVENT_MODULES,
 					},
 				},
 				additionalProperties: false,
 			},
 		],
 	},
-	defaultOptions: [{ eventModules: [FIRE_EVENT_OPTION] }],
+	defaultOptions: [{ eventModules: DEFAULT_EVENT_MODULES }],
 
 	create(context, [options], helpers) {
 		const { eventModules = VALID_EVENT_MODULES } = options;
