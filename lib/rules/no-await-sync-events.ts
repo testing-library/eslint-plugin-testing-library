@@ -10,13 +10,17 @@ import {
 } from '../node-utils';
 
 const USER_EVENT_ASYNC_EXCEPTIONS: string[] = ['type', 'keyboard'];
-const VALID_EVENT_MODULES = ['fire-event', 'user-event'] as const;
+const FIRE_EVENT_OPTION = 'fire-event' as const;
+const USER_EVENT_OPTION = 'user-event' as const;
+const VALID_EVENT_MODULES = [FIRE_EVENT_OPTION, USER_EVENT_OPTION];
+const DEFAULT_EVENT_MODULES = [FIRE_EVENT_OPTION];
 
 export const RULE_NAME = 'no-await-sync-events';
 export type MessageIds = 'noAwaitSyncEvents';
-type Options = [
-	{ eventModules?: readonly (typeof VALID_EVENT_MODULES)[number][] }
-];
+
+type ValidEventModules = (typeof VALID_EVENT_MODULES)[number];
+type EventModulesOptions = ReadonlyArray<ValidEventModules>;
+type Options = [{ eventModules?: EventModulesOptions }];
 
 export default createTestingLibraryRule<Options, MessageIds>({
 	name: RULE_NAME,
@@ -25,9 +29,9 @@ export default createTestingLibraryRule<Options, MessageIds>({
 		docs: {
 			description: 'Disallow unnecessary `await` for sync events',
 			recommendedConfig: {
-				dom: 'error',
-				angular: 'error',
-				react: 'error',
+				dom: ['error', { eventModules: DEFAULT_EVENT_MODULES }],
+				angular: ['error', { eventModules: DEFAULT_EVENT_MODULES }],
+				react: ['error', { eventModules: DEFAULT_EVENT_MODULES }],
 				vue: false,
 				marko: false,
 			},
@@ -42,20 +46,19 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				properties: {
 					eventModules: {
 						type: 'array',
+						items: { type: 'string', enum: VALID_EVENT_MODULES },
 						minItems: 1,
-						items: {
-							enum: VALID_EVENT_MODULES,
-						},
+						default: DEFAULT_EVENT_MODULES,
 					},
 				},
 				additionalProperties: false,
 			},
 		],
 	},
-	defaultOptions: [{ eventModules: VALID_EVENT_MODULES }],
+	defaultOptions: [{ eventModules: DEFAULT_EVENT_MODULES }],
 
 	create(context, [options], helpers) {
-		const { eventModules = VALID_EVENT_MODULES } = options;
+		const { eventModules = DEFAULT_EVENT_MODULES } = options;
 		let hasDelayDeclarationOrAssignmentGTZero: boolean;
 
 		// userEvent.type() and userEvent.keyboard() are exceptions, which returns a
@@ -107,10 +110,10 @@ export default createTestingLibraryRule<Options, MessageIds>({
 					return;
 				}
 
-				if (isFireEventMethod && !eventModules.includes('fire-event')) {
+				if (isFireEventMethod && !eventModules.includes(FIRE_EVENT_OPTION)) {
 					return;
 				}
-				if (isUserEventMethod && !eventModules.includes('user-event')) {
+				if (isUserEventMethod && !eventModules.includes(USER_EVENT_OPTION)) {
 					return;
 				}
 
