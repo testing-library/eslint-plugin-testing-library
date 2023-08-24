@@ -22,12 +22,6 @@ type ValidEventModules = (typeof VALID_EVENT_MODULES)[number];
 type EventModulesOptions = ReadonlyArray<ValidEventModules>;
 type Options = [{ eventModules?: EventModulesOptions }];
 
-function getEnabledEventModules(
-	eventModulesOption?: EventModulesOptions | undefined
-): ReadonlyArray<ValidEventModules> {
-	return eventModulesOption ?? DEFAULT_EVENT_MODULES;
-}
-
 export default createTestingLibraryRule<Options, MessageIds>({
 	name: RULE_NAME,
 	meta: {
@@ -64,7 +58,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 	defaultOptions: [{ eventModules: DEFAULT_EVENT_MODULES }],
 
 	create(context, [options], helpers) {
-		const { eventModules = VALID_EVENT_MODULES } = options;
+		const { eventModules = DEFAULT_EVENT_MODULES } = options;
 		let hasDelayDeclarationOrAssignmentGTZero: boolean;
 
 		// userEvent.type() and userEvent.keyboard() are exceptions, which returns a
@@ -99,11 +93,6 @@ export default createTestingLibraryRule<Options, MessageIds>({
 			},
 			'AwaitExpression > CallExpression'(node: TSESTree.CallExpression) {
 				const simulateEventFunctionIdentifier = getDeepestIdentifierNode(node);
-				const enabledEventModules = getEnabledEventModules(eventModules);
-				const isFireEventEnabled =
-					enabledEventModules.includes(FIRE_EVENT_OPTION);
-				const isUserEventEnabled =
-					enabledEventModules.includes(USER_EVENT_OPTION);
 
 				if (!simulateEventFunctionIdentifier) {
 					return;
@@ -121,10 +110,10 @@ export default createTestingLibraryRule<Options, MessageIds>({
 					return;
 				}
 
-				if (isFireEventMethod && !isFireEventEnabled) {
+				if (isFireEventMethod && !eventModules.includes(FIRE_EVENT_OPTION)) {
 					return;
 				}
-				if (isUserEventMethod && !isUserEventEnabled) {
+				if (isUserEventMethod && !eventModules.includes(USER_EVENT_OPTION)) {
 					return;
 				}
 
