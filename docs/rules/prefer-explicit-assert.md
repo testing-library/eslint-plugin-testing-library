@@ -72,7 +72,7 @@ This is how you can use these options in eslint configuration:
 
 ## When Not To Use It
 
-If you prefer to use `getBy*` queries implicitly as an assert-like method itself, then this rule is not recommended.
+If you prefer to use `getBy*` queries implicitly as an assert-like method itself, then this rule is not recommended. Instead check out this rule [prefer-implicit-assert](https://github.com/testing-library/eslint-plugin-testing-library/blob/main/docs/rules/prefer-implicit-assert.md)
 
 ## Further Reading
 
