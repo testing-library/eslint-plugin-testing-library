@@ -1,6 +1,12 @@
-import { TSESTree, ASTUtils, AST_NODE_TYPES } from '@typescript-eslint/utils';
+import {
+	TSESTree,
+	ASTUtils,
+	AST_NODE_TYPES,
+	TSESLint,
+} from '@typescript-eslint/utils';
 
 import { createTestingLibraryRule } from '../create-testing-library-rule';
+import { TestingLibrarySettings } from '../create-testing-library-rule/detect-testing-library-utils';
 import { isCallExpression, isMemberExpression } from '../node-utils';
 import { PRESENCE_MATCHERS, ABSENCE_MATCHERS } from '../utils';
 
@@ -81,6 +87,26 @@ const usesNotPresenceAssertion = (
 	);
 };
 
+const reportError = (
+	context: Readonly<
+		TSESLint.RuleContext<'preferImplicitAssert', []> & {
+			settings: TestingLibrarySettings;
+		}
+	>,
+	node: TSESTree.Identifier | TSESTree.Node | undefined,
+	queryType: string
+) => {
+	if (node) {
+		return context.report({
+			node,
+			messageId: 'preferImplicitAssert',
+			data: {
+				queryType,
+			},
+		});
+	}
+};
+
 export default createTestingLibraryRule<Options, MessageIds>({
 	name: RULE_NAME,
 	meta: {
@@ -123,30 +149,11 @@ export default createTestingLibraryRule<Options, MessageIds>({
 						isCalledUsingSomeObject(queryCall) ? queryCall.parent : queryCall;
 
 					if (node) {
-						if (
-							isCalledInExpect(node, isAsyncQuery) &&
-							usesPresenceAssertion(node, isAsyncQuery)
-						) {
-							return context.report({
-								node: queryCall,
-								messageId: 'preferImplicitAssert',
-								data: {
-									queryType: 'findBy*',
-								},
-							});
-						}
-
-						if (
-							isCalledInExpect(node, isAsyncQuery) &&
-							usesNotPresenceAssertion(node, isAsyncQuery)
-						) {
-							return context.report({
-								node: queryCall,
-								messageId: 'preferImplicitAssert',
-								data: {
-									queryType: 'findBy*',
-								},
-							});
+						if (isCalledInExpect(node, isAsyncQuery)) {
+							if (usesPresenceAssertion(node, isAsyncQuery))
+								return reportError(context, node, 'findBy*');
+							if (usesNotPresenceAssertion(node, isAsyncQuery))
+								return reportError(context, node, 'findBy*');
 						}
 					}
 				});
@@ -156,30 +163,11 @@ export default createTestingLibraryRule<Options, MessageIds>({
 					const node: TSESTree.Identifier | TSESTree.Node | undefined =
 						isCalledUsingSomeObject(queryCall) ? queryCall.parent : queryCall;
 					if (node) {
-						if (
-							isCalledInExpect(node, isAsyncQuery) &&
-							usesPresenceAssertion(node, isAsyncQuery)
-						) {
-							return context.report({
-								node: queryCall,
-								messageId: 'preferImplicitAssert',
-								data: {
-									queryType: 'getBy*',
-								},
-							});
-						}
-
-						if (
-							isCalledInExpect(node, isAsyncQuery) &&
-							usesNotPresenceAssertion(node, isAsyncQuery)
-						) {
-							return context.report({
-								node: queryCall,
-								messageId: 'preferImplicitAssert',
-								data: {
-									queryType: 'getBy*',
-								},
-							});
+						if (isCalledInExpect(node, isAsyncQuery)) {
+							if (usesPresenceAssertion(node, isAsyncQuery))
+								return reportError(context, node, 'getBy*');
+							if (usesNotPresenceAssertion(node, isAsyncQuery))
+								return reportError(context, node, 'getBy*');
 						}
 					}
 				});
