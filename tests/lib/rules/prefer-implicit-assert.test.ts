@@ -37,6 +37,15 @@ ruleTester.run(RULE_NAME, rule, {
 		...COMBINED_QUERIES_METHODS.map((queryMethod) => ({
 			code: `expect(query${queryMethod}('qux')).not.toBeInTheDocument();`,
 		})),
+		...COMBINED_QUERIES_METHODS.map((queryMethod) => ({
+			code: `const something = await find${queryMethod}('qux');`,
+		})),
+		...COMBINED_QUERIES_METHODS.map((queryMethod) => ({
+			code: `const something = get${queryMethod}('qux');`,
+		})),
+		...COMBINED_QUERIES_METHODS.map((queryMethod) => ({
+			code: `const something = query${queryMethod}('qux');`,
+		})),
 	],
 	invalid: [
 		...COMBINED_QUERIES_METHODS.map(

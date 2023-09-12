@@ -46,7 +46,10 @@ expect(queryByText('foo')).not.toBeInTheDocument();
 
 ## When Not To Use It
 
-If you prefer to use `getBy*` & `findBy*` queries with explicitly asserting existance of elements, then this rule is not recommended. Instead check out this rule [prefer-explicit-assert](https://github.com/testing-library/eslint-plugin-testing-library/blob/main/docs/rules/prefer-explicit-assert.md)
+If you prefer to use `getBy*` & `findBy*` queries with explicitly asserting existence of elements, then this rule is not recommended. Instead check out this rule [prefer-explicit-assert](https://github.com/testing-library/eslint-plugin-testing-library/blob/main/docs/rules/prefer-explicit-assert.md)
+
+- Never use both `prefer-implicit-assert` & `prefer-explicit-assert` choose one.
+- This library recommends `prefer-explicit-assert` to make it more clear to readers that it is not just a query without an assertion, but that it is checking for existence of an element
 
 ## Further Reading
 
