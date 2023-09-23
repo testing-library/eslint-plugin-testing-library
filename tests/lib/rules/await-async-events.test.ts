@@ -181,6 +181,29 @@ ruleTester.run(RULE_NAME, rule, {
 		]),
 
 		...USER_EVENT_ASYNC_FRAMEWORKS.flatMap((testingFramework) => [
+			{
+				code: `
+				import userEvent from '${testingFramework}'
+				test('setup method called is valid', () => {
+					userEvent.setup()
+				})
+				`,
+				options: [{ eventModule: 'userEvent' }] as const,
+			},
+			{
+				code: `
+				import userEvent from '${testingFramework}'
+				function customSetup() {
+					return {
+						user: userEvent.setup()
+					};
+				}
+				test('setup method called and returned is valid', () => {
+					const {user} = customSetup();
+				})
+				`,
+				options: [{ eventModule: 'userEvent' }] as const,
+			},
 			...USER_EVENT_ASYNC_FUNCTIONS.map((eventMethod) => ({
 				code: `
         import userEvent from '${testingFramework}'
