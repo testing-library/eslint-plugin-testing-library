@@ -618,6 +618,16 @@
         "code",
         "test"
       ]
+    },
+    {
+      "login": "justintoman",
+      "name": "justintoman",
+      "avatar_url": "https://avatars.githubusercontent.com/u/11649507?v=4",
+      "profile": "https://github.com/justintoman",
+      "contributions": [
+        "code",
+        "test"
+      ]
     }
   ],
   "contributorsPerLine": 7,
