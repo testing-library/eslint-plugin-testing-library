@@ -28,10 +28,10 @@ function buildFindByMethod(queryMethod: string) {
 function createScenario<
 	T extends
 		| TSESLint.InvalidTestCase<MessageIds, []>
-		| TSESLint.ValidTestCase<[]>
+		| TSESLint.ValidTestCase<[]>,
 >(callback: (waitMethod: string, queryMethod: string) => T) {
 	return SYNC_QUERIES_COMBINATIONS.map((queryMethod) =>
-		callback('waitFor', queryMethod)
+		callback('waitFor', queryMethod),
 	);
 }
 
@@ -190,7 +190,7 @@ ruleTester.run(RULE_NAME, rule, {
           import {${waitMethod}, screen} from '${testingFramework}';
           it('tests', async () => {
             const submitButton = await screen.${buildFindByMethod(
-							queryMethod
+							queryMethod,
 						)}('foo', { name: 'baz' })
           })
         `,
@@ -366,7 +366,7 @@ ruleTester.run(RULE_NAME, rule, {
         it('tests', async () => {
           const { ${queryMethod}, ${buildFindByMethod(queryMethod)} } = render()
           const submitButton = await ${buildFindByMethod(
-						queryMethod
+						queryMethod,
 					)}('foo', { name: 'baz' })
         })
       `,
@@ -395,7 +395,7 @@ ruleTester.run(RULE_NAME, rule, {
         it('tests', async () => {
           const { ${queryMethod}, ${buildFindByMethod(queryMethod)} } = render()
           const submitButton = await ${buildFindByMethod(
-						queryMethod
+						queryMethod,
 					)}('foo', { name: 'baz' })
         })
       `,
@@ -424,7 +424,7 @@ ruleTester.run(RULE_NAME, rule, {
         it('tests', async () => {
           const { ${queryMethod}, ${buildFindByMethod(queryMethod)} } = render()
           const submitButton = await ${buildFindByMethod(
-						queryMethod
+						queryMethod,
 					)}('foo', { name: 'baz' })
         })
       `,
@@ -453,7 +453,7 @@ ruleTester.run(RULE_NAME, rule, {
         it('tests', async () => {
           const { ${queryMethod}, ${buildFindByMethod(queryMethod)} } = render()
           const submitButton = await ${buildFindByMethod(
-						queryMethod
+						queryMethod,
 					)}('foo', { name: 'baz' })
         })
       `,
@@ -482,7 +482,7 @@ ruleTester.run(RULE_NAME, rule, {
         it('tests', async () => {
           const {${queryMethod}, ${buildFindByMethod(queryMethod)}} = render()
           const submitButton = await ${buildFindByMethod(
-						queryMethod
+						queryMethod,
 					)}('foo', { name: 'baz' })
         })
       `,
@@ -511,7 +511,7 @@ ruleTester.run(RULE_NAME, rule, {
         it('tests', async () => {
           const { ${queryMethod}, ${buildFindByMethod(queryMethod)} } = render()
           const submitButton = await ${buildFindByMethod(
-						queryMethod
+						queryMethod,
 					)}('foo', { name: 'baz' })
         })
       `,
@@ -540,7 +540,7 @@ ruleTester.run(RULE_NAME, rule, {
         it('tests', async () => {
           const { ${queryMethod}, ${buildFindByMethod(queryMethod)} } = render()
           const submitButton = await ${buildFindByMethod(
-						queryMethod
+						queryMethod,
 					)}('foo', { name: 'baz' })
         })
       `,
@@ -567,7 +567,7 @@ ruleTester.run(RULE_NAME, rule, {
           import {${waitMethod}} from '${testingFramework}';
           it('tests', async () => {
             const submitButton = await screen.${buildFindByMethod(
-							queryMethod
+							queryMethod,
 						)}('foo', { name: 'baz' })
           })
         `,
@@ -594,7 +594,7 @@ ruleTester.run(RULE_NAME, rule, {
           import {${waitMethod}} from '${testingFramework}';
           it('tests', async () => {
             const submitButton = await screen.${buildFindByMethod(
-							queryMethod
+							queryMethod,
 						)}('foo', { name: 'baz' })
           })
         `,
@@ -621,7 +621,7 @@ ruleTester.run(RULE_NAME, rule, {
           import {${waitMethod}} from '${testingFramework}';
           it('tests', async () => {
             const submitButton = await screen.${buildFindByMethod(
-							queryMethod
+							queryMethod,
 						)}('foo', { name: 'baz' })
           })
         `,
@@ -648,7 +648,7 @@ ruleTester.run(RULE_NAME, rule, {
           import {${waitMethod}} from '${testingFramework}';
           it('tests', async () => {
             const submitButton = await screen.${buildFindByMethod(
-							queryMethod
+							queryMethod,
 						)}('foo', { name: 'baz' })
           })
         `,
@@ -675,7 +675,7 @@ ruleTester.run(RULE_NAME, rule, {
           import {${waitMethod}} from '${testingFramework}';
           it('tests', async () => {
             const submitButton = await screen.${buildFindByMethod(
-							queryMethod
+							queryMethod,
 						)}('foo', { name: 'baz' })
           })
         `,
@@ -699,7 +699,7 @@ ruleTester.run(RULE_NAME, rule, {
 			],
 			output: `import {${waitMethod}} from '${testingFramework}';
 		  const button = await screen.${buildFindByMethod(
-				queryMethod
+				queryMethod,
 			)}('Count is: 0', { timeout: 100, interval: 200 })
         `,
 		})),

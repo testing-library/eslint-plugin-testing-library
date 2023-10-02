@@ -73,7 +73,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				const cleanupSpecifier = moduleNode.specifiers.find(
 					(specifier) =>
 						isImportSpecifier(specifier) &&
-						specifier.imported.name === 'cleanup'
+						specifier.imported.name === 'cleanup',
 				);
 
 				if (cleanupSpecifier) {
@@ -91,7 +91,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 						(property) =>
 							isProperty(property) &&
 							ASTUtils.isIdentifier(property.key) &&
-							property.key.name === 'cleanup'
+							property.key.name === 'cleanup',
 					);
 
 					if (cleanupProperty) {

@@ -52,7 +52,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 		}
 
 		function showErrorIfChainedContainerMethod(
-			innerNode: TSESTree.MemberExpression
+			innerNode: TSESTree.MemberExpression,
 		) {
 			if (isMemberExpression(innerNode)) {
 				if (ASTUtils.isIdentifier(innerNode.object)) {
@@ -81,7 +81,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 					}
 				}
 				showErrorIfChainedContainerMethod(
-					innerNode.object as TSESTree.MemberExpression
+					innerNode.object as TSESTree.MemberExpression,
 				);
 			}
 		}
@@ -122,7 +122,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				}
 
 				const isRenderWrapperVariableDeclarator = renderWrapperNames.includes(
-					initIdentifierNode.name
+					initIdentifierNode.name,
 				);
 
 				if (
@@ -137,7 +137,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 						(property) =>
 							isProperty(property) &&
 							ASTUtils.isIdentifier(property.key) &&
-							property.key.name === 'container'
+							property.key.name === 'container',
 					);
 
 					const nodeValue =
@@ -154,7 +154,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 							(property) =>
 								isProperty(property) &&
 								ASTUtils.isIdentifier(property.key) &&
-								destructuredContainerPropNames.push(property.key.name)
+								destructuredContainerPropNames.push(property.key.name),
 						);
 					}
 				} else if (ASTUtils.isIdentifier(node.id)) {

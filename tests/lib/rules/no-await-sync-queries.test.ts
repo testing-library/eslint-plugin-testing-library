@@ -142,7 +142,7 @@ ruleTester.run(RULE_NAME, rule, {
 							column: 31,
 						},
 					],
-				} as const)
+				}) as const,
 		),
 		// custom sync queries with await operator are not valid
 		{
@@ -192,7 +192,7 @@ ruleTester.run(RULE_NAME, rule, {
 							column: 22,
 						},
 					],
-				} as const)
+				}) as const,
 		),
 
 		// sync queries in screen with await operator are not valid
@@ -210,7 +210,7 @@ ruleTester.run(RULE_NAME, rule, {
 							column: 38,
 						},
 					],
-				} as const)
+				}) as const,
 		),
 
 		// sync queries in screen with await operator inside assert are not valid
@@ -228,7 +228,7 @@ ruleTester.run(RULE_NAME, rule, {
 							column: 29,
 						},
 					],
-				} as const)
+				}) as const,
 		),
 
 		// sync query awaited and related to testing library module
@@ -244,7 +244,7 @@ ruleTester.run(RULE_NAME, rule, {
       }
       `,
 					errors: [{ messageId: 'noAwaitSyncQuery', line: 4, column: 38 }],
-				} as const)
+				}) as const,
 		),
 		// sync query awaited and related to custom module is not valid
 		{

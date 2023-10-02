@@ -62,7 +62,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 			Detects `myRenamedValue` and adds it to the known async wrapper names.
 		 */
 		function detectDestructuredAsyncUtilWrapperAliases(
-			node: TSESTree.ObjectPattern
+			node: TSESTree.ObjectPattern,
 		) {
 			for (const property of node.properties) {
 				if (!isProperty(property)) {
@@ -110,7 +110,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 					ASTUtils.isIdentifier(node.id) &&
 					node.init !== null &&
 					functionWrappersNames.includes(
-						getDeepestIdentifierNode(node.init)?.name ?? ''
+						getDeepestIdentifierNode(node.init)?.name ?? '',
 					);
 
 				if (isAssigningKnownAsyncFunctionWrapper) {
@@ -138,7 +138,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
 				const references = getVariableReferences(
 					context,
-					closestCallExpression.parent
+					closestCallExpression.parent,
 				);
 
 				if (references.length === 0) {

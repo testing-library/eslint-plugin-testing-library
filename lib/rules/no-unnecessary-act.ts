@@ -87,7 +87,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 		 * Determines whether some call is non Testing Library related for a given list of statements.
 		 */
 		function hasSomeNonTestingLibraryCall(
-			statements: TSESTree.Statement[]
+			statements: TSESTree.Statement[],
 		): boolean {
 			return statements.some((statement) => {
 				const identifier = getStatementIdentifier(statement);
@@ -113,7 +113,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 		}
 
 		function checkNoUnnecessaryActFromBlockStatement(
-			blockStatementNode: TSESTree.BlockStatement
+			blockStatementNode: TSESTree.BlockStatement,
 		) {
 			const functionNode = blockStatementNode.parent as
 				| TSESTree.ArrowFunctionExpression
@@ -157,7 +157,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 		}
 
 		function checkNoUnnecessaryActFromImplicitReturn(
-			node: TSESTree.CallExpression
+			node: TSESTree.CallExpression,
 		) {
 			const nodeIdentifier = getDeepestIdentifierNode(node);
 

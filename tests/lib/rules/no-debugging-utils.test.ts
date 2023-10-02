@@ -602,7 +602,7 @@ ruleTester.run(RULE_NAME, rule, {
       debug()
       `,
 					errors: [{ line: 7, column: 7, messageId: 'noDebug' }],
-				} as const)
+				}) as const,
 		),
 		{
 			settings: { 'testing-library/utils-module': 'test-utils' },
@@ -629,7 +629,7 @@ ruleTester.run(RULE_NAME, rule, {
       utils.debug()
       `,
 					errors: [{ line: 7, column: 13, messageId: 'noDebug' }],
-				} as const)
+				}) as const,
 		),
 		{
 			settings: {
@@ -665,7 +665,7 @@ ruleTester.run(RULE_NAME, rule, {
       renamedDestructuredDebug('foo')
       `,
 					errors: [{ line: 12, column: 13, messageId: 'noDebug' }],
-				} as const)
+				}) as const,
 		),
 	],
 });

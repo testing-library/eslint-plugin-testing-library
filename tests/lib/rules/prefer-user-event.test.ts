@@ -13,16 +13,16 @@ import { createRuleTester } from '../test-utils';
 function createScenarioWithImport<
 	T extends
 		| TSESLint.InvalidTestCase<MessageIds, Options>
-		| TSESLint.ValidTestCase<Options>
+		| TSESLint.ValidTestCase<Options>,
 >(callback: (libraryModule: string, fireEventMethod: string) => T) {
 	return LIBRARY_MODULES.reduce(
 		(acc: Array<T>, libraryModule) =>
 			acc.concat(
 				Object.keys(MAPPING_TO_USER_EVENT).map((fireEventMethod) =>
-					callback(libraryModule, fireEventMethod)
-				)
+					callback(libraryModule, fireEventMethod),
+				),
 			),
-		[]
+		[],
 	);
 }
 
@@ -30,7 +30,7 @@ const ruleTester = createRuleTester();
 
 function formatUserEventMethodsMessage(fireEventMethod: string): string {
 	const userEventMethods = MAPPING_TO_USER_EVENT[fireEventMethod].map(
-		(methodName) => `userEvent.${methodName}`
+		(methodName) => `userEvent.${methodName}`,
 	);
 	let joinedList = '';
 
@@ -77,7 +77,7 @@ ruleTester.run(RULE_NAME, rule, {
         fireEvent.${fireEventMethod}(foo)
       `,
 				options: [{ allowedMethods: [fireEventMethod] }],
-			})
+			}),
 		),
 		...createScenarioWithImport<TSESLint.ValidTestCase<Options>>(
 			(libraryModule: string, fireEventMethod: string) => ({
@@ -87,7 +87,7 @@ ruleTester.run(RULE_NAME, rule, {
         fireEventAliased.${fireEventMethod}(foo)
       `,
 				options: [{ allowedMethods: [fireEventMethod] }],
-			})
+			}),
 		),
 		...createScenarioWithImport<TSESLint.ValidTestCase<Options>>(
 			(libraryModule: string, fireEventMethod: string) => ({
@@ -96,7 +96,7 @@ ruleTester.run(RULE_NAME, rule, {
         dom.fireEvent.${fireEventMethod}(foo)
       `,
 				options: [{ allowedMethods: [fireEventMethod] }],
-			})
+			}),
 		),
 		...LIBRARY_MODULES.map((libraryModule) => ({
 			// imported fireEvent and not used,
@@ -291,7 +291,7 @@ ruleTester.run(RULE_NAME, rule, {
 						},
 					},
 				],
-			})
+			}),
 		),
 		...createScenarioWithImport<TSESLint.InvalidTestCase<MessageIds, Options>>(
 			(libraryModule: string, fireEventMethod: string) => ({
@@ -310,7 +310,7 @@ ruleTester.run(RULE_NAME, rule, {
 						},
 					},
 				],
-			})
+			}),
 		),
 		...createScenarioWithImport<TSESLint.InvalidTestCase<MessageIds, Options>>(
 			(libraryModule: string, fireEventMethod: string) => ({
@@ -329,7 +329,7 @@ ruleTester.run(RULE_NAME, rule, {
 						},
 					},
 				],
-			})
+			}),
 		),
 		...createScenarioWithImport<TSESLint.InvalidTestCase<MessageIds, Options>>(
 			(libraryModule: string, fireEventMethod: string) => ({
@@ -348,7 +348,7 @@ ruleTester.run(RULE_NAME, rule, {
 						},
 					},
 				],
-			})
+			}),
 		),
 		...Object.keys(MAPPING_TO_USER_EVENT).map(
 			(fireEventMethod: string) =>
@@ -372,7 +372,7 @@ ruleTester.run(RULE_NAME, rule, {
 							},
 						},
 					],
-				} as const)
+				}) as const,
 		),
 		...Object.keys(MAPPING_TO_USER_EVENT).map(
 			(fireEventMethod: string) =>
@@ -396,7 +396,7 @@ ruleTester.run(RULE_NAME, rule, {
 							},
 						},
 					],
-				} as const)
+				}) as const,
 		),
 		...Object.keys(MAPPING_TO_USER_EVENT).map(
 			(fireEventMethod: string) =>
@@ -419,7 +419,7 @@ ruleTester.run(RULE_NAME, rule, {
 							},
 						},
 					],
-				} as const)
+				}) as const,
 		),
 		...Object.keys(MAPPING_TO_USER_EVENT).map(
 			(fireEventMethod: string) =>
@@ -443,7 +443,7 @@ ruleTester.run(RULE_NAME, rule, {
 							},
 						},
 					],
-				} as const)
+				}) as const,
 		),
 		{
 			code: ` // simple test to check error in detail

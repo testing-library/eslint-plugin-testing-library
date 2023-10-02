@@ -14,7 +14,7 @@ const getByQueries = ALL_QUERIES_METHODS.map((method) => `get${method}`);
 const getAllByQueries = ALL_QUERIES_METHODS.map((method) => `getAll${method}`);
 const queryByQueries = ALL_QUERIES_METHODS.map((method) => `query${method}`);
 const queryAllByQueries = ALL_QUERIES_METHODS.map(
-	(method) => `queryAll${method}`
+	(method) => `queryAll${method}`,
 );
 
 type RuleValidTestCase = TSESLint.ValidTestCase<Options>;
@@ -152,7 +152,7 @@ ruleTester.run(RULE_NAME, rule, {
 					],
 				}),
 			],
-			[]
+			[],
 		),
 		// cases: asserting with a configured allowed `[screen.]getAllBy*` query
 		...getAllByQueries.reduce<RuleValidTestCase[]>(
@@ -194,7 +194,7 @@ ruleTester.run(RULE_NAME, rule, {
 					],
 				}),
 			],
-			[]
+			[],
 		),
 		// cases: asserting with a configured allowed `[screen.]queryBy*` query
 		...queryByQueries.reduce<RuleValidTestCase[]>(
@@ -236,7 +236,7 @@ ruleTester.run(RULE_NAME, rule, {
 					],
 				}),
 			],
-			[]
+			[],
 		),
 		// cases: asserting with a configured allowed `[screen.]queryAllBy*` query
 		...queryAllByQueries.reduce<RuleValidTestCase[]>(
@@ -278,7 +278,7 @@ ruleTester.run(RULE_NAME, rule, {
 					],
 				}),
 			],
-			[]
+			[],
 		),
 		// case: getting outside an expectation
 		{
@@ -324,7 +324,7 @@ ruleTester.run(RULE_NAME, rule, {
 					],
 				}),
 			],
-			[]
+			[],
 		),
 		// cases: asserting with a disallowed `[screen.]getAllBy*` query
 		...getAllByQueries.reduce<RuleInvalidTestCase[]>(
@@ -338,7 +338,7 @@ ruleTester.run(RULE_NAME, rule, {
 					],
 				}),
 			],
-			[]
+			[],
 		),
 		// cases: asserting with a disallowed `[screen.]getBy*` query
 		...queryByQueries.reduce<RuleInvalidTestCase[]>(
@@ -352,7 +352,7 @@ ruleTester.run(RULE_NAME, rule, {
 					],
 				}),
 			],
-			[]
+			[],
 		),
 		// cases: asserting with a disallowed `[screen.]queryAllBy*` query
 		...queryAllByQueries.reduce<RuleInvalidTestCase[]>(
@@ -366,7 +366,7 @@ ruleTester.run(RULE_NAME, rule, {
 					],
 				}),
 			],
-			[]
+			[],
 		),
 		// cases: indexing into an `AllBy` result within the expectation
 		{

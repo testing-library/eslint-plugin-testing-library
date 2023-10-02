@@ -35,7 +35,7 @@ ruleTester.run(RULE_NAME, rule, {
 				`import { fireEvent } from "${testingFramework}"`,
 				`import * as testing from "${testingFramework}"`,
 				`import "${testingFramework}"`,
-			])
+			]),
 		),
 		'const { foo } = require("foo")',
 		'require("foo")',
@@ -46,7 +46,7 @@ ruleTester.run(RULE_NAME, rule, {
 				`const { fireEvent } = require("${testingFramework}")`,
 				`const { fireEvent: testing } = require("${testingFramework}")`,
 				`require("${testingFramework}")`,
-			])
+			]),
 		),
 		{
 			code: 'import { fireEvent } from "test-utils"',
@@ -115,8 +115,8 @@ ruleTester.run(RULE_NAME, rule, {
 								isOldImport ? oldName : newName
 							}${quote}`,
 						} as const,
-					])
-				)
+					]),
+				),
 		),
 		{
 			code: 'import * as testing from "dom-testing-library"',
@@ -192,8 +192,8 @@ ruleTester.run(RULE_NAME, rule, {
 									isOldImport ? oldName : newName
 								}")
               `,
-						} as const)
-				)
+						}) as const,
+				),
 		),
 		{
 			code: 'require("dom-testing-library")',

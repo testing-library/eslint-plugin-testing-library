@@ -22,5 +22,5 @@ export default readdirSync(rulesDir)
 			...allRules,
 			[ruleName]: importDefault<RuleModule>(join(rulesDir, ruleName)),
 		}),
-		{}
+		{},
 	);
