@@ -206,7 +206,7 @@ ruleTester.run(RULE_NAME, rule, {
           });
         `,
 				options: [{ eventModules: ['user-event'] }],
-			}))
+			})),
 		),
 
 		// valid tests for user-event when only fire-event set in eventModules
@@ -251,8 +251,8 @@ ruleTester.run(RULE_NAME, rule, {
 								data: { name: `fireEvent.${func}` },
 							},
 						],
-					} as const)
-			)
+					}) as const,
+			),
 		),
 		// sync userEvent sync methods with await operator are not valid
 		...USER_EVENT_SYNC_FUNCTIONS.map(
@@ -273,7 +273,7 @@ ruleTester.run(RULE_NAME, rule, {
 							data: { name: `userEvent.${func}` },
 						},
 					],
-				} as const)
+				}) as const,
 		),
 
 		// sync fireEvent methods with await operator are not valid
@@ -296,8 +296,8 @@ ruleTester.run(RULE_NAME, rule, {
 								data: { name: `fireEvent.${func}` },
 							},
 						],
-					} as const)
-			)
+					}) as const,
+			),
 		),
 
 		...USER_EVENT_SYNC_FUNCTIONS.map(
@@ -318,7 +318,7 @@ ruleTester.run(RULE_NAME, rule, {
 							data: { name: `userEvent.${func}` },
 						},
 					],
-				} as const)
+				}) as const,
 		),
 
 		{

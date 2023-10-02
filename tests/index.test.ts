@@ -13,7 +13,7 @@ it('should have a corresponding doc for each rule', () => {
 
 		if (!existsSync(docPath)) {
 			throw new Error(
-				`Could not find documentation file for rule "${rule}" in path "${docPath}"`
+				`Could not find documentation file for rule "${rule}" in path "${docPath}"`,
 			);
 		}
 	});
@@ -26,7 +26,7 @@ it('should have a corresponding test for each rule', () => {
 
 		if (!existsSync(testPath)) {
 			throw new Error(
-				`Could not find test file for rule "${rule}" in path "${testPath}"`
+				`Could not find test file for rule "${rule}" in path "${testPath}"`,
 			);
 		}
 	});
@@ -38,7 +38,7 @@ it('should have the correct amount of rules', () => {
 
 	if (length !== numberOfRules) {
 		throw new Error(
-			`There should be exactly ${numberOfRules} rules, but there are ${length}. If you've added a new rule, please update this number.`
+			`There should be exactly ${numberOfRules} rules, but there are ${length}. If you've added a new rule, please update this number.`,
 		);
 	}
 });

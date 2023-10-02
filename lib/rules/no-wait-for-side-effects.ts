@@ -42,7 +42,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				| TSESTree.AssignmentExpression
 				| TSESTree.BlockStatement
 				| TSESTree.CallExpression
-				| TSESTree.SequenceExpression
+				| TSESTree.SequenceExpression,
 		): boolean {
 			if (!node.parent) {
 				return false;
@@ -62,7 +62,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				| TSESTree.AssignmentExpression
 				| TSESTree.BlockStatement
 				| TSESTree.CallExpression
-				| TSESTree.SequenceExpression
+				| TSESTree.SequenceExpression,
 		): boolean {
 			if (!node.parent) {
 				return false;
@@ -89,7 +89,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 			}
 
 			const expressionIdentifier = getPropertyIdentifierNode(
-				node.expression.right
+				node.expression.right,
 			);
 
 			if (!expressionIdentifier) {
@@ -132,7 +132,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 		 * @returns {Boolean} Boolean indicating if variable declarataion has side effects
 		 */
 		function isSideEffectInVariableDeclaration(
-			node: TSESTree.VariableDeclaration
+			node: TSESTree.VariableDeclaration,
 		): boolean {
 			return node.declarations.some((declaration) => {
 				if (isCallExpression(declaration.init)) {
@@ -155,7 +155,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 		}
 
 		function getSideEffectNodes(
-			body: TSESTree.Node[]
+			body: TSESTree.Node[],
 		): TSESTree.ExpressionStatement[] {
 			return body.filter((node) => {
 				if (!isExpressionStatement(node) && !isVariableDeclaration(node)) {
@@ -203,7 +203,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				context.report({
 					node: sideEffectNode,
 					messageId: 'noSideEffectsWaitFor',
-				})
+				}),
 			);
 		}
 
@@ -211,7 +211,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 			node:
 				| TSESTree.AssignmentExpression
 				| TSESTree.CallExpression
-				| TSESTree.SequenceExpression
+				| TSESTree.SequenceExpression,
 		) {
 			if (!isCallerWaitFor(node)) {
 				return;

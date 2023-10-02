@@ -65,7 +65,7 @@ ruleTester.run(RULE_NAME, rule, {
           const { container } = render(<Example />);
           const button = container.querySelector('.btn-primary');
         `,
-				} as const)
+				}) as const,
 		),
 		{
 			settings: {
@@ -123,7 +123,7 @@ ruleTester.run(RULE_NAME, rule, {
 							messageId: 'noContainer',
 						},
 					],
-				} as const)
+				}) as const,
 		),
 		...SUPPORTED_TESTING_FRAMEWORKS.map(
 			(testingFramework) =>
@@ -144,7 +144,7 @@ ruleTester.run(RULE_NAME, rule, {
 							messageId: 'noContainer',
 						},
 					],
-				} as const)
+				}) as const,
 		),
 		{
 			code: `
@@ -214,7 +214,7 @@ ruleTester.run(RULE_NAME, rule, {
 							messageId: 'noContainer',
 						},
 					],
-				} as const)
+				}) as const,
 		),
 		{
 			settings: {

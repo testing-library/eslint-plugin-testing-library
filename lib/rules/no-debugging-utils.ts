@@ -59,7 +59,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 								[name]: { type: 'boolean' },
 								...obj,
 							}),
-							{}
+							{},
 						),
 						additionalProperties: false,
 					},
@@ -105,7 +105,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				}
 
 				const isRenderWrapperVariableDeclarator = renderWrapperNames.includes(
-					initIdentifierNode.name
+					initIdentifierNode.name,
 				);
 
 				if (
@@ -159,10 +159,10 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
 				const isDebugUtil = helpers.isDebugUtil(
 					callExpressionIdentifier,
-					utilsToReport as Array<(typeof DEBUG_UTILS)[number]>
+					utilsToReport as Array<(typeof DEBUG_UTILS)[number]>,
 				);
 				const isDeclaredDebugVariable = suspiciousDebugVariableNames.includes(
-					callExpressionIdentifier.name
+					callExpressionIdentifier.name,
 				);
 				const isChainedReferenceDebug = suspiciousReferenceNodes.some(
 					(suspiciousReferenceIdentifier) => {
@@ -170,7 +170,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 							utilsToReport.includes(callExpressionIdentifier.name) &&
 							suspiciousReferenceIdentifier.name === referenceIdentifier.name
 						);
-					}
+					},
 				);
 
 				const isVariableFromBuiltInConsole = builtInConsoleNodes.some(
@@ -179,9 +179,9 @@ export default createTestingLibraryRule<Options, MessageIds>({
 						return variables.some(
 							({ name }) =>
 								name === callExpressionIdentifier.name &&
-								isCallExpression(callExpressionIdentifier.parent)
+								isCallExpression(callExpressionIdentifier.parent),
 						);
-					}
+					},
 				);
 
 				if (

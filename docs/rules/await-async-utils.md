@@ -36,7 +36,7 @@ test('something incorrectly', async () => {
 			getByLabelText(container, 'username'),
 			getByLabelText(container, 'password'),
 		],
-		{ container }
+		{ container },
 	);
 
 	waitFor(() => {}, { timeout: 100 });
@@ -46,7 +46,7 @@ test('something incorrectly', async () => {
 	// wrap an async util within a function...
 	const makeCustomWait = () => {
 		return waitForElementToBeRemoved(() =>
-			document.querySelector('div.getOuttaHere')
+			document.querySelector('div.getOuttaHere'),
 		);
 	};
 	makeCustomWait(); // ...but not handling promise from it is incorrect
@@ -66,7 +66,7 @@ test('something correctly', async () => {
 			getByLabelText(container, 'username'),
 			getByLabelText(container, 'password'),
 		],
-		{ container }
+		{ container },
 	);
 
 	// `then` chained method is correct
@@ -77,7 +77,7 @@ test('something correctly', async () => {
 	// wrap an async util within a function...
 	const makeCustomWait = () => {
 		return waitForElementToBeRemoved(() =>
-			document.querySelector('div.getOuttaHere')
+			document.querySelector('div.getOuttaHere'),
 		);
 	};
 	await makeCustomWait(); // ...and handling promise from it is correct

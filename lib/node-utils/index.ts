@@ -63,7 +63,7 @@ const ValidLeftHandSideExpressions = [
  */
 export function findClosestCallExpressionNode(
 	node: TSESTree.Node | null | undefined,
-	shouldRestrictInnerScope = false
+	shouldRestrictInnerScope = false,
 ): TSESTree.CallExpression | null {
 	if (isCallExpression(node)) {
 		return node;
@@ -84,7 +84,7 @@ export function findClosestCallExpressionNode(
 }
 
 export function findClosestVariableDeclaratorNode(
-	node: TSESTree.Node | undefined
+	node: TSESTree.Node | undefined,
 ): TSESTree.VariableDeclarator | null {
 	if (!node) {
 		return null;
@@ -98,7 +98,7 @@ export function findClosestVariableDeclaratorNode(
 }
 
 export function findClosestFunctionExpressionNode(
-	node: TSESTree.Node | undefined
+	node: TSESTree.Node | undefined,
 ):
 	| TSESTree.ArrowFunctionExpression
 	| TSESTree.FunctionExpression
@@ -124,7 +124,7 @@ export function findClosestFunctionExpressionNode(
  */
 export function findClosestCallNode(
 	node: TSESTree.Node,
-	name: string
+	name: string,
 ): TSESTree.CallExpression | null {
 	if (!node.parent) {
 		return null;
@@ -162,7 +162,7 @@ export function hasChainedThen(node: TSESTree.Node): boolean {
 }
 
 export function isPromiseIdentifier(
-	node: TSESTree.Node
+	node: TSESTree.Node,
 ): node is TSESTree.Identifier & { name: 'Promise' } {
 	return ASTUtils.isIdentifier(node) && node.name === 'Promise';
 }
@@ -220,11 +220,11 @@ export function isPromisesArrayResolved(node: TSESTree.Node): boolean {
 export function isPromiseHandled(nodeIdentifier: TSESTree.Identifier): boolean {
 	const closestCallExpressionNode = findClosestCallExpressionNode(
 		nodeIdentifier,
-		true
+		true,
 	);
 
 	const suspiciousNodes = [nodeIdentifier, closestCallExpressionNode].filter(
-		Boolean
+		Boolean,
 	);
 
 	for (const node of suspiciousNodes) {
@@ -260,7 +260,7 @@ export function isPromiseHandled(nodeIdentifier: TSESTree.Identifier): boolean {
 
 export function getVariableReferences(
 	context: TSESLint.RuleContext<string, unknown[]>,
-	node: TSESTree.Node
+	node: TSESTree.Node,
 ): TSESLint.Scope.Reference[] {
 	if (ASTUtils.isVariableDeclarator(node)) {
 		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
@@ -279,11 +279,11 @@ interface InnermostFunctionScope extends TSESLintScope.FunctionScope {
 
 export function getInnermostFunctionScope(
 	context: TSESLint.RuleContext<string, unknown[]>,
-	asyncQueryNode: TSESTree.Identifier
+	asyncQueryNode: TSESTree.Identifier,
 ): InnermostFunctionScope | null {
 	const innermostScope = ASTUtils.getInnermostScope(
 		context.getScope(),
-		asyncQueryNode
+		asyncQueryNode,
 	);
 
 	if (
@@ -300,12 +300,12 @@ export function getFunctionReturnStatementNode(
 	functionNode:
 		| TSESTree.ArrowFunctionExpression
 		| TSESTree.FunctionDeclaration
-		| TSESTree.FunctionExpression
+		| TSESTree.FunctionExpression,
 ): TSESTree.Node | null {
 	if (isBlockStatement(functionNode.body)) {
 		// regular function or arrow function with block
 		const returnStatementNode = functionNode.body.body.find((statement) =>
-			isReturnStatement(statement)
+			isReturnStatement(statement),
 		) as TSESTree.ReturnStatement | undefined;
 
 		if (!returnStatementNode) {
@@ -331,7 +331,7 @@ export function getFunctionReturnStatementNode(
  *  it will return `rtl` identifier node
  */
 export function getPropertyIdentifierNode(
-	node: TSESTree.Node
+	node: TSESTree.Node,
 ): TSESTree.Identifier | null {
 	if (ASTUtils.isIdentifier(node)) {
 		return node;
@@ -363,7 +363,7 @@ export function getPropertyIdentifierNode(
  *  it will return `getByRole` identifier
  */
 export function getDeepestIdentifierNode(
-	node: TSESTree.Node
+	node: TSESTree.Node,
 ): TSESTree.Identifier | null {
 	if (ASTUtils.isIdentifier(node)) {
 		return node;
@@ -398,7 +398,7 @@ export function getReferenceNode(
 	node:
 		| TSESTree.CallExpression
 		| TSESTree.Identifier
-		| TSESTree.MemberExpression
+		| TSESTree.MemberExpression,
 ): TSESTree.CallExpression | TSESTree.Identifier | TSESTree.MemberExpression {
 	if (
 		node.parent &&
@@ -414,7 +414,7 @@ export function getFunctionName(
 	node:
 		| TSESTree.ArrowFunctionExpression
 		| TSESTree.FunctionDeclaration
-		| TSESTree.FunctionExpression
+		| TSESTree.FunctionExpression,
 ): string {
 	return (
 		ASTUtils.getFunctionNameWithKind(node)
@@ -429,7 +429,7 @@ export type ImportModuleNode =
 	| TSESTree.ImportDeclaration;
 
 export function getImportModuleName(
-	node: ImportModuleNode | null | undefined
+	node: ImportModuleNode | null | undefined,
 ): string | undefined {
 	// import node of shape: import { foo } from 'bar'
 	if (isImportDeclaration(node) && typeof node.source.value === 'string') {
@@ -456,7 +456,7 @@ type AssertNodeInfo = {
  * Extracts matcher info from MemberExpression node representing an assert.
  */
 export function getAssertNodeInfo(
-	node: TSESTree.MemberExpression
+	node: TSESTree.MemberExpression,
 ): AssertNodeInfo {
 	const emptyInfo = { matcher: null, isNegated: false } as AssertNodeInfo;
 
@@ -527,7 +527,7 @@ export function hasClosestExpectResolvesRejects(node: TSESTree.Node): boolean {
  */
 export function getInnermostReturningFunction(
 	context: TSESLint.RuleContext<string, unknown[]>,
-	node: TSESTree.Identifier
+	node: TSESTree.Identifier,
 ):
 	| TSESTree.ArrowFunctionExpression
 	| TSESTree.FunctionDeclaration
@@ -540,7 +540,7 @@ export function getInnermostReturningFunction(
 	}
 
 	const returnStatementNode = getFunctionReturnStatementNode(
-		functionScope.block
+		functionScope.block,
 	);
 
 	if (!returnStatementNode) {
@@ -559,7 +559,7 @@ export function getInnermostReturningFunction(
 
 export function hasImportMatch(
 	importNode: TSESTree.Identifier | TSESTree.ImportClause,
-	identifierName: string
+	identifierName: string,
 ): boolean {
 	if (ASTUtils.isIdentifier(importNode)) {
 		return importNode.name === identifierName;
@@ -569,7 +569,7 @@ export function hasImportMatch(
 }
 
 export function getStatementCallExpression(
-	statement: TSESTree.Statement
+	statement: TSESTree.Statement,
 ): TSESTree.CallExpression | undefined {
 	if (isExpressionStatement(statement)) {
 		const { expression } = statement;
@@ -634,7 +634,7 @@ export function isEmptyFunction(node: TSESTree.Node): boolean | undefined {
  */
 export function findImportSpecifier(
 	specifierName: string,
-	node: ImportModuleNode
+	node: ImportModuleNode,
 ): TSESTree.Identifier | TSESTree.ImportClause | undefined {
 	if (isImportDeclaration(node)) {
 		const namedExport = node.specifiers.find((n) => {
@@ -671,7 +671,7 @@ export function findImportSpecifier(
 			(n) =>
 				isProperty(n) &&
 				ASTUtils.isIdentifier(n.key) &&
-				n.key.name === specifierName
+				n.key.name === specifierName,
 		);
 		if (!property) {
 			return undefined;
