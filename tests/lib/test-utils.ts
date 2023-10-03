@@ -10,7 +10,7 @@ class TestingLibraryRuleTester extends TSESLint.RuleTester {
 	run<TMessageIds extends string, TOptions extends Readonly<unknown[]>>(
 		ruleName: string,
 		rule: TSESLint.RuleModule<TMessageIds, TOptions>,
-		tests: TSESLint.RunTests<TMessageIds, TOptions>,
+		tests: TSESLint.RunTests<TMessageIds, TOptions>
 	): void {
 		const { valid, invalid } = tests;
 
@@ -34,7 +34,7 @@ class TestingLibraryRuleTester extends TSESLint.RuleTester {
 }
 
 export const createRuleTester = (
-	parserOptions: Partial<TSESLint.ParserOptions> = {},
+	parserOptions: Partial<TSESLint.ParserOptions> = {}
 ): TSESLint.RuleTester => {
 	return new TestingLibraryRuleTester({
 		parser: resolve('./node_modules/@typescript-eslint/parser'),

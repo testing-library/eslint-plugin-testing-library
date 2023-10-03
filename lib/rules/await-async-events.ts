@@ -21,7 +21,7 @@ type EventModules = (typeof EVENTS_SIMULATORS)[number];
 export type Options = [
 	{
 		eventModule: EventModules | EventModules[];
-	},
+	}
 ];
 
 export default createTestingLibraryRule<Options, MessageIds>({
@@ -129,7 +129,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
 					const closestCallExpression = findClosestCallExpressionNode(
 						node,
-						true,
+						true
 					);
 
 					if (!closestCallExpression?.parent) {
@@ -138,7 +138,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
 					const references = getVariableReferences(
 						context,
-						closestCallExpression.parent,
+						closestCallExpression.parent
 					);
 
 					if (references.length === 0) {
@@ -153,7 +153,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 									if (functionExpression) {
 										const memberExpressionFixer = fixer.insertTextBefore(
 											node.parent,
-											'await ',
+											'await '
 										);
 
 										if (functionExpression.async) {
@@ -189,7 +189,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 					// previously detected
 					const closestCallExpression = findClosestCallExpressionNode(
 						node,
-						true,
+						true
 					);
 
 					if (!closestCallExpression) {

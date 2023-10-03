@@ -187,7 +187,7 @@ ruleTester.run(RULE_NAME, rule, {
 							},
 						},
 					],
-				}) as const,
+				} as const)
 		),
 		...COMBINED_QUERIES_METHODS.map(
 			(queryMethod) =>
@@ -199,7 +199,7 @@ ruleTester.run(RULE_NAME, rule, {
 							data: { queryType: 'findBy*' },
 						},
 					],
-				}) as const,
+				} as const)
 		),
 		...COMBINED_QUERIES_METHODS.map(
 			(queryMethod) =>
@@ -211,7 +211,7 @@ ruleTester.run(RULE_NAME, rule, {
 							data: { queryType: 'findBy*' },
 						},
 					],
-				}) as const,
+				} as const)
 		),
 		...COMBINED_QUERIES_METHODS.map(
 			(queryMethod) =>
@@ -227,7 +227,7 @@ ruleTester.run(RULE_NAME, rule, {
 							data: { queryType: 'findBy*' },
 						},
 					],
-				}) as const,
+				} as const)
 		),
 		...COMBINED_QUERIES_METHODS.map(
 			(queryMethod) =>
@@ -243,7 +243,7 @@ ruleTester.run(RULE_NAME, rule, {
 							data: { queryType: 'findBy*' },
 						},
 					],
-				}) as const,
+				} as const)
 		),
 		...COMBINED_QUERIES_METHODS.map(
 			(queryMethod) =>
@@ -262,7 +262,7 @@ ruleTester.run(RULE_NAME, rule, {
 							},
 						},
 					],
-				}) as const,
+				} as const)
 		),
 		...COMBINED_QUERIES_METHODS.map(
 			(queryMethod) =>
@@ -278,7 +278,7 @@ ruleTester.run(RULE_NAME, rule, {
 							},
 						},
 					],
-				}) as const,
+				} as const)
 		),
 		...COMBINED_QUERIES_METHODS.map(
 			(queryMethod) =>
@@ -308,7 +308,7 @@ ruleTester.run(RULE_NAME, rule, {
 							},
 						},
 					],
-				}) as const,
+				} as const)
 		),
 		...COMBINED_QUERIES_METHODS.map(
 			(queryMethod) =>
@@ -328,7 +328,7 @@ ruleTester.run(RULE_NAME, rule, {
 							},
 						},
 					],
-				}) as const,
+				} as const)
 		),
 		{
 			code: `getByIcon('foo')`, // custom `getBy` query extended through options
@@ -353,7 +353,7 @@ ruleTester.run(RULE_NAME, rule, {
 							data: { assertion: 'toBeInTheDocument' },
 						},
 					],
-				}) as const,
+				} as const)
 		),
 		...COMBINED_QUERIES_METHODS.map(
 			(queryMethod) =>
@@ -370,7 +370,7 @@ ruleTester.run(RULE_NAME, rule, {
 							data: { assertion: 'toBeInTheDocument' },
 						},
 					],
-				}) as const,
+				} as const)
 		),
 		...COMBINED_QUERIES_METHODS.map(
 			(queryMethod) =>
@@ -387,7 +387,7 @@ ruleTester.run(RULE_NAME, rule, {
 							data: { assertion: 'toBeInTheDocument' },
 						},
 					],
-				}) as const,
+				} as const)
 		),
 	],
 });

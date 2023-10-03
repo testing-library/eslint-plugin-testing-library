@@ -62,7 +62,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
 					const closestCallExpressionNode = findClosestCallExpressionNode(
 						node,
-						true,
+						true
 					);
 
 					if (!closestCallExpressionNode?.parent) {
@@ -71,7 +71,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
 					const references = getVariableReferences(
 						context,
-						closestCallExpressionNode.parent,
+						closestCallExpressionNode.parent
 					);
 
 					// check direct usage of async query:

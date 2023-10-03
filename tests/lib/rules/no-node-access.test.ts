@@ -157,7 +157,7 @@ ruleTester.run(RULE_NAME, rule, {
 				expect(screen.getByText('SomeComponent')).toBeInTheDocument();
 				`,
 			},
-		],
+		]
 	),
 	invalid: SUPPORTED_TESTING_FRAMEWORKS.flatMap((testingFramework) => [
 		{

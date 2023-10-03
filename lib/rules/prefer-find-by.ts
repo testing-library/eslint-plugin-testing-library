@@ -15,21 +15,21 @@ export type MessageIds = 'preferFindBy';
 type Options = [];
 
 export function getFindByQueryVariant(
-	queryMethod: string,
+	queryMethod: string
 ): 'findAllBy' | 'findBy' {
 	return queryMethod.includes('All') ? 'findAllBy' : 'findBy';
 }
 
 function findRenderDefinitionDeclaration(
 	scope: TSESLint.Scope.Scope | null,
-	query: string,
+	query: string
 ): TSESTree.Identifier | null {
 	if (!scope) {
 		return null;
 	}
 
 	const variable = scope.variables.find(
-		(v: TSESLint.Scope.Variable) => v.name === query,
+		(v: TSESLint.Scope.Variable) => v.name === query
 	);
 
 	if (variable) {
@@ -87,7 +87,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				queryMethod: string;
 				prevQuery: string;
 				fix: TSESLint.ReportFixFunction;
-			},
+			}
 		) {
 			const { queryMethod, queryVariant, prevQuery, fix } = replacementParams;
 			context.report({
@@ -103,7 +103,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 		}
 
 		function getWrongQueryNameInAssertion(
-			node: TSESTree.ArrowFunctionExpression,
+			node: TSESTree.ArrowFunctionExpression
 		) {
 			if (
 				!isCallExpression(node.body) ||
@@ -131,7 +131,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				isCallExpression(node.body.callee.object.arguments[0]) &&
 				isMemberExpression(node.body.callee.object.arguments[0].callee) &&
 				ASTUtils.isIdentifier(
-					node.body.callee.object.arguments[0].callee.property,
+					node.body.callee.object.arguments[0].callee.property
 				)
 			) {
 				return node.body.callee.object.arguments[0].callee.property.name;
@@ -143,10 +143,10 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				isCallExpression(node.body.callee.object.object) &&
 				isCallExpression(node.body.callee.object.object.arguments[0]) &&
 				isMemberExpression(
-					node.body.callee.object.object.arguments[0].callee,
+					node.body.callee.object.object.arguments[0].callee
 				) &&
 				ASTUtils.isIdentifier(
-					node.body.callee.object.object.arguments[0].callee.property,
+					node.body.callee.object.object.arguments[0].callee.property
 				)
 			) {
 				return node.body.callee.object.object.arguments[0].callee.property.name;
@@ -158,7 +158,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				isCallExpression(node.body.callee.object.object) &&
 				isCallExpression(node.body.callee.object.object.arguments[0]) &&
 				ASTUtils.isIdentifier(
-					node.body.callee.object.object.arguments[0].callee,
+					node.body.callee.object.object.arguments[0].callee
 				)
 			) {
 				return node.body.callee.object.object.arguments[0].callee.name;
@@ -203,7 +203,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				isCallExpression(node.body.callee.object.arguments[0]) &&
 				isMemberExpression(node.body.callee.object.arguments[0].callee) &&
 				ASTUtils.isIdentifier(
-					node.body.callee.object.arguments[0].callee.object,
+					node.body.callee.object.arguments[0].callee.object
 				)
 			) {
 				return node.body.callee.object.arguments[0].callee.object.name;
@@ -215,10 +215,10 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				isCallExpression(node.body.callee.object.object) &&
 				isCallExpression(node.body.callee.object.object.arguments[0]) &&
 				isMemberExpression(
-					node.body.callee.object.object.arguments[0].callee,
+					node.body.callee.object.object.arguments[0].callee
 				) &&
 				ASTUtils.isIdentifier(
-					node.body.callee.object.object.arguments[0].callee.object,
+					node.body.callee.object.object.arguments[0].callee.object
 				)
 			) {
 				return node.body.callee.object.object.arguments[0].callee.object.name;
@@ -250,10 +250,10 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				isCallExpression(node.body.callee.object.object) &&
 				isCallExpression(node.body.callee.object.object.arguments[0]) &&
 				ASTUtils.isIdentifier(
-					node.body.callee.object.object.arguments[0].callee,
+					node.body.callee.object.object.arguments[0].callee
 				) &&
 				helpers.isSyncQuery(
-					node.body.callee.object.object.arguments[0].callee,
+					node.body.callee.object.object.arguments[0].callee
 				) &&
 				helpers.isPresenceAssert(node.body.callee.object);
 
@@ -288,7 +288,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				isCallExpression(node.body.callee.object.arguments[0]) &&
 				isMemberExpression(node.body.callee.object.arguments[0].callee) &&
 				ASTUtils.isIdentifier(
-					node.body.callee.object.arguments[0].callee.object,
+					node.body.callee.object.arguments[0].callee.object
 				);
 
 			const isWrappedInNegatedPresenceAssert =
@@ -419,7 +419,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 						if (
 							helpers.isCustomQuery(
 								(argument.body as TSESTree.CallExpression)
-									.callee as TSESTree.Identifier,
+									.callee as TSESTree.Identifier
 							)
 						) {
 							return null;
@@ -435,7 +435,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 						// this adds the findBy* declaration - adding it to the list of destructured variables { findBy* } = render()
 						const definition = findRenderDefinitionDeclaration(
 							context.getScope(),
-							fullQueryMethod,
+							fullQueryMethod
 						);
 						// I think it should always find it, otherwise code should not be valid (it'd be using undeclared variables)
 						if (!definition) {
@@ -453,18 +453,18 @@ export default createTestingLibraryRule<Options, MessageIds>({
 									(p) =>
 										isProperty(p) &&
 										ASTUtils.isIdentifier(p.key) &&
-										p.key.name === findByMethod,
+										p.key.name === findByMethod
 								)
 							) {
 								return allFixes;
 							}
 							// the last character of a destructuring is always a  "}", so we should replace it with the findBy* declaration
 							const textDestructuring = sourceCode.getText(
-								allVariableDeclarations,
+								allVariableDeclarations
 							);
 							const text = textDestructuring.replace(
 								/(\s*})$/,
-								`, ${findByMethod}$1`,
+								`, ${findByMethod}$1`
 							);
 							allFixes.push(fixer.replaceText(allVariableDeclarations, text));
 						}

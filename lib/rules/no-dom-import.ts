@@ -21,7 +21,7 @@ const CORRECT_MODULE_NAME_BY_FRAMEWORK: Record<
 };
 const getCorrectModuleName = (
 	moduleName: string,
-	framework: string,
+	framework: string
 ): string => {
 	return (
 		CORRECT_MODULE_NAME_BY_FRAMEWORK[framework] ??
@@ -57,7 +57,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 	create(context, [framework], helpers) {
 		function report(
 			node: TSESTree.CallExpression | TSESTree.ImportDeclaration,
-			moduleName: string,
+			moduleName: string
 		) {
 			if (!framework) {
 				return context.report({
@@ -76,13 +76,13 @@ export default createTestingLibraryRule<Options, MessageIds>({
 						// Replace the module name with the raw module name as we can't predict which punctuation the user is going to use
 						return fixer.replaceText(
 							name,
-							name.raw.replace(moduleName, correctModuleName),
+							name.raw.replace(moduleName, correctModuleName)
 						);
 					} else {
 						const name = node.source;
 						return fixer.replaceText(
 							name,
-							name.raw.replace(moduleName, correctModuleName),
+							name.raw.replace(moduleName, correctModuleName)
 						);
 					}
 				},
@@ -100,7 +100,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 					importName = getImportModuleName(importNode);
 
 					const domModuleName = DOM_TESTING_LIBRARY_MODULES.find(
-						(module) => module === importName,
+						(module) => module === importName
 					);
 
 					if (!domModuleName) {

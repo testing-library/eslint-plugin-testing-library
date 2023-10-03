@@ -20,7 +20,7 @@ export type TestingLibraryRuleMetaDocs<TOptions extends readonly unknown[]> =
 	};
 export type TestingLibraryRuleMeta<
 	TMessageIds extends string,
-	TOptions extends readonly unknown[],
+	TOptions extends readonly unknown[]
 > = Omit<TSESLint.RuleMetaData<TMessageIds>, 'docs'> & {
 	docs: TestingLibraryRuleMetaDocs<TOptions>;
 };

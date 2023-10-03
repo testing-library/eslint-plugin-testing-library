@@ -121,31 +121,31 @@ export default createTestingLibraryRule<Options, MessageIds>({
 		}
 
 		function checkFunctionExpressionViolation(
-			node: TSESTree.CallExpressionArgument,
+			node: TSESTree.CallExpressionArgument
 		) {
 			if (!isFunctionExpression(node)) {
 				return false;
 			}
 
 			return node.body.body.some((statement) =>
-				isStatementViolation(statement),
+				isStatementViolation(statement)
 			);
 		}
 
 		function isArrowFunctionBodyViolation(
-			node: TSESTree.CallExpressionArgument,
+			node: TSESTree.CallExpressionArgument
 		) {
 			if (!isArrowFunctionExpression(node) || !isBlockStatement(node.body)) {
 				return false;
 			}
 
 			return node.body.body.some((statement) =>
-				isStatementViolation(statement),
+				isStatementViolation(statement)
 			);
 		}
 
 		function isArrowFunctionImplicitReturnViolation(
-			node: TSESTree.CallExpressionArgument,
+			node: TSESTree.CallExpressionArgument
 		) {
 			if (!isArrowFunctionExpression(node) || !isCallExpression(node.body)) {
 				return false;
@@ -162,7 +162,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 		}
 
 		function checkArrowFunctionViolation(
-			node: TSESTree.CallExpressionArgument,
+			node: TSESTree.CallExpressionArgument
 		) {
 			return (
 				isArrowFunctionBodyViolation(node) ||

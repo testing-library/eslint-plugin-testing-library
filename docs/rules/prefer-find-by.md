@@ -18,28 +18,28 @@ Examples of **incorrect** code for this rule
 ```js
 // arrow functions with one statement, using screen and any sync query method
 const submitButton = await waitFor(() =>
-	screen.getByRole('button', { name: /submit/i }),
+	screen.getByRole('button', { name: /submit/i })
 );
 const submitButton = await waitFor(() =>
-	screen.getAllByTestId('button', { name: /submit/i }),
+	screen.getAllByTestId('button', { name: /submit/i })
 );
 
 // arrow functions with one statement, calling any sync query method
 const submitButton = await waitFor(() =>
-	queryByLabel('button', { name: /submit/i }),
+	queryByLabel('button', { name: /submit/i })
 );
 
 const submitButton = await waitFor(() =>
-	queryAllByText('button', { name: /submit/i }),
+	queryAllByText('button', { name: /submit/i })
 );
 
 // arrow functions with one statement, calling any sync query method with presence assertion
 const submitButton = await waitFor(() =>
-	expect(queryByLabel('button', { name: /submit/i })).toBeInTheDocument(),
+	expect(queryByLabel('button', { name: /submit/i })).toBeInTheDocument()
 );
 
 const submitButton = await waitFor(() =>
-	expect(queryByLabel('button', { name: /submit/i })).not.toBeFalsy(),
+	expect(queryByLabel('button', { name: /submit/i })).not.toBeFalsy()
 );
 ```
 

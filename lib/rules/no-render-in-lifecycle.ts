@@ -14,12 +14,12 @@ export type MessageIds = 'noRenderInSetup';
 type Options = [
 	{
 		allowTestingFrameworkSetupHook?: string;
-	},
+	}
 ];
 
 export function findClosestBeforeHook(
 	node: TSESTree.Node | null,
-	testingFrameworkSetupHooksToFilter: string[],
+	testingFrameworkSetupHooksToFilter: string[]
 ): TSESTree.Identifier | null {
 	if (node === null) {
 		return null;
@@ -36,7 +36,7 @@ export function findClosestBeforeHook(
 	if (node.parent) {
 		return findClosestBeforeHook(
 			node.parent,
-			testingFrameworkSetupHooksToFilter,
+			testingFrameworkSetupHooksToFilter
 		);
 	}
 
@@ -94,7 +94,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 			CallExpression(node) {
 				const testingFrameworkSetupHooksToFilter =
 					TESTING_FRAMEWORK_SETUP_HOOKS.filter(
-						(hook) => hook !== allowTestingFrameworkSetupHook,
+						(hook) => hook !== allowTestingFrameworkSetupHook
 					);
 				const callExpressionIdentifier = getDeepestIdentifierNode(node);
 
@@ -103,7 +103,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				}
 
 				const isRenderIdentifier = helpers.isRenderUtil(
-					callExpressionIdentifier,
+					callExpressionIdentifier
 				);
 
 				if (isRenderIdentifier) {
@@ -119,7 +119,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
 				const beforeHook = findClosestBeforeHook(
 					node,
-					testingFrameworkSetupHooksToFilter,
+					testingFrameworkSetupHooksToFilter
 				);
 
 				if (!beforeHook) {

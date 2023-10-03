@@ -10,7 +10,7 @@ export type Options = [
 		testIdAttribute?: string[] | string;
 		testIdPattern: string;
 		customMessage?: string;
-	},
+	}
 ];
 
 const FILENAME_PLACEHOLDER = '{fileName}';

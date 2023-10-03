@@ -76,7 +76,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 						property.id.name === 'delay' &&
 						isLiteral(property.init) &&
 						property.init.value &&
-						property.init.value > 0,
+						property.init.value > 0
 				);
 			},
 			AssignmentExpression(node: TSESTree.AssignmentExpression) {
@@ -99,10 +99,10 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				}
 
 				const isUserEventMethod = helpers.isUserEventMethod(
-					simulateEventFunctionIdentifier,
+					simulateEventFunctionIdentifier
 				);
 				const isFireEventMethod = helpers.isFireEventMethod(
-					simulateEventFunctionIdentifier,
+					simulateEventFunctionIdentifier
 				);
 				const isSimulateEventMethod = isUserEventMethod || isFireEventMethod;
 
@@ -128,7 +128,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 						(property) =>
 							isProperty(property) &&
 							ASTUtils.isIdentifier(property.key) &&
-							property.key.name === 'delay',
+							property.key.name === 'delay'
 					);
 
 				// In case delay's value has been declared as a literal
@@ -141,7 +141,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 							property.key.name === 'delay' &&
 							isLiteral(property.value) &&
 							!!property.value.value &&
-							property.value.value > 0,
+							property.value.value > 0
 					);
 
 				const simulateEventFunctionName = simulateEventFunctionIdentifier.name;

@@ -29,7 +29,7 @@ function usesContainerOrBaseElement(node: TSESTree.CallExpression) {
 			(property) =>
 				isProperty(property) &&
 				ASTUtils.isIdentifier(property.key) &&
-				ALLOWED_RENDER_PROPERTIES_FOR_DESTRUCTURING.includes(property.key.name),
+				ALLOWED_RENDER_PROPERTIES_FOR_DESTRUCTURING.includes(property.key.name)
 		)
 	);
 }
@@ -157,7 +157,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
 				if (!isMemberExpression(identifierNode.parent)) {
 					const isSafeDestructuredQuery = safeDestructuredQueries.some(
-						(queryName) => queryName === identifierNode.name,
+						(queryName) => queryName === identifierNode.name
 					);
 					if (isSafeDestructuredQuery) {
 						return;

@@ -11,7 +11,7 @@ export type Options = [
 			query: 'get' | 'query';
 			matcher: string;
 		}[];
-	},
+	}
 ];
 
 export default createTestingLibraryRule<Options, MessageIds>({
@@ -83,7 +83,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 					const { query, matcher } = entry;
 					const isMatchingAssertForThisEntry = helpers.isMatchingAssert(
 						expectStatement,
-						matcher,
+						matcher
 					);
 
 					if (!isMatchingAssertForThisEntry) {

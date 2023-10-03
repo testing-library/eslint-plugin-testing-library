@@ -20,5 +20,5 @@ export default SUPPORTED_TESTING_FRAMEWORKS.reduce(
 		...allConfigs,
 		[framework]: getConfigForFramework(framework),
 	}),
-	{},
+	{}
 ) as Record<SupportedTestingFramework, LinterConfigRules>;

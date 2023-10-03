@@ -62,7 +62,7 @@ ruleTester.run(RULE_NAME, rule, {
 		})),
 		...TESTING_FRAMEWORK_SETUP_HOOKS.map((allowedSetupHook) => {
 			const [disallowedHook] = TESTING_FRAMEWORK_SETUP_HOOKS.filter(
-				(setupHook) => setupHook !== allowedSetupHook,
+				(setupHook) => setupHook !== allowedSetupHook
 			);
 			return {
 				settings: {
@@ -121,7 +121,7 @@ ruleTester.run(RULE_NAME, rule, {
 								messageId: 'noRenderInSetup',
 							},
 						],
-					}) as const,
+					} as const)
 			),
 			...TESTING_FRAMEWORK_SETUP_HOOKS.map(
 				(setupHook) =>
@@ -139,7 +139,7 @@ ruleTester.run(RULE_NAME, rule, {
 								messageId: 'noRenderInSetup',
 							},
 						],
-					}) as const,
+					} as const)
 			),
 		]),
 		// custom render function
@@ -164,7 +164,7 @@ ruleTester.run(RULE_NAME, rule, {
 							messageId: 'noRenderInSetup',
 						},
 					],
-				}) as const,
+				} as const)
 		),
 		...SUPPORTED_TESTING_FRAMEWORKS.flatMap((testingFramework) => [
 			...TESTING_FRAMEWORK_SETUP_HOOKS.map(
@@ -186,11 +186,11 @@ ruleTester.run(RULE_NAME, rule, {
 								messageId: 'noRenderInSetup',
 							},
 						],
-					}) as const,
+					} as const)
 			),
 			...TESTING_FRAMEWORK_SETUP_HOOKS.map((allowedSetupHook) => {
 				const [disallowedHook] = TESTING_FRAMEWORK_SETUP_HOOKS.filter(
-					(setupHook) => setupHook !== allowedSetupHook,
+					(setupHook) => setupHook !== allowedSetupHook
 				);
 				return {
 					code: `
@@ -229,7 +229,7 @@ ruleTester.run(RULE_NAME, rule, {
 								messageId: 'noRenderInSetup',
 							},
 						],
-					}) as const,
+					} as const)
 			),
 		]),
 		...TESTING_FRAMEWORK_SETUP_HOOKS.map(
@@ -253,7 +253,7 @@ ruleTester.run(RULE_NAME, rule, {
 							messageId: 'noRenderInSetup',
 						},
 					],
-				}) as const,
+				} as const)
 		),
 		...SUPPORTED_TESTING_FRAMEWORKS.flatMap((testingFramework) =>
 			TESTING_FRAMEWORK_SETUP_HOOKS.map(
@@ -273,8 +273,8 @@ ruleTester.run(RULE_NAME, rule, {
 								messageId: 'noRenderInSetup',
 							},
 						],
-					}) as const,
-			),
+					} as const)
+			)
 		),
 	],
 });

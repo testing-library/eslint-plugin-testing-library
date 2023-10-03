@@ -47,7 +47,7 @@ interface TestCaseParams {
 
 function createTestCase(
 	getTest: (
-		query: string,
+		query: string
 	) =>
 		| string
 		| { code: string; errors?: TSESLint.TestCaseError<'awaitAsyncQuery'>[] },
@@ -55,7 +55,7 @@ function createTestCase(
 		combinations = ALL_ASYNC_COMBINATIONS_TO_TEST,
 		isAsync,
 		testingFramework = '',
-	}: TestCaseParams = {},
+	}: TestCaseParams = {}
 ) {
 	return combinations.map((query) => {
 		const test = getTest(query);
@@ -74,7 +74,7 @@ function createTestCase(
 
 const CUSTOM_ASYNC_QUERIES_COMBINATIONS = combineQueries(
 	ASYNC_QUERIES_VARIANTS,
-	['ByIcon', 'ByButton'],
+	['ByIcon', 'ByButton']
 );
 
 // built-in queries + custom queries
@@ -103,7 +103,7 @@ ruleTester.run(RULE_NAME, rule, {
 			(query) => `
         doSomething()
         await ${query}('foo')
-      `,
+      `
 		),
 
 		// async queries are valid when saved in a variable with await operator
@@ -112,7 +112,7 @@ ruleTester.run(RULE_NAME, rule, {
         doSomething()
         const foo = await ${query}('foo')
         expect(foo).toBeInTheDocument();
-      `,
+      `
 		),
 
 		// async queries are valid when saved in a promise variable immediately resolved
@@ -120,7 +120,7 @@ ruleTester.run(RULE_NAME, rule, {
 			(query) => `
         const promise = ${query}('foo')
         await promise
-      `,
+      `
 		),
 
 		// async queries are valid when used with then method
@@ -129,7 +129,7 @@ ruleTester.run(RULE_NAME, rule, {
         ${query}('foo').then(() => {
           done()
         })
-      `,
+      `
 		),
 
 		// async queries are valid with promise in variable resolved by then method
@@ -137,7 +137,7 @@ ruleTester.run(RULE_NAME, rule, {
 			(query) => `
         const promise = ${query}('foo')
         promise.then((done) => done())
-      `,
+      `
 		),
 
 		// async queries are valid when wrapped within Promise.all + await expression
@@ -149,7 +149,7 @@ ruleTester.run(RULE_NAME, rule, {
           ${query}('foo'),
           ${query}('bar'),
         ]);
-      `,
+      `
 		),
 
 		// async queries are valid when wrapped within Promise.all + then chained
@@ -161,7 +161,7 @@ ruleTester.run(RULE_NAME, rule, {
           ${query}('foo'),
           ${query}('bar'),
         ]).then()
-      `,
+      `
 		),
 
 		// async queries are valid when wrapped within Promise.allSettled + await expression
@@ -173,7 +173,7 @@ ruleTester.run(RULE_NAME, rule, {
           ${query}('foo'),
           ${query}('bar'),
         ]);
-      `,
+      `
 		),
 
 		// async queries are valid when wrapped within Promise.allSettled + then chained
@@ -185,12 +185,12 @@ ruleTester.run(RULE_NAME, rule, {
           ${query}('foo'),
           ${query}('bar'),
         ]).then()
-      `,
+      `
 		),
 
 		// async queries are valid with promise returned in arrow function
 		...createTestCase(
-			(query) => `const anArrowFunction = () => ${query}('foo')`,
+			(query) => `const anArrowFunction = () => ${query}('foo')`
 		),
 
 		// async queries are valid with promise returned in regular function
@@ -203,7 +203,7 @@ ruleTester.run(RULE_NAME, rule, {
           const promise = ${query}('foo')
           return promise
         }
-      `,
+      `
 		),
 
 		// sync queries are valid
@@ -212,7 +212,7 @@ ruleTester.run(RULE_NAME, rule, {
         doSomething()
         ${query}('foo')
       `,
-			{ combinations: SYNC_QUERIES_COMBINATIONS },
+			{ combinations: SYNC_QUERIES_COMBINATIONS }
 		),
 
 		// async queries with resolves matchers are valid
@@ -220,14 +220,14 @@ ruleTester.run(RULE_NAME, rule, {
 			(query) => `
         expect(${query}("foo")).resolves.toBe("bar")
         expect(wrappedQuery(${query}("foo"))).resolves.toBe("bar")
-      `,
+      `
 		),
 		// async queries with toResolve matchers are valid
 		...createTestCase(
 			(query) => `
         expect(${query}("foo")).toResolve()
         expect(wrappedQuery(${query}("foo"))).toResolve()
-      `,
+      `
 		),
 
 		// async queries with rejects matchers are valid
@@ -235,7 +235,7 @@ ruleTester.run(RULE_NAME, rule, {
 			(query) => `
         expect(${query}("foo")).rejects.toBe("bar")
         expect(wrappedQuery(${query}("foo"))).rejects.toBe("bar")
-      `,
+      `
 		),
 
 		// async queries with toReject matchers are valid
@@ -243,7 +243,7 @@ ruleTester.run(RULE_NAME, rule, {
 			(query) => `
         expect(${query}("foo")).toReject()
         expect(wrappedQuery(${query}("foo"))).toReject()
-      `,
+      `
 		),
 
 		// unresolved async queries with aggressive reporting opted-out are valid
@@ -361,8 +361,8 @@ ruleTester.run(RULE_NAME, rule, {
       });
       `,
 						errors: [{ messageId: 'awaitAsyncQuery', line: 6, column: 21 }],
-					}) as const,
-			),
+					} as const)
+			)
 		),
 		...ALL_ASYNC_COMBINATIONS_TO_TEST.map(
 			(query) =>
@@ -382,7 +382,7 @@ ruleTester.run(RULE_NAME, rule, {
 							data: { name: query },
 						},
 					],
-				}) as const,
+				} as const)
 		),
 		...ALL_ASYNC_COMBINATIONS_TO_TEST.map(
 			(query) =>
@@ -403,7 +403,7 @@ ruleTester.run(RULE_NAME, rule, {
 							data: { name: query },
 						},
 					],
-				}) as const,
+				} as const)
 		),
 		...ALL_ASYNC_COMBINATIONS_TO_TEST.map(
 			(query) =>
@@ -425,7 +425,7 @@ ruleTester.run(RULE_NAME, rule, {
 							data: { name: query },
 						},
 					],
-				}) as const,
+				} as const)
 		),
 
 		// unresolved async queries are not valid (aggressive reporting)
@@ -440,7 +440,7 @@ ruleTester.run(RULE_NAME, rule, {
         })
       `,
 					errors: [{ messageId: 'awaitAsyncQuery', line: 5, column: 27 }],
-				}) as const,
+				} as const)
 		),
 
 		// unhandled promise from async query function wrapper is invalid
@@ -463,7 +463,7 @@ ruleTester.run(RULE_NAME, rule, {
         })
       `,
 					errors: [{ messageId: 'asyncQueryWrapper', line: 9, column: 27 }],
-				}) as const,
+				} as const)
 		),
 		// unhandled promise from async query arrow function wrapper is invalid
 		...ALL_ASYNC_COMBINATIONS_TO_TEST.map(
@@ -485,7 +485,7 @@ ruleTester.run(RULE_NAME, rule, {
         })
       `,
 					errors: [{ messageId: 'asyncQueryWrapper', line: 9, column: 27 }],
-				}) as const,
+				} as const)
 		),
 		// unhandled promise implicitly returned from async query arrow function wrapper is invalid
 		...ALL_ASYNC_COMBINATIONS_TO_TEST.map(
@@ -503,7 +503,7 @@ ruleTester.run(RULE_NAME, rule, {
         })
       `,
 					errors: [{ messageId: 'asyncQueryWrapper', line: 5, column: 27 }],
-				}) as const,
+				} as const)
 		),
 
 		// unhandled promise from custom query matching custom-queries setting is invalid

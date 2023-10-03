@@ -9,7 +9,7 @@ export type Options = [
 	{
 		presence?: boolean;
 		absence?: boolean;
-	},
+	}
 ];
 
 export default createTestingLibraryRule<Options, MessageIds>({
