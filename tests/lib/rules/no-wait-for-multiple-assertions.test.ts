@@ -125,7 +125,7 @@ ruleTester.run(RULE_NAME, rule, {
 					errors: [
 						{ line: 5, column: 11, messageId: 'noWaitForMultipleAssertion' },
 					],
-				}) as const,
+				} as const)
 		),
 		{
 			settings: { 'testing-library/utils-module': 'test-utils' },

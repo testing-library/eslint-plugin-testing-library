@@ -55,7 +55,7 @@ export const MAPPING_TO_USER_EVENT: Record<string, UserEventMethodsType[]> = {
 
 function buildErrorMessage(fireEventMethod: string) {
 	const userEventMethods = MAPPING_TO_USER_EVENT[fireEventMethod].map(
-		(methodName) => `userEvent.${methodName}`,
+		(methodName) => `userEvent.${methodName}`
 	);
 
 	// TODO: when min node version is 13, we can reimplement this using `Intl.ListFormat`
@@ -104,7 +104,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
 		const getFireEventMethodName = (
 			callExpressionNode: TSESTree.CallExpression,
-			node: TSESTree.Identifier,
+			node: TSESTree.Identifier
 		) => {
 			if (
 				!ASTUtils.isIdentifier(callExpressionNode.callee) &&
@@ -149,7 +149,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
 				const fireEventMethodName = getFireEventMethodName(
 					closestCallExpression,
-					node,
+					node
 				);
 
 				if (

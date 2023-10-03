@@ -37,7 +37,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
 	create(context, _, helpers) {
 		function getClosestAsyncUtil(
-			node: TSESTree.Node,
+			node: TSESTree.Node
 		): TSESTree.Identifier | null {
 			let n: TSESTree.Node | null = node;
 			do {
@@ -69,7 +69,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
 		return {
 			[`Identifier[name=${String(SNAPSHOT_REGEXP)}]`](
-				node: TSESTree.Identifier,
+				node: TSESTree.Identifier
 			) {
 				const closestAsyncUtil = getClosestAsyncUtil(node);
 				if (closestAsyncUtil === null) {

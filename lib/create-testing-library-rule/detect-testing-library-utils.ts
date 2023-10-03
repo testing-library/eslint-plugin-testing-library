@@ -35,7 +35,7 @@ export type TestingLibrarySettings = {
 
 export type TestingLibraryContext<
 	TOptions extends readonly unknown[],
-	TMessageIds extends string,
+	TMessageIds extends string
 > = Readonly<
 	TSESLint.RuleContext<TMessageIds, TOptions> & {
 		settings: TestingLibrarySettings;
@@ -45,11 +45,11 @@ export type TestingLibraryContext<
 export type EnhancedRuleCreate<
 	TOptions extends readonly unknown[],
 	TMessageIds extends string,
-	TRuleListener extends TSESLint.RuleListener = TSESLint.RuleListener,
+	TRuleListener extends TSESLint.RuleListener = TSESLint.RuleListener
 > = (
 	context: TestingLibraryContext<TOptions, TMessageIds>,
 	optionsWithDefault: Readonly<TOptions>,
-	detectionHelpers: Readonly<DetectionHelpers>,
+	detectionHelpers: Readonly<DetectionHelpers>
 ) => TRuleListener;
 
 // Helpers methods
@@ -69,33 +69,33 @@ type IsCustomQueryFn = (node: TSESTree.Identifier) => boolean;
 type IsBuiltInQueryFn = (node: TSESTree.Identifier) => boolean;
 type IsAsyncUtilFn = (
 	node: TSESTree.Identifier,
-	validNames?: readonly (typeof ASYNC_UTILS)[number][],
+	validNames?: readonly (typeof ASYNC_UTILS)[number][]
 ) => boolean;
 type IsFireEventMethodFn = (node: TSESTree.Identifier) => boolean;
 type IsUserEventMethodFn = (node: TSESTree.Identifier) => boolean;
 type IsRenderUtilFn = (node: TSESTree.Identifier) => boolean;
 type IsCreateEventUtil = (
-	node: TSESTree.CallExpression | TSESTree.Identifier,
+	node: TSESTree.CallExpression | TSESTree.Identifier
 ) => boolean;
 type IsRenderVariableDeclaratorFn = (
-	node: TSESTree.VariableDeclarator,
+	node: TSESTree.VariableDeclarator
 ) => boolean;
 type IsDebugUtilFn = (
 	identifierNode: TSESTree.Identifier,
-	validNames?: ReadonlyArray<(typeof DEBUG_UTILS)[number]>,
+	validNames?: ReadonlyArray<(typeof DEBUG_UTILS)[number]>
 ) => boolean;
 type IsPresenceAssertFn = (node: TSESTree.MemberExpression) => boolean;
 type IsMatchingAssertFn = (
 	node: TSESTree.MemberExpression,
-	matcherName: string,
+	matcherName: string
 ) => boolean;
 type IsAbsenceAssertFn = (node: TSESTree.MemberExpression) => boolean;
 type CanReportErrorsFn = () => boolean;
 type FindImportedTestingLibraryUtilSpecifierFn = (
-	specifierName: string,
+	specifierName: string
 ) => TSESTree.Identifier | TSESTree.ImportClause | undefined;
 type IsNodeComingFromTestingLibraryFn = (
-	node: TSESTree.Identifier | TSESTree.MemberExpression,
+	node: TSESTree.Identifier | TSESTree.MemberExpression
 ) => boolean;
 
 export interface DetectionHelpers {
@@ -156,14 +156,14 @@ export type DetectionOptions = {
 export function detectTestingLibraryUtils<
 	TOptions extends readonly unknown[],
 	TMessageIds extends string,
-	TRuleListener extends TSESLint.RuleListener = TSESLint.RuleListener,
+	TRuleListener extends TSESLint.RuleListener = TSESLint.RuleListener
 >(
 	ruleCreate: EnhancedRuleCreate<TOptions, TMessageIds, TRuleListener>,
-	{ skipRuleReportingCheck = false }: Partial<DetectionOptions> = {},
+	{ skipRuleReportingCheck = false }: Partial<DetectionOptions> = {}
 ) {
 	return (
 		context: TestingLibraryContext<TOptions, TMessageIds>,
-		optionsWithDefault: Readonly<TOptions>,
+		optionsWithDefault: Readonly<TOptions>
 	): TSESLint.RuleListener => {
 		const importedTestingLibraryNodes: ImportModuleNode[] = [];
 		let importedCustomModuleNode: ImportModuleNode | null = null;
@@ -192,8 +192,8 @@ export function detectTestingLibraryUtils<
 			node: TSESTree.Identifier | null | undefined,
 			isPotentialFunctionCallback: (
 				identifierNodeName: string,
-				originalNodeName?: string,
-			) => boolean,
+				originalNodeName?: string
+			) => boolean
 		): boolean {
 			if (!node) {
 				return false;
@@ -207,7 +207,7 @@ export function detectTestingLibraryUtils<
 			}
 
 			const importedUtilSpecifier = getTestingLibraryImportedUtilSpecifier(
-				referenceNodeIdentifier,
+				referenceNodeIdentifier
 			);
 
 			const originalNodeName =
@@ -340,7 +340,7 @@ export function detectTestingLibraryUtils<
 		 * or custom module are imported.
 		 */
 		const isTestingLibraryImported: IsTestingLibraryImportedFn = (
-			isStrict = false,
+			isStrict = false
 		) => {
 			const isSomeModuleImported =
 				importedTestingLibraryNodes.length !== 0 || !!importedCustomModuleNode;
@@ -371,7 +371,7 @@ export function detectTestingLibraryUtils<
 			const customQueries = getCustomQueries();
 			const isBuiltInQuery = ALL_QUERIES_COMBINATIONS.includes(node.name);
 			const isReportableCustomQuery = customQueries.some((pattern) =>
-				new RegExp(pattern).test(node.name),
+				new RegExp(pattern).test(node.name)
 			);
 			return isBuiltInQuery || isReportableCustomQuery;
 		};
@@ -441,7 +441,7 @@ export function detectTestingLibraryUtils<
 						(!!originalNodeName &&
 							(validNames as string[]).includes(originalNodeName))
 					);
-				},
+				}
 			);
 		};
 
@@ -455,7 +455,7 @@ export function detectTestingLibraryUtils<
 				node,
 				(identifierNodeName, originalNodeName) => {
 					return [identifierNodeName, originalNodeName].includes('fireEvent');
-				},
+				}
 			);
 		};
 
@@ -625,15 +625,15 @@ export function detectTestingLibraryUtils<
 						(validRenderName) =>
 							validRenderName === identifierNodeName ||
 							(Boolean(originalNodeName) &&
-								validRenderName === originalNodeName),
+								validRenderName === originalNodeName)
 					);
-				},
+				}
 			);
 
 		const isCreateEventUtil: IsCreateEventUtil = (node) => {
 			const isCreateEventCallback = (
 				identifierNodeName: string,
-				originalNodeName?: string,
+				originalNodeName?: string
 			) => [identifierNodeName, originalNodeName].includes(CREATE_EVENT_NAME);
 			if (
 				isCallExpression(node) &&
@@ -642,7 +642,7 @@ export function detectTestingLibraryUtils<
 			) {
 				return isPotentialTestingLibraryFunction(
 					node.callee.object,
-					isCreateEventCallback,
+					isCreateEventCallback
 				);
 			}
 
@@ -654,13 +654,13 @@ export function detectTestingLibraryUtils<
 			) {
 				return isPotentialTestingLibraryFunction(
 					node.callee.object.property,
-					isCreateEventCallback,
+					isCreateEventCallback
 				);
 			}
 			const identifier = getDeepestIdentifierNode(node);
 			return isPotentialTestingLibraryFunction(
 				identifier,
-				isCreateEventCallback,
+				isCreateEventCallback
 			);
 		};
 
@@ -679,7 +679,7 @@ export function detectTestingLibraryUtils<
 
 		const isDebugUtil: IsDebugUtilFn = (
 			identifierNode,
-			validNames = DEBUG_UTILS,
+			validNames = DEBUG_UTILS
 		) => {
 			const isBuiltInConsole =
 				isMemberExpression(identifierNode.parent) &&
@@ -696,7 +696,7 @@ export function detectTestingLibraryUtils<
 							(!!originalNodeName &&
 								(validNames as string[]).includes(originalNodeName))
 						);
-					},
+					}
 				)
 			);
 		};
@@ -715,7 +715,7 @@ export function detectTestingLibraryUtils<
 					return [identifierNodeName, originalNodeName]
 						.filter(Boolean)
 						.includes('act');
-				},
+				}
 			);
 
 			const isReactDomTestUtilsAct = (() => {
@@ -731,7 +731,7 @@ export function detectTestingLibraryUtils<
 
 				const importedUtilSpecifier = findImportSpecifier(
 					node.name,
-					importedReactDomTestUtilsNode,
+					importedReactDomTestUtilsNode
 				);
 				if (!importedUtilSpecifier) {
 					return false;
@@ -743,7 +743,7 @@ export function detectTestingLibraryUtils<
 					}
 
 					const variableDeclarator = findClosestVariableDeclaratorNode(
-						importedUtilSpecifier,
+						importedUtilSpecifier
 					);
 
 					if (isCallExpression(variableDeclarator?.init)) {
@@ -767,7 +767,7 @@ export function detectTestingLibraryUtils<
 
 				return hasImportMatch(
 					importedUtilSpecifier,
-					referenceNodeIdentifier.name,
+					referenceNodeIdentifier.name
 				);
 			})();
 
@@ -839,7 +839,7 @@ export function detectTestingLibraryUtils<
 		 */
 		const findImportedTestingLibraryUtilSpecifier: FindImportedTestingLibraryUtilSpecifierFn =
 			(
-				specifierName,
+				specifierName
 			): TSESTree.Identifier | TSESTree.ImportClause | undefined => {
 				const node =
 					getCustomModuleImportNode() ?? getTestingLibraryImportNode();
@@ -860,7 +860,7 @@ export function detectTestingLibraryUtils<
 				if (isImportDeclaration(importedUserEventLibraryNode)) {
 					const userEventIdentifier =
 						importedUserEventLibraryNode.specifiers.find((specifier) =>
-							isImportDefaultSpecifier(specifier),
+							isImportDefaultSpecifier(specifier)
 						);
 
 					if (userEventIdentifier) {
@@ -885,7 +885,7 @@ export function detectTestingLibraryUtils<
 			};
 
 		const getTestingLibraryImportedUtilSpecifier = (
-			node: TSESTree.Identifier | TSESTree.MemberExpression,
+			node: TSESTree.Identifier | TSESTree.MemberExpression
 		): TSESTree.Identifier | TSESTree.ImportClause | undefined => {
 			const identifierName: string | undefined =
 				getPropertyIdentifierNode(node)?.name;
@@ -911,7 +911,7 @@ export function detectTestingLibraryUtils<
 		 * and also make sure the name is a valid match in case it's been renamed.
 		 */
 		const isNodeComingFromTestingLibrary: IsNodeComingFromTestingLibraryFn = (
-			node,
+			node
 		) => {
 			const importNode = getTestingLibraryImportedUtilSpecifier(node);
 
@@ -1050,7 +1050,7 @@ export function detectTestingLibraryUtils<
 
 			// Check if Testing Library related modules are loaded with required.
 			[`CallExpression > Identifier[name="require"]`](
-				node: TSESTree.Identifier,
+				node: TSESTree.Identifier
 			) {
 				const callExpression = node.parent as TSESTree.CallExpression;
 				const { arguments: args } = callExpression;
@@ -1060,7 +1060,7 @@ export function detectTestingLibraryUtils<
 						(arg) =>
 							isLiteral(arg) &&
 							typeof arg.value === 'string' &&
-							/testing-library/g.test(arg.value),
+							/testing-library/g.test(arg.value)
 					)
 				) {
 					importedTestingLibraryNodes.push(callExpression);
@@ -1074,7 +1074,7 @@ export function detectTestingLibraryUtils<
 							customModule &&
 							isLiteral(arg) &&
 							typeof arg.value === 'string' &&
-							arg.value.endsWith(customModule),
+							arg.value.endsWith(customModule)
 					)
 				) {
 					importedCustomModuleNode = callExpression;
@@ -1086,7 +1086,7 @@ export function detectTestingLibraryUtils<
 						(arg) =>
 							isLiteral(arg) &&
 							typeof arg.value === 'string' &&
-							arg.value === USER_EVENT_PACKAGE,
+							arg.value === USER_EVENT_PACKAGE
 					)
 				) {
 					importedUserEventLibraryNode = callExpression;
@@ -1098,7 +1098,7 @@ export function detectTestingLibraryUtils<
 						(arg) =>
 							isLiteral(arg) &&
 							typeof arg.value === 'string' &&
-							arg.value === REACT_DOM_TEST_UTILS_PACKAGE,
+							arg.value === REACT_DOM_TEST_UTILS_PACKAGE
 					)
 				) {
 					importedReactDomTestUtilsNode = callExpression;
@@ -1111,7 +1111,7 @@ export function detectTestingLibraryUtils<
 		const enhancedRuleInstructions: TSESLint.RuleListener = {};
 
 		const allKeys = new Set(
-			Object.keys(detectionInstructions).concat(Object.keys(ruleInstructions)),
+			Object.keys(detectionInstructions).concat(Object.keys(ruleInstructions))
 		);
 
 		// Iterate over ALL instructions keys so we can override original rule instructions

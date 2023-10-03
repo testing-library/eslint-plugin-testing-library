@@ -15,7 +15,7 @@ type TestCase = InvalidTestCase | ValidTestCase;
 
 const addOptions = <T extends TestCase>(
 	array: T[],
-	options?: Options[number],
+	options?: Options[number]
 ): T[] =>
 	array.map((testCase) => ({
 		...testCase,
@@ -330,7 +330,7 @@ const invalidTestCases: InvalidTestCase[] = [
 						column: 9,
 					},
 				],
-			}) as const,
+			} as const)
 	),
 	{
 		settings: {

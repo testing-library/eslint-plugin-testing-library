@@ -391,7 +391,7 @@ ruleTester.run(RULE_NAME, rule, {
         await fireEvent.${eventMethod}(getByLabelText('username'))
       })
       `,
-					}) as const,
+					} as const)
 			),
 			...FIRE_EVENT_ASYNC_FUNCTIONS.map(
 				(eventMethod) =>
@@ -416,7 +416,7 @@ ruleTester.run(RULE_NAME, rule, {
 
       fireEvent.${eventMethod}(getByLabelText('username'))
       `,
-					}) as const,
+					} as const)
 			),
 			...FIRE_EVENT_ASYNC_FUNCTIONS.map(
 				(eventMethod) =>
@@ -449,7 +449,7 @@ ruleTester.run(RULE_NAME, rule, {
 
       test('should handle external function', run)
       `,
-					}) as const,
+					} as const)
 			),
 			...FIRE_EVENT_ASYNC_FUNCTIONS.map(
 				(eventMethod) =>
@@ -476,7 +476,7 @@ ruleTester.run(RULE_NAME, rule, {
         await testingLibraryFireEvent.${eventMethod}(getByLabelText('username'))
       })
       `,
-					}) as const,
+					} as const)
 			),
 			...FIRE_EVENT_ASYNC_FUNCTIONS.map(
 				(eventMethod) =>
@@ -503,7 +503,7 @@ ruleTester.run(RULE_NAME, rule, {
         await testingLibrary.fireEvent.${eventMethod}(getByLabelText('username'))
       })
       `,
-					}) as const,
+					} as const)
 			),
 			...FIRE_EVENT_ASYNC_FUNCTIONS.map(
 				(eventMethod) =>
@@ -537,7 +537,7 @@ ruleTester.run(RULE_NAME, rule, {
         await fireEvent.${eventMethod}(getByLabelText('username'))
       })
       `,
-					}) as const,
+					} as const)
 			),
 			...FIRE_EVENT_ASYNC_FUNCTIONS.map(
 				(eventMethod) =>
@@ -566,7 +566,7 @@ ruleTester.run(RULE_NAME, rule, {
         await fireEvent.${eventMethod}(getByLabelText('username'))
       })
       `,
-					}) as const,
+					} as const)
 			),
 			...FIRE_EVENT_ASYNC_FUNCTIONS.map(
 				(eventMethod) =>
@@ -599,7 +599,7 @@ ruleTester.run(RULE_NAME, rule, {
         await fireEvent.${eventMethod}(getByLabelText('username'))
       })
       `,
-					}) as const,
+					} as const)
 			),
 			...FIRE_EVENT_ASYNC_FUNCTIONS.map(
 				(eventMethod) =>
@@ -632,7 +632,7 @@ ruleTester.run(RULE_NAME, rule, {
         await fireEvent.${eventMethod}(getByLabelText('username'))
       })
       `,
-					}) as const,
+					} as const)
 			),
 
 			...FIRE_EVENT_ASYNC_FUNCTIONS.map(
@@ -663,7 +663,7 @@ ruleTester.run(RULE_NAME, rule, {
         const promise = await fireEvent.${eventMethod}(getByLabelText('username'))
       })
       `,
-					}) as const,
+					} as const)
 			),
 			...FIRE_EVENT_ASYNC_FUNCTIONS.map(
 				(eventMethod) =>
@@ -699,7 +699,7 @@ ruleTester.run(RULE_NAME, rule, {
         await triggerEvent()
       })
       `,
-					}) as const,
+					} as const)
 			),
 			...FIRE_EVENT_ASYNC_FUNCTIONS.map(
 				(eventMethod) =>
@@ -733,7 +733,7 @@ ruleTester.run(RULE_NAME, rule, {
 
       triggerEvent()
       `,
-					}) as const,
+					} as const)
 			),
 		]),
 		...USER_EVENT_ASYNC_FRAMEWORKS.flatMap((testingFramework) => [
@@ -762,7 +762,7 @@ ruleTester.run(RULE_NAME, rule, {
         await userEvent.${eventMethod}(getByLabelText('username'))
       })
       `,
-					}) as const,
+					} as const)
 			),
 			...USER_EVENT_ASYNC_FUNCTIONS.map(
 				(eventMethod) =>
@@ -787,7 +787,7 @@ ruleTester.run(RULE_NAME, rule, {
 			
       userEvent.${eventMethod}(getByLabelText('username'))
       `,
-					}) as const,
+					} as const)
 			),
 			...USER_EVENT_ASYNC_FUNCTIONS.map(
 				(eventMethod) =>
@@ -814,7 +814,7 @@ ruleTester.run(RULE_NAME, rule, {
         await testingLibraryUserEvent.${eventMethod}(getByLabelText('username'))
       })
       `,
-					}) as const,
+					} as const)
 			),
 			...USER_EVENT_ASYNC_FUNCTIONS.map(
 				(eventMethod) =>
@@ -848,7 +848,7 @@ ruleTester.run(RULE_NAME, rule, {
         await userEvent.${eventMethod}(getByLabelText('username'))
       })
       `,
-					}) as const,
+					} as const)
 			),
 			...USER_EVENT_ASYNC_FUNCTIONS.map(
 				(eventMethod) =>
@@ -878,7 +878,7 @@ ruleTester.run(RULE_NAME, rule, {
         const promise = await userEvent.${eventMethod}(getByLabelText('username'))
       })
       `,
-					}) as const,
+					} as const)
 			),
 			...USER_EVENT_ASYNC_FUNCTIONS.map(
 				(eventMethod) =>
@@ -914,7 +914,7 @@ ruleTester.run(RULE_NAME, rule, {
         await triggerEvent()
       })
       `,
-					}) as const,
+					} as const)
 			),
 			...USER_EVENT_ASYNC_FUNCTIONS.map(
 				(eventMethod) =>
@@ -948,7 +948,7 @@ ruleTester.run(RULE_NAME, rule, {
 
       triggerEvent()
       `,
-					}) as const,
+					} as const)
 			),
 		]),
 		{

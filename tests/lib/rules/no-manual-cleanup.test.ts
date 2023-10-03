@@ -67,7 +67,7 @@ ruleTester.run(RULE_NAME, rule, {
 							messageId: 'noManualCleanup',
 						},
 					],
-				}) as const,
+				} as const)
 		),
 		...ALL_TESTING_LIBRARIES_WITH_CLEANUP.map(
 			(lib) =>
@@ -84,7 +84,7 @@ ruleTester.run(RULE_NAME, rule, {
 							messageId: 'noManualCleanup',
 						},
 					],
-				}) as const,
+				} as const)
 		),
 		{
 			settings: {
@@ -106,7 +106,7 @@ ruleTester.run(RULE_NAME, rule, {
 							messageId: 'noManualCleanup',
 						},
 					],
-				}) as const,
+				} as const)
 		),
 		{
 			settings: {
@@ -128,7 +128,7 @@ ruleTester.run(RULE_NAME, rule, {
 							messageId: 'noManualCleanup',
 						},
 					],
-				}) as const,
+				} as const)
 		),
 		{
 			settings: {
@@ -153,7 +153,7 @@ ruleTester.run(RULE_NAME, rule, {
 							messageId: 'noManualCleanup',
 						},
 					],
-				}) as const,
+				} as const)
 		),
 		{
 			settings: {
@@ -179,7 +179,7 @@ ruleTester.run(RULE_NAME, rule, {
 							messageId: 'noManualCleanup',
 						},
 					],
-				}) as const,
+				} as const)
 		),
 		...ALL_TESTING_LIBRARIES_WITH_CLEANUP.map(
 			(lib) =>
@@ -192,7 +192,7 @@ ruleTester.run(RULE_NAME, rule, {
 							messageId: 'noManualCleanup',
 						},
 					],
-				}) as const,
+				} as const)
 		),
 		{
 			settings: {
@@ -217,7 +217,7 @@ ruleTester.run(RULE_NAME, rule, {
 							messageId: 'noManualCleanup',
 						},
 					],
-				}) as const,
+				} as const)
 		),
 		...ALL_TESTING_LIBRARIES_WITH_CLEANUP.map(
 			(lib) =>
@@ -233,7 +233,7 @@ ruleTester.run(RULE_NAME, rule, {
 							messageId: 'noManualCleanup',
 						},
 					],
-				}) as const,
+				} as const)
 		),
 	],
 });

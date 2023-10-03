@@ -16,7 +16,7 @@ type Options = [
 	{
 		assertion?: string;
 		includeFindQueries?: boolean;
-	},
+	}
 ];
 
 const isAtTopLevel = (node: TSESTree.Node) =>

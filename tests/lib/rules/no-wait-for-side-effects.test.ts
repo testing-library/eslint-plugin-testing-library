@@ -554,7 +554,7 @@ ruleTester.run(RULE_NAME, rule, {
         await waitFor(() => fireEvent.keyDown(input, {key: 'ArrowDown'}))
       `,
 					errors: [{ line: 3, column: 29, messageId: 'noSideEffectsWaitFor' }],
-				}) as const,
+				} as const)
 		),
 		{
 			settings: { 'testing-library/utils-module': '~/test-utils' },

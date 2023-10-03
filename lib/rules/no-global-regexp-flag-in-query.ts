@@ -60,7 +60,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
 						return fixer.replaceText(
 							literalNode,
-							`${raw}/${flagsWithoutGlobal}`,
+							`${raw}/${flagsWithoutGlobal}`
 						);
 					},
 				});
@@ -87,7 +87,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 		const variableNodesWithRegexs: TSESTree.VariableDeclarator[] = [];
 
 		function hasRegexInVariable(
-			identifier: TSESTree.Identifier,
+			identifier: TSESTree.Identifier
 		): TSESTree.VariableDeclarator | undefined {
 			return variableNodesWithRegexs.find((varNode) => {
 				if (
@@ -144,13 +144,13 @@ export default createTestingLibraryRule<Options, MessageIds>({
 									const splitter = regexVariableNode.init.raw.lastIndexOf('/');
 									const raw = regexVariableNode.init.raw.substring(0, splitter);
 									const flags = regexVariableNode.init.raw.substring(
-										splitter + 1,
+										splitter + 1
 									);
 									const flagsWithoutGlobal = flags.replace('g', '');
 
 									return fixer.replaceText(
 										regexVariableNode.init,
-										`${raw}/${flagsWithoutGlobal}`,
+										`${raw}/${flagsWithoutGlobal}`
 									);
 								}
 								return null;
@@ -165,7 +165,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 							isProperty(p) &&
 							ASTUtils.isIdentifier(p.key) &&
 							p.key.name === 'name' &&
-							isLiteral(p.value),
+							isLiteral(p.value)
 					) as TSESTree.Property | undefined;
 
 					if (namePropertyNode) {

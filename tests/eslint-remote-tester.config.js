@@ -33,7 +33,7 @@ module.exports = {
 					...all,
 					[`testing-library/${rule}`]: 'error',
 				}),
-				{},
+				{}
 			),
 
 			// Rules with required options without default values

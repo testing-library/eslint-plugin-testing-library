@@ -39,7 +39,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 	create(context, _, helpers) {
 		function checkSuspiciousNode(
 			node: TSESTree.Node,
-			originalNode?: TSESTree.Node,
+			originalNode?: TSESTree.Node
 		): void {
 			if (ASTUtils.isAwaitExpression(node)) {
 				return;
@@ -77,7 +77,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 			if (ASTUtils.isIdentifier(node)) {
 				const nodeVariable = ASTUtils.findVariable(
 					context.getScope(),
-					node.name,
+					node.name
 				);
 				if (!nodeVariable) {
 					return;
