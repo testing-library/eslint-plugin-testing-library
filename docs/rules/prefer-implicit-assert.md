@@ -54,3 +54,4 @@ If you prefer to use `getBy*` & `findBy*` queries with explicitly asserting exis
 ## Further Reading
 
 - [getBy query](https://testing-library.com/docs/dom-testing-library/api-queries#getby)
+- [findBy query](https://testing-library.com/docs/dom-testing-library/api-queries#findBy)
