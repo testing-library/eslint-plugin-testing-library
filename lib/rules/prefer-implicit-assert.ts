@@ -8,7 +8,6 @@ import {
 import { createTestingLibraryRule } from '../create-testing-library-rule';
 import { TestingLibrarySettings } from '../create-testing-library-rule/detect-testing-library-utils';
 import { isCallExpression, isMemberExpression } from '../node-utils';
-import { PRESENCE_MATCHERS, ABSENCE_MATCHERS } from '../utils';
 
 export const RULE_NAME = 'prefer-implicit-assert';
 export type MessageIds = 'preferImplicitAssert';
@@ -36,54 +35,6 @@ const isCalledInExpect = (
 		isCallExpression(node.parent.parent) &&
 		ASTUtils.isIdentifier(node.parent.parent.callee) &&
 		node.parent.parent.callee.name === 'expect'
-	);
-};
-
-const usesPresenceAssertion = (
-	node: TSESTree.Identifier | TSESTree.Node,
-	isAsyncQuery: boolean
-) => {
-	if (isAsyncQuery) {
-		return (
-			isMemberExpression(node.parent?.parent?.parent?.parent) &&
-			node.parent?.parent?.parent?.parent.property.type ===
-				AST_NODE_TYPES.Identifier &&
-			PRESENCE_MATCHERS.includes(node.parent.parent.parent.parent.property.name)
-		);
-	}
-	return (
-		isMemberExpression(node.parent?.parent?.parent) &&
-		node.parent?.parent?.parent.property.type === AST_NODE_TYPES.Identifier &&
-		PRESENCE_MATCHERS.includes(node.parent.parent.parent.property.name)
-	);
-};
-
-const usesNotPresenceAssertion = (
-	node: TSESTree.Identifier | TSESTree.Node,
-	isAsyncQuery: boolean
-) => {
-	if (isAsyncQuery) {
-		return (
-			isMemberExpression(node.parent?.parent?.parent?.parent) &&
-			node.parent?.parent?.parent?.parent.property.type ===
-				AST_NODE_TYPES.Identifier &&
-			node.parent.parent.parent.parent.property.name === 'not' &&
-			isMemberExpression(node.parent.parent.parent.parent.parent) &&
-			node.parent.parent.parent.parent.parent.property.type ===
-				AST_NODE_TYPES.Identifier &&
-			ABSENCE_MATCHERS.includes(
-				node.parent.parent.parent.parent.parent.property.name
-			)
-		);
-	}
-	return (
-		isMemberExpression(node.parent?.parent?.parent) &&
-		node.parent?.parent?.parent.property.type === AST_NODE_TYPES.Identifier &&
-		node.parent.parent.parent.property.name === 'not' &&
-		isMemberExpression(node.parent.parent.parent.parent) &&
-		node.parent.parent.parent.parent.property.type ===
-			AST_NODE_TYPES.Identifier &&
-		ABSENCE_MATCHERS.includes(node.parent.parent.parent.parent.property.name)
 	);
 };
 
@@ -143,31 +94,65 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				}
 			},
 			'Program:exit'() {
-				let isAsyncQuery = true;
 				findQueryCalls.forEach((queryCall) => {
+					const isAsyncQuery = true;
 					const node: TSESTree.Identifier | TSESTree.Node | undefined =
 						isCalledUsingSomeObject(queryCall) ? queryCall.parent : queryCall;
 
 					if (node) {
 						if (isCalledInExpect(node, isAsyncQuery)) {
-							if (usesPresenceAssertion(node, isAsyncQuery))
+							if (
+								isMemberExpression(node.parent?.parent?.parent?.parent) &&
+								node.parent?.parent?.parent?.parent.property.type ===
+									AST_NODE_TYPES.Identifier &&
+								helpers.isPresenceAssert(node.parent.parent.parent.parent)
+							) {
 								return reportError(context, node, 'findBy*');
-							if (usesNotPresenceAssertion(node, isAsyncQuery))
+							}
+
+							if (
+								isMemberExpression(node.parent?.parent?.parent?.parent) &&
+								node.parent?.parent?.parent?.parent.property.type ===
+									AST_NODE_TYPES.Identifier &&
+								node.parent.parent.parent.parent.property.name === 'not' &&
+								isMemberExpression(node.parent.parent.parent.parent.parent) &&
+								node.parent.parent.parent.parent.parent.property.type ===
+									AST_NODE_TYPES.Identifier &&
+								helpers.isAbsenceAssert(node.parent.parent.parent.parent.parent)
+							) {
 								return reportError(context, node, 'findBy*');
+							}
 						}
 					}
 				});
 
 				getQueryCalls.forEach((queryCall) => {
-					isAsyncQuery = false;
+					const isAsyncQuery = false;
 					const node: TSESTree.Identifier | TSESTree.Node | undefined =
 						isCalledUsingSomeObject(queryCall) ? queryCall.parent : queryCall;
 					if (node) {
 						if (isCalledInExpect(node, isAsyncQuery)) {
-							if (usesPresenceAssertion(node, isAsyncQuery))
+							if (
+								isMemberExpression(node.parent?.parent?.parent) &&
+								node.parent?.parent?.parent.property.type ===
+									AST_NODE_TYPES.Identifier &&
+								helpers.isPresenceAssert(node.parent.parent.parent)
+							) {
 								return reportError(context, node, 'getBy*');
-							if (usesNotPresenceAssertion(node, isAsyncQuery))
+							}
+
+							if (
+								isMemberExpression(node.parent?.parent?.parent) &&
+								node.parent?.parent?.parent.property.type ===
+									AST_NODE_TYPES.Identifier &&
+								node.parent.parent.parent.property.name === 'not' &&
+								isMemberExpression(node.parent.parent.parent.parent) &&
+								node.parent.parent.parent.parent.property.type ===
+									AST_NODE_TYPES.Identifier &&
+								helpers.isAbsenceAssert(node.parent.parent.parent.parent)
+							) {
 								return reportError(context, node, 'getBy*');
+							}
 						}
 					}
 				});
