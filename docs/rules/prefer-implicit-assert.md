@@ -3,11 +3,11 @@
 <!-- end auto-generated rule header -->
 
 Testing Library `getBy*` & `findBy*` queries throw an error if the element is not
-found. Therefore it is not necessary to also assert existance with things like `expect(getBy*.toBeInTheDocument()` or `expect(awaint findBy*).not.toBeNull()`
+found. Therefore it is not necessary to also assert existence with things like `expect(getBy*.toBeInTheDocument()` or `expect(await findBy*).not.toBeNull()`
 
 ## Rule Details
 
-This rule aims to reuduce uncecessary assertion's for presense of an element,
+This rule aims to reduce unnecessary assertion's for presence of an element,
 when using queries that implicitly fail when said element is not found.
 
 Examples of **incorrect** code for this rule with the default configuration:
@@ -26,7 +26,7 @@ expect(utils.getByText('foo')).toBeInTheDocument();
 expect(await utils.findByText('foo')).toBeInTheDocument();
 
 expect(await findByText('foo')).not.toBeNull();
-expect(await findByText('foo')).not.toBeUndified();
+expect(await findByText('foo')).not.toBeUndefined();
 ```
 
 Examples of **correct** code for this rule with the default configuration:
@@ -39,7 +39,7 @@ const utils = render(<Component />);
 utils.getByText('foo');
 await utils.findByText('foo');
 
-// When using queryBy* queries thees do not implicitly fial therefore you should explicitly check if your elements eixst or not
+// When using queryBy* queries these do not implicitly fail therefore you should explicitly check if your elements exist or not
 expect(queryByText('foo')).toBeInTheDocument();
 expect(queryByText('foo')).not.toBeInTheDocument();
 ```
