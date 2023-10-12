@@ -72,7 +72,10 @@ This is how you can use these options in eslint configuration:
 
 ## When Not To Use It
 
-If you prefer to use `getBy*` queries implicitly as an assert-like method itself, then this rule is not recommended.
+If you prefer to use `getBy*` queries implicitly as an assert-like method itself, then this rule is not recommended. Instead check out this rule [prefer-implicit-assert](https://github.com/testing-library/eslint-plugin-testing-library/blob/main/docs/rules/prefer-implicit-assert.md)
+
+- Never use both `prefer-explicit-assert` & `prefer-implicit-assert` choose one.
+- This library recommends `prefer-explicit-assert` to make it more clear to readers that it is not just a query without an assertion, but that it is checking for existence of an element
 
 ## Further Reading
 
