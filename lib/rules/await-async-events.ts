@@ -16,6 +16,7 @@ export const RULE_NAME = 'await-async-events';
 export type MessageIds = 'awaitAsyncEvent' | 'awaitAsyncEventWrapper';
 const FIRE_EVENT_NAME = 'fireEvent';
 const USER_EVENT_NAME = 'userEvent';
+const USER_EVENT_SETUP_FUNCTION_NAME = 'setup';
 type EventModules = (typeof EVENTS_SIMULATORS)[number];
 export type Options = [
 	{
@@ -90,6 +91,9 @@ export default createTestingLibraryRule<Options, MessageIds>({
 			messageId?: MessageIds;
 			fix?: TSESLint.ReportFixFunction;
 		}): void {
+			if (node.name === USER_EVENT_SETUP_FUNCTION_NAME) {
+				return;
+			}
 			if (!isPromiseHandled(node)) {
 				context.report({
 					node: closestCallExpression.callee,
