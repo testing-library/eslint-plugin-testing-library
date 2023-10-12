@@ -109,19 +109,6 @@ export default createTestingLibraryRule<Options, MessageIds>({
 							) {
 								return reportError(context, node, 'findBy*');
 							}
-
-							if (
-								isMemberExpression(node.parent?.parent?.parent?.parent) &&
-								node.parent?.parent?.parent?.parent.property.type ===
-									AST_NODE_TYPES.Identifier &&
-								node.parent.parent.parent.parent.property.name === 'not' &&
-								isMemberExpression(node.parent.parent.parent.parent.parent) &&
-								node.parent.parent.parent.parent.parent.property.type ===
-									AST_NODE_TYPES.Identifier &&
-								helpers.isAbsenceAssert(node.parent.parent.parent.parent.parent)
-							) {
-								return reportError(context, node, 'findBy*');
-							}
 						}
 					}
 				});
@@ -137,19 +124,6 @@ export default createTestingLibraryRule<Options, MessageIds>({
 								node.parent?.parent?.parent.property.type ===
 									AST_NODE_TYPES.Identifier &&
 								helpers.isPresenceAssert(node.parent.parent.parent)
-							) {
-								return reportError(context, node, 'getBy*');
-							}
-
-							if (
-								isMemberExpression(node.parent?.parent?.parent) &&
-								node.parent?.parent?.parent.property.type ===
-									AST_NODE_TYPES.Identifier &&
-								node.parent.parent.parent.property.name === 'not' &&
-								isMemberExpression(node.parent.parent.parent.parent) &&
-								node.parent.parent.parent.parent.property.type ===
-									AST_NODE_TYPES.Identifier &&
-								helpers.isAbsenceAssert(node.parent.parent.parent.parent)
 							) {
 								return reportError(context, node, 'getBy*');
 							}
