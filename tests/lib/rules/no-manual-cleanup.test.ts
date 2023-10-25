@@ -235,5 +235,22 @@ ruleTester.run(RULE_NAME, rule, {
 					],
 				} as const)
 		),
+		...ALL_TESTING_LIBRARIES_WITH_CLEANUP.map(
+			(lib) =>
+				({
+					code: `
+        import { render } from "${lib}";
+        import { cleanup } from "${lib}";
+        afterEach(cleanup);
+      `,
+					errors: [
+						{
+							line: 3,
+							column: 18,
+							messageId: 'noManualCleanup',
+						},
+					],
+				} as const)
+		),
 	],
 });

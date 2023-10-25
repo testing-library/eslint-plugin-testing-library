@@ -111,15 +111,12 @@ export default createTestingLibraryRule<Options, MessageIds>({
 		return {
 			'Program:exit'() {
 				const testingLibraryImportName = helpers.getTestingLibraryImportName();
-				const testingLibraryImportNode = helpers.getTestingLibraryImportNode();
 				const customModuleImportNode = helpers.getCustomModuleImportNode();
 
-				if (
-					testingLibraryImportName &&
-					testingLibraryImportNode &&
-					testingLibraryImportName.match(CLEANUP_LIBRARY_REGEXP)
-				) {
-					reportCandidateModule(testingLibraryImportNode);
+				if (testingLibraryImportName?.match(CLEANUP_LIBRARY_REGEXP)) {
+					for (const importNode of helpers.getAllTestingLibraryImportNodes()) {
+						reportCandidateModule(importNode);
+					}
 				}
 
 				if (customModuleImportNode) {
