@@ -204,6 +204,19 @@ ruleTester.run(RULE_NAME, rule, {
 				`,
 				options: [{ eventModule: 'userEvent' }] as const,
 			},
+			{
+				code: `
+				import userEvent from '${testingFramework}'
+				function customSetup() {
+					const user = userEvent.setup()
+					return {user}
+				}
+				test('setup method called and returned is valid', () => {
+					const {user} = customSetup();
+				})
+				`,
+				options: [{ eventModule: 'userEvent' }] as const,
+			},
 			...USER_EVENT_ASYNC_FUNCTIONS.map((eventMethod) => ({
 				code: `
         import userEvent from '${testingFramework}'
