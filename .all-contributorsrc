@@ -649,6 +649,16 @@
         "code",
         "test"
       ]
+    },
+    {
+      "login": "doochik",
+      "name": "Aleksei Androsov",
+      "avatar_url": "https://avatars.githubusercontent.com/u/31961?v=4",
+      "profile": "https://github.com/doochik",
+      "contributions": [
+        "code",
+        "test"
+      ]
     }
   ],
   "contributorsPerLine": 7,
