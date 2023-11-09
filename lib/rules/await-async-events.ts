@@ -91,9 +91,6 @@ export default createTestingLibraryRule<Options, MessageIds>({
 			messageId?: MessageIds;
 			fix?: TSESLint.ReportFixFunction;
 		}): void {
-			if (node.name === USER_EVENT_SETUP_FUNCTION_NAME) {
-				return;
-			}
 			if (!isPromiseHandled(node)) {
 				context.report({
 					node: closestCallExpression.callee,
@@ -133,6 +130,10 @@ export default createTestingLibraryRule<Options, MessageIds>({
 					);
 
 					if (!closestCallExpression?.parent) {
+						return;
+					}
+
+					if (node.name === USER_EVENT_SETUP_FUNCTION_NAME) {
 						return;
 					}
 
