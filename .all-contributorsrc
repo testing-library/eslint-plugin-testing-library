@@ -639,6 +639,16 @@
         "test",
         "doc"
       ]
+    },
+    {
+      "login": "maisano",
+      "name": "Richard Maisano",
+      "avatar_url": "https://avatars.githubusercontent.com/u/689081?v=4",
+      "profile": "https://github.com/maisano",
+      "contributions": [
+        "code",
+        "test"
+      ]
     }
   ],
   "contributorsPerLine": 7,
