@@ -140,6 +140,11 @@ ruleTester.run(RULE_NAME, rule, {
 				}),
 				...getValidAssertions({
 					query: queryName,
+					matcher: '.toBeOnTheScreen()',
+					assertionType: 'presence',
+				}),
+				...getValidAssertions({
+					query: queryName,
 					matcher: '.toBeTruthy()',
 					assertionType: 'presence',
 				}),
@@ -188,6 +193,12 @@ ruleTester.run(RULE_NAME, rule, {
 				...getValidAssertions({
 					query: queryName,
 					matcher: '.toBeInTheDocument()',
+					shouldUseScreen: true,
+					assertionType: 'presence',
+				}),
+				...getValidAssertions({
+					query: queryName,
+					matcher: '.toBeOnTheScreen()',
 					shouldUseScreen: true,
 					assertionType: 'presence',
 				}),
@@ -253,6 +264,11 @@ ruleTester.run(RULE_NAME, rule, {
 				}),
 				...getValidAssertions({
 					query: queryName,
+					matcher: '.toBeOnTheScreen()',
+					assertionType: 'presence',
+				}),
+				...getValidAssertions({
+					query: queryName,
 					matcher: '.toBeTruthy()',
 					assertionType: 'presence',
 				}),
@@ -301,6 +317,12 @@ ruleTester.run(RULE_NAME, rule, {
 				...getValidAssertions({
 					query: queryName,
 					matcher: '.toBeInTheDocument()',
+					shouldUseScreen: true,
+					assertionType: 'presence',
+				}),
+				...getValidAssertions({
+					query: queryName,
+					matcher: '.toBeOnTheScreen()',
 					shouldUseScreen: true,
 					assertionType: 'presence',
 				}),
@@ -376,6 +398,11 @@ ruleTester.run(RULE_NAME, rule, {
 				}),
 				...getValidAssertions({
 					query: queryName,
+					matcher: '.not.toBeOnTheScreen()',
+					assertionType: 'absence',
+				}),
+				...getValidAssertions({
+					query: queryName,
 					matcher: '.not.toBeTruthy()',
 					assertionType: 'absence',
 				}),
@@ -416,6 +443,12 @@ ruleTester.run(RULE_NAME, rule, {
 				...getValidAssertions({
 					query: queryName,
 					matcher: '.not.toBeInTheDocument()',
+					shouldUseScreen: true,
+					assertionType: 'absence',
+				}),
+				...getValidAssertions({
+					query: queryName,
+					matcher: '.not.toBeOnTheScreen()',
 					shouldUseScreen: true,
 					assertionType: 'absence',
 				}),
@@ -467,6 +500,11 @@ ruleTester.run(RULE_NAME, rule, {
 				}),
 				...getValidAssertions({
 					query: queryName,
+					matcher: '.not.toBeOnTheScreen()',
+					assertionType: 'absence',
+				}),
+				...getValidAssertions({
+					query: queryName,
 					matcher: '.not.toBeTruthy()',
 					assertionType: 'absence',
 				}),
@@ -507,6 +545,12 @@ ruleTester.run(RULE_NAME, rule, {
 				...getValidAssertions({
 					query: queryName,
 					matcher: '.not.toBeInTheDocument()',
+					shouldUseScreen: true,
+					assertionType: 'absence',
+				}),
+				...getValidAssertions({
+					query: queryName,
+					matcher: '.not.toBeOnTheScreen()',
 					shouldUseScreen: true,
 					assertionType: 'absence',
 				}),
@@ -559,6 +603,11 @@ ruleTester.run(RULE_NAME, rule, {
 				}),
 				getDisabledValidAssertion({
 					query: queryName,
+					matcher: '.not.toBeOnTheScreen',
+					assertionType: 'absence',
+				}),
+				getDisabledValidAssertion({
+					query: queryName,
 					matcher: '.not.toBeTruthy()',
 					assertionType: 'absence',
 				}),
@@ -589,6 +638,12 @@ ruleTester.run(RULE_NAME, rule, {
 				getDisabledValidAssertion({
 					query: queryName,
 					matcher: '.not.toBeInTheDocument',
+					shouldUseScreen: true,
+					assertionType: 'absence',
+				}),
+				getDisabledValidAssertion({
+					query: queryName,
+					matcher: '.not.toBeOnTheScreen',
 					shouldUseScreen: true,
 					assertionType: 'absence',
 				}),
@@ -628,6 +683,11 @@ ruleTester.run(RULE_NAME, rule, {
 				}),
 				getDisabledValidAssertion({
 					query: queryName,
+					matcher: '.not.toBeOnTheScreen',
+					assertionType: 'absence',
+				}),
+				getDisabledValidAssertion({
+					query: queryName,
 					matcher: '.not.toBeTruthy()',
 					assertionType: 'absence',
 				}),
@@ -658,6 +718,12 @@ ruleTester.run(RULE_NAME, rule, {
 				getDisabledValidAssertion({
 					query: queryName,
 					matcher: '.not.toBeInTheDocument',
+					shouldUseScreen: true,
+					assertionType: 'absence',
+				}),
+				getDisabledValidAssertion({
+					query: queryName,
+					matcher: '.not.toBeOnTheScreen',
 					shouldUseScreen: true,
 					assertionType: 'absence',
 				}),
@@ -697,6 +763,11 @@ ruleTester.run(RULE_NAME, rule, {
 				}),
 				getDisabledValidAssertion({
 					query: queryName,
+					matcher: '.toBeOnTheScreen()',
+					assertionType: 'presence',
+				}),
+				getDisabledValidAssertion({
+					query: queryName,
 					matcher: '.not.toBeFalsy()',
 					assertionType: 'presence',
 				}),
@@ -727,6 +798,12 @@ ruleTester.run(RULE_NAME, rule, {
 				getDisabledValidAssertion({
 					query: queryName,
 					matcher: '.toBeInTheDocument()',
+					shouldUseScreen: true,
+					assertionType: 'presence',
+				}),
+				getDisabledValidAssertion({
+					query: queryName,
+					matcher: '.toBeOnTheScreen()',
 					shouldUseScreen: true,
 					assertionType: 'presence',
 				}),
@@ -766,6 +843,11 @@ ruleTester.run(RULE_NAME, rule, {
 				}),
 				getDisabledValidAssertion({
 					query: queryName,
+					matcher: '.toBeOnTheScreen()',
+					assertionType: 'presence',
+				}),
+				getDisabledValidAssertion({
+					query: queryName,
 					matcher: '.not.toBeFalsy()',
 					assertionType: 'presence',
 				}),
@@ -796,6 +878,12 @@ ruleTester.run(RULE_NAME, rule, {
 				getDisabledValidAssertion({
 					query: queryName,
 					matcher: '.toBeInTheDocument()',
+					shouldUseScreen: true,
+					assertionType: 'presence',
+				}),
+				getDisabledValidAssertion({
+					query: queryName,
+					matcher: '.toBeOnTheScreen()',
 					shouldUseScreen: true,
 					assertionType: 'presence',
 				}),
@@ -869,6 +957,12 @@ ruleTester.run(RULE_NAME, rule, {
 				}),
 				...getInvalidAssertions({
 					query: queryName,
+					matcher: '.not.toBeOnTheScreen()',
+					messageId: 'wrongAbsenceQuery',
+					assertionType: 'absence',
+				}),
+				...getInvalidAssertions({
+					query: queryName,
 					matcher: '.not.toBeTruthy()',
 					messageId: 'wrongAbsenceQuery',
 					assertionType: 'absence',
@@ -903,6 +997,13 @@ ruleTester.run(RULE_NAME, rule, {
 				...getInvalidAssertions({
 					query: queryName,
 					matcher: '.not.toBeInTheDocument()',
+					messageId: 'wrongAbsenceQuery',
+					shouldUseScreen: true,
+					assertionType: 'absence',
+				}),
+				...getInvalidAssertions({
+					query: queryName,
+					matcher: '.not.toBeOnTheScreen()',
 					messageId: 'wrongAbsenceQuery',
 					shouldUseScreen: true,
 					assertionType: 'absence',
@@ -948,6 +1049,12 @@ ruleTester.run(RULE_NAME, rule, {
 				}),
 				...getInvalidAssertions({
 					query: queryName,
+					matcher: '.not.toBeOnTheScreen()',
+					messageId: 'wrongAbsenceQuery',
+					assertionType: 'absence',
+				}),
+				...getInvalidAssertions({
+					query: queryName,
 					matcher: '.not.toBeTruthy()',
 					messageId: 'wrongAbsenceQuery',
 					assertionType: 'absence',
@@ -982,6 +1089,13 @@ ruleTester.run(RULE_NAME, rule, {
 				...getInvalidAssertions({
 					query: queryName,
 					matcher: '.not.toBeInTheDocument()',
+					messageId: 'wrongAbsenceQuery',
+					shouldUseScreen: true,
+					assertionType: 'absence',
+				}),
+				...getInvalidAssertions({
+					query: queryName,
+					matcher: '.not.toBeOnTheScreen()',
 					messageId: 'wrongAbsenceQuery',
 					shouldUseScreen: true,
 					assertionType: 'absence',
@@ -1027,6 +1141,12 @@ ruleTester.run(RULE_NAME, rule, {
 				}),
 				...getInvalidAssertions({
 					query: queryName,
+					matcher: '.toBeOnTheScreen()',
+					messageId: 'wrongPresenceQuery',
+					assertionType: 'presence',
+				}),
+				...getInvalidAssertions({
+					query: queryName,
 					matcher: '.not.toBeFalsy()',
 					messageId: 'wrongPresenceQuery',
 					assertionType: 'presence',
@@ -1061,6 +1181,13 @@ ruleTester.run(RULE_NAME, rule, {
 				...getInvalidAssertions({
 					query: queryName,
 					matcher: '.toBeInTheDocument()',
+					messageId: 'wrongPresenceQuery',
+					shouldUseScreen: true,
+					assertionType: 'presence',
+				}),
+				...getInvalidAssertions({
+					query: queryName,
+					matcher: '.toBeOnTheScreen()',
 					messageId: 'wrongPresenceQuery',
 					shouldUseScreen: true,
 					assertionType: 'presence',
@@ -1106,6 +1233,12 @@ ruleTester.run(RULE_NAME, rule, {
 				}),
 				...getInvalidAssertions({
 					query: queryName,
+					matcher: '.toBeOnTheScreen()',
+					messageId: 'wrongPresenceQuery',
+					assertionType: 'presence',
+				}),
+				...getInvalidAssertions({
+					query: queryName,
 					matcher: '.not.toBeFalsy()',
 					messageId: 'wrongPresenceQuery',
 					assertionType: 'presence',
@@ -1146,6 +1279,13 @@ ruleTester.run(RULE_NAME, rule, {
 				}),
 				...getInvalidAssertions({
 					query: queryName,
+					matcher: '.toBeOnTheScreen()',
+					messageId: 'wrongPresenceQuery',
+					shouldUseScreen: true,
+					assertionType: 'presence',
+				}),
+				...getInvalidAssertions({
+					query: queryName,
 					matcher: '.not.toBeFalsy()',
 					messageId: 'wrongPresenceQuery',
 					shouldUseScreen: true,
@@ -1166,7 +1306,15 @@ ruleTester.run(RULE_NAME, rule, {
 			errors: [{ messageId: 'wrongAbsenceQuery', line: 1, column: 15 }],
 		},
 		{
+			code: 'expect(screen.getAllByText("button")[1]).not.toBeOnTheScreen()',
+			errors: [{ messageId: 'wrongAbsenceQuery', line: 1, column: 15 }],
+		},
+		{
 			code: 'expect(screen.queryAllByText("button")[1]).toBeInTheDocument()',
+			errors: [{ messageId: 'wrongPresenceQuery', line: 1, column: 15 }],
+		},
+		{
+			code: 'expect(screen.queryAllByText("button")[1]).toBeOnTheScreen()',
 			errors: [{ messageId: 'wrongPresenceQuery', line: 1, column: 15 }],
 		},
 		{
@@ -1178,8 +1326,22 @@ ruleTester.run(RULE_NAME, rule, {
 		},
 		{
 			code: `
+      // case: asserting presence incorrectly with custom queryBy* query
+        expect(queryByCustomQuery("button")).toBeOnTheScreen()
+      `,
+			errors: [{ messageId: 'wrongPresenceQuery', line: 3, column: 16 }],
+		},
+		{
+			code: `
         // case: asserting absence incorrectly with custom getBy* query
         expect(getByCustomQuery("button")).not.toBeInTheDocument()
+      `,
+			errors: [{ messageId: 'wrongAbsenceQuery', line: 3, column: 16 }],
+		},
+		{
+			code: `
+        // case: asserting absence incorrectly with custom getBy* query
+        expect(getByCustomQuery("button")).not.toBeOnTheScreen()
       `,
 			errors: [{ messageId: 'wrongAbsenceQuery', line: 3, column: 16 }],
 		},
@@ -1199,9 +1361,31 @@ ruleTester.run(RULE_NAME, rule, {
 				'testing-library/utils-module': 'test-utils',
 			},
 			code: `
+      // case: asserting presence incorrectly importing custom module
+      import 'test-utils'
+      expect(queryByRole("button")).toBeOnTheScreen()
+      `,
+			errors: [{ line: 4, column: 14, messageId: 'wrongPresenceQuery' }],
+		},
+		{
+			settings: {
+				'testing-library/utils-module': 'test-utils',
+			},
+			code: `
       // case: asserting absence incorrectly importing custom module
       import 'test-utils'
       expect(getByRole("button")).not.toBeInTheDocument()
+      `,
+			errors: [{ line: 4, column: 14, messageId: 'wrongAbsenceQuery' }],
+		},
+		{
+			settings: {
+				'testing-library/utils-module': 'test-utils',
+			},
+			code: `
+      // case: asserting absence incorrectly importing custom module
+      import 'test-utils'
+      expect(getByRole("button")).not.toBeOnTheScreen()
       `,
 			errors: [{ line: 4, column: 14, messageId: 'wrongAbsenceQuery' }],
 		},
@@ -1242,6 +1426,48 @@ ruleTester.run(RULE_NAME, rule, {
 			code: `
 	  // case: asserting within check does still work with improper outer clause and improper inner clause
 	  expect(within(screen.queryByRole("button")).queryByText("Hello")).toBeInTheDocument()`,
+			errors: [
+				{ line: 3, column: 25, messageId: 'wrongPresenceQuery' },
+				{ line: 3, column: 48, messageId: 'wrongPresenceQuery' },
+			],
+		},
+		{
+			code: `
+	  // case: asserting within check does still work with improper outer clause
+	  expect(within(screen.getByRole("button")).getByText("Hello")).not.toBeOnTheScreen()`,
+			errors: [{ line: 3, column: 46, messageId: 'wrongAbsenceQuery' }],
+		},
+		{
+			code: `
+	  // case: asserting within check does still work with improper outer clause
+	  expect(within(screen.getByRole("button")).queryByText("Hello")).toBeOnTheScreen()`,
+			errors: [{ line: 3, column: 46, messageId: 'wrongPresenceQuery' }],
+		},
+		{
+			code: `
+	  // case: asserting within check does still work with improper outer clause and improper inner clause
+	  expect(within(screen.queryByRole("button")).getByText("Hello")).not.toBeOnTheScreen()`,
+			errors: [
+				{ line: 3, column: 25, messageId: 'wrongPresenceQuery' },
+				{ line: 3, column: 48, messageId: 'wrongAbsenceQuery' },
+			],
+		},
+		{
+			code: `
+	  // case: asserting within check does still work with proper outer clause and improper inner clause
+	  expect(within(screen.queryByRole("button")).queryByText("Hello")).not.toBeOnTheScreen()`,
+			errors: [{ line: 3, column: 25, messageId: 'wrongPresenceQuery' }],
+		},
+		{
+			code: `
+	  // case: asserting within check does still work with proper outer clause and improper inner clause
+	  expect(within(screen.queryByRole("button")).getByText("Hello")).toBeOnTheScreen()`,
+			errors: [{ line: 3, column: 25, messageId: 'wrongPresenceQuery' }],
+		},
+		{
+			code: `
+	  // case: asserting within check does still work with improper outer clause and improper inner clause
+	  expect(within(screen.queryByRole("button")).queryByText("Hello")).toBeOnTheScreen()`,
 			errors: [
 				{ line: 3, column: 25, messageId: 'wrongPresenceQuery' },
 				{ line: 3, column: 48, messageId: 'wrongPresenceQuery' },
