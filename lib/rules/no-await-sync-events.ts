@@ -76,6 +76,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 						property.id.name === 'delay' &&
 						isLiteral(property.init) &&
 						property.init.value &&
+						// @ts-expect-error -- TODO: fix me
 						property.init.value > 0
 				);
 			},
@@ -88,6 +89,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 					isLiteral(node.right) &&
 					node.right.value !== null
 				) {
+					// @ts-expect-error -- TODO: fix me
 					hasDelayDeclarationOrAssignmentGTZero = node.right.value > 0;
 				}
 			},
@@ -141,6 +143,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 							property.key.name === 'delay' &&
 							isLiteral(property.value) &&
 							!!property.value.value &&
+							// @ts-expect-error -- TODO: fix me
 							property.value.value > 0
 					);
 
