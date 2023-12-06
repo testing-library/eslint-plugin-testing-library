@@ -1,16 +1,15 @@
-import { resolve } from 'path';
-
-import { TSESLint } from '@typescript-eslint/utils';
+import { RuleTester, RunTests } from '@typescript-eslint/rule-tester';
+import { RuleModule } from '@typescript-eslint/utils/ts-eslint';
 
 const DEFAULT_TEST_CASE_CONFIG = {
 	filename: 'MyComponent.test.js',
 };
 
-class TestingLibraryRuleTester extends TSESLint.RuleTester {
+class TestingLibraryRuleTester extends RuleTester {
 	run<TMessageIds extends string, TOptions extends Readonly<unknown[]>>(
 		ruleName: string,
-		rule: TSESLint.RuleModule<TMessageIds, TOptions>,
-		tests: TSESLint.RunTests<TMessageIds, TOptions>
+		rule: RuleModule<TMessageIds, TOptions>,
+		tests: RunTests<TMessageIds, TOptions>
 	): void {
 		const { valid, invalid } = tests;
 
@@ -33,18 +32,6 @@ class TestingLibraryRuleTester extends TSESLint.RuleTester {
 	}
 }
 
-export const createRuleTester = (
-	parserOptions: Partial<TSESLint.ParserOptions> = {}
-): TSESLint.RuleTester => {
-	return new TestingLibraryRuleTester({
-		parser: resolve('./node_modules/@typescript-eslint/parser'),
-		parserOptions: {
-			ecmaVersion: 2018,
-			sourceType: 'module',
-			ecmaFeatures: {
-				jsx: true,
-			},
-			...parserOptions,
-		},
-	});
+export const createRuleTester = (): RuleTester => {
+	return new TestingLibraryRuleTester();
 };

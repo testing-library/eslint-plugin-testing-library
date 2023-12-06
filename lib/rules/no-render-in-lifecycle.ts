@@ -67,6 +67,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				type: 'object',
 				properties: {
 					allowTestingFrameworkSetupHook: {
+						type: 'string',
 						enum: TESTING_FRAMEWORK_SETUP_HOOKS,
 					},
 				},

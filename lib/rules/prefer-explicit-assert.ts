@@ -1,4 +1,4 @@
-import { TSESTree, ASTUtils } from '@typescript-eslint/utils';
+import { TSESTree, ASTUtils, AST_NODE_TYPES } from '@typescript-eslint/utils';
 
 import { createTestingLibraryRule } from '../create-testing-library-rule';
 import {
@@ -21,10 +21,10 @@ type Options = [
 
 const isAtTopLevel = (node: TSESTree.Node) =>
 	(!!node.parent?.parent &&
-		node.parent.parent.type === 'ExpressionStatement') ||
-	(node.parent?.parent?.type === 'AwaitExpression' &&
+		node.parent.parent.type === AST_NODE_TYPES.ExpressionStatement) ||
+	(node.parent?.parent?.type === AST_NODE_TYPES.AwaitExpression &&
 		!!node.parent.parent.parent &&
-		node.parent.parent.parent.type === 'ExpressionStatement');
+		node.parent.parent.parent.type === AST_NODE_TYPES.ExpressionStatement);
 
 const isVariableDeclaration = (node: TSESTree.Node) => {
 	if (

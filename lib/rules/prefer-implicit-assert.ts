@@ -48,7 +48,7 @@ const reportError = (
 	queryType: string
 ) => {
 	if (node) {
-		return context.report({
+		context.report({
 			node,
 			messageId: 'preferImplicitAssert',
 			data: {
@@ -107,7 +107,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 									AST_NODE_TYPES.Identifier &&
 								helpers.isPresenceAssert(node.parent.parent.parent.parent)
 							) {
-								return reportError(context, node, 'findBy*');
+								reportError(context, node, 'findBy*');
 							}
 						}
 					}
@@ -125,7 +125,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 									AST_NODE_TYPES.Identifier &&
 								helpers.isPresenceAssert(node.parent.parent.parent)
 							) {
-								return reportError(context, node, 'getBy*');
+								reportError(context, node, 'getBy*');
 							}
 						}
 					}

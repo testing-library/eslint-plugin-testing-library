@@ -70,7 +70,10 @@ const DEBUG_UTILS = [
 	'prettyFormat',
 ] as const;
 
-const EVENTS_SIMULATORS = ['fireEvent', 'userEvent'] as const;
+const EVENTS_SIMULATORS = ['fireEvent', 'userEvent'] as (
+	| 'fireEvent'
+	| 'userEvent'
+)[];
 
 const TESTING_FRAMEWORK_SETUP_HOOKS = ['beforeEach', 'beforeAll'];
 

@@ -12,10 +12,7 @@ const DOM_TESTING_LIBRARY_MODULES = [
 	'@testing-library/dom',
 ];
 
-const CORRECT_MODULE_NAME_BY_FRAMEWORK: Record<
-	'angular' | 'marko' | string,
-	string | undefined
-> = {
+const CORRECT_MODULE_NAME_BY_FRAMEWORK: Record<string, string | undefined> = {
 	angular: '@testing-library/angular', // ATL is *always* called `@testing-library/angular`
 	marko: '@marko/testing-library', // Marko TL is called `@marko/testing-library`
 };
@@ -60,10 +57,11 @@ export default createTestingLibraryRule<Options, MessageIds>({
 			moduleName: string
 		) {
 			if (!framework) {
-				return context.report({
+				context.report({
 					node,
 					messageId: 'noDomImport',
 				});
+				return;
 			}
 
 			const correctModuleName = getCorrectModuleName(moduleName, framework);

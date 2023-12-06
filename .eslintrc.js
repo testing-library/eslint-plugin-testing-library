@@ -55,8 +55,7 @@ module.exports = {
 				project: ['./tsconfig.eslint.json'],
 			},
 			extends: [
-				'plugin:@typescript-eslint/recommended',
-				'plugin:@typescript-eslint/recommended-requiring-type-checking',
+				'plugin:@typescript-eslint/strict-type-checked',
 				'plugin:import/typescript',
 			],
 			rules: {
@@ -66,6 +65,7 @@ module.exports = {
 					{ argsIgnorePattern: '^_' },
 				],
 				'@typescript-eslint/no-use-before-define': 'off',
+				'@typescript-eslint/no-unnecessary-condition': 'off',
 
 				// Import
 				// Rules enabled by `import/recommended` but are better handled by

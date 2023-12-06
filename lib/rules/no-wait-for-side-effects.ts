@@ -199,12 +199,12 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				return;
 			}
 
-			getSideEffectNodes(node.body).forEach((sideEffectNode) =>
+			getSideEffectNodes(node.body).forEach((sideEffectNode) => {
 				context.report({
 					node: sideEffectNode,
 					messageId: 'noSideEffectsWaitFor',
-				})
-			);
+				});
+			});
 		}
 
 		function reportImplicitReturnSideEffect(

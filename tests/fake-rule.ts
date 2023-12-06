@@ -54,37 +54,44 @@ export default createTestingLibraryRule<Options, MessageIds>({
 		const reportCallExpressionIdentifier = (node: TSESTree.Identifier) => {
 			// force "render" to be reported
 			if (helpers.isRenderUtil(node)) {
-				return context.report({ node, messageId: 'renderError' });
+				context.report({ node, messageId: 'renderError' });
+				return;
 			}
 
 			// force async utils to be reported
 			if (helpers.isAsyncUtil(node)) {
-				return context.report({
+				context.report({
 					node,
 					messageId: 'asyncUtilError',
 					data: { utilName: node.name },
 				});
+				return;
 			}
 
 			if (helpers.isUserEventMethod(node)) {
-				return context.report({ node, messageId: 'userEventError' });
+				context.report({ node, messageId: 'userEventError' });
+				return;
 			}
 
 			// force queries to be reported
 			if (helpers.isCustomQuery(node)) {
-				return context.report({ node, messageId: 'customQueryError' });
+				context.report({ node, messageId: 'customQueryError' });
+				return;
 			}
 
 			if (helpers.isGetQueryVariant(node)) {
-				return context.report({ node, messageId: 'getByError' });
+				context.report({ node, messageId: 'getByError' });
+				return;
 			}
 
 			if (helpers.isQueryQueryVariant(node)) {
-				return context.report({ node, messageId: 'queryByError' });
+				context.report({ node, messageId: 'queryByError' });
+				return;
 			}
 
 			if (helpers.isFindQueryVariant(node)) {
-				return context.report({ node, messageId: 'findByError' });
+				context.report({ node, messageId: 'findByError' });
+				return;
 			}
 
 			return undefined;
@@ -92,11 +99,13 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
 		const reportMemberExpression = (node: TSESTree.MemberExpression) => {
 			if (helpers.isPresenceAssert(node)) {
-				return context.report({ node, messageId: 'presenceAssertError' });
+				context.report({ node, messageId: 'presenceAssertError' });
+				return;
 			}
 
 			if (helpers.isAbsenceAssert(node)) {
-				return context.report({ node, messageId: 'absenceAssertError' });
+				context.report({ node, messageId: 'absenceAssertError' });
+				return;
 			}
 
 			return undefined;

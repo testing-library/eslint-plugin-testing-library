@@ -2,7 +2,6 @@ import {
 	AST_NODE_TYPES,
 	ASTUtils,
 	TSESLint,
-	TSESLintScope,
 	TSESTree,
 } from '@typescript-eslint/utils';
 
@@ -270,7 +269,7 @@ export function getVariableReferences(
 	return [];
 }
 
-interface InnermostFunctionScope extends TSESLintScope.FunctionScope {
+interface InnermostFunctionScope extends TSESLint.Scope.Scopes.FunctionScope {
 	block:
 		| TSESTree.ArrowFunctionExpression
 		| TSESTree.FunctionDeclaration
@@ -287,7 +286,7 @@ export function getInnermostFunctionScope(
 	);
 
 	if (
-		innermostScope.type === 'function' &&
+		innermostScope.type === TSESLint.Scope.ScopeType.function &&
 		ASTUtils.isFunction(innermostScope.block)
 	) {
 		return innermostScope as unknown as InnermostFunctionScope;
