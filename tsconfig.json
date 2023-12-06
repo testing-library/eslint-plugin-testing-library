@@ -11,8 +11,7 @@
 		"outDir": "./dist",
 		"removeComments": true,
 		"skipLibCheck": true,
-		"sourceMap": false,
-		"suppressImplicitAnyIndexErrors": true
+		"sourceMap": false
 	},
 	"include": ["./lib/**/*.ts"]
 }
