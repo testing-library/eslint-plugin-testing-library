@@ -659,6 +659,15 @@
         "code",
         "test"
       ]
+    },
+    {
+      "login": "NicolasBonduel",
+      "name": "Nicolas Bonduel",
+      "avatar_url": "https://avatars.githubusercontent.com/u/6507454?v=4",
+      "profile": "https://github.com/NicolasBonduel",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,
