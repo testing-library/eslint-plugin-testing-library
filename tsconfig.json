@@ -1,16 +1,19 @@
 {
 	"compilerOptions": {
 		"strict": true,
-		"target": "es6",
-		"module": "commonjs",
-		"moduleResolution": "node",
+		"target": "ES2019",
+		"module": "NodeNext",
+		"moduleResolution": "NodeNext",
+		"lib": ["ES2019"],
 		"esModuleInterop": true,
-		"resolveJsonModule": true,
-		"forceConsistentCasingInFileNames": true,
-		"noImplicitAny": true,
-		"outDir": "./dist",
-		"removeComments": true,
 		"skipLibCheck": true,
+		"resolveJsonModule": true,
+		"moduleDetection": "force",
+		"isolatedModules": true,
+		"removeComments": true,
+		// TODO: turn it on
+		"noUncheckedIndexedAccess": false,
+		"outDir": "dist",
 		"sourceMap": false
 	},
 	"include": ["./lib/**/*.ts"]
