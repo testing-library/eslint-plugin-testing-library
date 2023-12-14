@@ -86,7 +86,7 @@
 		"prettier": "2.8.7",
 		"semantic-release": "^19.0.5",
 		"ts-node": "^10.9.1",
-		"typescript": "^5.3.2"
+		"typescript": "^5.0.4"
 	},
 	"peerDependencies": {
 		"eslint": "^7.5.0 || ^8.0.0"
