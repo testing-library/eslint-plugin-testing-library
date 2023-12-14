@@ -78,7 +78,7 @@ module.exports = {
 			settings: {
 				'import/resolver': {
 					node: {
-						extensions: ['.js', '.jsx', '.ts', '.tsx'],
+						extensions: ['.js', '.ts'],
 					},
 					typescript: {
 						alwaysTryTypes: true,
