@@ -38,7 +38,7 @@ getByText('foo');
 Examples of **correct** code for this rule:
 
 ```js
-import { screen } from '@testing-library/any-framework';
+import { render, screen } from '@testing-library/any-framework';
 
 // calling a query from the `screen` object
 render(<Component />);
