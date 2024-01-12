@@ -668,6 +668,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "lesha1201",
+      "name": "Alexey Ryabov",
+      "avatar_url": "https://avatars.githubusercontent.com/u/10157660?v=4",
+      "profile": "https://aryabov.com",
+      "contributions": [
+        "maintenance"
+      ]
     }
   ],
   "contributorsPerLine": 7,
