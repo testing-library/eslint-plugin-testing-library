@@ -21,7 +21,6 @@
 [![PRs Welcome][pr-badge]][pr-url]
 [![All Contributors][all-contributors-badge]](#contributors-)
 
-
 ## Installation
 
 You'll first need to install [ESLint](https://eslint.org):
