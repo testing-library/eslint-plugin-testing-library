@@ -1,0 +1,55 @@
+name: Verifications
+
+on:
+  workflow_call:
+
+jobs:
+  code-validation:
+    name: 'Code Validation: ${{ matrix.validation-script }}'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        validation-script:
+          ['lint', 'type-check', 'format:check', 'generate-all:check']
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+
+      - name: Install dependencies
+        uses: bahmutov/npm-install@v1
+
+      - name: Run script
+        run: npm run ${{ matrix.validation-script }}
+
+  tests:
+    name: Tests (Node v${{ matrix.node }} - ESLint v${{ matrix.eslint }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # The .x indicates "the most recent one"
+        node: [19.x, 18.x, 17.x, 16.x, 14.x, 14.17.0, 12.x, 12.22.0]
+        eslint: [7.5, 7, 8]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+
+      - name: Install dependencies
+        uses: bahmutov/npm-install@v1
+
+      - name: Install ESLint v${{ matrix.eslint }}
+        run: npm install --no-save --force eslint@${{ matrix.eslint }}
+
+      - name: Run tests
+        run: npm run test:ci
