@@ -12,7 +12,6 @@
 
 ---
 
-[![Build status][build-badge]][build-url]
 [![Package version][version-badge]][version-url]
 [![eslint-remote-tester][eslint-remote-tester-badge]][eslint-remote-tester-workflow]
 [![eslint-plugin-testing-library][package-health-badge]][package-health-url]
@@ -21,10 +20,7 @@
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg?style=flat-square)](https://github.com/semantic-release/semantic-release)
 [![PRs Welcome][pr-badge]][pr-url]
 [![All Contributors][all-contributors-badge]](#contributors-)
-<br />
-[![Watch on Github][gh-watchers-badge]][gh-watchers-url]
-[![Star on Github][gh-stars-badge]][gh-stars-url]
-[![Tweet][tweet-badge]][tweet-url]
+
 
 ## Installation
 
@@ -442,25 +438,17 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
 
-[build-badge]: https://github.com/testing-library/eslint-plugin-testing-library/actions/workflows/pipeline.yml/badge.svg
-[build-url]: https://github.com/testing-library/eslint-plugin-testing-library/actions/workflows/pipeline.yml
 [version-badge]: https://img.shields.io/npm/v/eslint-plugin-testing-library
 [version-url]: https://www.npmjs.com/package/eslint-plugin-testing-library
 [license-badge]: https://img.shields.io/npm/l/eslint-plugin-testing-library
-[eslint-remote-tester-badge]: https://img.shields.io/github/workflow/status/AriPerkkio/eslint-remote-tester/eslint-plugin-testing-library?label=eslint-remote-tester
-[eslint-remote-tester-workflow]: https://github.com/AriPerkkio/eslint-remote-tester/actions?query=workflow%3Aeslint-plugin-testing-library
+[license-url]: https://github.com/testing-library/eslint-plugin-testing-library/blob/main/LICENSE
+[eslint-remote-tester-badge]: https://img.shields.io/github/actions/workflow/status/AriPerkkio/eslint-remote-tester/lint-eslint-plugin-testing-library.yml
+[eslint-remote-tester-workflow]: https://github.com/AriPerkkio/eslint-remote-tester/actions/workflows/lint-eslint-plugin-testing-library.yml
 [package-health-badge]: https://snyk.io/advisor/npm-package/eslint-plugin-testing-library/badge.svg
 [package-health-url]: https://snyk.io/advisor/npm-package/eslint-plugin-testing-library
-[license-url]: https://github.com/testing-library/eslint-plugin-testing-library/blob/main/license
 [pr-badge]: https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square
 [all-contributors-badge]: https://img.shields.io/github/all-contributors/testing-library/eslint-plugin-testing-library?color=orange&style=flat-square
 [pr-url]: http://makeapullrequest.com
-[gh-watchers-badge]: https://img.shields.io/github/watchers/testing-library/eslint-plugin-testing-library?style=social
-[gh-watchers-url]: https://github.com/testing-library/eslint-plugin-testing-library/watchers
-[gh-stars-badge]: https://img.shields.io/github/stars/testing-library/eslint-plugin-testing-library?style=social
-[gh-stars-url]: https://github.com/testing-library/eslint-plugin-testing-library/stargazers
-[tweet-badge]: https://img.shields.io/twitter/url?style=social&url=https%3A%2F%2Fgithub.com%2Ftesting-library%2Feslint-plugin-testing-library
-[tweet-url]: https://twitter.com/intent/tweet?url=https%3a%2f%2fgithub.com%2ftesting-library%2feslint-plugin-testing-library&text=check%20out%20eslint-plugin-testing-library%20by%20@belcodev
 [badge-dom]: https://img.shields.io/badge/%F0%9F%90%99-DOM-black?style=flat-square
 [badge-angular]: https://img.shields.io/badge/-Angular-black?style=flat-square&logo=angular&logoColor=white&labelColor=DD0031&color=black
 [badge-react]: https://img.shields.io/badge/-React-black?style=flat-square&logo=react&logoColor=white&labelColor=61DAFB&color=black
