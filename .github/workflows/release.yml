@@ -1,0 +1,43 @@
+name: Release
+
+on:
+  push:
+    branches:
+      # semantic-release valid branches
+      - '+([0-9])?(.{+([0-9]),x}).x'
+      - 'main'
+      - 'next'
+      - 'next-major'
+      - 'beta'
+      - 'alpha'
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: Publish NPM package
+    runs-on: ubuntu-latest
+    # Avoid publishing in forks
+    if: github.repository == 'testing-library/eslint-plugin-testing-library'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+
+      - name: Install dependencies
+        uses: bahmutov/npm-install@v1
+
+      - name: Build package
+        run: npm run build
+
+      - name: Release new version
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_AUTOMATION_TOKEN }}
+        run: npx semantic-release
