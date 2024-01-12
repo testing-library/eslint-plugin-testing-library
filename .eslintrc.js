@@ -1,7 +1,12 @@
 module.exports = {
 	root: true,
+	env: {
+		es6: true,
+		node: true,
+	},
 	extends: [
-		'kentcdodds',
+		'eslint:recommended',
+		'plugin:import/recommended',
 		'plugin:jest/recommended',
 		'plugin:jest-formatting/recommended',
 		'prettier',
@@ -33,6 +38,12 @@ module.exports = {
 				},
 			},
 		],
+		'import/first': 'error',
+		'import/no-empty-named-blocks': 'error',
+		'import/no-extraneous-dependencies': 'error',
+		'import/no-mutable-exports': 'error',
+		'import/no-named-default': 'error',
+		'import/no-relative-packages': 'warn',
 	},
 	overrides: [
 		{
@@ -46,6 +57,7 @@ module.exports = {
 			extends: [
 				'plugin:@typescript-eslint/recommended',
 				'plugin:@typescript-eslint/recommended-requiring-type-checking',
+				'plugin:import/typescript',
 			],
 			rules: {
 				'@typescript-eslint/explicit-function-return-type': 'off',
@@ -54,6 +66,24 @@ module.exports = {
 					{ argsIgnorePattern: '^_' },
 				],
 				'@typescript-eslint/no-use-before-define': 'off',
+
+				// Import
+				// Rules enabled by `import/recommended` but are better handled by
+				// TypeScript and @typescript-eslint.
+				'import/default': 'off',
+				'import/export': 'off',
+				'import/namespace': 'off',
+				'import/no-unresolved': 'off',
+			},
+			settings: {
+				'import/resolver': {
+					node: {
+						extensions: ['.js', '.ts'],
+					},
+					typescript: {
+						alwaysTryTypes: true,
+					},
+				},
 			},
 		},
 	],
