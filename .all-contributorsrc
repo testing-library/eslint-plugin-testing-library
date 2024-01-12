@@ -21,7 +21,8 @@
         "review",
         "test",
         "infra",
-        "bug"
+        "bug",
+        "maintenance"
       ]
     },
     {
