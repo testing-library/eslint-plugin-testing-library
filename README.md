@@ -429,6 +429,9 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/doochik"><img src="https://avatars.githubusercontent.com/u/31961?v=4?s=100" width="100px;" alt="Aleksei Androsov"/><br /><sub><b>Aleksei Androsov</b></sub></a><br /><a href="https://github.com/testing-library/eslint-plugin-testing-library/commits?author=doochik" title="Code">💻</a> <a href="https://github.com/testing-library/eslint-plugin-testing-library/commits?author=doochik" title="Tests">⚠️</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/NicolasBonduel"><img src="https://avatars.githubusercontent.com/u/6507454?v=4?s=100" width="100px;" alt="Nicolas Bonduel"/><br /><sub><b>Nicolas Bonduel</b></sub></a><br /><a href="https://github.com/testing-library/eslint-plugin-testing-library/commits?author=NicolasBonduel" title="Documentation">📖</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://aryabov.com"><img src="https://avatars.githubusercontent.com/u/10157660?v=4?s=100" width="100px;" alt="Alexey Ryabov"/><br /><sub><b>Alexey Ryabov</b></sub></a><br /><a href="#maintenance-lesha1201" title="Maintenance">🚧</a></td>
+    </tr>
   </tbody>
 </table>
 
