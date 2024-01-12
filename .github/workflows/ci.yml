@@ -9,15 +9,15 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  validations:
-    name: Run validations
+  verifications:
+    name: Verifications
     uses: ./.github/workflows/verifications.yml
 
   required-checks:
     name: Require CI status checks
     runs-on: ubuntu-latest
     if: ${{ !cancelled() && github.event.action != 'closed' }}
-    needs: [validations]
+    needs: [verifications]
     steps:
       - run: ${{ !contains(needs.*.result, 'failure') }}
       - run: ${{ !contains(needs.*.result, 'cancelled') }}
