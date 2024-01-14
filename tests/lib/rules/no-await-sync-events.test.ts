@@ -146,6 +146,12 @@ ruleTester.run(RULE_NAME, rule, {
 		},
 		{
 			code: `() => {
+        await userEvent.type(element, 'bar', {delay: null})
+      }
+      `,
+		},
+		{
+			code: `() => {
         await userEvent.keyboard('foo', {delay: 1234})
       }
       `,
@@ -153,6 +159,13 @@ ruleTester.run(RULE_NAME, rule, {
 		{
 			code: `async() => {
 		const delay = 10
+        await userEvent.keyboard('foo', {delay})
+      }
+      `,
+		},
+		{
+			code: `async() => {
+		const delay = null
         await userEvent.keyboard('foo', {delay})
       }
       `,
