@@ -76,8 +76,8 @@ export default createTestingLibraryRule<Options, MessageIds>({
 						property.id.name === 'delay' &&
 						isLiteral(property.init) &&
 						property.init.value &&
-						// @ts-expect-error -- TODO: fix me
-						property.init.value > 0
+						Number.isInteger(property.init.value) &&
+						Number(property.init.value) > 0
 				);
 			},
 			AssignmentExpression(node: TSESTree.AssignmentExpression) {
@@ -89,8 +89,8 @@ export default createTestingLibraryRule<Options, MessageIds>({
 					isLiteral(node.right) &&
 					node.right.value !== null
 				) {
-					// @ts-expect-error -- TODO: fix me
-					hasDelayDeclarationOrAssignmentGTZero = node.right.value > 0;
+					hasDelayDeclarationOrAssignmentGTZero =
+						Number.isInteger(node.right.value) && Number(node.right.value) > 0;
 				}
 			},
 			'AwaitExpression > CallExpression'(node: TSESTree.CallExpression) {
@@ -143,8 +143,8 @@ export default createTestingLibraryRule<Options, MessageIds>({
 							property.key.name === 'delay' &&
 							isLiteral(property.value) &&
 							!!property.value.value &&
-							// @ts-expect-error -- TODO: fix me
-							property.value.value > 0
+							Number.isInteger(property.value.value) &&
+							Number(property.value.value) > 0
 					);
 
 				const simulateEventFunctionName = simulateEventFunctionIdentifier.name;
