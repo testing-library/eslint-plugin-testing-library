@@ -112,6 +112,31 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				}
 			},
 
+			MemberExpression(node) {
+				// console.log(node);
+				/**
+				 * EXAMPLE
+				 * node.object.name === 'container'
+				 * node.property.name === 'innerHTML'
+				 */
+
+				// showErrorIfChainedContainerMethod(node.callee);
+
+				// console.log({
+				// 	destructuredContainerPropNames,
+				// 	renderWrapperNames,
+				// 	renderResultVarName,
+				// 	containerName
+				// });
+
+				if (node.object.name === containerName && node.property.name === 'innerHTML') {
+					context.report({
+						node,
+						messageId: 'noContainer',
+					});
+				}
+			},
+
 			VariableDeclarator(node) {
 				if (!node.init) {
 					return;
