@@ -1,32 +1,41 @@
 # Disallow the use of `container` methods (`testing-library/no-container`)
 
-💼 This rule is enabled in the following configs: `angular`, `marko`, `react`, `vue`.
+💼 This rule is enabled in the following configs: `angular`, `marko`, `react`,
+`vue`.
 
 <!-- end auto-generated rule header -->
 
-By using `container` methods like `.querySelector` you may lose a lot of the confidence that the user can really interact with your UI. Also, the test becomes harder to read, and it will break more frequently.
+By using `container` methods like `.querySelector` and properties like
+`.innerHTML`, you may lose a lot of the confidence that the user can really
+interact with your UI. Also, the test becomes harder to read, and it will break
+more frequently.
 
-This applies to Testing Library frameworks built on top of **DOM Testing Library**
+This applies to Testing Library frameworks built on top of **DOM Testing
+Library**
 
 ## Rule Details
 
-This rule aims to disallow the use of `container` methods in your tests.
+This rule aims to disallow the use of `container` methods and properties in your
+tests.
 
 Examples of **incorrect** code for this rule:
 
 ```js
 const { container } = render(<Example />);
 const button = container.querySelector('.btn-primary');
+const html = container.innerHTML;
 ```
 
 ```js
 const { container: alias } = render(<Example />);
 const button = alias.querySelector('.btn-primary');
+const html = alias.innerHTML;
 ```
 
 ```js
 const view = render(<Example />);
 const button = view.container.getElementsByClassName('.btn-primary');
+const html = view.container.innerHTML;
 ```
 
 Examples of **correct** code for this rule:

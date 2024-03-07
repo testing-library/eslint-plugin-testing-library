@@ -31,6 +31,7 @@ ruleTester.run(RULE_NAME, rule, {
       `,
 		},
 		{
+			// TODO: should we or should we not fail using innerHTML on an element returned by document.createElement()?
 			code: `
         function getExampleDOM() {
           const container = document.createElement('div');

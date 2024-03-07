@@ -59,6 +59,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 					const isContainerName = innerNode.object.name === containerName;
 
 					if (isContainerName) {
+						// TODO: we just fail when we find the container name? Why would that be?
 						context.report({
 							node: innerNode,
 							messageId: 'noContainer',
@@ -131,6 +132,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				) {
 					return;
 				}
+				/** At this point, we have a render variable. */
 
 				if (isObjectPattern(node.id)) {
 					const containerIndex = node.id.properties.findIndex(
@@ -147,9 +149,13 @@ export default createTestingLibraryRule<Options, MessageIds>({
 						return;
 					}
 
+					// nodeValue is the container
+
 					if (ASTUtils.isIdentifier(nodeValue)) {
+						// record the name of the container
 						containerName = nodeValue.name;
 					} else if (isObjectPattern(nodeValue)) {
+						// push onto destructuredContainerPropNames
 						nodeValue.properties.forEach(
 							(property) =>
 								isProperty(property) &&
