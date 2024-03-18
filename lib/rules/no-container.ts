@@ -118,7 +118,9 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
 			MemberExpression(node) {
 				if (
+					ASTUtils.isIdentifier(node.object) &&
 					node.object.name === containerName &&
+					ASTUtils.isIdentifier(node.property) &&
 					isDisallowedContainerProperty(node.property.name)
 				) {
 					context.report({
@@ -172,20 +174,18 @@ export default createTestingLibraryRule<Options, MessageIds>({
 						containerName = nodeValue.name;
 					} else if (isObjectPattern(nodeValue)) {
 						// push onto destructuredContainerPropNames
-						nodeValue.properties.forEach(
-							(property) =>{
-								if (isProperty(property) && ASTUtils.isIdentifier(property.key)) {
-									if(isDisallowedContainerProperty(property.key.name)) {
-										context.report({
-											node,
-											messageId: 'noContainer',
-										});
-									}
-
-									destructuredContainerPropNames.push(property.key.name);
+						nodeValue.properties.forEach((property) => {
+							if (isProperty(property) && ASTUtils.isIdentifier(property.key)) {
+								if (isDisallowedContainerProperty(property.key.name)) {
+									context.report({
+										node,
+										messageId: 'noContainer',
+									});
 								}
+
+								destructuredContainerPropNames.push(property.key.name);
 							}
-						);
+						});
 					}
 				} else if (ASTUtils.isIdentifier(node.id)) {
 					renderResultVarName = node.id.name;
