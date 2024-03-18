@@ -183,14 +183,14 @@ export default createTestingLibraryRule<Options, MessageIds>({
 						// push onto destructuredContainerPropNames
 						nodeValue.properties.forEach(
 							(property) =>{
-								if(isDisallowedContainerProperty(property.key.name)) {
-									context.report({
-										node,
-										messageId: 'noContainer',
-									});
-								}
-
 								if (isProperty(property) && ASTUtils.isIdentifier(property.key)) {
+									if(isDisallowedContainerProperty(property.key.name)) {
+										context.report({
+											node,
+											messageId: 'noContainer',
+										});
+									}
+
 									destructuredContainerPropNames.push(property.key.name);
 								}
 							}
