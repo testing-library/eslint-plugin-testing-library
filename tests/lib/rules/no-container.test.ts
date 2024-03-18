@@ -372,6 +372,39 @@ ruleTester.run(RULE_NAME, rule, {
 				},
 			],
 		},
+		...SUPPORTED_TESTING_FRAMEWORKS.map(
+			(testingFramework) =>
+				({
+					settings: { 'testing-library/utils-module': 'test-utils' },
+					code: `
+        import { render } from '${testingFramework}'
+        const { container: { innerHTML } } = render(<Example />);
+      `,
+					errors: [
+						{
+							line: 3,
+							column: 15,
+							messageId: 'noContainer',
+						},
+					],
+				} as const)
+		),
+		{
+			settings: {
+				'testing-library/custom-renders': ['customRender', 'renderWithRedux'],
+			},
+			code: `
+        const { container } = renderWithRedux(<Example />);
+        container.innerHTML;
+      `,
+			errors: [
+				{
+					line: 3,
+					column: 9,
+					messageId: 'noContainer',
+				},
+			],
+		},
 		// {
 		// 	code: `
     //     const view = render(<Example />);
