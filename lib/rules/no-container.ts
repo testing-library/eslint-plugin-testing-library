@@ -87,6 +87,10 @@ export default createTestingLibraryRule<Options, MessageIds>({
 			}
 		}
 
+		function isDisallowedContainerProperty(propertyName: string): boolean {
+			return propertyName === 'innerHTML';
+		}
+
 		return {
 			CallExpression(node) {
 				const callExpressionIdentifier = getDeepestIdentifierNode(node);
@@ -124,7 +128,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
 				if (
 					node.object.name === containerName &&
-					node.property.name === 'innerHTML'
+					isDisallowedContainerProperty(node.property.name)
 				) {
 					context.report({
 						node,
@@ -179,11 +183,12 @@ export default createTestingLibraryRule<Options, MessageIds>({
 						// push onto destructuredContainerPropNames
 						nodeValue.properties.forEach(
 							(property) =>{
-								if(property.key.name === 'innerHTML') {
+								if(isDisallowedContainerProperty(property.key.name)) {
 									context.report({
 										node,
 										messageId: 'noContainer',
 									});
+									// TODO: Do we return here?
 								}
 								isProperty(property) &&
 								ASTUtils.isIdentifier(property.key) &&
