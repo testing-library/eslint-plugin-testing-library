@@ -74,6 +74,7 @@ ruleTester.run(RULE_NAME, rule, {
 			code: `
         import { otherRender } from 'somewhere-else'
         const { container } = otherRender(<Example />);
+		container.innerHTML;
         const button = container.querySelector('.btn-primary');
       `,
 		},
@@ -102,6 +103,17 @@ ruleTester.run(RULE_NAME, rule, {
 				const { container: { firstChild } } = render(<Example />);
 			`,
 		},
+		...SUPPORTED_TESTING_FRAMEWORKS.map(
+			(testingFramework) =>
+				({
+					settings: { 'testing-library/utils-module': 'test-utils' },
+					code: `
+          import { render as renamed } from '${testingFramework}'
+          import { render } from 'somewhere-else'
+          const { container: { innerHTML } } = render(<Example />);
+        `,
+				} as const)
+		),
 	],
 	invalid: [
 		{
@@ -128,6 +140,20 @@ ruleTester.run(RULE_NAME, rule, {
 				{
 					line: 4,
 					column: 24,
+					messageId: 'noContainer',
+				},
+			],
+		},
+		{
+			settings: { 'testing-library/utils-module': 'test-utils' },
+			code: `
+        import { render } from 'test-utils'
+        const { container: { innerHTML } } = render(<Example />);
+      `,
+			errors: [
+				{
+					line: 3,
+					column: 15,
 					messageId: 'noContainer',
 				},
 			],
@@ -166,6 +192,45 @@ ruleTester.run(RULE_NAME, rule, {
 						{
 							line: 7,
 							column: 24,
+							messageId: 'noContainer',
+						},
+					],
+				} as const)
+		),
+		...SUPPORTED_TESTING_FRAMEWORKS.map(
+			(testingFramework) =>
+				({
+					settings: { 'testing-library/utils-module': 'test-utils' },
+					code: `
+        import { render as testingRender } from '${testingFramework}'
+        const { container: renamed } = testingRender(<Example />);
+        renamed.innerHTML;
+      `,
+					errors: [
+						{
+							line: 4,
+							column: 9,
+							messageId: 'noContainer',
+						},
+					],
+				} as const)
+		),
+		...SUPPORTED_TESTING_FRAMEWORKS.map(
+			(testingFramework) =>
+				({
+					settings: { 'testing-library/utils-module': 'test-utils' },
+					code: `
+        import { render } from '${testingFramework}'
+
+        const setup = () => render(<Example />)
+
+        const { container } = setup()
+        container.innerHTML;
+      `,
+					errors: [
+						{
+							line: 7,
+							column: 9,
 							messageId: 'noContainer',
 						},
 					],
@@ -265,7 +330,19 @@ ruleTester.run(RULE_NAME, rule, {
 			errors: [
 				{
 					line: 3,
-					// TODO: Spaces & tabs mess up this
+					column: 5,
+					messageId: 'noContainer',
+				},
+			],
+		},
+		{
+			code: `
+				const { container: alias } = render(<Example />);
+				alias.innerHTML;
+			`,
+			errors: [
+				{
+					line: 3,
 					column: 5,
 					messageId: 'noContainer',
 				},
@@ -278,7 +355,18 @@ ruleTester.run(RULE_NAME, rule, {
 			errors: [
 				{
 					line: 2,
-					// TODO: Spaces & tabs mess up this
+					column: 11,
+					messageId: 'noContainer',
+				},
+			],
+		},
+		{
+			code: `
+				const { container: { innerHTML: alias } } = render(<Example />);
+			`,
+			errors: [
+				{
+					line: 2,
 					column: 11,
 					messageId: 'noContainer',
 				},
