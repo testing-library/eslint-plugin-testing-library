@@ -188,11 +188,11 @@ export default createTestingLibraryRule<Options, MessageIds>({
 										node,
 										messageId: 'noContainer',
 									});
-									// TODO: Do we return here?
 								}
-								isProperty(property) &&
-								ASTUtils.isIdentifier(property.key) &&
-								destructuredContainerPropNames.push(property.key.name);
+
+								if (isProperty(property) && ASTUtils.isIdentifier(property.key)) {
+									destructuredContainerPropNames.push(property.key.name);
+								}
 							}
 						);
 					}
