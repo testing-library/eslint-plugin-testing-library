@@ -372,5 +372,18 @@ ruleTester.run(RULE_NAME, rule, {
 				},
 			],
 		},
+		// {
+		// 	code: `
+    //     const view = render(<Example />);
+    //     view.container.innerHTML;
+    //   `,
+		// 	errors: [
+		// 		{
+		// 			line: 3,
+		// 			column: 29,
+		// 			messageId: 'noContainer',
+		// 		},
+		// 	],
+		// },
 	],
 });
