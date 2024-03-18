@@ -74,7 +74,7 @@ ruleTester.run(RULE_NAME, rule, {
 			code: `
         import { otherRender } from 'somewhere-else'
         const { container } = otherRender(<Example />);
-		container.innerHTML;
+        container.innerHTML;
         const button = container.querySelector('.btn-primary');
       `,
 		},
@@ -407,9 +407,9 @@ ruleTester.run(RULE_NAME, rule, {
 		},
 		// {
 		// 	code: `
-    //     const view = render(<Example />);
-    //     view.container.innerHTML;
-    //   `,
+		//     const view = render(<Example />);
+		//     view.container.innerHTML;
+		//   `,
 		// 	errors: [
 		// 		{
 		// 			line: 3,
