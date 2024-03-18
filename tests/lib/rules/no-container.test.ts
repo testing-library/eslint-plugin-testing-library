@@ -97,6 +97,11 @@ ruleTester.run(RULE_NAME, rule, {
 				container.firstChild;
 			`,
 		},
+		{
+			code: `
+				const { container: { firstChild } } = render(<Example />);
+			`,
+		},
 	],
 	invalid: [
 		{
@@ -262,6 +267,19 @@ ruleTester.run(RULE_NAME, rule, {
 					line: 3,
 					// TODO: Spaces & tabs mess up this
 					column: 5,
+					messageId: 'noContainer',
+				},
+			],
+		},
+		{
+			code: `
+				const { container: { innerHTML } } = render(<Example />);
+			`,
+			errors: [
+				{
+					line: 2,
+					// TODO: Spaces & tabs mess up this
+					column: 11,
 					messageId: 'noContainer',
 				},
 			],

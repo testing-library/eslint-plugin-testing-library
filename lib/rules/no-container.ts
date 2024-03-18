@@ -178,10 +178,17 @@ export default createTestingLibraryRule<Options, MessageIds>({
 					} else if (isObjectPattern(nodeValue)) {
 						// push onto destructuredContainerPropNames
 						nodeValue.properties.forEach(
-							(property) =>
+							(property) =>{
+								if(property.key.name === 'innerHTML') {
+									context.report({
+										node,
+										messageId: 'noContainer',
+									});
+								}
 								isProperty(property) &&
 								ASTUtils.isIdentifier(property.key) &&
-								destructuredContainerPropNames.push(property.key.name)
+								destructuredContainerPropNames.push(property.key.name);
+							}
 						);
 					}
 				} else if (ASTUtils.isIdentifier(node.id)) {
