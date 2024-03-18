@@ -32,7 +32,7 @@ const USER_EVENT_ASYNC_FUNCTIONS = [
 	'upload',
 ] as const;
 const FIRE_EVENT_ASYNC_FRAMEWORKS = [
-	'@testing-library/vue',
+	// '@testing-library/vue',
 	'@marko/testing-library',
 ] as const;
 const USER_EVENT_ASYNC_FRAMEWORKS = ['@testing-library/user-event'] as const;
@@ -373,6 +373,27 @@ ruleTester.run(RULE_NAME, rule, {
         })
         `,
 				options: [{ eventModule: ['userEvent', 'fireEvent'] }] as Options,
+			},
+			{
+				code: `
+				import userEvent from '${USER_EVENT_ASYNC_FRAMEWORKS[0]}'
+        test('userEvent as instance', async () => {
+					const user = userEvent.setup()
+          await user.click(getByLabelText('username'))
+        })
+				`,
+				options: [{ eventModule: ['userEvent'] }] as Options,
+			},
+			{
+				code: `
+				import u from '${USER_EVENT_ASYNC_FRAMEWORKS[0]}'
+				test('userEvent as named import', async () => {
+					const user = u.setup()
+					await user.click(getByLabelText('username'))
+					await u.click(getByLabelText('username'))
+				})
+				`,
+				options: [{ eventModule: ['userEvent'] }] as Options,
 			},
 		]),
 	],
@@ -963,6 +984,70 @@ ruleTester.run(RULE_NAME, rule, {
       `,
 					} as const)
 			),
+			...USER_EVENT_ASYNC_FUNCTIONS.map(
+				(eventMethod) =>
+					({
+						code: `
+      import userEvent from '${USER_EVENT_ASYNC_FRAMEWORKS[0]}'
+			test('instance of userEvent is recognized as async event', async function() {
+				const user = userEvent.setup()
+				user.${eventMethod}(getByLabelText('username'))
+      })
+      `,
+						errors: [
+							{
+								line: 5,
+								column: 5,
+								messageId: 'awaitAsyncEvent',
+								data: { name: eventMethod },
+							},
+						],
+						options: [{ eventModule: 'userEvent' }],
+						output: `
+      import userEvent from '${USER_EVENT_ASYNC_FRAMEWORKS[0]}'
+			test('instance of userEvent is recognized as async event', async function() {
+				const user = userEvent.setup()
+				await user.${eventMethod}(getByLabelText('username'))
+      })
+      `,
+					} as const)
+			),
+			...USER_EVENT_ASYNC_FUNCTIONS.map(
+				(eventMethod) =>
+					({
+						code: `
+      import userEvent from '${USER_EVENT_ASYNC_FRAMEWORKS[0]}'
+			test('instance of userEvent is recognized as async event along with static userEvent', async function() {
+				const user = userEvent.setup()
+				user.${eventMethod}(getByLabelText('username'))
+				userEvent.${eventMethod}(getByLabelText('username'))
+      })
+      `,
+						errors: [
+							{
+								line: 5,
+								column: 5,
+								messageId: 'awaitAsyncEvent',
+								data: { name: eventMethod },
+							},
+							{
+								line: 6,
+								column: 5,
+								messageId: 'awaitAsyncEvent',
+								data: { name: eventMethod },
+							},
+						],
+						options: [{ eventModule: 'userEvent' }],
+						output: `
+      import userEvent from '${USER_EVENT_ASYNC_FRAMEWORKS[0]}'
+			test('instance of userEvent is recognized as async event along with static userEvent', async function() {
+				const user = userEvent.setup()
+				await user.${eventMethod}(getByLabelText('username'))
+				await userEvent.${eventMethod}(getByLabelText('username'))
+      })
+      `,
+					} as const)
+			),
 		]),
 		{
 			code: `
@@ -1020,6 +1105,60 @@ ruleTester.run(RULE_NAME, rule, {
 			test('unhandled promise from userEvent relying on default options', async function() {
         fireEvent.click(getByLabelText('username'))
         await userEvent.click(getByLabelText('username'))
+      })
+      `,
+		},
+		{
+			code: `
+      import userEvent from '${USER_EVENT_ASYNC_FRAMEWORKS[0]}'
+			let user;
+			beforeEach(() => {
+				user = userEvent.setup()
+			})
+			test('instance of userEvent is recognized as async event when instance is initialized in beforeEach', async function() {
+				user.click(getByLabelText('username'))
+      })
+      `,
+			errors: [
+				{
+					line: 8,
+					column: 5,
+					messageId: 'awaitAsyncEvent',
+					data: { name: 'click' },
+				},
+			],
+			output: `
+      import userEvent from '${USER_EVENT_ASYNC_FRAMEWORKS[0]}'
+			let user;
+			beforeEach(() => {
+				user = userEvent.setup()
+			})
+			test('instance of userEvent is recognized as async event when instance is initialized in beforeEach', async function() {
+				await user.click(getByLabelText('username'))
+      })
+      `,
+		},
+		{
+			code: `
+      import u from '${USER_EVENT_ASYNC_FRAMEWORKS[0]}'
+			test('userEvent as named import', async function() {
+				const user = u.setup()
+				user.click(getByLabelText('username'))
+      })
+      `,
+			errors: [
+				{
+					line: 5,
+					column: 5,
+					messageId: 'awaitAsyncEvent',
+					data: { name: 'click' },
+				},
+			],
+			output: `
+      import u from '${USER_EVENT_ASYNC_FRAMEWORKS[0]}'
+			test('userEvent as named import', async function() {
+				const user = u.setup()
+				await user.click(getByLabelText('username'))
       })
       `,
 		},

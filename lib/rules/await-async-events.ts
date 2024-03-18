@@ -6,6 +6,7 @@ import {
 	findClosestFunctionExpressionNode,
 	getFunctionName,
 	getInnermostReturningFunction,
+	getUserEventInstance,
 	getVariableReferences,
 	isMemberExpression,
 	isPromiseHandled,
@@ -118,9 +119,20 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
 		return {
 			'CallExpression Identifier'(node: TSESTree.Identifier) {
+				const importedUserEventLibraryNode =
+					helpers.getTestingLibraryImportNode();
+				const userEventImport = helpers.getUserEventImportIdentifier(
+					importedUserEventLibraryNode
+				);
+				// Check if userEvent is used as an instance, like const user = userEvent.setup()
+				const userEventInstance = getUserEventInstance(
+					context,
+					userEventImport
+				);
 				if (
 					(isFireEventEnabled && helpers.isFireEventMethod(node)) ||
-					(isUserEventEnabled && helpers.isUserEventMethod(node))
+					(isUserEventEnabled &&
+						helpers.isUserEventMethod(node, userEventInstance))
 				) {
 					detectEventMethodWrapper(node);
 

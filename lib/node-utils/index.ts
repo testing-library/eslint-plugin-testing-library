@@ -679,3 +679,37 @@ export function findImportSpecifier(
 		return (property as TSESTree.Property).key as TSESTree.Identifier;
 	}
 }
+
+/**
+ * Finds if the userEvent is used as an instance
+ */
+
+export function getUserEventInstance(
+	context: TSESLint.RuleContext<string, unknown[]>,
+	userEventImport: TSESTree.Identifier | null
+): string | undefined {
+	const { tokensAndComments } = context.getSourceCode();
+	if (!userEventImport) {
+		return undefined;
+	}
+	/**
+	 * Check for the following pattern:
+	 * userEvent.setup(
+	 * For a line like this:
+	 * const user = userEvent.setup();
+	 * function will return 'user'
+	 */
+	for (const [index, token] of tokensAndComments.entries()) {
+		if (
+			token.type === 'Identifier' &&
+			token.value === userEventImport.name &&
+			tokensAndComments[index + 1].value === '.' &&
+			tokensAndComments[index + 2].value === 'setup' &&
+			tokensAndComments[index + 3].value === '(' &&
+			tokensAndComments[index - 1].value === '='
+		) {
+			return tokensAndComments[index - 2].value;
+		}
+	}
+	return undefined;
+}
