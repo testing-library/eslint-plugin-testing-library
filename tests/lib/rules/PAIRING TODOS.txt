@@ -1,5 +1,0 @@
-PAIRING TODOS
-
-- Ask maintainer
-  - Should we fail on the example in the tests of container.innerHTML from a document.create, instead of from render()? (assumption: no, should not fail, as we are only testing the use of testing library)
-  - Should we fail on use of other properties like firstChild, innerText?
