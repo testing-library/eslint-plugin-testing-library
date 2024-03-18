@@ -117,15 +117,6 @@ export default createTestingLibraryRule<Options, MessageIds>({
 			},
 
 			MemberExpression(node) {
-				// showErrorIfChainedContainerMethod(node.callee);
-
-				// console.log({
-				// 	destructuredContainerPropNames,
-				// 	renderWrapperNames,
-				// 	renderResultVarName,
-				// 	containerName
-				// });
-
 				if (
 					node.object.name === containerName &&
 					isDisallowedContainerProperty(node.property.name)
