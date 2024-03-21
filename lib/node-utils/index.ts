@@ -258,6 +258,46 @@ export function isPromiseHandled(nodeIdentifier: TSESTree.Identifier): boolean {
 	return false;
 }
 
+/**
+ * For an expression in a parent expression that evaluates to the expression or another child returns the parent node recursively.
+ */
+function getRootExpression(
+	expression: TSESTree.Expression
+): TSESTree.Expression {
+	const { parent } = expression;
+	if (parent == null) return expression;
+	switch (parent.type) {
+		case AST_NODE_TYPES.ConditionalExpression:
+		case AST_NODE_TYPES.LogicalExpression:
+			return getRootExpression(parent);
+		case AST_NODE_TYPES.SequenceExpression:
+			return parent.expressions[parent.expressions.length - 1] === expression
+				? getRootExpression(parent)
+				: expression;
+		default:
+			return expression;
+	}
+}
+
+/**
+ * Determines whether a given promise expression is considered unhandled.
+ *
+ * It will be considered unhandled if an ancestor voids the expression.
+ */
+export function isPromiseUnhandled(expression: TSESTree.Expression): boolean {
+	const { parent } = getRootExpression(expression);
+	if (parent == null) return false;
+	switch (parent.type) {
+		case AST_NODE_TYPES.ExpressionStatement:
+		case AST_NODE_TYPES.SequenceExpression:
+		case AST_NODE_TYPES.UnaryExpression:
+		case AST_NODE_TYPES.VariableDeclarator:
+			return true;
+		default:
+			return false;
+	}
+}
+
 export function getVariableReferences(
 	context: TSESLint.RuleContext<string, unknown[]>,
 	node: TSESTree.Node

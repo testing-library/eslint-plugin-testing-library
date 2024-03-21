@@ -8,7 +8,7 @@ import {
 	getInnermostReturningFunction,
 	getVariableReferences,
 	isMemberExpression,
-	isPromiseHandled,
+	isPromiseUnhandled,
 } from '../node-utils';
 import { EVENTS_SIMULATORS } from '../utils';
 
@@ -91,7 +91,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 			messageId?: MessageIds;
 			fix?: TSESLint.ReportFixFunction;
 		}): void {
-			if (!isPromiseHandled(node)) {
+			if (isPromiseUnhandled(closestCallExpression)) {
 				context.report({
 					node: closestCallExpression.callee,
 					messageId,
@@ -176,13 +176,17 @@ export default createTestingLibraryRule<Options, MessageIds>({
 							},
 						});
 					} else {
-						for (const reference of references) {
-							if (ASTUtils.isIdentifier(reference.identifier)) {
-								reportUnhandledNode({
-									node: reference.identifier,
-									closestCallExpression,
-								});
-							}
+						const referenceIdentifiers = references
+							.map(({ identifier }) => identifier)
+							.filter(ASTUtils.isIdentifier);
+						if (referenceIdentifiers.every(isPromiseUnhandled)) {
+							referenceIdentifiers.forEach(
+								(id) =>
+									void reportUnhandledNode({
+										node: id,
+										closestCallExpression,
+									})
+							);
 						}
 					}
 				} else if (functionWrappersNames.includes(node.name)) {
