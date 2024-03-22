@@ -255,8 +255,19 @@ function getRootExpression(
 	if (parent == null) return expression;
 	switch (parent.type) {
 		case AST_NODE_TYPES.ConditionalExpression:
-		case AST_NODE_TYPES.LogicalExpression:
 			return getRootExpression(parent);
+		case AST_NODE_TYPES.LogicalExpression:
+			switch (parent.operator) {
+				case '??':
+				case '||':
+					return getRootExpression(parent);
+				case '&&':
+					return parent.right === expression
+						? getRootExpression(parent)
+						: expression;
+				default:
+					return expression;
+			}
 		case AST_NODE_TYPES.SequenceExpression:
 			return parent.expressions[parent.expressions.length - 1] === expression
 				? getRootExpression(parent)
