@@ -222,40 +222,63 @@ export function isPromiseHandled(nodeIdentifier: TSESTree.Identifier): boolean {
 		nodeIdentifier,
 		true
 	);
+	const callRootExpression =
+		closestCallExpressionNode == null
+			? null
+			: getRootExpression(closestCallExpressionNode);
 
-	const suspiciousNodes = [nodeIdentifier, closestCallExpressionNode].filter(
-		Boolean
+	const suspiciousNodes = [nodeIdentifier, callRootExpression].filter(
+		(node): node is NonNullable<typeof node> => node != null
 	);
 
-	for (const node of suspiciousNodes) {
-		if (!node?.parent) {
-			continue;
-		}
-		if (ASTUtils.isAwaitExpression(node.parent)) {
-			return true;
-		}
-
+	return suspiciousNodes.some((node) => {
+		if (!node.parent) return false;
+		if (ASTUtils.isAwaitExpression(node.parent)) return true;
 		if (
 			isArrowFunctionExpression(node.parent) ||
 			isReturnStatement(node.parent)
-		) {
+		)
 			return true;
-		}
+		if (hasClosestExpectResolvesRejects(node.parent)) return true;
+		if (hasChainedThen(node)) return true;
+		if (isPromisesArrayResolved(node)) return true;
+	});
+}
 
-		if (hasClosestExpectResolvesRejects(node.parent)) {
-			return true;
+/**
+ * For an expression in a parent that evaluates to the expression or another child returns the parent node recursively.
+ */
+function getRootExpression(
+	expression: TSESTree.Expression
+): TSESTree.Expression {
+	const { parent } = expression;
+	if (parent == null) return expression;
+	switch (parent.type) {
+		case AST_NODE_TYPES.ConditionalExpression:
+			return getRootExpression(parent);
+		case AST_NODE_TYPES.LogicalExpression: {
+			let rootExpression;
+			switch (parent.operator) {
+				case '??':
+				case '||':
+					rootExpression = getRootExpression(parent);
+					break;
+				case '&&':
+					rootExpression =
+						parent.right === expression
+							? getRootExpression(parent)
+							: expression;
+					break;
+			}
+			return rootExpression ?? expression;
 		}
-
-		if (hasChainedThen(node)) {
-			return true;
-		}
-
-		if (isPromisesArrayResolved(node)) {
-			return true;
-		}
+		case AST_NODE_TYPES.SequenceExpression:
+			return parent.expressions[parent.expressions.length - 1] === expression
+				? getRootExpression(parent)
+				: expression;
+		default:
+			return expression;
 	}
-
-	return false;
 }
 
 export function getVariableReferences(

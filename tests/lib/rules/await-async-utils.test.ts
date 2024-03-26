@@ -439,6 +439,33 @@ ruleTester.run(RULE_NAME, rule, {
 			(asyncUtil) =>
 				({
 					code: `
+        import { ${asyncUtil} } from '${testingFramework}';
+        test('unhandled expression that evaluates to promise is invalid', () => {
+          const aPromise = ${asyncUtil}(() => getByLabelText('username'));
+          doSomethingElse(aPromise);
+          ${asyncUtil}(() => getByLabelText('email'));
+        });
+      `,
+					errors: [
+						{
+							line: 4,
+							column: 28,
+							messageId: 'awaitAsyncUtil',
+							data: { name: asyncUtil },
+						},
+						{
+							line: 6,
+							column: 11,
+							messageId: 'awaitAsyncUtil',
+							data: { name: asyncUtil },
+						},
+					],
+				} as const)
+		),
+		...ASYNC_UTILS.map(
+			(asyncUtil) =>
+				({
+					code: `
         import { ${asyncUtil}, render } from '${testingFramework}';
         
         function waitForSomethingAsync() {
