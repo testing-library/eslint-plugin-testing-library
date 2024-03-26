@@ -256,18 +256,22 @@ function getRootExpression(
 	switch (parent.type) {
 		case AST_NODE_TYPES.ConditionalExpression:
 			return getRootExpression(parent);
-		case AST_NODE_TYPES.LogicalExpression:
+		case AST_NODE_TYPES.LogicalExpression: {
+			let rootExpression;
 			switch (parent.operator) {
 				case '??':
 				case '||':
-					return getRootExpression(parent);
+					rootExpression = getRootExpression(parent);
+					break;
 				case '&&':
-					return parent.right === expression
-						? getRootExpression(parent)
-						: expression;
-				default:
-					return expression;
+					rootExpression =
+						parent.right === expression
+							? getRootExpression(parent)
+							: expression;
+					break;
 			}
+			return rootExpression ?? expression;
+		}
 		case AST_NODE_TYPES.SequenceExpression:
 			return parent.expressions[parent.expressions.length - 1] === expression
 				? getRootExpression(parent)
