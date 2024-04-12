@@ -315,6 +315,19 @@ ruleTester.run(RULE_NAME, rule, {
 				options: [{ eventModule: 'userEvent' }] as const,
 			})),
 			...USER_EVENT_ASYNC_FUNCTIONS.map((eventMethod) => ({
+				code: `
+        import userEvent from '${testingFramework}'
+        test('await expression that evaluates to promise is valid', async () => {
+          await (null, userEvent.${eventMethod}(getByLabelText('username')));
+		  await (condition ? null : userEvent.${eventMethod}(getByLabelText('username')));
+		  await (condition && userEvent.${eventMethod}(getByLabelText('username')));
+		  await (userEvent.${eventMethod}(getByLabelText('username')) || userEvent.${eventMethod}(getByLabelText('username')));
+		  await (userEvent.${eventMethod}(getByLabelText('username')) ?? userEvent.${eventMethod}(getByLabelText('username')));
+        })
+        `,
+				options: [{ eventModule: 'userEvent' }] as const,
+			})),
+			...USER_EVENT_ASYNC_FUNCTIONS.map((eventMethod) => ({
 				settings: {
 					'testing-library/utils-module': 'test-utils',
 				},
@@ -960,6 +973,92 @@ ruleTester.run(RULE_NAME, rule, {
       }
 
       triggerEvent()
+      `,
+					} as const)
+			),
+			...USER_EVENT_ASYNC_FUNCTIONS.map(
+				(eventMethod) =>
+					({
+						code: `
+		import userEvent from '${testingFramework}'
+		test('unhandled expression that evaluates to promise is invalid', () => {
+			condition ? null : (null, true && userEvent.${eventMethod}(getByLabelText('username')));
+		});
+      `,
+						errors: [
+							{
+								line: 4,
+								column: 38,
+								messageId: 'awaitAsyncEvent',
+								data: { name: eventMethod },
+							},
+						],
+						options: [{ eventModule: 'userEvent' }],
+						output: `
+		import userEvent from '${testingFramework}'
+		test('unhandled expression that evaluates to promise is invalid', async () => {
+			condition ? null : (null, true && await userEvent.${eventMethod}(getByLabelText('username')));
+		});
+      `,
+					} as const)
+			),
+			...USER_EVENT_ASYNC_FUNCTIONS.map(
+				(eventMethod) =>
+					({
+						code: `
+		import userEvent from '${testingFramework}'
+		test('handled AND expression with left promise is invalid', async () => {
+			await (userEvent.${eventMethod}(getByLabelText('username')) && userEvent.${eventMethod}(getByLabelText('username')));
+		});
+      `,
+						errors: [
+							{
+								line: 4,
+								column: 11,
+								messageId: 'awaitAsyncEvent',
+								data: { name: eventMethod },
+							},
+						],
+						options: [{ eventModule: 'userEvent' }],
+						output: `
+		import userEvent from '${testingFramework}'
+		test('handled AND expression with left promise is invalid', async () => {
+			await (await userEvent.${eventMethod}(getByLabelText('username')) && userEvent.${eventMethod}(getByLabelText('username')));
+		});
+      `,
+					} as const)
+			),
+			...USER_EVENT_ASYNC_FUNCTIONS.map(
+				(eventMethod) =>
+					({
+						code: `
+		import userEvent from '${testingFramework}'
+		test('voided promise is invalid', async () => {
+			await void userEvent.${eventMethod}(getByLabelText('username'));
+			await (userEvent.${eventMethod}(getByLabelText('username')), null);
+		});
+      `,
+						errors: [
+							{
+								line: 4,
+								column: 15,
+								messageId: 'awaitAsyncEvent',
+								data: { name: eventMethod },
+							},
+							{
+								line: 5,
+								column: 11,
+								messageId: 'awaitAsyncEvent',
+								data: { name: eventMethod },
+							},
+						],
+						options: [{ eventModule: 'userEvent' }],
+						output: `
+		import userEvent from '${testingFramework}'
+		test('voided promise is invalid', async () => {
+			await void await userEvent.${eventMethod}(getByLabelText('username'));
+			await (await userEvent.${eventMethod}(getByLabelText('username')), null);
+		});
       `,
 					} as const)
 			),
