@@ -122,6 +122,10 @@ export default createTestingLibraryRule<Options, MessageIds>({
 					(isFireEventEnabled && helpers.isFireEventMethod(node)) ||
 					(isUserEventEnabled && helpers.isUserEventMethod(node))
 				) {
+					if (node.name === USER_EVENT_SETUP_FUNCTION_NAME) {
+						return;
+					}
+
 					detectEventMethodWrapper(node);
 
 					const closestCallExpression = findClosestCallExpressionNode(
@@ -130,10 +134,6 @@ export default createTestingLibraryRule<Options, MessageIds>({
 					);
 
 					if (!closestCallExpression?.parent) {
-						return;
-					}
-
-					if (node.name === USER_EVENT_SETUP_FUNCTION_NAME) {
 						return;
 					}
 
