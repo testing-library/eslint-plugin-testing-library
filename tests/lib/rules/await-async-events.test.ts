@@ -207,6 +207,16 @@ ruleTester.run(RULE_NAME, rule, {
 			{
 				code: `
 				import userEvent from '${testingFramework}'
+				const customSetup = () => userEvent.setup();
+				test('setup method called and returned as arrow function body is valid', () => {
+					const user = customSetup();
+				})
+				`,
+				options: [{ eventModule: 'userEvent' }] as const,
+			},
+			{
+				code: `
+				import userEvent from '${testingFramework}'
 				function customSetup() {
 					const user = userEvent.setup();
 					return { user };
