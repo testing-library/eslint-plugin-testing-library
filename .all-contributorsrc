@@ -678,6 +678,16 @@
       "contributions": [
         "maintenance"
       ]
+    },
+    {
+      "login": "Chamion",
+      "name": "Jemi Salo",
+      "avatar_url": "https://avatars.githubusercontent.com/u/22522302?v=4",
+      "profile": "https://github.com/Chamion",
+      "contributions": [
+        "code",
+        "test"
+      ]
     }
   ],
   "contributorsPerLine": 7,

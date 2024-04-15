@@ -427,6 +427,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     </tr>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://aryabov.com"><img src="https://avatars.githubusercontent.com/u/10157660?v=4?s=100" width="100px;" alt="Alexey Ryabov"/><br /><sub><b>Alexey Ryabov</b></sub></a><br /><a href="#maintenance-lesha1201" title="Maintenance">🚧</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/Chamion"><img src="https://avatars.githubusercontent.com/u/22522302?v=4?s=100" width="100px;" alt="Jemi Salo"/><br /><sub><b>Jemi Salo</b></sub></a><br /><a href="https://github.com/testing-library/eslint-plugin-testing-library/commits?author=Chamion" title="Code">💻</a> <a href="https://github.com/testing-library/eslint-plugin-testing-library/commits?author=Chamion" title="Tests">⚠️</a></td>
     </tr>
   </tbody>
 </table>
