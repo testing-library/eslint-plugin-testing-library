@@ -22,19 +22,19 @@
 [![PRs Welcome][pr-badge]][pr-url]
 [![All Contributors][all-contributors-badge]](#contributors-)
 
+## Prerequisites
+
+To use this plugin, you must have [Node.js](https://nodejs.org/en/) (`^18.18.0`, `^20.9.0`, or `>=21.1.0`) installed and built with SSL support. (If you are using an official Node.js distribution, SSL is always built in.)
+
 ## Installation
 
-You'll first need to install [ESLint](https://eslint.org):
-
-```shell
-$ npm install --save-dev eslint
-# or
-$ yarn add --dev eslint
-```
+You'll first need to [install ESLint](https://eslint.org/docs/latest/use/getting-started).
 
 Next, install `eslint-plugin-testing-library`:
 
 ```shell
+$ pnpm add --save-dev eslint-plugin-testing-library
+# or
 $ npm install --save-dev eslint-plugin-testing-library
 # or
 $ yarn add --dev eslint-plugin-testing-library
@@ -49,6 +49,7 @@ You can find detailed guides for migrating `eslint-plugin-testing-library` in th
 - [Migration guide for v4](docs/migration-guides/v4.md)
 - [Migration guide for v5](docs/migration-guides/v5.md)
 - [Migration guide for v6](docs/migration-guides/v6.md)
+- [Migration guide for v7](docs/migration-guides/v7.md)
 
 ## Usage
 
