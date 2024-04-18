@@ -3,7 +3,6 @@
 // YOU CAN REGENERATE IT USING npm run generate:configs
 
 export = {
-	plugins: ['testing-library'],
 	rules: {
 		'testing-library/await-async-events': [
 			'error',

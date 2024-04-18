@@ -12,4 +12,13 @@ const plugin = {
 	rules,
 };
 
+// TODO: type this with TSESLint.Linter.RuleEntry when upgraded to ESLint v9
+const pluginConfigs: Record<string, unknown> = {};
+for (const [key, config] of Object.entries(configs)) {
+	pluginConfigs[key] = {
+		...config,
+		plugins: { 'testing-library': plugin },
+	};
+}
+
 export default plugin;
