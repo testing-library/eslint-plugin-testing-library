@@ -43,6 +43,12 @@ it('should have the correct amount of rules', () => {
 	}
 });
 
+it('should refer to the plugin itself on each config', () => {
+	Object.entries(plugin.configs).forEach(([_, config]) => {
+		expect(config.plugins).toEqual({ 'testing-library': plugin });
+	});
+});
+
 it('should export configs that refer to actual rules', () => {
 	const allConfigs = plugin.configs;
 
