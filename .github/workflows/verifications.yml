@@ -33,7 +33,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node: [18.18, 20.9, 21.1]
+        node: [18.18, 20.9, 21.1, 22]
         eslint: [7.5, 7, 8]
     steps:
       - name: Checkout
