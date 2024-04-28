@@ -33,7 +33,8 @@ const getRecommendedRulesForTestingFramework = (
 
 SUPPORTED_TESTING_FRAMEWORKS.forEach((framework) => {
 	const specificFrameworkConfig: LinterConfig = {
-		plugins: ['testing-library'],
+		// "plugins" property must be assigned after defining the plugin variable in the "lib/index.ts"
+		// https://eslint.org/docs/latest/extend/plugin-migration-flat-config#migrating-configs-for-flat-config
 		rules: getRecommendedRulesForTestingFramework(framework),
 	};
 

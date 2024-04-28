@@ -1,5 +1,5 @@
 module.exports = {
-	testMatch: ['**/tests/**/*.test.ts'],
+	roots: ['<rootDir>/tests/'],
 	transform: {
 		'^.+\\.ts$': '@swc/jest',
 	},
