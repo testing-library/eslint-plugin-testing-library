@@ -29,7 +29,7 @@
 		"README.md",
 		"LICENSE"
 	],
-	"main": "./dist/index.js",
+	"main": "./dist/lib/index.js",
 	"scripts": {
 		"prebuild": "del-cli dist",
 		"build": "tsc",

@@ -1,4 +1,7 @@
-import packageMetadata from '../package.json';
+import {
+	name as packageName,
+	version as packageVersion,
+} from '../package.json';
 
 import configs from './configs';
 import rules from './rules';
@@ -7,8 +10,8 @@ import { type SupportedTestingFramework } from './utils';
 // TODO: type properly when upgraded to ESLint v9
 const plugin = {
 	meta: {
-		name: packageMetadata.name,
-		version: packageMetadata.version,
+		name: packageName,
+		version: packageVersion,
 	},
 	configs,
 	rules,
