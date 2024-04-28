@@ -27,4 +27,4 @@ Object.keys(plugin.configs).forEach((configKey) => {
 	};
 });
 
-export default plugin;
+export = plugin;
