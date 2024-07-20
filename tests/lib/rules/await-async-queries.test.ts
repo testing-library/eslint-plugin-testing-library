@@ -361,6 +361,14 @@ ruleTester.run(RULE_NAME, rule, {
       });
       `,
 						errors: [{ messageId: 'awaitAsyncQuery', line: 6, column: 21 }],
+						output: `// async queries without await operator or then method are not valid
+      import { render } from '${testingFramework}'
+
+      test("An example test", async () => {
+        doSomething()
+        const foo = await ${query}('foo')
+      });
+      `,
 					}) as const
 			)
 		),
@@ -382,6 +390,13 @@ ruleTester.run(RULE_NAME, rule, {
 							data: { name: query },
 						},
 					],
+					output: `// async screen queries without await operator or then method are not valid
+      import { render } from '@testing-library/react'
+
+      test("An example test", async () => {
+        await screen.${query}('foo')
+      });
+      `,
 				}) as const
 		),
 		...ALL_ASYNC_COMBINATIONS_TO_TEST.map(
@@ -403,6 +418,14 @@ ruleTester.run(RULE_NAME, rule, {
 							data: { name: query },
 						},
 					],
+					output: `
+      import { render } from '@testing-library/react'
+
+      test("An example test", async () => {
+        doSomething()
+        const foo = await ${query}('foo')
+      });
+      `,
 				}) as const
 		),
 		...ALL_ASYNC_COMBINATIONS_TO_TEST.map(
@@ -440,6 +463,13 @@ ruleTester.run(RULE_NAME, rule, {
         })
       `,
 					errors: [{ messageId: 'awaitAsyncQuery', line: 5, column: 27 }],
+					output: `
+        import { render } from "another-library"
+
+        test('An example test', async () => {
+          const example = await ${query}("my example")
+        })
+      `,
 				}) as const
 		),
 
@@ -517,6 +547,11 @@ ruleTester.run(RULE_NAME, rule, {
       })
       `,
 			errors: [{ messageId: 'awaitAsyncQuery', line: 3, column: 25 }],
+			output: `
+      test('An invalid example test', () => {
+        const element = await findByIcon('search')
+      })
+      `,
 		},
 
 		{

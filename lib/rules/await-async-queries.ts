@@ -7,6 +7,7 @@ import {
 	getFunctionName,
 	getInnermostReturningFunction,
 	getVariableReferences,
+	isMemberExpression,
 	isPromiseHandled,
 } from '../node-utils';
 
@@ -34,6 +35,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 			asyncQueryWrapper:
 				'promise returned from `{{ name }}` wrapper over async query must be handled',
 		},
+		fixable: 'code',
 		schema: [],
 	},
 	defaultOptions: [],
@@ -82,6 +84,19 @@ export default createTestingLibraryRule<Options, MessageIds>({
 								node: identifierNode,
 								messageId: 'awaitAsyncQuery',
 								data: { name: identifierNode.name },
+								fix: (fixer) => {
+									if (
+										isMemberExpression(identifierNode.parent) &&
+										ASTUtils.isIdentifier(identifierNode.parent.object) &&
+										identifierNode.parent.object.name === 'screen'
+									) {
+										return fixer.insertTextBefore(
+											identifierNode.parent,
+											'await '
+										);
+									}
+									return fixer.insertTextBefore(identifierNode, 'await ');
+								},
 							});
 							return;
 						}
