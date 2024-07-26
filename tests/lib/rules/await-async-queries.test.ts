@@ -448,6 +448,15 @@ ruleTester.run(RULE_NAME, rule, {
 							data: { name: query },
 						},
 					],
+					output: `
+      import { render } from '@testing-library/react'
+
+      test("An example test", async () => {
+        const foo = ${query}('foo')
+        expect(await foo).toBeInTheDocument()
+        expect(await foo).toHaveAttribute('src', 'bar');
+      });
+      `,
 				}) as const
 		),
 
