@@ -3,6 +3,7 @@ import { ASTUtils, TSESTree } from '@typescript-eslint/utils';
 import { createTestingLibraryRule } from '../create-testing-library-rule';
 import {
 	findClosestCallExpressionNode,
+	findClosestFunctionExpressionNode,
 	getDeepestIdentifierNode,
 	getFunctionName,
 	getInnermostReturningFunction,
@@ -136,6 +137,45 @@ export default createTestingLibraryRule<Options, MessageIds>({
 						node: identifierNode,
 						messageId: 'asyncQueryWrapper',
 						data: { name: identifierNode.name },
+						fix: (fixer) => {
+							const functionExpression =
+								findClosestFunctionExpressionNode(node);
+
+							if (!functionExpression) return null;
+
+							let IdentifierNodeFixer;
+							// If the wrapper is a property of an object,
+							// add 'await' before the object, e.g.:
+							//   const obj = { wrapper: () => screen.findByText(/foo/i) };
+							//   await obj.wrapper();
+							if (isMemberExpression(identifierNode.parent)) {
+								IdentifierNodeFixer = fixer.insertTextBefore(
+									identifierNode.parent,
+									'await '
+								);
+								// Otherwise, add 'await' before the wrapper function, e.g.:
+								//   const wrapper = () => screen.findByText(/foo/i);
+								//   await wrapper();
+							} else {
+								IdentifierNodeFixer = fixer.insertTextBefore(
+									identifierNode,
+									'await '
+								);
+							}
+
+							if (functionExpression.async) {
+								return IdentifierNodeFixer;
+							} else {
+								// Mutate the actual node so if other nodes exist in this
+								// function expression body they don't also try to fix it.
+								functionExpression.async = true;
+
+								return [
+									IdentifierNodeFixer,
+									fixer.insertTextBefore(functionExpression, 'async '),
+								];
+							}
+						},
 					});
 				}
 			},
