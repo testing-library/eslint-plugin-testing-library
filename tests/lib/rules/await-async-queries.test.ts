@@ -497,11 +497,26 @@ ruleTester.run(RULE_NAME, rule, {
           const element = queryWrapper()
         })
 
-        test("An invalid example test", async () => {
+        test("A valid example test", async () => {
           const element = await queryWrapper()
         })
       `,
 					errors: [{ messageId: 'asyncQueryWrapper', line: 9, column: 27 }],
+					output: `
+        function queryWrapper() {
+          doSomethingElse();
+
+          return screen.${query}('foo')
+        }
+
+        test("An invalid example test", async () => {
+          const element = await queryWrapper()
+        })
+
+        test("A valid example test", async () => {
+          const element = await queryWrapper()
+        })
+      `,
 				}) as const
 		),
 		// unhandled promise from async query arrow function wrapper is invalid
@@ -519,11 +534,26 @@ ruleTester.run(RULE_NAME, rule, {
           const element = queryWrapper()
         })
 
-        test("An invalid example test", async () => {
+        test("A valid example test", async () => {
           const element = await queryWrapper()
         })
       `,
 					errors: [{ messageId: 'asyncQueryWrapper', line: 9, column: 27 }],
+					output: `
+        const queryWrapper = () => {
+          doSomethingElse();
+
+          return ${query}('foo')
+        }
+
+        test("An invalid example test", async () => {
+          const element = await queryWrapper()
+        })
+
+        test("A valid example test", async () => {
+          const element = await queryWrapper()
+        })
+      `,
 				}) as const
 		),
 		// unhandled promise implicitly returned from async query arrow function wrapper is invalid
@@ -537,11 +567,22 @@ ruleTester.run(RULE_NAME, rule, {
           const element = queryWrapper()
         })
 
-        test("An invalid example test", async () => {
+        test("A valid example test", async () => {
           const element = await queryWrapper()
         })
       `,
 					errors: [{ messageId: 'asyncQueryWrapper', line: 5, column: 27 }],
+					output: `
+        const queryWrapper = () => screen.${query}('foo')
+
+        test("An invalid example test", async () => {
+          const element = await queryWrapper()
+        })
+
+        test("A valid example test", async () => {
+          const element = await queryWrapper()
+        })
+      `,
 				}) as const
 		),
 
@@ -589,6 +630,30 @@ ruleTester.run(RULE_NAME, rule, {
       })
     `,
 			errors: [{ messageId: 'asyncQueryWrapper', line: 19, column: 34 }],
+			output: `// similar to issue #359 but forcing an error in no-awaited wrapper
+      import { render, screen } from 'mocks/test-utils'
+      import userEvent from '@testing-library/user-event'
+
+      const testData = {
+        name: 'John Doe',
+        email: 'john@doe.com',
+        password: 'extremeSecret',
+      }
+
+      const selectors = {
+        username: () => screen.findByRole('textbox', { name: /username/i }),
+        email: () => screen.findByRole('textbox', { name: /e-mail/i }),
+        password: () => screen.findByLabelText(/password/i),
+      }
+
+      test('this is a valid case', async () => {
+        render(<SomeComponent />)
+        userEvent.type(await selectors.username(), testData.name) // <-- unhandled here
+        userEvent.type(await selectors.email(), testData.email)
+        userEvent.type(await selectors.password(), testData.password)
+        // ...
+      })
+    `,
 		},
 	],
 });
