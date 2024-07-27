@@ -77,8 +77,10 @@ export default createTestingLibraryRule<Options, MessageIds>({
 						closestCallExpressionNode.parent
 					);
 
-					// check direct usage of async query:
-					// const element = await findByRole('button')
+					/**
+					 * Check direct usage of async query:
+					 * const element = await findByRole('button');
+					 */
 					if (references.length === 0) {
 						if (!isPromiseHandled(identifierNode)) {
 							context.report({
@@ -103,9 +105,11 @@ export default createTestingLibraryRule<Options, MessageIds>({
 						}
 					}
 
-					// check references usages of async query:
-					//  const promise = findByRole('button')
-					//  const element = await promise
+					/**
+					 * Check references usages of async query:
+					 * const promise = findByRole('button');
+					 * const element = await promise;
+					 */
 					for (const reference of references) {
 						if (
 							ASTUtils.isIdentifier(reference.identifier) &&
@@ -129,7 +133,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 					functionWrappersNames.includes(identifierNode.name) &&
 					!isPromiseHandled(identifierNode)
 				) {
-					// check async queries used within a wrapper previously detected
+					// Check async queries used within a wrapper previously detected
 					context.report({
 						node: identifierNode,
 						messageId: 'asyncQueryWrapper',
@@ -141,19 +145,23 @@ export default createTestingLibraryRule<Options, MessageIds>({
 							if (!functionExpression) return null;
 
 							let IdentifierNodeFixer;
-							// If the wrapper is a property of an object,
-							// add 'await' before the object, e.g.:
-							//   const obj = { wrapper: () => screen.findByText(/foo/i) };
-							//   await obj.wrapper();
 							if (isMemberExpression(identifierNode.parent)) {
+								/**
+								 * If the wrapper is a property of an object,
+								 * add 'await' before the object, e.g.:
+								 * const obj = { wrapper: () => screen.findByText(/foo/i) };
+								 * await obj.wrapper();
+								 */
 								IdentifierNodeFixer = fixer.insertTextBefore(
 									identifierNode.parent,
 									'await '
 								);
-								// Otherwise, add 'await' before the wrapper function, e.g.:
-								//   const wrapper = () => screen.findByText(/foo/i);
-								//   await wrapper();
 							} else {
+								/**
+								 * Add 'await' before the wrapper function, e.g.:
+								 * const wrapper = () => screen.findByText(/foo/i);
+								 * await wrapper();
+								 */
 								IdentifierNodeFixer = fixer.insertTextBefore(
 									identifierNode,
 									'await '
@@ -163,8 +171,10 @@ export default createTestingLibraryRule<Options, MessageIds>({
 							if (functionExpression.async) {
 								return IdentifierNodeFixer;
 							} else {
-								// Mutate the actual node so if other nodes exist in this
-								// function expression body they don't also try to fix it.
+								/**
+								 * Mutate the actual node so if other nodes exist in this
+								 * function expression body they don't also try to fix it.
+								 */
 								functionExpression.async = true;
 
 								return [
