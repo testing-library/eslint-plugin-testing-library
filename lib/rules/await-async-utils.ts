@@ -7,6 +7,7 @@ import {
 	getFunctionName,
 	getInnermostReturningFunction,
 	getVariableReferences,
+	isMemberExpression,
 	isObjectPattern,
 	isPromiseHandled,
 	isProperty,
@@ -36,6 +37,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				'Promise returned from {{ name }} wrapper over async util must be handled',
 		},
 		schema: [],
+		fixable: 'code',
 	},
 	defaultOptions: [],
 
@@ -148,6 +150,12 @@ export default createTestingLibraryRule<Options, MessageIds>({
 							messageId: getMessageId(node),
 							data: {
 								name: node.name,
+							},
+							fix: (fixer) => {
+								if (isMemberExpression(node.parent)) {
+									return fixer.insertTextBefore(node.parent, 'await ');
+								}
+								return fixer.insertTextBefore(node, 'await ');
 							},
 						});
 					}
