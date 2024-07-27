@@ -169,6 +169,9 @@ export default createTestingLibraryRule<Options, MessageIds>({
 								data: {
 									name: node.name,
 								},
+								fix: (fixer) => {
+									return fixer.insertTextBefore(referenceNode, 'await ');
+								},
 							});
 							return;
 						}
