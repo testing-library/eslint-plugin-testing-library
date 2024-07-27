@@ -347,6 +347,13 @@ ruleTester.run(RULE_NAME, rule, {
 							data: { name: asyncUtil },
 						},
 					],
+					output: `
+        import { ${asyncUtil} } from '${testingFramework}';
+        test('${asyncUtil} util not waited is invalid', () => {
+          doSomethingElse();
+          await ${asyncUtil}(() => getByLabelText('email'));
+        });
+      `,
 				}) as const
 		),
 		...ASYNC_UTILS.map(
@@ -367,6 +374,13 @@ ruleTester.run(RULE_NAME, rule, {
 							data: { name: asyncUtil },
 						},
 					],
+					output: `
+        import { ${asyncUtil} } from '${testingFramework}';
+        test('${asyncUtil} util not waited is invalid', () => {
+          doSomethingElse();
+          const el = await ${asyncUtil}(() => getByLabelText('email'));
+        });
+      `,
 				}) as const
 		),
 		...ASYNC_UTILS.map(
@@ -387,6 +401,13 @@ ruleTester.run(RULE_NAME, rule, {
 							data: { name: asyncUtil },
 						},
 					],
+					output: `
+        import * as asyncUtil from '${testingFramework}';
+        test('asyncUtil.${asyncUtil} util not handled is invalid', () => {
+          doSomethingElse();
+          await asyncUtil.${asyncUtil}(() => getByLabelText('email'));
+        });
+      `,
 				}) as const
 		),
 		...ASYNC_UTILS.map(
@@ -407,6 +428,13 @@ ruleTester.run(RULE_NAME, rule, {
 							data: { name: asyncUtil },
 						},
 					],
+					output: `
+        import { ${asyncUtil} } from '${testingFramework}';
+        test('${asyncUtil} util promise saved not handled is invalid', () => {
+          doSomethingElse();
+          const aPromise = await ${asyncUtil}(() => getByLabelText('email'));
+        });
+      `,
 				}) as const
 		),
 		...ASYNC_UTILS.map(
@@ -434,6 +462,14 @@ ruleTester.run(RULE_NAME, rule, {
 							data: { name: asyncUtil },
 						},
 					],
+					output: `
+        import { ${asyncUtil} } from '${testingFramework}';
+        test('several ${asyncUtil} utils not handled are invalid', () => {
+          const aPromise = ${asyncUtil}(() => getByLabelText('username'));
+          doSomethingElse(aPromise);
+          await ${asyncUtil}(() => getByLabelText('email'));
+        });
+      `,
 				}) as const
 		),
 		...ASYNC_UTILS.map(
@@ -461,6 +497,14 @@ ruleTester.run(RULE_NAME, rule, {
 							data: { name: asyncUtil },
 						},
 					],
+					output: `
+        import { ${asyncUtil} } from '${testingFramework}';
+        test('unhandled expression that evaluates to promise is invalid', () => {
+          const aPromise = ${asyncUtil}(() => getByLabelText('username'));
+          doSomethingElse(aPromise);
+          await ${asyncUtil}(() => getByLabelText('email'));
+        });
+      `,
 				}) as const
 		),
 		...ASYNC_UTILS.map(
@@ -486,6 +530,18 @@ ruleTester.run(RULE_NAME, rule, {
 							data: { name: 'waitForSomethingAsync' },
 						},
 					],
+					output: `
+        import { ${asyncUtil}, render } from '${testingFramework}';
+
+        function waitForSomethingAsync() {
+          return ${asyncUtil}(() => somethingAsync())
+        }
+
+        test('unhandled promise from function wrapping ${asyncUtil} util is invalid', async () => {
+          render()
+          await waitForSomethingAsync()
+        });
+      `,
 				}) as const
 		),
 		...ASYNC_UTILS.map(
@@ -508,6 +564,15 @@ ruleTester.run(RULE_NAME, rule, {
 							data: { name: asyncUtil },
 						},
 					],
+					output: `
+        import { ${asyncUtil} } from 'some-other-library';
+        test(
+        'aggressive reporting - util "${asyncUtil}" which is not related to testing library is invalid',
+        async () => {
+          doSomethingElse();
+          await ${asyncUtil}();
+        });
+      `,
 				}) as const
 		),
 		...ASYNC_UTILS.map(
@@ -533,6 +598,18 @@ ruleTester.run(RULE_NAME, rule, {
 							data: { name: 'waitForSomethingAsync' },
 						},
 					],
+					output: `
+        import { ${asyncUtil}, render } from '${testingFramework}';
+
+        function waitForSomethingAsync() {
+          return ${asyncUtil}(() => somethingAsync())
+        }
+
+        test('unhandled promise from function wrapping ${asyncUtil} util is invalid', async () => {
+          render()
+          const el = await waitForSomethingAsync()
+        });
+      `,
 				}) as const
 		),
 
@@ -556,6 +633,15 @@ ruleTester.run(RULE_NAME, rule, {
 							data: { name: asyncUtil },
 						},
 					],
+					output: `
+        import * as asyncUtils from 'some-other-library';
+        test(
+        'aggressive reporting - util "asyncUtils.${asyncUtil}" which is not related to testing library is invalid',
+        async () => {
+          doSomethingElse();
+          await asyncUtils.${asyncUtil}();
+        });
+      `,
 				}) as const
 		),
 		...ASYNC_UTILS.map(
@@ -586,6 +672,22 @@ ruleTester.run(RULE_NAME, rule, {
 							data: { name: 'waitForAsyncUtil' },
 						},
 					],
+					output: `
+        function setup() {
+          const utils = render(<MyComponent />);
+
+          const waitForAsyncUtil = () => {
+            return ${asyncUtil}(screen.queryByTestId('my-test-id'));
+          };
+
+          return { waitForAsyncUtil, ...utils };
+        }
+
+        test('unhandled promise from destructed property of async function wrapper is invalid', () => {
+          const { user, waitForAsyncUtil } = setup();
+          await waitForAsyncUtil();
+        });
+      `,
 				}) as const
 		),
 		...ASYNC_UTILS.map(
@@ -617,6 +719,23 @@ ruleTester.run(RULE_NAME, rule, {
 							data: { name: 'myAlias' },
 						},
 					],
+					output: `
+        function setup() {
+          const utils = render(<MyComponent />);
+
+          const waitForAsyncUtil = () => {
+            return ${asyncUtil}(screen.queryByTestId('my-test-id'));
+          };
+
+          return { waitForAsyncUtil, ...utils };
+        }
+
+        test('unhandled promise from destructed property of async function wrapper is invalid', () => {
+          const { user, waitForAsyncUtil } = setup();
+          const myAlias = waitForAsyncUtil;
+          await myAlias();
+        });
+      `,
 				}) as const
 		),
 		...ASYNC_UTILS.map(
@@ -647,6 +766,22 @@ ruleTester.run(RULE_NAME, rule, {
 							data: { name: 'waitForAsyncUtil' },
 						},
 					],
+					output: `
+        function setup() {
+          const utils = render(<MyComponent />);
+
+          const waitForAsyncUtil = () => {
+            return ${asyncUtil}(screen.queryByTestId('my-test-id'));
+          };
+
+          return { waitForAsyncUtil, ...utils };
+        }
+
+        test('unhandled promise from destructed property of async function wrapper is invalid', () => {
+          const { ...clone } = setup();
+          await clone.waitForAsyncUtil();
+        });
+      `,
 				}) as const
 		),
 		...ASYNC_UTILS.map(
@@ -677,6 +812,22 @@ ruleTester.run(RULE_NAME, rule, {
 							data: { name: 'myAlias' },
 						},
 					],
+					output: `
+        function setup() {
+          const utils = render(<MyComponent />);
+
+          const waitForAsyncUtil = () => {
+            return ${asyncUtil}(screen.queryByTestId('my-test-id'));
+          };
+
+          return { waitForAsyncUtil, ...utils };
+        }
+
+        test('unhandled promise from destructed property of async function wrapper is invalid', () => {
+          const { waitForAsyncUtil: myAlias } = setup();
+          await myAlias();
+        });
+      `,
 				}) as const
 		),
 		...ASYNC_UTILS.map(
@@ -706,6 +857,21 @@ ruleTester.run(RULE_NAME, rule, {
 							data: { name: 'waitForAsyncUtil' },
 						},
 					],
+					output: `
+        function setup() {
+          const utils = render(<MyComponent />);
+
+          const waitForAsyncUtil = () => {
+            return ${asyncUtil}(screen.queryByTestId('my-test-id'));
+          };
+
+          return { waitForAsyncUtil, ...utils };
+        }
+
+        test('unhandled promise from destructed property of async function wrapper is invalid', () => {
+          await setup().waitForAsyncUtil();
+        });
+      `,
 				}) as const
 		),
 		...ASYNC_UTILS.map(
@@ -736,6 +902,22 @@ ruleTester.run(RULE_NAME, rule, {
 							data: { name: 'myAlias' },
 						},
 					],
+					output: `
+        function setup() {
+          const utils = render(<MyComponent />);
+
+          const waitForAsyncUtil = () => {
+            return ${asyncUtil}(screen.queryByTestId('my-test-id'));
+          };
+
+          return { waitForAsyncUtil, ...utils };
+        }
+
+        test('unhandled promise from destructed property of async function wrapper is invalid', () => {
+          const myAlias = setup().waitForAsyncUtil;
+          await myAlias();
+        });
+      `,
 				}) as const
 		),
 	]),
