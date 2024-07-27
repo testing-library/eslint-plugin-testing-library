@@ -1,4 +1,4 @@
-import { TSESTree } from '@typescript-eslint/utils';
+import { ASTUtils, TSESTree } from '@typescript-eslint/utils';
 
 import { createTestingLibraryRule } from '../create-testing-library-rule';
 import { getDeepestIdentifierNode } from '../node-utils';
@@ -26,15 +26,20 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				'`{{ name }}` query is sync so it does not need to be awaited',
 		},
 		schema: [],
+		fixable: 'code',
 	},
 	defaultOptions: [],
 
 	create(context, _, helpers) {
 		return {
 			'AwaitExpression > CallExpression'(node: TSESTree.CallExpression) {
+				const awaitExpression = node.parent;
 				const deepestIdentifierNode = getDeepestIdentifierNode(node);
 
-				if (!deepestIdentifierNode) {
+				if (
+					!ASTUtils.isAwaitExpression(awaitExpression) ||
+					!deepestIdentifierNode
+				) {
 					return;
 				}
 
@@ -44,6 +49,15 @@ export default createTestingLibraryRule<Options, MessageIds>({
 						messageId: 'noAwaitSyncQuery',
 						data: {
 							name: deepestIdentifierNode.name,
+						},
+						fix: (fixer) => {
+							const awaitRangeStart = awaitExpression.range[0];
+							const awaitRangeEnd = awaitExpression.range[0] + 'await '.length;
+
+							return fixer.replaceTextRange(
+								[awaitRangeStart, awaitRangeEnd],
+								''
+							);
 						},
 					});
 				}
