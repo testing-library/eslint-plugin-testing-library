@@ -465,7 +465,7 @@ ruleTester.run(RULE_NAME, rule, {
         import { ${asyncUtil} } from '${testingFramework}';
         test('several ${asyncUtil} utils not handled are invalid', () => {
           const aPromise = ${asyncUtil}(() => getByLabelText('username'));
-          doSomethingElse(aPromise);
+          doSomethingElse(await aPromise);
           await ${asyncUtil}(() => getByLabelText('email'));
         });
       `,
@@ -500,7 +500,7 @@ ruleTester.run(RULE_NAME, rule, {
         import { ${asyncUtil} } from '${testingFramework}';
         test('unhandled expression that evaluates to promise is invalid', () => {
           const aPromise = ${asyncUtil}(() => getByLabelText('username'));
-          doSomethingElse(aPromise);
+          doSomethingElse(await aPromise);
           await ${asyncUtil}(() => getByLabelText('email'));
         });
       `,
