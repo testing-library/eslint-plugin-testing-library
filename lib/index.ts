@@ -1,5 +1,8 @@
+import type { TSESLint } from '@typescript-eslint/utils';
+
 import configs from './configs';
 import rules from './rules';
+import { SupportedTestingFramework } from './utils';
 
 // we can't natively import package.json as tsc will copy it into dist/
 const {
@@ -8,11 +11,34 @@ const {
 	// eslint-disable-next-line @typescript-eslint/no-var-requires
 } = require('../package.json') as { name: string; version: string };
 
-export = {
+const plugin = {
 	meta: {
 		name: packageName,
 		version: packageVersion,
 	},
-	configs,
+	// ugly cast for now to keep TypeScript happy since
+	// we don't have types for flat config yet
+	configs: {} as Record<
+		SupportedTestingFramework | `flat/${SupportedTestingFramework}`,
+		Pick<Required<TSESLint.Linter.Config>, 'rules'>
+	>,
 	rules,
 };
+
+plugin.configs = {
+	...configs,
+	...(Object.fromEntries(
+		Object.entries(configs).map(([framework, config]) => [
+			`flat/${framework}`,
+			{
+				plugins: { 'testing-library': plugin },
+				rules: config.rules,
+			},
+		])
+	) as Record<
+		`flat/${SupportedTestingFramework}`,
+		Pick<Required<TSESLint.Linter.Config>, 'rules'> & { plugins: unknown }
+	>),
+};
+
+export = plugin;
