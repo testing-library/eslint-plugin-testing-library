@@ -9,7 +9,7 @@ module.exports = {
 		'plugin:import/recommended',
 		'plugin:jest/recommended',
 		'plugin:jest-formatting/recommended',
-		'prettier',
+		'plugin:prettier/recommended',
 	],
 	rules: {
 		// Base
