@@ -52,6 +52,11 @@ it('should export configs that refer to actual rules', () => {
 		'react',
 		'vue',
 		'marko',
+		'flat/dom',
+		'flat/angular',
+		'flat/react',
+		'flat/vue',
+		'flat/marko',
 	]);
 	const allConfigRules = Object.values(allConfigs)
 		.map((config) => Object.keys(config.rules))
