@@ -108,6 +108,16 @@ Another approach for customizing ESLint config by paths is through [ESLint Casca
 
 ## Shareable configurations
 
+> [!NOTE]
+>
+> `eslint.config.js` compatible versions of configs are available prefixed with
+> `flat/`, though most of the plugin documentation still currently uses
+> `.eslintrc` syntax.
+>
+> Refer to the
+> [ESLint documentation on the new configuration file format](https://eslint.org/docs/latest/use/configure/configuration-files-new)
+> for more.
+
 This plugin exports several recommended configurations that enforce good practices for specific Testing Library packages.
 You can find more info about enabled rules in the [Supported Rules section](#supported-rules), under the `Configurations` column.
 
@@ -140,6 +150,22 @@ module.exports = {
 };
 ```
 
+To enable this configuration with `eslint.config.js`, use
+`testingLibrary.configs['flat/dom']`:
+
+```js
+const testingLibrary = require('eslint-plugin-testing-library');
+
+module.exports = [
+	{
+		files: [
+			/* glob matching your test files */
+		],
+		...testingLibrary.configs['flat/dom'],
+	},
+];
+```
+
 ### Angular
 
 Enforces recommended rules for Angular Testing Library.
@@ -151,6 +177,22 @@ To enable this configuration use the `extends` property in your
 module.exports = {
 	extends: ['plugin:testing-library/angular'],
 };
+```
+
+To enable this configuration with `eslint.config.js`, use
+`testingLibrary.configs['flat/angular']`:
+
+```js
+const testingLibrary = require('eslint-plugin-testing-library');
+
+module.exports = [
+	{
+		files: [
+			/* glob matching your test files */
+		],
+		...testingLibrary.configs['flat/angular'],
+	},
+];
 ```
 
 ### React
@@ -166,6 +208,22 @@ module.exports = {
 };
 ```
 
+To enable this configuration with `eslint.config.js`, use
+`testingLibrary.configs['flat/react']`:
+
+```js
+const testingLibrary = require('eslint-plugin-testing-library');
+
+module.exports = [
+	{
+		files: [
+			/* glob matching your test files */
+		],
+		...testingLibrary.configs['flat/react'],
+	},
+];
+```
+
 ### Vue
 
 Enforces recommended rules for Vue Testing Library.
@@ -179,6 +237,22 @@ module.exports = {
 };
 ```
 
+To enable this configuration with `eslint.config.js`, use
+`testingLibrary.configs['flat/vue']`:
+
+```js
+const testingLibrary = require('eslint-plugin-testing-library');
+
+module.exports = [
+	{
+		files: [
+			/* glob matching your test files */
+		],
+		...testingLibrary.configs['flat/vue'],
+	},
+];
+```
+
 ### Marko
 
 Enforces recommended rules for Marko Testing Library.
@@ -190,6 +264,22 @@ To enable this configuration use the `extends` property in your
 module.exports = {
 	extends: ['plugin:testing-library/marko'],
 };
+```
+
+To enable this configuration with `eslint.config.js`, use
+`testingLibrary.configs['flat/marko']`:
+
+```js
+const testingLibrary = require('eslint-plugin-testing-library');
+
+module.exports = [
+	{
+		files: [
+			/* glob matching your test files */
+		],
+		...testingLibrary.configs['flat/marko'],
+	},
+];
 ```
 
 ## Supported Rules

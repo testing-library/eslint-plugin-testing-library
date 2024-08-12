@@ -1,4 +1,5 @@
-import { type LinterConfigRules } from '../../lib/configs';
+import { type TSESLint } from '@typescript-eslint/utils';
+
 import rules from '../../lib/rules';
 import {
 	SUPPORTED_TESTING_FRAMEWORKS,
@@ -11,7 +12,7 @@ const RULE_NAME_PREFIX = 'testing-library/';
 
 const getRecommendedRulesForTestingFramework = (
 	framework: SupportedTestingFramework
-): LinterConfigRules =>
+): Record<string, TSESLint.Linter.RuleEntry> =>
 	Object.entries(rules)
 		.filter(
 			([
