@@ -196,7 +196,6 @@ ruleTester.run(RULE_NAME, rule, {
 
 		// cases: weird scenarios to check guard against parent nodes
 		'expect(element).not()',
-		'expect(element).not()',
 
 		// Test Cases for Queries and Aggressive Queries Reporting
 		{
