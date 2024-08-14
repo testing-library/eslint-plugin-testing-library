@@ -31,22 +31,38 @@ ruleTester.run(RULE_NAME, rule, {
 		'import { foo } from "foo"',
 		'import "foo"',
 		...SUPPORTED_TESTING_FRAMEWORKS.flatMap(({ oldName, newName }) =>
-			[oldName, newName].flatMap((testingFramework) => [
-				`import { fireEvent } from "${testingFramework}"`,
-				`import * as testing from "${testingFramework}"`,
-				`import "${testingFramework}"`,
-			])
+			[oldName, newName !== oldName ? newName : null].flatMap(
+				(testingFramework) => {
+					if (!testingFramework) {
+						return [];
+					}
+
+					return [
+						`import { fireEvent } from "${testingFramework}"`,
+						`import * as testing from "${testingFramework}"`,
+						`import "${testingFramework}"`,
+					];
+				}
+			)
 		),
 		'const { foo } = require("foo")',
 		'require("foo")',
 		'require("")',
 		'require()',
 		...SUPPORTED_TESTING_FRAMEWORKS.flatMap(({ oldName, newName }) =>
-			[oldName, newName].flatMap((testingFramework) => [
-				`const { fireEvent } = require("${testingFramework}")`,
-				`const { fireEvent: testing } = require("${testingFramework}")`,
-				`require("${testingFramework}")`,
-			])
+			[oldName, newName !== oldName ? newName : null].flatMap(
+				(testingFramework) => {
+					if (!testingFramework) {
+						return [];
+					}
+
+					return [
+						`const { fireEvent } = require("${testingFramework}")`,
+						`const { fireEvent: testing } = require("${testingFramework}")`,
+						`require("${testingFramework}")`,
+					];
+				}
+			)
 		),
 		{
 			code: 'import { fireEvent } from "test-utils"',
