@@ -40,7 +40,7 @@ ruleTester.run(RULE_NAME, rule, {
 		...ASYNC_QUERIES_COMBINATIONS.map((queryMethod) => ({
 			code: `
         it('tests', async () => {
-          const { ${queryMethod} } = setup()
+          const { ${queryMethod} } = setup() // implicitly using ${testingFramework}
           const submitButton = await ${queryMethod}('foo')
         })
       `,
@@ -251,7 +251,7 @@ ruleTester.run(RULE_NAME, rule, {
 		},
 		// invalid code, as we need findBy* to be defined somewhere, but required for getting 100% coverage
 		{
-			code: `const submitButton = await waitFor(() => getByText('baz', { name: 'button' }))`,
+			code: `const submitButton = await waitFor(() => getByText('baz', { name: 'button' })) // implicitly using ${testingFramework}`,
 			errors: [
 				{
 					messageId: 'preferFindBy',
@@ -263,12 +263,12 @@ ruleTester.run(RULE_NAME, rule, {
 					},
 				},
 			],
-			output: `const submitButton = await findByText('baz', { name: 'button' })`,
+			output: `const submitButton = await findByText('baz', { name: 'button' }) // implicitly using ${testingFramework}`,
 		},
 		// this code would be invalid too, as findByRole is not defined anywhere.
 		{
 			code: `
-          const getByRole = render().getByRole
+          const getByRole = render().getByRole // implicitly using ${testingFramework}
           const submitButton = await waitFor(() => getByRole('baz', { name: 'button' }))
         `,
 			errors: [
@@ -283,7 +283,7 @@ ruleTester.run(RULE_NAME, rule, {
 				},
 			],
 			output: `
-          const getByRole = render().getByRole
+          const getByRole = render().getByRole // implicitly using ${testingFramework}
           const submitButton = await findByRole('baz', { name: 'button' })
         `,
 		},

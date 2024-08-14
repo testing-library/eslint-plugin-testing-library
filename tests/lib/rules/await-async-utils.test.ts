@@ -126,7 +126,7 @@ ruleTester.run(RULE_NAME, rule, {
 				'testing-library/utils-module': 'test-utils',
 			},
 			code: `
-        import { ${asyncUtil} } from 'some-other-library';
+        import { ${asyncUtil} } from 'some-other-library'; // rather than ${testingFramework}
         test(
         'aggressive reporting disabled - util "${asyncUtil}" which is not related to testing library is valid',
         async () => {
@@ -140,7 +140,7 @@ ruleTester.run(RULE_NAME, rule, {
 				'testing-library/utils-module': 'test-utils',
 			},
 			code: `
-        import * as asyncUtils from 'some-other-library';
+        import * as asyncUtils from 'some-other-library'; // rather than ${testingFramework}
         test(
         'aggressive reporting disabled - util "asyncUtils.${asyncUtil}" which is not related to testing library is valid',
         async () => {
@@ -242,7 +242,7 @@ ruleTester.run(RULE_NAME, rule, {
 			code: `
       test('using unrelated promises with Promise.all is valid', async () => {
         Promise.all([
-          waitForNotRelatedToTestingLibrary(),
+          waitForNotRelatedToTestingLibrary(), // completely unrelated to ${testingFramework}
           promise1,
           await foo().then(() => baz())
         ])
@@ -262,6 +262,7 @@ ruleTester.run(RULE_NAME, rule, {
 		},
 		...ASYNC_UTILS.map((asyncUtil) => ({
 			code: `
+				// using ${testingFramework} implicitly
         function setup() {
           const utils = render(<MyComponent />);
         
@@ -297,7 +298,7 @@ ruleTester.run(RULE_NAME, rule, {
 		...ASYNC_UTILS.map((asyncUtil) => ({
 			code: `
           import React from 'react';
-          import { render, act } from '@testing-library/react';
+          import { render, act } from '${testingFramework}';
           
           const doWithAct = async (timeout) => {
             await act(async () => await ${asyncUtil}(screen.getByTestId('my-test')));
@@ -491,7 +492,7 @@ ruleTester.run(RULE_NAME, rule, {
 			(asyncUtil) =>
 				({
 					code: `
-        import { ${asyncUtil} } from 'some-other-library';
+        import { ${asyncUtil} } from 'some-other-library'; // rather than ${testingFramework}
         test(
         'aggressive reporting - util "${asyncUtil}" which is not related to testing library is invalid',
         async () => {
@@ -539,7 +540,7 @@ ruleTester.run(RULE_NAME, rule, {
 			(asyncUtil) =>
 				({
 					code: `
-        import * as asyncUtils from 'some-other-library';
+        import * as asyncUtils from 'some-other-library'; // rather than ${testingFramework}
         test(
         'aggressive reporting - util "asyncUtils.${asyncUtil}" which is not related to testing library is invalid',
         async () => {
@@ -561,6 +562,7 @@ ruleTester.run(RULE_NAME, rule, {
 			(asyncUtil) =>
 				({
 					code: `
+				// using ${testingFramework} implicitly
         function setup() {
           const utils = render(<MyComponent />);
         
@@ -578,7 +580,7 @@ ruleTester.run(RULE_NAME, rule, {
       `,
 					errors: [
 						{
-							line: 14,
+							line: 15,
 							column: 11,
 							messageId: 'asyncUtilWrapper',
 							data: { name: 'waitForAsyncUtil' },
@@ -590,6 +592,7 @@ ruleTester.run(RULE_NAME, rule, {
 			(asyncUtil) =>
 				({
 					code: `
+				// using ${testingFramework} implicitly
         function setup() {
           const utils = render(<MyComponent />);
         
@@ -608,7 +611,7 @@ ruleTester.run(RULE_NAME, rule, {
       `,
 					errors: [
 						{
-							line: 15,
+							line: 16,
 							column: 11,
 							messageId: 'asyncUtilWrapper',
 							data: { name: 'myAlias' },
@@ -620,6 +623,7 @@ ruleTester.run(RULE_NAME, rule, {
 			(asyncUtil) =>
 				({
 					code: `
+				// using ${testingFramework} implicitly
         function setup() {
           const utils = render(<MyComponent />);
         
@@ -637,7 +641,7 @@ ruleTester.run(RULE_NAME, rule, {
       `,
 					errors: [
 						{
-							line: 14,
+							line: 15,
 							column: 17,
 							messageId: 'asyncUtilWrapper',
 							data: { name: 'waitForAsyncUtil' },
@@ -649,6 +653,7 @@ ruleTester.run(RULE_NAME, rule, {
 			(asyncUtil) =>
 				({
 					code: `
+				// using ${testingFramework} implicitly
         function setup() {
           const utils = render(<MyComponent />);
         
@@ -666,7 +671,7 @@ ruleTester.run(RULE_NAME, rule, {
       `,
 					errors: [
 						{
-							line: 14,
+							line: 15,
 							column: 11,
 							messageId: 'asyncUtilWrapper',
 							data: { name: 'myAlias' },
@@ -678,6 +683,7 @@ ruleTester.run(RULE_NAME, rule, {
 			(asyncUtil) =>
 				({
 					code: `
+				// using ${testingFramework} implicitly
         function setup() {
           const utils = render(<MyComponent />);
         
@@ -694,7 +700,7 @@ ruleTester.run(RULE_NAME, rule, {
       `,
 					errors: [
 						{
-							line: 13,
+							line: 14,
 							column: 19,
 							messageId: 'asyncUtilWrapper',
 							data: { name: 'waitForAsyncUtil' },
@@ -706,6 +712,7 @@ ruleTester.run(RULE_NAME, rule, {
 			(asyncUtil) =>
 				({
 					code: `
+				// using ${testingFramework} implicitly
         function setup() {
           const utils = render(<MyComponent />);
         
@@ -723,7 +730,7 @@ ruleTester.run(RULE_NAME, rule, {
       `,
 					errors: [
 						{
-							line: 14,
+							line: 15,
 							column: 11,
 							messageId: 'asyncUtilWrapper',
 							data: { name: 'myAlias' },

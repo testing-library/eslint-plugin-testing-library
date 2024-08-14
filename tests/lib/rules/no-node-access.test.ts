@@ -61,7 +61,7 @@ ruleTester.run(RULE_NAME, rule, {
 			},
 			{
 				code: `
-      // case: code not related to testing library at all
+      // case: code not related to ${testingFramework} at all
       ReactDOM.render(
         <CommProvider useDsa={false}>
           <ThemeProvider>
@@ -116,14 +116,14 @@ ruleTester.run(RULE_NAME, rule, {
 					'testing-library/utils-module': 'test-utils',
 				},
 				code: `
-      // case: custom module set but not imported (aggressive reporting limited)
+      // case: custom module set but not imported using ${testingFramework} (aggressive reporting limited)
       const closestButton = document.getElementById('submit-btn').closest('button');
       expect(closestButton).toBeInTheDocument();
       `,
 			},
 			{
 				code: `
-      // case: without importing TL (aggressive reporting skipped)
+      // case: without importing ${testingFramework} (aggressive reporting skipped)
       const closestButton = document.getElementById('submit-btn')
       expect(closestButton).toBeInTheDocument();
       `,
@@ -141,7 +141,7 @@ ruleTester.run(RULE_NAME, rule, {
 			{
 				// Example from discussions in issue #386
 				code: `
-				import { render } from '@testing-library/react';
+				import { render } from '${testingFramework}';
 				
 				function Wrapper({ children }) {
 					// this should NOT be reported
@@ -165,7 +165,7 @@ ruleTester.run(RULE_NAME, rule, {
 				'testing-library/utils-module': 'test-utils',
 			},
 			code: `
-      // case: importing from custom module (aggressive reporting limited)
+      // case: importing from custom module for ${testingFramework} (aggressive reporting limited)
       import 'test-utils';
       const closestButton = document.getElementById('submit-btn')
       expect(closestButton).toBeInTheDocument();
