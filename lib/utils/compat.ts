@@ -1,9 +1,10 @@
 import { type TSESLint, type TSESTree } from '@typescript-eslint/utils';
 
 declare module '@typescript-eslint/utils/dist/ts-eslint/Rule' {
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	export interface RuleContext<
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		TMessageIds extends string,
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		TOptions extends readonly unknown[],
 	> {
 		/**
