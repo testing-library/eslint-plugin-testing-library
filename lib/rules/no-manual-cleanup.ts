@@ -11,6 +11,7 @@ import {
 	ImportModuleNode,
 	isImportDeclaration,
 } from '../node-utils';
+import { getDeclaredVariables } from '../utils';
 
 export const RULE_NAME = 'no-manual-cleanup';
 export type MessageIds = 'noManualCleanup';
@@ -64,7 +65,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 			if (isImportDeclaration(moduleNode)) {
 				// case: import utils from 'testing-library-module'
 				if (isImportDefaultSpecifier(moduleNode.specifiers[0])) {
-					const { references } = context.getDeclaredVariables(moduleNode)[0];
+					const { references } = getDeclaredVariables(context, moduleNode)[0];
 
 					reportImportReferences(references);
 				}
