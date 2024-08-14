@@ -65,14 +65,6 @@ export const getScope = (
 };
 
 /* istanbul ignore next */
-export const getAncestors = (
-  context: TSESLint.RuleContext<string, unknown[]>,
-  node: TSESTree.Node,
-) => {
-  return getSourceCode(context).getAncestors?.(node) ?? context.getAncestors();
-};
-
-/* istanbul ignore next */
 export const getDeclaredVariables = (
   context: TSESLint.RuleContext<string, unknown[]>,
   node: TSESTree.Node,
