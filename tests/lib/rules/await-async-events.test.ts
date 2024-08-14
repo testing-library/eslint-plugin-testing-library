@@ -131,7 +131,7 @@ ruleTester.run(RULE_NAME, rule, {
             doSomething()
             return fireEvent.${eventMethod}(getByLabelText('username'))
           }
-  
+
           await triggerEvent()
         })
         `,
@@ -172,7 +172,7 @@ ruleTester.run(RULE_NAME, rule, {
               doSomething()
               return fireEvent.focus(getByLabelText('username'))
             }
-    
+
           const reassignedFunction = triggerEvent
         })
         `,
@@ -318,7 +318,7 @@ ruleTester.run(RULE_NAME, rule, {
             doSomething()
             return userEvent.${eventMethod}(getByLabelText('username'))
           }
-  
+
           await triggerEvent()
         })
         `,
@@ -380,7 +380,7 @@ ruleTester.run(RULE_NAME, rule, {
               doSomething()
               return userEvent.focus(getByLabelText('username'))
             }
-    
+
           const reassignedFunction = triggerEvent
         })
         `,
@@ -447,11 +447,7 @@ ruleTester.run(RULE_NAME, rule, {
 							},
 						],
 						options: [{ eventModule: 'fireEvent' }],
-						output: `
-      import { fireEvent } from '${testingFramework}'
-
-      fireEvent.${eventMethod}(getByLabelText('username'))
-      `,
+						output: null,
 					}) as const
 			),
 			...FIRE_EVENT_ASYNC_FUNCTIONS.map(
@@ -759,16 +755,7 @@ ruleTester.run(RULE_NAME, rule, {
 							},
 						],
 						options: [{ eventModule: 'fireEvent' }],
-						output: `
-      import { fireEvent } from '${testingFramework}'
-
-      function triggerEvent() {
-        doSomething()
-        return fireEvent.${eventMethod}(getByLabelText('username'))
-      }
-
-      triggerEvent()
-      `,
+						output: null,
 					}) as const
 			),
 		]),
@@ -805,7 +792,7 @@ ruleTester.run(RULE_NAME, rule, {
 					({
 						code: `
       import userEvent from '${testingFramework}'
-			
+
       userEvent.${eventMethod}(getByLabelText('username'))
       `,
 						errors: [
@@ -818,11 +805,7 @@ ruleTester.run(RULE_NAME, rule, {
 							},
 						],
 						options: [{ eventModule: 'userEvent' }],
-						output: `
-      import userEvent from '${testingFramework}'
-			
-      userEvent.${eventMethod}(getByLabelText('username'))
-      `,
+						output: null,
 					}) as const
 			),
 			...USER_EVENT_ASYNC_FUNCTIONS.map(
@@ -974,16 +957,7 @@ ruleTester.run(RULE_NAME, rule, {
 							},
 						],
 						options: [{ eventModule: 'userEvent' }],
-						output: `
-      import userEvent from '${testingFramework}'
-
-      function triggerEvent() {
-        doSomething()
-        return userEvent.${eventMethod}(getByLabelText('username'))
-      }
-
-      triggerEvent()
-      `,
+						output: null,
 					}) as const
 			),
 			...USER_EVENT_ASYNC_FUNCTIONS.map(

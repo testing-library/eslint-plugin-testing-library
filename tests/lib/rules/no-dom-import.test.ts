@@ -77,7 +77,7 @@ ruleTester.run(RULE_NAME, rule, {
 					messageId: 'noDomImport',
 				},
 			],
-			output: 'import { fireEvent } from "dom-testing-library"',
+			output: null,
 		},
 		{
 			settings: {
@@ -92,9 +92,7 @@ ruleTester.run(RULE_NAME, rule, {
 					messageId: 'noDomImport',
 				},
 			],
-			output: `
-      // case: dom-testing-library imported with custom module setting
-      import { fireEvent } from "dom-testing-library"`,
+			output: null,
 		},
 		...SUPPORTED_TESTING_FRAMEWORKS.flatMap(
 			({ configOption, oldName, newName }) =>
