@@ -6,7 +6,7 @@ import {
 	TSESTree,
 } from '@typescript-eslint/utils';
 
-import { getScope } from '../utils';
+import { getDeclaredVariables, getScope } from '../utils';
 
 import {
 	isArrayExpression,
@@ -289,7 +289,7 @@ export function getVariableReferences(
 ): TSESLint.Scope.Reference[] {
 	if (ASTUtils.isVariableDeclarator(node)) {
 		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-		return context.getDeclaredVariables(node)[0]?.references?.slice(1) ?? [];
+		return getDeclaredVariables(context, node)[0]?.references?.slice(1) ?? [];
 	}
 
 	return [];
