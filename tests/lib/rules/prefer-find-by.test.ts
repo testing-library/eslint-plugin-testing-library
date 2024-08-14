@@ -306,13 +306,7 @@ ruleTester.run(RULE_NAME, rule, {
 					},
 				},
 			],
-			output: `
-          import { waitFor, render} from '${testingFramework}';
-          it('tests', async () => {
-            const { getByCustomQuery } = render()
-            const submitButton = await waitFor(() => getByCustomQuery('baz'))
-          })
-        `,
+			output: null,
 		},
 		// custom query triggers the error but there is no fix - so output is the same
 		{
@@ -333,13 +327,7 @@ ruleTester.run(RULE_NAME, rule, {
 					},
 				},
 			],
-			output: `
-          import {waitFor,render,screen} from '${testingFramework}';
-          it('tests', async () => {
-            const { getByCustomQuery } = render()
-            const submitButton = await waitFor(() => screen.getByCustomQuery('baz'))
-          })
-        `,
+			output: null,
 		},
 		// presence matchers
 		...createScenario((waitMethod: string, queryMethod: string) => ({
