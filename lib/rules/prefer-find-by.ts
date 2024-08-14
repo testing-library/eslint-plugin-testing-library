@@ -9,7 +9,7 @@ import {
 	isObjectPattern,
 	isProperty,
 } from '../node-utils';
-import { getSourceCode } from '../utils';
+import { getScope, getSourceCode } from '../utils';
 
 export const RULE_NAME = 'prefer-find-by';
 export type MessageIds = 'preferFindBy';
@@ -119,7 +119,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				isCallExpression(node.body.callee.object.arguments[0]) &&
 				ASTUtils.isIdentifier(node.body.callee.object.arguments[0].callee)
 			) {
-				return node.body.callee.object.arguments[0].callee.name;
+				return node.body.callee.object.arguments[0].callee;
 			}
 
 			if (!ASTUtils.isIdentifier(node.body.callee.property)) {
@@ -135,7 +135,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 					node.body.callee.object.arguments[0].callee.property
 				)
 			) {
-				return node.body.callee.object.arguments[0].callee.property.name;
+				return node.body.callee.object.arguments[0].callee.property;
 			}
 
 			// expect(screen.getByText).not shape
@@ -150,7 +150,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 					node.body.callee.object.object.arguments[0].callee.property
 				)
 			) {
-				return node.body.callee.object.object.arguments[0].callee.property.name;
+				return node.body.callee.object.object.arguments[0].callee.property;
 			}
 
 			// expect(getByText).not shape
@@ -162,10 +162,10 @@ export default createTestingLibraryRule<Options, MessageIds>({
 					node.body.callee.object.object.arguments[0].callee
 				)
 			) {
-				return node.body.callee.object.object.arguments[0].callee.name;
+				return node.body.callee.object.object.arguments[0].callee;
 			}
 
-			return node.body.callee.property.name;
+			return node.body.callee.property;
 		}
 
 		function getWrongQueryName(node: TSESTree.ArrowFunctionExpression) {
@@ -178,7 +178,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				ASTUtils.isIdentifier(node.body.callee) &&
 				helpers.isSyncQuery(node.body.callee)
 			) {
-				return node.body.callee.name;
+				return node.body.callee;
 			}
 
 			return getWrongQueryNameInAssertion(node);
@@ -354,11 +354,13 @@ export default createTestingLibraryRule<Options, MessageIds>({
 					}
 
 					// shape of () => screen.getByText
-					const fullQueryMethod = getWrongQueryName(argument);
+					const fullQueryMethodNode = getWrongQueryName(argument);
 
-					if (!fullQueryMethod) {
+					if (!fullQueryMethodNode) {
 						return;
 					}
+
+					const fullQueryMethod = fullQueryMethodNode.name;
 
 					// if there is a second argument to AwaitExpression, it is the options
 					const waitOptions = node.arguments[1];
@@ -401,11 +403,13 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				}
 
 				// shape of () => getByText
-				const fullQueryMethod = getWrongQueryName(argument);
+				const fullQueryMethodNode = getWrongQueryName(argument);
 
-				if (!fullQueryMethod) {
+				if (!fullQueryMethodNode) {
 					return;
 				}
+
+				const fullQueryMethod = fullQueryMethodNode.name;
 
 				const queryMethod = fullQueryMethod.split('By')[1];
 				const queryVariant = getFindByQueryVariant(fullQueryMethod);
@@ -435,7 +439,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
 						// this adds the findBy* declaration - adding it to the list of destructured variables { findBy* } = render()
 						const definition = findRenderDefinitionDeclaration(
-							context.getScope(),
+							getScope(context, fullQueryMethodNode),
 							fullQueryMethod
 						);
 						// I think it should always find it, otherwise code should not be valid (it'd be using undeclared variables)
