@@ -6,6 +6,8 @@ import {
 	TSESTree,
 } from '@typescript-eslint/utils';
 
+import { getScope } from '../utils';
+
 import {
 	isArrayExpression,
 	isArrowFunctionExpression,
@@ -305,7 +307,7 @@ export function getInnermostFunctionScope(
 	asyncQueryNode: TSESTree.Identifier
 ): InnermostFunctionScope | null {
 	const innermostScope = ASTUtils.getInnermostScope(
-		context.getScope(),
+		getScope(context, asyncQueryNode),
 		asyncQueryNode
 	);
 
