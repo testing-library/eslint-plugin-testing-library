@@ -9,6 +9,7 @@ import {
 	isObjectPattern,
 	isProperty,
 } from '../node-utils';
+import { getSourceCode } from '../utils';
 
 export const RULE_NAME = 'prefer-find-by';
 export type MessageIds = 'preferFindBy';
@@ -69,7 +70,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 	defaultOptions: [],
 
 	create(context, _, helpers) {
-		const sourceCode = context.getSourceCode();
+		const sourceCode = getSourceCode(context);
 
 		/**
 		 * Reports the invalid usage of wait* plus getBy/QueryBy methods and automatically fixes the scenario
