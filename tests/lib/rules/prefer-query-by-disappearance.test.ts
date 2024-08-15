@@ -231,20 +231,6 @@ ruleTester.run(RULE_NAME, rule, {
 		},
 		{
 			code: `
-        import { screen, waitForElementToBeRemoved } from '@marko/testing-library';
-
-        await waitForElementToBeRemoved(() => screen.getByText("hello"))
-      `,
-			errors: [
-				{
-					messageId: 'preferQueryByDisappearance',
-					line: 4,
-					column: 54,
-				},
-			],
-		},
-		{
-			code: `
         import { screen, waitForElementToBeRemoved } from '${testingFramework}';
 
         await waitForElementToBeRemoved(() => screen.findByText("hello"))
