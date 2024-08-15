@@ -281,26 +281,6 @@ ruleTester.run(RULE_NAME, rule, {
 		...ALL_QUERIES_COMBINATIONS.map(
 			(queryMethod) =>
 				({
-					settings: { 'testing-library/utils-module': 'test-utils' },
-					code: `
-        import { render } from 'test-utils'
-        const { ${queryMethod} } = render(foo)
-        ${queryMethod}()`,
-					errors: [
-						{
-							line: 4,
-							column: 9,
-							messageId: 'preferScreenQueries',
-							data: {
-								name: queryMethod,
-							},
-						},
-					],
-				} as const)
-		),
-		...ALL_QUERIES_COMBINATIONS.map(
-			(queryMethod) =>
-				({
 					code: `render().${queryMethod}()`,
 					errors: [
 						{

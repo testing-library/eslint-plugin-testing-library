@@ -6,6 +6,8 @@ import {
 	TSESTree,
 } from '@typescript-eslint/utils';
 
+import { getDeclaredVariables, getScope } from '../utils';
+
 import {
 	isArrayExpression,
 	isArrowFunctionExpression,
@@ -287,7 +289,7 @@ export function getVariableReferences(
 ): TSESLint.Scope.Reference[] {
 	if (ASTUtils.isVariableDeclarator(node)) {
 		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-		return context.getDeclaredVariables(node)[0]?.references?.slice(1) ?? [];
+		return getDeclaredVariables(context, node)[0]?.references?.slice(1) ?? [];
 	}
 
 	return [];
@@ -305,7 +307,7 @@ export function getInnermostFunctionScope(
 	asyncQueryNode: TSESTree.Identifier
 ): InnermostFunctionScope | null {
 	const innermostScope = ASTUtils.getInnermostScope(
-		context.getScope(),
+		getScope(context, asyncQueryNode),
 		asyncQueryNode
 	);
 

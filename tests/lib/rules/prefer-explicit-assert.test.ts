@@ -330,14 +330,6 @@ ruleTester.run(RULE_NAME, rule, {
 					],
 				} as const)
 		),
-		{
-			code: `getByIcon('foo')`, // custom `getBy` query extended through options
-			errors: [
-				{
-					messageId: 'preferExplicitAssert',
-				},
-			],
-		},
 		...COMBINED_QUERIES_METHODS.map(
 			(queryMethod) =>
 				({

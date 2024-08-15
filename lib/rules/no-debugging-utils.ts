@@ -11,7 +11,7 @@ import {
 	isObjectPattern,
 	isProperty,
 } from '../node-utils';
-import { DEBUG_UTILS } from '../utils';
+import { DEBUG_UTILS, getDeclaredVariables } from '../utils';
 
 type DebugUtilsToCheckForConfig = Record<(typeof DEBUG_UTILS)[number], boolean>;
 type DebugUtilsToCheckFor = Partial<DebugUtilsToCheckForConfig>;
@@ -175,7 +175,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
 				const isVariableFromBuiltInConsole = builtInConsoleNodes.some(
 					(variableDeclarator) => {
-						const variables = context.getDeclaredVariables(variableDeclarator);
+						const variables = getDeclaredVariables(context, variableDeclarator);
 						return variables.some(
 							({ name }) =>
 								name === callExpressionIdentifier.name &&

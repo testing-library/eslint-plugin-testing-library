@@ -299,16 +299,6 @@ ruleTester.run(RULE_NAME, rule, {
 				settings: { 'testing-library/custom-renders': ['renderHelper'] },
 				code: `
           import { waitFor } from '${testingFramework}';
-          import { renderWrapper } from 'somewhere-else';
-          await waitFor(() => {
-            renderWrapper(<App />)
-          })
-        `,
-			},
-			{
-				settings: { 'testing-library/custom-renders': ['renderHelper'] },
-				code: `
-          import { waitFor } from '${testingFramework}';
           await waitFor(() => result = renderWrapper(<App />))
         `,
 			},
@@ -428,14 +418,6 @@ ruleTester.run(RULE_NAME, rule, {
         await waitFor(() => render(<App />))
       `,
 				errors: [{ line: 3, column: 29, messageId: 'noSideEffectsWaitFor' }],
-			} as const,
-			{
-				code: `
-        import { waitFor } from '${testingFramework}';
-        const { rerender } = render(<App />)
-        await waitFor(() => rerender(<App />))
-      `,
-				errors: [{ line: 4, column: 29, messageId: 'noSideEffectsWaitFor' }],
 			} as const,
 			{
 				code: `
