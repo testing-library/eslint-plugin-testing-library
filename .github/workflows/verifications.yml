@@ -31,6 +31,7 @@ jobs:
   tests:
     name: Tests (Node v${{ matrix.node }} - ESLint v${{ matrix.eslint }})
     runs-on: ubuntu-latest
+    timeout-minutes: 3
     strategy:
       fail-fast: false
       matrix:
