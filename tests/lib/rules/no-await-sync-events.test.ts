@@ -264,7 +264,7 @@ ruleTester.run(RULE_NAME, rule, {
 								data: { name: `fireEvent.${func}` },
 							},
 						],
-					} as const)
+					}) as const
 			)
 		),
 		// sync userEvent sync methods with await operator are not valid
@@ -286,7 +286,7 @@ ruleTester.run(RULE_NAME, rule, {
 							data: { name: `userEvent.${func}` },
 						},
 					],
-				} as const)
+				}) as const
 		),
 
 		// sync fireEvent methods with await operator are not valid
@@ -309,7 +309,7 @@ ruleTester.run(RULE_NAME, rule, {
 								data: { name: `fireEvent.${func}` },
 							},
 						],
-					} as const)
+					}) as const
 			)
 		),
 
@@ -331,7 +331,7 @@ ruleTester.run(RULE_NAME, rule, {
 							data: { name: `userEvent.${func}` },
 						},
 					],
-				} as const)
+				}) as const
 		),
 
 		{

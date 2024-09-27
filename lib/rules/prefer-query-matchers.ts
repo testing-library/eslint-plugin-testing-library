@@ -11,7 +11,7 @@ export type Options = [
 			query: 'get' | 'query';
 			matcher: string;
 		}[];
-	}
+	},
 ];
 
 export default createTestingLibraryRule<Options, MessageIds>({

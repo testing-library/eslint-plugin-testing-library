@@ -62,7 +62,7 @@ ruleTester.run(RULE_NAME, rule, {
 							},
 						},
 					],
-				} as const)
+				}) as const
 		),
 		...COMBINED_QUERIES_METHODS.map(
 			(queryMethod) =>
@@ -78,7 +78,7 @@ ruleTester.run(RULE_NAME, rule, {
 							},
 						},
 					],
-				} as const)
+				}) as const
 		),
 		...COMBINED_QUERIES_METHODS.map(
 			(queryMethod) =>
@@ -94,7 +94,7 @@ ruleTester.run(RULE_NAME, rule, {
 							},
 						},
 					],
-				} as const)
+				}) as const
 		),
 		...COMBINED_QUERIES_METHODS.map(
 			(queryMethod) =>
@@ -110,7 +110,7 @@ ruleTester.run(RULE_NAME, rule, {
 							},
 						},
 					],
-				} as const)
+				}) as const
 		),
 		...COMBINED_QUERIES_METHODS.map(
 			(queryMethod) =>
@@ -126,7 +126,7 @@ ruleTester.run(RULE_NAME, rule, {
 							},
 						},
 					],
-				} as const)
+				}) as const
 		),
 		...COMBINED_QUERIES_METHODS.map(
 			(queryMethod) =>
@@ -142,7 +142,7 @@ ruleTester.run(RULE_NAME, rule, {
 							},
 						},
 					],
-				} as const)
+				}) as const
 		),
 		...COMBINED_QUERIES_METHODS.map(
 			(queryMethod) =>
@@ -158,7 +158,7 @@ ruleTester.run(RULE_NAME, rule, {
 							},
 						},
 					],
-				} as const)
+				}) as const
 		),
 		...COMBINED_QUERIES_METHODS.map(
 			(queryMethod) =>
@@ -174,7 +174,7 @@ ruleTester.run(RULE_NAME, rule, {
 							},
 						},
 					],
-				} as const)
+				}) as const
 		),
 		...COMBINED_QUERIES_METHODS.map(
 			(queryMethod) =>
@@ -190,7 +190,7 @@ ruleTester.run(RULE_NAME, rule, {
 							},
 						},
 					],
-				} as const)
+				}) as const
 		),
 		...COMBINED_QUERIES_METHODS.map(
 			(queryMethod) =>
@@ -206,7 +206,7 @@ ruleTester.run(RULE_NAME, rule, {
 							},
 						},
 					],
-				} as const)
+				}) as const
 		),
 		...COMBINED_QUERIES_METHODS.map(
 			(queryMethod) =>
@@ -224,7 +224,7 @@ ruleTester.run(RULE_NAME, rule, {
 							},
 						},
 					],
-				} as const)
+				}) as const
 		),
 		...COMBINED_QUERIES_METHODS.map(
 			(queryMethod) =>
@@ -242,7 +242,7 @@ ruleTester.run(RULE_NAME, rule, {
 							},
 						},
 					],
-				} as const)
+				}) as const
 		),
 		...COMBINED_QUERIES_METHODS.map(
 			(queryMethod) =>
@@ -260,7 +260,7 @@ ruleTester.run(RULE_NAME, rule, {
 							},
 						},
 					],
-				} as const)
+				}) as const
 		),
 		...COMBINED_QUERIES_METHODS.map(
 			(queryMethod) =>
@@ -278,7 +278,7 @@ ruleTester.run(RULE_NAME, rule, {
 							},
 						},
 					],
-				} as const)
+				}) as const
 		),
 		...COMBINED_QUERIES_METHODS.map(
 			(queryMethod) =>
@@ -296,7 +296,7 @@ ruleTester.run(RULE_NAME, rule, {
 							},
 						},
 					],
-				} as const)
+				}) as const
 		),
 		...COMBINED_QUERIES_METHODS.map(
 			(queryMethod) =>
@@ -312,7 +312,7 @@ ruleTester.run(RULE_NAME, rule, {
 							},
 						},
 					],
-				} as const)
+				}) as const
 		),
 		...COMBINED_QUERIES_METHODS.map(
 			(queryMethod) =>
@@ -328,7 +328,7 @@ ruleTester.run(RULE_NAME, rule, {
 							},
 						},
 					],
-				} as const)
+				}) as const
 		),
 		...COMBINED_QUERIES_METHODS.map(
 			(queryMethod) =>
@@ -344,7 +344,7 @@ ruleTester.run(RULE_NAME, rule, {
 							},
 						},
 					],
-				} as const)
+				}) as const
 		),
 		...COMBINED_QUERIES_METHODS.map(
 			(queryMethod) =>
@@ -360,7 +360,7 @@ ruleTester.run(RULE_NAME, rule, {
 							},
 						},
 					],
-				} as const)
+				}) as const
 		),
 		...COMBINED_QUERIES_METHODS.map(
 			(queryMethod) =>
@@ -376,7 +376,7 @@ ruleTester.run(RULE_NAME, rule, {
 							},
 						},
 					],
-				} as const)
+				}) as const
 		),
 		...COMBINED_QUERIES_METHODS.map(
 			(queryMethod) =>
@@ -392,7 +392,7 @@ ruleTester.run(RULE_NAME, rule, {
 							},
 						},
 					],
-				} as const)
+				}) as const
 		),
 		...COMBINED_QUERIES_METHODS.map(
 			(queryMethod) =>
@@ -408,7 +408,7 @@ ruleTester.run(RULE_NAME, rule, {
 							},
 						},
 					],
-				} as const)
+				}) as const
 		),
 		...COMBINED_QUERIES_METHODS.map(
 			(queryMethod) =>
@@ -424,7 +424,7 @@ ruleTester.run(RULE_NAME, rule, {
 							},
 						},
 					],
-				} as const)
+				}) as const
 		),
 		...COMBINED_QUERIES_METHODS.map(
 			(queryMethod) =>
@@ -440,7 +440,7 @@ ruleTester.run(RULE_NAME, rule, {
 							},
 						},
 					],
-				} as const)
+				}) as const
 		),
 		...COMBINED_QUERIES_METHODS.map(
 			(queryMethod) =>
@@ -456,7 +456,7 @@ ruleTester.run(RULE_NAME, rule, {
 							},
 						},
 					],
-				} as const)
+				}) as const
 		),
 		...COMBINED_QUERIES_METHODS.map(
 			(queryMethod) =>
@@ -474,7 +474,7 @@ ruleTester.run(RULE_NAME, rule, {
 							},
 						},
 					],
-				} as const)
+				}) as const
 		),
 		...COMBINED_QUERIES_METHODS.map(
 			(queryMethod) =>
@@ -492,7 +492,7 @@ ruleTester.run(RULE_NAME, rule, {
 							},
 						},
 					],
-				} as const)
+				}) as const
 		),
 		...COMBINED_QUERIES_METHODS.map(
 			(queryMethod) =>
@@ -510,7 +510,7 @@ ruleTester.run(RULE_NAME, rule, {
 							},
 						},
 					],
-				} as const)
+				}) as const
 		),
 		...COMBINED_QUERIES_METHODS.map(
 			(queryMethod) =>
@@ -528,7 +528,7 @@ ruleTester.run(RULE_NAME, rule, {
 							},
 						},
 					],
-				} as const)
+				}) as const
 		),
 		...COMBINED_QUERIES_METHODS.map(
 			(queryMethod) =>
@@ -546,7 +546,7 @@ ruleTester.run(RULE_NAME, rule, {
 							},
 						},
 					],
-				} as const)
+				}) as const
 		),
 	],
 });

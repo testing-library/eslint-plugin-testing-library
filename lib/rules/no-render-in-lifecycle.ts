@@ -14,7 +14,7 @@ export type MessageIds = 'noRenderInSetup';
 type Options = [
 	{
 		allowTestingFrameworkSetupHook?: string;
-	}
+	},
 ];
 
 export function findClosestBeforeHook(

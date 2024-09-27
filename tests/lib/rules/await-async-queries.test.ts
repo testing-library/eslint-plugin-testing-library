@@ -64,11 +64,11 @@ function createTestCase(
 			? {
 					code: createTestCode({ code: test, isAsync, testingFramework }),
 					errors: [],
-			  }
+				}
 			: {
 					code: createTestCode({ code: test.code, isAsync, testingFramework }),
 					errors: test.errors,
-			  };
+				};
 	});
 }
 
@@ -361,7 +361,7 @@ ruleTester.run(RULE_NAME, rule, {
       });
       `,
 						errors: [{ messageId: 'awaitAsyncQuery', line: 6, column: 21 }],
-					} as const)
+					}) as const
 			)
 		),
 		...ALL_ASYNC_COMBINATIONS_TO_TEST.map(
@@ -382,7 +382,7 @@ ruleTester.run(RULE_NAME, rule, {
 							data: { name: query },
 						},
 					],
-				} as const)
+				}) as const
 		),
 		...ALL_ASYNC_COMBINATIONS_TO_TEST.map(
 			(query) =>
@@ -403,7 +403,7 @@ ruleTester.run(RULE_NAME, rule, {
 							data: { name: query },
 						},
 					],
-				} as const)
+				}) as const
 		),
 		...ALL_ASYNC_COMBINATIONS_TO_TEST.map(
 			(query) =>
@@ -425,7 +425,7 @@ ruleTester.run(RULE_NAME, rule, {
 							data: { name: query },
 						},
 					],
-				} as const)
+				}) as const
 		),
 
 		// unresolved async queries are not valid (aggressive reporting)
@@ -440,7 +440,7 @@ ruleTester.run(RULE_NAME, rule, {
         })
       `,
 					errors: [{ messageId: 'awaitAsyncQuery', line: 5, column: 27 }],
-				} as const)
+				}) as const
 		),
 
 		// unhandled promise from async query function wrapper is invalid
@@ -463,7 +463,7 @@ ruleTester.run(RULE_NAME, rule, {
         })
       `,
 					errors: [{ messageId: 'asyncQueryWrapper', line: 9, column: 27 }],
-				} as const)
+				}) as const
 		),
 		// unhandled promise from async query arrow function wrapper is invalid
 		...ALL_ASYNC_COMBINATIONS_TO_TEST.map(
@@ -485,7 +485,7 @@ ruleTester.run(RULE_NAME, rule, {
         })
       `,
 					errors: [{ messageId: 'asyncQueryWrapper', line: 9, column: 27 }],
-				} as const)
+				}) as const
 		),
 		// unhandled promise implicitly returned from async query arrow function wrapper is invalid
 		...ALL_ASYNC_COMBINATIONS_TO_TEST.map(
@@ -503,7 +503,7 @@ ruleTester.run(RULE_NAME, rule, {
         })
       `,
 					errors: [{ messageId: 'asyncQueryWrapper', line: 5, column: 27 }],
-				} as const)
+				}) as const
 		),
 
 		// unhandled promise from custom query matching custom-queries setting is invalid

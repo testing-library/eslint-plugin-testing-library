@@ -11,7 +11,7 @@ import { LinterConfig, writeConfig } from './utils';
 const RULE_NAME_PREFIX = 'testing-library/';
 
 const getRecommendedRulesForTestingFramework = (
-	framework: SupportedTestingFramework,
+	framework: SupportedTestingFramework
 ): Record<string, TSESLint.Linter.RuleEntry> =>
 	Object.entries(rules)
 		.filter(
@@ -20,7 +20,7 @@ const getRecommendedRulesForTestingFramework = (
 				{
 					meta: { docs },
 				},
-			]) => Boolean(docs.recommendedConfig[framework]),
+			]) => Boolean(docs.recommendedConfig[framework])
 		)
 		.reduce((allRules, [ruleName, { meta }]) => {
 			const name = `${RULE_NAME_PREFIX}${ruleName}`;
