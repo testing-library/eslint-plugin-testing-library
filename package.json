@@ -67,7 +67,7 @@
 		"@typescript-eslint/parser": "^5.58.0",
 		"del-cli": "^5.0.0",
 		"eslint": "^8.38.0",
-		"eslint-config-prettier": "^8.8.0",
+		"eslint-config-prettier": "^9.1.0",
 		"eslint-doc-generator": "^1.4.3",
 		"eslint-import-resolver-typescript": "^3.6.1",
 		"eslint-plugin-import": "^2.29.0",
