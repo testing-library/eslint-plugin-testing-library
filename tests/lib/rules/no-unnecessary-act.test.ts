@@ -330,7 +330,7 @@ const invalidTestCases: InvalidTestCase[] = [
 						column: 9,
 					},
 				],
-			} as const)
+			}) as const
 	),
 	{
 		settings: {

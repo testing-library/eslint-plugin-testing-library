@@ -13,7 +13,7 @@ import { createRuleTester } from '../test-utils';
 function createScenarioWithImport<
 	T extends
 		| TSESLint.InvalidTestCase<MessageIds, Options>
-		| TSESLint.ValidTestCase<Options>
+		| TSESLint.ValidTestCase<Options>,
 >(callback: (libraryModule: string, fireEventMethod: string) => T) {
 	return LIBRARY_MODULES.reduce(
 		(acc: Array<T>, libraryModule) =>
@@ -372,7 +372,7 @@ ruleTester.run(RULE_NAME, rule, {
 							},
 						},
 					],
-				} as const)
+				}) as const
 		),
 		...Object.keys(MAPPING_TO_USER_EVENT).map(
 			(fireEventMethod: string) =>
@@ -396,7 +396,7 @@ ruleTester.run(RULE_NAME, rule, {
 							},
 						},
 					],
-				} as const)
+				}) as const
 		),
 		...Object.keys(MAPPING_TO_USER_EVENT).map(
 			(fireEventMethod: string) =>
@@ -419,7 +419,7 @@ ruleTester.run(RULE_NAME, rule, {
 							},
 						},
 					],
-				} as const)
+				}) as const
 		),
 		...Object.keys(MAPPING_TO_USER_EVENT).map(
 			(fireEventMethod: string) =>
@@ -443,7 +443,7 @@ ruleTester.run(RULE_NAME, rule, {
 							},
 						},
 					],
-				} as const)
+				}) as const
 		),
 		{
 			code: ` // simple test to check error in detail

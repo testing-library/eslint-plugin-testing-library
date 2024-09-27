@@ -21,7 +21,7 @@ type EventModules = (typeof EVENTS_SIMULATORS)[number];
 export type Options = [
 	{
 		eventModule: EventModules | EventModules[];
-	}
+	},
 ];
 
 export default createTestingLibraryRule<Options, MessageIds>({

@@ -32,11 +32,16 @@ const getRecommendedRulesForTestingFramework = (
 			};
 		}, {});
 
-SUPPORTED_TESTING_FRAMEWORKS.forEach((framework) => {
-	const specificFrameworkConfig: LinterConfig = {
-		plugins: ['testing-library'],
-		rules: getRecommendedRulesForTestingFramework(framework),
-	};
+(async () => {
+	for (const framework of SUPPORTED_TESTING_FRAMEWORKS) {
+		const specificFrameworkConfig: LinterConfig = {
+			plugins: ['testing-library'],
+			rules: getRecommendedRulesForTestingFramework(framework),
+		};
 
-	writeConfig(specificFrameworkConfig, framework);
+		await writeConfig(specificFrameworkConfig, framework);
+	}
+})().catch((error) => {
+	console.error(error);
+	process.exitCode = 1;
 });

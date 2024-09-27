@@ -179,7 +179,7 @@ ruleTester.run(RULE_NAME, rule, {
 							column: 36 + asyncUtil.length,
 						},
 					],
-				} as const)
+				}) as const
 		),
 		...ASYNC_UTILS.map(
 			(asyncUtil) =>
@@ -200,7 +200,7 @@ ruleTester.run(RULE_NAME, rule, {
 							column: 27,
 						},
 					],
-				} as const)
+				}) as const
 		),
 		...ASYNC_UTILS.map(
 			(asyncUtil) =>
@@ -219,7 +219,7 @@ ruleTester.run(RULE_NAME, rule, {
 							column: 47 + asyncUtil.length,
 						},
 					],
-				} as const)
+				}) as const
 		),
 		...ASYNC_UTILS.map(
 			(asyncUtil) =>
@@ -240,7 +240,7 @@ ruleTester.run(RULE_NAME, rule, {
 							column: 27,
 						},
 					],
-				} as const)
+				}) as const
 		),
 		...ASYNC_UTILS.map(
 			(asyncUtil) =>
@@ -259,7 +259,7 @@ ruleTester.run(RULE_NAME, rule, {
 							column: 36 + asyncUtil.length,
 						},
 					],
-				} as const)
+				}) as const
 		),
 		...ASYNC_UTILS.map(
 			(asyncUtil) =>
@@ -280,7 +280,7 @@ ruleTester.run(RULE_NAME, rule, {
 							column: 27,
 						},
 					],
-				} as const)
+				}) as const
 		),
 		...ASYNC_UTILS.map(
 			(asyncUtil) =>
@@ -299,7 +299,7 @@ ruleTester.run(RULE_NAME, rule, {
 							column: 47 + asyncUtil.length,
 						},
 					],
-				} as const)
+				}) as const
 		),
 		...ASYNC_UTILS.map(
 			(asyncUtil) =>
@@ -320,7 +320,7 @@ ruleTester.run(RULE_NAME, rule, {
 							column: 27,
 						},
 					],
-				} as const)
+				}) as const
 		),
 	]),
 });

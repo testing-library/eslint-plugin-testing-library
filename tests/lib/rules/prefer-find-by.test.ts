@@ -28,7 +28,7 @@ function buildFindByMethod(queryMethod: string) {
 function createScenario<
 	T extends
 		| TSESLint.InvalidTestCase<MessageIds, []>
-		| TSESLint.ValidTestCase<[]>
+		| TSESLint.ValidTestCase<[]>,
 >(callback: (waitMethod: string, queryMethod: string) => T) {
 	return SYNC_QUERIES_COMBINATIONS.map((queryMethod) =>
 		callback('waitFor', queryMethod)
