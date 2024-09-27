@@ -11,7 +11,7 @@ import { LinterConfig, writeConfig } from './utils';
 const RULE_NAME_PREFIX = 'testing-library/';
 
 const getRecommendedRulesForTestingFramework = (
-	framework: SupportedTestingFramework
+	framework: SupportedTestingFramework,
 ): Record<string, TSESLint.Linter.RuleEntry> =>
 	Object.entries(rules)
 		.filter(
@@ -20,7 +20,7 @@ const getRecommendedRulesForTestingFramework = (
 				{
 					meta: { docs },
 				},
-			]) => Boolean(docs.recommendedConfig[framework])
+			]) => Boolean(docs.recommendedConfig[framework]),
 		)
 		.reduce((allRules, [ruleName, { meta }]) => {
 			const name = `${RULE_NAME_PREFIX}${ruleName}`;
@@ -32,11 +32,16 @@ const getRecommendedRulesForTestingFramework = (
 			};
 		}, {});
 
-SUPPORTED_TESTING_FRAMEWORKS.forEach((framework) => {
-	const specificFrameworkConfig: LinterConfig = {
-		plugins: ['testing-library'],
-		rules: getRecommendedRulesForTestingFramework(framework),
-	};
+(async () => {
+	for (const framework of SUPPORTED_TESTING_FRAMEWORKS) {
+		const specificFrameworkConfig: LinterConfig = {
+			plugins: ['testing-library'],
+			rules: getRecommendedRulesForTestingFramework(framework),
+		};
 
-	writeConfig(specificFrameworkConfig, framework);
+		await writeConfig(specificFrameworkConfig, framework);
+	}
+})().catch((error) => {
+	console.error(error);
+	process.exitCode = 1;
 });
