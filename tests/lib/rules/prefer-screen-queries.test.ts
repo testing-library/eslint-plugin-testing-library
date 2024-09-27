@@ -211,7 +211,7 @@ ruleTester.run(RULE_NAME, rule, {
 							},
 						},
 					],
-				} as const)
+				}) as const
 		),
 		...ALL_QUERIES_COMBINATIONS.map(
 			(queryMethod) =>
@@ -231,7 +231,7 @@ ruleTester.run(RULE_NAME, rule, {
 							},
 						},
 					],
-				} as const)
+				}) as const
 		),
 
 		...ALL_QUERIES_COMBINATIONS.map(
@@ -254,7 +254,7 @@ ruleTester.run(RULE_NAME, rule, {
 							},
 						},
 					],
-				} as const)
+				}) as const
 		),
 		...SUPPORTED_TESTING_FRAMEWORKS.flatMap((testingFramework) =>
 			ALL_QUERIES_COMBINATIONS.map(
@@ -275,7 +275,7 @@ ruleTester.run(RULE_NAME, rule, {
 								},
 							},
 						],
-					} as const)
+					}) as const
 			)
 		),
 		...ALL_QUERIES_COMBINATIONS.map(
@@ -290,7 +290,7 @@ ruleTester.run(RULE_NAME, rule, {
 							},
 						},
 					],
-				} as const)
+				}) as const
 		),
 		...ALL_QUERIES_COMBINATIONS.map(
 			(queryMethod) =>
@@ -304,7 +304,7 @@ ruleTester.run(RULE_NAME, rule, {
 							},
 						},
 					],
-				} as const)
+				}) as const
 		),
 		...ALL_QUERIES_COMBINATIONS.map(
 			(queryMethod) =>
@@ -318,7 +318,7 @@ ruleTester.run(RULE_NAME, rule, {
 							},
 						},
 					],
-				} as const)
+				}) as const
 		),
 		...ALL_QUERIES_COMBINATIONS.map(
 			(queryMethod) =>
@@ -335,7 +335,7 @@ ruleTester.run(RULE_NAME, rule, {
 							},
 						},
 					],
-				} as const)
+				}) as const
 		),
 		...ALL_QUERIES_COMBINATIONS.map(
 			(queryMethod) =>
@@ -352,7 +352,7 @@ ruleTester.run(RULE_NAME, rule, {
 							},
 						},
 					],
-				} as const)
+				}) as const
 		),
 		...ALL_QUERIES_COMBINATIONS.map(
 			(queryMethod) =>
@@ -369,7 +369,7 @@ ruleTester.run(RULE_NAME, rule, {
 							},
 						},
 					],
-				} as const)
+				}) as const
 		),
 		...ALL_QUERIES_COMBINATIONS.map(
 			(queryMethod) =>
@@ -386,7 +386,7 @@ ruleTester.run(RULE_NAME, rule, {
 							},
 						},
 					],
-				} as const)
+				}) as const
 		),
 		...ALL_QUERIES_COMBINATIONS.map(
 			(queryMethod) =>
@@ -403,7 +403,7 @@ ruleTester.run(RULE_NAME, rule, {
 							},
 						},
 					],
-				} as const)
+				}) as const
 		),
 		...SUPPORTED_TESTING_FRAMEWORKS.flatMap((testingFramework) => [
 			{

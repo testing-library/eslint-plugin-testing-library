@@ -459,7 +459,7 @@ ruleTester.run(RULE_NAME, rule, {
 							messageId: 'renderError',
 						},
 					],
-				} as const)
+				}) as const
 		),
 		{
 			code: `
