@@ -1,15 +1,16 @@
-import { ASTUtils, TSESTree, TSESLint } from '@typescript-eslint/utils';
+import { ASTUtils, TSESLint, TSESTree } from '@typescript-eslint/utils';
 
 import { createTestingLibraryRule } from '../create-testing-library-rule';
 import {
+	getImportModuleName,
 	getVariableReferences,
+	ImportModuleNode,
+	isImportDeclaration,
 	isImportDefaultSpecifier,
 	isImportSpecifier,
 	isMemberExpression,
 	isObjectPattern,
 	isProperty,
-	ImportModuleNode,
-	isImportDeclaration,
 } from '../node-utils';
 
 export const RULE_NAME = 'no-manual-cleanup';
@@ -110,12 +111,15 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
 		return {
 			'Program:exit'() {
-				const testingLibraryImportName = helpers.getTestingLibraryImportName();
 				const customModuleImportNode = helpers.getCustomModuleImportNode();
 
-				if (testingLibraryImportName?.match(CLEANUP_LIBRARY_REGEXP)) {
-					for (const importNode of helpers.getAllTestingLibraryImportNodes()) {
-						reportCandidateModule(importNode);
+				for (const testingLibraryImportNode of helpers.getAllTestingLibraryImportNodes()) {
+					const testingLibraryImportName = getImportModuleName(
+						testingLibraryImportNode
+					);
+
+					if (testingLibraryImportName?.match(CLEANUP_LIBRARY_REGEXP)) {
+						reportCandidateModule(testingLibraryImportNode);
 					}
 				}
 

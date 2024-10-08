@@ -72,6 +72,38 @@ ruleTester.run(RULE_NAME, rule, {
 		...ALL_TESTING_LIBRARIES_WITH_CLEANUP.map(
 			(lib) =>
 				({
+					code: `
+						import { render, cleanup } from "${lib}"
+						import userEvent from "@testing-library/user-event"
+					`,
+					errors: [
+						{
+							line: 2,
+							column: 24, // error points to `cleanup`
+							messageId: 'noManualCleanup',
+						},
+					],
+				} as const)
+		),
+		...ALL_TESTING_LIBRARIES_WITH_CLEANUP.map(
+			(lib) =>
+				({
+					code: `
+						import userEvent from "@testing-library/user-event"
+						import { render, cleanup } from "${lib}"
+					`,
+					errors: [
+						{
+							line: 3,
+							column: 24, // error points to `cleanup`
+							messageId: 'noManualCleanup',
+						},
+					],
+				} as const)
+		),
+		...ALL_TESTING_LIBRARIES_WITH_CLEANUP.map(
+			(lib) =>
+				({
 					// official testing-library packages should be reported with custom module setting
 					settings: {
 						'testing-library/utils-module': 'test-utils',
@@ -252,5 +284,24 @@ ruleTester.run(RULE_NAME, rule, {
 					],
 				} as const)
 		),
+		{
+			code: `
+				import { cleanup as cleanupVue } from "@testing-library/vue";
+				import { cleanup as cleanupReact } from "@testing-library/react";
+				afterEach(() => { cleanupVue(); cleanupReact(); });
+			`,
+			errors: [
+				{
+					line: 2,
+					column: 14,
+					messageId: 'noManualCleanup',
+				},
+				{
+					line: 3,
+					column: 14,
+					messageId: 'noManualCleanup',
+				},
+			],
+		},
 	],
 });
