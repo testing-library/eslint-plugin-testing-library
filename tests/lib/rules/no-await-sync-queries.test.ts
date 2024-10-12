@@ -159,7 +159,19 @@ ruleTester.run(RULE_NAME, rule, {
 			output: `
       async () => {
         const element =  getByIcon('search')
-        const element = getByIcon('search')
+      }
+      `,
+		},
+		{
+			code: `
+      async () => {
+        const element = await(getByIcon('search'))
+      }
+      `,
+			errors: [{ messageId: 'noAwaitSyncQuery', line: 3, column: 31 }],
+			output: `
+      async () => {
+        const element = (getByIcon('search'))
       }
       `,
 		},
