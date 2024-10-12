@@ -52,7 +52,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 						},
 						fix: (fixer) => {
 							const awaitRangeStart = awaitExpression.range[0];
-							const awaitRangeEnd = awaitExpression.range[0] + 'await '.length;
+							const awaitRangeEnd = awaitExpression.range[0] + 'await'.length;
 
 							return fixer.replaceTextRange(
 								[awaitRangeStart, awaitRangeEnd],

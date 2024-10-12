@@ -143,7 +143,7 @@ ruleTester.run(RULE_NAME, rule, {
 						},
 					],
 					output: `async () => {
-        const element = ${query}('foo')
+        const element =  ${query}('foo')
       }
       `,
 				}) as const
@@ -158,6 +158,7 @@ ruleTester.run(RULE_NAME, rule, {
 			errors: [{ messageId: 'noAwaitSyncQuery', line: 3, column: 31 }],
 			output: `
       async () => {
+        const element =  getByIcon('search')
         const element = getByIcon('search')
       }
       `,
@@ -171,7 +172,7 @@ ruleTester.run(RULE_NAME, rule, {
 			errors: [{ messageId: 'noAwaitSyncQuery', line: 3, column: 31 }],
 			output: `
       async () => {
-        const element = queryByIcon('search')
+        const element =  queryByIcon('search')
       }
       `,
 		},
@@ -184,7 +185,7 @@ ruleTester.run(RULE_NAME, rule, {
 			errors: [{ messageId: 'noAwaitSyncQuery', line: 3, column: 38 }],
 			output: `
       async () => {
-        const element = screen.getAllByIcon('search')
+        const element =  screen.getAllByIcon('search')
       }
       `,
 		},
@@ -197,7 +198,7 @@ ruleTester.run(RULE_NAME, rule, {
 			errors: [{ messageId: 'noAwaitSyncQuery', line: 3, column: 38 }],
 			output: `
       async () => {
-        const element = screen.queryAllByIcon('search')
+        const element =  screen.queryAllByIcon('search')
       }
       `,
 		},
@@ -217,7 +218,7 @@ ruleTester.run(RULE_NAME, rule, {
 						},
 					],
 					output: `async () => {
-        expect(${query}('foo')).toBeEnabled()
+        expect( ${query}('foo')).toBeEnabled()
       }
       `,
 				}) as const
@@ -239,7 +240,7 @@ ruleTester.run(RULE_NAME, rule, {
 						},
 					],
 					output: `async () => {
-        const element = screen.${query}('foo')
+        const element =  screen.${query}('foo')
       }
       `,
 				}) as const
@@ -261,7 +262,7 @@ ruleTester.run(RULE_NAME, rule, {
 						},
 					],
 					output: `async () => {
-        expect(screen.${query}('foo')).toBeEnabled()
+        expect( screen.${query}('foo')).toBeEnabled()
       }
       `,
 				}) as const
@@ -283,7 +284,7 @@ ruleTester.run(RULE_NAME, rule, {
 					output: `
       import { screen } from '${testingFramework}'
       () => {
-        const element = screen.getByRole('button')
+        const element =  screen.getByRole('button')
       }
       `,
 				}) as const
@@ -301,7 +302,7 @@ ruleTester.run(RULE_NAME, rule, {
 			output: `
       import { screen } from 'test-utils'
       () => {
-        const element = screen.getByRole('button')
+        const element =  screen.getByRole('button')
       }
       `,
 		},
@@ -319,7 +320,7 @@ ruleTester.run(RULE_NAME, rule, {
 			errors: [{ messageId: 'noAwaitSyncQuery', line: 3, column: 31 }],
 			output: `
       test('A valid example test', async () => {
-        const element = queryByIcon('search')
+        const element =  queryByIcon('search')
       })
       `,
 		},
