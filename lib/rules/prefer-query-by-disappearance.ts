@@ -78,21 +78,6 @@ export default createTestingLibraryRule<Options, MessageIds>({
 			return false;
 		}
 
-		function checkNonCallbackViolation(node: TSESTree.CallExpressionArgument) {
-			if (!isCallExpression(node)) {
-				return false;
-			}
-
-			if (
-				!isMemberExpression(node.callee) &&
-				!getPropertyIdentifierNode(node.callee)
-			) {
-				return false;
-			}
-
-			return reportExpression(node.callee);
-		}
-
 		function isReturnViolation(node: TSESTree.Statement) {
 			if (!isReturnStatement(node) || !isCallExpression(node.argument)) {
 				return false;
@@ -177,7 +162,6 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
 			const argumentNode = node.arguments[0];
 
-			checkNonCallbackViolation(argumentNode);
 			checkArrowFunctionViolation(argumentNode);
 			checkFunctionExpressionViolation(argumentNode);
 		}

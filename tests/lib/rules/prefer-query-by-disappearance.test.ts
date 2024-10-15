@@ -25,6 +25,20 @@ ruleTester.run(RULE_NAME, rule, {
 		},
 		{
 			code: `
+        import { screen, waitForElementToBeRemoved } from '${testingFramework}';
+
+        await waitForElementToBeRemoved(screen.getByText("hello"))
+      `,
+		},
+		{
+			code: `
+        import { screen, waitForElementToBeRemoved } from '${testingFramework}';
+
+        await waitForElementToBeRemoved(screen.findByText("hello"))
+      `,
+		},
+		{
+			code: `
         import { screen } from '${testingFramework}';
 
         const callback = () => screen.getByRole('button')
@@ -213,6 +227,36 @@ ruleTester.run(RULE_NAME, rule, {
         })
       `,
 		},
+		{
+			code: `
+        import { screen } from '${testingFramework}';
+
+        const { getByText } = screen
+        await waitForElementToBeRemoved(getByText('hey'))
+      `,
+		},
+		{
+			code: `
+        import { render } from '${testingFramework}';
+
+        const { getByText } = render(<App />)
+        await waitForElementToBeRemoved(getByText('hey'))
+      `,
+		},
+		{
+			code: `
+        import { screen } from '${testingFramework}';
+        const { findByText } = screen
+        await waitForElementToBeRemoved(findByText('hey'))
+      `,
+		},
+		{
+			code: `
+        import { render } from '${testingFramework}';
+        const { findByText } = render(<App />)
+        await waitForElementToBeRemoved(findByText('hey'))
+      `,
+		},
 	]),
 	invalid: SUPPORTED_TESTING_FRAMEWORKS.flatMap((testingFramework) => [
 		{
@@ -318,34 +362,6 @@ ruleTester.run(RULE_NAME, rule, {
 					messageId: 'preferQueryByDisappearance',
 					line: 5,
 					column: 25,
-				},
-			],
-		},
-		{
-			code: `
-        import { screen, waitForElementToBeRemoved } from '${testingFramework}';
-
-        await waitForElementToBeRemoved(screen.getByText("hello"))
-      `,
-			errors: [
-				{
-					messageId: 'preferQueryByDisappearance',
-					line: 4,
-					column: 48,
-				},
-			],
-		},
-		{
-			code: `
-        import { screen, waitForElementToBeRemoved } from '${testingFramework}';
-
-        await waitForElementToBeRemoved(screen.findByText("hello"))
-      `,
-			errors: [
-				{
-					messageId: 'preferQueryByDisappearance',
-					line: 4,
-					column: 48,
 				},
 			],
 		},
@@ -712,66 +728,6 @@ ruleTester.run(RULE_NAME, rule, {
 					messageId: 'preferQueryByDisappearance',
 					line: 5,
 					column: 47,
-				},
-			],
-		},
-		{
-			code: `
-        import { screen } from '${testingFramework}';
-
-        const { getByText } = screen
-        await waitForElementToBeRemoved(getByText('hey'))
-      `,
-			errors: [
-				{
-					messageId: 'preferQueryByDisappearance',
-					line: 5,
-					column: 41,
-				},
-			],
-		},
-		{
-			code: `
-        import { render } from '${testingFramework}';
-
-        const { getByText } = render(<App />)
-        await waitForElementToBeRemoved(getByText('hey'))
-      `,
-			errors: [
-				{
-					messageId: 'preferQueryByDisappearance',
-					line: 5,
-					column: 41,
-				},
-			],
-		},
-		{
-			code: `
-        import { screen } from '${testingFramework}';
-
-        const { findByText } = screen
-        await waitForElementToBeRemoved(findByText('hey'))
-      `,
-			errors: [
-				{
-					messageId: 'preferQueryByDisappearance',
-					line: 5,
-					column: 41,
-				},
-			],
-		},
-		{
-			code: `
-        import { render } from '${testingFramework}';
-
-        const { findByText } = render(<App />)
-        await waitForElementToBeRemoved(findByText('hey'))
-      `,
-			errors: [
-				{
-					messageId: 'preferQueryByDisappearance',
-					line: 5,
-					column: 41,
 				},
 			],
 		},
