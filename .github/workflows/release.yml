@@ -28,10 +28,11 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
+          cache: npm
           node-version-file: '.nvmrc'
 
       - name: Install dependencies
-        uses: bahmutov/npm-install@v1
+        run: npm install
 
       - name: Build package
         run: npm run build
