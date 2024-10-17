@@ -72,7 +72,10 @@ type IsAsyncUtilFn = (
 	validNames?: readonly (typeof ASYNC_UTILS)[number][]
 ) => boolean;
 type IsFireEventMethodFn = (node: TSESTree.Identifier) => boolean;
-type IsUserEventMethodFn = (node: TSESTree.Identifier) => boolean;
+type IsUserEventMethodFn = (
+	node: TSESTree.Identifier,
+	userEventSession?: string
+) => boolean;
 type IsRenderUtilFn = (node: TSESTree.Identifier) => boolean;
 type IsCreateEventUtil = (
 	node: TSESTree.CallExpression | TSESTree.Identifier
@@ -97,6 +100,9 @@ type FindImportedTestingLibraryUtilSpecifierFn = (
 type IsNodeComingFromTestingLibraryFn = (
 	node: TSESTree.Identifier | TSESTree.MemberExpression
 ) => boolean;
+type getUserEventImportIdentifierFn = (
+	node: ImportModuleNode | null
+) => TSESTree.Identifier | null;
 
 export interface DetectionHelpers {
 	getTestingLibraryImportNode: GetTestingLibraryImportNodeFn;
@@ -130,6 +136,7 @@ export interface DetectionHelpers {
 	canReportErrors: CanReportErrorsFn;
 	findImportedTestingLibraryUtilSpecifier: FindImportedTestingLibraryUtilSpecifierFn;
 	isNodeComingFromTestingLibrary: IsNodeComingFromTestingLibraryFn;
+	getUserEventImportIdentifier: getUserEventImportIdentifierFn;
 }
 
 const USER_EVENT_PACKAGE = '@testing-library/user-event';
@@ -324,6 +331,35 @@ export function detectTestingLibraryUtils<
 
 		const getCustomModuleImportName: GetCustomModuleImportNameFn = () => {
 			return getImportModuleName(importedCustomModuleNode);
+		};
+
+		const getUserEventImportIdentifier = (node: ImportModuleNode | null) => {
+			if (!node) {
+				return null;
+			}
+
+			if (isImportDeclaration(node)) {
+				const userEventIdentifier = node.specifiers.find((specifier) =>
+					isImportDefaultSpecifier(specifier)
+				);
+
+				if (userEventIdentifier) {
+					return userEventIdentifier.local;
+				}
+			} else {
+				if (!ASTUtils.isVariableDeclarator(node.parent)) {
+					return null;
+				}
+
+				const requireNode = node.parent;
+				if (!ASTUtils.isIdentifier(requireNode.id)) {
+					return null;
+				}
+
+				return requireNode.id;
+			}
+
+			return null;
 		};
 
 		/**
@@ -557,7 +593,10 @@ export function detectTestingLibraryUtils<
 			return regularCall || wildcardCall || wildcardCallWithCallExpression;
 		};
 
-		const isUserEventMethod: IsUserEventMethodFn = (node) => {
+		const isUserEventMethod: IsUserEventMethodFn = (
+			node,
+			userEventInstance
+		) => {
 			const userEvent = findImportedUserEventSpecifier();
 			let userEventName: string | undefined;
 
@@ -567,7 +606,7 @@ export function detectTestingLibraryUtils<
 				userEventName = USER_EVENT_NAME;
 			}
 
-			if (!userEventName) {
+			if (!userEventName && !userEventInstance) {
 				return false;
 			}
 
@@ -591,8 +630,11 @@ export function detectTestingLibraryUtils<
 
 			// check userEvent.click() usage
 			return (
-				ASTUtils.isIdentifier(parentMemberExpression.object) &&
-				parentMemberExpression.object.name === userEventName
+				(ASTUtils.isIdentifier(parentMemberExpression.object) &&
+					parentMemberExpression.object.name === userEventName) ||
+				// check userEventInstance.click() usage
+				(ASTUtils.isIdentifier(parentMemberExpression.object) &&
+					parentMemberExpression.object.name === userEventInstance)
 			);
 		};
 
@@ -853,35 +895,7 @@ export function detectTestingLibraryUtils<
 
 		const findImportedUserEventSpecifier: () => TSESTree.Identifier | null =
 			() => {
-				if (!importedUserEventLibraryNode) {
-					return null;
-				}
-
-				if (isImportDeclaration(importedUserEventLibraryNode)) {
-					const userEventIdentifier =
-						importedUserEventLibraryNode.specifiers.find((specifier) =>
-							isImportDefaultSpecifier(specifier)
-						);
-
-					if (userEventIdentifier) {
-						return userEventIdentifier.local;
-					}
-				} else {
-					if (
-						!ASTUtils.isVariableDeclarator(importedUserEventLibraryNode.parent)
-					) {
-						return null;
-					}
-
-					const requireNode = importedUserEventLibraryNode.parent;
-					if (!ASTUtils.isIdentifier(requireNode.id)) {
-						return null;
-					}
-
-					return requireNode.id;
-				}
-
-				return null;
+				return getUserEventImportIdentifier(importedUserEventLibraryNode);
 			};
 
 		const getTestingLibraryImportedUtilSpecifier = (
@@ -997,6 +1011,7 @@ export function detectTestingLibraryUtils<
 			canReportErrors,
 			findImportedTestingLibraryUtilSpecifier,
 			isNodeComingFromTestingLibrary,
+			getUserEventImportIdentifier,
 		};
 
 		// Instructions for Testing Library detection.
