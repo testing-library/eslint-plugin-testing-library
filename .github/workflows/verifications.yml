@@ -19,10 +19,11 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
+          cache: npm
           node-version-file: '.nvmrc'
 
       - name: Install dependencies
-        uses: bahmutov/npm-install@v1
+        run: npm install
 
       - name: Run script
         run: npm run ${{ matrix.validation-script }}
@@ -43,10 +44,11 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
+          cache: npm
           node-version: ${{ matrix.node }}
 
       - name: Install dependencies
-        uses: bahmutov/npm-install@v1
+        run: npm install
 
       - name: Install ESLint v${{ matrix.eslint }}
         run: npm install --no-save --force eslint@${{ matrix.eslint }}
