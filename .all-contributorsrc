@@ -413,7 +413,8 @@
       "contributions": [
         "code",
         "doc",
-        "test"
+        "test",
+        "maintenance"
       ]
     },
     {
