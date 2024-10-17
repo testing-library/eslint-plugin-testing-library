@@ -113,9 +113,9 @@ ruleTester.run(RULE_NAME, rule, {
             const aPromise =  ${asyncUtil}(() =>
               document.querySelector('div.getOuttaHere')
             );
-            
+
             doSomethingElse();
-            
+
             return aPromise;
           };
         });
@@ -228,7 +228,7 @@ ruleTester.run(RULE_NAME, rule, {
 		...ASYNC_UTILS.map((asyncUtil) => ({
 			code: `
         import { ${asyncUtil} } from '${testingFramework}';
-        
+
         function waitForSomethingAsync() {
           return ${asyncUtil}(() => somethingAsync())
         }
@@ -262,14 +262,14 @@ ruleTester.run(RULE_NAME, rule, {
 		},
 		...ASYNC_UTILS.map((asyncUtil) => ({
 			code: `
-				// using ${testingFramework} implicitly
+				// implicitly using ${testingFramework}
         function setup() {
           const utils = render(<MyComponent />);
-        
+
           const waitForAsyncUtil = () => {
             return ${asyncUtil}(screen.queryByTestId('my-test-id'));
           };
-        
+
           return { waitForAsyncUtil, ...utils };
         }
 
@@ -287,7 +287,7 @@ ruleTester.run(RULE_NAME, rule, {
 
           const { waitForAsyncUtil: myDestructuredAlias } = setup();
           await myDestructuredAlias();
-          
+
           const { user, ...rest } = setup();
           await rest.waitForAsyncUtil();
 
@@ -299,23 +299,23 @@ ruleTester.run(RULE_NAME, rule, {
 			code: `
           import React from 'react';
           import { render, act } from '${testingFramework}';
-          
+
           const doWithAct = async (timeout) => {
             await act(async () => await ${asyncUtil}(screen.getByTestId('my-test')));
           };
-          
+
           describe('Component', () => {
             const mock = jest.fn();
-          
+
             it('test', async () => {
               let Component = () => {
                 mock(1);
                 return <div />;
               };
               render(<Component />);
-          
+
               await doWithAct(500);
-          
+
               const myNumberTestVar = 1;
               const myBooleanTestVar = false;
               const myArrayTestVar = [1, 2];
@@ -468,7 +468,7 @@ ruleTester.run(RULE_NAME, rule, {
 				({
 					code: `
         import { ${asyncUtil}, render } from '${testingFramework}';
-        
+
         function waitForSomethingAsync() {
           return ${asyncUtil}(() => somethingAsync())
         }
@@ -515,7 +515,7 @@ ruleTester.run(RULE_NAME, rule, {
 				({
 					code: `
         import { ${asyncUtil}, render } from '${testingFramework}';
-        
+
         function waitForSomethingAsync() {
           return ${asyncUtil}(() => somethingAsync())
         }
@@ -562,14 +562,14 @@ ruleTester.run(RULE_NAME, rule, {
 			(asyncUtil) =>
 				({
 					code: `
-				// using ${testingFramework} implicitly
+				// implicitly using ${testingFramework}
         function setup() {
           const utils = render(<MyComponent />);
-        
+
           const waitForAsyncUtil = () => {
             return ${asyncUtil}(screen.queryByTestId('my-test-id'));
           };
-        
+
           return { waitForAsyncUtil, ...utils };
         }
 
@@ -592,14 +592,14 @@ ruleTester.run(RULE_NAME, rule, {
 			(asyncUtil) =>
 				({
 					code: `
-				// using ${testingFramework} implicitly
+				// implicitly using ${testingFramework}
         function setup() {
           const utils = render(<MyComponent />);
-        
+
           const waitForAsyncUtil = () => {
             return ${asyncUtil}(screen.queryByTestId('my-test-id'));
           };
-        
+
           return { waitForAsyncUtil, ...utils };
         }
 
@@ -623,14 +623,14 @@ ruleTester.run(RULE_NAME, rule, {
 			(asyncUtil) =>
 				({
 					code: `
-				// using ${testingFramework} implicitly
+				// implicitly using ${testingFramework}
         function setup() {
           const utils = render(<MyComponent />);
-        
+
           const waitForAsyncUtil = () => {
             return ${asyncUtil}(screen.queryByTestId('my-test-id'));
           };
-        
+
           return { waitForAsyncUtil, ...utils };
         }
 
@@ -653,14 +653,14 @@ ruleTester.run(RULE_NAME, rule, {
 			(asyncUtil) =>
 				({
 					code: `
-				// using ${testingFramework} implicitly
+				// implicitly using ${testingFramework}
         function setup() {
           const utils = render(<MyComponent />);
-        
+
           const waitForAsyncUtil = () => {
             return ${asyncUtil}(screen.queryByTestId('my-test-id'));
           };
-        
+
           return { waitForAsyncUtil, ...utils };
         }
 
@@ -683,14 +683,14 @@ ruleTester.run(RULE_NAME, rule, {
 			(asyncUtil) =>
 				({
 					code: `
-				// using ${testingFramework} implicitly
+				// implicitly using ${testingFramework}
         function setup() {
           const utils = render(<MyComponent />);
-        
+
           const waitForAsyncUtil = () => {
             return ${asyncUtil}(screen.queryByTestId('my-test-id'));
           };
-        
+
           return { waitForAsyncUtil, ...utils };
         }
 
@@ -712,14 +712,14 @@ ruleTester.run(RULE_NAME, rule, {
 			(asyncUtil) =>
 				({
 					code: `
-				// using ${testingFramework} implicitly
+				// implicitly using ${testingFramework}
         function setup() {
           const utils = render(<MyComponent />);
-        
+
           const waitForAsyncUtil = () => {
             return ${asyncUtil}(screen.queryByTestId('my-test-id'));
           };
-        
+
           return { waitForAsyncUtil, ...utils };
         }
 

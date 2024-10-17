@@ -142,7 +142,7 @@ ruleTester.run(RULE_NAME, rule, {
 					'testing-library/utils-module': 'test-utils',
 				},
 				code: `
-        import { fireEvent } from 'somewhere-else' // not ${testingFramework}
+        import { fireEvent } from 'somewhere-else' // not using ${testingFramework}
         test('unhandled promise from event not related to TL is valid', async () => {
           fireEvent.${eventMethod}(getByLabelText('username'))
         })
@@ -154,7 +154,7 @@ ruleTester.run(RULE_NAME, rule, {
 					'testing-library/utils-module': 'test-utils',
 				},
 				code: `
-        import { fireEvent } from 'test-utils' // implicitly ${testingFramework}
+        import { fireEvent } from 'test-utils' // implicitly using ${testingFramework}
         test('await promise from event method imported from custom module is valid', async () => {
           await fireEvent.${eventMethod}(getByLabelText('username'))
         })
