@@ -11,7 +11,7 @@ import {
 export function createTestingLibraryRule<
 	TOptions extends readonly unknown[],
 	TMessageIds extends string,
-	TRuleListener extends TSESLint.RuleListener = TSESLint.RuleListener
+	TRuleListener extends TSESLint.RuleListener = TSESLint.RuleListener,
 >({
 	create,
 	detectionOptions = {},

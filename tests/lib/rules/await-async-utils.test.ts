@@ -346,7 +346,7 @@ ruleTester.run(RULE_NAME, rule, {
 							data: { name: asyncUtil },
 						},
 					],
-				} as const)
+				}) as const
 		),
 		...ASYNC_UTILS.map(
 			(asyncUtil) =>
@@ -366,7 +366,7 @@ ruleTester.run(RULE_NAME, rule, {
 							data: { name: asyncUtil },
 						},
 					],
-				} as const)
+				}) as const
 		),
 		...ASYNC_UTILS.map(
 			(asyncUtil) =>
@@ -386,7 +386,7 @@ ruleTester.run(RULE_NAME, rule, {
 							data: { name: asyncUtil },
 						},
 					],
-				} as const)
+				}) as const
 		),
 		...ASYNC_UTILS.map(
 			(asyncUtil) =>
@@ -406,7 +406,7 @@ ruleTester.run(RULE_NAME, rule, {
 							data: { name: asyncUtil },
 						},
 					],
-				} as const)
+				}) as const
 		),
 		...ASYNC_UTILS.map(
 			(asyncUtil) =>
@@ -433,7 +433,7 @@ ruleTester.run(RULE_NAME, rule, {
 							data: { name: asyncUtil },
 						},
 					],
-				} as const)
+				}) as const
 		),
 		...ASYNC_UTILS.map(
 			(asyncUtil) =>
@@ -460,7 +460,7 @@ ruleTester.run(RULE_NAME, rule, {
 							data: { name: asyncUtil },
 						},
 					],
-				} as const)
+				}) as const
 		),
 		...ASYNC_UTILS.map(
 			(asyncUtil) =>
@@ -485,7 +485,7 @@ ruleTester.run(RULE_NAME, rule, {
 							data: { name: 'waitForSomethingAsync' },
 						},
 					],
-				} as const)
+				}) as const
 		),
 		...ASYNC_UTILS.map(
 			(asyncUtil) =>
@@ -507,7 +507,7 @@ ruleTester.run(RULE_NAME, rule, {
 							data: { name: asyncUtil },
 						},
 					],
-				} as const)
+				}) as const
 		),
 		...ASYNC_UTILS.map(
 			(asyncUtil) =>
@@ -532,7 +532,7 @@ ruleTester.run(RULE_NAME, rule, {
 							data: { name: 'waitForSomethingAsync' },
 						},
 					],
-				} as const)
+				}) as const
 		),
 
 		...ASYNC_UTILS.map(
@@ -555,7 +555,7 @@ ruleTester.run(RULE_NAME, rule, {
 							data: { name: asyncUtil },
 						},
 					],
-				} as const)
+				}) as const
 		),
 		...ASYNC_UTILS.map(
 			(asyncUtil) =>
@@ -584,7 +584,7 @@ ruleTester.run(RULE_NAME, rule, {
 							data: { name: 'waitForAsyncUtil' },
 						},
 					],
-				} as const)
+				}) as const
 		),
 		...ASYNC_UTILS.map(
 			(asyncUtil) =>
@@ -614,7 +614,7 @@ ruleTester.run(RULE_NAME, rule, {
 							data: { name: 'myAlias' },
 						},
 					],
-				} as const)
+				}) as const
 		),
 		...ASYNC_UTILS.map(
 			(asyncUtil) =>
@@ -643,7 +643,7 @@ ruleTester.run(RULE_NAME, rule, {
 							data: { name: 'waitForAsyncUtil' },
 						},
 					],
-				} as const)
+				}) as const
 		),
 		...ASYNC_UTILS.map(
 			(asyncUtil) =>
@@ -672,7 +672,7 @@ ruleTester.run(RULE_NAME, rule, {
 							data: { name: 'myAlias' },
 						},
 					],
-				} as const)
+				}) as const
 		),
 		...ASYNC_UTILS.map(
 			(asyncUtil) =>
@@ -700,7 +700,7 @@ ruleTester.run(RULE_NAME, rule, {
 							data: { name: 'waitForAsyncUtil' },
 						},
 					],
-				} as const)
+				}) as const
 		),
 		...ASYNC_UTILS.map(
 			(asyncUtil) =>
@@ -729,7 +729,7 @@ ruleTester.run(RULE_NAME, rule, {
 							data: { name: 'myAlias' },
 						},
 					],
-				} as const)
+				}) as const
 		),
 	]),
 });

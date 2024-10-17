@@ -192,7 +192,7 @@ ruleTester.run(RULE_NAME, rule, {
 									isOldImport ? oldName : newName
 								}")
               `,
-						} as const)
+						}) as const
 				)
 		),
 		{

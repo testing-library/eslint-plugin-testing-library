@@ -35,7 +35,7 @@ export type TestingLibrarySettings = {
 
 export type TestingLibraryContext<
 	TOptions extends readonly unknown[],
-	TMessageIds extends string
+	TMessageIds extends string,
 > = Readonly<
 	TSESLint.RuleContext<TMessageIds, TOptions> & {
 		settings: TestingLibrarySettings;
@@ -45,7 +45,7 @@ export type TestingLibraryContext<
 export type EnhancedRuleCreate<
 	TOptions extends readonly unknown[],
 	TMessageIds extends string,
-	TRuleListener extends TSESLint.RuleListener = TSESLint.RuleListener
+	TRuleListener extends TSESLint.RuleListener = TSESLint.RuleListener,
 > = (
 	context: TestingLibraryContext<TOptions, TMessageIds>,
 	optionsWithDefault: Readonly<TOptions>,
@@ -156,7 +156,7 @@ export type DetectionOptions = {
 export function detectTestingLibraryUtils<
 	TOptions extends readonly unknown[],
 	TMessageIds extends string,
-	TRuleListener extends TSESLint.RuleListener = TSESLint.RuleListener
+	TRuleListener extends TSESLint.RuleListener = TSESLint.RuleListener,
 >(
 	ruleCreate: EnhancedRuleCreate<TOptions, TMessageIds, TRuleListener>,
 	{ skipRuleReportingCheck = false }: Partial<DetectionOptions> = {}
