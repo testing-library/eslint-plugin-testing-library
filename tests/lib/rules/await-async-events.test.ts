@@ -131,7 +131,7 @@ ruleTester.run(RULE_NAME, rule, {
             doSomething()
             return fireEvent.${eventMethod}(getByLabelText('username'))
           }
-  
+
           await triggerEvent()
         })
         `,
@@ -142,7 +142,7 @@ ruleTester.run(RULE_NAME, rule, {
 					'testing-library/utils-module': 'test-utils',
 				},
 				code: `
-        import { fireEvent } from 'somewhere-else'
+        import { fireEvent } from 'somewhere-else' // not using ${testingFramework}
         test('unhandled promise from event not related to TL is valid', async () => {
           fireEvent.${eventMethod}(getByLabelText('username'))
         })
@@ -154,7 +154,7 @@ ruleTester.run(RULE_NAME, rule, {
 					'testing-library/utils-module': 'test-utils',
 				},
 				code: `
-        import { fireEvent } from 'test-utils'
+        import { fireEvent } from 'test-utils' // implicitly using ${testingFramework}
         test('await promise from event method imported from custom module is valid', async () => {
           await fireEvent.${eventMethod}(getByLabelText('username'))
         })
@@ -166,13 +166,13 @@ ruleTester.run(RULE_NAME, rule, {
 				// valid use case without call expression
 				// so there is no innermost function scope found
 				code: `
-        import { fireEvent } from 'test-utils'
+        import { fireEvent } from 'test-utils' // implicitly using ${testingFramework}
         test('edge case for innermost function without call expression', async () => {
           function triggerEvent() {
               doSomething()
               return fireEvent.focus(getByLabelText('username'))
             }
-    
+
           const reassignedFunction = triggerEvent
         })
         `,
@@ -318,7 +318,7 @@ ruleTester.run(RULE_NAME, rule, {
             doSomething()
             return userEvent.${eventMethod}(getByLabelText('username'))
           }
-  
+
           await triggerEvent()
         })
         `,
@@ -380,7 +380,7 @@ ruleTester.run(RULE_NAME, rule, {
               doSomething()
               return userEvent.focus(getByLabelText('username'))
             }
-    
+
           const reassignedFunction = triggerEvent
         })
         `,
@@ -447,11 +447,7 @@ ruleTester.run(RULE_NAME, rule, {
 							},
 						],
 						options: [{ eventModule: 'fireEvent' }],
-						output: `
-      import { fireEvent } from '${testingFramework}'
-
-      fireEvent.${eventMethod}(getByLabelText('username'))
-      `,
+						output: null,
 					}) as const
 			),
 			...FIRE_EVENT_ASYNC_FUNCTIONS.map(
@@ -611,7 +607,7 @@ ruleTester.run(RULE_NAME, rule, {
 							'testing-library/utils-module': 'test-utils',
 						},
 						code: `
-      import { fireEvent } from 'test-utils'
+      import { fireEvent } from 'test-utils' // implicitly using ${testingFramework}
       test(
       'unhandled promise from event method imported from custom module with aggressive reporting opted-out is invalid',
       () => {
@@ -628,7 +624,7 @@ ruleTester.run(RULE_NAME, rule, {
 						],
 						options: [{ eventModule: 'fireEvent' }],
 						output: `
-      import { fireEvent } from 'test-utils'
+      import { fireEvent } from 'test-utils' // implicitly using ${testingFramework}
       test(
       'unhandled promise from event method imported from custom module with aggressive reporting opted-out is invalid',
       async () => {
@@ -759,16 +755,7 @@ ruleTester.run(RULE_NAME, rule, {
 							},
 						],
 						options: [{ eventModule: 'fireEvent' }],
-						output: `
-      import { fireEvent } from '${testingFramework}'
-
-      function triggerEvent() {
-        doSomething()
-        return fireEvent.${eventMethod}(getByLabelText('username'))
-      }
-
-      triggerEvent()
-      `,
+						output: null,
 					}) as const
 			),
 		]),
@@ -805,7 +792,7 @@ ruleTester.run(RULE_NAME, rule, {
 					({
 						code: `
       import userEvent from '${testingFramework}'
-			
+
       userEvent.${eventMethod}(getByLabelText('username'))
       `,
 						errors: [
@@ -818,11 +805,7 @@ ruleTester.run(RULE_NAME, rule, {
 							},
 						],
 						options: [{ eventModule: 'userEvent' }],
-						output: `
-      import userEvent from '${testingFramework}'
-			
-      userEvent.${eventMethod}(getByLabelText('username'))
-      `,
+						output: null,
 					}) as const
 			),
 			...USER_EVENT_ASYNC_FUNCTIONS.map(
@@ -974,16 +957,7 @@ ruleTester.run(RULE_NAME, rule, {
 							},
 						],
 						options: [{ eventModule: 'userEvent' }],
-						output: `
-      import userEvent from '${testingFramework}'
-
-      function triggerEvent() {
-        doSomething()
-        return userEvent.${eventMethod}(getByLabelText('username'))
-      }
-
-      triggerEvent()
-      `,
+						output: null,
 					}) as const
 			),
 			...USER_EVENT_ASYNC_FUNCTIONS.map(
