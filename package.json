@@ -51,7 +51,8 @@
 		"type-check": "tsc --noEmit"
 	},
 	"dependencies": {
-		"@typescript-eslint/utils": "^5.62.0"
+		"@typescript-eslint/scope-manager": "^6.21.0",
+		"@typescript-eslint/utils": "^6.21.0"
 	},
 	"devDependencies": {
 		"@babel/core": "^7.25.8",
@@ -63,8 +64,8 @@
 		"@swc/jest": "^0.2.36",
 		"@types/jest": "^27.5.2",
 		"@types/node": "^20.16.12",
-		"@typescript-eslint/eslint-plugin": "^5.62.0",
-		"@typescript-eslint/parser": "^5.62.0",
+		"@typescript-eslint/eslint-plugin": "^6.21.0",
+		"@typescript-eslint/parser": "^6.21.0",
 		"del-cli": "^5.1.0",
 		"eslint": "^8.57.1",
 		"eslint-config-prettier": "^9.1.0",

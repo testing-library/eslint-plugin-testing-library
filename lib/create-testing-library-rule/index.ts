@@ -37,7 +37,7 @@ export function createTestingLibraryRule<
 				...meta.docs,
 				// We're using our own recommendedConfig meta to tell our build tools
 				// if the rule is recommended on a config basis
-				recommended: false,
+				recommended: undefined,
 			},
 		},
 	});
