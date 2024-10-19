@@ -119,12 +119,10 @@ export default createTestingLibraryRule<Options, MessageIds>({
 								node: identifierNode,
 								messageId: 'awaitAsyncQuery',
 								data: { name: identifierNode.name },
-								fix: (fixer) => {
-									const fixes = references.map((ref) =>
+								fix: (fixer) =>
+									references.map((ref) =>
 										fixer.insertTextBefore(ref.identifier, 'await ')
-									);
-									return fixes;
-								},
+									),
 							});
 							return;
 						}
