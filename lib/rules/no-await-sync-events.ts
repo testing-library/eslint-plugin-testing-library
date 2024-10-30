@@ -9,9 +9,9 @@ import {
 	isProperty,
 } from '../node-utils';
 
-const USER_EVENT_ASYNC_EXCEPTIONS: string[] = ['type', 'keyboard'];
-const FIRE_EVENT_OPTION = 'fire-event' as const;
-const USER_EVENT_OPTION = 'user-event' as const;
+const USER_EVENT_ASYNC_EXCEPTIONS = ['type', 'keyboard'];
+const FIRE_EVENT_OPTION = 'fire-event';
+const USER_EVENT_OPTION = 'user-event';
 const VALID_EVENT_MODULES = [FIRE_EVENT_OPTION, USER_EVENT_OPTION];
 const DEFAULT_EVENT_MODULES = [FIRE_EVENT_OPTION];
 
