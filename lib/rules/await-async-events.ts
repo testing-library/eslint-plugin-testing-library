@@ -55,15 +55,15 @@ export default createTestingLibraryRule<Options, MessageIds>({
 						default: USER_EVENT_NAME,
 						oneOf: [
 							{
+								enum: EVENTS_SIMULATORS.concat(),
 								type: 'string',
-								enum: EVENTS_SIMULATORS,
 							},
 							{
-								type: 'array',
 								items: {
 									type: 'string',
-									enum: EVENTS_SIMULATORS,
+									enum: EVENTS_SIMULATORS.concat(),
 								},
+								type: 'array',
 							},
 						],
 					},

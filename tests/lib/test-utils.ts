@@ -39,7 +39,7 @@ export const createRuleTester = (
 	parserOptions: Partial<TSESLint.ParserOptions> = {}
 ): TSESLint.RuleTester => {
 	return new TestingLibraryRuleTester({
-		parser: resolve('./node_modules/@typescript-eslint/parser'),
+		parser: resolve('./node_modules/@typescript-eslint/parser/dist'),
 		parserOptions: {
 			ecmaVersion: 2018,
 			sourceType: 'module',

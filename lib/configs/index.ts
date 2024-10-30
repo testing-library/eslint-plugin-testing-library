@@ -1,6 +1,6 @@
 import { join } from 'path';
 
-import { type TSESLint } from '@typescript-eslint/utils';
+import type { TSESLint } from '@typescript-eslint/utils';
 
 import {
 	importDefault,
@@ -8,12 +8,10 @@ import {
 	SupportedTestingFramework,
 } from '../utils';
 
-export type LinterConfigRules = Pick<Required<TSESLint.Linter.Config>, 'rules'>;
-
 const configsDir = __dirname;
 
 const getConfigForFramework = (framework: SupportedTestingFramework) =>
-	importDefault<LinterConfigRules>(join(configsDir, framework));
+	importDefault<TSESLint.SharedConfig.RulesRecord>(join(configsDir, framework));
 
 export default SUPPORTED_TESTING_FRAMEWORKS.reduce(
 	(allConfigs, framework) => ({
@@ -21,4 +19,4 @@ export default SUPPORTED_TESTING_FRAMEWORKS.reduce(
 		[framework]: getConfigForFramework(framework),
 	}),
 	{}
-) as Record<SupportedTestingFramework, LinterConfigRules>;
+) as Record<SupportedTestingFramework, TSESLint.SharedConfig.RulesRecord>;
