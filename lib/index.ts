@@ -8,7 +8,7 @@ import { SupportedTestingFramework } from './utils';
 const {
 	name: packageName,
 	version: packageVersion,
-	// eslint-disable-next-line @typescript-eslint/no-var-requires
+	// eslint-disable-next-line @typescript-eslint/no-require-imports
 } = require('../package.json') as { name: string; version: string };
 
 const plugin = {
