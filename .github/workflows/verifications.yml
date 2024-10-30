@@ -36,7 +36,7 @@ jobs:
       fail-fast: false
       matrix:
         node: [18.18.0, 18, 20.9.0, 20, 21.1.0, 21, 22]
-        eslint: [7.5, 7, 8, 9]
+        eslint: [8.57.0, 8, 9]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
