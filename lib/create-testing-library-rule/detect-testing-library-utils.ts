@@ -28,7 +28,9 @@ import {
 const SETTING_OPTION_OFF = 'off' as const;
 
 export type TestingLibrarySettings = {
-	'testing-library/utils-module'?: string | typeof SETTING_OPTION_OFF;
+	'testing-library/utils-module'?:
+		| typeof SETTING_OPTION_OFF
+		| (string & NonNullable<unknown>);
 	'testing-library/custom-renders'?: string[] | typeof SETTING_OPTION_OFF;
 	'testing-library/custom-queries'?: string[] | typeof SETTING_OPTION_OFF;
 };

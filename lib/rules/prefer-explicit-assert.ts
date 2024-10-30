@@ -21,10 +21,11 @@ type Options = [
 
 const isAtTopLevel = (node: TSESTree.Node) =>
 	(!!node.parent?.parent &&
-		node.parent.parent.type === 'ExpressionStatement') ||
-	(node.parent?.parent?.type === 'AwaitExpression' &&
+		node.parent.parent.type === TSESTree.AST_NODE_TYPES.ExpressionStatement) ||
+	(node.parent?.parent?.type === TSESTree.AST_NODE_TYPES.AwaitExpression &&
 		!!node.parent.parent.parent &&
-		node.parent.parent.parent.type === 'ExpressionStatement');
+		node.parent.parent.parent.type ===
+			TSESTree.AST_NODE_TYPES.ExpressionStatement);
 
 const isVariableDeclaration = (node: TSESTree.Node) => {
 	if (
