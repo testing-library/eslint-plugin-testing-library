@@ -25,7 +25,7 @@ import {
 	PRESENCE_MATCHERS,
 } from '../utils';
 
-const SETTING_OPTION_OFF = 'off' as const;
+const SETTING_OPTION_OFF = 'off';
 
 export type TestingLibrarySettings = {
 	'testing-library/utils-module'?:
