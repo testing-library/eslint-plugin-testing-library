@@ -8,7 +8,7 @@ import {
 	EnhancedRuleCreate,
 } from './detect-testing-library-utils';
 
-export function createTestingLibraryRule<
+export const createTestingLibraryRule = <
 	TOptions extends readonly unknown[],
 	TMessageIds extends string,
 	TRuleListener extends TSESLint.RuleListener = TSESLint.RuleListener,
@@ -23,9 +23,8 @@ export function createTestingLibraryRule<
 	defaultOptions: Readonly<TOptions>;
 	detectionOptions?: Partial<DetectionOptions>;
 	create: EnhancedRuleCreate<TOptions, TMessageIds, TRuleListener>;
-}>): TSESLint.RuleModule<TMessageIds, TOptions> {
-	// eslint-disable-next-line new-cap
-	return ESLintUtils.RuleCreator(getDocsUrl)({
+}>): TSESLint.RuleModule<TMessageIds, TOptions> =>
+	ESLintUtils.RuleCreator(getDocsUrl)({
 		...remainingConfig,
 		create: detectTestingLibraryUtils<TOptions, TMessageIds, TRuleListener>(
 			create,
@@ -41,4 +40,3 @@ export function createTestingLibraryRule<
 			},
 		},
 	});
-}
