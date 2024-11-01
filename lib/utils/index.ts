@@ -43,6 +43,7 @@ const ALL_QUERIES_METHODS = [
 	'ByDisplayValue',
 	'ByRole',
 	'ByTestId',
+	'ByA11yState',
 ];
 
 const SYNC_QUERIES_COMBINATIONS = combineQueries(
