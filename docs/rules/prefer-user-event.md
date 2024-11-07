@@ -138,3 +138,6 @@ The following table lists all the possible equivalents from the low-level API `f
 | `pointerOut`     | <ul><li>`unhover`</li></ul>                                                                                 |
 | `pointerOver`    | <ul><li>`hover`</li><li>`selectOptions`</li><li>`deselectOptions`</li></ul>                                 |
 | `pointerUp`      | <ul><li>`click`</li><li>`dblClick`</li><li>`selectOptions`</li><li>`deselectOptions`</li></ul>              |
+| `press`          | <ul><li>`press`</li></ul>                                                                                   |
+| `scroll`         | <ul><li>`scrollTo`</li></ul>                                                                                |
+| `type`           | <ul><li>`type`</li></ul>                                                                                    |
