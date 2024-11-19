@@ -5,5 +5,5 @@ const interopRequireDefault = <T>(obj: any): { default: T } =>
 	obj?.__esModule ? obj : { default: obj };
 
 export const importDefault = <T>(moduleName: string): T =>
-	// eslint-disable-next-line @typescript-eslint/no-var-requires
+	// eslint-disable-next-line @typescript-eslint/no-require-imports
 	interopRequireDefault<T>(require(moduleName)).default;

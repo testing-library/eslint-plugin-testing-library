@@ -1,6 +1,6 @@
-import { ESLintUtils, TSESLint } from '@typescript-eslint/utils';
+import { ESLintUtils } from '@typescript-eslint/utils';
 
-import { getDocsUrl, TestingLibraryRuleMeta } from '../utils';
+import { getDocsUrl, TestingLibraryPluginDocs } from '../utils';
 
 import {
 	DetectionOptions,
@@ -11,32 +11,27 @@ import {
 export const createTestingLibraryRule = <
 	TOptions extends readonly unknown[],
 	TMessageIds extends string,
-	TRuleListener extends TSESLint.RuleListener = TSESLint.RuleListener,
 >({
 	create,
 	detectionOptions = {},
-	meta,
 	...remainingConfig
-}: Readonly<{
-	name: string;
-	meta: TestingLibraryRuleMeta<TMessageIds, TOptions>;
-	defaultOptions: Readonly<TOptions>;
-	detectionOptions?: Partial<DetectionOptions>;
-	create: EnhancedRuleCreate<TOptions, TMessageIds, TRuleListener>;
-}>): TSESLint.RuleModule<TMessageIds, TOptions> =>
-	ESLintUtils.RuleCreator(getDocsUrl)({
+}: Readonly<
+	Omit<
+		ESLintUtils.RuleWithMetaAndName<
+			TOptions,
+			TMessageIds,
+			TestingLibraryPluginDocs<TOptions>
+		>,
+		'create'
+	> & {
+		create: EnhancedRuleCreate<TMessageIds, TOptions>;
+		detectionOptions?: Partial<DetectionOptions>;
+	}
+>) =>
+	ESLintUtils.RuleCreator<TestingLibraryPluginDocs<TOptions>>(getDocsUrl)({
 		...remainingConfig,
-		create: detectTestingLibraryUtils<TOptions, TMessageIds, TRuleListener>(
+		create: detectTestingLibraryUtils<TMessageIds, TOptions>(
 			create,
 			detectionOptions
 		),
-		meta: {
-			...meta,
-			docs: {
-				...meta.docs,
-				// We're using our own recommendedConfig meta to tell our build tools
-				// if the rule is recommended on a config basis
-				recommended: undefined,
-			},
-		},
 	});

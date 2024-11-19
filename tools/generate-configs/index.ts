@@ -4,24 +4,18 @@ import rules from '../../lib/rules';
 import {
 	SUPPORTED_TESTING_FRAMEWORKS,
 	SupportedTestingFramework,
+	TestingLibraryPluginRuleModule,
 } from '../../lib/utils';
 
-import { LinterConfig, writeConfig } from './utils';
+import { writeConfig } from './utils';
 
 const RULE_NAME_PREFIX = 'testing-library/';
 
 const getRecommendedRulesForTestingFramework = (
 	framework: SupportedTestingFramework
 ): Record<string, TSESLint.Linter.RuleEntry> =>
-	Object.entries(rules)
-		.filter(
-			([
-				_,
-				{
-					meta: { docs },
-				},
-			]) => Boolean(docs.recommendedConfig[framework])
-		)
+	Object.entries<TestingLibraryPluginRuleModule<string, unknown[]>>(rules)
+		.filter(([_, { meta }]) => Boolean(meta.docs.recommendedConfig[framework]))
 		.reduce((allRules, [ruleName, { meta }]) => {
 			const name = `${RULE_NAME_PREFIX}${ruleName}`;
 			const recommendation = meta.docs.recommendedConfig[framework];
@@ -34,7 +28,7 @@ const getRecommendedRulesForTestingFramework = (
 
 (async () => {
 	for (const framework of SUPPORTED_TESTING_FRAMEWORKS) {
-		const specificFrameworkConfig: LinterConfig = {
+		const specificFrameworkConfig: TSESLint.Linter.ConfigType = {
 			plugins: ['testing-library'],
 			rules: getRecommendedRulesForTestingFramework(framework),
 		};

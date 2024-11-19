@@ -1,21 +1,18 @@
-import { resolve } from 'path';
+import tsESLintParser from '@typescript-eslint/parser';
+import { RuleTester, RunTests } from '@typescript-eslint/rule-tester';
 
-import { TSESLint } from '@typescript-eslint/utils';
-
-import { FlatCompatRuleTester } from './FlatCompatRuleTester';
+import { TestingLibraryPluginRuleModule } from '../../lib/utils';
 
 const DEFAULT_TEST_CASE_CONFIG = {
 	filename: 'MyComponent.test.js',
 };
 
-class TestingLibraryRuleTester extends FlatCompatRuleTester {
-	run<TMessageIds extends string, TOptions extends Readonly<unknown[]>>(
+class TestingLibraryRuleTester extends RuleTester {
+	run<TMessageIds extends string, TOptions extends readonly unknown[]>(
 		ruleName: string,
-		rule: TSESLint.RuleModule<TMessageIds, TOptions>,
-		tests: TSESLint.RunTests<TMessageIds, TOptions>
+		rule: TestingLibraryPluginRuleModule<TMessageIds, TOptions>,
+		{ invalid, valid }: RunTests<TMessageIds, TOptions>
 	): void {
-		const { valid, invalid } = tests;
-
 		const finalValid = valid.map((testCase) => {
 			if (typeof testCase === 'string') {
 				return {
@@ -35,18 +32,14 @@ class TestingLibraryRuleTester extends FlatCompatRuleTester {
 	}
 }
 
-export const createRuleTester = (
-	parserOptions: Partial<TSESLint.ParserOptions> = {}
-): TSESLint.RuleTester => {
-	return new TestingLibraryRuleTester({
-		parser: resolve('./node_modules/@typescript-eslint/parser/dist'),
-		parserOptions: {
-			ecmaVersion: 2018,
-			sourceType: 'module',
-			ecmaFeatures: {
-				jsx: true,
+export const createRuleTester = () =>
+	new TestingLibraryRuleTester({
+		languageOptions: {
+			parser: tsESLintParser,
+			parserOptions: {
+				ecmaFeatures: {
+					jsx: true,
+				},
 			},
-			...parserOptions,
 		},
 	});
-};
