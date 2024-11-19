@@ -665,6 +665,7 @@ export function findImportSpecifier(
 		const namedExport = node.specifiers.find((n) => {
 			return (
 				isImportSpecifier(n) &&
+				ASTUtils.isIdentifier(n.imported) &&
 				[n.imported.name, n.local.name].includes(specifierName)
 			);
 		});

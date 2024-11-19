@@ -36,8 +36,8 @@ export type TestingLibrarySettings = {
 };
 
 export type TestingLibraryContext<
-	TOptions extends readonly unknown[],
 	TMessageIds extends string,
+	TOptions extends readonly unknown[],
 > = Readonly<
 	TSESLint.RuleContext<TMessageIds, TOptions> & {
 		settings: TestingLibrarySettings;
@@ -45,14 +45,13 @@ export type TestingLibraryContext<
 >;
 
 export type EnhancedRuleCreate<
-	TOptions extends readonly unknown[],
 	TMessageIds extends string,
-	TRuleListener extends TSESLint.RuleListener = TSESLint.RuleListener,
+	TOptions extends readonly unknown[],
 > = (
-	context: TestingLibraryContext<TOptions, TMessageIds>,
+	context: TestingLibraryContext<TMessageIds, TOptions>,
 	optionsWithDefault: Readonly<TOptions>,
 	detectionHelpers: Readonly<DetectionHelpers>
-) => TRuleListener;
+) => TSESLint.RuleListener;
 
 // Helpers methods
 type GetTestingLibraryImportNodeFn = () => ImportModuleNode | null;
@@ -156,15 +155,14 @@ export type DetectionOptions = {
  * Enhances a given rule `create` with helpers to detect Testing Library utils.
  */
 export function detectTestingLibraryUtils<
-	TOptions extends readonly unknown[],
 	TMessageIds extends string,
-	TRuleListener extends TSESLint.RuleListener = TSESLint.RuleListener,
+	TOptions extends readonly unknown[],
 >(
-	ruleCreate: EnhancedRuleCreate<TOptions, TMessageIds, TRuleListener>,
+	ruleCreate: EnhancedRuleCreate<TMessageIds, TOptions>,
 	{ skipRuleReportingCheck = false }: Partial<DetectionOptions> = {}
 ) {
 	return (
-		context: TestingLibraryContext<TOptions, TMessageIds>,
+		context: TestingLibraryContext<TMessageIds, TOptions>,
 		optionsWithDefault: Readonly<TOptions>
 	): TSESLint.RuleListener => {
 		const importedTestingLibraryNodes: ImportModuleNode[] = [];
@@ -214,6 +212,7 @@ export function detectTestingLibraryUtils<
 
 			const originalNodeName =
 				isImportSpecifier(importedUtilSpecifier) &&
+				ASTUtils.isIdentifier(importedUtilSpecifier.imported) &&
 				importedUtilSpecifier.local.name !== importedUtilSpecifier.imported.name
 					? importedUtilSpecifier.imported.name
 					: undefined;
