@@ -27,9 +27,11 @@
 	"files": [
 		"dist",
 		"README.md",
-		"LICENSE"
+		"LICENSE",
+		"index.d.ts"
 	],
 	"main": "./dist/index.js",
+	"types": "index.d.ts",
 	"scripts": {
 		"prebuild": "del-cli dist",
 		"build": "tsc",
