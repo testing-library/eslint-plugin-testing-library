@@ -1,4 +1,4 @@
-//eslint-disable-next-line @typescript-eslint/no-var-requires
+//eslint-disable-next-line @typescript-eslint/no-require-imports
 const { ESLint } = require('eslint');
 
 const removeIgnoredFiles = async (files) => {

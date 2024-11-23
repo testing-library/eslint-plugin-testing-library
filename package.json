@@ -53,7 +53,8 @@
 		"type-check": "tsc --noEmit"
 	},
 	"dependencies": {
-		"@typescript-eslint/utils": "^5.62.0"
+		"@typescript-eslint/scope-manager": "^8.15.0",
+		"@typescript-eslint/utils": "^8.15.0"
 	},
 	"devDependencies": {
 		"@babel/core": "^7.25.8",
@@ -65,15 +66,16 @@
 		"@swc/jest": "^0.2.36",
 		"@types/jest": "^27.5.2",
 		"@types/node": "^22.8.6",
-		"@typescript-eslint/eslint-plugin": "^5.62.0",
-		"@typescript-eslint/parser": "^5.62.0",
+		"@typescript-eslint/eslint-plugin": "^8.15.0",
+		"@typescript-eslint/parser": "^8.15.0",
+		"@typescript-eslint/rule-tester": "^8.15.0",
 		"del-cli": "^5.1.0",
 		"eslint": "^8.57.1",
 		"eslint-config-prettier": "^9.1.0",
 		"eslint-doc-generator": "^1.7.1",
 		"eslint-import-resolver-typescript": "^3.6.3",
 		"eslint-plugin-import": "^2.31.0",
-		"eslint-plugin-jest": "^27.9.0",
+		"eslint-plugin-jest": "^28.8.3",
 		"eslint-plugin-jest-formatting": "^3.1.0",
 		"eslint-plugin-node": "^11.1.0",
 		"eslint-plugin-promise": "^6.6.0",
@@ -91,10 +93,10 @@
 		"typescript": "5.0.4"
 	},
 	"peerDependencies": {
-		"eslint": "^7.5.0 || ^8.0.0 || ^9.0.0"
+		"eslint": "^8.57.0 || ^9.0.0"
 	},
 	"engines": {
-		"node": "^12.22.0 || ^14.17.0 || >=16.0.0",
-		"npm": ">=6"
+		"node": "^18.18.0 || ^20.9.0 || >=21.1.0",
+		"npm": ">=9.8.1"
 	}
 }

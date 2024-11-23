@@ -14,17 +14,6 @@ module.exports = {
 	rules: {
 		// Base
 		'max-lines-per-function': 'off',
-		'no-restricted-imports': [
-			'error',
-			{
-				patterns: [
-					{
-						group: ['@typescript-eslint/utils/dist/*'],
-						message: 'Import from `@typescript-eslint/utils` instead.',
-					},
-				],
-			},
-		],
 
 		// Import
 		'import/order': [
@@ -51,12 +40,12 @@ module.exports = {
 			files: ['**/*.ts?(x)'],
 			parser: '@typescript-eslint/parser',
 			parserOptions: {
+				project: './tsconfig.eslint.json',
 				tsconfigRootDir: __dirname,
-				project: ['./tsconfig.eslint.json'],
 			},
 			extends: [
 				'plugin:@typescript-eslint/recommended',
-				'plugin:@typescript-eslint/recommended-requiring-type-checking',
+				'plugin:@typescript-eslint/recommended-type-checked',
 				'plugin:import/typescript',
 			],
 			rules: {

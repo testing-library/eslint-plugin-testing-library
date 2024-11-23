@@ -1,8 +1,8 @@
+import { FunctionScope, ScopeType } from '@typescript-eslint/scope-manager';
 import {
 	AST_NODE_TYPES,
 	ASTUtils,
 	TSESLint,
-	TSESLintScope,
 	TSESTree,
 } from '@typescript-eslint/utils';
 
@@ -188,7 +188,7 @@ export function isPromiseAllSettled(node: TSESTree.CallExpression): boolean {
 }
 
 /**
- * Determines whether a given node belongs to handled Promise.all or Promise.allSettled
+ * Determines whether a given node belongs to handled `Promise.all` or `Promise.allSettled`
  * array expression.
  */
 export function isPromisesArrayResolved(node: TSESTree.Node): boolean {
@@ -295,7 +295,7 @@ export function getVariableReferences(
 	return [];
 }
 
-interface InnermostFunctionScope extends TSESLintScope.FunctionScope {
+interface InnermostFunctionScope extends FunctionScope {
 	block:
 		| TSESTree.ArrowFunctionExpression
 		| TSESTree.FunctionDeclaration
@@ -312,7 +312,7 @@ export function getInnermostFunctionScope(
 	);
 
 	if (
-		innermostScope.type === 'function' &&
+		innermostScope.type === ScopeType.function &&
 		ASTUtils.isFunction(innermostScope.block)
 	) {
 		return innermostScope as unknown as InnermostFunctionScope;
@@ -665,6 +665,7 @@ export function findImportSpecifier(
 		const namedExport = node.specifiers.find((n) => {
 			return (
 				isImportSpecifier(n) &&
+				ASTUtils.isIdentifier(n.imported) &&
 				[n.imported.name, n.local.name].includes(specifierName)
 			);
 		});

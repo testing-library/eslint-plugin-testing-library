@@ -25,17 +25,19 @@ import {
 	PRESENCE_MATCHERS,
 } from '../utils';
 
-const SETTING_OPTION_OFF = 'off' as const;
+const SETTING_OPTION_OFF = 'off';
 
 export type TestingLibrarySettings = {
-	'testing-library/utils-module'?: string | typeof SETTING_OPTION_OFF;
+	'testing-library/utils-module'?:
+		| typeof SETTING_OPTION_OFF
+		| (string & NonNullable<unknown>);
 	'testing-library/custom-renders'?: string[] | typeof SETTING_OPTION_OFF;
 	'testing-library/custom-queries'?: string[] | typeof SETTING_OPTION_OFF;
 };
 
 export type TestingLibraryContext<
-	TOptions extends readonly unknown[],
 	TMessageIds extends string,
+	TOptions extends readonly unknown[],
 > = Readonly<
 	TSESLint.RuleContext<TMessageIds, TOptions> & {
 		settings: TestingLibrarySettings;
@@ -43,14 +45,13 @@ export type TestingLibraryContext<
 >;
 
 export type EnhancedRuleCreate<
-	TOptions extends readonly unknown[],
 	TMessageIds extends string,
-	TRuleListener extends TSESLint.RuleListener = TSESLint.RuleListener,
+	TOptions extends readonly unknown[],
 > = (
-	context: TestingLibraryContext<TOptions, TMessageIds>,
+	context: TestingLibraryContext<TMessageIds, TOptions>,
 	optionsWithDefault: Readonly<TOptions>,
 	detectionHelpers: Readonly<DetectionHelpers>
-) => TRuleListener;
+) => TSESLint.RuleListener;
 
 // Helpers methods
 type GetTestingLibraryImportNodeFn = () => ImportModuleNode | null;
@@ -154,15 +155,14 @@ export type DetectionOptions = {
  * Enhances a given rule `create` with helpers to detect Testing Library utils.
  */
 export function detectTestingLibraryUtils<
-	TOptions extends readonly unknown[],
 	TMessageIds extends string,
-	TRuleListener extends TSESLint.RuleListener = TSESLint.RuleListener,
+	TOptions extends readonly unknown[],
 >(
-	ruleCreate: EnhancedRuleCreate<TOptions, TMessageIds, TRuleListener>,
+	ruleCreate: EnhancedRuleCreate<TMessageIds, TOptions>,
 	{ skipRuleReportingCheck = false }: Partial<DetectionOptions> = {}
 ) {
 	return (
-		context: TestingLibraryContext<TOptions, TMessageIds>,
+		context: TestingLibraryContext<TMessageIds, TOptions>,
 		optionsWithDefault: Readonly<TOptions>
 	): TSESLint.RuleListener => {
 		const importedTestingLibraryNodes: ImportModuleNode[] = [];
@@ -212,6 +212,7 @@ export function detectTestingLibraryUtils<
 
 			const originalNodeName =
 				isImportSpecifier(importedUtilSpecifier) &&
+				ASTUtils.isIdentifier(importedUtilSpecifier.imported) &&
 				importedUtilSpecifier.local.name !== importedUtilSpecifier.imported.name
 					? importedUtilSpecifier.imported.name
 					: undefined;
