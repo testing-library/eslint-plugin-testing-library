@@ -23,7 +23,7 @@ permissions:
 
 jobs:
   publish:
-    name: Publish NPM package
+    name: Publish package
     runs-on: ubuntu-latest
     # Avoid publishing in forks
     if: github.repository == 'testing-library/eslint-plugin-testing-library'
@@ -31,20 +31,23 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
-          cache: npm
+          cache: 'pnpm'
           node-version-file: '.nvmrc'
 
       - name: Install dependencies
-        run: npm install
+        run: pnpm install
 
       - name: Build package
-        run: npm run build
+        run: pnpm run build
 
       - name: Release new version
-        run: npx semantic-release
+        run: pnpm exec semantic-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_CONFIG_PROVENANCE: true
