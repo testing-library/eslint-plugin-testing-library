@@ -16,17 +16,20 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
-          cache: npm
+          cache: 'pnpm'
           node-version-file: '.nvmrc'
 
       - name: Install dependencies
-        run: npm install
+        run: pnpm install
 
       - name: Run script
-        run: npm run ${{ matrix.validation-script }}
+        run: pnpm run ${{ matrix.validation-script }}
 
   tests:
     name: Tests (Node v${{ matrix.node }} - ESLint v${{ matrix.eslint }})
@@ -41,24 +44,23 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
-          cache: npm
+          cache: 'pnpm'
           node-version: ${{ matrix.node }}
 
       - name: Install dependencies
-        run: npm install
-
-        # see https://github.com/npm/cli/issues/7349
-      - if: ${{ matrix.eslint == 9 }}
-        run: npm un @typescript-eslint/eslint-plugin eslint-plugin-jest eslint-doc-generator
+        run: pnpm install
 
       - name: Install ESLint v${{ matrix.eslint }}
-        run: npm install --no-save --force eslint@${{ matrix.eslint }}
+        run: pnpm add eslint@${{ matrix.eslint }}
 
       - name: Run tests
-        run: npm run test:ci
+        run: pnpm run test:ci
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v5
