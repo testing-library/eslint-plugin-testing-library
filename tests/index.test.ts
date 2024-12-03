@@ -51,11 +51,13 @@ it('should export configs that refer to actual rules', () => {
 		'angular',
 		'react',
 		'vue',
+		'svelte',
 		'marko',
 		'flat/dom',
 		'flat/angular',
 		'flat/react',
 		'flat/vue',
+		'flat/svelte',
 		'flat/marko',
 	]);
 	const allConfigRules = Object.values(allConfigs)

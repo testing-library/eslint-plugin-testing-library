@@ -1,6 +1,6 @@
 # Disallow direct Node access (`testing-library/no-node-access`)
 
-💼 This rule is enabled in the following configs: `angular`, `dom`, `marko`, `react`, `vue`.
+💼 This rule is enabled in the following configs: `angular`, `dom`, `marko`, `react`, `svelte`, `vue`.
 
 <!-- end auto-generated rule header -->
 

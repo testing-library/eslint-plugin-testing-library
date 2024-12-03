@@ -1,6 +1,6 @@
 # Suggest using `find(All)By*` query instead of `waitFor` + `get(All)By*` to wait for elements (`testing-library/prefer-find-by`)
 
-💼 This rule is enabled in the following configs: `angular`, `dom`, `marko`, `react`, `vue`.
+💼 This rule is enabled in the following configs: `angular`, `dom`, `marko`, `react`, `svelte`, `vue`.
 
 🔧 This rule is automatically fixable by the [`--fix` CLI option](https://eslint.org/docs/latest/user-guide/command-line-interface#--fix).
 

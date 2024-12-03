@@ -1,6 +1,6 @@
 # Suggest using `screen` while querying (`testing-library/prefer-screen-queries`)
 
-💼 This rule is enabled in the following configs: `angular`, `dom`, `marko`, `react`, `vue`.
+💼 This rule is enabled in the following configs: `angular`, `dom`, `marko`, `react`, `svelte`, `vue`.
 
 <!-- end auto-generated rule header -->
 
