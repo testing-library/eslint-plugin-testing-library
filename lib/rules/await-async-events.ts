@@ -35,6 +35,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				angular: ['error', { eventModule: 'userEvent' }],
 				react: ['error', { eventModule: 'userEvent' }],
 				vue: ['error', { eventModule: ['fireEvent', 'userEvent'] }],
+				svelte: ['error', { eventModule: ['fireEvent', 'userEvent'] }],
 				marko: ['error', { eventModule: ['fireEvent', 'userEvent'] }],
 			},
 		},

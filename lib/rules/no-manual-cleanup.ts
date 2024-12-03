@@ -32,6 +32,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				angular: false,
 				react: 'error',
 				vue: 'error',
+				svelte: 'error',
 				marko: false,
 			},
 		},
