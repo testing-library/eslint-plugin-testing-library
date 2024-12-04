@@ -689,6 +689,15 @@
         "code",
         "test"
       ]
+    },
+    {
+      "login": "nostrorom",
+      "name": "nostro",
+      "avatar_url": "https://avatars.githubusercontent.com/u/49858211?v=4",
+      "profile": "https://github.com/nostrorom",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
