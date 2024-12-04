@@ -1,6 +1,6 @@
 # Suggest using `queryBy*` queries when waiting for disappearance (`testing-library/prefer-query-by-disappearance`)
 
-💼 This rule is enabled in the following configs: `angular`, `dom`, `marko`, `react`, `vue`.
+💼 This rule is enabled in the following configs: `angular`, `dom`, `marko`, `react`, `svelte`, `vue`.
 
 <!-- end auto-generated rule header -->
 

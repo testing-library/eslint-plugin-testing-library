@@ -1,6 +1,6 @@
 # Enforce a valid naming for return value from `render` (`testing-library/render-result-naming-convention`)
 
-💼 This rule is enabled in the following configs: `angular`, `marko`, `react`, `vue`.
+💼 This rule is enabled in the following configs: `angular`, `marko`, `react`, `svelte`, `vue`.
 
 <!-- end auto-generated rule header -->
 

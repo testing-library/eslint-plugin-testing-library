@@ -1,6 +1,6 @@
 # Disallow the use of `render` in testing frameworks setup functions (`testing-library/no-render-in-lifecycle`)
 
-💼 This rule is enabled in the following configs: `angular`, `marko`, `react`, `vue`.
+💼 This rule is enabled in the following configs: `angular`, `marko`, `react`, `svelte`, `vue`.
 
 <!-- end auto-generated rule header -->
 

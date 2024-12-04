@@ -1,6 +1,6 @@
 # Disallow importing from DOM Testing Library (`testing-library/no-dom-import`)
 
-💼 This rule is enabled in the following configs: `angular`, `marko`, `react`, `vue`.
+💼 This rule is enabled in the following configs: `angular`, `marko`, `react`, `svelte`, `vue`.
 
 🔧 This rule is automatically fixable by the [`--fix` CLI option](https://eslint.org/docs/latest/user-guide/command-line-interface#--fix).
 

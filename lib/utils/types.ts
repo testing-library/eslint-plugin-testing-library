@@ -31,6 +31,7 @@ export const SUPPORTED_TESTING_FRAMEWORKS = [
 	'angular',
 	'react',
 	'vue',
+	'svelte',
 	'marko',
 ] as const;
 export type SupportedTestingFramework =

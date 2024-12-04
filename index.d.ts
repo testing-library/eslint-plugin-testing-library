@@ -10,12 +10,14 @@ declare const plugin: {
 		dom: Linter.LegacyConfig;
 		marko: Linter.LegacyConfig;
 		react: Linter.LegacyConfig;
+		svelte: Linter.LegacyConfig;
 		vue: Linter.LegacyConfig;
-		'flat/angular': Linter.FlatConfig;
-		'flat/dom': Linter.FlatConfig;
-		'flat/marko': Linter.FlatConfig;
-		'flat/react': Linter.FlatConfig;
-		'flat/vue': Linter.FlatConfig;
+		'flat/angular': Linter.Config<Linter.RulesRecord>;
+		'flat/dom': Linter.Config<Linter.RulesRecord>;
+		'flat/marko': Linter.Config<Linter.RulesRecord>;
+		'flat/react': Linter.Config<Linter.RulesRecord>;
+		'flat/svelte': Linter.Config<Linter.RulesRecord>;
+		'flat/vue': Linter.Config<Linter.RulesRecord>;
 	};
 	rules: {
 		[key: string]: Rule.RuleModule;

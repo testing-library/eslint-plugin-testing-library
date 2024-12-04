@@ -40,6 +40,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				angular: 'warn',
 				react: 'warn',
 				vue: 'warn',
+				svelte: 'warn',
 				marko: 'warn',
 			},
 		},

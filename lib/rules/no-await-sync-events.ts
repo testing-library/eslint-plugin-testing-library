@@ -33,6 +33,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				angular: ['error', { eventModules: DEFAULT_EVENT_MODULES }],
 				react: ['error', { eventModules: DEFAULT_EVENT_MODULES }],
 				vue: false,
+				svelte: false,
 				marko: false,
 			},
 		},
