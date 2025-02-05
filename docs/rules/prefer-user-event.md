@@ -118,6 +118,7 @@ The following table lists all the possible equivalents from the low-level API `f
 | ---------------- | ----------------------------------------------------------------------------------------------------------- |
 | `click`          | <ul><li>`click`</li><li>`type`</li><li>`selectOptions`</li><li>`deselectOptions`</li></ul>                  |
 | `change`         | <ul><li>`upload`</li><li>`type`</li><li>`clear`</li><li>`selectOptions`</li><li>`deselectOptions`</li></ul> |
+| `changeText`     | <ul><li>`type`</li></ul>                                                                                    |
 | `dblClick`       | <ul><li>`dblClick`</li></ul>                                                                                |
 | `input`          | <ul><li>`type`</li><li>`upload`</li><li>`selectOptions`</li><li>`deselectOptions`</li><li>`paste`</li></ul> |
 | `keyDown`        | <ul><li>`type`</li><li>`tab`</li></ul>                                                                      |
@@ -138,3 +139,5 @@ The following table lists all the possible equivalents from the low-level API `f
 | `pointerOut`     | <ul><li>`unhover`</li></ul>                                                                                 |
 | `pointerOver`    | <ul><li>`hover`</li><li>`selectOptions`</li><li>`deselectOptions`</li></ul>                                 |
 | `pointerUp`      | <ul><li>`click`</li><li>`dblClick`</li><li>`selectOptions`</li><li>`deselectOptions`</li></ul>              |
+| `press`          | <ul><li>`press`</li></ul>                                                                                   |
+| `scroll`         | <ul><li>`scrollTo`</li></ul>                                                                                |
