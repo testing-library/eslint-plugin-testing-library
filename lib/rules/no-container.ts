@@ -87,6 +87,10 @@ export default createTestingLibraryRule<Options, MessageIds>({
 			}
 		}
 
+		function isDisallowedContainerProperty(propertyName: string): boolean {
+			return propertyName === 'innerHTML';
+		}
+
 		return {
 			CallExpression(node) {
 				const callExpressionIdentifier = getDeepestIdentifierNode(node);
@@ -104,6 +108,20 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				} else if (
 					ASTUtils.isIdentifier(node.callee) &&
 					destructuredContainerPropNames.includes(node.callee.name)
+				) {
+					context.report({
+						node,
+						messageId: 'noContainer',
+					});
+				}
+			},
+
+			MemberExpression(node) {
+				if (
+					ASTUtils.isIdentifier(node.object) &&
+					node.object.name === containerName &&
+					ASTUtils.isIdentifier(node.property) &&
+					isDisallowedContainerProperty(node.property.name)
 				) {
 					context.report({
 						node,
@@ -151,12 +169,18 @@ export default createTestingLibraryRule<Options, MessageIds>({
 					if (ASTUtils.isIdentifier(nodeValue)) {
 						containerName = nodeValue.name;
 					} else if (isObjectPattern(nodeValue)) {
-						nodeValue.properties.forEach(
-							(property) =>
-								isProperty(property) &&
-								ASTUtils.isIdentifier(property.key) &&
-								destructuredContainerPropNames.push(property.key.name)
-						);
+						nodeValue.properties.forEach((property) => {
+							if (isProperty(property) && ASTUtils.isIdentifier(property.key)) {
+								if (isDisallowedContainerProperty(property.key.name)) {
+									context.report({
+										node,
+										messageId: 'noContainer',
+									});
+								}
+
+								destructuredContainerPropNames.push(property.key.name);
+							}
+						});
 					}
 				} else if (ASTUtils.isIdentifier(node.id)) {
 					renderResultVarName = node.id.name;
