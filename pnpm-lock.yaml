@@ -76,8 +76,8 @@ importers:
         specifier: ^3.0.1
         version: 3.0.1(eslint@8.57.1)(ts-node@10.9.2(@swc/core@1.9.3)(@types/node@22.10.1)(typescript@5.7.2))
       eslint-remote-tester-repositories:
-        specifier: ^1.0.1
-        version: 1.0.1
+        specifier: ^2.0.1
+        version: 2.0.1
       husky:
         specifier: ^9.1.7
         version: 9.1.7
@@ -1564,8 +1564,9 @@ packages:
     peerDependencies:
       eslint: ^7.0.0 || ^8.0.0 || ^9.0.0
 
-  eslint-remote-tester-repositories@1.0.1:
-    resolution: {integrity: sha512-XL9PqGBDL4rORnQ74b/3tqbJUpMlPz9gzKSrmYFtakLBQ/ayBELB/HZvd6ZEl+mH0vBeSYtUH7E/rawBsf9Qzg==}
+  eslint-remote-tester-repositories@2.0.1:
+    resolution: {integrity: sha512-yBh82DczofOLWUXRcqGP4i92zmAVR3WhBDt7cs1xkGB/DLA2b0T7cKosr47V6m3L1yoM4Yx7KXr4SOywWw1XSw==}
+    engines: {node: ^18.0.0 || >=20.0.0}
 
   eslint-remote-tester@3.0.1:
     resolution: {integrity: sha512-/jifRW0gJ5NmrWGD8mn2imvafO0fS6KBKLzv8ZIdI1uMHZ2EriYN7Fw4cyOR7rfbt6Ve2tUrluSvVptW1PxEvg==}
@@ -5399,7 +5400,7 @@ snapshots:
       '@eslint-community/eslint-utils': 4.4.1(eslint@8.57.1)
       eslint: 8.57.1
 
-  eslint-remote-tester-repositories@1.0.1: {}
+  eslint-remote-tester-repositories@2.0.1: {}
 
   eslint-remote-tester@3.0.1(eslint@8.57.1)(ts-node@10.9.2(@swc/core@1.9.3)(@types/node@22.10.1)(typescript@5.7.2)):
     dependencies:
