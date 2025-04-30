@@ -698,6 +698,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "Stan-Stani",
+      "name": "Stan Stanislaus",
+      "avatar_url": "https://avatars.githubusercontent.com/u/14880397?v=4",
+      "profile": "http://www.seldoncortex.com",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,
