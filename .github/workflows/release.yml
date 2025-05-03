@@ -15,6 +15,12 @@ concurrency:
   group: release
   cancel-in-progress: false
 
+permissions:
+  contents: write # to be able to publish a GitHub release
+  id-token: write # to enable use of OIDC for npm provenance
+  issues: write # to be able to comment on released issues
+  pull-requests: write # to be able to comment on released pull requests
+
 jobs:
   publish:
     name: Publish NPM package
@@ -28,16 +34,18 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
+          cache: npm
           node-version-file: '.nvmrc'
 
       - name: Install dependencies
-        uses: bahmutov/npm-install@v1
+        run: npm install
 
       - name: Build package
         run: npm run build
 
       - name: Release new version
+        run: npx semantic-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_CONFIG_PROVENANCE: true
           NPM_TOKEN: ${{ secrets.NPM_AUTOMATION_TOKEN }}
-        run: npx semantic-release

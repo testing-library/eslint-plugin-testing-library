@@ -1,5 +1,6 @@
 import { createTestingLibraryRule } from '../create-testing-library-rule';
 import { isJSXAttribute, isLiteral } from '../node-utils';
+import { getFilename } from '../utils';
 
 export const RULE_NAME = 'consistent-data-testid';
 export type MessageIds =
@@ -77,11 +78,10 @@ export default createTestingLibraryRule<Options, MessageIds>({
 	},
 
 	create: (context, [options]) => {
-		const { getFilename } = context;
 		const { testIdPattern, testIdAttribute: attr, customMessage } = options;
 
 		function getFileNameData() {
-			const splitPath = getFilename().split('/');
+			const splitPath = getFilename(context).split('/');
 			const fileNameWithExtension = splitPath.pop() ?? '';
 			if (
 				fileNameWithExtension.includes('[') ||

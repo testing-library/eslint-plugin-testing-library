@@ -1,3 +1,4 @@
+export * from './compat';
 export * from './file-import';
 export * from './types';
 

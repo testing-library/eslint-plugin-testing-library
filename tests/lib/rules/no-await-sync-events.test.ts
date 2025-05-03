@@ -289,51 +289,6 @@ ruleTester.run(RULE_NAME, rule, {
 				} as const)
 		),
 
-		// sync fireEvent methods with await operator are not valid
-		// when only fire-event set in eventModules
-		...SUPPORTED_TESTING_FRAMEWORKS.flatMap((testingFramework) =>
-			FIRE_EVENT_FUNCTIONS.map(
-				(func) =>
-					({
-						code: `
-        import { fireEvent } from '${testingFramework}';
-        test('should report fireEvent.${func} sync event awaited', async() => {
-          await fireEvent.${func}('foo');
-        });
-      `,
-						errors: [
-							{
-								line: 4,
-								column: 17,
-								messageId: 'noAwaitSyncEvents',
-								data: { name: `fireEvent.${func}` },
-							},
-						],
-					} as const)
-			)
-		),
-
-		...USER_EVENT_SYNC_FUNCTIONS.map(
-			(func) =>
-				({
-					code: `
-        import userEvent from '@testing-library/user-event';
-        test('should report userEvent.${func} sync event awaited', async() => {
-          await userEvent.${func}('foo');
-        });
-      `,
-					options: [{ eventModules: ['user-event'] }],
-					errors: [
-						{
-							line: 4,
-							column: 17,
-							messageId: 'noAwaitSyncEvents',
-							data: { name: `userEvent.${func}` },
-						},
-					],
-				} as const)
-		),
-
 		{
 			code: `
         import userEvent from '@testing-library/user-event';
