@@ -8,6 +8,7 @@ import {
 	isNewExpression,
 	isPromiseIdentifier,
 } from '../node-utils';
+import { getScope } from '../utils';
 
 export const RULE_NAME = 'no-promise-in-fire-event';
 export type MessageIds = 'noPromiseInFireEvent';
@@ -76,7 +77,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
 			if (ASTUtils.isIdentifier(node)) {
 				const nodeVariable = ASTUtils.findVariable(
-					context.getScope(),
+					getScope(context, node),
 					node.name
 				);
 				if (!nodeVariable) {

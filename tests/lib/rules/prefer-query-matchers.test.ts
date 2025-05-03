@@ -24,6 +24,7 @@ type AssertionFnParams = {
 	query: string;
 	matcher: string;
 	options: Options;
+	onlyOptions?: boolean;
 };
 
 const wrapExpectInTest = (expectStatement: string) => `
@@ -39,28 +40,37 @@ const getValidAssertions = ({
 	query,
 	matcher,
 	options,
+	onlyOptions = false,
 }: AssertionFnParams): RuleValidTestCase[] => {
 	const expectStatement = `expect(${query}('Hello'))${matcher}`;
 	const expectScreenStatement = `expect(screen.${query}('Hello'))${matcher}`;
-	return [
-		{
-			// name: `${expectStatement} with default options of empty validEntries`,
-			code: wrapExpectInTest(expectStatement),
-		},
+	const casesWithOptions = [
 		{
 			// name: `${expectStatement} with provided options`,
 			code: wrapExpectInTest(expectStatement),
 			options,
 		},
 		{
-			// name: `${expectScreenStatement} with default options of empty validEntries`,
-			code: wrapExpectInTest(expectScreenStatement),
-		},
-		{
 			// name: `${expectScreenStatement} with provided options`,
 			code: wrapExpectInTest(expectScreenStatement),
 			options,
 		},
+	];
+
+	if (onlyOptions) {
+		return casesWithOptions;
+	}
+
+	return [
+		{
+			// name: `${expectStatement} with default options of empty validEntries`,
+			code: wrapExpectInTest(expectStatement),
+		},
+		{
+			// name: `${expectScreenStatement} with default options of empty validEntries`,
+			code: wrapExpectInTest(expectScreenStatement),
+		},
+		...casesWithOptions,
 	];
 };
 
@@ -150,6 +160,7 @@ ruleTester.run(RULE_NAME, rule, {
 					options: [
 						{ validEntries: [{ query: 'query', matcher: 'toBeVisible' }] },
 					],
+					onlyOptions: true,
 				}),
 			],
 			[]
@@ -192,6 +203,7 @@ ruleTester.run(RULE_NAME, rule, {
 					options: [
 						{ validEntries: [{ query: 'query', matcher: 'toBeVisible' }] },
 					],
+					onlyOptions: true,
 				}),
 			],
 			[]
@@ -234,6 +246,7 @@ ruleTester.run(RULE_NAME, rule, {
 					options: [
 						{ validEntries: [{ query: 'get', matcher: 'toBeVisible' }] },
 					],
+					onlyOptions: true,
 				}),
 			],
 			[]
@@ -276,6 +289,7 @@ ruleTester.run(RULE_NAME, rule, {
 					options: [
 						{ validEntries: [{ query: 'get', matcher: 'toBeVisible' }] },
 					],
+					onlyOptions: true,
 				}),
 			],
 			[]

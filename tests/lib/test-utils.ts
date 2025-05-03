@@ -2,11 +2,13 @@ import { resolve } from 'path';
 
 import { TSESLint } from '@typescript-eslint/utils';
 
+import { FlatCompatRuleTester } from './FlatCompatRuleTester';
+
 const DEFAULT_TEST_CASE_CONFIG = {
 	filename: 'MyComponent.test.js',
 };
 
-class TestingLibraryRuleTester extends TSESLint.RuleTester {
+class TestingLibraryRuleTester extends FlatCompatRuleTester {
 	run<TMessageIds extends string, TOptions extends Readonly<unknown[]>>(
 		ruleName: string,
 		rule: TSESLint.RuleModule<TMessageIds, TOptions>,
