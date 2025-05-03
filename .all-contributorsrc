@@ -689,6 +689,24 @@
         "code",
         "test"
       ]
+    },
+    {
+      "login": "nostrorom",
+      "name": "nostro",
+      "avatar_url": "https://avatars.githubusercontent.com/u/49858211?v=4",
+      "profile": "https://github.com/nostrorom",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "danielrentz",
+      "name": "Daniel Rentz",
+      "avatar_url": "https://avatars.githubusercontent.com/u/5064304?v=4",
+      "profile": "https://github.com/danielrentz",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

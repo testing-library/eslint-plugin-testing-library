@@ -1,6 +1,6 @@
 # Disallow the use of `cleanup` (`testing-library/no-manual-cleanup`)
 
-💼 This rule is enabled in the following configs: `react`, `vue`.
+💼 This rule is enabled in the following configs: `react`, `svelte`, `vue`.
 
 <!-- end auto-generated rule header -->
 

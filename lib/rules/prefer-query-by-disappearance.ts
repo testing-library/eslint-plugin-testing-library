@@ -28,6 +28,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				angular: 'error',
 				react: 'error',
 				vue: 'error',
+				svelte: 'error',
 				marko: 'error',
 			},
 		},
@@ -53,10 +54,10 @@ export default createTestingLibraryRule<Options, MessageIds>({
 		/**
 		 * Checks if node is reportable (starts with "get" or "find") and if it is, reports it with `context.report()`.
 		 *
-		 * @param {TSESTree.LeftHandSideExpression} node - Node to be tested
+		 * @param {TSESTree.Expression} node - Node to be tested
 		 * @returns {Boolean} Boolean indicating if expression was reported
 		 */
-		function reportExpression(node: TSESTree.LeftHandSideExpression): boolean {
+		function reportExpression(node: TSESTree.Expression): boolean {
 			const argumentProperty = isMemberExpression(node)
 				? getPropertyIdentifierNode(node.property)
 				: getPropertyIdentifierNode(node);

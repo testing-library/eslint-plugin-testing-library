@@ -1,6 +1,6 @@
 # Suggest using `screen` while querying (`testing-library/prefer-screen-queries`)
 
-💼 This rule is enabled in the following configs: `angular`, `dom`, `marko`, `react`, `vue`.
+💼 This rule is enabled in the following configs: `angular`, `dom`, `marko`, `react`, `svelte`, `vue`.
 
 <!-- end auto-generated rule header -->
 
@@ -38,7 +38,7 @@ getByText('foo');
 Examples of **correct** code for this rule:
 
 ```js
-import { render, screen } from '@testing-library/any-framework';
+import { render, screen, within } from '@testing-library/any-framework';
 
 // calling a query from the `screen` object
 render(<Component />);

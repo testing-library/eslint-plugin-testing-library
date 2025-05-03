@@ -16,17 +16,20 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
-          cache: npm
+          cache: 'pnpm'
           node-version-file: '.nvmrc'
 
       - name: Install dependencies
-        run: npm install
+        run: pnpm install
 
       - name: Run script
-        run: npm run ${{ matrix.validation-script }}
+        run: pnpm run ${{ matrix.validation-script }}
 
   tests:
     name: Tests (Node v${{ matrix.node }} - ESLint v${{ matrix.eslint }})
@@ -35,46 +38,31 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node: [12.22.0, 12, 14.17.0, 14, 16, 17, 18, 19, 20, 22]
-        eslint: [7.5, 7, 8, 9]
-        exclude:
-          # eslint@9 doesn't support < Node v18
-          - node: 17
-            eslint: 9
-          - node: 16
-            eslint: 9
-          - node: 14
-            eslint: 9
-          - node: 14.17.0
-            eslint: 9
-          - node: 12
-            eslint: 9
-          - node: 12.22.0
-            eslint: 9
+        node: [18.18.0, 18, 20.9.0, 20, 21.1.0, 21, 22, 23]
+        eslint: [8.57.0, 8, 9]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
-          cache: npm
+          cache: 'pnpm'
           node-version: ${{ matrix.node }}
 
       - name: Install dependencies
-        run: npm install
-
-        # see https://github.com/npm/cli/issues/7349
-      - if: ${{ matrix.eslint == 9 }}
-        run: npm un @typescript-eslint/eslint-plugin eslint-plugin-jest eslint-doc-generator
+        run: pnpm install
 
       - name: Install ESLint v${{ matrix.eslint }}
-        run: npm install --no-save --force eslint@${{ matrix.eslint }}
+        run: pnpm add eslint@${{ matrix.eslint }}
 
       - name: Run tests
-        run: npm run test:ci
+        run: pnpm run test:ci
 
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}

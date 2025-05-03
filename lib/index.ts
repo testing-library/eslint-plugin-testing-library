@@ -8,7 +8,7 @@ import { SupportedTestingFramework } from './utils';
 const {
 	name: packageName,
 	version: packageVersion,
-	// eslint-disable-next-line @typescript-eslint/no-var-requires
+	// eslint-disable-next-line @typescript-eslint/no-require-imports
 } = require('../package.json') as { name: string; version: string };
 
 const plugin = {
@@ -20,7 +20,7 @@ const plugin = {
 	// we don't have types for flat config yet
 	configs: {} as Record<
 		SupportedTestingFramework | `flat/${SupportedTestingFramework}`,
-		Pick<Required<TSESLint.Linter.Config>, 'rules'>
+		TSESLint.SharedConfig.RulesRecord
 	>,
 	rules,
 };
@@ -35,9 +35,9 @@ plugin.configs = {
 				rules: config.rules,
 			},
 		])
-	) as Record<
+	) as unknown as Record<
 		`flat/${SupportedTestingFramework}`,
-		Pick<Required<TSESLint.Linter.Config>, 'rules'> & { plugins: unknown }
+		TSESLint.SharedConfig.RulesRecord & { plugins: unknown }
 	>),
 };
 

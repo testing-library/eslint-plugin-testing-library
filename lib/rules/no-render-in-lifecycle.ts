@@ -55,6 +55,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				angular: 'error',
 				react: 'error',
 				vue: 'error',
+				svelte: 'error',
 				marko: 'error',
 			},
 		},
@@ -68,6 +69,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				properties: {
 					allowTestingFrameworkSetupHook: {
 						enum: TESTING_FRAMEWORK_SETUP_HOOKS,
+						type: 'string',
 					},
 				},
 			},

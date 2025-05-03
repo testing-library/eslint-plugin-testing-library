@@ -13,7 +13,7 @@ const DOM_TESTING_LIBRARY_MODULES = [
 ];
 
 const CORRECT_MODULE_NAME_BY_FRAMEWORK: Record<
-	'angular' | 'marko' | string,
+	'angular' | 'marko' | (string & NonNullable<unknown>),
 	string | undefined
 > = {
 	angular: '@testing-library/angular', // ATL is *always* called `@testing-library/angular`
@@ -40,6 +40,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				angular: ['error', 'angular'],
 				react: ['error', 'react'],
 				vue: ['error', 'vue'],
+				svelte: ['error', 'svelte'],
 				marko: ['error', 'marko'],
 			},
 		},

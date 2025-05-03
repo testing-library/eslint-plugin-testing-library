@@ -1,6 +1,6 @@
 # Ensure appropriate `get*`/`query*` queries are used with their respective matchers (`testing-library/prefer-presence-queries`)
 
-💼 This rule is enabled in the following configs: `angular`, `dom`, `marko`, `react`, `vue`.
+💼 This rule is enabled in the following configs: `angular`, `dom`, `marko`, `react`, `svelte`, `vue`.
 
 <!-- end auto-generated rule header -->
 

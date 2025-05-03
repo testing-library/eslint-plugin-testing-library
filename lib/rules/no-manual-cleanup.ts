@@ -32,6 +32,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				angular: false,
 				react: 'error',
 				vue: 'error',
+				svelte: 'error',
 				marko: false,
 			},
 		},
@@ -75,6 +76,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				const cleanupSpecifier = moduleNode.specifiers.find(
 					(specifier) =>
 						isImportSpecifier(specifier) &&
+						ASTUtils.isIdentifier(specifier.imported) &&
 						specifier.imported.name === 'cleanup'
 				);
 

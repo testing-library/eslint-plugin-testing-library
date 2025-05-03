@@ -35,6 +35,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				angular: ['error', { eventModule: 'userEvent' }],
 				react: ['error', { eventModule: 'userEvent' }],
 				vue: ['error', { eventModule: ['fireEvent', 'userEvent'] }],
+				svelte: ['error', { eventModule: ['fireEvent', 'userEvent'] }],
 				marko: ['error', { eventModule: ['fireEvent', 'userEvent'] }],
 			},
 		},
@@ -55,15 +56,15 @@ export default createTestingLibraryRule<Options, MessageIds>({
 						default: USER_EVENT_NAME,
 						oneOf: [
 							{
+								enum: EVENTS_SIMULATORS.concat(),
 								type: 'string',
-								enum: EVENTS_SIMULATORS,
 							},
 							{
-								type: 'array',
 								items: {
 									type: 'string',
-									enum: EVENTS_SIMULATORS,
+									enum: EVENTS_SIMULATORS.concat(),
 								},
+								type: 'array',
 							},
 						],
 					},

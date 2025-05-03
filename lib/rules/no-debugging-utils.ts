@@ -40,6 +40,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				angular: 'warn',
 				react: 'warn',
 				vue: 'warn',
+				svelte: 'warn',
 				marko: 'warn',
 			},
 		},
@@ -53,7 +54,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 					utilsToCheckFor: {
 						type: 'object',
 						properties: DEBUG_UTILS.reduce<
-							Record<string, JSONSchema.JSONSchema7>
+							Record<string, JSONSchema.JSONSchema4>
 						>(
 							(obj, name) => ({
 								[name]: { type: 'boolean' },

@@ -8,6 +8,7 @@ const config = {
 		'flat/dom',
 		'flat/marko',
 		'flat/react',
+		'flat/svelte',
 		'flat/vue',
 	],
 	postprocess: (content) =>
