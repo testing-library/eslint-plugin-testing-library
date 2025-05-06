@@ -24,6 +24,8 @@ export const UserEventMethods = [
 	'hover',
 	'unhover',
 	'paste',
+	'press',
+	'scrollTo',
 ] as const;
 type UserEventMethodsType = (typeof UserEventMethods)[number];
 
@@ -31,6 +33,7 @@ type UserEventMethodsType = (typeof UserEventMethods)[number];
 export const MAPPING_TO_USER_EVENT: Record<string, UserEventMethodsType[]> = {
 	click: ['click', 'type', 'selectOptions', 'deselectOptions'],
 	change: ['upload', 'type', 'clear', 'selectOptions', 'deselectOptions'],
+	changeText: ['type'],
 	dblClick: ['dblClick'],
 	input: ['type', 'upload', 'selectOptions', 'deselectOptions', 'paste'],
 	keyDown: ['type', 'tab'],
@@ -51,6 +54,8 @@ export const MAPPING_TO_USER_EVENT: Record<string, UserEventMethodsType[]> = {
 	pointerOut: ['unhover'],
 	pointerOver: ['hover', 'selectOptions', 'deselectOptions'],
 	pointerUp: ['click', 'dblClick', 'selectOptions', 'deselectOptions'],
+	press: ['press'],
+	scroll: ['scrollTo'],
 };
 
 function buildErrorMessage(fireEventMethod: string) {
