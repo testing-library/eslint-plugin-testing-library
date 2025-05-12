@@ -16,12 +16,12 @@ export default createTestingLibraryRule<Options, MessageIds>({
 		docs: {
 			description: 'Ensure no `data-testid` queries are used',
 			recommendedConfig: {
-				dom: 'error',
-				angular: 'error',
-				react: 'error',
-				vue: 'error',
-				svelte: 'error',
-				marko: 'error',
+				dom: false,
+				angular: false,
+				react: false,
+				vue: false,
+				svelte: false,
+				marko: false,
 			},
 		},
 		messages: {
