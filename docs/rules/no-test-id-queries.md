@@ -29,3 +29,4 @@ const input = screen.getByRole('textbox');
 - [about `getByTestId`](https://testing-library.com/docs/queries/bytestid)
 - [about `getByRole`](https://testing-library.com/docs/queries/byrole)
 - [about `getByLabelText`](https://testing-library.com/docs/queries/bylabeltext)
+- [Common mistakes with React Testing Library - Not querying by text](https://kentcdodds.com/blog/common-mistakes-with-react-testing-library#not-querying-by-text)

@@ -1,12 +1,13 @@
 import { TSESTree } from '@typescript-eslint/utils';
 
 import { createTestingLibraryRule } from '../create-testing-library-rule';
+import { ALL_QUERIES_VARIANTS } from '../utils';
 
 export const RULE_NAME = 'no-test-id-queries';
 export type MessageIds = 'noTestIdQueries';
 type Options = [];
 
-const QUERIES_REGEX = /^(get|query|getAll|queryAll|find|findAll)ByTestId$/;
+const QUERIES_REGEX = `/^(${ALL_QUERIES_VARIANTS.join('|')})TestId$/`;
 
 export default createTestingLibraryRule<Options, MessageIds>({
 	name: RULE_NAME,
@@ -33,7 +34,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
 	create(context) {
 		return {
-			[`CallExpression[callee.property.name=${String(QUERIES_REGEX)}], CallExpression[callee.name=${String(QUERIES_REGEX)}]`](
+			[`CallExpression[callee.property.name=${QUERIES_REGEX}], CallExpression[callee.name=${QUERIES_REGEX}]`](
 				node: TSESTree.CallExpression
 			) {
 				context.report({

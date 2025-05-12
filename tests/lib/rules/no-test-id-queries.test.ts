@@ -22,17 +22,25 @@ const QUERIES = [
 
 ruleTester.run(RULE_NAME, rule, {
 	valid: [
-		{
-			code: `
-			import { render } from '@testing-library/react';
+		`
+		import { render } from '@testing-library/react';
 
-			test('test', async () => {
-				const { getByRole } = render(<MyComponent />);
+		test('test', async () => {
+			const { getByRole } = render(<MyComponent />);
 
-				expect(getByRole('button')).toBeInTheDocument();
-			});
-			`,
-		},
+			expect(getByRole('button')).toBeInTheDocument();
+		});
+		`,
+
+		`
+		import { render } from '@testing-library/react';
+
+		test('test', async () => {
+			render(<MyComponent />);
+
+			expect(getTestId('button')).toBeInTheDocument();
+		});
+		`,
 	],
 
 	invalid: SUPPORTED_TESTING_FRAMEWORKS.flatMap((framework) =>
