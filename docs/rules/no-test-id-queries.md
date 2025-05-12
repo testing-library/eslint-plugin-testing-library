@@ -1,5 +1,7 @@
 # Ensure no `data-testid` queries are used (`testing-library/no-test-id-queries`)
 
+💼 This rule is enabled in the following configs: `angular`, `dom`, `marko`, `react`, `svelte`, `vue`.
+
 <!-- end auto-generated rule header -->
 
 ## Rule Details
