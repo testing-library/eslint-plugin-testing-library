@@ -278,6 +278,10 @@ function getRootExpression(
 			return parent.expressions[parent.expressions.length - 1] === expression
 				? getRootExpression(parent)
 				: expression;
+
+		case AST_NODE_TYPES.ChainExpression:
+			return getRootExpression(parent);
+
 		default:
 			return expression;
 	}
