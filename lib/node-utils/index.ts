@@ -374,6 +374,10 @@ export function getPropertyIdentifierNode(
 		return getPropertyIdentifierNode(node.expression);
 	}
 
+	if (ASTUtils.isAwaitExpression(node)) {
+		return getPropertyIdentifierNode(node.argument);
+	}
+
 	return null;
 }
 
