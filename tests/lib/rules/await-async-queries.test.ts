@@ -96,6 +96,18 @@ ruleTester.run(RULE_NAME, rule, {
 		// async queries with optional chaining are valid
 		...createTestCase((query) => `await screen?.${query}('foo')`),
 
+		...createTestCase(
+			(query) => `
+			it('test case', async () => {
+				let renderResult: RenderResult | undefined;
+
+				renderResult = render(<div>text</div>);
+
+				expect(await renderResult?.${query}('text')).toBeDefined();
+			});
+			`
+		),
+
 		// async @marko/testing-library screen queries declaration are valid
 		...createTestCase((query) => `await screen.${query}('foo')`, {
 			testingFramework: '@marko/testing-library',
