@@ -814,11 +814,13 @@ ruleTester.run(RULE_NAME, rule, {
         import { waitFor } from '${testingFramework}';
         import userEvent from '@testing-library/user-event'
 
-        await waitFor(() => {
-          await userEvent.click(button);
-        })
+        it("some test", async () => {
+          await waitFor(async () => {
+            await fireEvent.click(screen.getByTestId("something"));
+          });
+        });
         `,
-				errors: [{ line: 6, column: 11, messageId: 'noSideEffectsWaitFor' }],
+				errors: [{ line: 7, column: 13, messageId: 'noSideEffectsWaitFor' }],
 			},
 		]),
 	],
