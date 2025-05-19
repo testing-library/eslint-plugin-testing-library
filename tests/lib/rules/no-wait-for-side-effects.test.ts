@@ -114,6 +114,16 @@ ruleTester.run(RULE_NAME, rule, {
           })
         `,
 			},
+			{
+				code: `
+          import { waitFor } from '${testingFramework}';
+          import { notUserEvent } from 'somewhere-else';
+          
+          waitFor(() => {
+            await notUserEvent.click(button)
+          })
+        `,
+			},
 		]),
 		{
 			settings: { 'testing-library/utils-module': 'test-utils' },
@@ -796,6 +806,22 @@ ruleTester.run(RULE_NAME, rule, {
 					{ line: 7, column: 11, messageId: 'noSideEffectsWaitFor' },
 				],
 			} as const,
+		]),
+
+		...SUPPORTED_TESTING_FRAMEWORKS.flatMap((testingFramework) => [
+			{
+				code: `
+        import { waitFor } from '${testingFramework}';
+        import userEvent from '@testing-library/user-event'
+
+        it("some test", async () => {
+          await waitFor(async () => {
+            await fireEvent.click(screen.getByTestId("something"));
+          });
+        });
+        `,
+				errors: [{ line: 7, column: 13, messageId: 'noSideEffectsWaitFor' }],
+			},
 		]),
 	],
 });
