@@ -1,6 +1,7 @@
 name: Bug Report
 description: File a bug report
 labels: ['bug', 'triage']
+type: bug
 body:
   - type: dropdown
     id: read_troubleshooting
@@ -37,24 +38,6 @@ body:
       label: Node.js version
       description: What version of Node.js are you using?
       placeholder: 14.17.3
-    validations:
-      required: true
-
-  - type: input
-    id: npm_yarn_version
-    attributes:
-      label: package manager and version
-      description: Tell us package manager you are using, and what version.
-      placeholder: npm 6.14.13
-    validations:
-      required: true
-
-  - type: input
-    id: operating_system
-    attributes:
-      label: Operating system
-      description: Tell us what operating system you use, and what version.
-      placeholder: macOS Big Sur, version 11.4
     validations:
       required: true
 

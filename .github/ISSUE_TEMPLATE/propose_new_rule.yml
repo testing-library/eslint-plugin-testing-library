@@ -1,6 +1,7 @@
 name: Propose a new rule
 description: Propose a new rule for the eslint-plugin-testing-library.
 labels: ['new rule', 'triage']
+type: feature
 body:
   - type: input
     id: name_for_new_rule

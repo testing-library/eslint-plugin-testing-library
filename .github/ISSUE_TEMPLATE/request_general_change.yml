@@ -1,6 +1,7 @@
 name: Request a general change
 description: Request a general change for the eslint-plugin-testing-library.
 labels: ['enhancement', 'triage']
+type: task
 body:
   - type: input
     id: plugin_version
