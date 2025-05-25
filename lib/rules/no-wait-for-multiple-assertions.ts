@@ -1,10 +1,7 @@
 import { TSESTree } from '@typescript-eslint/utils';
 
 import { createTestingLibraryRule } from '../create-testing-library-rule';
-import {
-	getPropertyIdentifierNode,
-	isExpressionStatement,
-} from '../node-utils';
+import { getPropertyIdentifierNode } from '../node-utils';
 
 export const RULE_NAME = 'no-wait-for-multiple-assertions';
 export type MessageIds = 'noWaitForMultipleAssertion';
@@ -38,10 +35,6 @@ export default createTestingLibraryRule<Options, MessageIds>({
 			body: Array<TSESTree.Node>
 		): Array<TSESTree.ExpressionStatement> {
 			return body.filter((node) => {
-				if (!isExpressionStatement(node)) {
-					return false;
-				}
-
 				const expressionIdentifier = getPropertyIdentifierNode(node);
 				if (!expressionIdentifier) {
 					return false;
