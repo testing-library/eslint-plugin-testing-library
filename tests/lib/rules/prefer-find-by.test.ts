@@ -53,6 +53,17 @@ ruleTester.run(RULE_NAME, rule, {
         })
       `,
 		})),
+		...ASYNC_QUERIES_COMBINATIONS.map((queryMethod) => ({
+			code: `
+        import {waitFor} from '${testingFramework}';
+				it('tests', async () => {
+					await waitFor(async () => {
+						const button = screen.${queryMethod}("button", { name: "Submit" })
+						expect(button).toBeInTheDocument()
+					})
+				})
+      `,
+		})),
 		...SYNC_QUERIES_COMBINATIONS.map((queryMethod) => ({
 			code: `
         import {waitForElementToBeRemoved} from '${testingFramework}';
@@ -164,6 +175,17 @@ ruleTester.run(RULE_NAME, rule, {
           const { container } = render()
           await waitFor(() => expect(container.querySelector('baz')).toBeInTheDocument());
         })
+      `,
+		},
+		{
+			code: `
+        import {waitFor} from '${testingFramework}';
+				it('tests', async () => {
+					await waitFor(async () => {
+						const button = await foo("button", { name: "Submit" })
+						expect(button).toBeInTheDocument()
+					})
+				})
       `,
 		},
 	]),
