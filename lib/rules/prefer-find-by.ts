@@ -376,6 +376,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 					}
 					const queryIdentifier = getDeepestIdentifierNode(init.callee);
 
+					// ensure the query is a supported async query like findBy*
 					if (!queryIdentifier || !helpers.isAsyncQuery(queryIdentifier)) {
 						return;
 					}
