@@ -24,10 +24,6 @@ export function getFindByQueryVariant(
 	return queryMethod.includes('All') ? 'findAllBy' : 'findBy';
 }
 
-function isFindByQuery(name: string): boolean {
-	return /^find(All)?By/.test(name);
-}
-
 function findRenderDefinitionDeclaration(
 	scope: TSESLint.Scope.Scope | null,
 	query: string
@@ -367,13 +363,12 @@ export default createTestingLibraryRule<Options, MessageIds>({
 						}
 
 						const { callee } = declaration.init.argument;
-
-						const name = getDeepestIdentifierNode(callee)?.name;
-						return name ? isFindByQuery(name) : false;
+						const node = getDeepestIdentifierNode(callee);
+						return node ? helpers.isFindQueryVariant(node) : false;
 					});
 
 					const init = ASTUtils.isAwaitExpression(findByDeclarator?.init)
-						? findByDeclarator.init?.argument
+						? findByDeclarator.init.argument
 						: null;
 
 					if (!isCallExpression(init)) {
