@@ -92,7 +92,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				properties: {
 					assertion: {
 						type: 'string',
-						enum: PRESENCE_MATCHERS,
+						enum: [...PRESENCE_MATCHERS],
 					},
 					includeFindQueries: { type: 'boolean' },
 				},
@@ -182,8 +182,14 @@ export default createTestingLibraryRule<Options, MessageIds>({
 						}
 
 						const shouldEnforceAssertion =
-							(!isNegatedMatcher && PRESENCE_MATCHERS.includes(matcher)) ||
-							(isNegatedMatcher && ABSENCE_MATCHERS.includes(matcher));
+							(!isNegatedMatcher &&
+								PRESENCE_MATCHERS.some(
+									(presenceMather) => presenceMather === matcher
+								)) ||
+							(isNegatedMatcher &&
+								ABSENCE_MATCHERS.some(
+									(absenceMather) => absenceMather === matcher
+								));
 
 						if (shouldEnforceAssertion && matcher !== assertion) {
 							context.report({
