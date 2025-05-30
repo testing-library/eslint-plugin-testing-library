@@ -41,6 +41,12 @@ const submitButton = await waitFor(() =>
 const submitButton = await waitFor(() =>
 	expect(queryByLabel('button', { name: /submit/i })).not.toBeFalsy()
 );
+
+// unnecessary usage of waitFor with findBy*, which already includes waiting logic
+await waitFor(async () => {
+	const button = await findByRole('button', { name: 'Submit' });
+	expect(button).toBeInTheDocument();
+});
 ```
 
 Examples of **correct** code for this rule:
