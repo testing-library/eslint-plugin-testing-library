@@ -2,12 +2,15 @@ import { TSESTree, ASTUtils, TSESLint } from '@typescript-eslint/utils';
 
 import { createTestingLibraryRule } from '../create-testing-library-rule';
 import {
+	getDeepestIdentifierNode,
 	isArrowFunctionExpression,
+	isBlockStatement,
 	isCallExpression,
 	isMemberExpression,
 	isObjectExpression,
 	isObjectPattern,
 	isProperty,
+	isVariableDeclaration,
 } from '../node-utils';
 import { getScope, getSourceCode } from '../utils';
 
@@ -329,20 +332,82 @@ export default createTestingLibraryRule<Options, MessageIds>({
 		}
 
 		return {
-			'AwaitExpression > CallExpression'(node: TSESTree.CallExpression) {
+			'AwaitExpression > CallExpression'(
+				node: TSESTree.CallExpression & { parent: TSESTree.AwaitExpression }
+			) {
 				if (
 					!ASTUtils.isIdentifier(node.callee) ||
 					!helpers.isAsyncUtil(node.callee, ['waitFor'])
 				) {
 					return;
 				}
-				// ensure the only argument is an arrow function expression - if the arrow function is a block
-				// we skip it
+				// ensure the only argument is an arrow function expression
 				const argument = node.arguments[0];
-				if (
-					!isArrowFunctionExpression(argument) ||
-					!isCallExpression(argument.body)
-				) {
+
+				if (!isArrowFunctionExpression(argument)) {
+					return;
+				}
+
+				if (isBlockStatement(argument.body) && argument.async) {
+					const { body } = argument.body;
+					const declarations = body
+						.filter(isVariableDeclaration)
+						?.flatMap((declaration) => declaration.declarations);
+
+					const findByDeclarator = declarations.find((declaration) => {
+						if (
+							!ASTUtils.isAwaitExpression(declaration.init) ||
+							!isCallExpression(declaration.init.argument)
+						) {
+							return false;
+						}
+
+						const { callee } = declaration.init.argument;
+						const node = getDeepestIdentifierNode(callee);
+						return node ? helpers.isFindQueryVariant(node) : false;
+					});
+
+					const init = ASTUtils.isAwaitExpression(findByDeclarator?.init)
+						? findByDeclarator.init.argument
+						: null;
+
+					if (!isCallExpression(init)) {
+						return;
+					}
+					const queryIdentifier = getDeepestIdentifierNode(init.callee);
+
+					// ensure the query is a supported async query like findBy*
+					if (!queryIdentifier || !helpers.isAsyncQuery(queryIdentifier)) {
+						return;
+					}
+
+					const fullQueryMethod = queryIdentifier.name;
+					const queryMethod = fullQueryMethod.split('By')[1];
+					const queryVariant = getFindByQueryVariant(fullQueryMethod);
+
+					reportInvalidUsage(node, {
+						queryMethod,
+						queryVariant,
+						prevQuery: fullQueryMethod,
+						fix(fixer) {
+							const { parent: expressionStatement } = node.parent;
+							const bodyText = sourceCode
+								.getText(argument.body)
+								.slice(1, -1)
+								.trim();
+							const { line, column } = expressionStatement.loc.start;
+							const indent = sourceCode.getLines()[line - 1].slice(0, column);
+							const newText = bodyText
+								.split('\n')
+								.map((line) => line.trim())
+								.join(`\n${indent}`);
+							return fixer.replaceText(expressionStatement, newText);
+						},
+					});
+					return;
+				}
+
+				if (!isCallExpression(argument.body)) {
 					return;
 				}
 

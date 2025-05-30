@@ -53,6 +53,17 @@ ruleTester.run(RULE_NAME, rule, {
         })
       `,
 		})),
+		...ASYNC_QUERIES_COMBINATIONS.map((queryMethod) => ({
+			code: `
+        import {waitFor} from '${testingFramework}';
+				it('tests', async () => {
+					await waitFor(async () => {
+						const button = screen.${queryMethod}("button", { name: "Submit" })
+						expect(button).toBeInTheDocument()
+					})
+				})
+      `,
+		})),
 		...SYNC_QUERIES_COMBINATIONS.map((queryMethod) => ({
 			code: `
         import {waitForElementToBeRemoved} from '${testingFramework}';
@@ -164,6 +175,17 @@ ruleTester.run(RULE_NAME, rule, {
           const { container } = render()
           await waitFor(() => expect(container.querySelector('baz')).toBeInTheDocument());
         })
+      `,
+		},
+		{
+			code: `
+        import {waitFor} from '${testingFramework}';
+				it('tests', async () => {
+					await waitFor(async () => {
+						const button = await foo("button", { name: "Submit" })
+						expect(button).toBeInTheDocument()
+					})
+				})
       `,
 		},
 	]),
@@ -689,6 +711,35 @@ ruleTester.run(RULE_NAME, rule, {
 		  const button = await screen.${buildFindByMethod(
 				queryMethod
 			)}('Count is: 0', { timeout: 100, interval: 200 })
+        `,
+		})),
+		...ASYNC_QUERIES_COMBINATIONS.map((queryMethod) => ({
+			code: `
+				import {waitFor} from '${testingFramework}';
+				it('tests', async () => {
+					await waitFor(async () => {
+						const button = await screen.${queryMethod}("button", { name: "Submit" })
+						expect(button).toBeInTheDocument()
+					})
+				})
+        `,
+			errors: [
+				{
+					messageId: 'preferFindBy',
+					data: {
+						queryVariant: getFindByQueryVariant(queryMethod),
+						queryMethod: queryMethod.split('By')[1],
+						prevQuery: queryMethod,
+						waitForMethodName: 'waitFor',
+					},
+				},
+			],
+			output: `
+				import {waitFor} from '${testingFramework}';
+				it('tests', async () => {
+					const button = await screen.${queryMethod}("button", { name: "Submit" })
+					expect(button).toBeInTheDocument()
+				})
         `,
 		})),
 	]),
