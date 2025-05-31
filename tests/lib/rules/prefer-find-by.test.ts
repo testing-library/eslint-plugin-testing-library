@@ -1,4 +1,7 @@
-import { TSESLint } from '@typescript-eslint/utils';
+import {
+	type InvalidTestCase,
+	type ValidTestCase,
+} from '@typescript-eslint/rule-tester';
 
 import rule, {
 	RULE_NAME,
@@ -26,9 +29,7 @@ function buildFindByMethod(queryMethod: string) {
 }
 
 function createScenario<
-	T extends
-		| TSESLint.InvalidTestCase<MessageIds, []>
-		| TSESLint.ValidTestCase<[]>,
+	T extends InvalidTestCase<MessageIds, []> | ValidTestCase<[]>,
 >(callback: (waitMethod: string, queryMethod: string) => T) {
 	return SYNC_QUERIES_COMBINATIONS.map((queryMethod) =>
 		callback('waitFor', queryMethod)

@@ -2,7 +2,10 @@ export * from './compat';
 export * from './file-import';
 export * from './types';
 
-const combineQueries = (variants: string[], methods: string[]): string[] => {
+const combineQueries = (
+	variants: readonly string[],
+	methods: readonly string[]
+): string[] => {
 	const combinedQueries: string[] = [];
 	variants.forEach((variant) => {
 		const variantPrefix = variant.replace('By', '');
@@ -25,14 +28,19 @@ const LIBRARY_MODULES = [
 	'@testing-library/vue',
 	'@testing-library/svelte',
 	'@marko/testing-library',
-];
+] as const;
 
-const SYNC_QUERIES_VARIANTS = ['getBy', 'getAllBy', 'queryBy', 'queryAllBy'];
-const ASYNC_QUERIES_VARIANTS = ['findBy', 'findAllBy'];
+const SYNC_QUERIES_VARIANTS = [
+	'getBy',
+	'getAllBy',
+	'queryBy',
+	'queryAllBy',
+] as const;
+const ASYNC_QUERIES_VARIANTS = ['findBy', 'findAllBy'] as const;
 const ALL_QUERIES_VARIANTS = [
 	...SYNC_QUERIES_VARIANTS,
 	...ASYNC_QUERIES_VARIANTS,
-];
+] as const;
 
 const ALL_QUERIES_METHODS = [
 	'ByLabelText',
@@ -43,7 +51,7 @@ const ALL_QUERIES_METHODS = [
 	'ByDisplayValue',
 	'ByRole',
 	'ByTestId',
-];
+] as const;
 
 const SYNC_QUERIES_COMBINATIONS = combineQueries(
 	SYNC_QUERIES_VARIANTS,
@@ -58,7 +66,7 @@ const ASYNC_QUERIES_COMBINATIONS = combineQueries(
 const ALL_QUERIES_COMBINATIONS = [
 	...SYNC_QUERIES_COMBINATIONS,
 	...ASYNC_QUERIES_COMBINATIONS,
-];
+] as const;
 
 const ASYNC_UTILS = ['waitFor', 'waitForElementToBeRemoved'] as const;
 
@@ -73,7 +81,7 @@ const DEBUG_UTILS = [
 
 const EVENTS_SIMULATORS = ['fireEvent', 'userEvent'] as const;
 
-const TESTING_FRAMEWORK_SETUP_HOOKS = ['beforeEach', 'beforeAll'];
+const TESTING_FRAMEWORK_SETUP_HOOKS = ['beforeEach', 'beforeAll'] as const;
 
 const PROPERTIES_RETURNING_NODES = [
 	'activeElement',
@@ -93,7 +101,7 @@ const PROPERTIES_RETURNING_NODES = [
 	'previousSibling',
 	'rootNode',
 	'scripts',
-];
+] as const;
 
 const METHODS_RETURNING_NODES = [
 	'closest',
@@ -104,20 +112,20 @@ const METHODS_RETURNING_NODES = [
 	'getElementsByTagNameNS',
 	'querySelector',
 	'querySelectorAll',
-];
+] as const;
 
 const ALL_RETURNING_NODES = [
 	...PROPERTIES_RETURNING_NODES,
 	...METHODS_RETURNING_NODES,
-];
+] as const;
 
 const PRESENCE_MATCHERS = [
 	'toBeOnTheScreen',
 	'toBeInTheDocument',
 	'toBeTruthy',
 	'toBeDefined',
-];
-const ABSENCE_MATCHERS = ['toBeNull', 'toBeFalsy'];
+] as const;
+const ABSENCE_MATCHERS = ['toBeNull', 'toBeFalsy'] as const;
 
 export {
 	combineQueries,

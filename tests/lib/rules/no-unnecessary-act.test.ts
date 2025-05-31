@@ -1,4 +1,7 @@
-import { type TSESLint } from '@typescript-eslint/utils';
+import {
+	type InvalidTestCase,
+	type ValidTestCase,
+} from '@typescript-eslint/rule-tester';
 
 import rule, {
 	MessageIds,
@@ -9,9 +12,9 @@ import { createRuleTester } from '../test-utils';
 
 const ruleTester = createRuleTester();
 
-type ValidTestCase = TSESLint.ValidTestCase<Options>;
-type InvalidTestCase = TSESLint.InvalidTestCase<MessageIds, Options>;
-type TestCase = InvalidTestCase | ValidTestCase;
+type RuleValidTestCase = ValidTestCase<Options>;
+type RuleInvalidTestCase = InvalidTestCase<MessageIds, Options>;
+type TestCase = RuleInvalidTestCase | RuleValidTestCase;
 
 const addOptions = <T extends TestCase>(
 	array: T[],
@@ -37,7 +40,7 @@ const SUPPORTED_TESTING_FRAMEWORKS = [
 	['@marko/testing-library', 'Marko TL'],
 ];
 
-const validNonStrictTestCases: ValidTestCase[] = [
+const validNonStrictTestCases: RuleValidTestCase[] = [
 	{
 		code: `// case: RTL act wrapping both RTL and non-RTL calls
       import { act, render, waitFor } from '@testing-library/react'
@@ -62,7 +65,7 @@ const validNonStrictTestCases: ValidTestCase[] = [
 	},
 ];
 
-const validTestCases: ValidTestCase[] = [
+const validTestCases: RuleValidTestCase[] = [
 	...SUPPORTED_TESTING_FRAMEWORKS.map(([testingFramework, shortName]) => ({
 		code: `// case: ${shortName} act wrapping non-${shortName} calls
     import { act } from '${testingFramework}'
@@ -214,7 +217,7 @@ const validTestCases: ValidTestCase[] = [
 	})),
 ];
 
-const invalidStrictTestCases: InvalidTestCase[] =
+const invalidStrictTestCases: RuleInvalidTestCase[] =
 	SUPPORTED_TESTING_FRAMEWORKS.flatMap(([testingFramework, shortName]) => [
 		{
 			code: `// case: ${shortName} act wrapping both ${shortName} and non-${shortName} calls with strict option
@@ -244,7 +247,7 @@ const invalidStrictTestCases: InvalidTestCase[] =
 		},
 	]);
 
-const invalidTestCases: InvalidTestCase[] = [
+const invalidTestCases: RuleInvalidTestCase[] = [
 	...SUPPORTED_TESTING_FRAMEWORKS.map(
 		([testingFramework, shortName]) =>
 			({

@@ -1,4 +1,7 @@
-import { TSESLint } from '@typescript-eslint/utils';
+import {
+	type InvalidTestCase,
+	type ValidTestCase,
+} from '@typescript-eslint/rule-tester';
 
 import rule, {
 	MAPPING_TO_USER_EVENT,
@@ -11,9 +14,7 @@ import { LIBRARY_MODULES } from '../../../lib/utils';
 import { createRuleTester } from '../test-utils';
 
 function createScenarioWithImport<
-	T extends
-		| TSESLint.InvalidTestCase<MessageIds, Options>
-		| TSESLint.ValidTestCase<Options>,
+	T extends InvalidTestCase<MessageIds, Options> | ValidTestCase<Options>,
 >(callback: (libraryModule: string, fireEventMethod: string) => T) {
 	return LIBRARY_MODULES.reduce(
 		(acc: Array<T>, libraryModule) =>
@@ -69,7 +70,7 @@ ruleTester.run(RULE_NAME, rule, {
         userEvent.${userEventMethod}(foo)
       `,
 		})),
-		...createScenarioWithImport<TSESLint.ValidTestCase<Options>>(
+		...createScenarioWithImport<ValidTestCase<Options>>(
 			(libraryModule: string, fireEventMethod: string) => ({
 				code: `
         import { fireEvent } from '${libraryModule}'
@@ -79,7 +80,7 @@ ruleTester.run(RULE_NAME, rule, {
 				options: [{ allowedMethods: [fireEventMethod] }],
 			})
 		),
-		...createScenarioWithImport<TSESLint.ValidTestCase<Options>>(
+		...createScenarioWithImport<ValidTestCase<Options>>(
 			(libraryModule: string, fireEventMethod: string) => ({
 				code: `
         import { fireEvent as fireEventAliased } from '${libraryModule}'
@@ -89,7 +90,7 @@ ruleTester.run(RULE_NAME, rule, {
 				options: [{ allowedMethods: [fireEventMethod] }],
 			})
 		),
-		...createScenarioWithImport<TSESLint.ValidTestCase<Options>>(
+		...createScenarioWithImport<ValidTestCase<Options>>(
 			(libraryModule: string, fireEventMethod: string) => ({
 				code: `
         import * as dom from '${libraryModule}'
@@ -273,7 +274,7 @@ ruleTester.run(RULE_NAME, rule, {
 		},
 	],
 	invalid: [
-		...createScenarioWithImport<TSESLint.InvalidTestCase<MessageIds, Options>>(
+		...createScenarioWithImport<InvalidTestCase<MessageIds, Options>>(
 			(libraryModule: string, fireEventMethod: string) => ({
 				code: `
         import { fireEvent } from '${libraryModule}'
@@ -293,7 +294,7 @@ ruleTester.run(RULE_NAME, rule, {
 				],
 			})
 		),
-		...createScenarioWithImport<TSESLint.InvalidTestCase<MessageIds, Options>>(
+		...createScenarioWithImport<InvalidTestCase<MessageIds, Options>>(
 			(libraryModule: string, fireEventMethod: string) => ({
 				code: `
         import * as dom from '${libraryModule}'
@@ -312,7 +313,7 @@ ruleTester.run(RULE_NAME, rule, {
 				],
 			})
 		),
-		...createScenarioWithImport<TSESLint.InvalidTestCase<MessageIds, Options>>(
+		...createScenarioWithImport<InvalidTestCase<MessageIds, Options>>(
 			(libraryModule: string, fireEventMethod: string) => ({
 				code: `
         const { fireEvent } = require('${libraryModule}')
@@ -331,7 +332,7 @@ ruleTester.run(RULE_NAME, rule, {
 				],
 			})
 		),
-		...createScenarioWithImport<TSESLint.InvalidTestCase<MessageIds, Options>>(
+		...createScenarioWithImport<InvalidTestCase<MessageIds, Options>>(
 			(libraryModule: string, fireEventMethod: string) => ({
 				code: `
         const rtl = require('${libraryModule}')
@@ -484,7 +485,7 @@ ruleTester.run(RULE_NAME, rule, {
 			},
 			code: `
         import { fireEvent, createEvent } from 'test-utils'
-        
+
         fireEvent(node, createEvent('${fireEventMethod}', node))
       `,
 			errors: [

@@ -1,4 +1,7 @@
-import { type TSESLint } from '@typescript-eslint/utils';
+import {
+	type InvalidTestCase,
+	type ValidTestCase,
+} from '@typescript-eslint/rule-tester';
 
 import rule, {
 	MessageIds,
@@ -9,9 +12,9 @@ import { createRuleTester } from '../test-utils';
 
 const ruleTester = createRuleTester();
 
-type ValidTestCase = TSESLint.ValidTestCase<Options>;
-type InvalidTestCase = TSESLint.InvalidTestCase<MessageIds, Options>;
-type TestCase = InvalidTestCase | ValidTestCase;
+type RuleValidTestCase = ValidTestCase<Options>;
+type RuleInvalidTestCase = InvalidTestCase<MessageIds, Options>;
+type TestCase = RuleValidTestCase | RuleInvalidTestCase;
 const disableAggressiveReporting = <T extends TestCase>(array: T[]): T[] =>
 	array.map((testCase) => ({
 		...testCase,
@@ -22,11 +25,11 @@ const disableAggressiveReporting = <T extends TestCase>(array: T[]): T[] =>
 		},
 	}));
 
-const validTestCases: ValidTestCase[] = [
+const validTestCases: RuleValidTestCase[] = [
 	{
 		code: `
           import React from 'react';
-          
+
           const TestComponent = props => {
             return (
               <div data-testid="cool">
@@ -40,7 +43,7 @@ const validTestCases: ValidTestCase[] = [
 	{
 		code: `
           import React from 'react';
-          
+
           const TestComponent = props => {
             return (
               <div className="cool">
@@ -54,7 +57,7 @@ const validTestCases: ValidTestCase[] = [
 	{
 		code: `
             import React from 'react';
-            
+
             const TestComponent = props => {
               return (
                 <div data-testid="Awesome__CoolStuff">
@@ -73,7 +76,7 @@ const validTestCases: ValidTestCase[] = [
 	{
 		code: `
             import React from 'react';
-            
+
             const TestComponent = props => {
               return (
                 <div data-testid="Awesome">
@@ -92,7 +95,7 @@ const validTestCases: ValidTestCase[] = [
 	{
 		code: `
             import React from 'react';
-            
+
             const TestComponent = props => {
               return (
                 <div data-testid="Parent">
@@ -111,7 +114,7 @@ const validTestCases: ValidTestCase[] = [
 	{
 		code: `
             import React from 'react';
-            
+
             const TestComponent = props => {
               return (
                 <div data-testid="Parent">
@@ -130,7 +133,7 @@ const validTestCases: ValidTestCase[] = [
 	{
 		code: `
             import React from 'react';
-            
+
             const TestComponent = props => {
               return (
                 <div data-testid="wrong" custom-attr="right-1">
@@ -149,7 +152,7 @@ const validTestCases: ValidTestCase[] = [
 	{
 		code: `
             import React from 'react';
-            
+
             const TestComponent = props => {
               return (
                 <div another-custom-attr="right-1" custom-attr="right-2">
@@ -168,7 +171,7 @@ const validTestCases: ValidTestCase[] = [
 	{
 		code: `
             import React from 'react';
-            
+
             const TestComponent = props => {
               return (
                 <div data-test-id="Parent">
@@ -188,7 +191,7 @@ const validTestCases: ValidTestCase[] = [
 	{
 		code: `
           import React from 'react';
-          
+
           const TestComponent = props => {
             const dynamicTestId = 'somethingDynamic';
             return (
@@ -205,7 +208,7 @@ const validTestCases: ValidTestCase[] = [
 	{
 		code: `
             import React from 'react';
-            
+
             const TestComponent = props => {
               return (
                 <div data-testid="__CoolStuff">
@@ -224,7 +227,7 @@ const validTestCases: ValidTestCase[] = [
 	{
 		code: `
             import React from 'react';
-            
+
             const TestComponent = props => {
               return (
                 <div data-testid="__CoolStuff">
@@ -244,7 +247,7 @@ const validTestCases: ValidTestCase[] = [
 	{
 		code: `
             import React from 'react';
-            
+
             const TestComponent = props => {
               return (
                 <div data-testid="__CoolStuff">
@@ -262,11 +265,11 @@ const validTestCases: ValidTestCase[] = [
 		filename: '/my/cool/file/path/[...wildcard].js',
 	},
 ];
-const invalidTestCases: InvalidTestCase[] = [
+const invalidTestCases: RuleInvalidTestCase[] = [
 	{
 		code: `
         import React from 'react';
-            
+
         const TestComponent = props => {
           return (
             <div data-testid="Awesome__CoolStuff">
@@ -291,7 +294,7 @@ const invalidTestCases: InvalidTestCase[] = [
 	{
 		code: `
             import React from 'react';
-            
+
             const TestComponent = props => {
               return (
                 <div data-testid="Nope">
@@ -321,7 +324,7 @@ const invalidTestCases: InvalidTestCase[] = [
 	{
 		code: `
             import React from 'react';
-            
+
             const TestComponent = props => {
               return (
                 <div data-testid="Parent__cool" my-custom-attr="WrongComponent__cool">
@@ -352,7 +355,7 @@ const invalidTestCases: InvalidTestCase[] = [
 	{
 		code: `
             import React from 'react';
-            
+
             const TestComponent = props => {
               return (
                 <div custom-attr="wrong" another-custom-attr="wrong">
@@ -391,7 +394,7 @@ const invalidTestCases: InvalidTestCase[] = [
 	{
 		code: `
             import React from 'react';
-            
+
             const TestComponent = props => {
               return (
                 <div data-testid="WrongComponent__cool">
@@ -421,7 +424,7 @@ const invalidTestCases: InvalidTestCase[] = [
 	{
 		code: ` // test for custom message
             import React from 'react';
-            
+
             const TestComponent = props => {
               return (
                 <div data-testid="snake_case_value">

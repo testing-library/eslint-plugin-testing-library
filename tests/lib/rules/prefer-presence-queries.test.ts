@@ -1,4 +1,7 @@
-import { TSESLint } from '@typescript-eslint/utils';
+import {
+	type InvalidTestCase,
+	type ValidTestCase,
+} from '@typescript-eslint/rule-tester';
 
 import rule, {
 	RULE_NAME,
@@ -17,8 +20,8 @@ const queryAllByQueries = ALL_QUERIES_METHODS.map(
 	(method) => `queryAll${method}`
 );
 
-type RuleValidTestCase = TSESLint.ValidTestCase<Options>;
-type RuleInvalidTestCase = TSESLint.InvalidTestCase<MessageIds, Options>;
+type RuleValidTestCase = ValidTestCase<Options>;
+type RuleInvalidTestCase = InvalidTestCase<MessageIds, Options>;
 
 type AssertionFnParams = {
 	query: string;
@@ -921,7 +924,7 @@ ruleTester.run(RULE_NAME, rule, {
      // submit button exists
      const submitButton = screen.getByRole('button')
      fireEvent.click(submitButton)
-    
+
      // right after clicking submit button it disappears
      expect(submitButton).not.toBeInTheDocument()
     `,
