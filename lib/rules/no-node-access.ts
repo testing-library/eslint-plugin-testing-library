@@ -57,6 +57,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				: null;
 
 			if (
+				propertyName &&
 				ALL_RETURNING_NODES.some(
 					(allReturningNode) => allReturningNode === propertyName
 				)
