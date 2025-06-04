@@ -82,6 +82,15 @@ const getDisabledValidAssertion = ({
 	};
 };
 
+const toggleQueryPrefix = (query: string): string => {
+	if (query.startsWith('get')) return query.replace(/^get/, 'query');
+	if (query.startsWith('query')) return query.replace(/^query/, 'get');
+	return query;
+};
+
+const applyScreenPrefix = (query: string, shouldUseScreen: boolean): string =>
+	shouldUseScreen ? `screen.${query}` : query;
+
 const getInvalidAssertions = ({
 	query,
 	matcher,
@@ -89,12 +98,18 @@ const getInvalidAssertions = ({
 	shouldUseScreen = false,
 	assertionType,
 }: AssertionFnParams): RuleInvalidTestCase[] => {
-	const finalQuery = shouldUseScreen ? `screen.${query}` : query;
+	const finalQuery = applyScreenPrefix(query, shouldUseScreen);
 	const code = `expect(${finalQuery}('Hello'))${matcher}`;
+
+	const outputQuery = toggleQueryPrefix(query);
+	const finalOutputQuery = applyScreenPrefix(outputQuery, shouldUseScreen);
+	const output = `expect(${finalOutputQuery}('Hello'))${matcher}`;
+
 	return [
 		{
 			code,
 			errors: [{ messageId, line: 1, column: shouldUseScreen ? 15 : 8 }],
+			output,
 		},
 		{
 			code,
@@ -105,6 +120,7 @@ const getInvalidAssertions = ({
 				},
 			],
 			errors: [{ messageId, line: 1, column: shouldUseScreen ? 15 : 8 }],
+			output,
 		},
 	];
 };
@@ -1307,18 +1323,24 @@ ruleTester.run(RULE_NAME, rule, {
 		{
 			code: 'expect(screen.getAllByText("button")[1]).not.toBeInTheDocument()',
 			errors: [{ messageId: 'wrongAbsenceQuery', line: 1, column: 15 }],
+			output:
+				'expect(screen.queryAllByText("button")[1]).not.toBeInTheDocument()',
 		},
 		{
 			code: 'expect(screen.getAllByText("button")[1]).not.toBeOnTheScreen()',
 			errors: [{ messageId: 'wrongAbsenceQuery', line: 1, column: 15 }],
+			output:
+				'expect(screen.queryAllByText("button")[1]).not.toBeOnTheScreen()',
 		},
 		{
 			code: 'expect(screen.queryAllByText("button")[1]).toBeInTheDocument()',
 			errors: [{ messageId: 'wrongPresenceQuery', line: 1, column: 15 }],
+			output: 'expect(screen.getAllByText("button")[1]).toBeInTheDocument()',
 		},
 		{
 			code: 'expect(screen.queryAllByText("button")[1]).toBeOnTheScreen()',
 			errors: [{ messageId: 'wrongPresenceQuery', line: 1, column: 15 }],
+			output: 'expect(screen.getAllByText("button")[1]).toBeOnTheScreen()',
 		},
 		{
 			code: `
@@ -1326,6 +1348,10 @@ ruleTester.run(RULE_NAME, rule, {
         expect(queryByCustomQuery("button")).toBeInTheDocument()
       `,
 			errors: [{ messageId: 'wrongPresenceQuery', line: 3, column: 16 }],
+			output: `
+      // case: asserting presence incorrectly with custom queryBy* query
+        expect(getByCustomQuery("button")).toBeInTheDocument()
+      `,
 		},
 		{
 			code: `
@@ -1333,6 +1359,10 @@ ruleTester.run(RULE_NAME, rule, {
         expect(queryByCustomQuery("button")).toBeOnTheScreen()
       `,
 			errors: [{ messageId: 'wrongPresenceQuery', line: 3, column: 16 }],
+			output: `
+      // case: asserting presence incorrectly with custom queryBy* query
+        expect(getByCustomQuery("button")).toBeOnTheScreen()
+      `,
 		},
 		{
 			code: `
@@ -1340,6 +1370,10 @@ ruleTester.run(RULE_NAME, rule, {
         expect(getByCustomQuery("button")).not.toBeInTheDocument()
       `,
 			errors: [{ messageId: 'wrongAbsenceQuery', line: 3, column: 16 }],
+			output: `
+        // case: asserting absence incorrectly with custom getBy* query
+        expect(queryByCustomQuery("button")).not.toBeInTheDocument()
+      `,
 		},
 		{
 			code: `
@@ -1347,6 +1381,10 @@ ruleTester.run(RULE_NAME, rule, {
         expect(getByCustomQuery("button")).not.toBeOnTheScreen()
       `,
 			errors: [{ messageId: 'wrongAbsenceQuery', line: 3, column: 16 }],
+			output: `
+        // case: asserting absence incorrectly with custom getBy* query
+        expect(queryByCustomQuery("button")).not.toBeOnTheScreen()
+      `,
 		},
 		{
 			settings: {
@@ -1358,6 +1396,11 @@ ruleTester.run(RULE_NAME, rule, {
       expect(queryByRole("button")).toBeInTheDocument()
       `,
 			errors: [{ line: 4, column: 14, messageId: 'wrongPresenceQuery' }],
+			output: `
+      // case: asserting presence incorrectly importing custom module
+      import 'test-utils'
+      expect(getByRole("button")).toBeInTheDocument()
+      `,
 		},
 		{
 			settings: {
@@ -1369,6 +1412,11 @@ ruleTester.run(RULE_NAME, rule, {
       expect(queryByRole("button")).toBeOnTheScreen()
       `,
 			errors: [{ line: 4, column: 14, messageId: 'wrongPresenceQuery' }],
+			output: `
+      // case: asserting presence incorrectly importing custom module
+      import 'test-utils'
+      expect(getByRole("button")).toBeOnTheScreen()
+      `,
 		},
 		{
 			settings: {
@@ -1380,6 +1428,11 @@ ruleTester.run(RULE_NAME, rule, {
       expect(getByRole("button")).not.toBeInTheDocument()
       `,
 			errors: [{ line: 4, column: 14, messageId: 'wrongAbsenceQuery' }],
+			output: `
+      // case: asserting absence incorrectly importing custom module
+      import 'test-utils'
+      expect(queryByRole("button")).not.toBeInTheDocument()
+      `,
 		},
 		{
 			settings: {
@@ -1391,18 +1444,29 @@ ruleTester.run(RULE_NAME, rule, {
       expect(getByRole("button")).not.toBeOnTheScreen()
       `,
 			errors: [{ line: 4, column: 14, messageId: 'wrongAbsenceQuery' }],
+			output: `
+      // case: asserting absence incorrectly importing custom module
+      import 'test-utils'
+      expect(queryByRole("button")).not.toBeOnTheScreen()
+      `,
 		},
 		{
 			code: `
 	  // case: asserting within check does still work with improper outer clause
 	  expect(within(screen.getByRole("button")).getByText("Hello")).not.toBeInTheDocument()`,
 			errors: [{ line: 3, column: 46, messageId: 'wrongAbsenceQuery' }],
+			output: `
+	  // case: asserting within check does still work with improper outer clause
+	  expect(within(screen.getByRole("button")).queryByText("Hello")).not.toBeInTheDocument()`,
 		},
 		{
 			code: `
 	  // case: asserting within check does still work with improper outer clause
 	  expect(within(screen.getByRole("button")).queryByText("Hello")).toBeInTheDocument()`,
 			errors: [{ line: 3, column: 46, messageId: 'wrongPresenceQuery' }],
+			output: `
+	  // case: asserting within check does still work with improper outer clause
+	  expect(within(screen.getByRole("button")).getByText("Hello")).toBeInTheDocument()`,
 		},
 		{
 			code: `
@@ -1412,18 +1476,27 @@ ruleTester.run(RULE_NAME, rule, {
 				{ line: 3, column: 25, messageId: 'wrongPresenceQuery' },
 				{ line: 3, column: 48, messageId: 'wrongAbsenceQuery' },
 			],
+			output: `
+	  // case: asserting within check does still work with improper outer clause and improper inner clause
+	  expect(within(screen.getByRole("button")).queryByText("Hello")).not.toBeInTheDocument()`,
 		},
 		{
 			code: `
 	  // case: asserting within check does still work with proper outer clause and improper inner clause
 	  expect(within(screen.queryByRole("button")).queryByText("Hello")).not.toBeInTheDocument()`,
 			errors: [{ line: 3, column: 25, messageId: 'wrongPresenceQuery' }],
+			output: `
+	  // case: asserting within check does still work with proper outer clause and improper inner clause
+	  expect(within(screen.getByRole("button")).queryByText("Hello")).not.toBeInTheDocument()`,
 		},
 		{
 			code: `
 	  // case: asserting within check does still work with proper outer clause and improper inner clause
 	  expect(within(screen.queryByRole("button")).getByText("Hello")).toBeInTheDocument()`,
 			errors: [{ line: 3, column: 25, messageId: 'wrongPresenceQuery' }],
+			output: `
+	  // case: asserting within check does still work with proper outer clause and improper inner clause
+	  expect(within(screen.getByRole("button")).getByText("Hello")).toBeInTheDocument()`,
 		},
 		{
 			code: `
@@ -1433,18 +1506,27 @@ ruleTester.run(RULE_NAME, rule, {
 				{ line: 3, column: 25, messageId: 'wrongPresenceQuery' },
 				{ line: 3, column: 48, messageId: 'wrongPresenceQuery' },
 			],
+			output: `
+	  // case: asserting within check does still work with improper outer clause and improper inner clause
+	  expect(within(screen.getByRole("button")).getByText("Hello")).toBeInTheDocument()`,
 		},
 		{
 			code: `
 	  // case: asserting within check does still work with improper outer clause
 	  expect(within(screen.getByRole("button")).getByText("Hello")).not.toBeOnTheScreen()`,
 			errors: [{ line: 3, column: 46, messageId: 'wrongAbsenceQuery' }],
+			output: `
+	  // case: asserting within check does still work with improper outer clause
+	  expect(within(screen.getByRole("button")).queryByText("Hello")).not.toBeOnTheScreen()`,
 		},
 		{
 			code: `
 	  // case: asserting within check does still work with improper outer clause
 	  expect(within(screen.getByRole("button")).queryByText("Hello")).toBeOnTheScreen()`,
 			errors: [{ line: 3, column: 46, messageId: 'wrongPresenceQuery' }],
+			output: `
+	  // case: asserting within check does still work with improper outer clause
+	  expect(within(screen.getByRole("button")).getByText("Hello")).toBeOnTheScreen()`,
 		},
 		{
 			code: `
@@ -1454,18 +1536,27 @@ ruleTester.run(RULE_NAME, rule, {
 				{ line: 3, column: 25, messageId: 'wrongPresenceQuery' },
 				{ line: 3, column: 48, messageId: 'wrongAbsenceQuery' },
 			],
+			output: `
+	  // case: asserting within check does still work with improper outer clause and improper inner clause
+	  expect(within(screen.getByRole("button")).queryByText("Hello")).not.toBeOnTheScreen()`,
 		},
 		{
 			code: `
 	  // case: asserting within check does still work with proper outer clause and improper inner clause
 	  expect(within(screen.queryByRole("button")).queryByText("Hello")).not.toBeOnTheScreen()`,
 			errors: [{ line: 3, column: 25, messageId: 'wrongPresenceQuery' }],
+			output: `
+	  // case: asserting within check does still work with proper outer clause and improper inner clause
+	  expect(within(screen.getByRole("button")).queryByText("Hello")).not.toBeOnTheScreen()`,
 		},
 		{
 			code: `
 	  // case: asserting within check does still work with proper outer clause and improper inner clause
 	  expect(within(screen.queryByRole("button")).getByText("Hello")).toBeOnTheScreen()`,
 			errors: [{ line: 3, column: 25, messageId: 'wrongPresenceQuery' }],
+			output: `
+	  // case: asserting within check does still work with proper outer clause and improper inner clause
+	  expect(within(screen.getByRole("button")).getByText("Hello")).toBeOnTheScreen()`,
 		},
 		{
 			code: `
@@ -1475,6 +1566,9 @@ ruleTester.run(RULE_NAME, rule, {
 				{ line: 3, column: 25, messageId: 'wrongPresenceQuery' },
 				{ line: 3, column: 48, messageId: 'wrongPresenceQuery' },
 			],
+			output: `
+	  // case: asserting within check does still work with improper outer clause and improper inner clause
+	  expect(within(screen.getByRole("button")).getByText("Hello")).toBeOnTheScreen()`,
 		},
 	],
 });
