@@ -52,11 +52,17 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				return;
 			}
 
+			const propertyName = ASTUtils.isIdentifier(node.property)
+				? node.property.name
+				: null;
+
 			if (
-				ASTUtils.isIdentifier(node.property) &&
-				ALL_RETURNING_NODES.includes(node.property.name)
+				propertyName &&
+				ALL_RETURNING_NODES.some(
+					(allReturningNode) => allReturningNode === propertyName
+				)
 			) {
-				if (allowContainerFirstChild && node.property.name === 'firstChild') {
+				if (allowContainerFirstChild && propertyName === 'firstChild') {
 					return;
 				}
 

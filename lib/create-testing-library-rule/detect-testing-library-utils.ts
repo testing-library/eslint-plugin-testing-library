@@ -802,8 +802,10 @@ export function detectTestingLibraryUtils<
 			}
 
 			return isNegated
-				? ABSENCE_MATCHERS.includes(matcher)
-				: PRESENCE_MATCHERS.includes(matcher);
+				? ABSENCE_MATCHERS.some((absenceMather) => absenceMather === matcher)
+				: PRESENCE_MATCHERS.some(
+						(presenceMather) => presenceMather === matcher
+					);
 		};
 
 		/**
@@ -821,8 +823,8 @@ export function detectTestingLibraryUtils<
 			}
 
 			return isNegated
-				? PRESENCE_MATCHERS.includes(matcher)
-				: ABSENCE_MATCHERS.includes(matcher);
+				? PRESENCE_MATCHERS.some((presenceMather) => presenceMather === matcher)
+				: ABSENCE_MATCHERS.some((absenceMather) => absenceMather === matcher);
 		};
 
 		const isMatchingAssert: IsMatchingAssertFn = (node, matcherName) => {
