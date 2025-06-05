@@ -61,7 +61,7 @@ it('should export configs that refer to actual rules', () => {
 		'flat/marko',
 	]);
 	const allConfigRules = Object.values(allConfigs)
-		.map((config) => Object.keys(config.rules))
+		.map((config) => Object.keys(config.rules ?? {}))
 		.reduce((previousValue, currentValue) => [
 			...previousValue,
 			...currentValue,

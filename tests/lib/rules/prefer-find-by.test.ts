@@ -714,8 +714,9 @@ ruleTester.run(RULE_NAME, rule, {
 			)}('Count is: 0', { timeout: 100, interval: 200 })
         `,
 		})),
-		...ASYNC_QUERIES_COMBINATIONS.map((queryMethod) => ({
-			code: `
+		...ASYNC_QUERIES_COMBINATIONS.map<InvalidTestCase<MessageIds, []>>(
+			(queryMethod) => ({
+				code: `
 				import {waitFor} from '${testingFramework}';
 				it('tests', async () => {
 					await waitFor(async () => {
@@ -724,24 +725,25 @@ ruleTester.run(RULE_NAME, rule, {
 					})
 				})
         `,
-			errors: [
-				{
-					messageId: 'preferFindBy',
-					data: {
-						queryVariant: getFindByQueryVariant(queryMethod),
-						queryMethod: queryMethod.split('By')[1],
-						prevQuery: queryMethod,
-						waitForMethodName: 'waitFor',
+				errors: [
+					{
+						messageId: 'preferFindBy',
+						data: {
+							queryVariant: getFindByQueryVariant(queryMethod),
+							queryMethod: queryMethod.split('By')[1],
+							prevQuery: queryMethod,
+							waitForMethodName: 'waitFor',
+						},
 					},
-				},
-			],
-			output: `
+				],
+				output: `
 				import {waitFor} from '${testingFramework}';
 				it('tests', async () => {
 					const button = await screen.${queryMethod}("button", { name: "Submit" })
 					expect(button).toBeInTheDocument()
 				})
         `,
-		})),
+			})
+		),
 	]),
 });

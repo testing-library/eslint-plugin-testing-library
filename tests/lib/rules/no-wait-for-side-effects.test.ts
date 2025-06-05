@@ -1,4 +1,9 @@
-import rule, { RULE_NAME } from '../../../lib/rules/no-wait-for-side-effects';
+import { InvalidTestCase } from '@typescript-eslint/rule-tester';
+
+import rule, {
+	RULE_NAME,
+	type MessageIds,
+} from '../../../lib/rules/no-wait-for-side-effects';
 import { createRuleTester } from '../test-utils';
 
 const ruleTester = createRuleTester();
@@ -118,7 +123,7 @@ ruleTester.run(RULE_NAME, rule, {
 				code: `
           import { waitFor } from '${testingFramework}';
           import { notUserEvent } from 'somewhere-else';
-          
+
           waitFor(() => {
             await notUserEvent.click(button)
           })
@@ -736,7 +741,7 @@ ruleTester.run(RULE_NAME, rule, {
           expect(b).toEqual('b')
         }).then(() => {
           userEvent.click(button) // Side effects are allowed inside .then()
-          expect(b).toEqual('b') 
+          expect(b).toEqual('b')
         })
       `,
 				errors: [{ line: 4, column: 11, messageId: 'noSideEffectsWaitFor' }],
@@ -808,9 +813,10 @@ ruleTester.run(RULE_NAME, rule, {
 			} as const,
 		]),
 
-		...SUPPORTED_TESTING_FRAMEWORKS.flatMap((testingFramework) => [
-			{
-				code: `
+		...SUPPORTED_TESTING_FRAMEWORKS.flatMap<InvalidTestCase<MessageIds, []>>(
+			(testingFramework) => [
+				{
+					code: `
         import { waitFor } from '${testingFramework}';
         import userEvent from '@testing-library/user-event'
 
@@ -820,8 +826,9 @@ ruleTester.run(RULE_NAME, rule, {
           });
         });
         `,
-				errors: [{ line: 7, column: 13, messageId: 'noSideEffectsWaitFor' }],
-			},
-		]),
+					errors: [{ line: 7, column: 13, messageId: 'noSideEffectsWaitFor' }],
+				},
+			]
+		),
 	],
 });
