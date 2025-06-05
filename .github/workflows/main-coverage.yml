@@ -1,0 +1,38 @@
+name: Code Coverage (main)
+on:
+  push:
+    branches:
+      - 'main'
+
+permissions:
+  contents: read
+  statuses: write
+
+jobs:
+  coverage:
+    name: Code Coverage
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          cache: 'pnpm'
+          node-version-file: '.nvmrc'
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Run tests with coverage
+        run: pnpm run test:ci
+
+      - name: Upload coverage report
+        uses: codecov/codecov-action@v5
+        with:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
