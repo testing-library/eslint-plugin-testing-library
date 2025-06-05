@@ -191,7 +191,7 @@ ruleTester.run(RULE_NAME, rule, {
 		},
 	]),
 	invalid: SUPPORTED_TESTING_FRAMEWORKS.flatMap((testingFramework) => [
-		...createScenario((waitMethod: string, queryMethod: string) => ({
+		...createScenario((waitMethod, queryMethod) => ({
 			code: `
           import {${waitMethod}, screen} from '${testingFramework}';
           it('tests', async () => {
@@ -353,7 +353,7 @@ ruleTester.run(RULE_NAME, rule, {
 			output: null,
 		},
 		// presence matchers
-		...createScenario((waitMethod: string, queryMethod: string) => ({
+		...createScenario((waitMethod, queryMethod) => ({
 			code: `
         import {${waitMethod}} from '${testingFramework}';
         it('tests', async () => {
@@ -382,7 +382,7 @@ ruleTester.run(RULE_NAME, rule, {
         })
       `,
 		})),
-		...createScenario((waitMethod: string, queryMethod: string) => ({
+		...createScenario((waitMethod, queryMethod) => ({
 			code: `
         import {${waitMethod}} from '${testingFramework}';
         it('tests', async () => {
@@ -411,7 +411,7 @@ ruleTester.run(RULE_NAME, rule, {
         })
       `,
 		})),
-		...createScenario((waitMethod: string, queryMethod: string) => ({
+		...createScenario((waitMethod, queryMethod) => ({
 			code: `
         import {${waitMethod}} from '${testingFramework}';
         it('tests', async () => {
@@ -440,7 +440,7 @@ ruleTester.run(RULE_NAME, rule, {
         })
       `,
 		})),
-		...createScenario((waitMethod: string, queryMethod: string) => ({
+		...createScenario((waitMethod, queryMethod) => ({
 			code: `
         import {${waitMethod}} from '${testingFramework}';
         it('tests', async () => {
@@ -469,7 +469,7 @@ ruleTester.run(RULE_NAME, rule, {
         })
       `,
 		})),
-		...createScenario((waitMethod: string, queryMethod: string) => ({
+		...createScenario((waitMethod, queryMethod) => ({
 			code: `
         import {${waitMethod}} from '${testingFramework}';
         it('tests', async () => {
@@ -498,7 +498,7 @@ ruleTester.run(RULE_NAME, rule, {
         })
       `,
 		})),
-		...createScenario((waitMethod: string, queryMethod: string) => ({
+		...createScenario((waitMethod, queryMethod) => ({
 			code: `
         import {${waitMethod}} from '${testingFramework}';
         it('tests', async () => {
@@ -527,7 +527,7 @@ ruleTester.run(RULE_NAME, rule, {
         })
       `,
 		})),
-		...createScenario((waitMethod: string, queryMethod: string) => ({
+		...createScenario((waitMethod, queryMethod) => ({
 			code: `
         import {${waitMethod}} from '${testingFramework}';
         it('tests', async () => {
@@ -556,7 +556,7 @@ ruleTester.run(RULE_NAME, rule, {
         })
       `,
 		})),
-		...createScenario((waitMethod: string, queryMethod: string) => ({
+		...createScenario((waitMethod, queryMethod) => ({
 			code: `
           import {${waitMethod}} from '${testingFramework}';
           it('tests', async () => {
@@ -583,7 +583,7 @@ ruleTester.run(RULE_NAME, rule, {
           })
         `,
 		})),
-		...createScenario((waitMethod: string, queryMethod: string) => ({
+		...createScenario((waitMethod, queryMethod) => ({
 			code: `
           import {${waitMethod}} from '${testingFramework}';
           it('tests', async () => {
@@ -610,7 +610,7 @@ ruleTester.run(RULE_NAME, rule, {
           })
         `,
 		})),
-		...createScenario((waitMethod: string, queryMethod: string) => ({
+		...createScenario((waitMethod, queryMethod) => ({
 			code: `
           import {${waitMethod}} from '${testingFramework}';
           it('tests', async () => {
@@ -637,7 +637,7 @@ ruleTester.run(RULE_NAME, rule, {
           })
         `,
 		})),
-		...createScenario((waitMethod: string, queryMethod: string) => ({
+		...createScenario((waitMethod, queryMethod) => ({
 			code: `
           import {${waitMethod}} from '${testingFramework}';
           it('tests', async () => {
@@ -664,7 +664,7 @@ ruleTester.run(RULE_NAME, rule, {
           })
         `,
 		})),
-		...createScenario((waitMethod: string, queryMethod: string) => ({
+		...createScenario((waitMethod, queryMethod) => ({
 			code: `
           import {${waitMethod}} from '${testingFramework}';
           it('tests', async () => {
@@ -693,7 +693,7 @@ ruleTester.run(RULE_NAME, rule, {
 		})),
 		// Issue #579, https://github.com/testing-library/eslint-plugin-testing-library/issues/579
 		// findBy can have two sets of options: await screen.findByText('text', queryOptions, waitForOptions)
-		...createScenario((waitMethod: string, queryMethod: string) => ({
+		...createScenario((waitMethod, queryMethod) => ({
 			code: `import {${waitMethod}} from '${testingFramework}';
 		  const button = await ${waitMethod}(() => screen.${queryMethod}('Count is: 0'), { timeout: 100, interval: 200 })
         `,
