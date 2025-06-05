@@ -33,6 +33,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 			wrongAbsenceQuery:
 				'Use `queryBy*` queries rather than `getBy*` for checking element is NOT present',
 		},
+		fixable: 'code',
 		schema: [
 			{
 				type: 'object',
@@ -62,7 +63,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				const expectCallNode = findClosestCallNode(node, 'expect');
 				const withinCallNode = findClosestCallNode(node, 'within');
 
-				if (!expectCallNode || !isMemberExpression(expectCallNode.parent)) {
+				if (!isMemberExpression(expectCallNode?.parent)) {
 					return;
 				}
 
@@ -86,14 +87,25 @@ export default createTestingLibraryRule<Options, MessageIds>({
 					(withinCallNode || isPresenceAssert) &&
 					!isPresenceQuery
 				) {
-					context.report({ node, messageId: 'wrongPresenceQuery' });
+					const newQueryName = node.name.replace(/^query/, 'get');
+
+					context.report({
+						node,
+						messageId: 'wrongPresenceQuery',
+						fix: (fixer) => fixer.replaceText(node, newQueryName),
+					});
 				} else if (
 					!withinCallNode &&
 					absence &&
 					isAbsenceAssert &&
 					isPresenceQuery
 				) {
-					context.report({ node, messageId: 'wrongAbsenceQuery' });
+					const newQueryName = node.name.replace(/^get/, 'query');
+					context.report({
+						node,
+						messageId: 'wrongAbsenceQuery',
+						fix: (fixer) => fixer.replaceText(node, newQueryName),
+					});
 				}
 			},
 		};
