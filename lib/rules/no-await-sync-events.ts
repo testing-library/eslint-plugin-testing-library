@@ -31,7 +31,8 @@ export default createTestingLibraryRule<Options, MessageIds>({
 			recommendedConfig: {
 				dom: ['error', { eventModules: DEFAULT_EVENT_MODULES }],
 				angular: ['error', { eventModules: DEFAULT_EVENT_MODULES }],
-				react: ['error', { eventModules: DEFAULT_EVENT_MODULES }],
+				// @testing-library/react >= 17.0 requires `await act()` and therefore `await fireEvent()`
+				react: [false, { eventModules: DEFAULT_EVENT_MODULES }],
 				vue: false,
 				svelte: false,
 				marko: false,
