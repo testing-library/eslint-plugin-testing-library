@@ -1,11 +1,16 @@
 import { TSESTree, ASTUtils } from '@typescript-eslint/utils';
 
 import { createTestingLibraryRule } from '../create-testing-library-rule';
-import { ALL_RETURNING_NODES } from '../utils';
+import { ALL_RETURNING_NODES, EVENT_HANDLER_METHODS } from '../utils';
 
 export const RULE_NAME = 'no-node-access';
 export type MessageIds = 'noNodeAccess';
 export type Options = [{ allowContainerFirstChild: boolean }];
+
+const ALL_PROHIBITED_MEMBERS = [
+	...ALL_RETURNING_NODES,
+	...EVENT_HANDLER_METHODS,
+] as const;
 
 export default createTestingLibraryRule<Options, MessageIds>({
 	name: RULE_NAME,
@@ -58,7 +63,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
 			if (
 				propertyName &&
-				ALL_RETURNING_NODES.some(
+				ALL_PROHIBITED_MEMBERS.some(
 					(allReturningNode) => allReturningNode === propertyName
 				)
 			) {
