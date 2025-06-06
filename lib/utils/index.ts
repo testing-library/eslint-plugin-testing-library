@@ -114,6 +114,14 @@ const METHODS_RETURNING_NODES = [
 	'querySelectorAll',
 ] as const;
 
+const EVENT_HANDLER_METHODS = [
+	'click',
+	'focus',
+	'blur',
+	'select',
+	'submit',
+] as const;
+
 const ALL_RETURNING_NODES = [
 	...PROPERTIES_RETURNING_NODES,
 	...METHODS_RETURNING_NODES,
@@ -147,4 +155,5 @@ export {
 	ALL_RETURNING_NODES,
 	PRESENCE_MATCHERS,
 	ABSENCE_MATCHERS,
+	EVENT_HANDLER_METHODS,
 };

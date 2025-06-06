@@ -4,11 +4,11 @@
 
 <!-- end auto-generated rule header -->
 
-The Testing Library already provides methods for querying DOM elements.
+Disallow direct access or manipulation of DOM nodes in favor of Testing Library's user-centric APIs.
 
 ## Rule Details
 
-This rule aims to disallow DOM traversal using native HTML methods and properties, such as `closest`, `lastChild` and all that returns another Node element from an HTML tree.
+This rule aims to disallow direct access and manipulation of DOM nodes using native HTML properties and methods — including traversal (e.g. `closest`, `lastChild`) as well as direct actions (e.g. `click()`, `focus()`). Use Testing Library’s queries and userEvent APIs instead.
 
 Examples of **incorrect** code for this rule:
 
@@ -16,6 +16,12 @@ Examples of **incorrect** code for this rule:
 import { screen } from '@testing-library/react';
 
 screen.getByText('Submit').closest('button'); // chaining with Testing Library methods
+```
+
+```js
+import { screen } from '@testing-library/react';
+
+screen.getByText('Submit').click();
 ```
 
 ```js
@@ -39,6 +45,12 @@ import { screen } from '@testing-library/react';
 
 const button = screen.getByRole('button');
 expect(button).toHaveTextContent('submit');
+```
+
+```js
+import { screen } from '@testing-library/react';
+
+userEvent.click(screen.getByText('Submit'));
 ```
 
 ```js
