@@ -5,7 +5,7 @@ import rule, {
 	Options,
 	MessageIds,
 } from '../../../lib/rules/no-node-access';
-import { EVENT_HANDLER_METHODS } from '../../../lib/utils';
+import { EVENT_HANDLER_METHODS, EVENTS_SIMULATORS } from '../../../lib/utils';
 import { createRuleTester } from '../test-utils';
 
 const ruleTester = createRuleTester();
@@ -163,6 +163,14 @@ ruleTester.run(RULE_NAME, rule, {
 				expect(screen.getByText('SomeComponent')).toBeInTheDocument();
 				`,
 			},
+			...EVENTS_SIMULATORS.map((simulator) => ({
+				code: `
+        import { screen } from '${testingFramework}';
+
+        const buttonText = screen.getByText('submit');
+				${simulator}.click(buttonText);
+      `,
+			})),
 		]
 	),
 	invalid: SUPPORTED_TESTING_FRAMEWORKS.flatMap((testingFramework) => [
