@@ -1,11 +1,17 @@
-import { type TSESLint } from '@typescript-eslint/utils';
+import { InvalidTestCase, ValidTestCase } from '@typescript-eslint/rule-tester';
 
-import rule, { RULE_NAME, Options } from '../../../lib/rules/no-node-access';
+import rule, {
+	RULE_NAME,
+	Options,
+	MessageIds,
+} from '../../../lib/rules/no-node-access';
+import { EVENT_HANDLER_METHODS, EVENTS_SIMULATORS } from '../../../lib/utils';
 import { createRuleTester } from '../test-utils';
 
 const ruleTester = createRuleTester();
 
-type ValidTestCase = TSESLint.ValidTestCase<Options>;
+type RuleValidTestCase = ValidTestCase<Options>;
+type RuleInvalidTestCase = InvalidTestCase<MessageIds, Options>;
 
 const SUPPORTED_TESTING_FRAMEWORKS = [
 	'@testing-library/angular',
@@ -15,7 +21,7 @@ const SUPPORTED_TESTING_FRAMEWORKS = [
 ];
 
 ruleTester.run(RULE_NAME, rule, {
-	valid: SUPPORTED_TESTING_FRAMEWORKS.flatMap<ValidTestCase>(
+	valid: SUPPORTED_TESTING_FRAMEWORKS.flatMap<RuleValidTestCase>(
 		(testingFramework) => [
 			{
 				code: `
@@ -100,7 +106,7 @@ ruleTester.run(RULE_NAME, rule, {
 				code: `/* related to issue #386 fix
 				* now all node accessing properties (listed in lib/utils/index.ts, in PROPERTIES_RETURNING_NODES)
 				* will not be reported by this rule because anything props.something won't be reported.
-				*/ 
+				*/
 				import { screen } from '${testingFramework}';
 				function ComponentA(props) {
 					if (props.firstChild) {
@@ -142,21 +148,29 @@ ruleTester.run(RULE_NAME, rule, {
 				// Example from discussions in issue #386
 				code: `
 				import { render } from '${testingFramework}';
-				
+
 				function Wrapper({ children }) {
 					// this should NOT be reported
 					if (children) {
 					  // ...
 					}
-				  
+
 					// this should NOT be reported
 					return <div className="wrapper-class">{children}</div>
 				  };
-	
+
 				render(<Wrapper><SomeComponent /></Wrapper>);
 				expect(screen.getByText('SomeComponent')).toBeInTheDocument();
 				`,
 			},
+			...EVENTS_SIMULATORS.map((simulator) => ({
+				code: `
+        import { screen } from '${testingFramework}';
+
+        const buttonText = screen.getByText('submit');
+				${simulator}.click(buttonText);
+      `,
+			})),
 		]
 	),
 	invalid: SUPPORTED_TESTING_FRAMEWORKS.flatMap((testingFramework) => [
@@ -395,5 +409,24 @@ ruleTester.run(RULE_NAME, rule, {
 				},
 			],
 		},
+		...EVENT_HANDLER_METHODS.map<RuleInvalidTestCase>((method) => ({
+			code: `
+        import { screen } from '${testingFramework}';
+
+        const button = document.getElementById('submit-btn').${method}();
+      `,
+			errors: [
+				{
+					line: 4,
+					column: 33,
+					messageId: 'noNodeAccess',
+				},
+				{
+					line: 4,
+					column: 62,
+					messageId: 'noNodeAccess',
+				},
+			],
+		})),
 	]),
 });
