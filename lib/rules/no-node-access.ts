@@ -1,7 +1,11 @@
 import { TSESTree, ASTUtils } from '@typescript-eslint/utils';
 
 import { createTestingLibraryRule } from '../create-testing-library-rule';
-import { ALL_RETURNING_NODES, EVENT_HANDLER_METHODS } from '../utils';
+import {
+	ALL_RETURNING_NODES,
+	EVENT_HANDLER_METHODS,
+	EVENTS_SIMULATORS,
+} from '../utils';
 
 export const RULE_NAME = 'no-node-access';
 export type MessageIds = 'noNodeAccess';
@@ -61,11 +65,15 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				? node.property.name
 				: null;
 
+			const objectName = ASTUtils.isIdentifier(node.object)
+				? node.object.name
+				: null;
 			if (
 				propertyName &&
 				ALL_PROHIBITED_MEMBERS.some(
 					(allReturningNode) => allReturningNode === propertyName
-				)
+				) &&
+				!EVENTS_SIMULATORS.some((simulator) => simulator === objectName)
 			) {
 				if (allowContainerFirstChild && propertyName === 'firstChild') {
 					return;
