@@ -73,7 +73,12 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				ALL_PROHIBITED_MEMBERS.some(
 					(allReturningNode) => allReturningNode === propertyName
 				) &&
-				!EVENTS_SIMULATORS.some((simulator) => simulator === objectName)
+				![
+					...EVENTS_SIMULATORS,
+					// TODO: As discussed in https://github.com/testing-library/eslint-plugin-testing-library/issues/1024, this is just a temporary workaround.
+					// We should address the root cause and implement a proper solution instead of explicitly excluding 'user' here.
+					'user',
+				].some((simulator) => simulator === objectName)
 			) {
 				if (allowContainerFirstChild && propertyName === 'firstChild') {
 					return;
