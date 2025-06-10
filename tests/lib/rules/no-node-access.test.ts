@@ -163,6 +163,16 @@ ruleTester.run(RULE_NAME, rule, {
 				expect(screen.getByText('SomeComponent')).toBeInTheDocument();
 				`,
 			},
+			{
+				code: `
+				import userEvent from '@testing-library/user-event';
+        import { screen } from '${testingFramework}';
+
+        const buttonText = screen.getByText('submit');
+				const user = userEvent.setup();
+				user.click(buttonText);
+      `,
+			},
 			...EVENTS_SIMULATORS.map((simulator) => ({
 				code: `
         import { screen } from '${testingFramework}';
