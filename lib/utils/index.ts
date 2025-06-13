@@ -114,7 +114,7 @@ const METHODS_RETURNING_NODES = [
 	'querySelectorAll',
 ] as const;
 
-const EVENT_HANDLER_METHODS = ['click', 'blur', 'select', 'submit'] as const;
+const EVENT_HANDLER_METHODS = ['click', 'select', 'submit'] as const;
 
 const ALL_RETURNING_NODES = [
 	...PROPERTIES_RETURNING_NODES,
