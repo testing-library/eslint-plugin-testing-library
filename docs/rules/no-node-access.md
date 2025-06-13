@@ -11,7 +11,7 @@ Disallow direct access or manipulation of DOM nodes in favor of Testing Library'
 This rule aims to disallow direct access and manipulation of DOM nodes using native HTML properties and methods — including traversal (e.g. `closest`, `lastChild`) as well as direct actions (e.g. `click()`, `select()`). Use Testing Library’s queries and userEvent APIs instead.
 
 > [!NOTE]
-> This rule does not report usage of `focus()`, because imperative focus (e.g. `getByText('focus me').focus()`) is recommended over `fireEvent.focus()`.
+> This rule does not report usage of `focus()` or `blur()`, because imperative usage (e.g. `getByText('focus me').focus()` or .`blur()`) is recommended over `fireEvent.focus()` or `fireEvent.blur()`.
 > If an element is not focusable, related assertions will fail, leading to more robust tests. See [Testing Library Events Guide](https://testing-library.com/docs/guide-events/) for more details.
 
 Examples of **incorrect** code for this rule:
