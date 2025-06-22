@@ -1,6 +1,7 @@
 export * from './compat';
 export * from './file-import';
 export * from './types';
+export * from './resolve-to-testing-library-fn';
 
 const combineQueries = (
 	variants: readonly string[],
