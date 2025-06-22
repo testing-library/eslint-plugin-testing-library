@@ -198,6 +198,16 @@ ruleTester.run(RULE_NAME, rule, {
         import { screen } from '${testingFramework}';
 
         const buttonText = screen.getByText('submit');
+				const userAlias = userEvt.setup();
+				userAlias.click(buttonText);
+      `,
+			},
+			{
+				code: `
+				import userEvt from '@testing-library/user-event';
+        import { screen } from '${testingFramework}';
+
+        const buttonText = screen.getByText('submit');
 				userEvt.click(buttonText);
       `,
 			},

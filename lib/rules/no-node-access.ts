@@ -121,12 +121,21 @@ export default createTestingLibraryRule<Options, MessageIds>({
 			},
 			VariableDeclarator(node: TSESTree.VariableDeclarator) {
 				const { init, id } = node;
+
+				if (!isCallExpression(init)) {
+					return;
+				}
+
 				if (
-					init &&
-					isCallExpression(init) &&
-					isMemberExpression(init.callee) &&
-					ASTUtils.isIdentifier(init.callee.object) &&
-					init.callee.object.name === 'userEvent' &&
+					!isMemberExpression(init.callee) ||
+					!ASTUtils.isIdentifier(init.callee.object)
+				) {
+					return;
+				}
+
+				const testingLibraryFn = resolveToTestingLibraryFn(init, context);
+				if (
+					init.callee.object.name === testingLibraryFn?.local &&
 					ASTUtils.isIdentifier(init.callee.property) &&
 					init.callee.property.name === 'setup' &&
 					ASTUtils.isIdentifier(id)
