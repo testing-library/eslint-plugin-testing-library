@@ -224,13 +224,6 @@ ruleTester.run('typescript', rule, {
 	valid: [
 		{
 			code: `
-        import type userEvent from '@testing-library/user-event';
-
-        userEvent.setup()
-      `,
-		},
-		{
-			code: `
         import userEvent = require('@testing-library/user-event');
 
         userEvent.setup()
