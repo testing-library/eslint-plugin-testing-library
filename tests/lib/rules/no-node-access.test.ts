@@ -5,7 +5,7 @@ import rule, {
 	Options,
 	MessageIds,
 } from '../../../lib/rules/no-node-access';
-import { EVENT_HANDLER_METHODS, EVENTS_SIMULATORS } from '../../../lib/utils';
+import { EVENT_HANDLER_METHODS } from '../../../lib/utils';
 import { createRuleTester } from '../test-utils';
 
 const ruleTester = createRuleTester();
@@ -173,14 +173,42 @@ ruleTester.run(RULE_NAME, rule, {
 				user.click(buttonText);
       `,
 			},
-			...EVENTS_SIMULATORS.map((simulator) => ({
+			{
 				code: `
+				import userEvent from '@testing-library/user-event';
         import { screen } from '${testingFramework}';
 
         const buttonText = screen.getByText('submit');
-				${simulator}.click(buttonText);
+				const userAlias = userEvent.setup();
+				userAlias.click(buttonText);
       `,
-			})),
+			},
+			{
+				code: `
+				import userEvent from '@testing-library/user-event';
+        import { screen } from '${testingFramework}';
+
+        const buttonText = screen.getByText('submit');
+				userEvent.setup().click(buttonText);
+      `,
+			},
+			{
+				code: `
+				import userEvt from '@testing-library/user-event';
+        import { screen } from '${testingFramework}';
+
+        const buttonText = screen.getByText('submit');
+				userEvt.click(buttonText);
+      `,
+			},
+			{
+				code: `
+        import { screen, fireEvent as fe } from '${testingFramework}';
+
+        const buttonText = screen.getByText('submit');
+				fe.click(buttonText);
+      `,
+			},
 		]
 	),
 	invalid: SUPPORTED_TESTING_FRAMEWORKS.flatMap((testingFramework) => [
