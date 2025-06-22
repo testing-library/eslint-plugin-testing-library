@@ -137,8 +137,6 @@ export const getNodeChain = (node: TSESTree.Node): AccessorNode[] | null => {
 	}
 
 	switch (node.type) {
-		case AST_NODE_TYPES.TaggedTemplateExpression:
-			return getNodeChain(node.tag);
 		case AST_NODE_TYPES.MemberExpression:
 			return joinChains(getNodeChain(node.object), getNodeChain(node.property));
 		case AST_NODE_TYPES.CallExpression:
