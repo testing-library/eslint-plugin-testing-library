@@ -219,6 +219,16 @@ ruleTester.run(RULE_NAME, rule, {
 				fe.click(buttonText);
       `,
 			},
+			{
+				settings: { 'testing-library/utils-module': 'test-utils' },
+				code: `
+				// case: custom module set but not imported using ${testingFramework} (aggressive reporting limited)
+        import { screen, fireEvent as fe } from 'test-utils';
+
+        const buttonText = screen.getByText('submit');
+				fe.click(buttonText);
+      `,
+			},
 		]
 	),
 	invalid: SUPPORTED_TESTING_FRAMEWORKS.flatMap((testingFramework) => [
@@ -457,24 +467,47 @@ ruleTester.run(RULE_NAME, rule, {
 				},
 			],
 		},
-		...EVENT_HANDLER_METHODS.map<RuleInvalidTestCase>((method) => ({
-			code: `
+		...EVENT_HANDLER_METHODS.flatMap<RuleInvalidTestCase>((method) => [
+			{
+				code: `
         import { screen } from '${testingFramework}';
 
         const button = document.getElementById('submit-btn').${method}();
       `,
-			errors: [
-				{
-					line: 4,
-					column: 33,
-					messageId: 'noNodeAccess',
-				},
-				{
-					line: 4,
-					column: 62,
-					messageId: 'noNodeAccess',
-				},
-			],
-		})),
+				errors: [
+					{
+						line: 4,
+						column: 33,
+						messageId: 'noNodeAccess',
+					},
+					{
+						line: 4,
+						column: 62,
+						messageId: 'noNodeAccess',
+					},
+				],
+			},
+			{
+				settings: { 'testing-library/utils-module': 'test-utils' },
+				code: `
+				// case: custom module set but not imported using ${testingFramework} (aggressive reporting limited)
+        import { screen } from 'test-utils';
+
+        const button = document.getElementById('submit-btn').${method}();
+      `,
+				errors: [
+					{
+						line: 5,
+						column: 33,
+						messageId: 'noNodeAccess',
+					},
+					{
+						line: 5,
+						column: 62,
+						messageId: 'noNodeAccess',
+					},
+				],
+			},
+		]),
 	]),
 });

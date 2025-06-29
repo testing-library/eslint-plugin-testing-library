@@ -73,6 +73,14 @@ ruleTester.run('esm', rule, {
 			userEvent.setup()
 		`,
 		},
+		{
+			settings: { 'testing-library/utils-module': 'test-utils' },
+			code: `
+			import { userEvent } from './test-utils';
+
+			userEvent.setup()
+		`,
+		},
 		...LIBRARY_MODULES.map((module) => ({
 			code: `
       import * as testingLibrary from '${module}';
@@ -96,6 +104,69 @@ ruleTester.run('esm', rule, {
 						data: {
 							original: null,
 							local: 'userEvent',
+						},
+					},
+				},
+			],
+		},
+		{
+			settings: { 'testing-library/utils-module': 'test-utils' },
+			code: `
+			import userEvent from 'test-utils';
+
+			userEvent.setup()
+		`,
+			errors: [
+				{
+					messageId: 'details',
+					data: {
+						data: {
+							original: null,
+							local: 'userEvent',
+						},
+					},
+				},
+			],
+		},
+		{
+			settings: {
+				'testing-library/custom-renders': ['customRender', 'renderWithRedux'],
+				'testing-library/utils-module': 'test-utils',
+			},
+			code: `
+			import { customRender } from 'test-utils';
+
+			customRender()
+		`,
+			errors: [
+				{
+					messageId: 'details',
+					data: {
+						data: {
+							original: null,
+							local: 'customRender',
+						},
+					},
+				},
+			],
+		},
+		{
+			settings: {
+				'testing-library/custom-queries': ['ByComplexText', 'queryByIcon'],
+				'testing-library/utils-module': 'test-utils',
+			},
+			code: `
+			import { queryByIcon } from 'test-utils';
+
+			queryByIcon()
+		`,
+			errors: [
+				{
+					messageId: 'details',
+					data: {
+						data: {
+							original: null,
+							local: 'queryByIcon',
 						},
 					},
 				},
