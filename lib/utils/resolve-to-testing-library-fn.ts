@@ -6,6 +6,7 @@ import {
 	TSESTree,
 } from '@typescript-eslint/utils';
 
+import { TestingLibraryContext } from '../create-testing-library-rule/detect-testing-library-utils';
 import {
 	isImportDefaultSpecifier,
 	isImportExpression,
@@ -153,9 +154,12 @@ interface ResolvedTestingLibraryUserEventFn {
 
 const USER_EVENT_PACKAGE = '@testing-library/user-event';
 
-export const resolveToTestingLibraryFn = (
+export const resolveToTestingLibraryFn = <
+	TMessageIds extends string,
+	TOptions extends readonly unknown[],
+>(
 	node: TSESTree.CallExpression,
-	context: TSESLint.RuleContext<string, unknown[]>
+	context: TestingLibraryContext<TMessageIds, TOptions>
 ): ResolvedTestingLibraryUserEventFn | null => {
 	const chain = getNodeChain(node);
 	if (!chain?.length) return null;
@@ -168,8 +172,9 @@ export const resolveToTestingLibraryFn = (
 		return null;
 	}
 
+	const customModuleSetting = context.settings['testing-library/utils-module'];
 	if (
-		[...LIBRARY_MODULES, USER_EVENT_PACKAGE].some(
+		[...LIBRARY_MODULES, USER_EVENT_PACKAGE, customModuleSetting].some(
 			(module) => module === maybeImport.source
 		)
 	) {
