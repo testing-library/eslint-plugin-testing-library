@@ -74,6 +74,20 @@ ruleTester.run('esm', rule, {
 		`,
 		},
 		{
+			code: `
+			import type { userEvent } from '@testing-library/user-event';
+
+			userEvent.setup()
+		`,
+		},
+		{
+			code: `
+			import * as userEvent from '@testing-library/user-event';
+
+			userEvent.default.setup()
+		`,
+		},
+		{
 			settings: { 'testing-library/utils-module': 'test-utils' },
 			code: `
 			import { userEvent } from './test-utils';
@@ -96,6 +110,42 @@ ruleTester.run('esm', rule, {
 			import userEvent from '@testing-library/user-event';
 
 			userEvent.setup()
+		`,
+			errors: [
+				{
+					messageId: 'details',
+					data: {
+						data: {
+							original: null,
+							local: 'userEvent',
+						},
+					},
+				},
+			],
+		},
+		{
+			code: `
+			const { userEvent } = await import('@testing-library/user-event');
+
+			userEvent.setup()
+		`,
+			errors: [
+				{
+					messageId: 'details',
+					data: {
+						data: {
+							original: null,
+							local: 'userEvent',
+						},
+					},
+				},
+			],
+		},
+		{
+			code: `
+			import { "userEvent" as user } from '@testing-library/user-event';
+
+			user.setup()
 		`,
 			errors: [
 				{
