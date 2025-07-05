@@ -75,13 +75,6 @@ ruleTester.run('esm', rule, {
 		},
 		{
 			code: `
-			import type { userEvent } from '@testing-library/user-event';
-
-			userEvent.setup()
-		`,
-		},
-		{
-			code: `
 			import * as userEvent from '@testing-library/user-event';
 
 			userEvent.default.setup()
@@ -267,7 +260,21 @@ ruleTester.run('cjs', rule, {
 	valid: [
 		{
 			code: `
-			 const { userEvent } = require('./test-utils');
+			const { userEvent } = require('./test-utils');
+
+			userEvent.setup()
+		`,
+		},
+		{
+			code: `
+			const { "default": userEvent } = require('./test-utils');
+
+			userEvent.setup()
+		`,
+		},
+		{
+			code: `
+			const { userEvent } = require(\`./test-utils\`);
 
 			userEvent.setup()
 		`,
@@ -293,7 +300,25 @@ ruleTester.run('cjs', rule, {
 					messageId: 'details',
 					data: {
 						data: {
-							original: null,
+							original: 'default',
+							local: 'userEvent',
+						},
+					},
+				},
+			],
+		},
+		{
+			code: `
+			const { default: userEvent } = require(\`@testing-library/user-event\`);
+
+			userEvent.setup()
+		`,
+			errors: [
+				{
+					messageId: 'details',
+					data: {
+						data: {
+							original: 'default',
 							local: 'userEvent',
 						},
 					},
@@ -349,6 +374,13 @@ ruleTester.run('typescript', rule, {
 
         userEvent.setup()
       `,
+		},
+		{
+			code: `
+			import type { userEvent } from '@testing-library/user-event';
+
+			userEvent.setup()
+		`,
 		},
 	],
 	invalid: [],
