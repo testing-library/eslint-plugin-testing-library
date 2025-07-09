@@ -46,6 +46,9 @@ export const isJSXAttribute = ASTUtils.isNodeOfType(
 	AST_NODE_TYPES.JSXAttribute
 );
 export const isLiteral = ASTUtils.isNodeOfType(AST_NODE_TYPES.Literal);
+export const isTemplateLiteral = ASTUtils.isNodeOfType(
+	AST_NODE_TYPES.TemplateLiteral
+);
 export const isMemberExpression = ASTUtils.isNodeOfType(
 	AST_NODE_TYPES.MemberExpression
 );

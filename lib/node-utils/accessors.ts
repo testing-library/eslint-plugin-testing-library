@@ -4,7 +4,7 @@ import {
 	type TSESTree,
 } from '@typescript-eslint/utils';
 
-import { isLiteral } from './is-node-of-type';
+import { isLiteral, isTemplateLiteral } from './is-node-of-type';
 
 /**
  * A `Literal` with a `value` of type `string`.
@@ -45,7 +45,7 @@ const isSimpleTemplateLiteral = <V extends string>(
 	node: TSESTree.Node,
 	value?: V
 ): node is TemplateLiteral<V> =>
-	node.type === AST_NODE_TYPES.TemplateLiteral &&
+	isTemplateLiteral(node) &&
 	node.quasis.length === 1 && // bail out if not simple
 	(value === undefined || node.quasis[0].value.raw === value);
 
