@@ -41,7 +41,7 @@ interface TemplateLiteral<Value extends string = string>
  * If a `value` is provided & the `node` is a `TemplateLiteral`,
  * the `value` will be compared to that of the `TemplateLiteral`.
  */
-const isTemplateLiteral = <V extends string>(
+const isSimpleTemplateLiteral = <V extends string>(
 	node: TSESTree.Node,
 	value?: V
 ): node is TemplateLiteral<V> =>
@@ -60,7 +60,7 @@ export const isStringNode = <V extends string>(
 	node: TSESTree.Node,
 	specifics?: V
 ): node is StringNode<V> =>
-	isStringLiteral(node, specifics) || isTemplateLiteral(node, specifics);
+	isStringLiteral(node, specifics) || isSimpleTemplateLiteral(node, specifics);
 
 /**
  * Gets the value of the given `StringNode`.
@@ -69,7 +69,7 @@ export const isStringNode = <V extends string>(
  * otherwise, `value` is returned instead.
  */
 export const getStringValue = <S extends string>(node: StringNode<S>): S =>
-	isTemplateLiteral(node) ? node.quasis[0].value.raw : node.value;
+	isSimpleTemplateLiteral(node) ? node.quasis[0].value.raw : node.value;
 
 /**
  * An `Identifier` with a known `name` value
