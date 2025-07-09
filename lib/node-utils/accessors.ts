@@ -17,13 +17,6 @@ interface StringLiteral<Value extends string = string>
  *
  * If a `value` is provided & the `node` is a `StringLiteral`,
  * the `value` will be compared to that of the `StringLiteral`.
- *
- * @param {Node} node
- * @param {V} [value]
- *
- * @return {node is StringLiteral<V>}
- *
- * @template V
  */
 const isStringLiteral = <V extends string>(
 	node: TSESTree.Node,
@@ -45,13 +38,6 @@ interface TemplateLiteral<Value extends string = string>
  *
  * If a `value` is provided & the `node` is a `TemplateLiteral`,
  * the `value` will be compared to that of the `TemplateLiteral`.
- *
- * @param {Node} node
- * @param {V} [value]
- *
- * @return {node is TemplateLiteral<V>}
- *
- * @template V
  */
 const isTemplateLiteral = <V extends string>(
 	node: TSESTree.Node,
@@ -67,13 +53,6 @@ export type StringNode<S extends string = string> =
 
 /**
  * Checks if the given `node` is a {@link StringNode}.
- *
- * @param {Node} node
- * @param {V} [specifics]
- *
- * @return {node is StringNode}
- *
- * @template V
  */
 export const isStringNode = <V extends string>(
 	node: TSESTree.Node,
@@ -86,12 +65,6 @@ export const isStringNode = <V extends string>(
  *
  * If the `node` is a `TemplateLiteral`, the `raw` value is used;
  * otherwise, `value` is returned instead.
- *
- * @param {StringNode<S>} node
- *
- * @return {S}
- *
- * @template S
  */
 export const getStringValue = <S extends string>(node: StringNode<S>): S =>
 	isTemplateLiteral(node) ? node.quasis[0].value.raw : node.value;
@@ -108,13 +81,6 @@ interface KnownIdentifier<Name extends string> extends TSESTree.Identifier {
  *
  * If a `name` is provided, & the `node` is an `Identifier`,
  * the `name` will be compared to that of the `identifier`.
- *
- * @param {Node} node
- * @param {V} [name]
- *
- * @return {node is KnownIdentifier<Name>}
- *
- * @template V
  */
 export const isIdentifier = <V extends string>(
 	node: TSESTree.Node,
@@ -136,13 +102,6 @@ export const isIdentifier = <V extends string>(
  *
  * Note that `value` here refers to the normalised value.
  * The property that holds the value is not always called `name`.
- *
- * @param {Node} node
- * @param {V} [value]
- *
- * @return {node is AccessorNode<V>}
- *
- * @template V
  */
 export const isSupportedAccessor = <V extends string>(
 	node: TSESTree.Node,
@@ -153,12 +112,6 @@ export const isSupportedAccessor = <V extends string>(
 /**
  * Gets the value of the given `AccessorNode`,
  * account for the different node types.
- *
- * @param {AccessorNode<S>} accessor
- *
- * @return {S}
- *
- * @template S
  */
 export const getAccessorValue = <S extends string = string>(
 	accessor: AccessorNode<S>
