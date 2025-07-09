@@ -4,6 +4,8 @@ import {
 	type TSESTree,
 } from '@typescript-eslint/utils';
 
+import { isLiteral } from './is-node-of-type';
+
 /**
  * A `Literal` with a `value` of type `string`.
  */
@@ -22,7 +24,7 @@ const isStringLiteral = <V extends string>(
 	node: TSESTree.Node,
 	value?: V
 ): node is StringLiteral<V> =>
-	node.type === AST_NODE_TYPES.Literal &&
+	isLiteral(node) &&
 	typeof node.value === 'string' &&
 	(value === undefined || node.value === value);
 
