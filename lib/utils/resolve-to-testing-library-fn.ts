@@ -24,7 +24,7 @@ import {
 	isSupportedAccessor,
 } from '../node-utils/accessors';
 
-import { LIBRARY_MODULES } from '.';
+import { LIBRARY_MODULES, USER_EVENT_MODULE } from '.';
 
 interface ImportDetails {
 	source: string;
@@ -152,8 +152,6 @@ interface ResolvedTestingLibraryUserEventFn {
 	local: string;
 }
 
-const USER_EVENT_PACKAGE = '@testing-library/user-event';
-
 export const resolveToTestingLibraryFn = <
 	TMessageIds extends string,
 	TOptions extends readonly unknown[],
@@ -174,7 +172,7 @@ export const resolveToTestingLibraryFn = <
 
 	const customModuleSetting = context.settings['testing-library/utils-module'];
 	if (
-		[...LIBRARY_MODULES, USER_EVENT_PACKAGE, customModuleSetting].some(
+		[...LIBRARY_MODULES, USER_EVENT_MODULE, customModuleSetting].some(
 			(module) => module === maybeImport.source
 		)
 	) {

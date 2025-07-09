@@ -31,6 +31,8 @@ const LIBRARY_MODULES = [
 	'@marko/testing-library',
 ] as const;
 
+const USER_EVENT_MODULE = '@testing-library/user-event';
+
 const SYNC_QUERIES_VARIANTS = [
 	'getBy',
 	'getAllBy',
@@ -151,4 +153,5 @@ export {
 	PRESENCE_MATCHERS,
 	ABSENCE_MATCHERS,
 	EVENT_HANDLER_METHODS,
+	USER_EVENT_MODULE,
 };
