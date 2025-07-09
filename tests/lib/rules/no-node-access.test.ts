@@ -229,21 +229,6 @@ ruleTester.run(RULE_NAME, rule, {
 				fe.click(buttonText);
       `,
 			},
-			{
-				code: `
-				// case: custom module set but not imported using ${testingFramework} (aggressive reporting limited)
-				import { screen } from '${testingFramework}';
-
-        const ui = {
-					select: screen.getByRole('combobox', {name: 'Test label'}),
-				};
-				test('...', () => {
-					const select = ui.select.get();
-					expect(select).toHaveClass(selectClasses.select);
-				});
-      `,
-				only: true,
-			},
 		]
 	),
 	invalid: SUPPORTED_TESTING_FRAMEWORKS.flatMap((testingFramework) => [
