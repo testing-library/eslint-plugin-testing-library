@@ -5,7 +5,7 @@ import rule, {
 	Options,
 	MessageIds,
 } from '../../../lib/rules/no-node-access';
-import { EVENT_HANDLER_METHODS, EVENTS_SIMULATORS } from '../../../lib/utils';
+import { EVENT_HANDLER_METHODS } from '../../../lib/utils';
 import { createRuleTester } from '../test-utils';
 
 const ruleTester = createRuleTester();
@@ -173,14 +173,76 @@ ruleTester.run(RULE_NAME, rule, {
 				user.click(buttonText);
       `,
 			},
-			...EVENTS_SIMULATORS.map((simulator) => ({
+			{
 				code: `
+				import userEvent from '@testing-library/user-event';
         import { screen } from '${testingFramework}';
 
         const buttonText = screen.getByText('submit');
-				${simulator}.click(buttonText);
+				const userAlias = userEvent.setup();
+				userAlias.click(buttonText);
       `,
-			})),
+			},
+			{
+				code: `
+				import userEvent from '@testing-library/user-event';
+        import { screen } from '${testingFramework}';
+
+        const buttonText = screen.getByText('submit');
+				userEvent.setup().click(buttonText);
+      `,
+			},
+			{
+				code: `
+				import userEvt from '@testing-library/user-event';
+        import { screen } from '${testingFramework}';
+
+        const buttonText = screen.getByText('submit');
+				const userAlias = userEvt.setup();
+				userAlias.click(buttonText);
+      `,
+			},
+			{
+				code: `
+				import userEvt from '@testing-library/user-event';
+        import { screen } from '${testingFramework}';
+
+        const buttonText = screen.getByText('submit');
+				userEvt.click(buttonText);
+      `,
+			},
+			{
+				code: `
+        import { screen, fireEvent as fe } from '${testingFramework}';
+
+        const buttonText = screen.getByText('submit');
+				fe.click(buttonText);
+      `,
+			},
+			{
+				settings: { 'testing-library/utils-module': 'test-utils' },
+				code: `
+				// case: custom module set but not imported using ${testingFramework} (aggressive reporting limited)
+        import { screen, fireEvent as fe } from 'test-utils';
+
+        const buttonText = screen.getByText('submit');
+				fe.click(buttonText);
+      `,
+			},
+			{
+				code: `
+				// case: custom module set but not imported using ${testingFramework} (aggressive reporting limited)
+				import { screen } from '${testingFramework}';
+
+        const ui = {
+					select: screen.getByRole('combobox', {name: 'Test label'}),
+				};
+				test('...', () => {
+					const select = ui.select.get();
+					expect(select).toHaveClass(selectClasses.select);
+				});
+      `,
+			},
 		]
 	),
 	invalid: SUPPORTED_TESTING_FRAMEWORKS.flatMap((testingFramework) => [
@@ -419,24 +481,47 @@ ruleTester.run(RULE_NAME, rule, {
 				},
 			],
 		},
-		...EVENT_HANDLER_METHODS.map<RuleInvalidTestCase>((method) => ({
-			code: `
+		...EVENT_HANDLER_METHODS.flatMap<RuleInvalidTestCase>((method) => [
+			{
+				code: `
         import { screen } from '${testingFramework}';
 
         const button = document.getElementById('submit-btn').${method}();
       `,
-			errors: [
-				{
-					line: 4,
-					column: 33,
-					messageId: 'noNodeAccess',
-				},
-				{
-					line: 4,
-					column: 62,
-					messageId: 'noNodeAccess',
-				},
-			],
-		})),
+				errors: [
+					{
+						line: 4,
+						column: 33,
+						messageId: 'noNodeAccess',
+					},
+					{
+						line: 4,
+						column: 62,
+						messageId: 'noNodeAccess',
+					},
+				],
+			},
+			{
+				settings: { 'testing-library/utils-module': 'test-utils' },
+				code: `
+				// case: custom module set but not imported using ${testingFramework} (aggressive reporting limited)
+        import { screen } from 'test-utils';
+
+        const button = document.getElementById('submit-btn').${method}();
+      `,
+				errors: [
+					{
+						line: 5,
+						column: 33,
+						messageId: 'noNodeAccess',
+					},
+					{
+						line: 5,
+						column: 62,
+						messageId: 'noNodeAccess',
+					},
+				],
+			},
+		]),
 	]),
 });

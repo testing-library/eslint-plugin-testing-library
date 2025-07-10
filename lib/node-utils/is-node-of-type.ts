@@ -30,6 +30,12 @@ export const isImportDeclaration = ASTUtils.isNodeOfType(
 export const isImportDefaultSpecifier = ASTUtils.isNodeOfType(
 	AST_NODE_TYPES.ImportDefaultSpecifier
 );
+export const isTSImportEqualsDeclaration = ASTUtils.isNodeOfType(
+	AST_NODE_TYPES.TSImportEqualsDeclaration
+);
+export const isImportExpression = ASTUtils.isNodeOfType(
+	AST_NODE_TYPES.ImportExpression
+);
 export const isImportNamespaceSpecifier = ASTUtils.isNodeOfType(
 	AST_NODE_TYPES.ImportNamespaceSpecifier
 );
@@ -40,6 +46,9 @@ export const isJSXAttribute = ASTUtils.isNodeOfType(
 	AST_NODE_TYPES.JSXAttribute
 );
 export const isLiteral = ASTUtils.isNodeOfType(AST_NODE_TYPES.Literal);
+export const isTemplateLiteral = ASTUtils.isNodeOfType(
+	AST_NODE_TYPES.TemplateLiteral
+);
 export const isMemberExpression = ASTUtils.isNodeOfType(
 	AST_NODE_TYPES.MemberExpression
 );

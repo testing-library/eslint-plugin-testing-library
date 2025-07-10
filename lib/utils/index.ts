@@ -1,6 +1,7 @@
 export * from './compat';
 export * from './file-import';
 export * from './types';
+export * from './resolve-to-testing-library-fn';
 
 const combineQueries = (
 	variants: readonly string[],
@@ -29,6 +30,8 @@ const LIBRARY_MODULES = [
 	'@testing-library/svelte',
 	'@marko/testing-library',
 ] as const;
+
+const USER_EVENT_MODULE = '@testing-library/user-event';
 
 const SYNC_QUERIES_VARIANTS = [
 	'getBy',
@@ -150,4 +153,5 @@ export {
 	PRESENCE_MATCHERS,
 	ABSENCE_MATCHERS,
 	EVENT_HANDLER_METHODS,
+	USER_EVENT_MODULE,
 };

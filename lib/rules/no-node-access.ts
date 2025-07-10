@@ -1,20 +1,18 @@
 import { TSESTree, ASTUtils } from '@typescript-eslint/utils';
 
 import { createTestingLibraryRule } from '../create-testing-library-rule';
+import { isCallExpression, isMemberExpression } from '../node-utils';
 import {
 	ALL_RETURNING_NODES,
 	EVENT_HANDLER_METHODS,
-	EVENTS_SIMULATORS,
+	resolveToTestingLibraryFn,
 } from '../utils';
 
 export const RULE_NAME = 'no-node-access';
 export type MessageIds = 'noNodeAccess';
 export type Options = [{ allowContainerFirstChild: boolean }];
 
-const ALL_PROHIBITED_MEMBERS = [
-	...ALL_RETURNING_NODES,
-	...EVENT_HANDLER_METHODS,
-] as const;
+const userEventInstanceNames = new Set<string>();
 
 export default createTestingLibraryRule<Options, MessageIds>({
 	name: RULE_NAME,
@@ -65,20 +63,11 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				? node.property.name
 				: null;
 
-			const objectName = ASTUtils.isIdentifier(node.object)
-				? node.object.name
-				: null;
 			if (
 				propertyName &&
-				ALL_PROHIBITED_MEMBERS.some(
+				ALL_RETURNING_NODES.some(
 					(allReturningNode) => allReturningNode === propertyName
-				) &&
-				![
-					...EVENTS_SIMULATORS,
-					// TODO: As discussed in https://github.com/testing-library/eslint-plugin-testing-library/issues/1024, this is just a temporary workaround.
-					// We should address the root cause and implement a proper solution instead of explicitly excluding 'user' here.
-					'user',
-				].some((simulator) => simulator === objectName)
+				)
 			) {
 				if (allowContainerFirstChild && propertyName === 'firstChild') {
 					return;
@@ -100,6 +89,60 @@ export default createTestingLibraryRule<Options, MessageIds>({
 		}
 
 		return {
+			CallExpression(node: TSESTree.CallExpression) {
+				const { callee } = node;
+				const property = isMemberExpression(callee) ? callee.property : null;
+				const object = isMemberExpression(callee) ? callee.object : null;
+
+				const propertyName = ASTUtils.isIdentifier(property)
+					? property.name
+					: null;
+				const objectName = ASTUtils.isIdentifier(object) ? object.name : null;
+
+				const isEventHandlerMethod = EVENT_HANDLER_METHODS.some(
+					(method) => method === propertyName
+				);
+				const hasUserEventInstanceName = userEventInstanceNames.has(
+					objectName ?? ''
+				);
+				const testingLibraryFn = resolveToTestingLibraryFn(node, context);
+
+				if (
+					!testingLibraryFn &&
+					isEventHandlerMethod &&
+					!hasUserEventInstanceName
+				) {
+					context.report({
+						node,
+						loc: property?.loc.start,
+						messageId: 'noNodeAccess',
+					});
+				}
+			},
+			VariableDeclarator(node: TSESTree.VariableDeclarator) {
+				const { init, id } = node;
+
+				if (!isCallExpression(init)) {
+					return;
+				}
+
+				if (
+					!isMemberExpression(init.callee) ||
+					!ASTUtils.isIdentifier(init.callee.object)
+				) {
+					return;
+				}
+
+				const testingLibraryFn = resolveToTestingLibraryFn(init, context);
+				if (
+					init.callee.object.name === testingLibraryFn?.local &&
+					ASTUtils.isIdentifier(init.callee.property) &&
+					init.callee.property.name === 'setup' &&
+					ASTUtils.isIdentifier(id)
+				) {
+					userEventInstanceNames.add(id.name);
+				}
+			},
 			'ExpressionStatement MemberExpression': showErrorForNodeAccess,
 			'VariableDeclarator MemberExpression': showErrorForNodeAccess,
 		};
