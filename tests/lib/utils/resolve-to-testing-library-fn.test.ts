@@ -81,6 +81,7 @@ ruleTester.run('esm', rule, {
 		`,
 		},
 		{
+			// Verifies that a local './test-utils' import doesn't match the configured 'test-utils' utils module
 			settings: { 'testing-library/utils-module': 'test-utils' },
 			code: `
 			import { userEvent } from './test-utils';
