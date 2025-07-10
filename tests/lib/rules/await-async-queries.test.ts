@@ -261,6 +261,24 @@ ruleTester.run(RULE_NAME, rule, {
       `
 		),
 
+		// jasmine async matchers are valid
+		...createTestCase(
+			(query) => `
+        expectAsync(${query}("foo")).toBeRejected()
+        expectAsync(wrappedQuery(${query}("foo"))).toBeRejected()
+        expectAsync(${query}("foo")).toBeRejectedWith("bar")
+        expectAsync(wrappedQuery(${query}("foo"))).toBeRejectedWith("bar")
+        expectAsync(${query}("foo")).toBeRejectedWithError("bar")
+        expectAsync(wrappedQuery(${query}("foo"))).toBeRejectedWithError("bar")
+        expectAsync(${query}("foo")).toBePending()
+        expectAsync(wrappedQuery(${query}("foo"))).toBePending()
+        expectAsync(${query}("foo")).toBeResolved()
+        expectAsync(wrappedQuery(${query}("foo"))).toBeResolved()
+        expectAsync(${query}("foo")).toBeResolvedTo("bar")
+        expectAsync(wrappedQuery(${query}("foo"))).toBeResolvedTo("bar")
+      `
+		),
+
 		// unresolved async queries with aggressive reporting opted-out are valid
 		...ALL_ASYNC_COMBINATIONS_TO_TEST.map((query) => ({
 			settings: { 'testing-library/utils-module': 'test-utils' },

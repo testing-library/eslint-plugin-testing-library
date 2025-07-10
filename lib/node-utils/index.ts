@@ -525,6 +525,12 @@ const matcherNamesHandlePromise = [
 	'rejects',
 	'toResolve',
 	'toReject',
+	'toBeRejected',
+	'toBeRejectedWith',
+	'toBeRejectedWithError',
+	'toBePending',
+	'toBeResolved',
+	'toBeResolvedTo',
 ];
 
 /**
@@ -539,7 +545,7 @@ export function hasClosestExpectResolvesRejects(node: TSESTree.Node): boolean {
 		ASTUtils.isIdentifier(node.callee) &&
 		node.parent &&
 		isMemberExpression(node.parent) &&
-		node.callee.name === 'expect'
+		['expect', 'expectAsync'].includes(node.callee.name)
 	) {
 		const expectMatcher = node.parent.property;
 		return (
