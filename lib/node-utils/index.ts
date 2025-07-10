@@ -241,7 +241,7 @@ export function isPromiseHandled(nodeIdentifier: TSESTree.Identifier): boolean {
 			isReturnStatement(node.parent)
 		)
 			return true;
-		if (hasClosestExpectResolvesRejects(node.parent)) return true;
+		if (hasClosestExpectHandlesPromise(node.parent)) return true;
 		if (hasChainedThen(node)) return true;
 		if (isPromisesArrayResolved(node)) return true;
 	});
@@ -534,12 +534,12 @@ const matcherNamesHandlePromise = [
 ];
 
 /**
- * Determines whether a node belongs to an async assertion
- * fulfilled by `resolves` or `rejects` properties or
- *  by `toResolve` or `toReject` jest-extended matchers
- *
+ * Determines whether a node belongs to an async assertion that is fulfilled by:
+ * - `resolves` or `rejects` properties
+ * - `toResolve` or `toReject` jest-extended matchers
+ * - jasmine async matchers
  */
-export function hasClosestExpectResolvesRejects(node: TSESTree.Node): boolean {
+export function hasClosestExpectHandlesPromise(node: TSESTree.Node): boolean {
 	if (
 		isCallExpression(node) &&
 		ASTUtils.isIdentifier(node.callee) &&
@@ -558,7 +558,7 @@ export function hasClosestExpectResolvesRejects(node: TSESTree.Node): boolean {
 		return false;
 	}
 
-	return hasClosestExpectResolvesRejects(node.parent);
+	return hasClosestExpectHandlesPromise(node.parent);
 }
 
 /**
