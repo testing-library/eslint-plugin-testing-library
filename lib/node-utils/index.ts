@@ -218,6 +218,7 @@ export function isPromisesArrayResolved(node: TSESTree.Node): boolean {
  * - it's returned from a function
  * - has `resolves` or `rejects` jest methods
  * - has `toResolve` or `toReject` jest-extended matchers
+ * - has a jasmine async matcher
  */
 export function isPromiseHandled(nodeIdentifier: TSESTree.Identifier): boolean {
 	const closestCallExpressionNode = findClosestCallExpressionNode(
@@ -241,7 +242,7 @@ export function isPromiseHandled(nodeIdentifier: TSESTree.Identifier): boolean {
 			isReturnStatement(node.parent)
 		)
 			return true;
-		if (hasClosestExpectResolvesRejects(node.parent)) return true;
+		if (hasClosestExpectHandlesPromise(node.parent)) return true;
 		if (hasChainedThen(node)) return true;
 		if (isPromisesArrayResolved(node)) return true;
 	});
@@ -521,25 +522,34 @@ export function getAssertNodeInfo(
 }
 
 const matcherNamesHandlePromise = [
+	// jest matchers
 	'resolves',
 	'rejects',
+	// jest-extended matchers
 	'toResolve',
 	'toReject',
+	// jasmine matchers
+	'toBeRejected',
+	'toBeRejectedWith',
+	'toBeRejectedWithError',
+	'toBePending',
+	'toBeResolved',
+	'toBeResolvedTo',
 ];
 
 /**
- * Determines whether a node belongs to an async assertion
- * fulfilled by `resolves` or `rejects` properties or
- *  by `toResolve` or `toReject` jest-extended matchers
- *
+ * Determines whether a node belongs to an async assertion that is fulfilled by:
+ * - `resolves` or `rejects` properties
+ * - `toResolve` or `toReject` jest-extended matchers
+ * - jasmine async matchers
  */
-export function hasClosestExpectResolvesRejects(node: TSESTree.Node): boolean {
+export function hasClosestExpectHandlesPromise(node: TSESTree.Node): boolean {
 	if (
 		isCallExpression(node) &&
 		ASTUtils.isIdentifier(node.callee) &&
 		node.parent &&
 		isMemberExpression(node.parent) &&
-		node.callee.name === 'expect'
+		['expect', 'expectAsync'].includes(node.callee.name)
 	) {
 		const expectMatcher = node.parent.property;
 		return (
@@ -552,7 +562,7 @@ export function hasClosestExpectResolvesRejects(node: TSESTree.Node): boolean {
 		return false;
 	}
 
-	return hasClosestExpectResolvesRejects(node.parent);
+	return hasClosestExpectHandlesPromise(node.parent);
 }
 
 /**

@@ -63,6 +63,20 @@ ruleTester.run(RULE_NAME, rule, {
 		...ASYNC_UTILS.map((asyncUtil) => ({
 			code: `
         import { ${asyncUtil} } from '${testingFramework}';
+        test('${asyncUtil} util expect chained with jasmine async matchers are valid', () => {
+          doSomethingElse();
+          expectAsync(${asyncUtil}(() => getByLabelText('email'))).toBeRejected();
+          expectAsync(${asyncUtil}(() => getByLabelText('email'))).toBeRejectedWith("bar");
+          expectAsync(${asyncUtil}(() => getByLabelText('email'))).toBeRejectedWithError("bar");
+          expectAsync(${asyncUtil}(() => getByLabelText('email'))).toBeResolved();
+          expectAsync(${asyncUtil}(() => getByLabelText('email'))).toBeResolvedTo("bar");
+          expectAsync(${asyncUtil}(() => getByLabelText('email'))).toBePending();
+        });
+      `,
+		})),
+		...ASYNC_UTILS.map((asyncUtil) => ({
+			code: `
+        import { ${asyncUtil} } from '${testingFramework}';
         test('${asyncUtil} util promise saved in var and chained with then is valid', () => {
           doSomethingElse();
           const aPromise = ${asyncUtil}(() => getByLabelText('email'));
