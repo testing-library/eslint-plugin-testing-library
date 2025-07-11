@@ -218,6 +218,7 @@ export function isPromisesArrayResolved(node: TSESTree.Node): boolean {
  * - it's returned from a function
  * - has `resolves` or `rejects` jest methods
  * - has `toResolve` or `toReject` jest-extended matchers
+ * - has a jasmine async matcher
  */
 export function isPromiseHandled(nodeIdentifier: TSESTree.Identifier): boolean {
 	const closestCallExpressionNode = findClosestCallExpressionNode(
@@ -521,10 +522,13 @@ export function getAssertNodeInfo(
 }
 
 const matcherNamesHandlePromise = [
+	// jest matchers
 	'resolves',
 	'rejects',
+	// jest-extended matchers
 	'toResolve',
 	'toReject',
+	// jasmine matchers
 	'toBeRejected',
 	'toBeRejectedWith',
 	'toBeRejectedWithError',
