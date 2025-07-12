@@ -90,6 +90,13 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
 		return {
 			CallExpression(node: TSESTree.CallExpression) {
+				// This rule is so aggressive that can cause tons of false positives outside test files when Aggressive Reporting
+				// is enabled. Because of that, this rule will skip this mechanism and report only if some Testing Library package
+				// or custom one (set in utils-module Shared Setting) is found.
+				if (!helpers.isTestingLibraryImported(true)) {
+					return;
+				}
+
 				const { callee } = node;
 				const property = isMemberExpression(callee) ? callee.property : null;
 				const object = isMemberExpression(callee) ? callee.object : null;
