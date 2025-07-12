@@ -24,6 +24,15 @@ ruleTester.run(RULE_NAME, rule, {
 	valid: SUPPORTED_TESTING_FRAMEWORKS.flatMap<RuleValidTestCase>(
 		(testingFramework) => [
 			{
+				// valid because no Testing Library module is imported
+				code: `
+				// case: custom module set but not imported using ${testingFramework} (aggressive reporting limited)
+				const body = document.body
+
+				body.click();
+      `,
+			},
+			{
 				code: `
         import { screen } from '${testingFramework}';
 
