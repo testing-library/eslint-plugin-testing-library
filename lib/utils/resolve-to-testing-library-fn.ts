@@ -171,11 +171,12 @@ export const resolveToTestingLibraryFn = <
 	}
 
 	const customModuleSetting = context.settings['testing-library/utils-module'];
-	if (
-		[...LIBRARY_MODULES, USER_EVENT_MODULE, customModuleSetting].some(
-			(module) => module === maybeImport.source
-		)
-	) {
+	const hasImportModuleMatch =
+		[...LIBRARY_MODULES, USER_EVENT_MODULE].includes(maybeImport.source) ||
+		(typeof customModuleSetting === 'string' &&
+			maybeImport.source.endsWith(customModuleSetting));
+
+	if (hasImportModuleMatch) {
 		return {
 			original: maybeImport.imported,
 			local: maybeImport.local,
