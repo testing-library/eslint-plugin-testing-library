@@ -33,6 +33,12 @@ const LIBRARY_MODULES = [
 
 const USER_EVENT_MODULE = '@testing-library/user-event';
 
+const OLD_LIBRARY_MODULES = [
+	'dom-testing-library',
+	'vue-testing-library',
+	'react-testing-library',
+] as const;
+
 const SYNC_QUERIES_VARIANTS = [
 	'getBy',
 	'getAllBy',
@@ -154,4 +160,5 @@ export {
 	ABSENCE_MATCHERS,
 	EVENT_HANDLER_METHODS,
 	USER_EVENT_MODULE,
+	OLD_LIBRARY_MODULES,
 };
