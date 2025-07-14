@@ -728,6 +728,16 @@
         "code",
         "test"
       ]
+    },
+    {
+      "login": "puglyfe",
+      "name": "Charley Pugmire",
+      "avatar_url": "https://avatars.githubusercontent.com/u/3228931?v=4",
+      "profile": "https://www.charleypugmire.me",
+      "contributions": [
+        "code",
+        "test"
+      ]
     }
   ],
   "contributorsPerLine": 7,
