@@ -22,6 +22,7 @@ problems in the tests. The promise will be considered as handled when:
 - chaining the `then` method
 - chaining `resolves` or `rejects` from jest
 - chaining `toResolve()` or `toReject()` from [jest-extended](https://github.com/jest-community/jest-extended#promise)
+- chaining jasmine [async matchers](https://jasmine.github.io/api/edge/async-matchers.html)
 - it's returned from a function (in this case, that particular function will be analyzed by this rule too)
 
 Examples of **incorrect** code for this rule:

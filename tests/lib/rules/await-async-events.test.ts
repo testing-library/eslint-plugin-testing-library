@@ -178,6 +178,43 @@ ruleTester.run(RULE_NAME, rule, {
         `,
 				options: [{ eventModule: 'fireEvent' }] as const,
 			},
+
+			...FIRE_EVENT_ASYNC_FUNCTIONS.map((eventMethod) => ({
+				code: `
+        import { fireEvent } from '${testingFramework}'
+        test('jest async matchers are valid', async () => {
+          expect(fireEvent.${eventMethod}(getByLabelText('username'))).rejects.toBe("foo")
+          expect(fireEvent.${eventMethod}(getByLabelText('username'))).resolves.toBe("foo")
+        })
+        `,
+				options: [{ eventModule: 'fireEvent' }] as const,
+			})),
+
+			...FIRE_EVENT_ASYNC_FUNCTIONS.map((eventMethod) => ({
+				code: `
+        import { fireEvent } from '${testingFramework}'
+        test('jest-extended async matchers are valid', async () => {
+          expect(fireEvent.${eventMethod}(getByLabelText('username'))).toReject()
+          expect(fireEvent.${eventMethod}(getByLabelText('username'))).toResolve()
+        })
+        `,
+				options: [{ eventModule: 'fireEvent' }] as const,
+			})),
+
+			...FIRE_EVENT_ASYNC_FUNCTIONS.map((eventMethod) => ({
+				code: `
+        import { fireEvent } from '${testingFramework}'
+        test('jasmine async matchers are valid', async () => {
+          expectAsync(fireEvent.${eventMethod}(getByLabelText('username'))).toBeRejected()
+          expectAsync(fireEvent.${eventMethod}(getByLabelText('username'))).toBeRejectedWith("foo")
+          expectAsync(fireEvent.${eventMethod}(getByLabelText('username'))).toBeRejectedWithError("foo")
+          expectAsync(fireEvent.${eventMethod}(getByLabelText('username'))).toBePending()
+          expectAsync(fireEvent.${eventMethod}(getByLabelText('username'))).toBeResolved()
+          expectAsync(fireEvent.${eventMethod}(getByLabelText('username'))).toBeResolvedTo("foo")
+        })
+        `,
+				options: [{ eventModule: 'fireEvent' }] as const,
+			})),
 		]),
 
 		...USER_EVENT_ASYNC_FRAMEWORKS.flatMap((testingFramework) => [
