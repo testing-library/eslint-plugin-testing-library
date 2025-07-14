@@ -24,7 +24,7 @@ import {
 	isSupportedAccessor,
 } from '../node-utils/accessors';
 
-import { LIBRARY_MODULES, USER_EVENT_MODULE } from '.';
+import { isTestingLibraryModule } from './is-testing-library-module';
 
 interface ImportDetails {
 	source: string;
@@ -171,12 +171,8 @@ export const resolveToTestingLibraryFn = <
 	}
 
 	const customModuleSetting = context.settings['testing-library/utils-module'];
-	const hasImportModuleMatch =
-		[...LIBRARY_MODULES, USER_EVENT_MODULE].includes(maybeImport.source) ||
-		(typeof customModuleSetting === 'string' &&
-			maybeImport.source.endsWith(customModuleSetting));
 
-	if (hasImportModuleMatch) {
+	if (isTestingLibraryModule(maybeImport.source, customModuleSetting)) {
 		return {
 			original: maybeImport.imported,
 			local: maybeImport.local,
