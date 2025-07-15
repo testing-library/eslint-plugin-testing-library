@@ -73,7 +73,10 @@ type IsAsyncUtilFn = (
 	validNames?: readonly (typeof ASYNC_UTILS)[number][]
 ) => boolean;
 type IsFireEventMethodFn = (node: TSESTree.Identifier) => boolean;
-type IsUserEventMethodFn = (node: TSESTree.Identifier) => boolean;
+type IsUserEventMethodFn = (
+	node: TSESTree.Identifier,
+	userEventSetupVars?: Set<string>
+) => boolean;
 type IsRenderUtilFn = (node: TSESTree.Identifier) => boolean;
 type IsCreateEventUtil = (
 	node: TSESTree.CallExpression | TSESTree.Identifier
@@ -558,7 +561,10 @@ export function detectTestingLibraryUtils<
 			return regularCall || wildcardCall || wildcardCallWithCallExpression;
 		};
 
-		const isUserEventMethod: IsUserEventMethodFn = (node) => {
+		const isUserEventMethod: IsUserEventMethodFn = (
+			node,
+			userEventSetupVars
+		) => {
 			const userEvent = findImportedUserEventSpecifier();
 			let userEventName: string | undefined;
 
@@ -566,10 +572,6 @@ export function detectTestingLibraryUtils<
 				userEventName = userEvent.name;
 			} else if (isAggressiveModuleReportingEnabled()) {
 				userEventName = USER_EVENT_NAME;
-			}
-
-			if (!userEventName) {
-				return false;
 			}
 
 			const parentMemberExpression: TSESTree.MemberExpression | undefined =
@@ -583,18 +585,33 @@ export function detectTestingLibraryUtils<
 
 			// make sure that given node it's not userEvent object itself
 			if (
-				[userEventName, USER_EVENT_NAME].includes(node.name) ||
+				(userEventName &&
+					[userEventName, USER_EVENT_NAME].includes(node.name)) ||
 				(ASTUtils.isIdentifier(parentMemberExpression.object) &&
 					parentMemberExpression.object.name === node.name)
 			) {
 				return false;
 			}
 
-			// check userEvent.click() usage
-			return (
+			// check userEvent.click() usage (imported identifier)
+			if (
+				userEventName &&
 				ASTUtils.isIdentifier(parentMemberExpression.object) &&
 				parentMemberExpression.object.name === userEventName
-			);
+			) {
+				return true;
+			}
+
+			// check user.click() usage where user is a variable from userEvent.setup()
+			if (
+				userEventSetupVars &&
+				ASTUtils.isIdentifier(parentMemberExpression.object) &&
+				userEventSetupVars.has(parentMemberExpression.object.name)
+			) {
+				return true;
+			}
+
+			return false;
 		};
 
 		/**

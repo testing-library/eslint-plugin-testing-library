@@ -1083,6 +1083,34 @@ ruleTester.run(RULE_NAME, rule, {
       `,
 					}) as const
 			),
+			...USER_EVENT_ASYNC_FUNCTIONS.map(
+				(eventMethod) =>
+					({
+						code: `
+        import userEvent from '${testingFramework}'
+        test('unhandled promise from event method called from userEvent.setup() return value is invalid', async () => {
+          const user = userEvent.setup();
+          user.${eventMethod}(getByLabelText('username'))
+        })
+        `,
+						errors: [
+							{
+								line: 5,
+								column: 11,
+								messageId: 'awaitAsyncEvent',
+								data: { name: eventMethod },
+							},
+						],
+						options: [{ eventModule: 'userEvent' }],
+						output: `
+        import userEvent from '${testingFramework}'
+        test('unhandled promise from event method called from userEvent.setup() return value is invalid', async () => {
+          const user = userEvent.setup();
+          await user.${eventMethod}(getByLabelText('username'))
+        })
+        `,
+					}) as const
+			),
 		]),
 		{
 			code: `

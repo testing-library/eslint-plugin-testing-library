@@ -1,4 +1,9 @@
-import { ASTUtils, TSESLint, TSESTree } from '@typescript-eslint/utils';
+import {
+	AST_NODE_TYPES,
+	ASTUtils,
+	TSESLint,
+	TSESTree,
+} from '@typescript-eslint/utils';
 
 import { createTestingLibraryRule } from '../create-testing-library-rule';
 import {
@@ -81,6 +86,9 @@ export default createTestingLibraryRule<Options, MessageIds>({
 	create(context, [options], helpers) {
 		const functionWrappersNames: string[] = [];
 
+		// Track variables assigned from userEvent.setup()
+		const userEventSetupVars = new Set<string>();
+
 		function reportUnhandledNode({
 			node,
 			closestCallExpression,
@@ -118,10 +126,28 @@ export default createTestingLibraryRule<Options, MessageIds>({
 		const isUserEventEnabled = eventModules.includes(USER_EVENT_NAME);
 
 		return {
+			// Track variables assigned from userEvent.setup()
+			VariableDeclarator(node: TSESTree.VariableDeclarator) {
+				if (
+					isUserEventEnabled &&
+					node.init &&
+					node.init.type === AST_NODE_TYPES.CallExpression &&
+					node.init.callee.type === AST_NODE_TYPES.MemberExpression &&
+					node.init.callee.object.type === AST_NODE_TYPES.Identifier &&
+					node.init.callee.object.name === USER_EVENT_NAME &&
+					node.init.callee.property.type === AST_NODE_TYPES.Identifier &&
+					node.init.callee.property.name === USER_EVENT_SETUP_FUNCTION_NAME &&
+					node.id.type === AST_NODE_TYPES.Identifier
+				) {
+					userEventSetupVars.add(node.id.name);
+				}
+			},
+
 			'CallExpression Identifier'(node: TSESTree.Identifier) {
 				if (
 					(isFireEventEnabled && helpers.isFireEventMethod(node)) ||
-					(isUserEventEnabled && helpers.isUserEventMethod(node))
+					(isUserEventEnabled &&
+						helpers.isUserEventMethod(node, userEventSetupVars))
 				) {
 					if (node.name === USER_EVENT_SETUP_FUNCTION_NAME) {
 						return;
