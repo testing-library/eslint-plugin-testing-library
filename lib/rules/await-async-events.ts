@@ -86,8 +86,11 @@ export default createTestingLibraryRule<Options, MessageIds>({
 	create(context, [options], helpers) {
 		const functionWrappersNames: string[] = [];
 
-		// Track variables assigned from userEvent.setup()
+		// Track variables assigned from userEvent.setup() (directly or via destructuring)
 		const userEventSetupVars = new Set<string>();
+
+		// Temporary: Map function names to property names that are assigned from userEvent.setup()
+		const tempSetupFunctionProps = new Map<string, Set<string>>();
 
 		function reportUnhandledNode({
 			node,
@@ -126,8 +129,9 @@ export default createTestingLibraryRule<Options, MessageIds>({
 		const isUserEventEnabled = eventModules.includes(USER_EVENT_NAME);
 
 		return {
-			// Track variables assigned from userEvent.setup()
+			// Track variables assigned from userEvent.setup() and destructuring from setup functions
 			VariableDeclarator(node: TSESTree.VariableDeclarator) {
+				// Direct assignment: const user = userEvent.setup();
 				if (
 					isUserEventEnabled &&
 					node.init &&
@@ -140,6 +144,83 @@ export default createTestingLibraryRule<Options, MessageIds>({
 					node.id.type === AST_NODE_TYPES.Identifier
 				) {
 					userEventSetupVars.add(node.id.name);
+				}
+
+				// Destructuring: const { user, myUser: alias } = setup(...)
+				if (
+					isUserEventEnabled &&
+					node.id.type === AST_NODE_TYPES.ObjectPattern &&
+					node.init &&
+					node.init.type === AST_NODE_TYPES.CallExpression &&
+					node.init.callee.type === AST_NODE_TYPES.Identifier &&
+					tempSetupFunctionProps.has(node.init.callee.name)
+				) {
+					const setupProps = tempSetupFunctionProps.get(node.init.callee.name)!;
+					for (const prop of node.id.properties) {
+						if (
+							prop.type === AST_NODE_TYPES.Property &&
+							prop.key.type === AST_NODE_TYPES.Identifier &&
+							setupProps.has(prop.key.name) &&
+							prop.value.type === AST_NODE_TYPES.Identifier
+						) {
+							userEventSetupVars.add(prop.value.name);
+						}
+					}
+				}
+			},
+
+			// Track functions that return { ...: userEvent.setup(), ... }
+			ReturnStatement(node: TSESTree.ReturnStatement) {
+				if (
+					isUserEventEnabled &&
+					node.argument &&
+					node.argument.type === AST_NODE_TYPES.ObjectExpression
+				) {
+					const setupProps = new Set<string>();
+					for (const prop of node.argument.properties) {
+						if (
+							prop.type === AST_NODE_TYPES.Property &&
+							prop.key.type === AST_NODE_TYPES.Identifier
+						) {
+							// Direct: foo: userEvent.setup()
+							if (
+								prop.value.type === AST_NODE_TYPES.CallExpression &&
+								prop.value.callee.type === AST_NODE_TYPES.MemberExpression &&
+								prop.value.callee.object.type === AST_NODE_TYPES.Identifier &&
+								prop.value.callee.object.name === USER_EVENT_NAME &&
+								prop.value.callee.property.type === AST_NODE_TYPES.Identifier &&
+								prop.value.callee.property.name ===
+									USER_EVENT_SETUP_FUNCTION_NAME
+							) {
+								setupProps.add(prop.key.name);
+							}
+							// Indirect: foo: u, where u is a userEvent.setup() var
+							else if (
+								prop.value.type === AST_NODE_TYPES.Identifier &&
+								userEventSetupVars.has(prop.value.name)
+							) {
+								setupProps.add(prop.key.name);
+							}
+						}
+					}
+					if (setupProps.size > 0) {
+						// Find the function this return is in
+						let parent: TSESTree.Node | undefined = node.parent;
+						while (parent) {
+							if (
+								parent.type === AST_NODE_TYPES.FunctionDeclaration ||
+								parent.type === AST_NODE_TYPES.FunctionExpression ||
+								parent.type === AST_NODE_TYPES.ArrowFunctionExpression
+							) {
+								const name = getFunctionName(parent);
+								if (name) {
+									tempSetupFunctionProps.set(name, setupProps);
+								}
+								break;
+							}
+							parent = parent.parent;
+						}
+					}
 				}
 			},
 
