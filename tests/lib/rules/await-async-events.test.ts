@@ -138,6 +138,21 @@ ruleTester.run(RULE_NAME, rule, {
 				options: [{ eventModule: 'fireEvent' }] as const,
 			})),
 			...FIRE_EVENT_ASYNC_FUNCTIONS.map((eventMethod) => ({
+				code: `
+        import { fireEvent } from '${testingFramework}'
+        test('await promise assigned to a variable from function wrapping event method is valid', () => {
+          function triggerEvent() {
+            doSomething()
+            return fireEvent.${eventMethod}(getByLabelText('username'))
+          }
+
+          const result = await triggerEvent()
+          expect(result).toBe(undefined)
+        })
+        `,
+				options: [{ eventModule: 'fireEvent' }] as const,
+			})),
+			...FIRE_EVENT_ASYNC_FUNCTIONS.map((eventMethod) => ({
 				settings: {
 					'testing-library/utils-module': 'test-utils',
 				},
@@ -357,6 +372,21 @@ ruleTester.run(RULE_NAME, rule, {
           }
 
           await triggerEvent()
+        })
+        `,
+				options: [{ eventModule: 'userEvent' }] as const,
+			})),
+			...USER_EVENT_ASYNC_FUNCTIONS.map((eventMethod) => ({
+				code: `
+        import userEvent from '${testingFramework}'
+        test('await promise assigned to a variable from function wrapping event method is valid', () => {
+          function triggerEvent() {
+            doSomething()
+            return userEvent.${eventMethod}(getByLabelText('username'))
+          }
+
+          const result = await triggerEvent()
+          expect(result).toBe(undefined)
         })
         `,
 				options: [{ eventModule: 'userEvent' }] as const,
@@ -775,6 +805,44 @@ ruleTester.run(RULE_NAME, rule, {
 					({
 						code: `
       import { fireEvent } from '${testingFramework}'
+      test('unhandled promise assigned to a variable returned from function wrapping event method is invalid', () => {
+        function triggerEvent() {
+          doSomething()
+          return fireEvent.${eventMethod}(getByLabelText('username'))
+        }
+
+        const result = triggerEvent()
+        expect(result).toBe(undefined)
+      })
+      `,
+						errors: [
+							{
+								line: 9,
+								column: 24,
+								messageId: 'awaitAsyncEventWrapper',
+								data: { name: 'triggerEvent' },
+							},
+						],
+						options: [{ eventModule: 'fireEvent' }],
+						output: `
+      import { fireEvent } from '${testingFramework}'
+      test('unhandled promise assigned to a variable returned from function wrapping event method is invalid', async () => {
+        function triggerEvent() {
+          doSomething()
+          return fireEvent.${eventMethod}(getByLabelText('username'))
+        }
+
+        const result = await triggerEvent()
+        expect(result).toBe(undefined)
+      })
+      `,
+					}) as const
+			),
+			...FIRE_EVENT_ASYNC_FUNCTIONS.map(
+				(eventMethod) =>
+					({
+						code: `
+      import { fireEvent } from '${testingFramework}'
 
       function triggerEvent() {
         doSomething()
@@ -968,6 +1036,44 @@ ruleTester.run(RULE_NAME, rule, {
         }
 
         await triggerEvent()
+      })
+      `,
+					}) as const
+			),
+			...USER_EVENT_ASYNC_FUNCTIONS.map(
+				(eventMethod) =>
+					({
+						code: `
+      import userEvent from '${testingFramework}'
+      test('unhandled promise assigned to a variable returned from function wrapping event method is invalid', function() {
+        function triggerEvent() {
+          doSomething()
+          return userEvent.${eventMethod}(getByLabelText('username'))
+        }
+
+        const result = triggerEvent()
+        expect(result).toBe(undefined)
+      })
+      `,
+						errors: [
+							{
+								line: 9,
+								column: 24,
+								messageId: 'awaitAsyncEventWrapper',
+								data: { name: 'triggerEvent' },
+							},
+						],
+						options: [{ eventModule: 'userEvent' }],
+						output: `
+      import userEvent from '${testingFramework}'
+      test('unhandled promise assigned to a variable returned from function wrapping event method is invalid', async function() {
+        function triggerEvent() {
+          doSomething()
+          return userEvent.${eventMethod}(getByLabelText('username'))
+        }
+
+        const result = await triggerEvent()
+        expect(result).toBe(undefined)
       })
       `,
 					}) as const

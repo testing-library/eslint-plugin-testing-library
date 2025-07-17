@@ -7,6 +7,7 @@ import {
 	getFunctionName,
 	getInnermostReturningFunction,
 	getVariableReferences,
+	isCallExpression,
 	isObjectPattern,
 	isPromiseHandled,
 	isProperty,
@@ -110,6 +111,8 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				const isAssigningKnownAsyncFunctionWrapper =
 					ASTUtils.isIdentifier(node.id) &&
 					node.init !== null &&
+					!isCallExpression(node.init) &&
+					!ASTUtils.isAwaitExpression(node.init) &&
 					functionWrappersNames.includes(
 						getDeepestIdentifierNode(node.init)?.name ?? ''
 					);

@@ -291,6 +291,23 @@ ruleTester.run(RULE_NAME, rule, {
       `,
 		})),
 
+		// handled promise assigned to variable returned from async query wrapper is valid
+		...ALL_ASYNC_COMBINATIONS_TO_TEST.map(
+			(query) =>
+				({
+					code: `
+        const queryWrapper = () => {
+          return screen.${query}('foo')
+        }
+
+        test("A valid example test", async () => {
+          const element = await queryWrapper()
+          expect(element).toBeVisible()
+        })
+      `,
+				}) as const
+		),
+
 		// non-matching query is valid
 		`
     test('A valid example test', async () => {
