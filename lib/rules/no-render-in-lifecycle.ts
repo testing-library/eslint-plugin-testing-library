@@ -72,6 +72,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 						type: 'string',
 					},
 				},
+				additionalProperties: false,
 			},
 		],
 	},

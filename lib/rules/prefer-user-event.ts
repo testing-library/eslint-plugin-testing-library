@@ -90,6 +90,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				properties: {
 					allowedMethods: { type: 'array' },
 				},
+				additionalProperties: false,
 			},
 		],
 	},
