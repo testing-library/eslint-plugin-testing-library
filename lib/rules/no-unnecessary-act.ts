@@ -45,6 +45,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 						type: 'boolean',
 					},
 				},
+				additionalProperties: false,
 			},
 		],
 	},
