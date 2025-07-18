@@ -231,7 +231,6 @@ ruleTester.run(RULE_NAME, rule, {
 			},
 			{
 				code: `
-				// case: custom module set but not imported using ${testingFramework} (aggressive reporting limited)
 				import { screen } from '${testingFramework}';
 
         const ui = {
@@ -240,6 +239,32 @@ ruleTester.run(RULE_NAME, rule, {
 				test('...', () => {
 					const select = ui.select.get();
 					expect(select).toHaveClass(selectClasses.select);
+				});
+      `,
+			},
+			{
+				settings: { 'testing-library/utils-module': 'test-utils' },
+				code: `
+				// case: custom module set but not imported using ${testingFramework} (aggressive reporting limited)
+        import { screen, render } from 'test-utils';
+				import MyComponent from './MyComponent'
+
+				test('...', async () => {
+					const { user } = render(<MyComponent />)
+					await user.click(screen.getByRole("button"))
+				});
+      `,
+			},
+			{
+				settings: { 'testing-library/utils-module': 'test-utils' },
+				code: `
+				// case: custom module set but not imported using ${testingFramework} (aggressive reporting limited)
+        import { screen, render } from 'test-utils';
+				import MyComponent from './MyComponent'
+
+				test('...', async () => {
+					const result = render(<MyComponent />)
+					await result.user.click(screen.getByRole("button"))
 				});
       `,
 			},
