@@ -268,6 +268,22 @@ ruleTester.run(RULE_NAME, rule, {
 				});
       `,
 			},
+			{
+				settings: {
+					'testing-library/utils-module': 'TestUtils',
+					'testing-library/custom-renders': ['renderComponent'],
+				},
+				code: `
+				// case: custom module set but not imported using ${testingFramework} (aggressive reporting limited)
+        import { screen, renderComponent } from './TestUtils';
+				import MyComponent from './MyComponent'
+
+				test('...', async () => {
+					const result = renderComponent(<MyComponent />)
+					await result.user.click(screen.getByRole("button"))
+				});
+      `,
+			},
 		]
 	),
 	invalid: SUPPORTED_TESTING_FRAMEWORKS.flatMap((testingFramework) => [
