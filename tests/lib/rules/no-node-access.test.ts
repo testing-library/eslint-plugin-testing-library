@@ -230,6 +230,16 @@ ruleTester.run(RULE_NAME, rule, {
       `,
 			},
 			{
+				settings: { 'testing-library/utils-module': 'test-utils' },
+				code: `
+				// case: custom module set but not imported using ${testingFramework} (aggressive reporting limited)
+        import { screen, fireEvent } from '../test-utils';
+
+        const buttonText = screen.getByText('submit');
+				fireEvent.click(buttonText);
+      `,
+			},
+			{
 				code: `
 				import { screen } from '${testingFramework}';
 
