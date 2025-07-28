@@ -555,6 +555,9 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/y-hsgw"><img src="https://avatars.githubusercontent.com/u/49516827?v=4?s=100" width="100px;" alt="Yukihiro Hasegawa"/><br /><sub><b>Yukihiro Hasegawa</b></sub></a><br /><a href="https://github.com/testing-library/eslint-plugin-testing-library/commits?author=y-hsgw" title="Code">💻</a> <a href="https://github.com/testing-library/eslint-plugin-testing-library/commits?author=y-hsgw" title="Tests">⚠️</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://www.charleypugmire.me"><img src="https://avatars.githubusercontent.com/u/3228931?v=4?s=100" width="100px;" alt="Charley Pugmire"/><br /><sub><b>Charley Pugmire</b></sub></a><br /><a href="https://github.com/testing-library/eslint-plugin-testing-library/commits?author=puglyfe" title="Code">💻</a> <a href="https://github.com/testing-library/eslint-plugin-testing-library/commits?author=puglyfe" title="Tests">⚠️</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/andreww2012"><img src="https://avatars.githubusercontent.com/u/6554045?v=4?s=100" width="100px;" alt="Andrew Kazakov"/><br /><sub><b>Andrew Kazakov</b></sub></a><br /><a href="https://github.com/testing-library/eslint-plugin-testing-library/commits?author=andreww2012" title="Code">💻</a></td>
+    </tr>
   </tbody>
 </table>
 

@@ -738,6 +738,15 @@
         "code",
         "test"
       ]
+    },
+    {
+      "login": "andreww2012",
+      "name": "Andrew Kazakov",
+      "avatar_url": "https://avatars.githubusercontent.com/u/6554045?v=4",
+      "profile": "https://github.com/andreww2012",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
