@@ -1,13 +1,26 @@
 import {
-	LIBRARY_MODULES,
-	OLD_LIBRARY_MODULES,
-	USER_EVENT_MODULE,
-} from '../../../lib/utils';
-import {
 	isCustomTestingLibraryModule,
 	isOfficialTestingLibraryModule,
 	isTestingLibraryModule,
 } from '../../../lib/utils/is-testing-library-module';
+
+const OLD_LIBRARY_MODULES = [
+	'dom-testing-library',
+	'vue-testing-library',
+	'react-testing-library',
+] as const;
+
+const LIBRARY_MODULES = [
+	'@testing-library/dom',
+	'@testing-library/angular',
+	'@testing-library/react',
+	'@testing-library/preact',
+	'@testing-library/vue',
+	'@testing-library/svelte',
+	'@marko/testing-library',
+] as const;
+
+const USER_EVENT_MODULE = '@testing-library/user-event';
 
 describe('isOfficialTestingLibraryModule', () => {
 	it.each([...OLD_LIBRARY_MODULES, ...LIBRARY_MODULES, USER_EVENT_MODULE])(
