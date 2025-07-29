@@ -186,6 +186,16 @@ ruleTester.run(RULE_NAME, rule, {
 			{
 				code: `
 				import userEvent from '@testing-library/user-event';
+				import { screen } from '${testingFramework}';
+				test('...', () => {
+					const buttonText = screen.getByText('submit');
+					(() => { click: userEvent.click(buttonText); })();
+				});
+      `,
+			},
+			{
+				code: `
+				import userEvent from '@testing-library/user-event';
         import { screen } from '${testingFramework}';
 
         const buttonText = screen.getByText('submit');
@@ -241,7 +251,6 @@ ruleTester.run(RULE_NAME, rule, {
 			},
 			{
 				code: `
-				// case: custom module set but not imported using ${testingFramework} (aggressive reporting limited)
 				import { screen } from '${testingFramework}';
 
         const ui = {
@@ -250,6 +259,48 @@ ruleTester.run(RULE_NAME, rule, {
 				test('...', () => {
 					const select = ui.select.get();
 					expect(select).toHaveClass(selectClasses.select);
+				});
+      `,
+			},
+			{
+				settings: { 'testing-library/utils-module': 'test-utils' },
+				code: `
+				// case: custom module set but not imported using ${testingFramework} (aggressive reporting limited)
+        import { screen, render } from 'test-utils';
+				import MyComponent from './MyComponent'
+
+				test('...', async () => {
+					const { user } = render(<MyComponent />)
+					await user.click(screen.getByRole("button"))
+				});
+      `,
+			},
+			{
+				settings: { 'testing-library/utils-module': 'test-utils' },
+				code: `
+				// case: custom module set but not imported using ${testingFramework} (aggressive reporting limited)
+        import { screen, render } from 'test-utils';
+				import MyComponent from './MyComponent'
+
+				test('...', async () => {
+					const result = render(<MyComponent />)
+					await result.user.click(screen.getByRole("button"))
+				});
+      `,
+			},
+			{
+				settings: {
+					'testing-library/utils-module': 'TestUtils',
+					'testing-library/custom-renders': ['renderComponent'],
+				},
+				code: `
+				// case: custom module set but not imported using ${testingFramework} (aggressive reporting limited)
+        import { screen, renderComponent } from './TestUtils';
+				import MyComponent from './MyComponent'
+
+				test('...', async () => {
+					const result = renderComponent(<MyComponent />)
+					await result.user.click(screen.getByRole("button"))
 				});
       `,
 			},
