@@ -186,6 +186,16 @@ ruleTester.run(RULE_NAME, rule, {
 			{
 				code: `
 				import userEvent from '@testing-library/user-event';
+				import { screen } from '${testingFramework}';
+				test('...', () => {
+					const buttonText = screen.getByText('submit');
+					(() => { click: userEvent.click(buttonText); })();
+				});
+      `,
+			},
+			{
+				code: `
+				import userEvent from '@testing-library/user-event';
         import { screen } from '${testingFramework}';
 
         const buttonText = screen.getByText('submit');
