@@ -80,15 +80,6 @@ ruleTester.run('esm', rule, {
 			userEvent.default.setup()
 		`,
 		},
-		{
-			// Verifies that a local './test-utils' import doesn't match the configured 'test-utils' utils module
-			settings: { 'testing-library/utils-module': 'test-utils' },
-			code: `
-			import { userEvent } from './test-utils';
-
-			userEvent.setup()
-		`,
-		},
 		...LIBRARY_MODULES.map((module) => ({
 			code: `
       import * as testingLibrary from '${module}';
@@ -157,6 +148,44 @@ ruleTester.run('esm', rule, {
 			settings: { 'testing-library/utils-module': 'test-utils' },
 			code: `
 			import userEvent from 'test-utils';
+
+			userEvent.setup()
+		`,
+			errors: [
+				{
+					messageId: 'details',
+					data: {
+						data: {
+							original: null,
+							local: 'userEvent',
+						},
+					},
+				},
+			],
+		},
+		{
+			settings: { 'testing-library/utils-module': 'test-utils' },
+			code: `
+			import userEvent from '../test-utils';
+
+			userEvent.setup()
+		`,
+			errors: [
+				{
+					messageId: 'details',
+					data: {
+						data: {
+							original: null,
+							local: 'userEvent',
+						},
+					},
+				},
+			],
+		},
+		{
+			settings: { 'testing-library/utils-module': 'test-utils' },
+			code: `
+			import userEvent from '@/test-utils';
 
 			userEvent.setup()
 		`,

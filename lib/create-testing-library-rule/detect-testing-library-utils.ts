@@ -23,7 +23,13 @@ import {
 	ASYNC_UTILS,
 	DEBUG_UTILS,
 	PRESENCE_MATCHERS,
+	USER_EVENT_MODULE,
 } from '../utils';
+import {
+	isCustomTestingLibraryModule,
+	isOfficialTestingLibraryModule,
+	isTestingLibraryModule,
+} from '../utils/is-testing-library-module';
 
 const SETTING_OPTION_OFF = 'off';
 
@@ -136,7 +142,6 @@ export interface DetectionHelpers {
 	isNodeComingFromTestingLibrary: IsNodeComingFromTestingLibraryFn;
 }
 
-const USER_EVENT_PACKAGE = '@testing-library/user-event';
 const REACT_DOM_TEST_UTILS_PACKAGE = 'react-dom/test-utils';
 const FIRE_EVENT_NAME = 'fireEvent';
 const CREATE_EVENT_NAME = 'createEvent';
@@ -977,12 +982,11 @@ export function detectTestingLibraryUtils<
 			}
 
 			const hasImportElementMatch = hasImportMatch(importNode, identifierName);
-			const hasImportModuleMatch =
-				/testing-library/g.test(importDeclarationName) ||
-				(typeof customModuleSetting === 'string' &&
-					importDeclarationName.endsWith(customModuleSetting));
 
-			return hasImportElementMatch && hasImportModuleMatch;
+			return (
+				hasImportElementMatch &&
+				isTestingLibraryModule(importDeclarationName, customModuleSetting)
+			);
 		};
 
 		const helpers: DetectionHelpers = {
@@ -1034,7 +1038,7 @@ export function detectTestingLibraryUtils<
 				}
 				// check only if testing library import not found yet so we avoid
 				// to override importedTestingLibraryNodes after it's found
-				if (/testing-library/g.test(node.source.value)) {
+				if (isOfficialTestingLibraryModule(node.source.value)) {
 					importedTestingLibraryNodes.push(node);
 				}
 
@@ -1042,9 +1046,8 @@ export function detectTestingLibraryUtils<
 				// to override importedCustomModuleNode after it's found
 				const customModule = getCustomModule();
 				if (
-					customModule &&
 					!importedCustomModuleNode &&
-					node.source.value.endsWith(customModule)
+					isCustomTestingLibraryModule(node.source.value, customModule)
 				) {
 					importedCustomModuleNode = node;
 				}
@@ -1053,7 +1056,7 @@ export function detectTestingLibraryUtils<
 				// to override importedUserEventLibraryNode after it's found
 				if (
 					!importedUserEventLibraryNode &&
-					node.source.value === USER_EVENT_PACKAGE
+					node.source.value === USER_EVENT_MODULE
 				) {
 					importedUserEventLibraryNode = node;
 				}
@@ -1080,7 +1083,7 @@ export function detectTestingLibraryUtils<
 						(arg) =>
 							isLiteral(arg) &&
 							typeof arg.value === 'string' &&
-							/testing-library/g.test(arg.value)
+							isOfficialTestingLibraryModule(arg.value)
 					)
 				) {
 					importedTestingLibraryNodes.push(callExpression);
@@ -1091,10 +1094,9 @@ export function detectTestingLibraryUtils<
 					!importedCustomModuleNode &&
 					args.some(
 						(arg) =>
-							customModule &&
 							isLiteral(arg) &&
 							typeof arg.value === 'string' &&
-							arg.value.endsWith(customModule)
+							isCustomTestingLibraryModule(arg.value, customModule)
 					)
 				) {
 					importedCustomModuleNode = callExpression;
@@ -1106,7 +1108,7 @@ export function detectTestingLibraryUtils<
 						(arg) =>
 							isLiteral(arg) &&
 							typeof arg.value === 'string' &&
-							arg.value === USER_EVENT_PACKAGE
+							arg.value === USER_EVENT_MODULE
 					)
 				) {
 					importedUserEventLibraryNode = callExpression;
