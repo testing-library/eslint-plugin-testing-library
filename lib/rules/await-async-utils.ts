@@ -121,20 +121,29 @@ export default createTestingLibraryRule<Options, MessageIds>({
 					functionWrappersNames.push((node.id as TSESTree.Identifier).name);
 				}
 			},
-			'CallExpression Identifier'(node: TSESTree.Identifier) {
+			CallExpression(node: TSESTree.CallExpression) {
+				const callExpressionIdentifier = getDeepestIdentifierNode(node);
+
+				if (!callExpressionIdentifier) {
+					return;
+				}
+
 				const isAsyncUtilOrKnownAliasAroundIt =
-					helpers.isAsyncUtil(node) ||
-					functionWrappersNames.includes(node.name);
+					helpers.isAsyncUtil(callExpressionIdentifier) ||
+					functionWrappersNames.includes(callExpressionIdentifier.name);
 				if (!isAsyncUtilOrKnownAliasAroundIt) {
 					return;
 				}
 
 				// detect async query used within wrapper function for later analysis
-				if (helpers.isAsyncUtil(node)) {
-					detectAsyncUtilWrapper(node);
+				if (helpers.isAsyncUtil(callExpressionIdentifier)) {
+					detectAsyncUtilWrapper(callExpressionIdentifier);
 				}
 
-				const closestCallExpression = findClosestCallExpressionNode(node, true);
+				const closestCallExpression = findClosestCallExpressionNode(
+					callExpressionIdentifier,
+					true
+				);
 
 				if (!closestCallExpression?.parent) {
 					return;
@@ -146,12 +155,12 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				);
 
 				if (references.length === 0) {
-					if (!isPromiseHandled(node)) {
+					if (!isPromiseHandled(callExpressionIdentifier)) {
 						context.report({
-							node,
-							messageId: getMessageId(node),
+							node: callExpressionIdentifier,
+							messageId: getMessageId(callExpressionIdentifier),
 							data: {
-								name: node.name,
+								name: callExpressionIdentifier.name,
 							},
 						});
 					}
@@ -160,10 +169,10 @@ export default createTestingLibraryRule<Options, MessageIds>({
 						const referenceNode = reference.identifier as TSESTree.Identifier;
 						if (!isPromiseHandled(referenceNode)) {
 							context.report({
-								node,
-								messageId: getMessageId(node),
+								node: callExpressionIdentifier,
+								messageId: getMessageId(callExpressionIdentifier),
 								data: {
-									name: node.name,
+									name: callExpressionIdentifier.name,
 								},
 							});
 							return;

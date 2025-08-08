@@ -113,6 +113,11 @@ ruleTester.run(RULE_NAME, rule, {
 			testingFramework: '@marko/testing-library',
 		}),
 
+		// async queries not called are valid
+		...createTestCase((query) => `expect(screen.${query}).toBeDefined()`, {
+			isAsync: false,
+		}),
+
 		// async queries are valid with await operator
 		...createTestCase(
 			(query) => `
