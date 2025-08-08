@@ -19,7 +19,7 @@ problems in the tests. The promise will be considered as handled when:
 
 - using the `await` operator
 - wrapped within `Promise.all` or `Promise.allSettled` methods
-- chaining the `then` method
+- chaining the `then` or `catch` method
 - chaining `resolves` or `rejects` from jest
 - chaining `toResolve()` or `toReject()` from [jest-extended](https://github.com/jest-community/jest-extended#promise)
 - chaining jasmine [async matchers](https://jasmine.github.io/api/edge/async-matchers.html)

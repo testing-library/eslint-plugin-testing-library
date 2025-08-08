@@ -99,6 +99,16 @@ ruleTester.run(RULE_NAME, rule, {
         `,
 				options: [{ eventModule: 'fireEvent' }] as const,
 			})),
+			...FIRE_EVENT_ASYNC_FUNCTIONS.map((eventMethod) => ({
+				code: `
+        import { fireEvent } from '${testingFramework}'
+        test('chain catch method to promise from event method is valid', async (done) => {
+          fireEvent.${eventMethod}(getByLabelText('username'))
+            .catch((error) => { done() })
+        })
+        `,
+				options: [{ eventModule: 'fireEvent' }] as const,
+			})),
 			{
 				code: `
         import { fireEvent } from '${testingFramework}'
@@ -308,6 +318,16 @@ ruleTester.run(RULE_NAME, rule, {
         test('chain then method to promise from event method is valid', async (done) => {
           userEvent.${eventMethod}(getByLabelText('username'))
             .then(() => { done() })
+        })
+        `,
+				options: [{ eventModule: 'userEvent' }] as const,
+			})),
+			...USER_EVENT_ASYNC_FUNCTIONS.map((eventMethod) => ({
+				code: `
+        import userEvent from '${testingFramework}'
+        test('chain catch method to promise from event method is valid', async (done) => {
+          userEvent.${eventMethod}(getByLabelText('username'))
+            .catch((error) => { done() })
         })
         `,
 				options: [{ eventModule: 'userEvent' }] as const,
