@@ -261,6 +261,20 @@ ruleTester.run(RULE_NAME, rule, {
         });
       `,
 		})),
+		...ASYNC_UTILS.map((asyncUtil) => ({
+			code: `
+        import { ${asyncUtil} } from '${testingFramework}';
+
+        function waitForSomethingAsync() {
+          return ${asyncUtil}(() => somethingAsync())
+        }
+
+        test('handled promise in variable declaration from function wrapping ${asyncUtil} util is valid', async () => {
+          const result = await waitForSomethingAsync()
+          expect(result).toBe('foo')
+        });
+      `,
+		})),
 		{
 			code: `
       test('using unrelated promises with Promise.all is valid', async () => {
@@ -506,6 +520,32 @@ ruleTester.run(RULE_NAME, rule, {
 							messageId: 'asyncUtilWrapper',
 							line: 10,
 							column: 11,
+							data: { name: 'waitForSomethingAsync' },
+						},
+					],
+				}) as const
+		),
+		...ASYNC_UTILS.map(
+			(asyncUtil) =>
+				({
+					code: `
+		    import { ${asyncUtil}, render } from '${testingFramework}';
+
+		    function waitForSomethingAsync() {
+		      return ${asyncUtil}(() => somethingAsync())
+		    }
+
+		    test('unhandled promise in variable declaration from function wrapping ${asyncUtil} util is invalid', async () => {
+		      render()
+		      const result = waitForSomethingAsync()
+		      expect(result).toBe('foo')
+		    });
+		  `,
+					errors: [
+						{
+							messageId: 'asyncUtilWrapper',
+							line: 10,
+							column: 24,
 							data: { name: 'waitForSomethingAsync' },
 						},
 					],
