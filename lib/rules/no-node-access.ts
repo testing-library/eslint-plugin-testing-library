@@ -1,10 +1,20 @@
+import {
+	DefinitionType,
+	type ScopeVariable,
+} from '@typescript-eslint/scope-manager';
 import { TSESTree, ASTUtils } from '@typescript-eslint/utils';
 
 import { createTestingLibraryRule } from '../create-testing-library-rule';
-import { isCallExpression, isMemberExpression } from '../node-utils';
+import {
+	getDeepestIdentifierNode,
+	getPropertyIdentifierNode,
+	isCallExpression,
+	isMemberExpression,
+} from '../node-utils';
 import {
 	ALL_RETURNING_NODES,
 	EVENT_HANDLER_METHODS,
+	getScope,
 	resolveToTestingLibraryFn,
 } from '../utils';
 
@@ -89,24 +99,39 @@ export default createTestingLibraryRule<Options, MessageIds>({
 			}
 		}
 
+		function detectTestingLibraryFn(
+			node: TSESTree.CallExpression,
+			variable: ScopeVariable | null
+		) {
+			if (variable && variable.defs.length > 0) {
+				const def = variable.defs[0];
+				if (
+					def.type === DefinitionType.Variable &&
+					isCallExpression(def.node.init)
+				) {
+					return resolveToTestingLibraryFn(def.node.init, context);
+				}
+			}
+
+			return resolveToTestingLibraryFn(node, context);
+		}
+
 		return {
 			CallExpression(node: TSESTree.CallExpression) {
-				const { callee } = node;
-				const property = isMemberExpression(callee) ? callee.property : null;
-				const object = isMemberExpression(callee) ? callee.object : null;
-
-				const propertyName = ASTUtils.isIdentifier(property)
-					? property.name
-					: null;
-				const objectName = ASTUtils.isIdentifier(object) ? object.name : null;
+				const property = getDeepestIdentifierNode(node);
+				const identifier = getPropertyIdentifierNode(node);
 
 				const isEventHandlerMethod = EVENT_HANDLER_METHODS.some(
-					(method) => method === propertyName
+					(method) => method === property?.name
 				);
 				const hasUserEventInstanceName = userEventInstanceNames.has(
-					objectName ?? ''
+					identifier?.name ?? ''
 				);
-				const testingLibraryFn = resolveToTestingLibraryFn(node, context);
+
+				const variable = identifier
+					? ASTUtils.findVariable(getScope(context, node), identifier)
+					: null;
+				const testingLibraryFn = detectTestingLibraryFn(node, variable);
 
 				if (
 					!testingLibraryFn &&
