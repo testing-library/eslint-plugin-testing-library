@@ -22,8 +22,6 @@ export const RULE_NAME = 'no-node-access';
 export type MessageIds = 'noNodeAccess';
 export type Options = [{ allowContainerFirstChild: boolean }];
 
-const userEventInstanceNames = new Set<string>();
-
 export default createTestingLibraryRule<Options, MessageIds>({
 	name: RULE_NAME,
 	meta: {
@@ -62,6 +60,8 @@ export default createTestingLibraryRule<Options, MessageIds>({
 	],
 
 	create(context, [{ allowContainerFirstChild = false }], helpers) {
+		const userEventInstanceNames = new Set<string>();
+
 		function showErrorForNodeAccess(node: TSESTree.MemberExpression) {
 			// This rule is so aggressive that can cause tons of false positives outside test files when Aggressive Reporting
 			// is enabled. Because of that, this rule will skip this mechanism and report only if some Testing Library package
@@ -167,6 +167,26 @@ export default createTestingLibraryRule<Options, MessageIds>({
 					ASTUtils.isIdentifier(id)
 				) {
 					userEventInstanceNames.add(id.name);
+				}
+			},
+			AssignmentExpression(node: TSESTree.AssignmentExpression) {
+				if (
+					ASTUtils.isIdentifier(node.left) &&
+					isCallExpression(node.right) &&
+					isMemberExpression(node.right.callee) &&
+					ASTUtils.isIdentifier(node.right.callee.object)
+				) {
+					const testingLibraryFn = resolveToTestingLibraryFn(
+						node.right,
+						context
+					);
+					if (
+						node.right.callee.object.name === testingLibraryFn?.local &&
+						ASTUtils.isIdentifier(node.right.callee.property) &&
+						node.right.callee.property.name === 'setup'
+					) {
+						userEventInstanceNames.add(node.left.name);
+					}
 				}
 			},
 			'ExpressionStatement MemberExpression': showErrorForNodeAccess,

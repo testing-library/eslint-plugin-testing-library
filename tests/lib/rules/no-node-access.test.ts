@@ -223,6 +223,43 @@ ruleTester.run(RULE_NAME, rule, {
 			},
 			{
 				code: `
+				import { screen } from '${testingFramework}';
+				import userEvent from '@testing-library/user-event';
+
+				describe('Testing', () => {
+					let user;
+
+					beforeEach(() => {
+						user = userEvent.setup();
+					});
+
+					it('test 1', async () => {
+						await user.click(screen.getByRole('button'));
+					});
+				});
+      `,
+			},
+			{
+				settings: { 'testing-library/utils-module': 'test-utils' },
+				code: `
+				// case: custom module set but not imported using ${testingFramework} (aggressive reporting limited)
+				import { screen, userEvent } from 'test-utils';
+
+				describe('Testing', () => {
+					let user;
+
+					beforeEach(() => {
+						user = userEvent.setup();
+					});
+
+					it('test 1', async () => {
+						await user.click(screen.getByRole('button'));
+					});
+				});
+      `,
+			},
+			{
+				code: `
         import { screen, fireEvent as fe } from '${testingFramework}';
 
         const buttonText = screen.getByText('submit');
