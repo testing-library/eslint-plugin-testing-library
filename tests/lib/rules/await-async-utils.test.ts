@@ -36,6 +36,14 @@ ruleTester.run(RULE_NAME, rule, {
 		...ASYNC_UTILS.map((asyncUtil) => ({
 			code: `
         import { ${asyncUtil} } from '${testingFramework}';
+        test('${asyncUtil} util not called is valid', () => {
+          expect(${asyncUtil}).toBeDefined();
+        });
+      `,
+		})),
+		...ASYNC_UTILS.map((asyncUtil) => ({
+			code: `
+        import { ${asyncUtil} } from '${testingFramework}';
         test('${asyncUtil} util directly chained with then is valid', () => {
           doSomethingElse();
           ${asyncUtil}(() => getByLabelText('email')).then(() => { console.log('done') });
@@ -286,6 +294,23 @@ ruleTester.run(RULE_NAME, rule, {
         test('edge case for no innermost function scope', () => {
           const foo = waitFor
         })
+      `,
+		},
+		{
+			// edge case for coverage: CallExpressions without deepest identifiers
+			code: `
+        import { waitFor } from '${testingFramework}';
+        test('coverage test for CallExpressions without identifiers', () => {
+          const asyncUtil = waitFor
+
+          // These CallExpressions have no deepest identifier:
+          const funcs = [() => console.log('test')]
+          const obj = { [Symbol.iterator]: () => 'symbol' }
+
+          funcs[0]()
+          obj[Symbol.iterator]()
+          (function() { return 'iife' })()
+        });
       `,
 		},
 		...ASYNC_UTILS.map((asyncUtil) => ({
