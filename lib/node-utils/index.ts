@@ -151,16 +151,24 @@ export function hasThenProperty(node: TSESTree.Node): boolean {
 	);
 }
 
-export function hasChainedThen(node: TSESTree.Node): boolean {
+export function hasPromiseHandlerProperty(node: TSESTree.Node): boolean {
+	return (
+		isMemberExpression(node) &&
+		ASTUtils.isIdentifier(node.property) &&
+		['then', 'catch'].includes(node.property.name)
+	);
+}
+
+export function hasChainedPromiseHandler(node: TSESTree.Node): boolean {
 	const parent = node.parent;
 
-	// wait(...).then(...)
+	// wait(...).then(...) or wait(...).catch(...)
 	if (isCallExpression(parent) && parent.parent) {
-		return hasThenProperty(parent.parent);
+		return hasPromiseHandlerProperty(parent.parent);
 	}
 
-	// promise.then(...)
-	return !!parent && hasThenProperty(parent);
+	// promise.then(...) or promise.catch(...)
+	return !!parent && hasPromiseHandlerProperty(parent);
 }
 
 export function isPromiseIdentifier(
@@ -214,7 +222,7 @@ export function isPromisesArrayResolved(node: TSESTree.Node): boolean {
  * - it belongs to the `await` expression
  * - it belongs to the `Promise.all` method
  * - it belongs to the `Promise.allSettled` method
- * - it's chained with the `then` method
+ * - it's chained with the `then` or `catch` method
  * - it's returned from a function
  * - has `resolves` or `rejects` jest methods
  * - has `toResolve` or `toReject` jest-extended matchers
@@ -243,7 +251,7 @@ export function isPromiseHandled(nodeIdentifier: TSESTree.Identifier): boolean {
 		)
 			return true;
 		if (hasClosestExpectHandlesPromise(node.parent)) return true;
-		if (hasChainedThen(node)) return true;
+		if (hasChainedPromiseHandler(node)) return true;
 		if (isPromisesArrayResolved(node)) return true;
 	});
 }
