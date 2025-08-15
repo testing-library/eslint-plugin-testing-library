@@ -636,7 +636,6 @@ ruleTester.run(RULE_NAME, rule, {
 					},
 				],
 			},
-
 			{
 				code: `
         import { screen } from '${testingFramework}';
@@ -801,6 +800,454 @@ ruleTester.run(RULE_NAME, rule, {
 					{
 						line: 4,
 						column: 47,
+						messageId: 'noNodeAccess',
+					},
+				],
+			},
+			{
+				code: `
+        import { screen } from '${testingFramework}';
+
+        const dom = screen.findByLabelText('foo')['${method}']();
+      `,
+				errors: [
+					{
+						line: 4,
+						column: 51,
+						messageId: 'noNodeAccess',
+					},
+				],
+			},
+			{
+				code: `
+        import { screen } from '${testingFramework}';
+
+        const dom = screen.findByLabelText('foo').${method}();
+      `,
+				errors: [
+					{
+						line: 4,
+						column: 51,
+						messageId: 'noNodeAccess',
+					},
+				],
+			},
+			{
+				code: `
+        import { screen } from '${testingFramework}';
+
+        const dom = screen.findByPlaceholderText('foo')['${method}']();
+      `,
+				errors: [
+					{
+						line: 4,
+						column: 57,
+						messageId: 'noNodeAccess',
+					},
+				],
+			},
+			{
+				code: `
+        import { screen } from '${testingFramework}';
+
+        const dom = screen.findByPlaceholderText('foo').${method}();
+      `,
+				errors: [
+					{
+						line: 4,
+						column: 57,
+						messageId: 'noNodeAccess',
+					},
+				],
+			},
+			{
+				code: `
+        import { screen } from '${testingFramework}';
+
+        const dom = screen.findByText('foo')['${method}']();
+      `,
+				errors: [
+					{
+						line: 4,
+						column: 46,
+						messageId: 'noNodeAccess',
+					},
+				],
+			},
+			{
+				code: `
+        import { screen } from '${testingFramework}';
+
+        const dom = screen.findByText('foo').${method}();
+      `,
+				errors: [
+					{
+						line: 4,
+						column: 46,
+						messageId: 'noNodeAccess',
+					},
+				],
+			},
+			{
+				code: `
+        import { screen } from '${testingFramework}';
+
+        const dom = screen.findByAltText('foo')['${method}']();
+      `,
+				errors: [
+					{
+						line: 4,
+						column: 49,
+						messageId: 'noNodeAccess',
+					},
+				],
+			},
+			{
+				code: `
+        import { screen } from '${testingFramework}';
+
+        const dom = screen.findByAltText('foo').${method}();
+      `,
+				errors: [
+					{
+						line: 4,
+						column: 49,
+						messageId: 'noNodeAccess',
+					},
+				],
+			},
+			{
+				code: `
+        import { screen } from '${testingFramework}';
+
+        const dom = screen.findByTitle('foo')['${method}']();
+      `,
+				errors: [
+					{
+						line: 4,
+						column: 47,
+						messageId: 'noNodeAccess',
+					},
+				],
+			},
+			{
+				code: `
+        import { screen } from '${testingFramework}';
+
+        const dom = screen.findByTitle('foo').${method}();
+      `,
+				errors: [
+					{
+						line: 4,
+						column: 47,
+						messageId: 'noNodeAccess',
+					},
+				],
+			},
+			{
+				code: `
+        import { screen } from '${testingFramework}';
+
+        const dom = screen.findByDisplayValue('foo')['${method}']();
+      `,
+				errors: [
+					{
+						line: 4,
+						column: 54,
+						messageId: 'noNodeAccess',
+					},
+				],
+			},
+			{
+				code: `
+        import { screen } from '${testingFramework}';
+
+        const dom = screen.findByDisplayValue('foo').${method}();
+      `,
+				errors: [
+					{
+						line: 4,
+						column: 54,
+						messageId: 'noNodeAccess',
+					},
+				],
+			},
+			{
+				code: `
+        import { screen } from '${testingFramework}';
+
+        const dom = screen.findByRole('foo')['${method}']();
+      `,
+				errors: [
+					{
+						line: 4,
+						column: 46,
+						messageId: 'noNodeAccess',
+					},
+				],
+			},
+			{
+				code: `
+        import { screen } from '${testingFramework}';
+
+        const dom = screen.findByRole('foo').${method}();
+      `,
+				errors: [
+					{
+						line: 4,
+						column: 46,
+						messageId: 'noNodeAccess',
+					},
+				],
+			},
+			{
+				code: `
+        import { screen } from '${testingFramework}';
+
+        const dom = screen.findByTestId('foo')['${method}']();
+      `,
+				errors: [
+					{
+						line: 4,
+						column: 48,
+						messageId: 'noNodeAccess',
+					},
+				],
+			},
+			{
+				code: `
+        import { screen } from '${testingFramework}';
+
+        const dom = screen.findByTestId('foo').${method}();
+      `,
+				errors: [
+					{
+						line: 4,
+						column: 48,
+						messageId: 'noNodeAccess',
+					},
+				],
+			},
+			{
+				code: `
+        import { screen } from '${testingFramework}';
+
+        const dom = screen.queryByLabelText('foo')['${method}']();
+      `,
+				errors: [
+					{
+						line: 4,
+						column: 52,
+						messageId: 'noNodeAccess',
+					},
+				],
+			},
+			{
+				code: `
+        import { screen } from '${testingFramework}';
+
+        const dom = screen.queryByLabelText('foo').${method}();
+      `,
+				errors: [
+					{
+						line: 4,
+						column: 52,
+						messageId: 'noNodeAccess',
+					},
+				],
+			},
+			{
+				code: `
+        import { screen } from '${testingFramework}';
+
+        const dom = screen.queryByPlaceholderText('foo')['${method}']();
+      `,
+				errors: [
+					{
+						line: 4,
+						column: 58,
+						messageId: 'noNodeAccess',
+					},
+				],
+			},
+			{
+				code: `
+        import { screen } from '${testingFramework}';
+
+        const dom = screen.queryByPlaceholderText('foo').${method}();
+      `,
+				errors: [
+					{
+						line: 4,
+						column: 58,
+						messageId: 'noNodeAccess',
+					},
+				],
+			},
+			{
+				code: `
+        import { screen } from '${testingFramework}';
+
+        const dom = screen.queryByText('foo')['${method}']();
+      `,
+				errors: [
+					{
+						line: 4,
+						column: 47,
+						messageId: 'noNodeAccess',
+					},
+				],
+			},
+			{
+				code: `
+        import { screen } from '${testingFramework}';
+
+        const dom = screen.queryByText('foo').${method}();
+      `,
+				errors: [
+					{
+						line: 4,
+						column: 47,
+						messageId: 'noNodeAccess',
+					},
+				],
+			},
+			{
+				code: `
+        import { screen } from '${testingFramework}';
+
+        const dom = screen.queryByAltText('foo')['${method}']();
+      `,
+				errors: [
+					{
+						line: 4,
+						column: 50,
+						messageId: 'noNodeAccess',
+					},
+				],
+			},
+			{
+				code: `
+        import { screen } from '${testingFramework}';
+
+        const dom = screen.queryByAltText('foo').${method}();
+      `,
+				errors: [
+					{
+						line: 4,
+						column: 50,
+						messageId: 'noNodeAccess',
+					},
+				],
+			},
+			{
+				code: `
+        import { screen } from '${testingFramework}';
+
+        const dom = screen.queryByTitle('foo')['${method}']();
+      `,
+				errors: [
+					{
+						line: 4,
+						column: 48,
+						messageId: 'noNodeAccess',
+					},
+				],
+			},
+			{
+				code: `
+        import { screen } from '${testingFramework}';
+
+        const dom = screen.queryByTitle('foo').${method}();
+      `,
+				errors: [
+					{
+						line: 4,
+						column: 48,
+						messageId: 'noNodeAccess',
+					},
+				],
+			},
+			{
+				code: `
+        import { screen } from '${testingFramework}';
+
+        const dom = screen.queryByDisplayValue('foo')['${method}']();
+      `,
+				errors: [
+					{
+						line: 4,
+						column: 55,
+						messageId: 'noNodeAccess',
+					},
+				],
+			},
+			{
+				code: `
+        import { screen } from '${testingFramework}';
+
+        const dom = screen.queryByDisplayValue('foo').${method}();
+      `,
+				errors: [
+					{
+						line: 4,
+						column: 55,
+						messageId: 'noNodeAccess',
+					},
+				],
+			},
+			{
+				code: `
+        import { screen } from '${testingFramework}';
+
+        const dom = screen.queryByRole('foo')['${method}']();
+      `,
+				errors: [
+					{
+						line: 4,
+						column: 47,
+						messageId: 'noNodeAccess',
+					},
+				],
+			},
+			{
+				code: `
+        import { screen } from '${testingFramework}';
+
+        const dom = screen.queryByRole('foo').${method}();
+      `,
+				errors: [
+					{
+						line: 4,
+						column: 47,
+						messageId: 'noNodeAccess',
+					},
+				],
+			},
+			{
+				code: `
+        import { screen } from '${testingFramework}';
+
+        const dom = screen.queryByTestId('foo')['${method}']();
+      `,
+				errors: [
+					{
+						line: 4,
+						column: 49,
+						messageId: 'noNodeAccess',
+					},
+				],
+			},
+			{
+				code: `
+        import { screen } from '${testingFramework}';
+
+        const dom = screen.queryByTestId('foo').${method}();
+      `,
+				errors: [
+					{
+						line: 4,
+						column: 49,
 						messageId: 'noNodeAccess',
 					},
 				],
