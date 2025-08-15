@@ -341,6 +341,34 @@ ruleTester.run(RULE_NAME, rule, {
 				});
       `,
 			},
+			{
+				code: `
+				import { screen } from '${testingFramework}';
+
+				class Hoge {
+					submit() {}
+					click() {}
+				}
+
+				test('...', () => {
+						const pm = new Hoge();
+						pm.click();
+						pm.submit();
+				});`,
+			},
+			{
+				code: `
+				import { user } from 'hoge'
+				import { screen } from '${testingFramework}';
+
+				test('...', () => {
+				 	const button = screen.getByRole('button');
+					user.click(button)
+					user.select(button)
+					user.submit(button)
+				})
+				`,
+			},
 		]
 	),
 	invalid: SUPPORTED_TESTING_FRAMEWORKS.flatMap((testingFramework) => [
