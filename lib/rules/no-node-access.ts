@@ -1,20 +1,15 @@
-import {
-	DefinitionType,
-	type ScopeVariable,
-} from '@typescript-eslint/scope-manager';
 import { TSESTree, ASTUtils } from '@typescript-eslint/utils';
 
 import { createTestingLibraryRule } from '../create-testing-library-rule';
 import {
 	getDeepestIdentifierNode,
-	getPropertyIdentifierNode,
-	isCallExpression,
+	isLiteral,
 	isMemberExpression,
 } from '../node-utils';
 import {
+	ALL_QUERIES_COMBINATIONS,
 	ALL_RETURNING_NODES,
 	EVENT_HANDLER_METHODS,
-	getScope,
 	resolveToTestingLibraryFn,
 } from '../utils';
 
@@ -60,8 +55,6 @@ export default createTestingLibraryRule<Options, MessageIds>({
 	],
 
 	create(context, [{ allowContainerFirstChild = false }], helpers) {
-		const userEventInstanceNames = new Set<string>();
-
 		function showErrorForNodeAccess(node: TSESTree.MemberExpression) {
 			// This rule is so aggressive that can cause tons of false positives outside test files when Aggressive Reporting
 			// is enabled. Because of that, this rule will skip this mechanism and report only if some Testing Library package
@@ -99,94 +92,44 @@ export default createTestingLibraryRule<Options, MessageIds>({
 			}
 		}
 
-		function detectTestingLibraryFn(
-			node: TSESTree.CallExpression,
-			variable: ScopeVariable | null
+		function getProperty(
+			node: TSESTree.PrivateIdentifier | TSESTree.Expression
 		) {
-			if (variable && variable.defs.length > 0) {
-				const def = variable.defs[0];
-				if (
-					def.type === DefinitionType.Variable &&
-					isCallExpression(def.node.init)
-				) {
-					return resolveToTestingLibraryFn(def.node.init, context);
-				}
+			if (isLiteral(node)) {
+				return node;
 			}
 
-			return resolveToTestingLibraryFn(node, context);
+			return getDeepestIdentifierNode(node);
 		}
 
 		return {
 			CallExpression(node: TSESTree.CallExpression) {
-				const property = getDeepestIdentifierNode(node);
-				const identifier = getPropertyIdentifierNode(node);
+				if (!isMemberExpression(node.callee)) return;
 
-				const isEventHandlerMethod = EVENT_HANDLER_METHODS.some(
-					(method) => method === property?.name
-				);
-				const hasUserEventInstanceName = userEventInstanceNames.has(
-					identifier?.name ?? ''
-				);
-
-				const variable = identifier
-					? ASTUtils.findVariable(getScope(context, node), identifier)
-					: null;
-				const testingLibraryFn = detectTestingLibraryFn(node, variable);
+				const { callee } = node;
+				if (
+					!EVENT_HANDLER_METHODS.some(
+						(method) => method === ASTUtils.getPropertyName(callee)
+					)
+				) {
+					return;
+				}
+				const identifier = getDeepestIdentifierNode(callee.object);
 
 				if (
-					!testingLibraryFn &&
-					isEventHandlerMethod &&
-					!hasUserEventInstanceName
+					!identifier ||
+					!ALL_QUERIES_COMBINATIONS.includes(identifier.name)
 				) {
+					return;
+				}
+
+				if (resolveToTestingLibraryFn(node, context)) {
+					const property = getProperty(callee.property);
 					context.report({
 						node,
 						loc: property?.loc.start,
 						messageId: 'noNodeAccess',
 					});
-				}
-			},
-			VariableDeclarator(node: TSESTree.VariableDeclarator) {
-				const { init, id } = node;
-
-				if (!isCallExpression(init)) {
-					return;
-				}
-
-				if (
-					!isMemberExpression(init.callee) ||
-					!ASTUtils.isIdentifier(init.callee.object)
-				) {
-					return;
-				}
-
-				const testingLibraryFn = resolveToTestingLibraryFn(init, context);
-				if (
-					init.callee.object.name === testingLibraryFn?.local &&
-					ASTUtils.isIdentifier(init.callee.property) &&
-					init.callee.property.name === 'setup' &&
-					ASTUtils.isIdentifier(id)
-				) {
-					userEventInstanceNames.add(id.name);
-				}
-			},
-			AssignmentExpression(node: TSESTree.AssignmentExpression) {
-				if (
-					ASTUtils.isIdentifier(node.left) &&
-					isCallExpression(node.right) &&
-					isMemberExpression(node.right.callee) &&
-					ASTUtils.isIdentifier(node.right.callee.object)
-				) {
-					const testingLibraryFn = resolveToTestingLibraryFn(
-						node.right,
-						context
-					);
-					if (
-						node.right.callee.object.name === testingLibraryFn?.local &&
-						ASTUtils.isIdentifier(node.right.callee.property) &&
-						node.right.callee.property.name === 'setup'
-					) {
-						userEventInstanceNames.add(node.left.name);
-					}
 				}
 			},
 			'ExpressionStatement MemberExpression': showErrorForNodeAccess,
