@@ -214,7 +214,6 @@ ruleTester.run(RULE_NAME, rule, {
         const buttonText = screen.getByText('submit');
 				await click(userEvent, buttonText);
       `,
-					only: true,
 				},
 				{
 					code: `
