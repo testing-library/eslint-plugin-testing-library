@@ -21,52 +21,53 @@ const SUPPORTED_TESTING_FRAMEWORKS = [
 ];
 
 ruleTester.run(RULE_NAME, rule, {
-	valid: SUPPORTED_TESTING_FRAMEWORKS.flatMap<RuleValidTestCase>(
-		(testingFramework) => [
-			{
-				code: `
+	valid: [
+		...SUPPORTED_TESTING_FRAMEWORKS.flatMap<RuleValidTestCase>(
+			(testingFramework) => [
+				{
+					code: `
         import { screen } from '${testingFramework}';
 
         const buttonText = screen.getByText('submit');
       `,
-			},
-			{
-				code: `
+				},
+				{
+					code: `
         import { screen } from '${testingFramework}';
 
         const { getByText } = screen
         const firstChild = getByText('submit');
         expect(firstChild).toBeInTheDocument()
       `,
-			},
-			{
-				code: `
+				},
+				{
+					code: `
         import { screen } from '${testingFramework}';
 
         const firstChild = screen.getByText('submit');
         expect(firstChild).toBeInTheDocument()
       `,
-			},
-			{
-				code: `
+				},
+				{
+					code: `
         import { screen } from '${testingFramework}';
 
         const { getByText } = screen;
         const button = getByRole('button');
         expect(button).toHaveTextContent('submit');
       `,
-			},
-			{
-				code: `
+				},
+				{
+					code: `
         import { render, within } from '${testingFramework}';
 
         const { getByLabelText } = render(<MyComponent />);
         const signInModal = getByLabelText('Sign In');
         within(signInModal).getByPlaceholderText('Username');
       `,
-			},
-			{
-				code: `
+				},
+				{
+					code: `
       // case: code not related to ${testingFramework} at all
       ReactDOM.render(
         <CommProvider useDsa={false}>
@@ -81,17 +82,17 @@ ruleTester.run(RULE_NAME, rule, {
         document.getElementById('root')
       );
       `,
-			},
-			{
-				code: `// issue #386 examples, props.children should not be reported
+				},
+				{
+					code: `// issue #386 examples, props.children should not be reported
 				import { screen } from '${testingFramework}';
 				jest.mock('@/some/path', () => ({
 					someProperty: jest.fn((props) => props.children),
 				  }));
 				`,
-			},
-			{
-				code: `// issue #386 examples
+				},
+				{
+					code: `// issue #386 examples
 				import { screen } from '${testingFramework}';
 				function ComponentA(props) {
 					if (props.children) {
@@ -101,9 +102,9 @@ ruleTester.run(RULE_NAME, rule, {
 					return <div>{props.children}</div>
 				  }
 				`,
-			},
-			{
-				code: `/* related to issue #386 fix
+				},
+				{
+					code: `/* related to issue #386 fix
 				* now all node accessing properties (listed in lib/utils/index.ts, in PROPERTIES_RETURNING_NODES)
 				* will not be reported by this rule because anything props.something won't be reported.
 				*/
@@ -116,37 +117,37 @@ ruleTester.run(RULE_NAME, rule, {
 					return <div>{props.nextSibling}</div>
 				  }
 				`,
-			},
-			{
-				settings: {
-					'testing-library/utils-module': 'test-utils',
 				},
-				code: `
+				{
+					settings: {
+						'testing-library/utils-module': 'test-utils',
+					},
+					code: `
       // case: custom module set but not imported using ${testingFramework} (aggressive reporting limited)
       const closestButton = document.getElementById('submit-btn').closest('button');
       expect(closestButton).toBeInTheDocument();
       `,
-			},
-			{
-				code: `
+				},
+				{
+					code: `
       // case: without importing ${testingFramework} (aggressive reporting skipped)
       const closestButton = document.getElementById('submit-btn')
       expect(closestButton).toBeInTheDocument();
       `,
-			},
-			{
-				options: [{ allowContainerFirstChild: true }],
-				code: `
+				},
+				{
+					options: [{ allowContainerFirstChild: true }],
+					code: `
         import { render } from '${testingFramework}';
 
         const { container } = render(<MyComponent />)
 
         expect(container.firstChild).toMatchSnapshot()
       `,
-			},
-			{
-				// Example from discussions in issue #386
-				code: `
+				},
+				{
+					// Example from discussions in issue #386
+					code: `
 				import { render } from '${testingFramework}';
 
 				function Wrapper({ children }) {
@@ -162,9 +163,9 @@ ruleTester.run(RULE_NAME, rule, {
 				render(<Wrapper><SomeComponent /></Wrapper>);
 				expect(screen.getByText('SomeComponent')).toBeInTheDocument();
 				`,
-			},
-			{
-				code: `
+				},
+				{
+					code: `
 				import userEvent from '@testing-library/user-event';
         import { screen } from '${testingFramework}';
 
@@ -172,9 +173,9 @@ ruleTester.run(RULE_NAME, rule, {
 				const user = userEvent.setup();
 				user.click(buttonText);
       `,
-			},
-			{
-				code: `
+				},
+				{
+					code: `
 				import userEvent from '@testing-library/user-event';
         import { screen } from '${testingFramework}';
 
@@ -182,9 +183,9 @@ ruleTester.run(RULE_NAME, rule, {
 				const userAlias = userEvent.setup();
 				userAlias.click(buttonText);
       `,
-			},
-			{
-				code: `
+				},
+				{
+					code: `
 				import userEvent from '@testing-library/user-event';
 				import { screen } from '${testingFramework}';
 				test('...', () => {
@@ -192,18 +193,30 @@ ruleTester.run(RULE_NAME, rule, {
 					(() => { click: userEvent.click(buttonText); })();
 				});
       `,
-			},
-			{
-				code: `
+				},
+				{
+					code: `
 				import userEvent from '@testing-library/user-event';
         import { screen } from '${testingFramework}';
 
         const buttonText = screen.getByText('submit');
 				userEvent.setup().click(buttonText);
       `,
-			},
-			{
-				code: `
+				},
+				{
+					code: `
+				import userEvent, { type UserEvent } from '@testing-library/user-event';
+        import { screen } from '${testingFramework}';
+
+				const click = async (user: UserEvent, element: HTMLElement) => {
+					await user.click(element);
+				};
+        const buttonText = screen.getByText('submit');
+				await click(userEvent, buttonText);
+      `,
+				},
+				{
+					code: `
 				import userEvt from '@testing-library/user-event';
         import { screen } from '${testingFramework}';
 
@@ -211,18 +224,18 @@ ruleTester.run(RULE_NAME, rule, {
 				const userAlias = userEvt.setup();
 				userAlias.click(buttonText);
       `,
-			},
-			{
-				code: `
+				},
+				{
+					code: `
 				import userEvt from '@testing-library/user-event';
         import { screen } from '${testingFramework}';
 
         const buttonText = screen.getByText('submit');
 				userEvt.click(buttonText);
       `,
-			},
-			{
-				code: `
+				},
+				{
+					code: `
 				import { screen } from '${testingFramework}';
 				import userEvent from '@testing-library/user-event';
 
@@ -238,10 +251,10 @@ ruleTester.run(RULE_NAME, rule, {
 					});
 				});
       `,
-			},
-			{
-				settings: { 'testing-library/utils-module': 'test-utils' },
-				code: `
+				},
+				{
+					settings: { 'testing-library/utils-module': 'test-utils' },
+					code: `
 				// case: custom module set but not imported using ${testingFramework} (aggressive reporting limited)
 				import { screen, userEvent } from 'test-utils';
 
@@ -257,37 +270,37 @@ ruleTester.run(RULE_NAME, rule, {
 					});
 				});
       `,
-			},
-			{
-				code: `
+				},
+				{
+					code: `
         import { screen, fireEvent as fe } from '${testingFramework}';
 
         const buttonText = screen.getByText('submit');
 				fe.click(buttonText);
       `,
-			},
-			{
-				settings: { 'testing-library/utils-module': 'test-utils' },
-				code: `
+				},
+				{
+					settings: { 'testing-library/utils-module': 'test-utils' },
+					code: `
 				// case: custom module set but not imported using ${testingFramework} (aggressive reporting limited)
         import { screen, fireEvent as fe } from 'test-utils';
 
         const buttonText = screen.getByText('submit');
 				fe.click(buttonText);
       `,
-			},
-			{
-				settings: { 'testing-library/utils-module': 'test-utils' },
-				code: `
+				},
+				{
+					settings: { 'testing-library/utils-module': 'test-utils' },
+					code: `
 				// case: custom module set but not imported using ${testingFramework} (aggressive reporting limited)
         import { screen, fireEvent } from '../test-utils';
 
         const buttonText = screen.getByText('submit');
 				fireEvent.click(buttonText);
       `,
-			},
-			{
-				code: `
+				},
+				{
+					code: `
 				import { screen } from '${testingFramework}';
 
         const ui = {
@@ -298,10 +311,10 @@ ruleTester.run(RULE_NAME, rule, {
 					expect(select).toHaveClass(selectClasses.select);
 				});
       `,
-			},
-			{
-				settings: { 'testing-library/utils-module': 'test-utils' },
-				code: `
+				},
+				{
+					settings: { 'testing-library/utils-module': 'test-utils' },
+					code: `
 				// case: custom module set but not imported using ${testingFramework} (aggressive reporting limited)
         import { screen, render } from 'test-utils';
 				import MyComponent from './MyComponent'
@@ -311,10 +324,10 @@ ruleTester.run(RULE_NAME, rule, {
 					await user.click(screen.getByRole("button"))
 				});
       `,
-			},
-			{
-				settings: { 'testing-library/utils-module': 'test-utils' },
-				code: `
+				},
+				{
+					settings: { 'testing-library/utils-module': 'test-utils' },
+					code: `
 				// case: custom module set but not imported using ${testingFramework} (aggressive reporting limited)
         import { screen, render } from 'test-utils';
 				import MyComponent from './MyComponent'
@@ -324,13 +337,13 @@ ruleTester.run(RULE_NAME, rule, {
 					await result.user.click(screen.getByRole("button"))
 				});
       `,
-			},
-			{
-				settings: {
-					'testing-library/utils-module': 'TestUtils',
-					'testing-library/custom-renders': ['renderComponent'],
 				},
-				code: `
+				{
+					settings: {
+						'testing-library/utils-module': 'TestUtils',
+						'testing-library/custom-renders': ['renderComponent'],
+					},
+					code: `
 				// case: custom module set but not imported using ${testingFramework} (aggressive reporting limited)
         import { screen, renderComponent } from './TestUtils';
 				import MyComponent from './MyComponent'
@@ -340,9 +353,9 @@ ruleTester.run(RULE_NAME, rule, {
 					await result.user.click(screen.getByRole("button"))
 				});
       `,
-			},
-			{
-				code: `
+				},
+				{
+					code: `
 				import { screen } from '${testingFramework}';
 
 				class Hoge {
@@ -355,9 +368,9 @@ ruleTester.run(RULE_NAME, rule, {
 						pm.click();
 						pm.submit();
 				});`,
-			},
-			{
-				code: `
+				},
+				{
+					code: `
 				import { user } from 'hoge'
 				import { screen } from '${testingFramework}';
 
@@ -368,9 +381,17 @@ ruleTester.run(RULE_NAME, rule, {
 					user.submit(button)
 				})
 				`,
-			},
-		]
-	),
+				},
+			]
+		),
+		{
+			code: `
+		import { select } from "@wordpress/data"
+
+		const selectMyPluginReduxStore = () => select("my-plugin/foo")
+		`,
+		},
+	],
 	invalid: SUPPORTED_TESTING_FRAMEWORKS.flatMap((testingFramework) => [
 		{
 			settings: {
