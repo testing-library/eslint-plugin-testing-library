@@ -160,6 +160,15 @@ ruleTester.run(RULE_NAME, rule, {
       `
 		),
 
+		// async queries are valid with catch
+		...createTestCase(
+			(query) => `
+        ${query}('foo').catch((error) => {
+          expect(error.message).toMatch(/my error message/)
+        })
+      `
+		),
+
 		// async queries are valid when wrapped within Promise.all + await expression
 		...createTestCase(
 			(query) => `
