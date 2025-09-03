@@ -222,7 +222,7 @@ export function isPromisesArrayResolved(node: TSESTree.Node): boolean {
  * - it belongs to the `await` expression
  * - it belongs to the `Promise.all` method
  * - it belongs to the `Promise.allSettled` method
- * - it's chained with the `then` `catch` `finally` method
+ * - it's chained with the `then`, `catch`, `finally` method
  * - it's returned from a function
  * - has `resolves` or `rejects` jest methods
  * - has `toResolve` or `toReject` jest-extended matchers
