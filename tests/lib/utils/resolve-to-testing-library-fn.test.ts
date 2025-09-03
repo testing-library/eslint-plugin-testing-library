@@ -63,6 +63,16 @@ ruleTester.run('esm', rule, {
 			function userClick() {
 				userEvent.click(document.body);
 			}
+    	userClick()
+		`,
+		},
+		{
+			code: `
+			import { userEvent } from './test-utils';
+
+			function userClick() {
+				userEvent.click(document.body);
+			}
     	[].forEach(userClick);
 		`,
 		},
