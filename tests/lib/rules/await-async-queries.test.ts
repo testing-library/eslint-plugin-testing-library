@@ -492,6 +492,25 @@ ruleTester.run(RULE_NAME, rule, {
       import { render } from '@testing-library/react'
 
       test("An example test", async () => {
+        const view = render(<Component />)
+        const foo = view.${query}('foo')
+      });
+      `,
+			errors: [{ messageId: 'awaitAsyncQuery', line: 6, column: 26 }],
+			output: `
+      import { render } from '@testing-library/react'
+
+      test("An example test", async () => {
+        const view = render(<Component />)
+        const foo = await view.${query}('foo')
+      });
+      `,
+		})),
+		...ALL_ASYNC_COMBINATIONS_TO_TEST.map<RuleInvalidTestCase>((query) => ({
+			code: `
+      import { render } from '@testing-library/react'
+
+      test("An example test", async () => {
         const foo = ${query}('foo')
         expect(foo).toBeInTheDocument()
         expect(foo).toHaveAttribute('src', 'bar');
