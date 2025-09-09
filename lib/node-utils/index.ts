@@ -301,7 +301,6 @@ export function getVariableReferences(
 	node: TSESTree.Node
 ): TSESLint.Scope.Reference[] {
 	if (ASTUtils.isVariableDeclarator(node)) {
-		 
 		return getDeclaredVariables(context, node)[0]?.references?.slice(1) ?? [];
 	}
 

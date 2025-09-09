@@ -490,7 +490,6 @@ export function detectTestingLibraryUtils<
 		/**
 		 * Determines whether a given node is fireEvent method or not
 		 */
-		 
 		const isFireEventMethod: IsFireEventMethodFn = (node) => {
 			const fireEventUtil =
 				findImportedTestingLibraryUtilSpecifier(FIRE_EVENT_NAME);
@@ -527,7 +526,6 @@ export function detectTestingLibraryUtils<
 
 			// we know it's defined at this point, but TS seems to think it is not
 			// so here I'm enforcing it once in order to avoid using "!" operator every time
-			 
 			const definedParentMemberExpression = parentMemberExpression!;
 
 			// check fireEvent.click() usage
