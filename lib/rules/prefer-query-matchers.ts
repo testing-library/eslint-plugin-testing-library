@@ -1,7 +1,7 @@
-import { TSESTree } from '@typescript-eslint/utils';
-
 import { createTestingLibraryRule } from '../create-testing-library-rule';
 import { findClosestCallNode, isMemberExpression } from '../node-utils';
+
+import type { TSESTree } from '@typescript-eslint/utils';
 
 export const RULE_NAME = 'prefer-query-matchers';
 export type MessageIds = 'wrongQueryForMatcher';

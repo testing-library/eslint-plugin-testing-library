@@ -1,10 +1,10 @@
-import { InvalidTestCase } from '@typescript-eslint/rule-tester';
-
 import rule, {
 	RULE_NAME,
 	type MessageIds,
 } from '../../../lib/rules/no-wait-for-side-effects';
 import { createRuleTester } from '../test-utils';
+
+import type { InvalidTestCase } from '@typescript-eslint/rule-tester';
 
 const ruleTester = createRuleTester();
 

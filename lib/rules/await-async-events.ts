@@ -1,4 +1,4 @@
-import { ASTUtils, TSESLint, TSESTree } from '@typescript-eslint/utils';
+import { ASTUtils } from '@typescript-eslint/utils';
 
 import { createTestingLibraryRule } from '../create-testing-library-rule';
 import {
@@ -11,6 +11,8 @@ import {
 	isPromiseHandled,
 } from '../node-utils';
 import { EVENTS_SIMULATORS } from '../utils';
+
+import type { TSESLint, TSESTree } from '@typescript-eslint/utils';
 
 export const RULE_NAME = 'await-async-events';
 export type MessageIds = 'awaitAsyncEvent' | 'awaitAsyncEventWrapper';

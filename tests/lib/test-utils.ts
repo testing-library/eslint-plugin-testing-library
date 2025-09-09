@@ -1,7 +1,8 @@
-import { RuleTester, RunTests } from '@typescript-eslint/rule-tester';
+import { RuleTester } from '@typescript-eslint/rule-tester';
 import { parser } from 'typescript-eslint';
 
-import { TestingLibraryPluginRuleModule } from '../../lib/utils';
+import type { TestingLibraryPluginRuleModule } from '../../lib/utils';
+import type { RunTests } from '@typescript-eslint/rule-tester';
 
 const DEFAULT_TEST_CASE_CONFIG = {
 	filename: 'MyComponent.test.js',

@@ -1,12 +1,6 @@
 import { DefinitionType } from '@typescript-eslint/scope-manager';
-import {
-	AST_NODE_TYPES,
-	ASTUtils,
-	TSESLint,
-	TSESTree,
-} from '@typescript-eslint/utils';
+import { AST_NODE_TYPES, ASTUtils } from '@typescript-eslint/utils';
 
-import { TestingLibraryContext } from '../create-testing-library-rule/detect-testing-library-utils';
 import {
 	isImportDefaultSpecifier,
 	isImportExpression,
@@ -15,8 +9,8 @@ import {
 	isTSImportEqualsDeclaration,
 	isCallExpression,
 } from '../node-utils';
+import { isTestingLibraryModule } from './is-testing-library-module';
 import {
-	AccessorNode,
 	getAccessorValue,
 	getStringValue,
 	isIdentifier,
@@ -24,7 +18,9 @@ import {
 	isSupportedAccessor,
 } from '../node-utils/accessors';
 
-import { isTestingLibraryModule } from './is-testing-library-module';
+import type { TestingLibraryContext } from '../create-testing-library-rule/detect-testing-library-utils';
+import type { AccessorNode } from '../node-utils/accessors';
+import type { TSESLint, TSESTree } from '@typescript-eslint/utils';
 
 interface ImportDetails {
 	source: string;

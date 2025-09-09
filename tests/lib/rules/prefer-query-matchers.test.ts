@@ -1,15 +1,15 @@
-import {
-	type InvalidTestCase,
-	type ValidTestCase,
-} from '@typescript-eslint/rule-tester';
+import rule, { RULE_NAME } from '../../../lib/rules/prefer-query-matchers';
+import { ALL_QUERIES_METHODS } from '../../../lib/utils';
+import { createRuleTester } from '../test-utils';
 
-import rule, {
-	RULE_NAME,
+import type {
 	MessageIds,
 	Options,
 } from '../../../lib/rules/prefer-query-matchers';
-import { ALL_QUERIES_METHODS } from '../../../lib/utils';
-import { createRuleTester } from '../test-utils';
+import type {
+	InvalidTestCase,
+	ValidTestCase,
+} from '@typescript-eslint/rule-tester';
 
 const ruleTester = createRuleTester();
 

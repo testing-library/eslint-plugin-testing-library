@@ -1,4 +1,4 @@
-import { ASTUtils, TSESLint, TSESTree } from '@typescript-eslint/utils';
+import { ASTUtils } from '@typescript-eslint/utils';
 
 import {
 	findClosestVariableDeclaratorNode,
@@ -9,7 +9,6 @@ import {
 	getPropertyIdentifierNode,
 	getReferenceNode,
 	hasImportMatch,
-	ImportModuleNode,
 	isCallExpression,
 	isImportDeclaration,
 	isImportDefaultSpecifier,
@@ -30,6 +29,9 @@ import {
 	isOfficialTestingLibraryModule,
 	isTestingLibraryModule,
 } from '../utils/is-testing-library-module';
+
+import type { ImportModuleNode } from '../node-utils';
+import type { TSESLint, TSESTree } from '@typescript-eslint/utils';
 
 const SETTING_OPTION_OFF = 'off';
 

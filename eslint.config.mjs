@@ -37,6 +37,7 @@ const config = defineConfig(
 			'max-lines-per-function': 'off',
 
 			// TypeScript
+			'@typescript-eslint/consistent-type-imports': 'error',
 			'@typescript-eslint/explicit-function-return-type': 'off',
 			'@typescript-eslint/no-unused-vars': [
 				'warn',
@@ -50,7 +51,14 @@ const config = defineConfig(
 			'import-x/order': [
 				'warn',
 				{
-					groups: ['builtin', 'external', 'parent', 'sibling', 'index'],
+					groups: [
+						'builtin',
+						'external',
+						'internal',
+						['parent', 'sibling', 'index'],
+						'object',
+						'type',
+					],
 					'newlines-between': 'always',
 
 					alphabetize: {

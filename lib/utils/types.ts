@@ -1,4 +1,4 @@
-import { TSESLint } from '@typescript-eslint/utils';
+import type { TSESLint } from '@typescript-eslint/utils';
 
 type Recommended = 'error' | 'warn' | false;
 type RecommendedConfig<TOptions extends readonly unknown[]> =

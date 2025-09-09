@@ -1,13 +1,12 @@
-import { type TSESLint } from '@typescript-eslint/utils';
-
+import { writeConfig } from './utils';
 import rules from '../../lib/rules';
-import {
-	SUPPORTED_TESTING_FRAMEWORKS,
+import { SUPPORTED_TESTING_FRAMEWORKS } from '../../lib/utils';
+
+import type {
 	SupportedTestingFramework,
 	TestingLibraryPluginRuleModule,
 } from '../../lib/utils';
-
-import { writeConfig } from './utils';
+import type { TSESLint } from '@typescript-eslint/utils';
 
 const RULE_NAME_PREFIX = 'testing-library/';
 
