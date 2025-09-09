@@ -1,5 +1,5 @@
-import tsESLintParser from '@typescript-eslint/parser';
 import { RuleTester, RunTests } from '@typescript-eslint/rule-tester';
+import { parser } from 'typescript-eslint';
 
 import { TestingLibraryPluginRuleModule } from '../../lib/utils';
 
@@ -35,7 +35,7 @@ class TestingLibraryRuleTester extends RuleTester {
 export const createRuleTester = () =>
 	new TestingLibraryRuleTester({
 		languageOptions: {
-			parser: tsESLintParser,
+			parser,
 			parserOptions: {
 				ecmaFeatures: {
 					jsx: true,

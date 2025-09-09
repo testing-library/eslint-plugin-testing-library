@@ -66,8 +66,6 @@
 		"@swc/jest": "^0.2.37",
 		"@types/jest": "^29.5.14",
 		"@types/node": "^22.9.3",
-		"@typescript-eslint/eslint-plugin": "^8.43.0",
-		"@typescript-eslint/parser": "^8.43.0",
 		"@typescript-eslint/rule-tester": "^8.43.0",
 		"del-cli": "^6.0.0",
 		"eslint": "^9.35.0",

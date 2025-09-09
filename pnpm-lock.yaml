@@ -42,12 +42,6 @@ importers:
       '@types/node':
         specifier: ^22.9.3
         version: 22.15.29
-      '@typescript-eslint/eslint-plugin':
-        specifier: ^8.43.0
-        version: 8.43.0(@typescript-eslint/parser@8.43.0(eslint@9.35.0(jiti@2.5.1))(typescript@5.7.2))(eslint@9.35.0(jiti@2.5.1))(typescript@5.7.2)
-      '@typescript-eslint/parser':
-        specifier: ^8.43.0
-        version: 8.43.0(eslint@9.35.0(jiti@2.5.1))(typescript@5.7.2)
       '@typescript-eslint/rule-tester':
         specifier: ^8.43.0
         version: 8.43.0(eslint@9.35.0(jiti@2.5.1))(typescript@5.7.2)
