@@ -53,8 +53,8 @@
 		"type-check": "tsc --noEmit"
 	},
 	"dependencies": {
-		"@typescript-eslint/scope-manager": "^8.15.0",
-		"@typescript-eslint/utils": "^8.15.0"
+		"@typescript-eslint/scope-manager": "^8.43.0",
+		"@typescript-eslint/utils": "^8.43.0"
 	},
 	"devDependencies": {
 		"@commitlint/cli": "^19.6.0",
@@ -63,16 +63,16 @@
 		"@swc/jest": "^0.2.37",
 		"@types/jest": "^29.5.14",
 		"@types/node": "^22.9.3",
-		"@typescript-eslint/eslint-plugin": "^8.15.0",
-		"@typescript-eslint/parser": "^8.15.0",
-		"@typescript-eslint/rule-tester": "^8.15.0",
+		"@typescript-eslint/eslint-plugin": "^8.43.0",
+		"@typescript-eslint/parser": "^8.43.0",
+		"@typescript-eslint/rule-tester": "^8.43.0",
 		"del-cli": "^6.0.0",
-		"eslint": "^8.57.1",
-		"eslint-config-prettier": "^9.1.0",
-		"eslint-doc-generator": "^1.7.1",
-		"eslint-import-resolver-typescript": "^3.6.3",
-		"eslint-plugin-import": "^2.31.0",
-		"eslint-plugin-jest": "^28.9.0",
+		"eslint": "^9.35.0",
+		"eslint-config-prettier": "^10.1.8",
+		"eslint-doc-generator": "^2.2.2",
+		"eslint-import-resolver-typescript": "^4.4.4",
+		"eslint-plugin-import": "^2.32.0",
+		"eslint-plugin-jest": "^29.0.1",
 		"eslint-plugin-jest-formatting": "^3.1.0",
 		"eslint-plugin-node": "^11.1.0",
 		"eslint-plugin-promise": "^7.1.0",
