@@ -301,7 +301,7 @@ export function getVariableReferences(
 	node: TSESTree.Node
 ): TSESLint.Scope.Reference[] {
 	if (ASTUtils.isVariableDeclarator(node)) {
-		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+		 
 		return getDeclaredVariables(context, node)[0]?.references?.slice(1) ?? [];
 	}
 

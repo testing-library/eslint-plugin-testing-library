@@ -1,5 +1,3 @@
-/* eslint-disable  @typescript-eslint/no-require-imports  */
-/* eslint-disable import/no-extraneous-dependencies */
 const { rules } = require('eslint-plugin-testing-library');
 const {
 	getRepositories,
