@@ -35,6 +35,7 @@ const config = defineConfig(
 		rules: {
 			// Base
 			'max-lines-per-function': 'off',
+			'no-console': 'warn',
 
 			// TypeScript
 			'@typescript-eslint/consistent-type-imports': 'error',
