@@ -53,8 +53,8 @@
 		"type-check": "tsc --noEmit"
 	},
 	"dependencies": {
-		"@typescript-eslint/scope-manager": "^8.43.0",
-		"@typescript-eslint/utils": "^8.43.0"
+		"@typescript-eslint/scope-manager": "^8.15.0",
+		"@typescript-eslint/utils": "^8.15.0"
 	},
 	"devDependencies": {
 		"@commitlint/cli": "^19.6.0",
@@ -66,7 +66,7 @@
 		"@swc/jest": "^0.2.37",
 		"@types/jest": "^29.5.14",
 		"@types/node": "^22.9.3",
-		"@typescript-eslint/rule-tester": "^8.43.0",
+		"@typescript-eslint/rule-tester": "^8.15.0",
 		"del-cli": "^6.0.0",
 		"eslint": "^9.35.0",
 		"eslint-config-prettier": "^10.1.8",
@@ -89,7 +89,7 @@
 		"semver": "^7.6.3",
 		"ts-node": "^10.9.2",
 		"typescript": "^5.7.2",
-		"typescript-eslint": "^8.43.0"
+		"typescript-eslint": "^8.15.0"
 	},
 	"peerDependencies": {
 		"eslint": "^8.57.0 || ^9.0.0"
