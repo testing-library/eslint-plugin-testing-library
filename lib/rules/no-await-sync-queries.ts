@@ -1,7 +1,7 @@
-import { TSESTree } from '@typescript-eslint/utils';
-
 import { createTestingLibraryRule } from '../create-testing-library-rule';
 import { getDeepestIdentifierNode } from '../node-utils';
+
+import type { TSESTree } from '@typescript-eslint/utils';
 
 export const RULE_NAME = 'no-await-sync-queries';
 export type MessageIds = 'noAwaitSyncQuery';

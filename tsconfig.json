@@ -16,5 +16,5 @@
 		"outDir": "dist",
 		"sourceMap": false
 	},
-	"include": ["./lib/**/*.ts", "./tests/**/*.ts"]
+	"include": ["**/*.ts"]
 }

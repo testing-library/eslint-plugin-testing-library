@@ -1,8 +1,9 @@
 import { writeFile } from 'fs/promises';
 import { resolve } from 'path';
 
-import { type TSESLint } from '@typescript-eslint/utils';
 import { format, resolveConfig } from 'prettier';
+
+import type { TSESLint } from '@typescript-eslint/utils';
 
 const prettierConfig = resolveConfig(__dirname);
 

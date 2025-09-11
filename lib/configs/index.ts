@@ -1,12 +1,9 @@
 import { join } from 'path';
 
-import type { TSESLint } from '@typescript-eslint/utils';
+import { importDefault, SUPPORTED_TESTING_FRAMEWORKS } from '../utils';
 
-import {
-	importDefault,
-	SUPPORTED_TESTING_FRAMEWORKS,
-	SupportedTestingFramework,
-} from '../utils';
+import type { SupportedTestingFramework } from '../utils';
+import type { TSESLint } from '@typescript-eslint/utils';
 
 const configsDir = __dirname;
 

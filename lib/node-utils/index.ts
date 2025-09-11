@@ -1,13 +1,7 @@
-import { FunctionScope, ScopeType } from '@typescript-eslint/scope-manager';
-import {
-	AST_NODE_TYPES,
-	ASTUtils,
-	TSESLint,
-	TSESTree,
-} from '@typescript-eslint/utils';
+import { ScopeType } from '@typescript-eslint/scope-manager';
+import { AST_NODE_TYPES, ASTUtils } from '@typescript-eslint/utils';
 
 import { getDeclaredVariables, getScope } from '../utils';
-
 import {
 	isArrayExpression,
 	isArrowFunctionExpression,
@@ -27,6 +21,9 @@ import {
 	isReturnStatement,
 	isVariableDeclaration,
 } from './is-node-of-type';
+
+import type { FunctionScope } from '@typescript-eslint/scope-manager';
+import type { TSESLint, TSESTree } from '@typescript-eslint/utils';
 
 export * from './is-node-of-type';
 
@@ -301,7 +298,6 @@ export function getVariableReferences(
 	node: TSESTree.Node
 ): TSESLint.Scope.Reference[] {
 	if (ASTUtils.isVariableDeclarator(node)) {
-		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 		return getDeclaredVariables(context, node)[0]?.references?.slice(1) ?? [];
 	}
 

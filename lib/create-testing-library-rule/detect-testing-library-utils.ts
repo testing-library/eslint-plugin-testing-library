@@ -1,4 +1,4 @@
-import { ASTUtils, TSESLint, TSESTree } from '@typescript-eslint/utils';
+import { ASTUtils } from '@typescript-eslint/utils';
 
 import {
 	findClosestVariableDeclaratorNode,
@@ -9,7 +9,6 @@ import {
 	getPropertyIdentifierNode,
 	getReferenceNode,
 	hasImportMatch,
-	ImportModuleNode,
 	isCallExpression,
 	isImportDeclaration,
 	isImportDefaultSpecifier,
@@ -30,6 +29,9 @@ import {
 	isOfficialTestingLibraryModule,
 	isTestingLibraryModule,
 } from '../utils/is-testing-library-module';
+
+import type { ImportModuleNode } from '../node-utils';
+import type { TSESLint, TSESTree } from '@typescript-eslint/utils';
 
 const SETTING_OPTION_OFF = 'off';
 
@@ -490,7 +492,6 @@ export function detectTestingLibraryUtils<
 		/**
 		 * Determines whether a given node is fireEvent method or not
 		 */
-		// eslint-disable-next-line complexity
 		const isFireEventMethod: IsFireEventMethodFn = (node) => {
 			const fireEventUtil =
 				findImportedTestingLibraryUtilSpecifier(FIRE_EVENT_NAME);
@@ -527,7 +528,6 @@ export function detectTestingLibraryUtils<
 
 			// we know it's defined at this point, but TS seems to think it is not
 			// so here I'm enforcing it once in order to avoid using "!" operator every time
-			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 			const definedParentMemberExpression = parentMemberExpression!;
 
 			// check fireEvent.click() usage
