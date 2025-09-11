@@ -1,10 +1,4 @@
-import { InvalidTestCase, ValidTestCase } from '@typescript-eslint/rule-tester';
-import { TSESLint } from '@typescript-eslint/utils';
-
-import rule, {
-	RULE_NAME,
-	MessageIds,
-} from '../../../lib/rules/await-async-queries';
+import rule, { RULE_NAME } from '../../../lib/rules/await-async-queries';
 import {
 	ASYNC_QUERIES_COMBINATIONS,
 	ASYNC_QUERIES_VARIANTS,
@@ -12,6 +6,13 @@ import {
 	SYNC_QUERIES_COMBINATIONS,
 } from '../../../lib/utils';
 import { createRuleTester } from '../test-utils';
+
+import type { MessageIds } from '../../../lib/rules/await-async-queries';
+import type {
+	InvalidTestCase,
+	ValidTestCase,
+} from '@typescript-eslint/rule-tester';
+import type { TSESLint } from '@typescript-eslint/utils';
 
 const ruleTester = createRuleTester();
 

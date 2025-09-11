@@ -1,4 +1,4 @@
-import { ASTUtils, TSESTree, JSONSchema } from '@typescript-eslint/utils';
+import { ASTUtils } from '@typescript-eslint/utils';
 
 import { createTestingLibraryRule } from '../create-testing-library-rule';
 import {
@@ -12,6 +12,8 @@ import {
 	isProperty,
 } from '../node-utils';
 import { DEBUG_UTILS, getDeclaredVariables } from '../utils';
+
+import type { TSESTree, JSONSchema } from '@typescript-eslint/utils';
 
 type DebugUtilsToCheckForConfig = Record<(typeof DEBUG_UTILS)[number], boolean>;
 type DebugUtilsToCheckFor = Partial<DebugUtilsToCheckForConfig>;

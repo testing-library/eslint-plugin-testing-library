@@ -1,12 +1,12 @@
-import { InvalidTestCase, ValidTestCase } from '@typescript-eslint/rule-tester';
-
-import rule, {
-	RULE_NAME,
-	Options,
-	MessageIds,
-} from '../../../lib/rules/no-node-access';
+import rule, { RULE_NAME } from '../../../lib/rules/no-node-access';
 import { EVENT_HANDLER_METHODS } from '../../../lib/utils';
 import { createRuleTester } from '../test-utils';
+
+import type { Options, MessageIds } from '../../../lib/rules/no-node-access';
+import type {
+	InvalidTestCase,
+	ValidTestCase,
+} from '@typescript-eslint/rule-tester';
 
 const ruleTester = createRuleTester();
 

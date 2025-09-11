@@ -1,18 +1,18 @@
-import {
-	type InvalidTestCase,
-	type ValidTestCase,
-} from '@typescript-eslint/rule-tester';
-
 import rule, {
 	RULE_NAME,
 	getFindByQueryVariant,
-	MessageIds,
 } from '../../../lib/rules/prefer-find-by';
 import {
 	ASYNC_QUERIES_COMBINATIONS,
 	SYNC_QUERIES_COMBINATIONS,
 } from '../../../lib/utils';
 import { createRuleTester } from '../test-utils';
+
+import type { MessageIds } from '../../../lib/rules/prefer-find-by';
+import type {
+	InvalidTestCase,
+	ValidTestCase,
+} from '@typescript-eslint/rule-tester';
 
 const ruleTester = createRuleTester();
 

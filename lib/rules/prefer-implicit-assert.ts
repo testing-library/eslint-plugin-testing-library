@@ -1,13 +1,10 @@
-import {
-	TSESTree,
-	ASTUtils,
-	AST_NODE_TYPES,
-	TSESLint,
-} from '@typescript-eslint/utils';
+import { ASTUtils, AST_NODE_TYPES } from '@typescript-eslint/utils';
 
 import { createTestingLibraryRule } from '../create-testing-library-rule';
-import { TestingLibrarySettings } from '../create-testing-library-rule/detect-testing-library-utils';
 import { isCallExpression, isMemberExpression } from '../node-utils';
+
+import type { TestingLibrarySettings } from '../create-testing-library-rule/detect-testing-library-utils';
+import type { TSESTree, TSESLint } from '@typescript-eslint/utils';
 
 export const RULE_NAME = 'prefer-implicit-assert';
 export type MessageIds = 'preferImplicitAssert';

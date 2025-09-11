@@ -1,7 +1,9 @@
 import { readdirSync } from 'fs';
 import { join, parse } from 'path';
 
-import { importDefault, TestingLibraryPluginRuleModule } from '../utils';
+import { importDefault } from '../utils';
+
+import type { TestingLibraryPluginRuleModule } from '../utils';
 
 const rulesDir = __dirname;
 const excludedFiles = ['index'];

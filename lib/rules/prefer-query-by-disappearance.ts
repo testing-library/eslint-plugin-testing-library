@@ -1,5 +1,3 @@
-import { TSESTree } from '@typescript-eslint/utils';
-
 import { createTestingLibraryRule } from '../create-testing-library-rule';
 import {
 	getPropertyIdentifierNode,
@@ -11,6 +9,8 @@ import {
 	isReturnStatement,
 	isBlockStatement,
 } from '../node-utils';
+
+import type { TSESTree } from '@typescript-eslint/utils';
 
 export const RULE_NAME = 'prefer-query-by-disappearance';
 type MessageIds = 'preferQueryByDisappearance';

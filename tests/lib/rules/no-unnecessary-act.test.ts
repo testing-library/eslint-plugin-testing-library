@@ -1,14 +1,14 @@
-import {
-	type InvalidTestCase,
-	type ValidTestCase,
-} from '@typescript-eslint/rule-tester';
+import rule, { RULE_NAME } from '../../../lib/rules/no-unnecessary-act';
+import { createRuleTester } from '../test-utils';
 
-import rule, {
+import type {
 	MessageIds,
 	Options,
-	RULE_NAME,
 } from '../../../lib/rules/no-unnecessary-act';
-import { createRuleTester } from '../test-utils';
+import type {
+	InvalidTestCase,
+	ValidTestCase,
+} from '@typescript-eslint/rule-tester';
 
 const ruleTester = createRuleTester();
 

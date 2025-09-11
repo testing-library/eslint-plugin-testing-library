@@ -1,10 +1,9 @@
-import { ASTUtils, TSESLint, TSESTree } from '@typescript-eslint/utils';
+import { ASTUtils } from '@typescript-eslint/utils';
 
 import { createTestingLibraryRule } from '../create-testing-library-rule';
 import {
 	getImportModuleName,
 	getVariableReferences,
-	ImportModuleNode,
 	isImportDeclaration,
 	isImportDefaultSpecifier,
 	isImportSpecifier,
@@ -13,6 +12,9 @@ import {
 	isProperty,
 } from '../node-utils';
 import { getDeclaredVariables } from '../utils';
+
+import type { ImportModuleNode } from '../node-utils';
+import type { TSESLint, TSESTree } from '@typescript-eslint/utils';
 
 export const RULE_NAME = 'no-manual-cleanup';
 export type MessageIds = 'noManualCleanup';

@@ -1,4 +1,4 @@
-import { ASTUtils, TSESTree } from '@typescript-eslint/utils';
+import { ASTUtils } from '@typescript-eslint/utils';
 
 import { createTestingLibraryRule } from '../create-testing-library-rule';
 import {
@@ -8,6 +8,8 @@ import {
 	isObjectExpression,
 	isProperty,
 } from '../node-utils';
+
+import type { TSESTree } from '@typescript-eslint/utils';
 
 const USER_EVENT_ASYNC_EXCEPTIONS = ['type', 'keyboard'];
 const FIRE_EVENT_OPTION = 'fire-event';

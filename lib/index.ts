@@ -1,8 +1,8 @@
-import type { TSESLint } from '@typescript-eslint/utils';
-
 import configs from './configs';
 import rules from './rules';
-import { SupportedTestingFramework } from './utils';
+
+import type { SupportedTestingFramework } from './utils';
+import type { TSESLint } from '@typescript-eslint/utils';
 
 // we can't natively import package.json as tsc will copy it into dist/
 const {

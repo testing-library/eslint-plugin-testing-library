@@ -1,6 +1,6 @@
-import { TestingLibrarySettings } from '../create-testing-library-rule/detect-testing-library-utils';
-
 import { LIBRARY_MODULES, OLD_LIBRARY_MODULES, USER_EVENT_MODULE } from '.';
+
+import type { TestingLibrarySettings } from '../create-testing-library-rule/detect-testing-library-utils';
 
 export const isOfficialTestingLibraryModule = (importSourceName: string) =>
 	[...OLD_LIBRARY_MODULES, ...LIBRARY_MODULES, USER_EVENT_MODULE].includes(
