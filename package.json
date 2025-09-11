@@ -41,7 +41,7 @@
 		"generate:rules-doc": "pnpm run build && pnpm run rule-doc-generator",
 		"format": "pnpm run prettier-base --write",
 		"format:check": "pnpm run prettier-base --check",
-		"lint": "eslint --max-warnings 0 --report-unused-disable-directives .",
+		"lint": "eslint --max-warnings 0 .",
 		"lint:fix": "pnpm run lint --fix",
 		"prepare": "is-ci || husky",
 		"prettier-base": "prettier . --ignore-unknown --cache --log-level warn",
