@@ -1,6 +1,6 @@
 # Disallow unnecessary `await` for sync events (`testing-library/no-await-sync-events`)
 
-💼 This rule is enabled in the following configs: `angular`, `dom`, `react`.
+💼 This rule is enabled in the following configs: `angular`, `dom`.
 
 <!-- end auto-generated rule header -->
 
@@ -110,6 +110,7 @@ module.exports = {
 
 ## When Not To Use It
 
+- When you're using `@testing-library/react` in version 17 and above.
 - `"fire-event"` option: should be disabled only for those Testing Library packages where fire-event methods are async.
 - `"user-event"` option: should be disabled only if using v14 or greater.
 
