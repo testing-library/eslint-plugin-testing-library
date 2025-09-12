@@ -164,20 +164,20 @@ export default createTestingLibraryRule<Options, MessageIds>({
 								);
 							}
 
-							if (functionExpression.async) {
-								return IdentifierNodeFixer;
-							} else {
+							const ruleFixes = [IdentifierNodeFixer];
+							if (!functionExpression.async) {
 								/**
 								 * Mutate the actual node so if other nodes exist in this
 								 * function expression body they don't also try to fix it.
 								 */
 								functionExpression.async = true;
 
-								return [
-									IdentifierNodeFixer,
-									fixer.insertTextBefore(functionExpression, 'async '),
-								];
+								ruleFixes.push(
+									fixer.insertTextBefore(functionExpression, 'async ')
+								);
 							}
+
+							return ruleFixes;
 						},
 					});
 				}
