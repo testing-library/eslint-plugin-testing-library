@@ -5,7 +5,16 @@ import {
 } from '../../../lib/utils';
 import { createRuleTester } from '../test-utils';
 
+import type { MessageIds } from '../../../lib/rules/no-await-sync-queries';
+import type {
+	InvalidTestCase,
+	ValidTestCase,
+} from '@typescript-eslint/rule-tester';
+
 const ruleTester = createRuleTester();
+
+type RuleValidTestCase = ValidTestCase<[]>;
+type RuleInvalidTestCase = InvalidTestCase<MessageIds, []>;
 
 const SUPPORTED_TESTING_FRAMEWORKS = [
 	'@testing-library/dom',
@@ -18,7 +27,7 @@ const SUPPORTED_TESTING_FRAMEWORKS = [
 ruleTester.run(RULE_NAME, rule, {
 	valid: [
 		// sync queries without await are valid
-		...SYNC_QUERIES_COMBINATIONS.map((query) => ({
+		...SYNC_QUERIES_COMBINATIONS.map<RuleValidTestCase>((query) => ({
 			code: `() => {
         const element = ${query}('foo')
       }
@@ -61,7 +70,7 @@ ruleTester.run(RULE_NAME, rule, {
 		},
 
 		// sync queries without await inside assert are valid
-		...SYNC_QUERIES_COMBINATIONS.map((query) => ({
+		...SYNC_QUERIES_COMBINATIONS.map<RuleValidTestCase>((query) => ({
 			code: `() => {
         expect(${query}('foo')).toBeEnabled()
       }
@@ -69,7 +78,7 @@ ruleTester.run(RULE_NAME, rule, {
 		})),
 
 		// async queries with await operator are valid
-		...ASYNC_QUERIES_COMBINATIONS.map((query) => ({
+		...ASYNC_QUERIES_COMBINATIONS.map<RuleValidTestCase>((query) => ({
 			code: `async () => {
         const element = await ${query}('foo')
       }
@@ -77,7 +86,7 @@ ruleTester.run(RULE_NAME, rule, {
 		})),
 
 		// async queries with then method are valid
-		...ASYNC_QUERIES_COMBINATIONS.map((query) => ({
+		...ASYNC_QUERIES_COMBINATIONS.map<RuleValidTestCase>((query) => ({
 			code: `() => {
         ${query}('foo').then(() => {});
       }
@@ -128,22 +137,19 @@ ruleTester.run(RULE_NAME, rule, {
 
 	invalid: [
 		// sync queries with await operator are not valid
-		...SYNC_QUERIES_COMBINATIONS.map(
-			(query) =>
-				({
-					code: `async () => {
+		...SYNC_QUERIES_COMBINATIONS.map<RuleInvalidTestCase>((query) => ({
+			code: `async () => {
         const element = await ${query}('foo')
       }
       `,
-					errors: [
-						{
-							messageId: 'noAwaitSyncQuery',
-							line: 2,
-							column: 31,
-						},
-					],
-				}) as const
-		),
+			errors: [
+				{
+					messageId: 'noAwaitSyncQuery',
+					line: 2,
+					column: 31,
+				},
+			],
+		})),
 		// custom sync queries with await operator are not valid
 		{
 			code: `
@@ -178,73 +184,63 @@ ruleTester.run(RULE_NAME, rule, {
 			errors: [{ messageId: 'noAwaitSyncQuery', line: 3, column: 38 }],
 		},
 		// sync queries with await operator inside assert are not valid
-		...SYNC_QUERIES_COMBINATIONS.map(
-			(query) =>
-				({
-					code: `async () => {
+		...SYNC_QUERIES_COMBINATIONS.map<RuleInvalidTestCase>((query) => ({
+			code: `async () => {
         expect(await ${query}('foo')).toBeEnabled()
       }
       `,
-					errors: [
-						{
-							messageId: 'noAwaitSyncQuery',
-							line: 2,
-							column: 22,
-						},
-					],
-				}) as const
-		),
+			errors: [
+				{
+					messageId: 'noAwaitSyncQuery',
+					line: 2,
+					column: 22,
+				},
+			],
+		})),
 
 		// sync queries in screen with await operator are not valid
-		...SYNC_QUERIES_COMBINATIONS.map(
-			(query) =>
-				({
-					code: `async () => {
+		...SYNC_QUERIES_COMBINATIONS.map<RuleInvalidTestCase>((query) => ({
+			code: `async () => {
         const element = await screen.${query}('foo')
       }
       `,
-					errors: [
-						{
-							messageId: 'noAwaitSyncQuery',
-							line: 2,
-							column: 38,
-						},
-					],
-				}) as const
-		),
+			errors: [
+				{
+					messageId: 'noAwaitSyncQuery',
+					line: 2,
+					column: 38,
+				},
+			],
+		})),
 
 		// sync queries in screen with await operator inside assert are not valid
-		...SYNC_QUERIES_COMBINATIONS.map(
-			(query) =>
-				({
-					code: `async () => {
+		...SYNC_QUERIES_COMBINATIONS.map<RuleInvalidTestCase>((query) => ({
+			code: `async () => {
         expect(await screen.${query}('foo')).toBeEnabled()
       }
       `,
-					errors: [
-						{
-							messageId: 'noAwaitSyncQuery',
-							line: 2,
-							column: 29,
-						},
-					],
-				}) as const
-		),
+			errors: [
+				{
+					messageId: 'noAwaitSyncQuery',
+					line: 2,
+					column: 29,
+				},
+			],
+		})),
 
 		// sync query awaited and related to testing library module
 		// with custom module setting is not valid
-		...SUPPORTED_TESTING_FRAMEWORKS.map(
-			(testingFramework) =>
-				({
-					settings: { 'testing-library/utils-module': 'test-utils' },
-					code: `
+		...SUPPORTED_TESTING_FRAMEWORKS.map<RuleInvalidTestCase>(
+			(testingFramework) => ({
+				settings: { 'testing-library/utils-module': 'test-utils' },
+				code: `
       import { screen } from '${testingFramework}'
       () => {
         const element = await screen.getByRole('button')
       }
       `,
-					errors: [{ messageId: 'noAwaitSyncQuery', line: 4, column: 38 }],
-				}) as const
+				errors: [{ messageId: 'noAwaitSyncQuery', line: 4, column: 38 }],
+			})
 		),
 		// sync query awaited and related to custom module is not valid
 		{
