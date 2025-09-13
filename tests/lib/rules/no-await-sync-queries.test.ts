@@ -149,6 +149,10 @@ ruleTester.run(RULE_NAME, rule, {
 					column: 31,
 				},
 			],
+			output: `async () => {
+        const element =  ${query}('foo')
+      }
+      `,
 		})),
 		// custom sync queries with await operator are not valid
 		{
@@ -158,6 +162,11 @@ ruleTester.run(RULE_NAME, rule, {
       }
       `,
 			errors: [{ messageId: 'noAwaitSyncQuery', line: 3, column: 31 }],
+			output: `
+      async () => {
+        const element =  getByIcon('search')
+      }
+      `,
 		},
 		{
 			code: `
@@ -166,6 +175,11 @@ ruleTester.run(RULE_NAME, rule, {
       }
       `,
 			errors: [{ messageId: 'noAwaitSyncQuery', line: 3, column: 31 }],
+			output: `
+      async () => {
+        const element =  queryByIcon('search')
+      }
+      `,
 		},
 		{
 			code: `
@@ -174,6 +188,11 @@ ruleTester.run(RULE_NAME, rule, {
       }
       `,
 			errors: [{ messageId: 'noAwaitSyncQuery', line: 3, column: 38 }],
+			output: `
+      async () => {
+        const element =  screen.getAllByIcon('search')
+      }
+      `,
 		},
 		{
 			code: `
@@ -182,6 +201,11 @@ ruleTester.run(RULE_NAME, rule, {
       }
       `,
 			errors: [{ messageId: 'noAwaitSyncQuery', line: 3, column: 38 }],
+			output: `
+      async () => {
+        const element =  screen.queryAllByIcon('search')
+      }
+      `,
 		},
 		// sync queries with await operator inside assert are not valid
 		...SYNC_QUERIES_COMBINATIONS.map<RuleInvalidTestCase>((query) => ({
@@ -196,6 +220,10 @@ ruleTester.run(RULE_NAME, rule, {
 					column: 22,
 				},
 			],
+			output: `async () => {
+        expect( ${query}('foo')).toBeEnabled()
+      }
+      `,
 		})),
 
 		// sync queries in screen with await operator are not valid
@@ -211,6 +239,10 @@ ruleTester.run(RULE_NAME, rule, {
 					column: 38,
 				},
 			],
+			output: `async () => {
+        const element =  screen.${query}('foo')
+      }
+      `,
 		})),
 
 		// sync queries in screen with await operator inside assert are not valid
@@ -226,6 +258,10 @@ ruleTester.run(RULE_NAME, rule, {
 					column: 29,
 				},
 			],
+			output: `async () => {
+        expect( screen.${query}('foo')).toBeEnabled()
+      }
+      `,
 		})),
 
 		// sync query awaited and related to testing library module
@@ -240,6 +276,12 @@ ruleTester.run(RULE_NAME, rule, {
       }
       `,
 				errors: [{ messageId: 'noAwaitSyncQuery', line: 4, column: 38 }],
+				output: `
+      import { screen } from '${testingFramework}'
+      () => {
+        const element =  screen.getByRole('button')
+      }
+      `,
 			})
 		),
 		// sync query awaited and related to custom module is not valid
@@ -252,6 +294,12 @@ ruleTester.run(RULE_NAME, rule, {
       }
       `,
 			errors: [{ messageId: 'noAwaitSyncQuery', line: 4, column: 38 }],
+			output: `
+      import { screen } from 'test-utils'
+      () => {
+        const element =  screen.getByRole('button')
+      }
+      `,
 		},
 
 		// awaited custom sync query matching custom-queries setting is invalid
@@ -265,6 +313,24 @@ ruleTester.run(RULE_NAME, rule, {
       })
       `,
 			errors: [{ messageId: 'noAwaitSyncQuery', line: 3, column: 31 }],
+			output: `
+      test('A valid example test', async () => {
+        const element =  queryByIcon('search')
+      })
+      `,
+		},
+		{
+			code: `
+      test('A valid example test', async () => {
+        const element = await(screen.getByRole('button'))
+      })
+      `,
+			errors: [{ messageId: 'noAwaitSyncQuery', line: 3, column: 38 }],
+			output: `
+      test('A valid example test', async () => {
+        const element = (screen.getByRole('button'))
+      })
+      `,
 		},
 	],
 });
