@@ -71,6 +71,15 @@ ruleTester.run(RULE_NAME, rule, {
 		...ASYNC_UTILS.map<RuleValidTestCase>((asyncUtil) => ({
 			code: `
         import { ${asyncUtil} } from '${testingFramework}';
+        test('${asyncUtil} util directly chained with finally is valid', () => {
+          doSomethingElse();
+          ${asyncUtil}(() => getByLabelText('email')).finally(() => { console.log('done') });
+        });
+      `,
+		})),
+		...ASYNC_UTILS.map((asyncUtil) => ({
+			code: `
+        import { ${asyncUtil} } from '${testingFramework}';
         test('${asyncUtil} util expect chained with .resolves is valid', () => {
           doSomethingElse();
           expect(${asyncUtil}(() => getByLabelText('email'))).resolves.toBe("foo");
