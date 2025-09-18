@@ -4,6 +4,7 @@ import { createTestingLibraryRule } from '../create-testing-library-rule';
 import {
 	findClosestCallExpressionNode,
 	findClosestFunctionExpressionNode,
+	getDeepestIdentifierNode,
 	getFunctionName,
 	getInnermostReturningFunction,
 	getVariableReferences,
@@ -155,6 +156,13 @@ export default createTestingLibraryRule<Options, MessageIds>({
 										findClosestFunctionExpressionNode(node);
 
 									if (functionExpression) {
+										const deepestCalleeIdentifier = getDeepestIdentifierNode(
+											functionExpression.parent
+										);
+										if (deepestCalleeIdentifier?.name === 'forEach') {
+											return null;
+										}
+
 										const memberExpressionFixer = fixer.insertTextBefore(
 											node.parent,
 											'await '
