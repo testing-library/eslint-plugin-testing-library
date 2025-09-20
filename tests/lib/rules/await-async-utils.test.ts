@@ -416,6 +416,13 @@ ruleTester.run(RULE_NAME, rule, {
 					data: { name: asyncUtil },
 				},
 			],
+			output: `
+        import { ${asyncUtil} } from '${testingFramework}';
+        test('${asyncUtil} util not waited is invalid', async () => {
+          doSomethingElse();
+          await ${asyncUtil}(() => getByLabelText('email'));
+        });
+      `,
 		})),
 		...ASYNC_UTILS.map<RuleInvalidTestCase>((asyncUtil) => ({
 			code: `
@@ -433,6 +440,13 @@ ruleTester.run(RULE_NAME, rule, {
 					data: { name: asyncUtil },
 				},
 			],
+			output: `
+        import { ${asyncUtil} } from '${testingFramework}';
+        test('${asyncUtil} util not waited is invalid', async () => {
+          doSomethingElse();
+          const el = await ${asyncUtil}(() => getByLabelText('email'));
+        });
+      `,
 		})),
 		...ASYNC_UTILS.map<RuleInvalidTestCase>((asyncUtil) => ({
 			code: `
@@ -450,6 +464,13 @@ ruleTester.run(RULE_NAME, rule, {
 					data: { name: asyncUtil },
 				},
 			],
+			output: `
+        import * as asyncUtil from '${testingFramework}';
+        test('asyncUtil.${asyncUtil} util not handled is invalid', async () => {
+          doSomethingElse();
+          await asyncUtil.${asyncUtil}(() => getByLabelText('email'));
+        });
+      `,
 		})),
 		...ASYNC_UTILS.map<RuleInvalidTestCase>((asyncUtil) => ({
 			code: `
@@ -467,6 +488,13 @@ ruleTester.run(RULE_NAME, rule, {
 					data: { name: asyncUtil },
 				},
 			],
+			output: `
+        import { ${asyncUtil} } from '${testingFramework}';
+        test('${asyncUtil} util promise saved not handled is invalid', async () => {
+          doSomethingElse();
+          const aPromise = await ${asyncUtil}(() => getByLabelText('email'));
+        });
+      `,
 		})),
 		...ASYNC_UTILS.map<RuleInvalidTestCase>((asyncUtil) => ({
 			code: `
@@ -491,6 +519,14 @@ ruleTester.run(RULE_NAME, rule, {
 					data: { name: asyncUtil },
 				},
 			],
+			output: `
+        import { ${asyncUtil} } from '${testingFramework}';
+        test('several ${asyncUtil} utils not handled are invalid', async () => {
+          const aPromise = ${asyncUtil}(() => getByLabelText('username'));
+          doSomethingElse(await aPromise);
+          await ${asyncUtil}(() => getByLabelText('email'));
+        });
+      `,
 		})),
 		...ASYNC_UTILS.map<RuleInvalidTestCase>((asyncUtil) => ({
 			code: `
@@ -515,6 +551,14 @@ ruleTester.run(RULE_NAME, rule, {
 					data: { name: asyncUtil },
 				},
 			],
+			output: `
+        import { ${asyncUtil} } from '${testingFramework}';
+        test('unhandled expression that evaluates to promise is invalid', async () => {
+          const aPromise = ${asyncUtil}(() => getByLabelText('username'));
+          doSomethingElse(await aPromise);
+          await ${asyncUtil}(() => getByLabelText('email'));
+        });
+      `,
 		})),
 		...ASYNC_UTILS.map<RuleInvalidTestCase>((asyncUtil) => ({
 			code: `
@@ -537,6 +581,18 @@ ruleTester.run(RULE_NAME, rule, {
 					data: { name: 'waitForSomethingAsync' },
 				},
 			],
+			output: `
+        import { ${asyncUtil}, render } from '${testingFramework}';
+
+        function waitForSomethingAsync() {
+          return ${asyncUtil}(() => somethingAsync())
+        }
+
+        test('unhandled promise from function wrapping ${asyncUtil} util is invalid', async () => {
+          render()
+          await waitForSomethingAsync()
+        });
+      `,
 		})),
 		...ASYNC_UTILS.map<RuleInvalidTestCase>((asyncUtil) => ({
 			code: `
@@ -560,6 +616,19 @@ ruleTester.run(RULE_NAME, rule, {
 					data: { name: 'waitForSomethingAsync' },
 				},
 			],
+			output: `
+		    import { ${asyncUtil}, render } from '${testingFramework}';
+
+		    function waitForSomethingAsync() {
+		      return ${asyncUtil}(() => somethingAsync())
+		    }
+
+		    test('unhandled promise in variable declaration from function wrapping ${asyncUtil} util is invalid', async () => {
+		      render()
+		      const result = waitForSomethingAsync()
+		      expect(await result).toBe('foo')
+		    });
+		  `,
 		})),
 		...ASYNC_UTILS.map<RuleInvalidTestCase>((asyncUtil) => ({
 			code: `
@@ -579,6 +648,15 @@ ruleTester.run(RULE_NAME, rule, {
 					data: { name: asyncUtil },
 				},
 			],
+			output: `
+        import { ${asyncUtil} } from 'some-other-library'; // rather than ${testingFramework}
+        test(
+        'aggressive reporting - util "${asyncUtil}" which is not related to testing library is invalid',
+        async () => {
+          doSomethingElse();
+          await ${asyncUtil}();
+        });
+      `,
 		})),
 		...ASYNC_UTILS.map<RuleInvalidTestCase>((asyncUtil) => ({
 			code: `
@@ -601,6 +679,18 @@ ruleTester.run(RULE_NAME, rule, {
 					data: { name: 'waitForSomethingAsync' },
 				},
 			],
+			output: `
+        import { ${asyncUtil}, render } from '${testingFramework}';
+
+        function waitForSomethingAsync() {
+          return ${asyncUtil}(() => somethingAsync())
+        }
+
+        test('unhandled promise from function wrapping ${asyncUtil} util is invalid', async () => {
+          render()
+          const el = await waitForSomethingAsync()
+        });
+      `,
 		})),
 
 		...ASYNC_UTILS.map<RuleInvalidTestCase>((asyncUtil) => ({
@@ -621,6 +711,15 @@ ruleTester.run(RULE_NAME, rule, {
 					data: { name: asyncUtil },
 				},
 			],
+			output: `
+        import * as asyncUtils from 'some-other-library'; // rather than ${testingFramework}
+        test(
+        'aggressive reporting - util "asyncUtils.${asyncUtil}" which is not related to testing library is invalid',
+        async () => {
+          doSomethingElse();
+          await asyncUtils.${asyncUtil}();
+        });
+      `,
 		})),
 		...ASYNC_UTILS.map<RuleInvalidTestCase>((asyncUtil) => ({
 			code: `
@@ -648,6 +747,23 @@ ruleTester.run(RULE_NAME, rule, {
 					data: { name: 'waitForAsyncUtil' },
 				},
 			],
+			output: `
+				// implicitly using ${testingFramework}
+        function setup() {
+          const utils = render(<MyComponent />);
+
+          const waitForAsyncUtil = () => {
+            return ${asyncUtil}(screen.queryByTestId('my-test-id'));
+          };
+
+          return { waitForAsyncUtil, ...utils };
+        }
+
+        test('unhandled promise from destructed property of async function wrapper is invalid', async () => {
+          const { user, waitForAsyncUtil } = setup();
+          await waitForAsyncUtil();
+        });
+      `,
 		})),
 		...ASYNC_UTILS.map<RuleInvalidTestCase>((asyncUtil) => ({
 			code: `
@@ -676,6 +792,24 @@ ruleTester.run(RULE_NAME, rule, {
 					data: { name: 'myAlias' },
 				},
 			],
+			output: `
+				// implicitly using ${testingFramework}
+        function setup() {
+          const utils = render(<MyComponent />);
+
+          const waitForAsyncUtil = () => {
+            return ${asyncUtil}(screen.queryByTestId('my-test-id'));
+          };
+
+          return { waitForAsyncUtil, ...utils };
+        }
+
+        test('unhandled promise from destructed property of async function wrapper is invalid', async () => {
+          const { user, waitForAsyncUtil } = setup();
+          const myAlias = waitForAsyncUtil;
+          await myAlias();
+        });
+      `,
 		})),
 		...ASYNC_UTILS.map<RuleInvalidTestCase>((asyncUtil) => ({
 			code: `
@@ -703,6 +837,23 @@ ruleTester.run(RULE_NAME, rule, {
 					data: { name: 'waitForAsyncUtil' },
 				},
 			],
+			output: `
+				// implicitly using ${testingFramework}
+        function setup() {
+          const utils = render(<MyComponent />);
+
+          const waitForAsyncUtil = () => {
+            return ${asyncUtil}(screen.queryByTestId('my-test-id'));
+          };
+
+          return { waitForAsyncUtil, ...utils };
+        }
+
+        test('unhandled promise from destructed property of async function wrapper is invalid', async () => {
+          const { ...clone } = setup();
+          await clone.waitForAsyncUtil();
+        });
+      `,
 		})),
 		...ASYNC_UTILS.map<RuleInvalidTestCase>((asyncUtil) => ({
 			code: `
@@ -730,6 +881,23 @@ ruleTester.run(RULE_NAME, rule, {
 					data: { name: 'myAlias' },
 				},
 			],
+			output: `
+				// implicitly using ${testingFramework}
+        function setup() {
+          const utils = render(<MyComponent />);
+
+          const waitForAsyncUtil = () => {
+            return ${asyncUtil}(screen.queryByTestId('my-test-id'));
+          };
+
+          return { waitForAsyncUtil, ...utils };
+        }
+
+        test('unhandled promise from destructed property of async function wrapper is invalid', async () => {
+          const { waitForAsyncUtil: myAlias } = setup();
+          await myAlias();
+        });
+      `,
 		})),
 		...ASYNC_UTILS.map<RuleInvalidTestCase>((asyncUtil) => ({
 			code: `
@@ -756,6 +924,22 @@ ruleTester.run(RULE_NAME, rule, {
 					data: { name: 'waitForAsyncUtil' },
 				},
 			],
+			output: `
+				// implicitly using ${testingFramework}
+        function setup() {
+          const utils = render(<MyComponent />);
+
+          const waitForAsyncUtil = () => {
+            return ${asyncUtil}(screen.queryByTestId('my-test-id'));
+          };
+
+          return { waitForAsyncUtil, ...utils };
+        }
+
+        test('unhandled promise from destructed property of async function wrapper is invalid', async () => {
+          await setup().waitForAsyncUtil();
+        });
+      `,
 		})),
 		...ASYNC_UTILS.map<RuleInvalidTestCase>((asyncUtil) => ({
 			code: `
@@ -783,6 +967,23 @@ ruleTester.run(RULE_NAME, rule, {
 					data: { name: 'myAlias' },
 				},
 			],
+			output: `
+				// implicitly using ${testingFramework}
+        function setup() {
+          const utils = render(<MyComponent />);
+
+          const waitForAsyncUtil = () => {
+            return ${asyncUtil}(screen.queryByTestId('my-test-id'));
+          };
+
+          return { waitForAsyncUtil, ...utils };
+        }
+
+        test('unhandled promise from destructed property of async function wrapper is invalid', async () => {
+          const myAlias = setup().waitForAsyncUtil;
+          await myAlias();
+        });
+      `,
 		})),
 	]),
 });
