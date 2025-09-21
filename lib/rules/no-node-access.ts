@@ -1,18 +1,23 @@
-import { TSESTree, ASTUtils } from '@typescript-eslint/utils';
+import { ASTUtils } from '@typescript-eslint/utils';
 
 import { createTestingLibraryRule } from '../create-testing-library-rule';
-import { isCallExpression, isMemberExpression } from '../node-utils';
 import {
+	getDeepestIdentifierNode,
+	isLiteral,
+	isMemberExpression,
+} from '../node-utils';
+import {
+	ALL_QUERIES_COMBINATIONS,
 	ALL_RETURNING_NODES,
 	EVENT_HANDLER_METHODS,
 	resolveToTestingLibraryFn,
 } from '../utils';
 
+import type { TSESTree } from '@typescript-eslint/utils';
+
 export const RULE_NAME = 'no-node-access';
 export type MessageIds = 'noNodeAccess';
 export type Options = [{ allowContainerFirstChild: boolean }];
-
-const userEventInstanceNames = new Set<string>();
 
 export default createTestingLibraryRule<Options, MessageIds>({
 	name: RULE_NAME,
@@ -89,59 +94,44 @@ export default createTestingLibraryRule<Options, MessageIds>({
 			}
 		}
 
+		function getProperty(
+			node: TSESTree.PrivateIdentifier | TSESTree.Expression
+		) {
+			if (isLiteral(node)) {
+				return node;
+			}
+
+			return getDeepestIdentifierNode(node);
+		}
+
 		return {
 			CallExpression(node: TSESTree.CallExpression) {
+				if (!isMemberExpression(node.callee)) return;
+
 				const { callee } = node;
-				const property = isMemberExpression(callee) ? callee.property : null;
-				const object = isMemberExpression(callee) ? callee.object : null;
-
-				const propertyName = ASTUtils.isIdentifier(property)
-					? property.name
-					: null;
-				const objectName = ASTUtils.isIdentifier(object) ? object.name : null;
-
-				const isEventHandlerMethod = EVENT_HANDLER_METHODS.some(
-					(method) => method === propertyName
-				);
-				const hasUserEventInstanceName = userEventInstanceNames.has(
-					objectName ?? ''
-				);
-				const testingLibraryFn = resolveToTestingLibraryFn(node, context);
+				if (
+					!EVENT_HANDLER_METHODS.some(
+						(method) => method === ASTUtils.getPropertyName(callee)
+					)
+				) {
+					return;
+				}
+				const identifier = getDeepestIdentifierNode(callee.object);
 
 				if (
-					!testingLibraryFn &&
-					isEventHandlerMethod &&
-					!hasUserEventInstanceName
+					!identifier ||
+					!ALL_QUERIES_COMBINATIONS.includes(identifier.name)
 				) {
+					return;
+				}
+
+				if (resolveToTestingLibraryFn(node, context)) {
+					const property = getProperty(callee.property);
 					context.report({
 						node,
 						loc: property?.loc.start,
 						messageId: 'noNodeAccess',
 					});
-				}
-			},
-			VariableDeclarator(node: TSESTree.VariableDeclarator) {
-				const { init, id } = node;
-
-				if (!isCallExpression(init)) {
-					return;
-				}
-
-				if (
-					!isMemberExpression(init.callee) ||
-					!ASTUtils.isIdentifier(init.callee.object)
-				) {
-					return;
-				}
-
-				const testingLibraryFn = resolveToTestingLibraryFn(init, context);
-				if (
-					init.callee.object.name === testingLibraryFn?.local &&
-					ASTUtils.isIdentifier(init.callee.property) &&
-					init.callee.property.name === 'setup' &&
-					ASTUtils.isIdentifier(id)
-				) {
-					userEventInstanceNames.add(id.name);
 				}
 			},
 			'ExpressionStatement MemberExpression': showErrorForNodeAccess,

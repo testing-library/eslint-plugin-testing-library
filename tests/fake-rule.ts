@@ -2,9 +2,9 @@
  * @file Fake rule to be able to test createTestingLibraryRule and
  * detectTestingLibraryUtils properly
  */
-import { TSESTree } from '@typescript-eslint/utils';
-
 import { createTestingLibraryRule } from '../lib/create-testing-library-rule';
+
+import type { TSESTree } from '@typescript-eslint/utils';
 
 export const RULE_NAME = 'fake-rule';
 type Options = [];

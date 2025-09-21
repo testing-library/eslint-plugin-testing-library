@@ -1,9 +1,9 @@
-import { InvalidTestCase } from '@typescript-eslint/rule-tester';
-
 import { createTestingLibraryRule } from '../../../lib/create-testing-library-rule';
 import { LIBRARY_MODULES } from '../../../lib/utils';
 import { resolveToTestingLibraryFn } from '../../../lib/utils/resolve-to-testing-library-fn';
 import { createRuleTester } from '../test-utils';
+
+import type { InvalidTestCase } from '@typescript-eslint/rule-tester';
 
 type MessageIds = 'details';
 
@@ -54,6 +54,16 @@ ruleTester.run('esm', rule, {
 			import { userEvent } from './test-utils';
 
 			(userEvent => userEvent.setup)();
+		`,
+		},
+		{
+			code: `
+			import { userEvent } from './test-utils';
+
+			function userClick() {
+				userEvent.click(document.body);
+			}
+    	userClick()
 		`,
 		},
 		{

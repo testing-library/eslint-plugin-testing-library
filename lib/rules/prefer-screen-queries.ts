@@ -1,4 +1,4 @@
-import { ASTUtils, TSESTree } from '@typescript-eslint/utils';
+import { ASTUtils } from '@typescript-eslint/utils';
 
 import { createTestingLibraryRule } from '../create-testing-library-rule';
 import {
@@ -11,6 +11,8 @@ import {
 	isObjectPattern,
 	isProperty,
 } from '../node-utils';
+
+import type { TSESTree } from '@typescript-eslint/utils';
 
 export const RULE_NAME = 'prefer-screen-queries';
 export type MessageIds = 'preferScreenQueries';

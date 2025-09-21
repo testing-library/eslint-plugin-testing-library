@@ -1,8 +1,7 @@
-import rule, {
-	Options,
-	RULE_NAME,
-} from '../../../lib/rules/await-async-events';
+import rule, { RULE_NAME } from '../../../lib/rules/await-async-events';
 import { createRuleTester } from '../test-utils';
+
+import type { Options } from '../../../lib/rules/await-async-events';
 
 const ruleTester = createRuleTester();
 
@@ -95,6 +94,16 @@ ruleTester.run(RULE_NAME, rule, {
           fireEvent.${eventMethod}(getByLabelText('username')).then(() => {
             fireEvent.${eventMethod}(getByLabelText('username')).then(() => { done() })
           })
+        })
+        `,
+				options: [{ eventModule: 'fireEvent' }] as const,
+			})),
+			...FIRE_EVENT_ASYNC_FUNCTIONS.map((eventMethod) => ({
+				code: `
+        import { fireEvent } from '${testingFramework}'
+        test('chain catch method to promise from event method is valid', async (done) => {
+          fireEvent.${eventMethod}(getByLabelText('username'))
+            .catch((error) => { done() })
         })
         `,
 				options: [{ eventModule: 'fireEvent' }] as const,
@@ -323,6 +332,16 @@ ruleTester.run(RULE_NAME, rule, {
         test('chain then method to promise from event method is valid', async (done) => {
           userEvent.${eventMethod}(getByLabelText('username'))
             .then(() => { done() })
+        })
+        `,
+				options: [{ eventModule: 'userEvent' }] as const,
+			})),
+			...USER_EVENT_ASYNC_FUNCTIONS.map((eventMethod) => ({
+				code: `
+        import userEvent from '${testingFramework}'
+        test('chain catch method to promise from event method is valid', async (done) => {
+          userEvent.${eventMethod}(getByLabelText('username'))
+            .catch((error) => { done() })
         })
         `,
 				options: [{ eventModule: 'userEvent' }] as const,

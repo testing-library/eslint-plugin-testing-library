@@ -1,4 +1,4 @@
-import { TSESTree, ASTUtils, TSESLint } from '@typescript-eslint/utils';
+import { ASTUtils } from '@typescript-eslint/utils';
 
 import { createTestingLibraryRule } from '../create-testing-library-rule';
 import {
@@ -13,6 +13,8 @@ import {
 	isVariableDeclaration,
 } from '../node-utils';
 import { getScope, getSourceCode } from '../utils';
+
+import type { TSESTree, TSESLint } from '@typescript-eslint/utils';
 
 export const RULE_NAME = 'prefer-find-by';
 export type MessageIds = 'preferFindBy';

@@ -1,9 +1,5 @@
-import {
-	AST_NODE_TYPES,
-	ASTUtils,
-	TSESLint,
-	TSESTree,
-} from '@typescript-eslint/utils';
+import { AST_NODE_TYPES, ASTUtils } from '@typescript-eslint/utils';
+import type { TSESLint, TSESTree } from '@typescript-eslint/utils';
 
 import { createTestingLibraryRule } from '../create-testing-library-rule';
 import {

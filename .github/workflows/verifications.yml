@@ -14,13 +14,13 @@ jobs:
           ['lint', 'type-check', 'format:check', 'generate-all:check']
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4
 
       - name: Set up Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           cache: 'pnpm'
           node-version-file: '.nvmrc'
@@ -42,13 +42,13 @@ jobs:
         eslint: [8.57.0, 8, 9]
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4
 
       - name: Set up Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           cache: 'pnpm'
           node-version: ${{ matrix.node }}
