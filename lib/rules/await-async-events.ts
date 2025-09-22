@@ -129,21 +129,6 @@ export default createTestingLibraryRule<Options, MessageIds>({
 			);
 		}
 
-		function findFunctionName(node: TSESTree.Node): string | null {
-			let current: TSESTree.Node | undefined = node;
-			while (current) {
-				if (
-					current.type === AST_NODE_TYPES.FunctionDeclaration ||
-					current.type === AST_NODE_TYPES.FunctionExpression ||
-					current.type === AST_NODE_TYPES.ArrowFunctionExpression
-				) {
-					return getFunctionName(current);
-				}
-				current = current.parent;
-			}
-			return null;
-		}
-
 		const eventModules =
 			typeof options.eventModule === 'string'
 				? [options.eventModule]
@@ -221,8 +206,9 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				}
 
 				if (setupProps.size > 0) {
-					const functionName = findFunctionName(node);
-					if (functionName) {
+					const functionNode = findClosestFunctionExpressionNode(node);
+					if (functionNode) {
+						const functionName = getFunctionName(functionNode);
 						setupFunctions.set(functionName, setupProps);
 					}
 				}
