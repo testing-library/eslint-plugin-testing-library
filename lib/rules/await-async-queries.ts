@@ -11,6 +11,7 @@ import {
 	isMemberExpression,
 	isPromiseHandled,
 } from '../node-utils';
+import { wrapWithFunctionExpressionFix } from '../utils/wrap-function-expression-fix';
 
 import type { TSESTree } from '@typescript-eslint/utils';
 
@@ -164,20 +165,11 @@ export default createTestingLibraryRule<Options, MessageIds>({
 								);
 							}
 
-							const ruleFixes = [IdentifierNodeFixer];
-							if (!functionExpression.async) {
-								/**
-								 * Mutate the actual node so if other nodes exist in this
-								 * function expression body they don't also try to fix it.
-								 */
-								functionExpression.async = true;
-
-								ruleFixes.push(
-									fixer.insertTextBefore(functionExpression, 'async ')
-								);
-							}
-
-							return ruleFixes;
+							return wrapWithFunctionExpressionFix(
+								fixer,
+								IdentifierNodeFixer,
+								functionExpression
+							);
 						},
 					});
 				}
