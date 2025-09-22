@@ -1208,6 +1208,178 @@ ruleTester.run(RULE_NAME, rule, {
       `,
 					}) as const
 			),
+			...USER_EVENT_ASYNC_FUNCTIONS.map(
+				(eventMethod) =>
+					({
+						code: `
+        import userEvent from '${testingFramework}'
+        test('unhandled promise from event method called from userEvent.setup() return value is invalid', () => {
+          const user = userEvent.setup();
+          user.${eventMethod}(getByLabelText('username'))
+        })
+        `,
+						errors: [
+							{
+								line: 5,
+								column: 11,
+								messageId: 'awaitAsyncEvent',
+								data: { name: eventMethod },
+							},
+						],
+						options: [{ eventModule: 'userEvent' }],
+						output: `
+        import userEvent from '${testingFramework}'
+        test('unhandled promise from event method called from userEvent.setup() return value is invalid', async () => {
+          const user = userEvent.setup();
+          await user.${eventMethod}(getByLabelText('username'))
+        })
+        `,
+					}) as const
+			),
+			// This covers the example in the docs:
+			// https://testing-library.com/docs/user-event/intro#writing-tests-with-userevent
+			...USER_EVENT_ASYNC_FUNCTIONS.map(
+				(eventMethod) =>
+					({
+						code: `
+        import userEvent from '${testingFramework}'
+        test('unhandled promise from event method called from destructured custom setup function is invalid', () => {
+          function customSetup(jsx) {
+            return {
+              user: userEvent.setup(),
+              ...render(jsx)
+            }
+          }
+          const { user } = customSetup(<MyComponent />);
+          user.${eventMethod}(getByLabelText('username'))
+        })
+        `,
+						errors: [
+							{
+								line: 11,
+								column: 11,
+								messageId: 'awaitAsyncEvent',
+								data: { name: eventMethod },
+							},
+						],
+						options: [{ eventModule: 'userEvent' }],
+						output: `
+        import userEvent from '${testingFramework}'
+        test('unhandled promise from event method called from destructured custom setup function is invalid', async () => {
+          function customSetup(jsx) {
+            return {
+              user: userEvent.setup(),
+              ...render(jsx)
+            }
+          }
+          const { user } = customSetup(<MyComponent />);
+          await user.${eventMethod}(getByLabelText('username'))
+        })
+        `,
+					}) as const
+			),
+			...USER_EVENT_ASYNC_FUNCTIONS.map(
+				(eventMethod) =>
+					({
+						code: `
+        import userEvent from '${testingFramework}'
+        test('unhandled promise from aliased event method called from destructured custom setup function is invalid', () => {
+          function customSetup(jsx) {
+            return {
+              foo: userEvent.setup(),
+              bar: userEvent.setup(),
+              ...render(jsx)
+            }
+          }
+          const { foo, bar: myUser } = customSetup(<MyComponent />);
+          myUser.${eventMethod}(getByLabelText('username'))
+          foo.${eventMethod}(getByLabelText('username'))
+        })
+        `,
+						errors: [
+							{
+								line: 12,
+								column: 11,
+								messageId: 'awaitAsyncEvent',
+								data: { name: eventMethod },
+							},
+							{
+								line: 13,
+								column: 11,
+								messageId: 'awaitAsyncEvent',
+								data: { name: eventMethod },
+							},
+						],
+						options: [{ eventModule: 'userEvent' }],
+						output: `
+        import userEvent from '${testingFramework}'
+        test('unhandled promise from aliased event method called from destructured custom setup function is invalid', async () => {
+          function customSetup(jsx) {
+            return {
+              foo: userEvent.setup(),
+              bar: userEvent.setup(),
+              ...render(jsx)
+            }
+          }
+          const { foo, bar: myUser } = customSetup(<MyComponent />);
+          await myUser.${eventMethod}(getByLabelText('username'))
+          await foo.${eventMethod}(getByLabelText('username'))
+        })
+        `,
+					}) as const
+			),
+			...USER_EVENT_ASYNC_FUNCTIONS.map(
+				(eventMethod) =>
+					({
+						code: `
+        import userEvent from '${testingFramework}'
+        test('unhandled promise from setup reference in custom setup function is invalid', () => {
+          function customSetup(jsx) {
+            const u = userEvent.setup()
+            return {
+              foo: u,
+              bar: u,
+              ...render(jsx)
+            }
+          }
+          const { foo, bar: myUser } = customSetup(<MyComponent />);
+          myUser.${eventMethod}(getByLabelText('username'))
+          foo.${eventMethod}(getByLabelText('username'))
+        })
+        `,
+						errors: [
+							{
+								line: 13,
+								column: 11,
+								messageId: 'awaitAsyncEvent',
+								data: { name: eventMethod },
+							},
+							{
+								line: 14,
+								column: 11,
+								messageId: 'awaitAsyncEvent',
+								data: { name: eventMethod },
+							},
+						],
+						options: [{ eventModule: 'userEvent' }],
+						output: `
+        import userEvent from '${testingFramework}'
+        test('unhandled promise from setup reference in custom setup function is invalid', async () => {
+          function customSetup(jsx) {
+            const u = userEvent.setup()
+            return {
+              foo: u,
+              bar: u,
+              ...render(jsx)
+            }
+          }
+          const { foo, bar: myUser } = customSetup(<MyComponent />);
+          await myUser.${eventMethod}(getByLabelText('username'))
+          await foo.${eventMethod}(getByLabelText('username'))
+        })
+        `,
+					}) as const
+			),
 		]),
 		{
 			code: `
