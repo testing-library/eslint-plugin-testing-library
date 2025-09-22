@@ -88,7 +88,7 @@ ruleTester.run(addAsyncToFunctionFix.name, rule, {
 			async function foo(a, b) {
   			return a + b;
 			}`,
-			errors: [{ messageId: 'alwaysAsync', line: 1 }],
+			errors: [{ messageId: 'alwaysAsync', line: 2 }],
 		},
 		{
 			code: `
