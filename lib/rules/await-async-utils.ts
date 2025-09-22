@@ -14,7 +14,7 @@ import {
 	isPromiseHandled,
 	isProperty,
 } from '../node-utils';
-import { wrapWithFunctionExpressionFix } from '../utils/wrap-function-expression-fix';
+import { addAsyncToFunctionFix } from '../utils/add-async-fo-function-fix';
 
 import type { TSESLint, TSESTree } from '@typescript-eslint/utils';
 
@@ -181,7 +181,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 									callExpressionIdentifier
 								);
 								const awaitFix = insertAwaitBeforeNode(fixer, referenceNode);
-								return wrapWithFunctionExpressionFix(
+								return addAsyncToFunctionFix(
 									fixer,
 									awaitFix,
 									functionExpression
@@ -201,7 +201,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 								},
 								fix: (fixer) => {
 									const awaitFix = insertAwaitBeforeNode(fixer, referenceNode);
-									return wrapWithFunctionExpressionFix(
+									return addAsyncToFunctionFix(
 										fixer,
 										awaitFix,
 										functionExpression

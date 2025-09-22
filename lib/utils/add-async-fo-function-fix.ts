@@ -1,6 +1,6 @@
 import type { TSESLint, TSESTree } from '@typescript-eslint/utils';
 
-export const wrapWithFunctionExpressionFix = (
+export const addAsyncToFunctionFix = (
 	fixer: TSESLint.RuleFixer,
 	ruleFix: TSESLint.RuleFix,
 	functionExpression:

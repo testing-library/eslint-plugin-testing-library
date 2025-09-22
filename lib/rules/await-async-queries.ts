@@ -11,7 +11,7 @@ import {
 	isMemberExpression,
 	isPromiseHandled,
 } from '../node-utils';
-import { wrapWithFunctionExpressionFix } from '../utils/wrap-function-expression-fix';
+import { addAsyncToFunctionFix } from '../utils/add-async-fo-function-fix';
 
 import type { TSESTree } from '@typescript-eslint/utils';
 
@@ -165,7 +165,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 								);
 							}
 
-							return wrapWithFunctionExpressionFix(
+							return addAsyncToFunctionFix(
 								fixer,
 								IdentifierNodeFixer,
 								functionExpression
