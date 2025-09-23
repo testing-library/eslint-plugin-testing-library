@@ -14,7 +14,7 @@ import {
 	isPromiseHandled,
 	isProperty,
 } from '../node-utils';
-import { addAsyncToFunctionFix } from '../utils/add-async-fo-function-fix';
+import { addAsyncToFunctionFix } from '../utils/add-async-to-function-fix';
 
 import type { TSESLint, TSESTree } from '@typescript-eslint/utils';
 

@@ -1,5 +1,5 @@
 import { createTestingLibraryRule } from '../../../lib/create-testing-library-rule';
-import { addAsyncToFunctionFix } from '../../../lib/utils/add-async-fo-function-fix';
+import { addAsyncToFunctionFix } from '../../../lib/utils/add-async-to-function-fix';
 import { createRuleTester } from '../test-utils';
 
 import type { TSESTree } from '@typescript-eslint/utils';
