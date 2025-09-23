@@ -6,6 +6,7 @@ import { fileURLToPath } from 'node:url';
 import js from '@eslint/js';
 import { defineConfig, globalIgnores } from 'eslint/config';
 import prettierConfig from 'eslint-config-prettier/flat';
+import eslintPluginPlugin from 'eslint-plugin-eslint-plugin';
 import { importX } from 'eslint-plugin-import-x';
 import jest from 'eslint-plugin-jest';
 import * as jestFormatting from 'eslint-plugin-jest-formatting';
@@ -21,6 +22,7 @@ const config = defineConfig(
 	importX.flatConfigs.recommended,
 	importX.flatConfigs.typescript,
 	nodePlugin.configs['flat/recommended-module'],
+	eslintPluginPlugin.configs.recommended,
 	{
 		name: 'Language options',
 		files: ['**/*.{js,mjs,cjs,ts,mts}'],
