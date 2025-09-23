@@ -1,3 +1,5 @@
+import { isAwaitExpression } from '@typescript-eslint/utils/ast-utils';
+
 import { createTestingLibraryRule } from '../create-testing-library-rule';
 import {
 	getPropertyIdentifierNode,
@@ -8,6 +10,7 @@ import {
 	isSequenceExpression,
 	hasThenProperty,
 } from '../node-utils';
+import { getSourceCode } from '../utils';
 
 import type { TSESTree } from '@typescript-eslint/utils';
 
@@ -35,6 +38,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				'Avoid using side effects within `waitFor` callback',
 		},
 		schema: [],
+		fixable: 'code',
 	},
 	defaultOptions: [],
 	create(context, _, helpers) {
@@ -209,10 +213,15 @@ export default createTestingLibraryRule<Options, MessageIds>({
 		}
 
 		function reportImplicitReturnSideEffect(
-			node:
+			node: (
 				| TSESTree.AssignmentExpression
 				| TSESTree.CallExpression
 				| TSESTree.SequenceExpression
+			) & {
+				parent: TSESTree.ArrowFunctionExpression & {
+					parent: TSESTree.CallExpression;
+				};
+			}
 		) {
 			if (!isCallerWaitFor(node)) {
 				return;
@@ -242,6 +251,14 @@ export default createTestingLibraryRule<Options, MessageIds>({
 			context.report({
 				node,
 				messageId: 'noSideEffectsWaitFor',
+				fix: (fixer) => {
+					const { parent: callExpressionNode } = node.parent;
+					const targetNode = isAwaitExpression(callExpressionNode.parent)
+						? callExpressionNode.parent
+						: callExpressionNode;
+					const sourceCode = getSourceCode(context);
+					return fixer.replaceText(targetNode, sourceCode.getText(node));
+				},
 			});
 		}
 
