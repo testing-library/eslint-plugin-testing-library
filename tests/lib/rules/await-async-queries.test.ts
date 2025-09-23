@@ -177,6 +177,14 @@ ruleTester.run(RULE_NAME, rule, {
       `
 		),
 
+		// async queries are valid with finally
+		...createTestCase(
+			(query) => `
+				const promise = ${query}('foo')
+        promise.finally((done) => done())
+      `
+		),
+
 		// async queries are valid when wrapped within Promise.all + await expression
 		...createTestCase(
 			(query) => `
