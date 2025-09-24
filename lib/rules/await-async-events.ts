@@ -1,4 +1,4 @@
-import { ASTUtils, TSESLint, TSESTree } from '@typescript-eslint/utils';
+import { AST_NODE_TYPES, ASTUtils } from '@typescript-eslint/utils';
 
 import { createTestingLibraryRule } from '../create-testing-library-rule';
 import {
@@ -12,6 +12,8 @@ import {
 	isPromiseHandled,
 } from '../node-utils';
 import { EVENTS_SIMULATORS } from '../utils';
+
+import type { TSESLint, TSESTree } from '@typescript-eslint/utils';
 
 export const RULE_NAME = 'await-async-events';
 export type MessageIds = 'awaitAsyncEvent' | 'awaitAsyncEventWrapper';
@@ -82,6 +84,12 @@ export default createTestingLibraryRule<Options, MessageIds>({
 	create(context, [options], helpers) {
 		const functionWrappersNames: string[] = [];
 
+		// Track variables assigned from userEvent.setup() (directly or via destructuring)
+		const userEventSetupVars = new Set<string>();
+
+		// Track functions that return userEvent.setup() instances and their property names
+		const setupFunctions = new Map<string, Set<string>>();
+
 		function reportUnhandledNode({
 			node,
 			closestCallExpression,
@@ -111,6 +119,17 @@ export default createTestingLibraryRule<Options, MessageIds>({
 			}
 		}
 
+		function isUserEventSetupCall(node: TSESTree.Node): boolean {
+			return (
+				node.type === AST_NODE_TYPES.CallExpression &&
+				node.callee.type === AST_NODE_TYPES.MemberExpression &&
+				node.callee.object.type === AST_NODE_TYPES.Identifier &&
+				node.callee.object.name === USER_EVENT_NAME &&
+				node.callee.property.type === AST_NODE_TYPES.Identifier &&
+				node.callee.property.name === USER_EVENT_SETUP_FUNCTION_NAME
+			);
+		}
+
 		const eventModules =
 			typeof options.eventModule === 'string'
 				? [options.eventModule]
@@ -119,10 +138,88 @@ export default createTestingLibraryRule<Options, MessageIds>({
 		const isUserEventEnabled = eventModules.includes(USER_EVENT_NAME);
 
 		return {
+			// Track variables assigned from userEvent.setup() and destructuring from setup functions
+			VariableDeclarator(node: TSESTree.VariableDeclarator) {
+				if (!isUserEventEnabled) return;
+
+				// Direct assignment: const user = userEvent.setup();
+				if (
+					node.init &&
+					isUserEventSetupCall(node.init) &&
+					node.id.type === AST_NODE_TYPES.Identifier
+				) {
+					userEventSetupVars.add(node.id.name);
+				}
+
+				// Destructuring: const { user, myUser: alias } = setup(...)
+				if (
+					node.id.type === AST_NODE_TYPES.ObjectPattern &&
+					node.init &&
+					node.init.type === AST_NODE_TYPES.CallExpression &&
+					node.init.callee.type === AST_NODE_TYPES.Identifier
+				) {
+					const functionName = node.init.callee.name;
+					const setupProps = setupFunctions.get(functionName);
+
+					if (setupProps) {
+						for (const prop of node.id.properties) {
+							if (
+								prop.type === AST_NODE_TYPES.Property &&
+								prop.key.type === AST_NODE_TYPES.Identifier &&
+								setupProps.has(prop.key.name) &&
+								prop.value.type === AST_NODE_TYPES.Identifier
+							) {
+								userEventSetupVars.add(prop.value.name);
+							}
+						}
+					}
+				}
+			},
+
+			// Track functions that return { ...: userEvent.setup(), ... }
+			ReturnStatement(node: TSESTree.ReturnStatement) {
+				if (
+					!isUserEventEnabled ||
+					!node.argument ||
+					node.argument.type !== AST_NODE_TYPES.ObjectExpression
+				) {
+					return;
+				}
+
+				const setupProps = new Set<string>();
+				for (const prop of node.argument.properties) {
+					if (
+						prop.type === AST_NODE_TYPES.Property &&
+						prop.key.type === AST_NODE_TYPES.Identifier
+					) {
+						// Direct: foo: userEvent.setup()
+						if (isUserEventSetupCall(prop.value)) {
+							setupProps.add(prop.key.name);
+						}
+						// Indirect: foo: u, where u is a userEvent.setup() var
+						else if (
+							prop.value.type === AST_NODE_TYPES.Identifier &&
+							userEventSetupVars.has(prop.value.name)
+						) {
+							setupProps.add(prop.key.name);
+						}
+					}
+				}
+
+				if (setupProps.size > 0) {
+					const functionNode = findClosestFunctionExpressionNode(node);
+					if (functionNode) {
+						const functionName = getFunctionName(functionNode);
+						setupFunctions.set(functionName, setupProps);
+					}
+				}
+			},
+
 			'CallExpression Identifier'(node: TSESTree.Identifier) {
 				if (
 					(isFireEventEnabled && helpers.isFireEventMethod(node)) ||
-					(isUserEventEnabled && helpers.isUserEventMethod(node))
+					(isUserEventEnabled &&
+						helpers.isUserEventMethod(node, userEventSetupVars))
 				) {
 					if (node.name === USER_EVENT_SETUP_FUNCTION_NAME) {
 						return;

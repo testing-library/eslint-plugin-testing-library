@@ -1,14 +1,14 @@
 import { ESLintUtils } from '@typescript-eslint/utils';
 
-import {
-	getDocsUrl,
+import { getDocsUrl } from '../utils';
+import { detectTestingLibraryUtils } from './detect-testing-library-utils';
+
+import type {
 	TestingLibraryPluginDocs,
 	TestingLibraryPluginRuleModule,
 } from '../utils';
-
-import {
+import type {
 	DetectionOptions,
-	detectTestingLibraryUtils,
 	EnhancedRuleCreate,
 } from './detect-testing-library-utils';
 

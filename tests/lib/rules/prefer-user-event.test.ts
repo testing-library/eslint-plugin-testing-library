@@ -1,17 +1,16 @@
-import {
-	type InvalidTestCase,
-	type ValidTestCase,
-} from '@typescript-eslint/rule-tester';
-
 import rule, {
 	MAPPING_TO_USER_EVENT,
-	MessageIds,
-	Options,
 	RULE_NAME,
 	UserEventMethods,
 } from '../../../lib/rules/prefer-user-event';
 import { LIBRARY_MODULES } from '../../../lib/utils';
 import { createRuleTester } from '../test-utils';
+
+import type { MessageIds, Options } from '../../../lib/rules/prefer-user-event';
+import type {
+	InvalidTestCase,
+	ValidTestCase,
+} from '@typescript-eslint/rule-tester';
 
 function createScenarioWithImport<
 	T extends InvalidTestCase<MessageIds, Options> | ValidTestCase<Options>,

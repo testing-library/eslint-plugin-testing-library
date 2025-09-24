@@ -1,9 +1,9 @@
-import { InvalidTestCase } from '@typescript-eslint/rule-tester';
-
 import { createTestingLibraryRule } from '../../../lib/create-testing-library-rule';
 import { LIBRARY_MODULES } from '../../../lib/utils';
 import { resolveToTestingLibraryFn } from '../../../lib/utils/resolve-to-testing-library-fn';
 import { createRuleTester } from '../test-utils';
+
+import type { InvalidTestCase } from '@typescript-eslint/rule-tester';
 
 type MessageIds = 'details';
 

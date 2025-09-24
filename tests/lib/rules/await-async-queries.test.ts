@@ -1,5 +1,3 @@
-import { TSESLint } from '@typescript-eslint/utils';
-
 import rule, { RULE_NAME } from '../../../lib/rules/await-async-queries';
 import {
 	ASYNC_QUERIES_COMBINATIONS,
@@ -9,7 +7,17 @@ import {
 } from '../../../lib/utils';
 import { createRuleTester } from '../test-utils';
 
+import type { MessageIds } from '../../../lib/rules/await-async-queries';
+import type {
+	InvalidTestCase,
+	ValidTestCase,
+} from '@typescript-eslint/rule-tester';
+import type { TSESLint } from '@typescript-eslint/utils';
+
 const ruleTester = createRuleTester();
+
+type RuleValidTestCase = ValidTestCase<[]>;
+type RuleInvalidTestCase = InvalidTestCase<MessageIds, []>;
 
 const SUPPORTED_TESTING_FRAMEWORKS = [
 	'@testing-library/dom',
@@ -169,6 +177,14 @@ ruleTester.run(RULE_NAME, rule, {
       `
 		),
 
+		// async queries are valid with finally
+		...createTestCase(
+			(query) => `
+				const promise = ${query}('foo')
+        promise.finally((done) => done())
+      `
+		),
+
 		// async queries are valid when wrapped within Promise.all + await expression
 		...createTestCase(
 			(query) => `
@@ -306,10 +322,8 @@ ruleTester.run(RULE_NAME, rule, {
 		})),
 
 		// handled promise assigned to variable returned from async query wrapper is valid
-		...ALL_ASYNC_COMBINATIONS_TO_TEST.map(
-			(query) =>
-				({
-					code: `
+		...ALL_ASYNC_COMBINATIONS_TO_TEST.map<RuleValidTestCase>((query) => ({
+			code: `
         const queryWrapper = () => {
           return screen.${query}('foo')
         }
@@ -319,8 +333,7 @@ ruleTester.run(RULE_NAME, rule, {
           expect(element).toBeVisible()
         })
       `,
-				}) as const
-		),
+		})),
 
 		// non-matching query is valid
 		`
@@ -413,10 +426,8 @@ ruleTester.run(RULE_NAME, rule, {
 
 	invalid: [
 		...SUPPORTED_TESTING_FRAMEWORKS.flatMap((testingFramework) =>
-			ALL_ASYNC_COMBINATIONS_TO_TEST.map(
-				(query) =>
-					({
-						code: `// async queries without await operator or then method are not valid
+			ALL_ASYNC_COMBINATIONS_TO_TEST.map<RuleInvalidTestCase>((query) => ({
+				code: `// async queries without await operator or then method are not valid
       import { render } from '${testingFramework}'
 
       test("An example test", async () => {
@@ -424,34 +435,43 @@ ruleTester.run(RULE_NAME, rule, {
         const foo = ${query}('foo')
       });
       `,
-						errors: [{ messageId: 'awaitAsyncQuery', line: 6, column: 21 }],
-					}) as const
-			)
+				errors: [{ messageId: 'awaitAsyncQuery', line: 6, column: 21 }],
+				output: `// async queries without await operator or then method are not valid
+      import { render } from '${testingFramework}'
+
+      test("An example test", async () => {
+        doSomething()
+        const foo = await ${query}('foo')
+      });
+      `,
+			}))
 		),
-		...ALL_ASYNC_COMBINATIONS_TO_TEST.map(
-			(query) =>
-				({
-					code: `// async screen queries without await operator or then method are not valid
+		...ALL_ASYNC_COMBINATIONS_TO_TEST.map<RuleInvalidTestCase>((query) => ({
+			code: `// async screen queries without await operator or then method are not valid
       import { render } from '@testing-library/react'
 
       test("An example test", async () => {
         screen.${query}('foo')
       });
       `,
-					errors: [
-						{
-							messageId: 'awaitAsyncQuery',
-							line: 5,
-							column: 16,
-							data: { name: query },
-						},
-					],
-				}) as const
-		),
-		...ALL_ASYNC_COMBINATIONS_TO_TEST.map(
-			(query) =>
-				({
-					code: `
+			errors: [
+				{
+					messageId: 'awaitAsyncQuery',
+					line: 5,
+					column: 16,
+					data: { name: query },
+				},
+			],
+			output: `// async screen queries without await operator or then method are not valid
+      import { render } from '@testing-library/react'
+
+      test("An example test", async () => {
+        await screen.${query}('foo')
+      });
+      `,
+		})),
+		...ALL_ASYNC_COMBINATIONS_TO_TEST.map<RuleInvalidTestCase>((query) => ({
+			code: `
       import { render } from '@testing-library/react'
 
       test("An example test", async () => {
@@ -459,20 +479,44 @@ ruleTester.run(RULE_NAME, rule, {
         const foo = ${query}('foo')
       });
       `,
-					errors: [
-						{
-							messageId: 'awaitAsyncQuery',
-							line: 6,
-							column: 21,
-							data: { name: query },
-						},
-					],
-				}) as const
-		),
-		...ALL_ASYNC_COMBINATIONS_TO_TEST.map(
-			(query) =>
-				({
-					code: `
+			errors: [
+				{
+					messageId: 'awaitAsyncQuery',
+					line: 6,
+					column: 21,
+					data: { name: query },
+				},
+			],
+			output: `
+      import { render } from '@testing-library/react'
+
+      test("An example test", async () => {
+        doSomething()
+        const foo = await ${query}('foo')
+      });
+      `,
+		})),
+		...ALL_ASYNC_COMBINATIONS_TO_TEST.map<RuleInvalidTestCase>((query) => ({
+			code: `
+      import { render } from '@testing-library/react'
+
+      test("An example test", async () => {
+        const view = render(<Component />)
+        const foo = view.${query}('foo')
+      });
+      `,
+			errors: [{ messageId: 'awaitAsyncQuery', line: 6, column: 26 }],
+			output: `
+      import { render } from '@testing-library/react'
+
+      test("An example test", async () => {
+        const view = render(<Component />)
+        const foo = await view.${query}('foo')
+      });
+      `,
+		})),
+		...ALL_ASYNC_COMBINATIONS_TO_TEST.map<RuleInvalidTestCase>((query) => ({
+			code: `
       import { render } from '@testing-library/react'
 
       test("An example test", async () => {
@@ -481,37 +525,47 @@ ruleTester.run(RULE_NAME, rule, {
         expect(foo).toHaveAttribute('src', 'bar');
       });
       `,
-					errors: [
-						{
-							messageId: 'awaitAsyncQuery',
-							line: 5,
-							column: 21,
-							data: { name: query },
-						},
-					],
-				}) as const
-		),
+			errors: [
+				{
+					messageId: 'awaitAsyncQuery',
+					line: 5,
+					column: 21,
+					data: { name: query },
+				},
+			],
+			output: `
+      import { render } from '@testing-library/react'
+
+      test("An example test", async () => {
+        const foo = ${query}('foo')
+        expect(await foo).toBeInTheDocument()
+        expect(await foo).toHaveAttribute('src', 'bar');
+      });
+      `,
+		})),
 
 		// unresolved async queries are not valid (aggressive reporting)
-		...ALL_ASYNC_COMBINATIONS_TO_TEST.map(
-			(query) =>
-				({
-					code: `
+		...ALL_ASYNC_COMBINATIONS_TO_TEST.map<RuleInvalidTestCase>((query) => ({
+			code: `
         import { render } from "another-library"
 
         test('An example test', async () => {
           const example = ${query}("my example")
         })
       `,
-					errors: [{ messageId: 'awaitAsyncQuery', line: 5, column: 27 }],
-				}) as const
-		),
+			errors: [{ messageId: 'awaitAsyncQuery', line: 5, column: 27 }],
+			output: `
+        import { render } from "another-library"
+
+        test('An example test', async () => {
+          const example = await ${query}("my example")
+        })
+      `,
+		})),
 
 		// unhandled promise from async query function wrapper is invalid
-		...ALL_ASYNC_COMBINATIONS_TO_TEST.map(
-			(query) =>
-				({
-					code: `
+		...ALL_ASYNC_COMBINATIONS_TO_TEST.map<RuleInvalidTestCase>((query) => ({
+			code: `
         function queryWrapper() {
           doSomethingElse();
 
@@ -526,14 +580,26 @@ ruleTester.run(RULE_NAME, rule, {
           const element = await queryWrapper()
         })
       `,
-					errors: [{ messageId: 'asyncQueryWrapper', line: 9, column: 27 }],
-				}) as const
-		),
+			errors: [{ messageId: 'asyncQueryWrapper', line: 9, column: 27 }],
+			output: `
+        function queryWrapper() {
+          doSomethingElse();
+
+          return screen.${query}('foo')
+        }
+
+        test("An invalid example test", async () => {
+          const element = await queryWrapper()
+        })
+
+        test("An invalid example test", async () => {
+          const element = await queryWrapper()
+        })
+      `,
+		})),
 		// unhandled promise from async query arrow function wrapper is invalid
-		...ALL_ASYNC_COMBINATIONS_TO_TEST.map(
-			(query) =>
-				({
-					code: `
+		...ALL_ASYNC_COMBINATIONS_TO_TEST.map<RuleInvalidTestCase>((query) => ({
+			code: `
         const queryWrapper = () => {
           doSomethingElse();
 
@@ -548,14 +614,26 @@ ruleTester.run(RULE_NAME, rule, {
           const element = await queryWrapper()
         })
       `,
-					errors: [{ messageId: 'asyncQueryWrapper', line: 9, column: 27 }],
-				}) as const
-		),
+			errors: [{ messageId: 'asyncQueryWrapper', line: 9, column: 27 }],
+			output: `
+        const queryWrapper = () => {
+          doSomethingElse();
+
+          return ${query}('foo')
+        }
+
+        test("An invalid example test", async () => {
+          const element = await queryWrapper()
+        })
+
+        test("An invalid example test", async () => {
+          const element = await queryWrapper()
+        })
+      `,
+		})),
 		// unhandled promise implicitly returned from async query arrow function wrapper is invalid
-		...ALL_ASYNC_COMBINATIONS_TO_TEST.map(
-			(query) =>
-				({
-					code: `
+		...ALL_ASYNC_COMBINATIONS_TO_TEST.map<RuleInvalidTestCase>((query) => ({
+			code: `
         const queryWrapper = () => screen.${query}('foo')
 
         test("An invalid example test", () => {
@@ -566,9 +644,19 @@ ruleTester.run(RULE_NAME, rule, {
           const element = await queryWrapper()
         })
       `,
-					errors: [{ messageId: 'asyncQueryWrapper', line: 5, column: 27 }],
-				}) as const
-		),
+			errors: [{ messageId: 'asyncQueryWrapper', line: 5, column: 27 }],
+			output: `
+        const queryWrapper = () => screen.${query}('foo')
+
+        test("An invalid example test", async () => {
+          const element = await queryWrapper()
+        })
+
+        test("An invalid example test", async () => {
+          const element = await queryWrapper()
+        })
+      `,
+		})),
 
 		// unhandled promise from custom query matching custom-queries setting is invalid
 		{
@@ -581,6 +669,11 @@ ruleTester.run(RULE_NAME, rule, {
       })
       `,
 			errors: [{ messageId: 'awaitAsyncQuery', line: 3, column: 25 }],
+			output: `
+      test('An invalid example test', () => {
+        const element = await findByIcon('search')
+      })
+      `,
 		},
 
 		{
@@ -609,6 +702,30 @@ ruleTester.run(RULE_NAME, rule, {
       })
     `,
 			errors: [{ messageId: 'asyncQueryWrapper', line: 19, column: 34 }],
+			output: `// similar to issue #359 but forcing an error in no-awaited wrapper
+      import { render, screen } from 'mocks/test-utils'
+      import userEvent from '@testing-library/user-event'
+
+      const testData = {
+        name: 'John Doe',
+        email: 'john@doe.com',
+        password: 'extremeSecret',
+      }
+
+      const selectors = {
+        username: () => screen.findByRole('textbox', { name: /username/i }),
+        email: () => screen.findByRole('textbox', { name: /e-mail/i }),
+        password: () => screen.findByLabelText(/password/i),
+      }
+
+      test('this is a valid case', async () => {
+        render(<SomeComponent />)
+        userEvent.type(await selectors.username(), testData.name) // <-- unhandled here
+        userEvent.type(await selectors.email(), testData.email)
+        userEvent.type(await selectors.password(), testData.password)
+        // ...
+      })
+    `,
 		},
 	],
 });

@@ -2,6 +2,8 @@
 
 💼 This rule is enabled in the following configs: `angular`, `dom`, `marko`, `react`, `svelte`, `vue`.
 
+🔧 This rule is automatically fixable by the [`--fix` CLI option](https://eslint.org/docs/latest/user-guide/command-line-interface#--fix).
+
 <!-- end auto-generated rule header -->
 
 Ensure that promises returned by async utils are handled properly.
@@ -19,7 +21,7 @@ problems in the tests. The promise will be considered as handled when:
 
 - using the `await` operator
 - wrapped within `Promise.all` or `Promise.allSettled` methods
-- chaining the `then` or `catch` method
+- chaining the `then`, `catch`, `finally` method
 - chaining `resolves` or `rejects` from jest
 - chaining `toResolve()` or `toReject()` from [jest-extended](https://github.com/jest-community/jest-extended#promise)
 - chaining jasmine [async matchers](https://jasmine.github.io/api/edge/async-matchers.html)

@@ -1,4 +1,4 @@
-import { ASTUtils, TSESTree } from '@typescript-eslint/utils';
+import { ASTUtils } from '@typescript-eslint/utils';
 
 import { createTestingLibraryRule } from '../create-testing-library-rule';
 import {
@@ -8,6 +8,8 @@ import {
 	isCallExpression,
 } from '../node-utils';
 import { TESTING_FRAMEWORK_SETUP_HOOKS } from '../utils';
+
+import type { TSESTree } from '@typescript-eslint/utils';
 
 export const RULE_NAME = 'no-render-in-lifecycle';
 export type MessageIds = 'noRenderInSetup';

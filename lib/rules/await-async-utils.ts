@@ -1,17 +1,22 @@
-import { TSESTree, ASTUtils } from '@typescript-eslint/utils';
+import { ASTUtils } from '@typescript-eslint/utils';
 
 import { createTestingLibraryRule } from '../create-testing-library-rule';
 import {
 	findClosestCallExpressionNode,
+	findClosestFunctionExpressionNode,
 	getDeepestIdentifierNode,
 	getFunctionName,
 	getInnermostReturningFunction,
+	getReferenceNode,
 	getVariableReferences,
 	isCallExpression,
 	isObjectPattern,
 	isPromiseHandled,
 	isProperty,
 } from '../node-utils';
+import { addAsyncToFunctionFix } from '../utils/add-async-to-function-fix';
+
+import type { TSESLint, TSESTree } from '@typescript-eslint/utils';
 
 export const RULE_NAME = 'await-async-utils';
 export type MessageIds = 'asyncUtilWrapper' | 'awaitAsyncUtil';
@@ -38,6 +43,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				'Promise returned from {{ name }} wrapper over async util must be handled',
 		},
 		schema: [],
+		fixable: 'code',
 	},
 	defaultOptions: [],
 
@@ -87,6 +93,13 @@ export default createTestingLibraryRule<Options, MessageIds>({
 					}
 				}
 			}
+		}
+
+		function insertAwaitBeforeNode(
+			fixer: TSESLint.RuleFixer,
+			node: TSESTree.Node
+		) {
+			return fixer.insertTextBefore(node, 'await ');
 		}
 
 		/*
@@ -153,6 +166,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 					context,
 					closestCallExpression.parent
 				);
+				const functionExpression = findClosestFunctionExpressionNode(node);
 
 				if (references.length === 0) {
 					if (!isPromiseHandled(callExpressionIdentifier)) {
@@ -161,6 +175,17 @@ export default createTestingLibraryRule<Options, MessageIds>({
 							messageId: getMessageId(callExpressionIdentifier),
 							data: {
 								name: callExpressionIdentifier.name,
+							},
+							fix: (fixer) => {
+								const referenceNode = getReferenceNode(
+									callExpressionIdentifier
+								);
+								const awaitFix = insertAwaitBeforeNode(fixer, referenceNode);
+								return addAsyncToFunctionFix(
+									fixer,
+									awaitFix,
+									functionExpression
+								);
 							},
 						});
 					}
@@ -173,6 +198,14 @@ export default createTestingLibraryRule<Options, MessageIds>({
 								messageId: getMessageId(callExpressionIdentifier),
 								data: {
 									name: callExpressionIdentifier.name,
+								},
+								fix: (fixer) => {
+									const awaitFix = insertAwaitBeforeNode(fixer, referenceNode);
+									return addAsyncToFunctionFix(
+										fixer,
+										awaitFix,
+										functionExpression
+									);
 								},
 							});
 							return;

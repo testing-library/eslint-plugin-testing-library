@@ -3,6 +3,15 @@ import rule, {
 } from '../../../lib/rules/no-wait-for-multiple-assertions';
 import { createRuleTester } from '../test-utils';
 
+import type { MessageIds } from '../../../lib/rules/no-wait-for-multiple-assertions';
+import type {
+	InvalidTestCase,
+	ValidTestCase,
+} from '@typescript-eslint/rule-tester';
+
+type RuleValidTestCase = ValidTestCase<[]>;
+type RuleInvalidTestCase = InvalidTestCase<MessageIds, []>;
+
 const ruleTester = createRuleTester();
 
 const SUPPORTED_TESTING_FRAMEWORKS = [
@@ -37,9 +46,10 @@ ruleTester.run(RULE_NAME, rule, {
         })
       `,
 		},
-		...SUPPORTED_TESTING_FRAMEWORKS.map((testingFramework) => ({
-			settings: { 'testing-library/utils-module': 'test-utils' },
-			code: `// Aggressive Reporting disabled - waitFor renamed
+		...SUPPORTED_TESTING_FRAMEWORKS.map<RuleValidTestCase>(
+			(testingFramework) => ({
+				settings: { 'testing-library/utils-module': 'test-utils' },
+				code: `// Aggressive Reporting disabled - waitFor renamed
         import { waitFor as renamedWaitFor } from '${testingFramework}'
         import { waitFor } from 'somewhere-else'
         await waitFor(() => {
@@ -47,7 +57,8 @@ ruleTester.run(RULE_NAME, rule, {
           expect(b).toEqual('b')
         })
       `,
-		})),
+			})
+		),
 		// this needs to be check by other rule
 		{
 			code: `
@@ -111,21 +122,20 @@ ruleTester.run(RULE_NAME, rule, {
 				{ line: 4, column: 11, messageId: 'noWaitForMultipleAssertion' },
 			],
 		},
-		...SUPPORTED_TESTING_FRAMEWORKS.map(
-			(testingFramework) =>
-				({
-					settings: { 'testing-library/utils-module': 'test-utils' },
-					code: `// Aggressive Reporting disabled
+		...SUPPORTED_TESTING_FRAMEWORKS.map<RuleInvalidTestCase>(
+			(testingFramework) => ({
+				settings: { 'testing-library/utils-module': 'test-utils' },
+				code: `// Aggressive Reporting disabled
         import { waitFor } from '${testingFramework}'
         await waitFor(() => {
           expect(a).toEqual('a')
           expect(b).toEqual('b')
         })
       `,
-					errors: [
-						{ line: 5, column: 11, messageId: 'noWaitForMultipleAssertion' },
-					],
-				}) as const
+				errors: [
+					{ line: 5, column: 11, messageId: 'noWaitForMultipleAssertion' },
+				],
+			})
 		),
 		{
 			settings: { 'testing-library/utils-module': 'test-utils' },

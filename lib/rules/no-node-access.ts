@@ -1,4 +1,4 @@
-import { TSESTree, ASTUtils } from '@typescript-eslint/utils';
+import { ASTUtils } from '@typescript-eslint/utils';
 
 import { createTestingLibraryRule } from '../create-testing-library-rule';
 import {
@@ -12,6 +12,8 @@ import {
 	EVENT_HANDLER_METHODS,
 	resolveToTestingLibraryFn,
 } from '../utils';
+
+import type { TSESTree } from '@typescript-eslint/utils';
 
 export const RULE_NAME = 'no-node-access';
 export type MessageIds = 'noNodeAccess';

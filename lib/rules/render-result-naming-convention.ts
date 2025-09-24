@@ -1,4 +1,4 @@
-import { ASTUtils, TSESTree } from '@typescript-eslint/utils';
+import { ASTUtils } from '@typescript-eslint/utils';
 
 import { createTestingLibraryRule } from '../create-testing-library-rule';
 import {
@@ -7,6 +7,8 @@ import {
 	getInnermostReturningFunction,
 	isObjectPattern,
 } from '../node-utils';
+
+import type { TSESTree } from '@typescript-eslint/utils';
 
 export const RULE_NAME = 'render-result-naming-convention';
 export type MessageIds = 'renderResultNamingConvention';

@@ -1,4 +1,4 @@
-import { ASTUtils, TSESLint, TSESTree } from '@typescript-eslint/utils';
+import { ASTUtils } from '@typescript-eslint/utils';
 
 import {
 	findClosestVariableDeclaratorNode,
@@ -9,7 +9,6 @@ import {
 	getPropertyIdentifierNode,
 	getReferenceNode,
 	hasImportMatch,
-	ImportModuleNode,
 	isCallExpression,
 	isImportDeclaration,
 	isImportDefaultSpecifier,
@@ -30,6 +29,9 @@ import {
 	isOfficialTestingLibraryModule,
 	isTestingLibraryModule,
 } from '../utils/is-testing-library-module';
+
+import type { ImportModuleNode } from '../node-utils';
+import type { TSESLint, TSESTree } from '@typescript-eslint/utils';
 
 const SETTING_OPTION_OFF = 'off';
 
@@ -79,7 +81,10 @@ type IsAsyncUtilFn = (
 	validNames?: readonly (typeof ASYNC_UTILS)[number][]
 ) => boolean;
 type IsFireEventMethodFn = (node: TSESTree.Identifier) => boolean;
-type IsUserEventMethodFn = (node: TSESTree.Identifier) => boolean;
+type IsUserEventMethodFn = (
+	node: TSESTree.Identifier,
+	userEventSetupVars?: Set<string>
+) => boolean;
 type IsRenderUtilFn = (node: TSESTree.Identifier) => boolean;
 type IsCreateEventUtil = (
 	node: TSESTree.CallExpression | TSESTree.Identifier
@@ -490,7 +495,6 @@ export function detectTestingLibraryUtils<
 		/**
 		 * Determines whether a given node is fireEvent method or not
 		 */
-		// eslint-disable-next-line complexity
 		const isFireEventMethod: IsFireEventMethodFn = (node) => {
 			const fireEventUtil =
 				findImportedTestingLibraryUtilSpecifier(FIRE_EVENT_NAME);
@@ -527,7 +531,6 @@ export function detectTestingLibraryUtils<
 
 			// we know it's defined at this point, but TS seems to think it is not
 			// so here I'm enforcing it once in order to avoid using "!" operator every time
-			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 			const definedParentMemberExpression = parentMemberExpression!;
 
 			// check fireEvent.click() usage
@@ -563,7 +566,10 @@ export function detectTestingLibraryUtils<
 			return regularCall || wildcardCall || wildcardCallWithCallExpression;
 		};
 
-		const isUserEventMethod: IsUserEventMethodFn = (node) => {
+		const isUserEventMethod: IsUserEventMethodFn = (
+			node,
+			userEventSetupVars
+		) => {
 			const userEvent = findImportedUserEventSpecifier();
 			let userEventName: string | undefined;
 
@@ -571,10 +577,6 @@ export function detectTestingLibraryUtils<
 				userEventName = userEvent.name;
 			} else if (isAggressiveModuleReportingEnabled()) {
 				userEventName = USER_EVENT_NAME;
-			}
-
-			if (!userEventName) {
-				return false;
 			}
 
 			const parentMemberExpression: TSESTree.MemberExpression | undefined =
@@ -588,18 +590,33 @@ export function detectTestingLibraryUtils<
 
 			// make sure that given node it's not userEvent object itself
 			if (
-				[userEventName, USER_EVENT_NAME].includes(node.name) ||
+				(userEventName &&
+					[userEventName, USER_EVENT_NAME].includes(node.name)) ||
 				(ASTUtils.isIdentifier(parentMemberExpression.object) &&
 					parentMemberExpression.object.name === node.name)
 			) {
 				return false;
 			}
 
-			// check userEvent.click() usage
-			return (
+			// check userEvent.click() usage (imported identifier)
+			if (
+				userEventName &&
 				ASTUtils.isIdentifier(parentMemberExpression.object) &&
 				parentMemberExpression.object.name === userEventName
-			);
+			) {
+				return true;
+			}
+
+			// check user.click() usage where user is a variable from userEvent.setup()
+			if (
+				userEventSetupVars &&
+				ASTUtils.isIdentifier(parentMemberExpression.object) &&
+				userEventSetupVars.has(parentMemberExpression.object.name)
+			) {
+				return true;
+			}
+
+			return false;
 		};
 
 		/**
