@@ -1460,5 +1460,24 @@ ruleTester.run(RULE_NAME, rule, {
       })
       `,
 		},
+		{
+			code: `
+			import userEvent from '${USER_EVENT_ASYNC_FRAMEWORKS[0]}'
+			test('setup method called is valid', () => {
+				const foo = [];
+				foo.forEach(() => {
+					userEvent.click();
+				});
+			})
+				`,
+			errors: [
+				{
+					line: 6,
+					column: 6,
+					messageId: 'awaitAsyncEvent',
+					data: { name: 'click' },
+				},
+			],
+		},
 	],
 });
