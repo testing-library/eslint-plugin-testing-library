@@ -557,6 +557,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     </tr>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/andreww2012"><img src="https://avatars.githubusercontent.com/u/6554045?v=4?s=100" width="100px;" alt="Andrew Kazakov"/><br /><sub><b>Andrew Kazakov</b></sub></a><br /><a href="https://github.com/testing-library/eslint-plugin-testing-library/commits?author=andreww2012" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/bonkevin"><img src="https://avatars.githubusercontent.com/u/228623539?v=4?s=100" width="100px;" alt="Kevin Bon"/><br /><sub><b>Kevin Bon</b></sub></a><br /><a href="https://github.com/testing-library/eslint-plugin-testing-library/commits?author=bonkevin" title="Code">💻</a> <a href="https://github.com/testing-library/eslint-plugin-testing-library/commits?author=bonkevin" title="Tests">⚠️</a></td>
     </tr>
   </tbody>
 </table>

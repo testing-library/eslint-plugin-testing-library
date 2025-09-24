@@ -748,6 +748,16 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "bonkevin",
+      "name": "Kevin Bon",
+      "avatar_url": "https://avatars.githubusercontent.com/u/228623539?v=4",
+      "profile": "https://github.com/bonkevin",
+      "contributions": [
+        "code",
+        "test"
+      ]
     }
   ],
   "contributorsPerLine": 7,
