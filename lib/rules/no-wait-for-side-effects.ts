@@ -218,7 +218,11 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				| TSESTree.CallExpression
 				| TSESTree.SequenceExpression
 			) & {
-				parent: TSESTree.ArrowFunctionExpression & {
+				parent: (
+					| TSESTree.ArrowFunctionExpression
+					| TSESTree.FunctionDeclaration
+					| TSESTree.FunctionExpression
+				) & {
 					parent: TSESTree.CallExpression;
 				};
 			}
