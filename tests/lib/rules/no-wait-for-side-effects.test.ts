@@ -368,11 +368,43 @@ ruleTester.run(RULE_NAME, rule, {
 				{
 					code: `
         import { waitFor } from '${testingFramework}';
+        waitFor(() => render(<App />))
+      `,
+					errors: [{ line: 3, column: 23, messageId: 'noSideEffectsWaitFor' }],
+					output: `
+        import { waitFor } from '${testingFramework}';
+        render(<App />)
+      `,
+				},
+				{
+					code: `
+        import { waitFor } from '${testingFramework}';
         await waitFor(function() {
           render(<App />)
         })
       `,
 					errors: [{ line: 4, column: 11, messageId: 'noSideEffectsWaitFor' }],
+					output: `
+        import { waitFor } from '${testingFramework}';
+        render(<App />)
+        await waitFor(function() {
+        })
+      `,
+				},
+				{
+					code: `
+        import { waitFor } from '${testingFramework}';
+        waitFor(function() {
+          render(<App />)
+        })
+      `,
+					errors: [{ line: 4, column: 11, messageId: 'noSideEffectsWaitFor' }],
+					output: `
+        import { waitFor } from '${testingFramework}';
+        render(<App />)
+        waitFor(function() {
+        })
+      `,
 				},
 				{
 					code: `
@@ -382,6 +414,12 @@ ruleTester.run(RULE_NAME, rule, {
         })
       `,
 					errors: [{ line: 4, column: 11, messageId: 'noSideEffectsWaitFor' }],
+					output: `
+        import { waitFor } from '${testingFramework}';
+        const { container } = renderHelper(<App />)
+        await waitFor(function() {
+        })
+      `,
 				},
 				{
 					settings: { 'testing-library/custom-renders': ['renderHelper'] },
@@ -407,6 +445,13 @@ ruleTester.run(RULE_NAME, rule, {
         })
       `,
 					errors: [{ line: 5, column: 11, messageId: 'noSideEffectsWaitFor' }],
+					output: `
+        import { waitFor } from '${testingFramework}';
+        import { renderHelper } from 'somewhere-else';
+        renderHelper(<App />)
+        await waitFor(() => {
+        })
+      `,
 				},
 				{
 					settings: { 'testing-library/custom-renders': ['renderHelper'] },
@@ -418,6 +463,13 @@ ruleTester.run(RULE_NAME, rule, {
         })
       `,
 					errors: [{ line: 5, column: 11, messageId: 'noSideEffectsWaitFor' }],
+					output: `
+        import { waitFor } from '${testingFramework}';
+        import { renderHelper } from 'somewhere-else';
+        const { container } = renderHelper(<App />)
+        await waitFor(() => {
+        })
+      `,
 				},
 				{
 					settings: { 'testing-library/custom-renders': ['renderHelper'] },
@@ -430,6 +482,14 @@ ruleTester.run(RULE_NAME, rule, {
         })
       `,
 					errors: [{ line: 6, column: 11, messageId: 'noSideEffectsWaitFor' }],
+					output: `
+        import { waitFor } from '${testingFramework}';
+        import { renderHelper } from 'somewhere-else';
+        let container;
+        ({ container } = renderHelper(<App />))
+        await waitFor(() => {
+        })
+      `,
 				},
 				{
 					code: `
@@ -539,6 +599,12 @@ ruleTester.run(RULE_NAME, rule, {
         })
       `,
 					errors: [{ line: 4, column: 11, messageId: 'noSideEffectsWaitFor' }],
+					output: `
+        import { waitFor } from '${testingFramework}';
+        render(<App />)
+        await waitFor(() => {
+        })
+      `,
 				},
 				{
 					code: `
@@ -548,6 +614,12 @@ ruleTester.run(RULE_NAME, rule, {
         })
       `,
 					errors: [{ line: 4, column: 11, messageId: 'noSideEffectsWaitFor' }],
+					output: `
+        import { waitFor } from '${testingFramework}';
+        const { container } = render(<App />)
+        await waitFor(() => {
+        })
+      `,
 				},
 				{
 					code: `
@@ -557,6 +629,12 @@ ruleTester.run(RULE_NAME, rule, {
         })
       `,
 					errors: [{ line: 4, column: 11, messageId: 'noSideEffectsWaitFor' }],
+					output: `
+        import { waitFor } from '${testingFramework}';
+        result = render(<App />)
+        await waitFor(() => {
+        })
+      `,
 				},
 				{
 					code: `
@@ -566,7 +644,22 @@ ruleTester.run(RULE_NAME, rule, {
           { container } = render(<App />)
         })
       `,
-					errors: [{ line: 4, column: 11, messageId: 'noSideEffectsWaitFor' }],
+					errors: [
+						{
+							line: 4,
+							column: 11,
+							messageId: 'noSideEffectsWaitFor',
+							endLine: 5,
+							endColumn: 42,
+						},
+					],
+					output: `
+        import { waitFor } from '${testingFramework}';
+        const a = 5,
+          { container } = render(<App />)
+        await waitFor(() => {
+        })
+      `,
 				},
 				{
 					code: `
@@ -577,6 +670,13 @@ ruleTester.run(RULE_NAME, rule, {
         })
       `,
 					errors: [{ line: 5, column: 11, messageId: 'noSideEffectsWaitFor' }],
+					output: `
+        import { waitFor } from '${testingFramework}';
+        const { rerender } = render(<App />)
+        rerender(<App />)
+        await waitFor(() => {
+        })
+      `,
 				},
 				{
 					code: `
@@ -590,6 +690,22 @@ ruleTester.run(RULE_NAME, rule, {
 						{ line: 4, column: 11, messageId: 'noSideEffectsWaitFor' },
 						{ line: 5, column: 11, messageId: 'noSideEffectsWaitFor' },
 					],
+					output: [
+						`
+        import { waitFor } from '${testingFramework}';
+        render(<App />)
+        await waitFor(() => {
+          fireEvent.keyDown(input, {key: 'ArrowDown'})
+        })
+      `,
+						`
+        import { waitFor } from '${testingFramework}';
+        render(<App />)
+        fireEvent.keyDown(input, {key: 'ArrowDown'})
+        await waitFor(() => {
+        })
+      `,
+					],
 				},
 				{
 					code: `
@@ -602,6 +718,22 @@ ruleTester.run(RULE_NAME, rule, {
 					errors: [
 						{ line: 4, column: 11, messageId: 'noSideEffectsWaitFor' },
 						{ line: 5, column: 11, messageId: 'noSideEffectsWaitFor' },
+					],
+					output: [
+						`
+        import { waitFor } from '${testingFramework}';
+        render(<App />)
+        await waitFor(() => {
+          userEvent.click(button)
+        })
+      `,
+						`
+        import { waitFor } from '${testingFramework}';
+        render(<App />)
+        userEvent.click(button)
+        await waitFor(() => {
+        })
+      `,
 					],
 				},
 			]
@@ -642,6 +774,12 @@ ruleTester.run(RULE_NAME, rule, {
         })
       `,
 					errors: [{ line: 4, column: 11, messageId: 'noSideEffectsWaitFor' }],
+					output: `
+        import { waitFor } from '${testingFramework}';
+        fireEvent.keyDown(input, {key: 'ArrowDown'})
+        await waitFor(() => {
+        })
+      `,
 				},
 				{
 					code: `
@@ -651,6 +789,12 @@ ruleTester.run(RULE_NAME, rule, {
         })
       `,
 					errors: [{ line: 4, column: 11, messageId: 'noSideEffectsWaitFor' }],
+					output: `
+        import { waitFor, fireEvent as renamedFireEvent } from '${testingFramework}';
+        renamedFireEvent.keyDown(input, {key: 'ArrowDown'})
+        await waitFor(() => {
+        })
+      `,
 				},
 			]
 		),
@@ -663,6 +807,12 @@ ruleTester.run(RULE_NAME, rule, {
         })
       `,
 			errors: [{ line: 4, column: 11, messageId: 'noSideEffectsWaitFor' }],
+			output: `
+        import { waitFor, fireEvent } from '~/test-utils';
+        fireEvent.keyDown(input, {key: 'ArrowDown'})
+        await waitFor(() => {
+        })
+      `,
 		},
 		...SUPPORTED_TESTING_FRAMEWORKS.flatMap<RuleInvalidTestCase>(
 			(testingFramework) => [
@@ -675,6 +825,13 @@ ruleTester.run(RULE_NAME, rule, {
         })
       `,
 					errors: [{ line: 5, column: 11, messageId: 'noSideEffectsWaitFor' }],
+					output: `
+        import { waitFor } from '${testingFramework}';
+        fireEvent.keyDown(input, {key: 'ArrowDown'})
+        await waitFor(() => {
+          expect(b).toEqual('b')
+        })
+      `,
 				},
 				{
 					code: `
@@ -685,6 +842,13 @@ ruleTester.run(RULE_NAME, rule, {
         })
       `,
 					errors: [{ line: 4, column: 11, messageId: 'noSideEffectsWaitFor' }],
+					output: `
+        import { waitFor } from '${testingFramework}';
+        fireEvent.keyDown(input, {key: 'ArrowDown'})
+        await waitFor(() => {
+          expect(b).toEqual('b')
+        })
+      `,
 				},
 				{
 					code: `
@@ -694,6 +858,12 @@ ruleTester.run(RULE_NAME, rule, {
         })
       `,
 					errors: [{ line: 4, column: 11, messageId: 'noSideEffectsWaitFor' }],
+					output: `
+        import { waitFor } from '${testingFramework}';
+        fireEvent.keyDown(input, {key: 'ArrowDown'})
+        await waitFor(function() {
+        })
+      `,
 				},
 				{
 					code: `
@@ -704,6 +874,13 @@ ruleTester.run(RULE_NAME, rule, {
         })
       `,
 					errors: [{ line: 5, column: 11, messageId: 'noSideEffectsWaitFor' }],
+					output: `
+        import { waitFor } from '${testingFramework}';
+        fireEvent.keyDown(input, {key: 'ArrowDown'})
+        await waitFor(function() {
+          expect(b).toEqual('b')
+        })
+      `,
 				},
 				{
 					code: `
@@ -714,6 +891,13 @@ ruleTester.run(RULE_NAME, rule, {
         })
       `,
 					errors: [{ line: 4, column: 11, messageId: 'noSideEffectsWaitFor' }],
+					output: `
+        import { waitFor } from '${testingFramework}';
+        fireEvent.keyDown(input, {key: 'ArrowDown'})
+        await waitFor(function() {
+          expect(b).toEqual('b')
+        })
+      `,
 				},
 			]
 		),
@@ -739,6 +923,12 @@ ruleTester.run(RULE_NAME, rule, {
         })
       `,
 					errors: [{ line: 4, column: 11, messageId: 'noSideEffectsWaitFor' }],
+					output: `
+        import { waitFor } from '${testingFramework}';
+        userEvent.click(button)
+        await waitFor(() => {
+        })
+      `,
 				},
 				{
 					code: `
@@ -749,6 +939,13 @@ ruleTester.run(RULE_NAME, rule, {
         })
       `,
 					errors: [{ line: 5, column: 11, messageId: 'noSideEffectsWaitFor' }],
+					output: `
+        import { waitFor } from '${testingFramework}';
+        import renamedUserEvent from '@testing-library/user-event'
+        renamedUserEvent.click(button)
+        await waitFor(() => {
+        })
+      `,
 				},
 			]
 		),
@@ -762,6 +959,13 @@ ruleTester.run(RULE_NAME, rule, {
         })
       `,
 			errors: [{ line: 5, column: 11, messageId: 'noSideEffectsWaitFor' }],
+			output: `
+        import { waitFor } from '~/test-utils';
+        import userEvent from '@testing-library/user-event'
+        userEvent.click();
+        await waitFor(() => {
+        })
+      `,
 		},
 		...SUPPORTED_TESTING_FRAMEWORKS.flatMap<RuleInvalidTestCase>(
 			(testingFramework) => [
@@ -774,6 +978,13 @@ ruleTester.run(RULE_NAME, rule, {
         })
       `,
 					errors: [{ line: 5, column: 11, messageId: 'noSideEffectsWaitFor' }],
+					output: `
+        import { waitFor } from '${testingFramework}';
+        userEvent.click(button)
+        await waitFor(() => {
+          expect(b).toEqual('b')
+        })
+      `,
 				},
 				{
 					code: `
@@ -784,6 +995,13 @@ ruleTester.run(RULE_NAME, rule, {
         })
       `,
 					errors: [{ line: 4, column: 11, messageId: 'noSideEffectsWaitFor' }],
+					output: `
+        import { waitFor } from '${testingFramework}';
+        userEvent.click(button)
+        await waitFor(() => {
+          expect(b).toEqual('b')
+        })
+      `,
 				},
 				{
 					code: `
@@ -793,6 +1011,12 @@ ruleTester.run(RULE_NAME, rule, {
         })
       `,
 					errors: [{ line: 4, column: 11, messageId: 'noSideEffectsWaitFor' }],
+					output: `
+        import { waitFor } from '${testingFramework}';
+        userEvent.click(button)
+        await waitFor(function() {
+        })
+      `,
 				},
 				{
 					code: `
@@ -803,6 +1027,13 @@ ruleTester.run(RULE_NAME, rule, {
         })
       `,
 					errors: [{ line: 5, column: 11, messageId: 'noSideEffectsWaitFor' }],
+					output: `
+        import { waitFor } from '${testingFramework}';
+        userEvent.click(button)
+        await waitFor(function() {
+          expect(b).toEqual('b')
+        })
+      `,
 				},
 				{
 					code: `
@@ -813,6 +1044,13 @@ ruleTester.run(RULE_NAME, rule, {
         })
       `,
 					errors: [{ line: 4, column: 11, messageId: 'noSideEffectsWaitFor' }],
+					output: `
+        import { waitFor } from '${testingFramework}';
+        userEvent.click(button)
+        await waitFor(function() {
+          expect(b).toEqual('b')
+        })
+      `,
 				},
 				{
 					// Issue #500, https://github.com/testing-library/eslint-plugin-testing-library/issues/500
@@ -827,6 +1065,16 @@ ruleTester.run(RULE_NAME, rule, {
         })
       `,
 					errors: [{ line: 4, column: 11, messageId: 'noSideEffectsWaitFor' }],
+					output: `
+        import { waitFor } from '${testingFramework}';
+        userEvent.click(button)
+        waitFor(function() {
+          expect(b).toEqual('b')
+        }).then(() => {
+          userEvent.click(button) // Side effects are allowed inside .then()
+          expect(b).toEqual('b')
+        })
+      `,
 				},
 				{
 					// Issue #500, https://github.com/testing-library/eslint-plugin-testing-library/issues/500
@@ -848,6 +1096,20 @@ ruleTester.run(RULE_NAME, rule, {
 						{ line: 4, column: 11, messageId: 'noSideEffectsWaitFor' },
 						{ line: 10, column: 13, messageId: 'noSideEffectsWaitFor' },
 					],
+					output: `
+        import { waitFor } from '${testingFramework}';
+        userEvent.click(button)
+        waitFor(function() {
+          expect(b).toEqual('b')
+        }).then(() => {
+          userEvent.click(button) // Side effects are allowed inside .then()
+          expect(b).toEqual('b')
+          fireEvent.keyDown(input, {key: 'ArrowDown'}) // But not if there is a another waitFor with side effects inside the .then()
+          await waitFor(() => {
+            expect(b).toEqual('b')
+          })
+        })
+      `,
 				},
 			]
 		),
@@ -874,6 +1136,40 @@ ruleTester.run(RULE_NAME, rule, {
 				{ line: 9, column: 13, messageId: 'noSideEffectsWaitFor' },
 				{ line: 12, column: 13, messageId: 'noSideEffectsWaitFor' },
 			],
+			output: [
+				`// all mixed
+        import { waitFor, fireEvent as renamedFireEvent, screen } from '~/test-utils';
+        import userEvent from '@testing-library/user-event'
+        import { fireEvent } from 'somewhere-else'
+
+        test('check all mixed', async () => {
+          const button = await screen.findByRole('button')
+          renamedFireEvent.keyDown(input, {key: 'ArrowDown'})
+          await waitFor(() => {
+            expect(b).toEqual('b')
+            fireEvent.keyDown(input, {key: 'ArrowDown'})
+            userEvent.click(button)
+            someBool ? 'a' : 'b' // cover expression statement without identifier for 100% coverage
+          })
+        })
+      `,
+				`// all mixed
+        import { waitFor, fireEvent as renamedFireEvent, screen } from '~/test-utils';
+        import userEvent from '@testing-library/user-event'
+        import { fireEvent } from 'somewhere-else'
+
+        test('check all mixed', async () => {
+          const button = await screen.findByRole('button')
+          renamedFireEvent.keyDown(input, {key: 'ArrowDown'})
+          userEvent.click(button)
+          await waitFor(() => {
+            expect(b).toEqual('b')
+            fireEvent.keyDown(input, {key: 'ArrowDown'})
+            someBool ? 'a' : 'b' // cover expression statement without identifier for 100% coverage
+          })
+        })
+      `,
+			],
 		},
 		// side effects (userEvent, fireEvent or render) in variable declarations
 		...SUPPORTED_TESTING_FRAMEWORKS.flatMap<RuleInvalidTestCase>(
@@ -894,6 +1190,35 @@ ruleTester.run(RULE_NAME, rule, {
 						{ line: 6, column: 11, messageId: 'noSideEffectsWaitFor' },
 						{ line: 7, column: 11, messageId: 'noSideEffectsWaitFor' },
 					],
+					output: [
+						`
+        import { waitFor } from '${testingFramework}';
+        import userEvent from '@testing-library/user-event'
+        const a = userEvent.click(button);
+        await waitFor(() => {
+          const b = fireEvent.click(button);
+          const wrapper = render(<App />);
+        })
+        `,
+						`
+        import { waitFor } from '${testingFramework}';
+        import userEvent from '@testing-library/user-event'
+        const a = userEvent.click(button);
+        const b = fireEvent.click(button);
+        await waitFor(() => {
+          const wrapper = render(<App />);
+        })
+        `,
+						`
+        import { waitFor } from '${testingFramework}';
+        import userEvent from '@testing-library/user-event'
+        const a = userEvent.click(button);
+        const b = fireEvent.click(button);
+        const wrapper = render(<App />);
+        await waitFor(() => {
+        })
+        `,
+					],
 				},
 			]
 		),
@@ -912,6 +1237,16 @@ ruleTester.run(RULE_NAME, rule, {
         });
         `,
 					errors: [{ line: 7, column: 13, messageId: 'noSideEffectsWaitFor' }],
+					output: `
+        import { waitFor } from '${testingFramework}';
+        import userEvent from '@testing-library/user-event'
+
+        it("some test", async () => {
+          await fireEvent.click(screen.getByTestId("something"));
+          await waitFor(async () => {
+          });
+        });
+        `,
 				},
 			]
 		),
