@@ -214,7 +214,8 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				return;
 			}
 
-			getSideEffectNodes(node.body).forEach((sideEffectNode) =>
+			const sideEffects = getSideEffectNodes(node.body);
+			sideEffects.forEach((sideEffectNode) =>
 				context.report({
 					node: sideEffectNode,
 					messageId: 'noSideEffectsWaitFor',
@@ -223,11 +224,31 @@ export default createTestingLibraryRule<Options, MessageIds>({
 						const targetNode = isAwaitExpression(callExpressionNode.parent)
 							? callExpressionNode.parent
 							: callExpressionNode;
+
 						const lines = sourceCode.getText().split('\n');
-
 						const line = lines[targetNode.loc.start.line - 1];
-
 						const indent = line.match(/^\s*/)?.[0] ?? '';
+						const sideEffectLines = lines.slice(
+							sideEffectNode.loc.start.line - 1,
+							sideEffectNode.loc.end.line
+						);
+						const sideEffectNodeText = sideEffectLines.join('\n').trimStart();
+						if (
+							sideEffects.length === node.body.length &&
+							sideEffects.length === 1
+						) {
+							const tokenAfter = sourceCode.getTokenAfter(targetNode);
+							return [
+								fixer.insertTextBefore(targetNode, sideEffectNodeText),
+								tokenAfter?.value === ';'
+									? fixer.removeRange([
+											targetNode.range[0],
+											tokenAfter.range[1],
+										])
+									: fixer.remove(targetNode),
+							];
+						}
+
 						const lineStart = sourceCode.getIndexFromLoc({
 							line: sideEffectNode.loc.start.line,
 							column: 0,
@@ -237,15 +258,10 @@ export default createTestingLibraryRule<Options, MessageIds>({
 							column: 0,
 						});
 
-						const sideEffectLines = lines.slice(
-							sideEffectNode.loc.start.line - 1,
-							sideEffectNode.loc.end.line
-						);
-						const sideEffectNodeText = sideEffectLines.join('\n');
 						return [
 							fixer.insertTextBefore(
 								targetNode,
-								sideEffectNodeText.trimStart() + '\n' + indent
+								sideEffectNodeText + '\n' + indent
 							),
 							fixer.removeRange([lineStart, lineEnd]),
 						];
