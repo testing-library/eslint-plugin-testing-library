@@ -387,8 +387,6 @@ ruleTester.run(RULE_NAME, rule, {
 					output: `
         import { waitFor } from '${testingFramework}';
         render(<App />)
-        await waitFor(function() {
-        })
       `,
 				},
 				{
@@ -402,8 +400,6 @@ ruleTester.run(RULE_NAME, rule, {
 					output: `
         import { waitFor } from '${testingFramework}';
         render(<App />)
-        waitFor(function() {
-        })
       `,
 				},
 				{
@@ -417,8 +413,6 @@ ruleTester.run(RULE_NAME, rule, {
 					output: `
         import { waitFor } from '${testingFramework}';
         const { container } = renderHelper(<App />)
-        await waitFor(function() {
-        })
       `,
 				},
 				{
@@ -449,8 +443,6 @@ ruleTester.run(RULE_NAME, rule, {
         import { waitFor } from '${testingFramework}';
         import { renderHelper } from 'somewhere-else';
         renderHelper(<App />)
-        await waitFor(() => {
-        })
       `,
 				},
 				{
@@ -467,8 +459,6 @@ ruleTester.run(RULE_NAME, rule, {
         import { waitFor } from '${testingFramework}';
         import { renderHelper } from 'somewhere-else';
         const { container } = renderHelper(<App />)
-        await waitFor(() => {
-        })
       `,
 				},
 				{
@@ -487,8 +477,6 @@ ruleTester.run(RULE_NAME, rule, {
         import { renderHelper } from 'somewhere-else';
         let container;
         ({ container } = renderHelper(<App />))
-        await waitFor(() => {
-        })
       `,
 				},
 				{
@@ -602,8 +590,6 @@ ruleTester.run(RULE_NAME, rule, {
 					output: `
         import { waitFor } from '${testingFramework}';
         render(<App />)
-        await waitFor(() => {
-        })
       `,
 				},
 				{
@@ -617,8 +603,6 @@ ruleTester.run(RULE_NAME, rule, {
 					output: `
         import { waitFor } from '${testingFramework}';
         const { container } = render(<App />)
-        await waitFor(() => {
-        })
       `,
 				},
 				{
@@ -632,8 +616,6 @@ ruleTester.run(RULE_NAME, rule, {
 					output: `
         import { waitFor } from '${testingFramework}';
         result = render(<App />)
-        await waitFor(() => {
-        })
       `,
 				},
 				{
@@ -657,8 +639,6 @@ ruleTester.run(RULE_NAME, rule, {
         import { waitFor } from '${testingFramework}';
         const a = 5,
           { container } = render(<App />)
-        await waitFor(() => {
-        })
       `,
 				},
 				{
@@ -674,8 +654,6 @@ ruleTester.run(RULE_NAME, rule, {
         import { waitFor } from '${testingFramework}';
         const { rerender } = render(<App />)
         rerender(<App />)
-        await waitFor(() => {
-        })
       `,
 				},
 				{
@@ -702,8 +680,6 @@ ruleTester.run(RULE_NAME, rule, {
         import { waitFor } from '${testingFramework}';
         render(<App />)
         fireEvent.keyDown(input, {key: 'ArrowDown'})
-        await waitFor(() => {
-        })
       `,
 					],
 				},
@@ -731,8 +707,6 @@ ruleTester.run(RULE_NAME, rule, {
         import { waitFor } from '${testingFramework}';
         render(<App />)
         userEvent.click(button)
-        await waitFor(() => {
-        })
       `,
 					],
 				},
@@ -777,8 +751,6 @@ ruleTester.run(RULE_NAME, rule, {
 					output: `
         import { waitFor } from '${testingFramework}';
         fireEvent.keyDown(input, {key: 'ArrowDown'})
-        await waitFor(() => {
-        })
       `,
 				},
 				{
@@ -792,8 +764,6 @@ ruleTester.run(RULE_NAME, rule, {
 					output: `
         import { waitFor, fireEvent as renamedFireEvent } from '${testingFramework}';
         renamedFireEvent.keyDown(input, {key: 'ArrowDown'})
-        await waitFor(() => {
-        })
       `,
 				},
 			]
@@ -810,8 +780,6 @@ ruleTester.run(RULE_NAME, rule, {
 			output: `
         import { waitFor, fireEvent } from '~/test-utils';
         fireEvent.keyDown(input, {key: 'ArrowDown'})
-        await waitFor(() => {
-        })
       `,
 		},
 		...SUPPORTED_TESTING_FRAMEWORKS.flatMap<RuleInvalidTestCase>(
@@ -861,8 +829,6 @@ ruleTester.run(RULE_NAME, rule, {
 					output: `
         import { waitFor } from '${testingFramework}';
         fireEvent.keyDown(input, {key: 'ArrowDown'})
-        await waitFor(function() {
-        })
       `,
 				},
 				{
@@ -926,8 +892,6 @@ ruleTester.run(RULE_NAME, rule, {
 					output: `
         import { waitFor } from '${testingFramework}';
         userEvent.click(button)
-        await waitFor(() => {
-        })
       `,
 				},
 				{
@@ -943,8 +907,6 @@ ruleTester.run(RULE_NAME, rule, {
         import { waitFor } from '${testingFramework}';
         import renamedUserEvent from '@testing-library/user-event'
         renamedUserEvent.click(button)
-        await waitFor(() => {
-        })
       `,
 				},
 			]
@@ -963,8 +925,6 @@ ruleTester.run(RULE_NAME, rule, {
         import { waitFor } from '~/test-utils';
         import userEvent from '@testing-library/user-event'
         userEvent.click();
-        await waitFor(() => {
-        })
       `,
 		},
 		...SUPPORTED_TESTING_FRAMEWORKS.flatMap<RuleInvalidTestCase>(
@@ -1014,8 +974,6 @@ ruleTester.run(RULE_NAME, rule, {
 					output: `
         import { waitFor } from '${testingFramework}';
         userEvent.click(button)
-        await waitFor(function() {
-        })
       `,
 				},
 				{
@@ -1215,7 +1173,55 @@ ruleTester.run(RULE_NAME, rule, {
         const a = userEvent.click(button);
         const b = fireEvent.click(button);
         const wrapper = render(<App />);
+        `,
+					],
+				},
+				{
+					// Issue #368, https://github.com/testing-library/eslint-plugin-testing-library/issues/368
+					code: `
+        import { waitFor } from '${testingFramework}';
+        import userEvent from '@testing-library/user-event'
         await waitFor(() => {
+          const a = userEvent.click(button);
+          const b = fireEvent.click(button);
+          const c = "hoge";
+          const wrapper = render(<App />);
+        })
+        `,
+					errors: [
+						{ line: 5, column: 11, messageId: 'noSideEffectsWaitFor' },
+						{ line: 6, column: 11, messageId: 'noSideEffectsWaitFor' },
+						{ line: 8, column: 11, messageId: 'noSideEffectsWaitFor' },
+					],
+					output: [
+						`
+        import { waitFor } from '${testingFramework}';
+        import userEvent from '@testing-library/user-event'
+        const a = userEvent.click(button);
+        await waitFor(() => {
+          const b = fireEvent.click(button);
+          const c = "hoge";
+          const wrapper = render(<App />);
+        })
+        `,
+						`
+        import { waitFor } from '${testingFramework}';
+        import userEvent from '@testing-library/user-event'
+        const a = userEvent.click(button);
+        const b = fireEvent.click(button);
+        await waitFor(() => {
+          const c = "hoge";
+          const wrapper = render(<App />);
+        })
+        `,
+						`
+        import { waitFor } from '${testingFramework}';
+        import userEvent from '@testing-library/user-event'
+        const a = userEvent.click(button);
+        const b = fireEvent.click(button);
+        const wrapper = render(<App />);
+        await waitFor(() => {
+          const c = "hoge";
         })
         `,
 					],
@@ -1243,8 +1249,6 @@ ruleTester.run(RULE_NAME, rule, {
 
         it("some test", async () => {
           await fireEvent.click(screen.getByTestId("something"));
-          await waitFor(async () => {
-          });
         });
         `,
 				},
