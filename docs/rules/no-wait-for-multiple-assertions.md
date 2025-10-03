@@ -7,9 +7,13 @@
 ## Rule Details
 
 This rule aims to ensure the correct usage of `expect` inside `waitFor`, in the way that they're intended to be used.
-When using multiple assertions inside `waitFor`, if one fails, you have to wait for a timeout before seeing it failing.
-Putting one assertion, you can both wait for the UI to settle to the state you want to assert on,
-and also fail faster if one of the assertions do end up failing
+
+If you use multiple assertions against the **same asynchronous target** inside `waitFor`,
+you may have to wait for a timeout before seeing a test failure, which is inefficient.
+Therefore, you should avoid using multiple assertions on the same async target inside a single `waitFor` callback.
+
+However, multiple assertions against **different async targets** (for example, independent state updates or different function calls) are allowed.
+This avoids unnecessary verbosity and maintains readability, without increasing the risk of missing failures.
 
 Example of **incorrect** code for this rule:
 
@@ -17,13 +21,13 @@ Example of **incorrect** code for this rule:
 const foo = async () => {
 	await waitFor(() => {
 		expect(a).toEqual('a');
-		expect(b).toEqual('b');
+		expect(a).toEqual('a');
 	});
 
 	// or
 	await waitFor(function () {
 		expect(a).toEqual('a');
-		expect(b).toEqual('b');
+		expect(a).toEqual('a');
 	});
 };
 ```
@@ -33,13 +37,13 @@ Examples of **correct** code for this rule:
 ```js
 const foo = async () => {
 	await waitFor(() => expect(a).toEqual('a'));
-	expect(b).toEqual('b');
+	expect(a).toEqual('a');
 
 	// or
 	await waitFor(function () {
 		expect(a).toEqual('a');
 	});
-	expect(b).toEqual('b');
+	expect(a).toEqual('a');
 
 	// it only detects expect
 	// so this case doesn't generate warnings
