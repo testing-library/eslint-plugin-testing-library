@@ -103,9 +103,6 @@ export default createTestingLibraryRule<Options, MessageIds>({
 			}
 
 			for (const expressionStatements of expectArgumentMap.values()) {
-				if (expressionStatements.length <= 1) {
-					continue;
-				}
 				// Skip the first matched assertion; only report subsequent duplicates.
 				for (const expressionStatement of expressionStatements.slice(1)) {
 					context.report({
