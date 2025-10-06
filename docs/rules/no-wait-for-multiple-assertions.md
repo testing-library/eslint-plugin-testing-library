@@ -20,13 +20,13 @@ Example of **incorrect** code for this rule:
 ```js
 const foo = async () => {
 	await waitFor(() => {
-		expect(window.fetch).toHaveBeenCalledWith('/foo');
+		expect(window.fetch).toHaveBeenCalledTimes(1);
 		expect(window.fetch).toHaveBeenCalledWith('/foo');
 	});
 
 	// or
 	await waitFor(function () {
-		expect(window.fetch).toHaveBeenCalledWith('/foo');
+		expect(window.fetch).toHaveBeenCalledTimes(1);
 		expect(window.fetch).toHaveBeenCalledWith('/foo');
 	});
 };
@@ -36,14 +36,14 @@ Examples of **correct** code for this rule:
 
 ```js
 const foo = async () => {
-	await waitFor(() => expect(window.fetch).toHaveBeenCalledWith('foo'));
-	expect(window.fetch).toHaveBeenCalledTimes(1);
+	await waitFor(() => expect(window.fetch).toHaveBeenCalledTimes(1);
+	expect(window.fetch).toHaveBeenCalledWith('/foo');
 
 	// or
 	await waitFor(function () {
-		expect(window.fetch).toHaveBeenCalledWith('foo');
+		expect(window.fetch).toHaveBeenCalledTimes(1);
 	});
-	expect(window.fetch).toHaveBeenCalledTimes(1);
+	expect(window.fetch).toHaveBeenCalledWith('/foo');
 
 	// it only detects expect
 	// so this case doesn't generate warnings
