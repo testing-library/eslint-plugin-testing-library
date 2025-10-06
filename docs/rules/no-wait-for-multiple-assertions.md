@@ -20,14 +20,14 @@ Example of **incorrect** code for this rule:
 ```js
 const foo = async () => {
 	await waitFor(() => {
-		expect(a).toEqual('a');
-		expect(a).toEqual('a');
+		expect(window.fetch).toHaveBeenCalledWith('/foo');
+		expect(window.fetch).toHaveBeenCalledWith('/foo');
 	});
 
 	// or
 	await waitFor(function () {
-		expect(a).toEqual('a');
-		expect(a).toEqual('a');
+		expect(window.fetch).toHaveBeenCalledWith('/foo');
+		expect(window.fetch).toHaveBeenCalledWith('/foo');
 	});
 };
 ```
@@ -36,20 +36,26 @@ Examples of **correct** code for this rule:
 
 ```js
 const foo = async () => {
-	await waitFor(() => expect(a).toEqual('a'));
-	expect(a).toEqual('a');
+	await waitFor(() => expect(window.fetch).toHaveBeenCalledWith('foo'));
+	expect(window.fetch).toHaveBeenCalledTimes(1);
 
 	// or
 	await waitFor(function () {
-		expect(a).toEqual('a');
+		expect(window.fetch).toHaveBeenCalledWith('foo');
 	});
-	expect(a).toEqual('a');
+	expect(window.fetch).toHaveBeenCalledTimes(1);
 
 	// it only detects expect
 	// so this case doesn't generate warnings
 	await waitFor(() => {
 		fireEvent.keyDown(input, { key: 'ArrowDown' });
-		expect(b).toEqual('b');
+		expect(window.fetch).toHaveBeenCalledTimes(1);
+	});
+
+	// different async targets so the rule does not report it
+	await waitFor(() => {
+		expect(window.fetch).toHaveBeenCalledWith('/foo');
+		expect(localStorage.setItem).toHaveBeenCalledWith('bar', 'baz');
 	});
 };
 ```
