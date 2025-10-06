@@ -37,6 +37,22 @@ ruleTester.run(RULE_NAME, rule, {
       `,
 		},
 		{
+			code: `
+        await waitFor(function() {
+          expect(a).toEqual('a')
+          expect(b).toEqual('b')
+        })
+      `,
+		},
+		{
+			code: `
+        await waitFor(function() {
+          expect(a).toEqual('a')
+          expect('a').toEqual('a')
+        })
+      `,
+		},
+		{
 			settings: { 'testing-library/utils-module': 'test-utils' },
 			code: `// Aggressive Reporting disabled - module imported not matching
         import { waitFor } from 'somewhere-else'
@@ -115,7 +131,18 @@ ruleTester.run(RULE_NAME, rule, {
 			code: `
         await waitFor(() => {
           expect(a).toEqual('a')
-          expect(b).toEqual('b')
+          expect(a).toEqual('a')
+        })
+      `,
+			errors: [
+				{ line: 4, column: 11, messageId: 'noWaitForMultipleAssertion' },
+			],
+		},
+		{
+			code: `
+        await waitFor(() => {
+          expect(screen.getByTestId('a')).toHaveTextContent('a')
+          expect(screen.getByTestId('a')).toHaveTextContent('a')
         })
       `,
 			errors: [
@@ -129,7 +156,7 @@ ruleTester.run(RULE_NAME, rule, {
         import { waitFor } from '${testingFramework}'
         await waitFor(() => {
           expect(a).toEqual('a')
-          expect(b).toEqual('b')
+          expect(a).toEqual('a')
         })
       `,
 				errors: [
@@ -143,7 +170,7 @@ ruleTester.run(RULE_NAME, rule, {
         import { waitFor as renamedWaitFor } from 'test-utils'
         await renamedWaitFor(() => {
           expect(a).toEqual('a')
-          expect(b).toEqual('b')
+          expect(a).toEqual('a')
         })
       `,
 			errors: [
@@ -155,7 +182,7 @@ ruleTester.run(RULE_NAME, rule, {
         await waitFor(() => {
           expect(a).toEqual('a')
           console.log('testing-library')
-          expect(b).toEqual('b')
+          expect(a).toEqual('a')
         })
       `,
 			errors: [
@@ -168,7 +195,7 @@ ruleTester.run(RULE_NAME, rule, {
           await waitFor(() => {
             expect(a).toEqual('a')
             console.log('testing-library')
-            expect(b).toEqual('b')
+            expect(a).toEqual('a')
           })
         })
       `,
@@ -181,7 +208,7 @@ ruleTester.run(RULE_NAME, rule, {
         await waitFor(async () => {
           expect(a).toEqual('a')
           await somethingAsync()
-          expect(b).toEqual('b')
+          expect(a).toEqual('a')
         })
       `,
 			errors: [
@@ -192,9 +219,9 @@ ruleTester.run(RULE_NAME, rule, {
 			code: `
         await waitFor(function() {
           expect(a).toEqual('a')
-          expect(b).toEqual('b')
-          expect(c).toEqual('c')
-          expect(d).toEqual('d')
+          expect(a).toEqual('a')
+          expect(a).toEqual('a')
+          expect(a).toEqual('a')
         })
       `,
 			errors: [
@@ -207,8 +234,22 @@ ruleTester.run(RULE_NAME, rule, {
 			code: `
         await waitFor(function() {
           expect(a).toEqual('a')
-          console.log('testing-library')
+          expect(a).toEqual('a')
           expect(b).toEqual('b')
+          expect(b).toEqual('b')
+        })
+      `,
+			errors: [
+				{ line: 4, column: 11, messageId: 'noWaitForMultipleAssertion' },
+				{ line: 6, column: 11, messageId: 'noWaitForMultipleAssertion' },
+			],
+		},
+		{
+			code: `
+        await waitFor(function() {
+          expect(a).toEqual('a')
+          console.log('testing-library')
+          expect(a).toEqual('a')
         })
       `,
 			errors: [
@@ -220,8 +261,20 @@ ruleTester.run(RULE_NAME, rule, {
         await waitFor(async function() {
           expect(a).toEqual('a')
           const el = await somethingAsync()
-          expect(b).toEqual('b')
+          expect(a).toEqual('a')
         })
+      `,
+			errors: [
+				{ line: 5, column: 11, messageId: 'noWaitForMultipleAssertion' },
+			],
+		},
+		{
+			code: `
+        await waitFor(() => {
+          expect(window.fetch).toHaveBeenCalledTimes(1);
+          expect(localStorage.setItem).toHaveBeenCalledWith('bar', 'baz');
+          expect(window.fetch).toHaveBeenCalledWith('/foo');
+        });
       `,
 			errors: [
 				{ line: 5, column: 11, messageId: 'noWaitForMultipleAssertion' },

@@ -1,5 +1,10 @@
 import { createTestingLibraryRule } from '../create-testing-library-rule';
-import { getPropertyIdentifierNode } from '../node-utils';
+import {
+	getPropertyIdentifierNode,
+	isCallExpression,
+	isMemberExpression,
+} from '../node-utils';
+import { getSourceCode } from '../utils';
 
 import type { TSESTree } from '@typescript-eslint/utils';
 
@@ -44,6 +49,24 @@ export default createTestingLibraryRule<Options, MessageIds>({
 			}) as Array<TSESTree.ExpressionStatement>;
 		}
 
+		function getExpectArgument(expression: TSESTree.Expression) {
+			if (!isCallExpression(expression)) {
+				return null;
+			}
+
+			const { callee } = expression;
+			if (!isMemberExpression(callee)) {
+				return null;
+			}
+
+			const { object } = callee;
+			if (!isCallExpression(object) || object.arguments.length === 0) {
+				return null;
+			}
+
+			return object.arguments[0];
+		}
+
 		function reportMultipleAssertion(node: TSESTree.BlockStatement) {
 			if (!node.parent) {
 				return;
@@ -62,14 +85,28 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
 			const expectNodes = getExpectNodes(node.body);
 
-			if (expectNodes.length <= 1) {
-				return;
+			const expectArgumentMap = new Map<
+				string,
+				TSESTree.ExpressionStatement[]
+			>();
+
+			for (const expectNode of expectNodes) {
+				const argument = getExpectArgument(expectNode.expression);
+				if (!argument) {
+					continue;
+				}
+
+				const argumentText = getSourceCode(context).getText(argument);
+				const existingNodes = expectArgumentMap.get(argumentText) ?? [];
+				const newTargetNodes = [...existingNodes, expectNode];
+				expectArgumentMap.set(argumentText, newTargetNodes);
 			}
 
-			for (let i = 0; i < expectNodes.length; i++) {
-				if (i !== 0) {
+			for (const expressionStatements of expectArgumentMap.values()) {
+				// Skip the first matched assertion; only report subsequent duplicates.
+				for (const expressionStatement of expressionStatements.slice(1)) {
 					context.report({
-						node: expectNodes[i],
+						node: expressionStatement,
 						messageId: 'noWaitForMultipleAssertion',
 					});
 				}
