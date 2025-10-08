@@ -5,7 +5,6 @@ import { defineConfig, globalIgnores } from 'eslint/config';
 import prettierConfig from 'eslint-config-prettier/flat';
 import { importX } from 'eslint-plugin-import-x';
 import jest from 'eslint-plugin-jest';
-import * as jestFormatting from 'eslint-plugin-jest-formatting';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
@@ -92,7 +91,10 @@ const config = defineConfig(
 		name: 'Jest config',
 		files: ['**/*.test.ts', '**/*.test.js'],
 		...jest.configs['flat/recommended'],
-		...jestFormatting.configs['flat/recommended'],
+		rules: {
+			...jest.configs['flat/recommended'].rules,
+			'jest/padding-around-all': 'error',
+		},
 	},
 	{
 		name: 'Plain JS',
