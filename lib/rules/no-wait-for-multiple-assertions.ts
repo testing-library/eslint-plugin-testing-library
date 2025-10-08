@@ -33,6 +33,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				'Avoid using multiple assertions within `waitFor` callback',
 		},
 		schema: [],
+		fixable: 'code',
 	},
 	defaultOptions: [],
 	create(context, _, helpers) {
@@ -108,6 +109,37 @@ export default createTestingLibraryRule<Options, MessageIds>({
 					context.report({
 						node: expressionStatement,
 						messageId: 'noWaitForMultipleAssertion',
+						fix(fixer) {
+							const sourceCode = getSourceCode(context);
+
+							const lineStart = sourceCode.getIndexFromLoc({
+								line: expressionStatement.loc.start.line,
+								column: 0,
+							});
+							const lineEnd = sourceCode.getIndexFromLoc({
+								line: expressionStatement.loc.end.line + 1,
+								column: 0,
+							});
+							const lines = sourceCode.getText().split('\n');
+							const line = lines[callExpressionNode.loc.start.line - 1];
+							const indent = line.match(/^\s*/)?.[0] ?? '';
+
+							const expressionStatementLines = lines.slice(
+								expressionStatement.loc.start.line - 1,
+								expressionStatement.loc.end.line
+							);
+							const statementText = expressionStatementLines
+								.join('\n')
+								.trimStart();
+
+							return [
+								fixer.removeRange([lineStart, lineEnd]),
+								fixer.insertTextAfter(
+									callExpressionNode,
+									`\n${indent}${statementText}`
+								),
+							];
+						},
 					});
 				}
 			}
