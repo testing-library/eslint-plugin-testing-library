@@ -47,9 +47,9 @@
 		"prettier-base": "prettier . --ignore-unknown --cache --log-level warn",
 		"rule-doc-generator": "eslint-doc-generator",
 		"semantic-release": "semantic-release",
-		"test": "jest",
-		"test:ci": "pnpm run test --ci --coverage",
-		"test:watch": "pnpm run test --watch",
+		"test": "vitest run",
+		"test:ci": "vitest run --coverage",
+		"test:watch": "vitest",
 		"type-check": "tsc --noEmit"
 	},
 	"dependencies": {
@@ -63,10 +63,9 @@
 		"@eslint/eslintrc": "^3.3.1",
 		"@eslint/js": "^9.35.0",
 		"@swc/core": "^1.9.3",
-		"@swc/jest": "^0.2.37",
-		"@types/jest": "^29.5.14",
 		"@types/node": "^22.9.3",
 		"@typescript-eslint/rule-tester": "^8.15.0",
+		"@vitest/coverage-v8": "^3.2.4",
 		"del-cli": "^6.0.0",
 		"eslint": "^9.35.0",
 		"eslint-config-prettier": "^10.1.8",
@@ -80,14 +79,15 @@
 		"eslint-remote-tester-repositories": "^1.0.1",
 		"globals": "^16.3.0",
 		"husky": "^9.1.7",
-		"jest": "^29.7.0",
+		"is-ci": "^3.0.1",
 		"lint-staged": "^15.2.10",
 		"prettier": "3.6.2",
 		"semantic-release": "^25.0.2",
 		"semver": "^7.6.3",
 		"ts-node": "^10.9.2",
 		"typescript": "^5.7.2",
-		"typescript-eslint": "^8.15.0"
+		"typescript-eslint": "^8.15.0",
+		"vitest": "^3.2.4"
 	},
 	"peerDependencies": {
 		"eslint": "^8.57.0 || ^9.0.0"
