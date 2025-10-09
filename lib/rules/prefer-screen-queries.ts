@@ -11,6 +11,7 @@ import {
 	isObjectPattern,
 	isProperty,
 } from '../node-utils';
+import { resolveToTestingLibraryFn } from '../utils';
 
 import type { TSESTree } from '@typescript-eslint/utils';
 
@@ -181,10 +182,11 @@ export default createTestingLibraryRule<Options, MessageIds>({
 					reportInvalidUsage(identifierNode);
 					return;
 				}
-
+				const testingLibraryFn = resolveToTestingLibraryFn(node, context);
 				if (
 					ASTUtils.isIdentifier(memberExpressionNode.object) &&
-					!isIdentifierAllowed(memberExpressionNode.object.name)
+					!isIdentifierAllowed(memberExpressionNode.object.name) &&
+					!isIdentifierAllowed(testingLibraryFn?.original ?? '')
 				) {
 					reportInvalidUsage(identifierNode);
 				}

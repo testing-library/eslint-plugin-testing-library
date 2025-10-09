@@ -57,7 +57,7 @@ ruleTester.run(RULE_NAME, rule, {
 				code: `
           import { render } from '${testingFramework}'
           import { ${query} } from 'custom-queries'
-    
+
           test("imported custom queries, since they can't be used through screen", () => {
             render(foo)
             ${query}('bar')
@@ -67,7 +67,7 @@ ruleTester.run(RULE_NAME, rule, {
 			...CUSTOM_QUERY_COMBINATIONS.map((query) => ({
 				code: `
           import { render } from '${testingFramework}'
-    
+
           test("render-returned custom queries, since they can't be used through screen", () => {
             const { ${query} } = render(foo)
             ${query}('bar')
@@ -80,13 +80,22 @@ ruleTester.run(RULE_NAME, rule, {
 				},
 				code: `
           import { render } from '${testingFramework}'
-    
+
           test("custom queries + custom-queries setting, since they can't be used through screen", () => {
             const { ${query} } = render(foo)
             ${query}('bar')
           })
         `,
 			})),
+			{
+				code: `
+          import { screen as rtlScreen } from '${testingFramework}'
+
+          test("test", () => {
+            rtlScreen.getByText('hoge');
+          })
+        `,
+			},
 		]),
 		{
 			code: `
@@ -135,6 +144,16 @@ ruleTester.run(RULE_NAME, rule, {
         const utils = render(baz);
         utils.unmount();
       `,
+		},
+		{
+			settings: { 'testing-library/utils-module': 'test-utils' },
+			code: `
+				import { screen as rtlScreen } from 'test-utils'
+
+				test("test", () => {
+					rtlScreen.getByText('hoge');
+				})
+			`,
 		},
 		...ALL_QUERIES_COMBINATIONS.map((queryMethod: string) => ({
 			code: `
