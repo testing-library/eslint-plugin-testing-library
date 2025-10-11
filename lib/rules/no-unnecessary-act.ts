@@ -7,8 +7,10 @@ import {
 	getStatementCallExpression,
 	isEmptyFunction,
 	isExpressionStatement,
+	isMemberExpression,
 	isReturnStatement,
 } from '../node-utils';
+import { resolveToTestingLibraryFn } from '../utils';
 
 import type { TSESTree } from '@typescript-eslint/utils';
 
@@ -58,6 +60,8 @@ export default createTestingLibraryRule<Options, MessageIds>({
 	],
 
 	create(context, [{ isStrict = true }], helpers) {
+		const userEventInstanceNames = new Set<string>();
+
 		function getStatementIdentifier(statement: TSESTree.Statement) {
 			const callExpression = getStatementCallExpression(statement);
 
@@ -87,11 +91,18 @@ export default createTestingLibraryRule<Options, MessageIds>({
 			return null;
 		}
 
-		/**
-		 * Determines whether some call is non Testing Library related for a given list of statements.
-		 */
-		function hasSomeNonTestingLibraryCall(
-			statements: TSESTree.Statement[]
+		function hasUserEventInstanceName(identifier: TSESTree.Identifier) {
+			if (!isMemberExpression(identifier.parent)) {
+				return false;
+			}
+
+			const propertyIdentifier = getPropertyIdentifierNode(identifier.parent);
+			return userEventInstanceNames.has(propertyIdentifier?.name ?? '');
+		}
+
+		function hasStatementReference(
+			statements: TSESTree.Statement[],
+			predicate: (identifier: TSESTree.Identifier) => boolean
 		): boolean {
 			return statements.some((statement) => {
 				const identifier = getStatementIdentifier(statement);
@@ -100,20 +111,31 @@ export default createTestingLibraryRule<Options, MessageIds>({
 					return false;
 				}
 
-				return !helpers.isTestingLibraryUtil(identifier);
+				return predicate(identifier);
 			});
 		}
 
+		/**
+		 * Determines whether some call is non Testing Library related for a given list of statements.
+		 */
+		function hasSomeNonTestingLibraryCall(
+			statements: TSESTree.Statement[]
+		): boolean {
+			return hasStatementReference(
+				statements,
+				(identifier) =>
+					!helpers.isTestingLibraryUtil(identifier) &&
+					!hasUserEventInstanceName(identifier)
+			);
+		}
+
 		function hasTestingLibraryCall(statements: TSESTree.Statement[]) {
-			return statements.some((statement) => {
-				const identifier = getStatementIdentifier(statement);
-
-				if (!identifier) {
-					return false;
-				}
-
-				return helpers.isTestingLibraryUtil(identifier);
-			});
+			return hasStatementReference(
+				statements,
+				(identifier) =>
+					helpers.isTestingLibraryUtil(identifier) ||
+					hasUserEventInstanceName(identifier)
+			);
 		}
 
 		function checkNoUnnecessaryActFromBlockStatement(
@@ -196,7 +218,24 @@ export default createTestingLibraryRule<Options, MessageIds>({
 			});
 		}
 
+		function registerUserEventInstance(
+			node: TSESTree.CallExpression & { parent: TSESTree.VariableDeclarator }
+		) {
+			const propertyIdentifier = getPropertyIdentifierNode(node);
+			const deepestIdentifier = getDeepestIdentifierNode(node);
+			const testingLibraryFn = resolveToTestingLibraryFn(node, context);
+
+			if (
+				propertyIdentifier?.name === testingLibraryFn?.local &&
+				deepestIdentifier?.name === 'setup' &&
+				ASTUtils.isIdentifier(node.parent?.id)
+			) {
+				userEventInstanceNames.add(node.parent.id.name);
+			}
+		}
+
 		return {
+			'VariableDeclarator > CallExpression': registerUserEventInstance,
 			'CallExpression > ArrowFunctionExpression > BlockStatement':
 				checkNoUnnecessaryActFromBlockStatement,
 			'CallExpression > FunctionExpression > BlockStatement':
