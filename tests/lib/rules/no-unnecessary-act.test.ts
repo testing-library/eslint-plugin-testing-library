@@ -64,7 +64,7 @@ const validNonStrictTestCases: RuleValidTestCase[] = [
       `,
 	},
 	{
-		code: `
+		code: `// case: RTL act wrapping both userEvent and non-RTL calls
       import { act } from '@testing-library/react'
       import userEvent from '@testing-library/user-event'
 
