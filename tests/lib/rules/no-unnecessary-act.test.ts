@@ -63,6 +63,21 @@ const validNonStrictTestCases: RuleValidTestCase[] = [
       });
       `,
 	},
+	{
+		code: `// case: RTL act wrapping both userEvent and non-RTL calls
+      import { act } from '@testing-library/react'
+      import userEvent from '@testing-library/user-event'
+
+      test('valid case', async () => {
+        const user = userEvent.setup();
+
+        await act(async () => {
+          await user.click(element);
+					stuffThatDoesNotUseRTL()
+        });
+      })
+      `,
+	},
 ];
 
 const validTestCases: RuleValidTestCase[] = [
@@ -242,6 +257,28 @@ const invalidStrictTestCases: RuleInvalidTestCase[] =
 					messageId: 'noUnnecessaryActTestingLibraryUtil',
 					line: 8,
 					column: 7,
+				},
+			],
+		},
+		{
+			code: `
+      import { act } from '${testingFramework}'
+      import userEvent from '@testing-library/user-event'
+
+      test('invalid case', async () => {
+        const user = userEvent.setup();
+
+        await act(async () => {
+          await user.click(element);
+					stuffThatDoesNotUseRTL()
+        });
+      })
+      `,
+			errors: [
+				{
+					messageId: 'noUnnecessaryActTestingLibraryUtil',
+					line: 8,
+					column: 15,
 				},
 			],
 		},
@@ -564,6 +601,40 @@ const invalidTestCases: RuleInvalidTestCase[] = [
 			{ messageId: 'noUnnecessaryActEmptyFunction', line: 6, column: 9 },
 			{ messageId: 'noUnnecessaryActEmptyFunction', line: 7, column: 15 },
 			{ messageId: 'noUnnecessaryActEmptyFunction', line: 8, column: 9 },
+		],
+	},
+	{
+		code: `
+      import { act } from '@testing-library/react'
+      import userEvent from '@testing-library/user-event'
+
+      test('invalid case', async () => {
+        const user = userEvent.setup();
+
+        await act(async () => {
+          await user.click(element);
+        });
+      })
+      `,
+		errors: [
+			{ messageId: 'noUnnecessaryActTestingLibraryUtil', line: 8, column: 15 },
+		],
+	},
+	{
+		code: `
+      import { act } from '@testing-library/react'
+      import userEvent from '@testing-library/user-event'
+
+      test('invalid case', async () => {
+        const user = userEvent.setup();
+
+        act(async () => {
+          await user.click(element);
+        });
+      })
+      `,
+		errors: [
+			{ messageId: 'noUnnecessaryActTestingLibraryUtil', line: 8, column: 9 },
 		],
 	},
 	{
