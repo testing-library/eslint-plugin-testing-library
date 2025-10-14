@@ -78,6 +78,18 @@ const validNonStrictTestCases: RuleValidTestCase[] = [
       })
       `,
 	},
+	{
+		code: `// case: RTL act wrapping optional chaining call without RTL usage
+      import { act, render } from '@testing-library/react'
+
+      test('valid case', async () => {
+        act(() => {
+          render(element);
+          callback?.();
+        });
+      });
+      `,
+	},
 ];
 
 const validTestCases: RuleValidTestCase[] = [
@@ -139,6 +151,19 @@ const validTestCases: RuleValidTestCase[] = [
 
       act(() => stuffThatDoesNotUseRTL()).then(() => {})
       act(stuffThatDoesNotUseRTL().then(() => {}))
+    });
+    `,
+	})),
+	...SUPPORTED_TESTING_FRAMEWORKS.map(([testingFramework, shortName]) => ({
+		code: `// case: ${shortName} act wrapping non-${shortName} calls
+    import { act } from '${testingFramework}'
+
+		let callback: undefined | (() => void);
+
+    test('valid case', async () => {
+      act(() => {
+        callback?.();
+      });
     });
     `,
 	})),

@@ -6,6 +6,7 @@ import {
 	isArrayExpression,
 	isArrowFunctionExpression,
 	isAssignmentExpression,
+	isChainExpression,
 	isBlockStatement,
 	isCallExpression,
 	isExpressionStatement,
@@ -379,7 +380,7 @@ export function getPropertyIdentifierNode(
 		return getPropertyIdentifierNode(node.callee);
 	}
 
-	if (isExpressionStatement(node)) {
+	if (isExpressionStatement(node) || isChainExpression(node)) {
 		return getPropertyIdentifierNode(node.expression);
 	}
 
@@ -405,6 +406,10 @@ export function getDeepestIdentifierNode(
 ): TSESTree.Identifier | null {
 	if (ASTUtils.isIdentifier(node)) {
 		return node;
+	}
+
+	if (isChainExpression(node)) {
+		return getDeepestIdentifierNode(node.expression);
 	}
 
 	if (isMemberExpression(node) && ASTUtils.isIdentifier(node.property)) {
@@ -615,48 +620,45 @@ export function hasImportMatch(
 	return importNode.local.name === identifierName;
 }
 
-export function getStatementCallExpression(
-	statement: TSESTree.Statement
-): TSESTree.CallExpression | undefined {
-	if (isExpressionStatement(statement)) {
-		const { expression } = statement;
-		if (isCallExpression(expression)) {
-			return expression;
-		}
-
-		if (
-			ASTUtils.isAwaitExpression(expression) &&
-			isCallExpression(expression.argument)
-		) {
-			return expression.argument;
-		}
-
-		if (isAssignmentExpression(expression)) {
-			if (isCallExpression(expression.right)) {
-				return expression.right;
-			}
-
-			if (
-				ASTUtils.isAwaitExpression(expression.right) &&
-				isCallExpression(expression.right.argument)
-			) {
-				return expression.right.argument;
-			}
-		}
+function getCallExpressionFromNode(
+	node: TSESTree.Node | null
+): TSESTree.CallExpression | null {
+	if (isCallExpression(node)) {
+		return node;
 	}
 
-	if (isReturnStatement(statement) && isCallExpression(statement.argument)) {
-		return statement.argument;
+	if (isChainExpression(node)) {
+		return getCallExpressionFromNode(node.expression);
+	}
+
+	if (ASTUtils.isAwaitExpression(node)) {
+		return getCallExpressionFromNode(node.argument);
+	}
+
+	if (isAssignmentExpression(node)) {
+		return getCallExpressionFromNode(node.right);
+	}
+
+	return null;
+}
+
+export function getStatementCallExpression(
+	statement: TSESTree.Statement
+): TSESTree.CallExpression | null {
+	if (isExpressionStatement(statement)) {
+		return getCallExpressionFromNode(statement.expression);
+	}
+
+	if (isReturnStatement(statement)) {
+		return getCallExpressionFromNode(statement.argument);
 	}
 
 	if (isVariableDeclaration(statement)) {
 		for (const declaration of statement.declarations) {
-			if (isCallExpression(declaration.init)) {
-				return declaration.init;
-			}
+			return getCallExpressionFromNode(declaration.init);
 		}
 	}
-	return undefined;
+	return null;
 }
 
 /**

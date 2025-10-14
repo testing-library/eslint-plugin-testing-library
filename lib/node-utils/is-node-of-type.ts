@@ -21,6 +21,9 @@ export const isVariableDeclaration = ASTUtils.isNodeOfType(
 export const isAssignmentExpression = ASTUtils.isNodeOfType(
 	AST_NODE_TYPES.AssignmentExpression
 );
+export const isChainExpression = ASTUtils.isNodeOfType(
+	AST_NODE_TYPES.ChainExpression
+);
 export const isSequenceExpression = ASTUtils.isNodeOfType(
 	AST_NODE_TYPES.SequenceExpression
 );
