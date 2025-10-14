@@ -1,10 +1,10 @@
 // @ts-check
 
 import js from '@eslint/js';
+import vitest from '@vitest/eslint-plugin';
 import { defineConfig, globalIgnores } from 'eslint/config';
 import prettierConfig from 'eslint-config-prettier/flat';
 import { importX } from 'eslint-plugin-import-x';
-import jest from 'eslint-plugin-jest';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
@@ -88,12 +88,12 @@ const config = defineConfig(
 		},
 	},
 	{
-		name: 'Jest config',
+		name: 'Vitest config',
 		files: ['**/*.test.ts', '**/*.test.js'],
-		...jest.configs['flat/recommended'],
+		...vitest.configs.recommended,
 		rules: {
-			...jest.configs['flat/recommended'].rules,
-			'jest/padding-around-all': 'error',
+			...vitest.configs.recommended.rules,
+			'vitest/padding-around-all': 'warn',
 		},
 	},
 	{

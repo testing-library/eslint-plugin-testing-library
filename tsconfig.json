@@ -16,5 +16,5 @@
 		"outDir": "dist",
 		"sourceMap": false
 	},
-	"include": ["**/*.ts"]
+	"include": ["**/*.ts", "**/*.mts"]
 }
