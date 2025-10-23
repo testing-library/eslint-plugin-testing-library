@@ -1,4 +1,5 @@
 import { ASTUtils } from '@typescript-eslint/utils';
+import { isIdentifier } from '@typescript-eslint/utils/ast-utils';
 
 import { createTestingLibraryRule } from '../create-testing-library-rule';
 import {
@@ -409,7 +410,8 @@ export default createTestingLibraryRule<Options, MessageIds>({
 					return;
 				}
 
-				if (!isCallExpression(argument.body)) {
+				const argumentBody = argument.body;
+				if (!isCallExpression(argumentBody)) {
 					return;
 				}
 
@@ -438,29 +440,42 @@ export default createTestingLibraryRule<Options, MessageIds>({
 					}
 
 					const queryVariant = getFindByQueryVariant(fullQueryMethod);
-					const callArguments = getQueryArguments(argument.body);
+					const callArguments = getQueryArguments(argumentBody);
 					const queryMethod = fullQueryMethod.split('By')[1];
 
 					if (!queryMethod) {
 						return;
 					}
-
 					reportInvalidUsage(node, {
 						queryMethod,
 						queryVariant,
 						prevQuery: fullQueryMethod,
 						fix(fixer) {
-							const property = (
-								(argument.body as TSESTree.CallExpression)
-									.callee as TSESTree.MemberExpression
-							).property;
-							if (helpers.isCustomQuery(property as TSESTree.Identifier)) {
-								return null;
-							}
-							const newCode = `${caller}.${queryVariant}${queryMethod}(${callArguments
+							const findByCallText = `${caller}.${queryVariant}${queryMethod}(${callArguments
 								.map((callArgNode) => sourceCode.getText(callArgNode))
 								.join(', ')}${waitOptionsSourceCode})`;
-							return fixer.replaceText(node, newCode);
+
+							if (!isMemberExpression(argumentBody.callee)) return null;
+
+							const { property, object } = argumentBody.callee;
+							if (ASTUtils.isVariableDeclarator(node.parent.parent)) {
+								if (isIdentifier(property) && helpers.isCustomQuery(property)) {
+									return null;
+								}
+								return fixer.replaceText(node, findByCallText);
+							}
+
+							if (!isCallExpression(object)) return null;
+
+							const originalExpect = sourceCode.getText(argumentBody);
+							const awaited = `await ${findByCallText}`;
+							const newExpect = originalExpect.replace(
+								sourceCode.getText(object.arguments[0]),
+								awaited
+							);
+							const output = originalExpect.replace(originalExpect, newExpect);
+
+							return fixer.replaceText(node.parent, output);
 						},
 					});
 					return;
@@ -481,7 +496,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
 				const queryMethod = fullQueryMethod.split('By')[1];
 				const queryVariant = getFindByQueryVariant(fullQueryMethod);
-				const callArguments = getQueryArguments(argument.body);
+				const callArguments = getQueryArguments(argumentBody);
 
 				reportInvalidUsage(node, {
 					queryMethod,
@@ -490,10 +505,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 					fix(fixer) {
 						// we know from above callee is an Identifier
 						if (
-							helpers.isCustomQuery(
-								(argument.body as TSESTree.CallExpression)
-									.callee as TSESTree.Identifier
-							)
+							helpers.isCustomQuery(argumentBody.callee as TSESTree.Identifier)
 						) {
 							return null;
 						}
