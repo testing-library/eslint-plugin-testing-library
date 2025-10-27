@@ -16,8 +16,8 @@ concurrency:
   cancel-in-progress: false
 
 permissions:
+  id-token: write # to enable use of OIDC (npm trusted publishing and provenance)
   contents: write # to be able to publish a GitHub release
-  id-token: write # to enable use of OIDC for npm provenance
   issues: write # to be able to comment on released issues
   pull-requests: write # to be able to comment on released pull requests
 
@@ -50,5 +50,3 @@ jobs:
         run: pnpm exec semantic-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_CONFIG_PROVENANCE: true
-          NPM_TOKEN: ${{ secrets.NPM_AUTOMATION_TOKEN }}
