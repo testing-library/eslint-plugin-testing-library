@@ -25,6 +25,7 @@ const LIBRARY_MODULES = [
 	'@testing-library/dom',
 	'@testing-library/angular',
 	'@testing-library/react',
+	'@testing-library/react-native',
 	'@testing-library/preact',
 	'@testing-library/vue',
 	'@testing-library/svelte',
