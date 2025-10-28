@@ -691,6 +691,64 @@ ruleTester.run(RULE_NAME, rule, {
           })
         `,
 		})),
+		...createScenario((waitMethod, queryMethod) => ({
+			code: `
+			import { screen } from '${testingFramework}';
+
+			it('tests', async () => {
+				await ${waitMethod}(() => expect(screen.${queryMethod}('button', { name: 'Count is: 0' })).toBeInTheDocument())
+			})
+			`,
+			errors: [
+				{
+					line: 5,
+					column: 11,
+					messageId: 'preferFindBy',
+					data: {
+						queryVariant: getFindByQueryVariant(queryMethod),
+						queryMethod: queryMethod.split('By')[1],
+						prevQuery: queryMethod,
+						waitForMethodName: waitMethod,
+					},
+				},
+			],
+			output: `
+			import { screen } from '${testingFramework}';
+
+			it('tests', async () => {
+				expect(await screen.${buildFindByMethod(queryMethod)}('button', { name: 'Count is: 0' })).toBeInTheDocument()
+			})
+			`,
+		})),
+		...createScenario((waitMethod, queryMethod) => ({
+			code: `
+			import { screen } from '${testingFramework}';
+
+			it('tests', async () => {
+				await ${waitMethod}(() => expect(screen.${queryMethod}('button', { name: 'Count is: 0' })).toBeInTheDocument(), { timeout: 100, interval: 200 })
+			})
+			`,
+			errors: [
+				{
+					line: 5,
+					column: 11,
+					messageId: 'preferFindBy',
+					data: {
+						queryVariant: getFindByQueryVariant(queryMethod),
+						queryMethod: queryMethod.split('By')[1],
+						prevQuery: queryMethod,
+						waitForMethodName: waitMethod,
+					},
+				},
+			],
+			output: `
+			import { screen } from '${testingFramework}';
+
+			it('tests', async () => {
+				expect(await screen.${buildFindByMethod(queryMethod)}('button', { name: 'Count is: 0' }, { timeout: 100, interval: 200 })).toBeInTheDocument()
+			})
+			`,
+		})),
 		// Issue #579, https://github.com/testing-library/eslint-plugin-testing-library/issues/579
 		// findBy can have two sets of options: await screen.findByText('text', queryOptions, waitForOptions)
 		...createScenario((waitMethod, queryMethod) => ({
