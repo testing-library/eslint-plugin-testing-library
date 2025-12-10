@@ -36,7 +36,7 @@ const USER_EVENT_METHODS = [
 export default createTestingLibraryRule<Options, MessageIds>({
 	name: RULE_NAME,
 	meta: {
-		type: 'problem',
+		type: 'suggestion',
 		docs: {
 			description:
 				'Suggest using userEvent with setup() instead of direct methods',
