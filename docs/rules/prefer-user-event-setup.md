@@ -4,7 +4,7 @@
 
 ## Rule Details
 
-This rule enforces using methods on instances returned by `userEvent.setup()` instead of calling methods directly on the `userEvent` object. The setup pattern is the [recommended approach](https://testing-library.com/docs/user-event/intro/#writing-tests-with-userevent) in the official user-event documentation.
+This rule encourages using methods on instances returned by `userEvent.setup()` instead of calling methods directly on the `userEvent` object. The setup pattern is the [recommended approach](https://testing-library.com/docs/user-event/intro/#writing-tests-with-userevent) in the official user-event documentation.
 
 Using `userEvent.setup()` provides several benefits:
 
