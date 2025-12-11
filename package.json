@@ -43,7 +43,7 @@
 		"format:check": "pnpm run prettier-base --check",
 		"lint": "eslint --max-warnings 0 .",
 		"lint:fix": "pnpm run lint --fix",
-		"prepare": "is-ci || husky",
+		"prepare": "husky || true",
 		"prettier-base": "prettier . --ignore-unknown --cache --log-level warn",
 		"rule-doc-generator": "eslint-doc-generator",
 		"semantic-release": "semantic-release",
