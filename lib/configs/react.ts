@@ -2,6 +2,8 @@
 // DO NOT EDIT THIS CODE BY HAND
 // YOU CAN REGENERATE IT USING pnpm run generate:configs
 
+import type { Linter } from 'eslint';
+
 export = {
 	plugins: ['testing-library'],
 	rules: {
@@ -34,4 +36,4 @@ export = {
 		'testing-library/prefer-screen-queries': 'error',
 		'testing-library/render-result-naming-convention': 'error',
 	},
-};
+} satisfies Linter.LegacyConfig;

@@ -1,19 +1,20 @@
-import { join } from 'path';
-
-import { importDefault, SUPPORTED_TESTING_FRAMEWORKS } from '../utils';
+import angular from './angular';
+import dom from './dom';
+import marko from './marko';
+import react from './react';
+import svelte from './svelte';
+import vue from './vue';
 
 import type { SupportedTestingFramework } from '../utils';
-import type { TSESLint } from '@typescript-eslint/utils';
+import type { Linter } from 'eslint';
 
-const configsDir = __dirname;
+const legacyConfigs: Record<SupportedTestingFramework, Linter.LegacyConfig> = {
+	dom,
+	angular,
+	react,
+	vue,
+	svelte,
+	marko,
+};
 
-const getConfigForFramework = (framework: SupportedTestingFramework) =>
-	importDefault<TSESLint.SharedConfig.RulesRecord>(join(configsDir, framework));
-
-export default SUPPORTED_TESTING_FRAMEWORKS.reduce(
-	(allConfigs, framework) => ({
-		...allConfigs,
-		[framework]: getConfigForFramework(framework),
-	}),
-	{}
-) as Record<SupportedTestingFramework, TSESLint.SharedConfig.RulesRecord>;
+export { legacyConfigs };

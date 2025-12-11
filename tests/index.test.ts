@@ -1,12 +1,23 @@
-import { existsSync } from 'node:fs';
+import { existsSync, readdirSync } from 'node:fs';
 import { resolve } from 'node:path';
 
 import { it, expect } from 'vitest';
 
 import plugin from '../lib';
 
-const numberOfRules = 28;
 const ruleNames = Object.keys(plugin.rules);
+
+it('should export all existing rules', () => {
+	const rulesDirPath = resolve(__dirname, '../lib/rules');
+
+	const rulesFiles = readdirSync(rulesDirPath)
+		.filter((file) => file !== 'index.ts')
+		.map((file) => file.replace('.ts', ''));
+
+	rulesFiles.forEach((ruleFile) => {
+		expect(ruleNames).toContain(ruleFile);
+	});
+});
 
 it('should have a corresponding doc for each rule', () => {
 	ruleNames.forEach((rule) => {
@@ -28,15 +39,6 @@ it('should have a corresponding test for each rule', () => {
 			`Could not find test file for rule "${rule}" in path "${testPath}"`
 		).toBe(true);
 	});
-});
-
-it('should have the correct amount of rules', () => {
-	const { length } = ruleNames;
-
-	expect(
-		numberOfRules,
-		`There should be exactly ${numberOfRules} rules, but there are ${length}. If you've added a new rule, please update this number.`
-	).toEqual(length);
 });
 
 it('should export configs that refer to actual rules', () => {
@@ -71,7 +73,8 @@ it('should export configs that refer to actual rules', () => {
 		expect(rule.startsWith(ruleNamePrefix)).toBe(true);
 		expect(ruleNames).toContain(ruleName);
 
-		// eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-require-imports
-		expect(() => require(`../lib/rules/${ruleName}`)).not.toThrow();
+		const ruleFilePath = resolve(__dirname, '../lib/rules', `${ruleName}.ts`);
+
+		expect(() => import(ruleFilePath)).not.toThrow();
 	});
 });
