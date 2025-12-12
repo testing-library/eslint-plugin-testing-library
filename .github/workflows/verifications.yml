@@ -2,9 +2,9 @@ name: Verifications
 
 on:
   workflow_call:
-    secrets:
-      CODECOV_TOKEN:
-        required: true
+
+permissions:
+  id-token: write # OIDC auth for Codecov
 
 jobs:
   code-validation:
@@ -65,7 +65,16 @@ jobs:
       - name: Run tests
         run: pnpm run test:ci
 
-      - name: Upload coverage reports to Codecov
+      - name: Upload tests coverage report
         uses: codecov/codecov-action@v5
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        if: ${{ !cancelled() && github.event.action != 'closed' }}
+        with:
+          use_oidc: true
+          report_type: 'coverage'
+
+      - name: Upload tests result report
+        uses: codecov/codecov-action@v5
+        if: ${{ !cancelled() && github.event.action != 'closed' }}
+        with:
+          use_oidc: true
+          report_type: 'test_results'
