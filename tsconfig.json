@@ -2,8 +2,9 @@
 	"compilerOptions": {
 		"strict": true,
 		"target": "ES2019",
-		"module": "NodeNext",
-		"moduleResolution": "NodeNext",
+		"module": "preserve",
+		// "moduleResolution": "Bundler", <-- this is implied by "module": "preserve"
+		"noEmit": true,
 		"lib": ["ES2019"],
 		"esModuleInterop": true,
 		"skipLibCheck": true,
