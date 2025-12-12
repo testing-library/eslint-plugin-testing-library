@@ -33,8 +33,7 @@
 	"main": "./dist/index.js",
 	"types": "index.d.ts",
 	"scripts": {
-		"prebuild": "del-cli dist",
-		"build": "tsc -p ./tsconfig.build.json",
+		"build": "tsdown lib/index.ts --format esm --format cjs",
 		"generate-all": "pnpm run --parallel \"/^generate:.*/\"",
 		"generate-all:check": "pnpm run generate-all && git diff --exit-code",
 		"generate:configs": "ts-node tools/generate-configs",
@@ -68,7 +67,6 @@
 		"@vitest/coverage-v8": "^3.2.4",
 		"@vitest/eslint-plugin": "^1.5.2",
 		"@vitest/ui": "3.2.4",
-		"del-cli": "^6.0.0",
 		"eslint": "^9.35.0",
 		"eslint-config-prettier": "^10.1.8",
 		"eslint-doc-generator": "^2.2.2",

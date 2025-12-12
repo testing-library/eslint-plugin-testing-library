@@ -4,7 +4,7 @@
 
 import type { Linter } from 'eslint';
 
-export = {
+export default {
 	plugins: ['testing-library'],
 	rules: {
 		'testing-library/await-async-events': [

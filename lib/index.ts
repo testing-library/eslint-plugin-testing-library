@@ -1,15 +1,12 @@
 import { legacyConfigs } from './configs';
 import rules from './rules';
+import {
+	name as packageName,
+	version as packageVersion,
+} from '../package.json';
 
 import type { SupportedTestingFramework } from './utils';
 import type { TSESLint } from '@typescript-eslint/utils';
-
-const {
-	name: packageName,
-	version: packageVersion,
-	// we can't natively import package.json as tsc will copy it into dist/
-	// eslint-disable-next-line @typescript-eslint/no-require-imports
-} = require('../package.json') as { name: string; version: string };
 
 type FinalConfigs = Record<
 	SupportedTestingFramework | `flat/${SupportedTestingFramework}`,
