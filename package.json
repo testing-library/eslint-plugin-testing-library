@@ -14,17 +14,24 @@
 	"bugs": "testing-library/eslint-plugin-testing-library/issues",
 	"repository": "testing-library/eslint-plugin-testing-library",
 	"license": "MIT",
-	"author": "Mario Beltrán <https://mario.dev>",
+	"author": "Mario Beltrán (https://mario.dev)",
 	"files": [
-		"dist",
-		"README.md",
-		"LICENSE",
-		"index.d.ts"
+		"dist"
 	],
-	"main": "./dist/index.js",
-	"types": "index.d.ts",
+	"type": "commonjs",
+	"main": "./dist/index.cjs",
+	"module": "./dist/index.mjs",
+	"types": "./dist/index.d.cts",
+	"exports": {
+		".": {
+			"import": "./dist/index.mjs",
+			"require": "./dist/index.cjs"
+		},
+		"./package.json": "./package.json"
+	},
 	"scripts": {
 		"build": "tsdown lib/index.ts --format esm --format cjs",
+		"bundle-check": "pnpm run build & publint",
 		"generate-all": "pnpm run --parallel \"/^generate:.*/\"",
 		"generate-all:check": "pnpm run generate-all && git diff --exit-code",
 		"generate:configs": "ts-node tools/generate-configs",
@@ -71,6 +78,7 @@
 		"husky": "^9.1.7",
 		"lint-staged": "^15.2.10",
 		"prettier": "3.6.2",
+		"publint": "^0.3.16",
 		"semantic-release": "^25.0.2",
 		"semver": "^7.6.3",
 		"ts-node": "^10.9.2",
