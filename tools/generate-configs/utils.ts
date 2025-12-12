@@ -1,9 +1,11 @@
-import { writeFile } from 'fs/promises';
-import { resolve } from 'path';
+import { writeFile } from 'node:fs/promises';
+import { resolve } from 'node:path';
 
 import { format, resolveConfig } from 'prettier';
 
 import type { TSESLint } from '@typescript-eslint/utils';
+
+const __dirname = new URL('.', import.meta.url).pathname;
 
 const prettierConfig = resolveConfig(__dirname);
 

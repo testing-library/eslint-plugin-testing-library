@@ -18,7 +18,7 @@
 	"files": [
 		"dist"
 	],
-	"type": "commonjs",
+	"type": "module",
 	"main": "./dist/index.cjs",
 	"module": "./dist/index.mjs",
 	"types": "./dist/index.d.cts",
@@ -34,7 +34,7 @@
 		"bundle-check": "pnpm run build && publint",
 		"generate-all": "pnpm run --parallel \"/^generate:.*/\"",
 		"generate-all:check": "pnpm run generate-all && git diff --exit-code",
-		"generate:configs": "ts-node tools/generate-configs",
+		"generate:configs": "tsx tools/generate-configs",
 		"generate:rules-doc": "pnpm run build && pnpm run rule-doc-generator",
 		"format": "pnpm run prettier-base --write",
 		"format:check": "pnpm run prettier-base --check",
@@ -81,8 +81,8 @@
 		"publint": "^0.3.16",
 		"semantic-release": "^25.0.2",
 		"semver": "^7.6.3",
-		"ts-node": "^10.9.2",
 		"tsdown": "^0.17.3",
+		"tsx": "^4.21.0",
 		"typescript": "^5.7.2",
 		"typescript-eslint": "^8.15.0",
 		"vitest": "^3.2.4"
