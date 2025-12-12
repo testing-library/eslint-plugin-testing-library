@@ -14,7 +14,13 @@ jobs:
       fail-fast: false
       matrix:
         validation-script:
-          ['lint', 'type-check', 'format:check', 'generate-all:check']
+          [
+            'lint',
+            'type-check',
+            'format:check',
+            'generate-all:check',
+            'bundle-check',
+          ]
     steps:
       - name: Checkout
         uses: actions/checkout@v6
