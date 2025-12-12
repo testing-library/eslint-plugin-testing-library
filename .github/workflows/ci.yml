@@ -12,8 +12,6 @@ jobs:
   verifications:
     name: Verifications
     uses: ./.github/workflows/verifications.yml
-    secrets:
-      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
   required-checks:
     name: Require CI status checks

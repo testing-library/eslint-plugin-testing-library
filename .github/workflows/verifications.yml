@@ -2,9 +2,9 @@ name: Verifications
 
 on:
   workflow_call:
-    secrets:
-      CODECOV_TOKEN:
-        required: true
+
+permissions:
+  id-token: write # OIDC auth for Codecov
 
 jobs:
   code-validation:
@@ -67,5 +67,5 @@ jobs:
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v5
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        with:
+          use_oidc: true

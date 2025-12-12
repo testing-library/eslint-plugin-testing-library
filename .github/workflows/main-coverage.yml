@@ -5,6 +5,7 @@ on:
       - 'main'
 
 permissions:
+  id-token: write # OIDC auth for Codecov
   contents: read
   statuses: write
 
@@ -34,5 +35,5 @@ jobs:
 
       - name: Upload coverage report
         uses: codecov/codecov-action@v5
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        with:
+          use_oidc: true
