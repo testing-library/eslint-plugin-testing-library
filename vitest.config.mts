@@ -5,6 +5,7 @@ export default defineConfig({
 		include: ['**/tests/**/*.test.ts'],
 		setupFiles: ['./vitest.setup.mts'],
 		coverage: {
+			include: ['lib/**'],
 			thresholds: {
 				branches: 90,
 				functions: 90,
