@@ -4,9 +4,6 @@ on:
   pull_request:
   merge_group:
 
-permissions:
-  contents: read
-
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -15,6 +12,8 @@ jobs:
   verifications:
     name: Verifications
     uses: ./.github/workflows/verifications.yml
+    secrets:
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
   required-checks:
     name: Require CI status checks

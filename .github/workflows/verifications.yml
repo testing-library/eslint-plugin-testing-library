@@ -2,6 +2,9 @@ name: Verifications
 
 on:
   workflow_call:
+    secrets:
+      CODECOV_TOKEN:
+        required: true
 
 jobs:
   code-validation:

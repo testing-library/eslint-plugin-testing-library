@@ -39,7 +39,6 @@ jobs:
         with:
           cache: 'pnpm'
           node-version-file: '.nvmrc'
-          registry-url: 'https://registry.npmjs.org'
 
       # Ensure npm 11.5.1 or later is installed for correct OIDC publishing
       - name: Update npm
