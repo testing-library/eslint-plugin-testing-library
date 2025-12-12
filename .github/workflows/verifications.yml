@@ -65,14 +65,16 @@ jobs:
       - name: Run tests
         run: pnpm run test:ci
 
-      - name: Upload coverage report to Codecov
+      - name: Upload tests coverage report
         uses: codecov/codecov-action@v5
+        if: ${{ !cancelled() && github.event.action != 'closed' }}
         with:
           use_oidc: true
           report_type: 'coverage'
 
-      - name: Upload tests results report to Codecov
+      - name: Upload tests result report
         uses: codecov/codecov-action@v5
+        if: ${{ !cancelled() && github.event.action != 'closed' }}
         with:
           use_oidc: true
           report_type: 'test_results'
