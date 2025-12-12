@@ -31,7 +31,7 @@
 	},
 	"scripts": {
 		"build": "tsdown lib/index.ts --format esm --format cjs",
-		"bundle-check": "pnpm run build & publint",
+		"bundle-check": "pnpm run build && publint",
 		"generate-all": "pnpm run --parallel \"/^generate:.*/\"",
 		"generate-all:check": "pnpm run generate-all && git diff --exit-code",
 		"generate:configs": "ts-node tools/generate-configs",
