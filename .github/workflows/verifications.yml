@@ -65,7 +65,14 @@ jobs:
       - name: Run tests
         run: pnpm run test:ci
 
-      - name: Upload coverage reports to Codecov
+      - name: Upload coverage report to Codecov
         uses: codecov/codecov-action@v5
         with:
           use_oidc: true
+          report_type: 'coverage'
+
+      - name: Upload tests results report to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          use_oidc: true
+          report_type: 'test_results'
