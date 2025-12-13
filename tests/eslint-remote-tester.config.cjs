@@ -1,8 +1,9 @@
-const { rules } = require('eslint-plugin-testing-library');
 const {
 	getRepositories,
 	getPathIgnorePattern,
 } = require('eslint-remote-tester-repositories');
+
+const { rules } = require('eslint-plugin-testing-library');
 
 module.exports = {
 	repositories: getRepositories({ randomize: true }),
