@@ -1,9 +1,7 @@
-const prettier = require('prettier');
-
-const prettierConfig = require('./.prettierrc.js');
+import * as prettier from 'prettier';
 
 /** @type {import('eslint-doc-generator').GenerateOptions} */
-const config = {
+export default {
 	ignoreConfig: [
 		'flat/angular',
 		'flat/dom',
@@ -12,8 +10,8 @@ const config = {
 		'flat/svelte',
 		'flat/vue',
 	],
-	postprocess: (content) =>
-		prettier.format(content, { ...prettierConfig, parser: 'markdown' }),
+	postprocess: async (content, path) => {
+		const prettierConfig = await prettier.resolveConfig(path);
+		return prettier.format(content, { ...prettierConfig, parser: 'markdown' });
+	},
 };
-
-module.exports = config;
