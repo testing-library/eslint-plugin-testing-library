@@ -18,7 +18,7 @@ jobs:
             'lint',
             'type-check',
             'format:check',
-            'generate-all:check',
+            'validate-gen-all',
             'bundle-check',
           ]
     steps:
