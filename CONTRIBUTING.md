@@ -63,7 +63,7 @@ each rule has three files named with its identifier (e.g. `no-debugging-utils`):
 
 Additionally, you need to do a couple of extra things:
 
-- Run `pnpm run generate:rules-doc` to include your rule in the "Supported Rules" table within the [README.md](./README.md)
+- Run `pnpm run generate:docs` to include your rule in the "Supported Rules" table within the [README.md](./README.md)
 
 ### Custom rule creator
 
