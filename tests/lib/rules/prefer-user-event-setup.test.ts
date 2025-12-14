@@ -128,13 +128,15 @@ ruleTester.run(RULE_NAME, rule, {
 		{
 			code: `
 				import userEvent from '@testing-library/user-event';
-				
+
 				test('example', async () => {
 					await userEvent.click(element);
 				});
 			`,
 			errors: [
 				{
+					line: 5,
+					column: 12,
 					messageId: 'preferUserEventSetup',
 					data: { method: 'click' },
 				},
@@ -143,13 +145,15 @@ ruleTester.run(RULE_NAME, rule, {
 		{
 			code: `
 				import userEvent from '@testing-library/user-event';
-				
+
 				test('example', async () => {
 					await userEvent.type(input, 'hello');
 				});
 			`,
 			errors: [
 				{
+					line: 5,
+					column: 12,
 					messageId: 'preferUserEventSetup',
 					data: { method: 'type' },
 				},
@@ -159,7 +163,7 @@ ruleTester.run(RULE_NAME, rule, {
 		{
 			code: `
 				import userEvent from '@testing-library/user-event';
-				
+
 				test('example', async () => {
 					await userEvent.type(input, 'hello');
 					await userEvent.click(button);
@@ -167,10 +171,14 @@ ruleTester.run(RULE_NAME, rule, {
 			`,
 			errors: [
 				{
+					line: 5,
+					column: 12,
 					messageId: 'preferUserEventSetup',
 					data: { method: 'type' },
 				},
 				{
+					line: 6,
+					column: 12,
 					messageId: 'preferUserEventSetup',
 					data: { method: 'click' },
 				},
@@ -181,13 +189,15 @@ ruleTester.run(RULE_NAME, rule, {
 			(method) => ({
 				code: `
 				import userEvent from '@testing-library/user-event';
-				
+
 				test('example', async () => {
 					await userEvent.${method}(element);
 				});
 			`,
 				errors: [
 					{
+						line: 5,
+						column: 12,
 						messageId: 'preferUserEventSetup' as MessageIds,
 						data: { method },
 					},
@@ -198,13 +208,15 @@ ruleTester.run(RULE_NAME, rule, {
 		{
 			code: `
 				import userEventLib from '@testing-library/user-event';
-				
+
 				test('example', async () => {
 					await userEventLib.click(element);
 				});
 			`,
 			errors: [
 				{
+					line: 5,
+					column: 12,
 					messageId: 'preferUserEventSetup',
 					data: { method: 'click' },
 				},
@@ -214,7 +226,7 @@ ruleTester.run(RULE_NAME, rule, {
 		{
 			code: `
 				import userEvent from '@testing-library/user-event';
-				
+
 				test('example', async () => {
 					const user = userEvent.setup();
 					await user.click(button1);
@@ -223,6 +235,8 @@ ruleTester.run(RULE_NAME, rule, {
 			`,
 			errors: [
 				{
+					line: 7,
+					column: 12,
 					messageId: 'preferUserEventSetup',
 					data: { method: 'type' },
 				},
@@ -232,13 +246,15 @@ ruleTester.run(RULE_NAME, rule, {
 		{
 			code: `
 				import { userEvent } from '@testing-library/user-event';
-				
+
 				test('example', async () => {
 					await userEvent.click(element);
 				});
 			`,
 			errors: [
 				{
+					line: 5,
+					column: 12,
 					messageId: 'preferUserEventSetup',
 					data: { method: 'click' },
 				},
@@ -248,7 +264,7 @@ ruleTester.run(RULE_NAME, rule, {
 		{
 			code: `
 				import userEvent from '@testing-library/user-event';
-				
+
 				test('example', async () => {
 					userEvent.setup(); // setup called but result not used
 					await userEvent.click(element);
@@ -256,6 +272,8 @@ ruleTester.run(RULE_NAME, rule, {
 			`,
 			errors: [
 				{
+					line: 6,
+					column: 12,
 					messageId: 'preferUserEventSetup',
 					data: { method: 'click' },
 				},
@@ -265,12 +283,12 @@ ruleTester.run(RULE_NAME, rule, {
 		{
 			code: `
 				import userEvent from '@testing-library/user-event';
-				
+
 				describe('suite', () => {
 					test('test 1', async () => {
 						await userEvent.click(element);
 					});
-					
+
 					test('test 2', async () => {
 						const user = userEvent.setup();
 						await user.type(input, 'hello'); // This is correct
@@ -280,10 +298,14 @@ ruleTester.run(RULE_NAME, rule, {
 			`,
 			errors: [
 				{
+					line: 6,
+					column: 13,
 					messageId: 'preferUserEventSetup',
 					data: { method: 'click' },
 				},
 				{
+					line: 12,
+					column: 13,
 					messageId: 'preferUserEventSetup',
 					data: { method: 'dblClick' },
 				},
