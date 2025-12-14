@@ -57,7 +57,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 	},
 	defaultOptions: [],
 
-	create(context) {
+	create(context, options, helpers) {
 		// Track variables assigned from userEvent.setup()
 		const userEventSetupVars = new Set<string>();
 
@@ -75,19 +75,6 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				node.callee.object.name === userEventIdentifier &&
 				node.callee.property.type === AST_NODE_TYPES.Identifier &&
 				node.callee.property.name === SETUP_METHOD_NAME
-			);
-		}
-
-		function isDirectUserEventMethodCall(
-			node: TSESTree.MemberExpression
-		): boolean {
-			return (
-				node.object.type === AST_NODE_TYPES.Identifier &&
-				node.object.name === userEventIdentifier &&
-				node.property.type === AST_NODE_TYPES.Identifier &&
-				USER_EVENT_METHODS.includes(
-					node.property.name as (typeof USER_EVENT_METHODS)[number]
-				)
 			);
 		}
 
@@ -196,9 +183,15 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
 				if (
 					node.callee.type === AST_NODE_TYPES.MemberExpression &&
-					isDirectUserEventMethodCall(node.callee)
+					node.callee.property.type === AST_NODE_TYPES.Identifier &&
+					helpers.isUserEventMethod(node.callee.property)
 				) {
-					const methodName = (node.callee.property as TSESTree.Identifier).name;
+					const methodName = node.callee.property.name;
+
+					// Exclude setup() method
+					if (methodName === SETUP_METHOD_NAME) {
+						return;
+					}
 
 					// Check if this is called on a setup instance
 					const isSetupInstance =
