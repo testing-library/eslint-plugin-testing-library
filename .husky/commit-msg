@@ -1,4 +1,1 @@
-# Skip commit-msg hook on CI
-[ -n "$CI" ] && exit 0
-
 commitlint --edit $1
