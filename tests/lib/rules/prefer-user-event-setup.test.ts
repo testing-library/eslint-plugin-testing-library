@@ -1,28 +1,10 @@
 import rule, { RULE_NAME } from '../../../lib/rules/prefer-user-event-setup';
+import { USER_EVENT_METHODS } from '../../../lib/utils';
 import { createRuleTester } from '../test-utils';
 
 import type { MessageIds } from '../../../lib/rules/prefer-user-event-setup';
 
 const ruleTester = createRuleTester();
-
-const USER_EVENT_METHODS = [
-	'clear',
-	'click',
-	'copy',
-	'cut',
-	'dblClick',
-	'deselectOptions',
-	'hover',
-	'keyboard',
-	'pointer',
-	'paste',
-	'selectOptions',
-	'tripleClick',
-	'type',
-	'unhover',
-	'upload',
-	'tab',
-];
 
 ruleTester.run(RULE_NAME, rule, {
 	valid: [

@@ -13,26 +13,6 @@ const USER_EVENT_PACKAGE = '@testing-library/user-event';
 const USER_EVENT_NAME = 'userEvent';
 const SETUP_METHOD_NAME = 'setup';
 
-// All userEvent methods that should use setup()
-const USER_EVENT_METHODS = [
-	'clear',
-	'click',
-	'copy',
-	'cut',
-	'dblClick',
-	'deselectOptions',
-	'hover',
-	'keyboard',
-	'pointer',
-	'paste',
-	'selectOptions',
-	'tripleClick',
-	'type',
-	'unhover',
-	'upload',
-	'tab',
-] as const;
-
 export default createTestingLibraryRule<Options, MessageIds>({
 	name: RULE_NAME,
 	meta: {

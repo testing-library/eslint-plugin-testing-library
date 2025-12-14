@@ -1,4 +1,5 @@
 import rule, { RULE_NAME } from '../../../lib/rules/await-async-events';
+import { USER_EVENT_METHODS } from '../../../lib/utils';
 import { createRuleTester } from '../test-utils';
 
 import type { Options } from '../../../lib/rules/await-async-events';
@@ -12,24 +13,7 @@ const FIRE_EVENT_ASYNC_FUNCTIONS = [
 	'blur',
 	'keyDown',
 ] as const;
-const USER_EVENT_ASYNC_FUNCTIONS = [
-	'click',
-	'dblClick',
-	'tripleClick',
-	'hover',
-	'unhover',
-	'tab',
-	'keyboard',
-	'copy',
-	'cut',
-	'paste',
-	'pointer',
-	'clear',
-	'deselectOptions',
-	'selectOptions',
-	'type',
-	'upload',
-] as const;
+const USER_EVENT_ASYNC_FUNCTIONS = USER_EVENT_METHODS;
 const FIRE_EVENT_ASYNC_FRAMEWORKS = [
 	'@testing-library/vue',
 	'@marko/testing-library',
