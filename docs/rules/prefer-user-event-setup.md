@@ -110,7 +110,37 @@ test('using custom render', async () => {
 
 ## When Not To Use This Rule
 
-If you're using an older version of user-event (< v14) that doesn't support or require the setup pattern, you may want to disable this rule.
+You may want to disable this rule in the following situations:
+
+### Using older user-event versions
+
+If you're using an older version of user-event (< v14) that doesn't support or require the setup pattern.
+
+### Custom render functions in external files
+
+If your project uses a custom render function that calls `userEvent.setup()` in a separate test utilities file (e.g., `test-utils.ts`), this rule may produce false positives because it cannot detect the setup call outside the current file.
+
+For example:
+
+```js
+// test-utils.js
+export function renderWithUser(ui) {
+	return {
+		user: userEvent.setup(), // setup() called here
+		...render(ui),
+	};
+}
+
+// MyComponent.test.js
+import { renderWithUser } from './test-utils';
+
+test('example', async () => {
+	const { user } = renderWithUser(<MyComponent />);
+	await user.click(...); // ✅ This is correct, but the rule cannot detect it
+});
+```
+
+In this case, you should disable the rule for your project since it cannot track setup calls across files.
 
 ## Further Reading
 
