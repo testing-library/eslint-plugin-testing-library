@@ -758,6 +758,17 @@
         "code",
         "test"
       ]
+    },
+    {
+      "login": "gipcompany",
+      "name": "Atsushi Ishida",
+      "avatar_url": "https://avatars.githubusercontent.com/u/130989?v=4",
+      "profile": "https://github.com/diveintohacking",
+      "contributions": [
+        "code",
+        "test",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,
