@@ -1,11 +1,14 @@
 name: Smoke test
 
 on:
-  schedule:
+  schedule: # Every Sunday at midnight
     - cron: '0 0 * * SUN'
-  workflow_dispatch:
+  workflow_dispatch: # Manual trigger
   release:
     types: [published]
+
+permissions:
+  issues: write # To create issues for test results
 
 jobs:
   test:
@@ -27,12 +30,8 @@ jobs:
           pnpm install
           pnpm run build
 
-      - run: pnpm link
-        working-directory: ./dist
-
-      - run: pnpm link eslint-plugin-testing-library
-
       - uses: AriPerkkio/eslint-remote-tester-run-action@v4
         with:
-          issue-title: 'Results of weekly scheduled smoke test'
-          eslint-remote-tester-config: tests/eslint-remote-tester.config.js
+          issue-title: 'Results of smoke test'
+          issue-label: 'smoke-test'
+          eslint-remote-tester-config: eslint-remote-tester.config.ts
