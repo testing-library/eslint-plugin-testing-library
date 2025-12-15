@@ -124,6 +124,25 @@ const METHODS_RETURNING_NODES = [
 
 const EVENT_HANDLER_METHODS = ['click', 'select', 'submit'] as const;
 
+const USER_EVENT_METHODS = [
+	'clear',
+	'click',
+	'copy',
+	'cut',
+	'dblClick',
+	'deselectOptions',
+	'hover',
+	'keyboard',
+	'pointer',
+	'paste',
+	'selectOptions',
+	'tripleClick',
+	'type',
+	'unhover',
+	'upload',
+	'tab',
+] as const;
+
 const ALL_RETURNING_NODES = [
 	...PROPERTIES_RETURNING_NODES,
 	...METHODS_RETURNING_NODES,
@@ -158,6 +177,7 @@ export {
 	PRESENCE_MATCHERS,
 	ABSENCE_MATCHERS,
 	EVENT_HANDLER_METHODS,
+	USER_EVENT_METHODS,
 	USER_EVENT_MODULE,
 	OLD_LIBRARY_MODULES,
 };
