@@ -57,8 +57,8 @@ Based on [ESLint's Rule Naming Conventions](https://eslint.org/docs/developer-gu
 In the [same way as ESLint](https://eslint.org/docs/developer-guide/working-with-rules),
 each rule has three files named with its identifier (e.g. `no-debugging-utils`):
 
-- in the `lib/rules` directory: a source file (e.g. `no-debugging-utils.ts`)
-- in the `tests/lib/rules` directory: a test file (e.g. `no-debugging-utils.ts`)
+- in the `src/rules` directory: a source file (e.g. `no-debugging-utils.ts`)
+- in the `tests/rules` directory: a test file (e.g. `no-debugging-utils.ts`)
 - in the `docs/rules` directory: a Markdown documentation file (e.g. `no-debugging-utils.md`)
 
 Additionally, you need to do a couple of extra things:

@@ -33,7 +33,7 @@ export const writeConfig = async (
 		parser: 'typescript',
 		...prettierConfig,
 	});
-	const filePath = resolve(__dirname, `../../lib/configs/${configName}.ts`);
+	const filePath = resolve(__dirname, `../../src/configs/${configName}.ts`);
 
 	await writeFile(filePath, configStr);
 };

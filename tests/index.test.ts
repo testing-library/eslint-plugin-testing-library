@@ -3,12 +3,12 @@ import { resolve } from 'node:path';
 
 import { it, expect } from 'vitest';
 
-import plugin from '../lib';
+import plugin from '../src';
 
 const ruleNames = Object.keys(plugin.rules);
 
 it('should export all existing rules', () => {
-	const rulesDirPath = resolve(__dirname, '../lib/rules');
+	const rulesDirPath = resolve(__dirname, '../src/rules');
 
 	const rulesFiles = readdirSync(rulesDirPath)
 		.filter((file) => file !== 'index.ts')
@@ -32,7 +32,7 @@ it('should have a corresponding doc for each rule', () => {
 
 it('should have a corresponding test for each rule', () => {
 	ruleNames.forEach((rule) => {
-		const testPath = resolve(__dirname, './lib/rules/', `${rule}.test.ts`);
+		const testPath = resolve(__dirname, './rules/', `${rule}.test.ts`);
 
 		expect(
 			existsSync(testPath),
@@ -73,7 +73,7 @@ it('should export configs that refer to actual rules', () => {
 		expect(rule.startsWith(ruleNamePrefix)).toBe(true);
 		expect(ruleNames).toContain(ruleName);
 
-		const ruleFilePath = resolve(__dirname, '../lib/rules', `${ruleName}.ts`);
+		const ruleFilePath = resolve(__dirname, '../src/rules', `${ruleName}.ts`);
 
 		expect(() => import(ruleFilePath)).not.toThrow();
 	});

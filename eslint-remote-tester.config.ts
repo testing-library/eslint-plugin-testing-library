@@ -4,7 +4,7 @@ import {
 } from 'eslint-remote-tester-repositories';
 import { parser } from 'typescript-eslint';
 
-import testingLibraryPlugin from './lib';
+import testingLibraryPlugin from './src';
 
 import type { Config } from 'eslint-remote-tester';
 

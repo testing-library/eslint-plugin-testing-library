@@ -1,0 +1,336 @@
+import rule, { RULE_NAME } from '../../src/rules/no-await-sync-queries';
+import {
+	SYNC_QUERIES_COMBINATIONS,
+	ASYNC_QUERIES_COMBINATIONS,
+} from '../../src/utils';
+import { createRuleTester } from '../test-utils';
+
+import type { MessageIds } from '../../src/rules/no-await-sync-queries';
+import type {
+	InvalidTestCase,
+	ValidTestCase,
+} from '@typescript-eslint/rule-tester';
+
+const ruleTester = createRuleTester();
+
+type RuleValidTestCase = ValidTestCase<[]>;
+type RuleInvalidTestCase = InvalidTestCase<MessageIds, []>;
+
+const SUPPORTED_TESTING_FRAMEWORKS = [
+	'@testing-library/dom',
+	'@testing-library/angular',
+	'@testing-library/react',
+	'@testing-library/vue',
+	'@marko/testing-library',
+];
+
+ruleTester.run(RULE_NAME, rule, {
+	valid: [
+		// sync queries without await are valid
+		...SYNC_QUERIES_COMBINATIONS.map<RuleValidTestCase>((query) => ({
+			code: `() => {
+        const element = ${query}('foo')
+      }
+      `,
+		})),
+		// custom sync queries without await are valid
+		`() => {
+      const element = getByIcon('search')
+    }
+    `,
+		`() => {
+      const element = queryByIcon('search')
+    }
+    `,
+		`() => {
+      const element = getAllByIcon('search')
+    }
+    `,
+		`() => {
+      const element = queryAllByIcon('search')
+    }
+    `,
+		`async () => {
+      await waitFor(() => {
+        getByText('search');
+      });
+    }
+    `,
+
+		// awaited custom sync query not matching custom-queries setting is valid
+		{
+			settings: {
+				'testing-library/custom-queries': ['queryByIcon', 'ByComplexText'],
+			},
+			code: `
+      test('A valid example test', async () => {
+        const element = await getByIcon('search')
+      })
+      `,
+		},
+
+		// sync queries without await inside assert are valid
+		...SYNC_QUERIES_COMBINATIONS.map<RuleValidTestCase>((query) => ({
+			code: `() => {
+        expect(${query}('foo')).toBeEnabled()
+      }
+      `,
+		})),
+
+		// async queries with await operator are valid
+		...ASYNC_QUERIES_COMBINATIONS.map<RuleValidTestCase>((query) => ({
+			code: `async () => {
+        const element = await ${query}('foo')
+      }
+      `,
+		})),
+
+		// async queries with then method are valid
+		...ASYNC_QUERIES_COMBINATIONS.map<RuleValidTestCase>((query) => ({
+			code: `() => {
+        ${query}('foo').then(() => {});
+      }
+      `,
+		})),
+
+		// sync query awaited but not related to custom module is invalid but not reported
+		{
+			settings: { 'testing-library/utils-module': 'test-utils' },
+			code: `
+      import { screen } from 'somewhere-else'
+      () => {
+        const element = await screen.getByRole('button')
+      }
+      `,
+		},
+
+		// https://github.com/testing-library/eslint-plugin-testing-library/issues/276
+		`
+    // sync query within call expression but not part of the callee
+    const chooseElementFromSomewhere = async (text, getAllByLabelText) => {
+      const someElement = getAllByLabelText(text)[0].parentElement;
+      // ...
+      await someOtherAsyncFunction();
+    };
+
+    await chooseElementFromSomewhere('someTextToUseInAQuery', getAllByLabelText);
+    `,
+
+		`// edge case for coverage:
+     // valid use case without call expression
+     // so there is no innermost function scope found
+     await test('edge case for no innermost function scope', () => {
+      const foo = getAllByLabelText
+    })
+    `,
+
+		`// edge case for coverage: CallExpression without deepest Identifier
+     await someList[0]();
+    `,
+
+		`// element is removed
+    test('movie title no longer present in DOM', async () => {
+      await waitForElementToBeRemoved(() => queryByText('the mummy'))
+    })
+    `,
+	],
+
+	invalid: [
+		// sync queries with await operator are not valid
+		...SYNC_QUERIES_COMBINATIONS.map<RuleInvalidTestCase>((query) => ({
+			code: `async () => {
+        const element = await ${query}('foo')
+      }
+      `,
+			errors: [
+				{
+					messageId: 'noAwaitSyncQuery',
+					line: 2,
+					column: 31,
+				},
+			],
+			output: `async () => {
+        const element =  ${query}('foo')
+      }
+      `,
+		})),
+		// custom sync queries with await operator are not valid
+		{
+			code: `
+      async () => {
+        const element = await getByIcon('search')
+      }
+      `,
+			errors: [{ messageId: 'noAwaitSyncQuery', line: 3, column: 31 }],
+			output: `
+      async () => {
+        const element =  getByIcon('search')
+      }
+      `,
+		},
+		{
+			code: `
+      async () => {
+        const element = await queryByIcon('search')
+      }
+      `,
+			errors: [{ messageId: 'noAwaitSyncQuery', line: 3, column: 31 }],
+			output: `
+      async () => {
+        const element =  queryByIcon('search')
+      }
+      `,
+		},
+		{
+			code: `
+      async () => {
+        const element = await screen.getAllByIcon('search')
+      }
+      `,
+			errors: [{ messageId: 'noAwaitSyncQuery', line: 3, column: 38 }],
+			output: `
+      async () => {
+        const element =  screen.getAllByIcon('search')
+      }
+      `,
+		},
+		{
+			code: `
+      async () => {
+        const element = await screen.queryAllByIcon('search')
+      }
+      `,
+			errors: [{ messageId: 'noAwaitSyncQuery', line: 3, column: 38 }],
+			output: `
+      async () => {
+        const element =  screen.queryAllByIcon('search')
+      }
+      `,
+		},
+		// sync queries with await operator inside assert are not valid
+		...SYNC_QUERIES_COMBINATIONS.map<RuleInvalidTestCase>((query) => ({
+			code: `async () => {
+        expect(await ${query}('foo')).toBeEnabled()
+      }
+      `,
+			errors: [
+				{
+					messageId: 'noAwaitSyncQuery',
+					line: 2,
+					column: 22,
+				},
+			],
+			output: `async () => {
+        expect( ${query}('foo')).toBeEnabled()
+      }
+      `,
+		})),
+
+		// sync queries in screen with await operator are not valid
+		...SYNC_QUERIES_COMBINATIONS.map<RuleInvalidTestCase>((query) => ({
+			code: `async () => {
+        const element = await screen.${query}('foo')
+      }
+      `,
+			errors: [
+				{
+					messageId: 'noAwaitSyncQuery',
+					line: 2,
+					column: 38,
+				},
+			],
+			output: `async () => {
+        const element =  screen.${query}('foo')
+      }
+      `,
+		})),
+
+		// sync queries in screen with await operator inside assert are not valid
+		...SYNC_QUERIES_COMBINATIONS.map<RuleInvalidTestCase>((query) => ({
+			code: `async () => {
+        expect(await screen.${query}('foo')).toBeEnabled()
+      }
+      `,
+			errors: [
+				{
+					messageId: 'noAwaitSyncQuery',
+					line: 2,
+					column: 29,
+				},
+			],
+			output: `async () => {
+        expect( screen.${query}('foo')).toBeEnabled()
+      }
+      `,
+		})),
+
+		// sync query awaited and related to testing library module
+		// with custom module setting is not valid
+		...SUPPORTED_TESTING_FRAMEWORKS.map<RuleInvalidTestCase>(
+			(testingFramework) => ({
+				settings: { 'testing-library/utils-module': 'test-utils' },
+				code: `
+      import { screen } from '${testingFramework}'
+      () => {
+        const element = await screen.getByRole('button')
+      }
+      `,
+				errors: [{ messageId: 'noAwaitSyncQuery', line: 4, column: 38 }],
+				output: `
+      import { screen } from '${testingFramework}'
+      () => {
+        const element =  screen.getByRole('button')
+      }
+      `,
+			})
+		),
+		// sync query awaited and related to custom module is not valid
+		{
+			settings: { 'testing-library/utils-module': 'test-utils' },
+			code: `
+      import { screen } from 'test-utils'
+      () => {
+        const element = await screen.getByRole('button')
+      }
+      `,
+			errors: [{ messageId: 'noAwaitSyncQuery', line: 4, column: 38 }],
+			output: `
+      import { screen } from 'test-utils'
+      () => {
+        const element =  screen.getByRole('button')
+      }
+      `,
+		},
+
+		// awaited custom sync query matching custom-queries setting is invalid
+		{
+			settings: {
+				'testing-library/custom-queries': ['queryByIcon', 'ByComplexText'],
+			},
+			code: `
+      test('A valid example test', async () => {
+        const element = await queryByIcon('search')
+      })
+      `,
+			errors: [{ messageId: 'noAwaitSyncQuery', line: 3, column: 31 }],
+			output: `
+      test('A valid example test', async () => {
+        const element =  queryByIcon('search')
+      })
+      `,
+		},
+		{
+			code: `
+      test('A valid example test', async () => {
+        const element = await(screen.getByRole('button'))
+      })
+      `,
+			errors: [{ messageId: 'noAwaitSyncQuery', line: 3, column: 38 }],
+			output: `
+      test('A valid example test', async () => {
+        const element = (screen.getByRole('button'))
+      })
+      `,
+		},
+	],
+});

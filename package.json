@@ -30,13 +30,13 @@
 		"./package.json": "./package.json"
 	},
 	"scripts": {
-		"build": "tsdown lib/index.ts --format esm --format cjs",
+		"build": "tsdown --format esm --format cjs",
 		"bundle-check": "pnpm run build && publint",
 		"generate-all": "pnpm run --parallel \"/^generate:.*/\"",
 		"generate:configs": "jiti tools/generate-configs",
 		"generate:docs": "pnpm run build && pnpm run eslint-doc-generator",
 		"validate-gen-all": "pnpm run --parallel \"/^validate-gen:.*/\"",
-		"validate-gen:configs": "pnpm run generate:configs && git diff --exit-code lib/configs",
+		"validate-gen:configs": "pnpm run generate:configs && git diff --exit-code src/configs",
 		"validate-gen:docs": "pnpm run build && pnpm run eslint-doc-generator --check",
 		"format": "pnpm run prettier-base --write",
 		"format:check": "pnpm run prettier-base --check",
