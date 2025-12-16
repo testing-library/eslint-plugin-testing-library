@@ -124,7 +124,9 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
 				const [firstArg, secondArg] = getArguments(identifierNode);
 
-				const firstArgumentHasError = reportLiteralWithRegex(firstArg);
+				const firstArgumentHasError = firstArg
+					? reportLiteralWithRegex(firstArg)
+					: false;
 				if (firstArgumentHasError) {
 					return;
 				}

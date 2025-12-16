@@ -1,14 +1,14 @@
 {
 	"compilerOptions": {
 		"strict": true,
+		"noUncheckedIndexedAccess": true,
+		"noImplicitOverride": true,
 		"target": "ES2023",
 		"module": "preserve",
 		// "moduleResolution": "Bundler", <-- this is implied by "module": "preserve"
 		"noEmit": true,
 		"lib": ["ES2023"],
 		"skipLibCheck": true,
-		"isolatedModules": true,
-		// TODO: turn it on
-		"noUncheckedIndexedAccess": false
+		"isolatedModules": true
 	}
 }

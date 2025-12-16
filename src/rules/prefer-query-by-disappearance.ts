@@ -178,6 +178,10 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
 			const argumentNode = node.arguments[0];
 
+			if (!argumentNode) {
+				return;
+			}
+
 			checkNonCallbackViolation(argumentNode);
 			checkArrowFunctionViolation(argumentNode);
 			checkFunctionExpressionViolation(argumentNode);

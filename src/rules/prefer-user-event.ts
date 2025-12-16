@@ -56,9 +56,10 @@ export const MAPPING_TO_USER_EVENT: Record<string, UserEventMethodsType[]> = {
 };
 
 function buildErrorMessage(fireEventMethod: string) {
-	const userEventMethods = MAPPING_TO_USER_EVENT[fireEventMethod].map(
-		(methodName) => `userEvent.${methodName}`
-	);
+	const userEventMethods =
+		MAPPING_TO_USER_EVENT[fireEventMethod]?.map(
+			(methodName) => `userEvent.${methodName}`
+		) ?? [];
 
 	// TODO: when min node version is 13, we can reimplement this using `Intl.ListFormat`
 	return userEventMethods.join(', ').replace(/, ([a-zA-Z.]+)$/, ', or $1');

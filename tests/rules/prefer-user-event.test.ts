@@ -29,9 +29,11 @@ function createScenarioWithImport<
 const ruleTester = createRuleTester();
 
 function formatUserEventMethodsMessage(fireEventMethod: string): string {
-	const userEventMethods = MAPPING_TO_USER_EVENT[fireEventMethod].map(
-		(methodName) => `userEvent.${methodName}`
-	);
+	// TODO: refactor this using `Intl.ListFormat`
+	const userEventMethods =
+		MAPPING_TO_USER_EVENT[fireEventMethod]?.map(
+			(methodName) => `userEvent.${methodName}`
+		) ?? [];
 	let joinedList = '';
 
 	for (let i = 0; i < userEventMethods.length; i++) {

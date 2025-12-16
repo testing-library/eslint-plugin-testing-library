@@ -388,6 +388,11 @@ export default createTestingLibraryRule<Options, MessageIds>({
 					const queryMethod = fullQueryMethod.split('By')[1];
 					const queryVariant = getFindByQueryVariant(fullQueryMethod);
 
+					if (!queryMethod) {
+						// We shouldn't reach this point, but it's a safeguard for TS noUncheckedIndexedAccess
+						throw Error('Query method could not be determined.');
+					}
+
 					reportInvalidUsage(node, {
 						queryMethod,
 						queryVariant,
@@ -399,7 +404,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 								.slice(1, -1)
 								.trim();
 							const { line, column } = expressionStatement.loc.start;
-							const indent = sourceCode.getLines()[line - 1].slice(0, column);
+							const indent = sourceCode.getLines()[line - 1]?.slice(0, column);
 							const newText = bodyText
 								.split('\n')
 								.map((line) => line.trim())
@@ -497,6 +502,11 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				const queryMethod = fullQueryMethod.split('By')[1];
 				const queryVariant = getFindByQueryVariant(fullQueryMethod);
 				const callArguments = getQueryArguments(argumentBody);
+
+				if (!queryMethod) {
+					// We shouldn't reach this point, but it's a safeguard for TS noUncheckedIndexedAccess
+					throw Error('Query method could not be determined.');
+				}
 
 				reportInvalidUsage(node, {
 					queryMethod,

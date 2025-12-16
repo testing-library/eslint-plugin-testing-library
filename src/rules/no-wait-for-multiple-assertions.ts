@@ -122,7 +122,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 							});
 							const lines = sourceCode.getText().split('\n');
 							const line = lines[callExpressionNode.loc.start.line - 1];
-							const indent = line.match(/^\s*/)?.[0] ?? '';
+							const indent = line?.match(/^\s*/)?.[0] ?? '';
 
 							const expressionStatementLines = lines.slice(
 								expressionStatement.loc.start.line - 1,

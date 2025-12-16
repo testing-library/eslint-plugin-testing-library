@@ -317,7 +317,7 @@ export function detectTestingLibraryUtils<
 
 		// Helpers for Testing Library detection.
 		const getTestingLibraryImportNode: GetTestingLibraryImportNodeFn = () => {
-			return importedTestingLibraryNodes[0];
+			return importedTestingLibraryNodes[0] ?? null;
 		};
 
 		const getAllTestingLibraryImportNodes: GetTestingLibraryImportNodesFn =

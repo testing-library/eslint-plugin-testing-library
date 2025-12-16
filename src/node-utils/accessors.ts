@@ -47,7 +47,7 @@ const isSimpleTemplateLiteral = <V extends string>(
 ): node is TemplateLiteral<V> =>
 	isTemplateLiteral(node) &&
 	node.quasis.length === 1 && // bail out if not simple
-	(value === undefined || node.quasis[0].value.raw === value);
+	(value === undefined || node.quasis[0]?.value.raw === value);
 
 export type StringNode<S extends string = string> =
 	| StringLiteral<S>

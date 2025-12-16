@@ -111,6 +111,9 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
 				const domElementArgument = closestCallExpression.arguments[0];
 
+				if (!domElementArgument) {
+					return;
+				}
 				checkSuspiciousNode(domElementArgument);
 			},
 		};
