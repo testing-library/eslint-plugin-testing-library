@@ -8,10 +8,17 @@ import {
 import type { SupportedTestingFramework } from './utils';
 import type { TSESLint } from '@typescript-eslint/utils';
 
-type FinalConfigs = Record<
-	SupportedTestingFramework | `flat/${SupportedTestingFramework}`,
-	TSESLint.ClassicConfig.Config | TSESLint.FlatConfig.Config
+type ClassicConfigs = Record<
+	SupportedTestingFramework,
+	TSESLint.ClassicConfig.Config
 >;
+
+type FlatConfigs = Record<
+	`flat/${SupportedTestingFramework}`,
+	TSESLint.FlatConfig.Config
+>;
+
+type FinalConfigs = ClassicConfigs & FlatConfigs;
 
 const plugin = {
 	meta: {
@@ -50,4 +57,4 @@ plugin.configs = {
 	},
 } satisfies FinalConfigs;
 
-export = plugin;
+export default plugin;
