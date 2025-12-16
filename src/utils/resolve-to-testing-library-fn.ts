@@ -108,7 +108,7 @@ const resolveScope = (
 		const ref = currentScope.set.get(identifier);
 		if (ref && ref.defs.length > 0) {
 			const def = ref.defs[ref.defs.length - 1];
-			const importDetails = describePossibleImportDef(def);
+			const importDetails = def ? describePossibleImportDef(def) : null;
 
 			if (importDetails?.local === identifier) {
 				return importDetails;
@@ -159,6 +159,9 @@ export const resolveToTestingLibraryFn = <
 	if (!chain?.length) return null;
 
 	const identifier = chain[0];
+	if (!identifier) {
+		return null;
+	}
 	const scope = context.sourceCode.getScope(identifier);
 	const maybeImport = resolveScope(scope, getAccessorValue(identifier));
 

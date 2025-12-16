@@ -227,7 +227,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
 						const lines = sourceCode.getText().split('\n');
 						const line = lines[targetNode.loc.start.line - 1];
-						const indent = line.match(/^\s*/)?.[0] ?? '';
+						const indent = line?.match(/^\s*/)?.[0] ?? '';
 						const sideEffectLines = lines.slice(
 							sideEffectNode.loc.start.line - 1,
 							sideEffectNode.loc.end.line

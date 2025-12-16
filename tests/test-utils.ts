@@ -9,7 +9,7 @@ const DEFAULT_TEST_CASE_CONFIG = {
 };
 
 class TestingLibraryRuleTester extends RuleTester {
-	run<TMessageIds extends string, TOptions extends readonly unknown[]>(
+	override run<TMessageIds extends string, TOptions extends readonly unknown[]>(
 		ruleName: string,
 		rule: TestingLibraryPluginRuleModule<TMessageIds, TOptions>,
 		{ invalid, valid }: RunTests<TMessageIds, TOptions>

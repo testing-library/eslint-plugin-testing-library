@@ -144,7 +144,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 					);
 
 					const nodeValue =
-						containerIndex !== -1 && node.id.properties[containerIndex].value;
+						containerIndex !== -1 && node.id.properties[containerIndex]?.value;
 
 					if (!nodeValue) {
 						return;

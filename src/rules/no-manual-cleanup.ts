@@ -69,9 +69,14 @@ export default createTestingLibraryRule<Options, MessageIds>({
 			if (isImportDeclaration(moduleNode)) {
 				// case: import utils from 'testing-library-module'
 				if (isImportDefaultSpecifier(moduleNode.specifiers[0])) {
-					const { references } = getDeclaredVariables(context, moduleNode)[0];
+					const declaredVariables = getDeclaredVariables(
+						context,
+						moduleNode
+					)[0];
 
-					reportImportReferences(references);
+					if (declaredVariables) {
+						reportImportReferences(declaredVariables.references);
+					}
 				}
 
 				// case: import { cleanup } from 'testing-library-module'
