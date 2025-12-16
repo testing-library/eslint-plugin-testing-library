@@ -1,5 +1,5 @@
 import rule, { RULE_NAME } from './fake-rule';
-import { createRuleTester } from './lib/test-utils';
+import { createRuleTester } from './test-utils';
 
 const ruleTester = createRuleTester();
 

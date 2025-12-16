@@ -1,20 +1,14 @@
 {
 	"compilerOptions": {
 		"strict": true,
-		"target": "ES2019",
-		"module": "NodeNext",
-		"moduleResolution": "NodeNext",
-		"lib": ["ES2019"],
-		"esModuleInterop": true,
+		"target": "ES2023",
+		"module": "preserve",
+		// "moduleResolution": "Bundler", <-- this is implied by "module": "preserve"
+		"noEmit": true,
+		"lib": ["ES2023"],
 		"skipLibCheck": true,
-		"resolveJsonModule": true,
-		"moduleDetection": "force",
 		"isolatedModules": true,
-		"removeComments": true,
 		// TODO: turn it on
-		"noUncheckedIndexedAccess": false,
-		"outDir": "dist",
-		"sourceMap": false
-	},
-	"include": ["**/*.ts", "**/*.mts"]
+		"noUncheckedIndexedAccess": false
+	}
 }
