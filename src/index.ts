@@ -1,60 +1,70 @@
-import { legacyConfigs } from './configs';
-import rules from './rules';
+import { baseConfigs } from './configs';
+import { rules } from './rules';
 import {
 	name as packageName,
 	version as packageVersion,
 } from '../package.json';
 
 import type { SupportedTestingFramework } from './utils';
-import type { TSESLint } from '@typescript-eslint/utils';
+import type { ESLint, Rule, Linter } from 'eslint';
 
-type ClassicConfigs = Record<
-	SupportedTestingFramework,
-	TSESLint.ClassicConfig.Config
->;
+type ClassicConfigs = Record<SupportedTestingFramework, Linter.LegacyConfig>;
+type FlatConfigs = Record<`flat/${SupportedTestingFramework}`, Linter.Config>;
+type PluginConfigs = ClassicConfigs & FlatConfigs;
 
-type FlatConfigs = Record<
-	`flat/${SupportedTestingFramework}`,
-	TSESLint.FlatConfig.Config
->;
+const PLUGIN_NAME = 'testing-library' as const;
 
-type FinalConfigs = ClassicConfigs & FlatConfigs;
+function createPluginFlatConfigs() {
+	return Object.entries(baseConfigs).reduce(
+		(acc, [configName, configRecord]) => {
+			const flatName = `flat/${configName}`;
 
-const plugin = {
+			return {
+				...acc,
+				[flatName]: {
+					name: `${PLUGIN_NAME}/${configName}`,
+					plugins: {
+						get 'testing-library'(): ESLint.Plugin {
+							return testingLibraryPlugin;
+						},
+					},
+					rules: configRecord.rules,
+				},
+			};
+		},
+		{}
+	) as {
+		[TKey in SupportedTestingFramework as `flat/${SupportedTestingFramework}`]: Linter.Config;
+	};
+}
+
+function createPluginLegacyConfigs() {
+	return Object.entries(baseConfigs).reduce(
+		(acc, [configName, configRecord]) => {
+			return {
+				...acc,
+				[configName]: {
+					plugins: [PLUGIN_NAME],
+					rules: configRecord.rules,
+				},
+			};
+		},
+		{}
+	) as {
+		[TLegacyKey in SupportedTestingFramework]: Linter.LegacyConfig;
+	};
+}
+
+const testingLibraryPlugin = {
 	meta: {
 		name: packageName,
 		version: packageVersion,
 	},
-	configs: {} as FinalConfigs,
-	rules,
-};
+	rules: rules as unknown as Record<string, Rule.RuleModule>,
+	configs: {
+		...createPluginFlatConfigs(),
+		...createPluginLegacyConfigs(),
+	} satisfies PluginConfigs,
+} as const satisfies ESLint.Plugin;
 
-plugin.configs = {
-	...legacyConfigs,
-	'flat/dom': {
-		plugins: { 'testing-library': plugin },
-		rules: legacyConfigs.dom.rules,
-	},
-	'flat/angular': {
-		plugins: { 'testing-library': plugin },
-		rules: legacyConfigs.angular.rules,
-	},
-	'flat/react': {
-		plugins: { 'testing-library': plugin },
-		rules: legacyConfigs.react.rules,
-	},
-	'flat/vue': {
-		plugins: { 'testing-library': plugin },
-		rules: legacyConfigs.vue.rules,
-	},
-	'flat/svelte': {
-		plugins: { 'testing-library': plugin },
-		rules: legacyConfigs.svelte.rules,
-	},
-	'flat/marko': {
-		plugins: { 'testing-library': plugin },
-		rules: legacyConfigs.marko.rules,
-	},
-} satisfies FinalConfigs;
-
-export default plugin;
+export default testingLibraryPlugin;

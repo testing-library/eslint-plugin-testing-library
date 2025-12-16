@@ -8,13 +8,17 @@ import vue from './vue';
 import type { SupportedTestingFramework } from '../utils';
 import type { Linter } from 'eslint';
 
-const legacyConfigs: Record<SupportedTestingFramework, Linter.LegacyConfig> = {
+type BaseConfig = {
+	rules: Linter.RulesRecord;
+};
+
+export const baseConfigs = {
 	dom,
 	angular,
 	react,
 	vue,
 	svelte,
 	marko,
+} as const satisfies {
+	[TKey in SupportedTestingFramework]: BaseConfig;
 };
-
-export { legacyConfigs };

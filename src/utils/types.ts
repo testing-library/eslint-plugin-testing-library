@@ -34,5 +34,6 @@ export const SUPPORTED_TESTING_FRAMEWORKS = [
 	'svelte',
 	'marko',
 ] as const;
+
 export type SupportedTestingFramework =
 	(typeof SUPPORTED_TESTING_FRAMEWORKS)[number];

@@ -25,7 +25,7 @@ export const writeConfig = async (
 ): Promise<void> => {
 	const code = `import type { Linter } from 'eslint';
 
-	export default ${JSON.stringify(config)} satisfies Linter.LegacyConfig;
+	export default ${JSON.stringify(config)} satisfies { rules: Linter.RulesRecord };
 	`;
 
 	const prettierConfig = await prettier.resolveConfig(__dirname);

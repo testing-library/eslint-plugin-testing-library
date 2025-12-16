@@ -28,7 +28,7 @@ import preferUserEvent from './prefer-user-event';
 import preferUserEventSetup from './prefer-user-event-setup';
 import renderResultNamingConvention from './render-result-naming-convention';
 
-export default {
+export const rules = {
 	'await-async-events': awaitAsyncEvents,
 	'await-async-queries': awaitAsyncQueries,
 	'await-async-utils': awaitAsyncUtils,
@@ -58,4 +58,4 @@ export default {
 	'prefer-user-event': preferUserEvent,
 	'prefer-user-event-setup': preferUserEventSetup,
 	'render-result-naming-convention': renderResultNamingConvention,
-};
+} as const;

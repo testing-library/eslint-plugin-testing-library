@@ -45,18 +45,18 @@ it('should export configs that refer to actual rules', () => {
 	const allConfigs = plugin.configs;
 
 	expect(Object.keys(allConfigs)).toEqual([
-		'dom',
-		'angular',
-		'react',
-		'vue',
-		'svelte',
-		'marko',
 		'flat/dom',
 		'flat/angular',
 		'flat/react',
 		'flat/vue',
 		'flat/svelte',
 		'flat/marko',
+		'dom',
+		'angular',
+		'react',
+		'vue',
+		'svelte',
+		'marko',
 	]);
 
 	const allConfigRules = Object.values(allConfigs)
@@ -66,11 +66,10 @@ it('should export configs that refer to actual rules', () => {
 			...currentValue,
 		]);
 
-	allConfigRules.forEach((rule) => {
-		const ruleNamePrefix = 'testing-library/';
-		const ruleName = rule.slice(ruleNamePrefix.length);
+	allConfigRules.forEach((configRuleName) => {
+		const ruleName = configRuleName.replace('testing-library/', '');
 
-		expect(rule.startsWith(ruleNamePrefix)).toBe(true);
+		expect(configRuleName).toMatch(/^testing-library\/[a-z-]+$/);
 		expect(ruleNames).toContain(ruleName);
 
 		const ruleFilePath = resolve(__dirname, '../src/rules', `${ruleName}.ts`);

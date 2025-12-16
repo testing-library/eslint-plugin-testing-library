@@ -5,7 +5,6 @@
 import type { Linter } from 'eslint';
 
 export default {
-	plugins: ['testing-library'],
 	rules: {
 		'testing-library/await-async-events': [
 			'error',
@@ -34,4 +33,4 @@ export default {
 		'testing-library/prefer-screen-queries': 'error',
 		'testing-library/render-result-naming-convention': 'error',
 	},
-} satisfies Linter.LegacyConfig;
+} satisfies { rules: Linter.RulesRecord };
