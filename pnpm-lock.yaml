@@ -93,9 +93,6 @@ importers:
       semantic-release:
         specifier: 25.0.2
         version: 25.0.2(typescript@5.9.3)
-      semver:
-        specifier: 7.7.2
-        version: 7.7.2
       tsdown:
         specifier: 0.17.3
         version: 0.17.3(publint@0.3.16)(typescript@5.9.3)
