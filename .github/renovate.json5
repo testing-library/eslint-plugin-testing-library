@@ -1,4 +1,14 @@
 {
 	$schema: 'https://docs.renovatebot.com/renovate-schema.json',
 	extends: ['config:recommended'],
+
+	packageRules: [
+		// We don't want to update pnpm too often
+		{
+			description: 'Get pnpm updates once a month',
+			matchDepTypes: ['packageManager'],
+			matchPackageNames: ['pnpm'],
+			extends: ['schedule:monthly'],
+		},
+	],
 }
