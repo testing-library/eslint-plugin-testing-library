@@ -30,7 +30,7 @@ jobs:
           pnpm install
           pnpm run build
 
-      - uses: AriPerkkio/eslint-remote-tester-run-action@v4
+      - uses: AriPerkkio/eslint-remote-tester-run-action@v5
         with:
           issue-title: 'Results of smoke test'
           issue-label: 'smoke-test'
