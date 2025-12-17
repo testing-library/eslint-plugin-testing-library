@@ -1,6 +1,28 @@
 {
 	$schema: 'https://docs.renovatebot.com/renovate-schema.json',
-	extends: ['config:recommended'],
+	extends: [
+		// Default config for libraries (extends "config:recommended")
+		// https://docs.renovatebot.com/presets-config/#configjs-lib
+		'config:js-lib',
+
+		// Pin `github-action` digests to increase security (converted to SemVer)
+		// https://docs.renovatebot.com/presets-helpers/#helperspingithubactiondigests
+		'helpers:pinGitHubActionDigestsToSemver',
+
+		// Update automatically if tests pass
+		':automergeLinters', // https://docs.renovatebot.com/presets-default/#automergelinters
+		':automergeTesters', // https://docs.renovatebot.com/presets-default/#automergetesters
+		':automergeTypes', // https://docs.renovatebot.com/presets-default/#automergetypes
+		':automergeRequireAllStatusChecks', // https://docs.renovatebot.com/presets-default/#automergerequireallstatuschecks
+
+		// Wait until npm packages are at least 3 days old before updating
+		// https://docs.renovatebot.com/presets-security/#securityminimumreleaseagenpm
+		'security:minimumReleaseAgeNpm',
+
+		// Migrate deprecated config options automatically
+		// https://docs.renovatebot.com/presets-default/#configmigration
+		':configMigration',
+	],
 
 	packageRules: [
 		// We don't want to update pnpm too often
