@@ -86,7 +86,7 @@
 		"semantic-release": "25.0.2",
 		"tsdown": "0.17.3",
 		"typescript": "5.9.3",
-		"typescript-eslint": "8.43.0",
+		"typescript-eslint": "^8.15.0",
 		"vitest": "3.2.4"
 	},
 	"peerDependencies": {
