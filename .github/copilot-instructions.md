@@ -4,7 +4,6 @@
 
 This is an ESLint plugin that enforces best practices for Testing Library (DOM, React, Vue, Angular, Svelte, Marko). The plugin provides 30 ESLint rules to catch common mistakes when writing tests with Testing Library frameworks.
 
-**Repository size**: ~296MB (including node_modules)
 **Language**: TypeScript
 **Package Manager**: pnpm (v9.15.9)
 **Node.js**: v22 (^18.18.0, ^20.9.0, or >=21.1.0 supported)
@@ -84,7 +83,7 @@ pnpm run bundle-check
 ## Testing
 
 **Test Location**: `tests/` directory mirrors `src/` structure
-**Test Files**: 34 test files with 17,234+ tests total
+**Test Files**: 34 test files with thousands of tests
 **Test Time**: ~40 seconds for full suite
 
 ```bash
@@ -307,7 +306,7 @@ Valid types: feat, fix, docs, style, refactor, test, chore, perf, ci, build, rev
 | --------------------------- | ------------------------ | ---- | ----------------------------- |
 | `pnpm install`              | Install dependencies     | ~7s  | Run first, installs git hooks |
 | `pnpm run build`            | Build plugin             | ~2s  | Outputs to `dist/`            |
-| `pnpm run test`             | Run all tests            | ~40s | 17,234+ tests                 |
+| `pnpm run test`             | Run all tests            | ~40s | Thousands of tests            |
 | `pnpm run test:ci`          | Tests + coverage         | ~45s | CI mode, 90% threshold        |
 | `pnpm run lint`             | Check code style         | ~5s  | ESLint v9 flat config         |
 | `pnpm run lint:fix`         | Fix code style           | ~5s  | Auto-fixes issues             |
