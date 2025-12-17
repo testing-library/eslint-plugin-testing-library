@@ -5,8 +5,8 @@
 This is an ESLint plugin that enforces best practices for Testing Library (DOM, React, Vue, Angular, Svelte, Marko). The plugin provides 30 ESLint rules to catch common mistakes when writing tests with Testing Library frameworks.
 
 **Language**: TypeScript
-**Package Manager**: pnpm (v9.15.9)
-**Node.js**: v22 (^18.18.0, ^20.9.0, or >=21.1.0 supported)
+**Package Manager**: pnpm (version specified in `package.json` `packageManager` field)
+**Node.js**: Version specified in `.nvmrc` (supported versions in `package.json` `engines.node`)
 **Build Tool**: tsdown (TypeScript bundler using Rolldown)
 **Test Framework**: Vitest
 **Code Coverage**: 90% threshold (branches, functions, lines, statements)
@@ -15,8 +15,8 @@ This is an ESLint plugin that enforces best practices for Testing Library (DOM, 
 
 **CRITICAL**: This project uses **pnpm**, not npm or yarn. Always use `pnpm` commands.
 
-1. Install pnpm globally: `npm install -g pnpm@9.15.9`
-2. Node.js version is specified in `.nvmrc` (v22)
+1. Enable pnpm via corepack: `corepack enable pnpm` (uses version from `package.json` `packageManager` field)
+2. Node.js version is specified in `.nvmrc`
 3. Install dependencies: `pnpm install` (this MUST be run first)
 
 ## Build and Validation Workflow
@@ -268,7 +268,7 @@ The `.gitignore` already handles these, but be aware:
 
 ### "pnpm: command not found"
 
-Install pnpm globally: `npm install -g pnpm@9.15.9`
+Enable pnpm via corepack: `corepack enable pnpm`
 
 ### Build Failures
 
