@@ -1,18 +1,25 @@
 // @ts-check
 
+import { dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
 import js from '@eslint/js';
 import vitest from '@vitest/eslint-plugin';
 import { defineConfig, globalIgnores } from 'eslint/config';
 import prettierConfig from 'eslint-config-prettier/flat';
 import { importX } from 'eslint-plugin-import-x';
+import nodePlugin from 'eslint-plugin-n';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const config = defineConfig(
 	js.configs.recommended,
 	tseslint.configs.recommendedTypeChecked,
 	importX.flatConfigs.recommended,
 	importX.flatConfigs.typescript,
+	nodePlugin.configs['flat/recommended'],
 	{
 		name: 'Language options',
 		files: ['**/*.{js,mjs,cjs,ts,mts}'],
@@ -25,7 +32,7 @@ const config = defineConfig(
 			parser: tseslint.parser,
 			parserOptions: {
 				projectService: true,
-				tsconfigRootDir: import.meta.dirname,
+				tsconfigRootDir: __dirname,
 			},
 		},
 	},
@@ -73,6 +80,10 @@ const config = defineConfig(
 			'import-x/no-mutable-exports': 'error',
 			'import-x/no-named-default': 'error',
 			'import-x/no-relative-packages': 'warn',
+
+			// Node
+			// This one is covered by TypeScript
+			'n/no-missing-import': 'off',
 		},
 	},
 	{
