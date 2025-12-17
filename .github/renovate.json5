@@ -32,5 +32,15 @@
 			matchPackageNames: ['pnpm'],
 			extends: ['schedule:monthly'],
 		},
+
+		// Group typescript-eslint monorepo packages together,
+		// so both prod and dev keep the same version.
+		{
+			description: 'Group typescript-eslint monorepo for both prod and dev dependencies',
+			extends: ['monorepo:typescript-eslint'],
+			matchDepTypes: ['dependencies', 'devDependencies'],
+			groupName: 'typescript-eslint monorepo',
+			rangeStrategy: 'in-range-only',
+		},
 	],
 }
