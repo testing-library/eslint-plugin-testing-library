@@ -77,7 +77,7 @@
 		"eslint-plugin-promise": "7.2.1",
 		"eslint-remote-tester": "4.0.3",
 		"eslint-remote-tester-repositories": "2.0.2",
-		"globals": "16.3.0",
+		"globals": "16.5.0",
 		"husky": "9.1.7",
 		"jiti": "2.6.1",
 		"lint-staged": "15.4.3",
