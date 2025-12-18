@@ -91,8 +91,8 @@ importers:
         specifier: 25.0.2
         version: 25.0.2(typescript@5.9.3)
       tsdown:
-        specifier: 0.17.4
-        version: 0.17.4(publint@0.3.16)(typescript@5.9.3)
+        specifier: 0.18.0
+        version: 0.18.0(publint@0.3.16)(typescript@5.9.3)
       typescript:
         specifier: 5.9.3
         version: 5.9.3
@@ -3640,10 +3640,9 @@ packages:
   tsconfig-paths@3.15.0:
     resolution: {integrity: sha512-2Ac2RgzDe/cn48GvOe3M+o82pEFewD3UPbyoUHHdKasHwJKjds4fLXWf/Ux5kATBKN20oaFGu+jbElp1pos0mg==}
 
-  tsdown@0.17.4:
-    resolution: {integrity: sha512-z+kNuv1rwM1POQIufDUVrdNc/uGy0ueRVafCyDH39IdHxin4JXgB8DNGSPoqdIpcOpqUoRbNreK8NxENFmlhKw==}
+  tsdown@0.18.0:
+    resolution: {integrity: sha512-Yotdh3NzizysnqR96xfpHFYtEntk1cZvSRHz8A+Pn3ZHNdTQa4fBQxh6HHzWZwfjdQv47xb7GCv6vEWMtxBirw==}
     engines: {node: '>=20.19.0'}
-    deprecated: Including an unexpected breaking change (copy behavior)
     hasBin: true
     peerDependencies:
       '@arethetypeswrong/core': ^0.18.1
@@ -7714,7 +7713,7 @@ snapshots:
       strip-bom: 3.0.0
     optional: true
 
-  tsdown@0.17.4(publint@0.3.16)(typescript@5.9.3):
+  tsdown@0.18.0(publint@0.3.16)(typescript@5.9.3):
     dependencies:
       ansis: 4.2.0
       cac: 6.7.14
