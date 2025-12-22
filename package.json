@@ -54,8 +54,8 @@
 		"type-check": "tsc --noEmit"
 	},
 	"dependencies": {
-		"@typescript-eslint/scope-manager": "^8.15.0",
-		"@typescript-eslint/utils": "^8.15.0"
+		"@typescript-eslint/scope-manager": "^8.50.0",
+		"@typescript-eslint/utils": "^8.50.0"
 	},
 	"devDependencies": {
 		"@commitlint/cli": "20.2.0",
@@ -63,7 +63,7 @@
 		"@eslint/eslintrc": "3.3.3",
 		"@eslint/js": "9.35.0",
 		"@types/node": "22.19.3",
-		"@typescript-eslint/rule-tester": "8.43.0",
+		"@typescript-eslint/rule-tester": "^8.50.0",
 		"@vitest/coverage-v8": "3.2.4",
 		"@vitest/eslint-plugin": "1.5.4",
 		"@vitest/ui": "3.2.4",
@@ -85,7 +85,7 @@
 		"semantic-release": "25.0.2",
 		"tsdown": "0.18.1",
 		"typescript": "5.9.3",
-		"typescript-eslint": "^8.15.0",
+		"typescript-eslint": "^8.50.0",
 		"vitest": "3.2.4"
 	},
 	"peerDependencies": {

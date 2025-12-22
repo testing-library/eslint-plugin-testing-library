@@ -12,8 +12,10 @@ class TestingLibraryRuleTester extends RuleTester {
 	override run<TMessageIds extends string, TOptions extends readonly unknown[]>(
 		ruleName: string,
 		rule: TestingLibraryPluginRuleModule<TMessageIds, TOptions>,
-		{ invalid, valid }: RunTests<TMessageIds, TOptions>
+		runTests: RunTests<NoInfer<TMessageIds>, NoInfer<TOptions>>
 	): void {
+		const { valid, invalid } = runTests;
+
 		const finalValid = valid.map((testCase) => {
 			if (typeof testCase === 'string') {
 				return {
