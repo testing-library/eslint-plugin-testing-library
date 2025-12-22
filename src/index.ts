@@ -1,4 +1,6 @@
 import { createRequire } from 'node:module';
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 import { baseConfigs } from './configs';
 import { rules } from './rules';
@@ -11,14 +13,16 @@ type FlatConfigs = Record<`flat/${SupportedTestingFramework}`, Linter.Config>;
 type PluginConfigs = ClassicConfigs & FlatConfigs;
 
 const require = createRequire(import.meta.url);
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 // Reference package.json with `require` so it takes the right "version"
 // with semantic release after bundle is generated.
-const { name: packageName, version: packageVersion } =
-	require('./package.json') as {
-		name: string;
-		version: string;
-	};
+const { name: packageName, version: packageVersion } = require(
+	resolve(__dirname, '../package.json')
+) as {
+	name: string;
+	version: string;
+};
 
 const PLUGIN_NAME = 'testing-library' as const;
 
