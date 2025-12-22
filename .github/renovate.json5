@@ -40,7 +40,7 @@
 			extends: ['monorepo:typescript-eslint'],
 			matchDepTypes: ['dependencies', 'devDependencies'],
 			groupName: 'typescript-eslint monorepo',
-			rangeStrategy: 'in-range-only',
+			rangeStrategy: 'replace',
 		},
 	],
 }
