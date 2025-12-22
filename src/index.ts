@@ -12,6 +12,11 @@ type ClassicConfigs = Record<SupportedTestingFramework, Linter.LegacyConfig>;
 type FlatConfigs = Record<`flat/${SupportedTestingFramework}`, Linter.Config>;
 type PluginConfigs = ClassicConfigs & FlatConfigs;
 
+type TestingLibraryPlugin = Omit<ESLint.Plugin, 'rules' | 'configs'> & {
+	rules: NonNullable<ESLint.Plugin['rules']>;
+	configs: PluginConfigs;
+};
+
 const PLUGIN_NAME = 'testing-library' as const;
 
 function createPluginFlatConfigs() {
@@ -55,7 +60,7 @@ function createPluginLegacyConfigs() {
 	};
 }
 
-const testingLibraryPlugin: ESLint.Plugin = {
+const testingLibraryPlugin: TestingLibraryPlugin = {
 	meta: {
 		name: packageName,
 		version: packageVersion,
@@ -64,7 +69,7 @@ const testingLibraryPlugin: ESLint.Plugin = {
 	configs: {
 		...createPluginFlatConfigs(),
 		...createPluginLegacyConfigs(),
-	} satisfies PluginConfigs,
+	},
 };
 
 export default testingLibraryPlugin;
