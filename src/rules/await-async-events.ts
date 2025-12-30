@@ -15,7 +15,7 @@ import { EVENTS_SIMULATORS } from '../utils';
 
 import type { TSESLint, TSESTree } from '@typescript-eslint/utils';
 
-export const RULE_NAME = 'await-async-events';
+const RULE_NAME = 'await-async-events';
 export type MessageIds = 'awaitAsyncEvent' | 'awaitAsyncEventWrapper';
 const FIRE_EVENT_NAME = 'fireEvent';
 const USER_EVENT_NAME = 'userEvent';

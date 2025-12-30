@@ -11,7 +11,7 @@ import { TESTING_FRAMEWORK_SETUP_HOOKS } from '../utils';
 
 import type { TSESTree } from '@typescript-eslint/utils';
 
-export const RULE_NAME = 'no-render-in-lifecycle';
+const RULE_NAME = 'no-render-in-lifecycle';
 export type MessageIds = 'noRenderInSetup';
 type Options = [
 	{

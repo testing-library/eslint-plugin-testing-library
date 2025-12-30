@@ -3,7 +3,7 @@ import { ALL_QUERIES_VARIANTS } from '../utils';
 
 import type { TSESTree } from '@typescript-eslint/utils';
 
-export const RULE_NAME = 'no-test-id-queries';
+const RULE_NAME = 'no-test-id-queries';
 export type MessageIds = 'noTestIdQueries';
 type Options = [];
 

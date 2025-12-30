@@ -3,7 +3,7 @@ import { isCallExpression, getImportModuleName } from '../node-utils';
 
 import type { TSESTree } from '@typescript-eslint/utils';
 
-export const RULE_NAME = 'no-dom-import';
+const RULE_NAME = 'no-dom-import';
 export type MessageIds = 'noDomImport' | 'noDomImportFramework';
 type Options = [string];
 

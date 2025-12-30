@@ -6,7 +6,7 @@ import { createTestingLibraryRule } from '../src/create-testing-library-rule';
 
 import type { TSESTree } from '@typescript-eslint/utils';
 
-export const RULE_NAME = 'fake-rule';
+const RULE_NAME = 'fake-rule';
 type Options = [];
 type MessageIds =
 	| 'absenceAssertError'

@@ -14,7 +14,7 @@ import { getSourceCode } from '../utils';
 
 import type { TSESTree } from '@typescript-eslint/utils';
 
-export const RULE_NAME = 'no-wait-for-side-effects';
+const RULE_NAME = 'no-wait-for-side-effects';
 export type MessageIds = 'noSideEffectsWaitFor';
 type Options = [];
 

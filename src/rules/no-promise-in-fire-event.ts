@@ -12,7 +12,7 @@ import { getScope } from '../utils';
 
 import type { TSESTree } from '@typescript-eslint/utils';
 
-export const RULE_NAME = 'no-promise-in-fire-event';
+const RULE_NAME = 'no-promise-in-fire-event';
 export type MessageIds = 'noPromiseInFireEvent';
 type Options = [];
 

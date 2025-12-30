@@ -12,7 +12,7 @@ import {
 
 import type { TSESTree } from '@typescript-eslint/utils';
 
-export const RULE_NAME = 'no-container';
+const RULE_NAME = 'no-container';
 export type MessageIds = 'noContainer';
 type Options = [];
 

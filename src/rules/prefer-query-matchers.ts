@@ -3,7 +3,7 @@ import { findClosestCallNode, isMemberExpression } from '../node-utils';
 
 import type { TSESTree } from '@typescript-eslint/utils';
 
-export const RULE_NAME = 'prefer-query-matchers';
+const RULE_NAME = 'prefer-query-matchers';
 export type MessageIds = 'wrongQueryForMatcher';
 export type Options = [
 	{

@@ -18,7 +18,7 @@ import { addAsyncToFunctionFix } from '../utils/add-async-to-function-fix';
 
 import type { TSESLint, TSESTree } from '@typescript-eslint/utils';
 
-export const RULE_NAME = 'await-async-utils';
+const RULE_NAME = 'await-async-utils';
 export type MessageIds = 'asyncUtilWrapper' | 'awaitAsyncUtil';
 type Options = [];
 

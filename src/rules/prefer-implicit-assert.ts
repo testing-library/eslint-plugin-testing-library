@@ -6,7 +6,7 @@ import { isCallExpression, isMemberExpression } from '../node-utils';
 import type { TestingLibrarySettings } from '../create-testing-library-rule/detect-testing-library-utils';
 import type { TSESTree, TSESLint } from '@typescript-eslint/utils';
 
-export const RULE_NAME = 'prefer-implicit-assert';
+const RULE_NAME = 'prefer-implicit-assert';
 export type MessageIds = 'preferImplicitAssert';
 type Options = [];
 

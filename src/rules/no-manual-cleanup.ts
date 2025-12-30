@@ -16,7 +16,7 @@ import { getDeclaredVariables } from '../utils';
 import type { ImportModuleNode } from '../node-utils';
 import type { TSESLint, TSESTree } from '@typescript-eslint/utils';
 
-export const RULE_NAME = 'no-manual-cleanup';
+const RULE_NAME = 'no-manual-cleanup';
 export type MessageIds = 'noManualCleanup';
 type Options = [];
 
