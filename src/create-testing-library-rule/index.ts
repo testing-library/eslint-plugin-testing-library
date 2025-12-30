@@ -12,6 +12,12 @@ import type {
 	EnhancedRuleCreate,
 } from './detect-testing-library-utils';
 
+type TestingLibraryPluginRuleModuleWithName<
+	TMessageIds extends string,
+	TOptions extends readonly unknown[],
+> = TestingLibraryPluginRuleModule<TMessageIds, TOptions> &
+	Required<Pick<TestingLibraryPluginRuleModule<TMessageIds, TOptions>, 'name'>>;
+
 export const createTestingLibraryRule = <
 	TOptions extends readonly unknown[],
 	TMessageIds extends string,
@@ -31,7 +37,7 @@ export const createTestingLibraryRule = <
 		create: EnhancedRuleCreate<TMessageIds, TOptions>;
 		detectionOptions?: Partial<DetectionOptions>;
 	}
->): TestingLibraryPluginRuleModule<TMessageIds, TOptions> => {
+>): TestingLibraryPluginRuleModuleWithName<TMessageIds, TOptions> => {
 	const rule = ESLintUtils.RuleCreator<TestingLibraryPluginDocs<TOptions>>(
 		getDocsUrl
 	)({
