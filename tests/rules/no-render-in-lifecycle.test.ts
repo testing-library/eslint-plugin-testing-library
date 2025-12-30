@@ -1,4 +1,4 @@
-import rule, { RULE_NAME } from '../../src/rules/no-render-in-lifecycle';
+import rule from '../../src/rules/no-render-in-lifecycle';
 import { TESTING_FRAMEWORK_SETUP_HOOKS } from '../../src/utils';
 import { createRuleTester } from '../test-utils';
 
@@ -11,7 +11,7 @@ const SUPPORTED_TESTING_FRAMEWORKS = [
 	'@marko/testing-library',
 ];
 
-ruleTester.run(RULE_NAME, rule, {
+ruleTester.run(rule.name, rule, {
 	valid: [
 		...SUPPORTED_TESTING_FRAMEWORKS.map((testingFramework) => ({
 			code: `

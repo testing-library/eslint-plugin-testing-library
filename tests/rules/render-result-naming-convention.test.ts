@@ -1,6 +1,4 @@
-import rule, {
-	RULE_NAME,
-} from '../../src/rules/render-result-naming-convention';
+import rule from '../../src/rules/render-result-naming-convention';
 import { createRuleTester } from '../test-utils';
 
 const ruleTester = createRuleTester();
@@ -12,7 +10,7 @@ const SUPPORTED_TESTING_FRAMEWORKS = [
 	'@marko/testing-library',
 ];
 
-ruleTester.run(RULE_NAME, rule, {
+ruleTester.run(rule.name, rule, {
 	valid: [
 		...SUPPORTED_TESTING_FRAMEWORKS.flatMap((testingFramework) => [
 			{

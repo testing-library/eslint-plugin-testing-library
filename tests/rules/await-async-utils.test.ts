@@ -1,4 +1,4 @@
-import rule, { RULE_NAME } from '../../src/rules/await-async-utils';
+import rule from '../../src/rules/await-async-utils';
 import { ASYNC_UTILS } from '../../src/utils';
 import { createRuleTester } from '../test-utils';
 
@@ -21,7 +21,7 @@ const SUPPORTED_TESTING_FRAMEWORKS = [
 	'@marko/testing-library',
 ];
 
-ruleTester.run(RULE_NAME, rule, {
+ruleTester.run(rule.name, rule, {
 	valid: SUPPORTED_TESTING_FRAMEWORKS.flatMap((testingFramework) => [
 		...ASYNC_UTILS.map<RuleValidTestCase>((asyncUtil) => ({
 			code: `

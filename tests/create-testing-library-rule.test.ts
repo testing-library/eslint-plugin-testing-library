@@ -1,9 +1,9 @@
-import rule, { RULE_NAME } from './fake-rule';
+import rule from './fake-rule';
 import { createRuleTester } from './test-utils';
 
 const ruleTester = createRuleTester();
 
-ruleTester.run(RULE_NAME, rule, {
+ruleTester.run(rule.name, rule, {
 	valid: [
 		// Test Cases for Imports
 		{

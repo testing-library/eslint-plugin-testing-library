@@ -1,6 +1,4 @@
-import rule, {
-	RULE_NAME,
-} from '../../src/rules/no-wait-for-multiple-assertions';
+import rule from '../../src/rules/no-wait-for-multiple-assertions';
 import { createRuleTester } from '../test-utils';
 
 import type { MessageIds } from '../../src/rules/no-wait-for-multiple-assertions';
@@ -22,7 +20,7 @@ const SUPPORTED_TESTING_FRAMEWORKS = [
 	'@marko/testing-library',
 ];
 
-ruleTester.run(RULE_NAME, rule, {
+ruleTester.run(rule.name, rule, {
 	valid: [
 		{
 			code: `

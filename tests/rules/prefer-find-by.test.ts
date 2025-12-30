@@ -1,7 +1,4 @@
-import rule, {
-	RULE_NAME,
-	getFindByQueryVariant,
-} from '../../src/rules/prefer-find-by';
+import rule, { getFindByQueryVariant } from '../../src/rules/prefer-find-by';
 import {
 	ASYNC_QUERIES_COMBINATIONS,
 	SYNC_QUERIES_COMBINATIONS,
@@ -36,7 +33,7 @@ function createScenario<
 	);
 }
 
-ruleTester.run(RULE_NAME, rule, {
+ruleTester.run(rule.name, rule, {
 	valid: SUPPORTED_TESTING_FRAMEWORKS.flatMap((testingFramework) => [
 		...ASYNC_QUERIES_COMBINATIONS.map((queryMethod) => ({
 			code: `

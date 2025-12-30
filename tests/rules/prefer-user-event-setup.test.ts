@@ -1,4 +1,4 @@
-import rule, { RULE_NAME } from '../../src/rules/prefer-user-event-setup';
+import rule from '../../src/rules/prefer-user-event-setup';
 import { USER_EVENT_METHODS } from '../../src/utils';
 import { createRuleTester } from '../test-utils';
 
@@ -6,7 +6,7 @@ import type { MessageIds } from '../../src/rules/prefer-user-event-setup';
 
 const ruleTester = createRuleTester();
 
-ruleTester.run(RULE_NAME, rule, {
+ruleTester.run(rule.name, rule, {
 	valid: [
 		// Using userEvent.setup() correctly
 		{

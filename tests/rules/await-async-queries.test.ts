@@ -1,4 +1,4 @@
-import rule, { RULE_NAME } from '../../src/rules/await-async-queries';
+import rule from '../../src/rules/await-async-queries';
 import {
 	ASYNC_QUERIES_COMBINATIONS,
 	ASYNC_QUERIES_VARIANTS,
@@ -91,7 +91,7 @@ const ALL_ASYNC_COMBINATIONS_TO_TEST = [
 	...CUSTOM_ASYNC_QUERIES_COMBINATIONS,
 ];
 
-ruleTester.run(RULE_NAME, rule, {
+ruleTester.run(rule.name, rule, {
 	valid: [
 		// async queries declaration from render functions are valid
 		...createTestCase((query) => `const { ${query} } = render()`, {

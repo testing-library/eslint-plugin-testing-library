@@ -1,4 +1,4 @@
-import rule, { RULE_NAME } from '../../src/rules/no-unnecessary-act';
+import rule from '../../src/rules/no-unnecessary-act';
 import { createRuleTester } from '../test-utils';
 
 import type { MessageIds, Options } from '../../src/rules/no-unnecessary-act';
@@ -990,7 +990,7 @@ const invalidTestCases: RuleInvalidTestCase[] = [
 	},
 ];
 
-ruleTester.run(RULE_NAME, rule, {
+ruleTester.run(rule.name, rule, {
 	valid: [
 		...validTestCases,
 		...disableStrict(validNonStrictTestCases),

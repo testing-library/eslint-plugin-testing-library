@@ -1,4 +1,4 @@
-import rule, { RULE_NAME } from '../../src/rules/prefer-query-matchers';
+import rule from '../../src/rules/prefer-query-matchers';
 import { ALL_QUERIES_METHODS } from '../../src/utils';
 import { createRuleTester } from '../test-utils';
 
@@ -120,7 +120,7 @@ const getInvalidAssertions = ({
 	];
 };
 
-ruleTester.run(RULE_NAME, rule, {
+ruleTester.run(rule.name, rule, {
 	valid: [
 		// cases: methods not matching Testing Library queries pattern
 		`expect(queryElement('foo')).toBeVisible()`,

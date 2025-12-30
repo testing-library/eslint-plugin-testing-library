@@ -1,4 +1,4 @@
-import rule, { RULE_NAME } from '../../src/rules/no-wait-for-snapshot';
+import rule from '../../src/rules/no-wait-for-snapshot';
 import { ASYNC_UTILS } from '../../src/utils';
 import { createRuleTester } from '../test-utils';
 
@@ -12,7 +12,7 @@ const SUPPORTED_TESTING_FRAMEWORKS = [
 	'@marko/testing-library',
 ];
 
-ruleTester.run(RULE_NAME, rule, {
+ruleTester.run(rule.name, rule, {
 	valid: [
 		...SUPPORTED_TESTING_FRAMEWORKS.flatMap((testingFramework) => [
 			...ASYNC_UTILS.map((asyncUtil) => ({

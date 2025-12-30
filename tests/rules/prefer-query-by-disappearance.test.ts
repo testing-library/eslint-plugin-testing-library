@@ -1,4 +1,4 @@
-import rule, { RULE_NAME } from '../../src/rules/prefer-query-by-disappearance';
+import rule from '../../src/rules/prefer-query-by-disappearance';
 import { createRuleTester } from '../test-utils';
 
 const ruleTester = createRuleTester();
@@ -11,7 +11,7 @@ const SUPPORTED_TESTING_FRAMEWORKS = [
 	'@marko/testing-library',
 ];
 
-ruleTester.run(RULE_NAME, rule, {
+ruleTester.run(rule.name, rule, {
 	valid: SUPPORTED_TESTING_FRAMEWORKS.flatMap((testingFramework) => [
 		{
 			code: `

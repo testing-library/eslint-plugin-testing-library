@@ -1,4 +1,4 @@
-import rule, { RULE_NAME } from '../../src/rules/no-test-id-queries';
+import rule from '../../src/rules/no-test-id-queries';
 import { createRuleTester } from '../test-utils';
 
 const ruleTester = createRuleTester();
@@ -20,7 +20,7 @@ const QUERIES = [
 	'findAllByTestId',
 ];
 
-ruleTester.run(RULE_NAME, rule, {
+ruleTester.run(rule.name, rule, {
 	valid: [
 		`
 		import { render } from '@testing-library/react';
