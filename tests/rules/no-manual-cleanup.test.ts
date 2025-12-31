@@ -1,4 +1,4 @@
-import rule, { RULE_NAME } from '../../src/rules/no-manual-cleanup';
+import rule from '../../src/rules/no-manual-cleanup';
 import { createRuleTester } from '../test-utils';
 
 const ruleTester = createRuleTester();
@@ -11,7 +11,7 @@ const ALL_TESTING_LIBRARIES_WITH_CLEANUP = [
 	'@marko/testing-library',
 ];
 
-ruleTester.run(RULE_NAME, rule, {
+ruleTester.run(rule.name, rule, {
 	valid: [
 		{
 			code: `import "@testing-library/react"`,

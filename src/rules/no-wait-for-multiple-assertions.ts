@@ -8,7 +8,7 @@ import { getSourceCode } from '../utils';
 
 import type { TSESTree } from '@typescript-eslint/utils';
 
-export const RULE_NAME = 'no-wait-for-multiple-assertions';
+const RULE_NAME = 'no-wait-for-multiple-assertions';
 export type MessageIds = 'noWaitForMultipleAssertion';
 type Options = [];
 

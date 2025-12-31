@@ -4,7 +4,7 @@ import { createTestingLibraryRule } from '../create-testing-library-rule';
 
 import type { TSESTree } from '@typescript-eslint/utils';
 
-export const RULE_NAME = 'prefer-user-event-setup';
+const RULE_NAME = 'prefer-user-event-setup';
 
 export type MessageIds = 'preferUserEventSetup';
 export type Options = [];

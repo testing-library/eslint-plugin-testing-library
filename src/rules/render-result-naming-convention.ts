@@ -10,7 +10,7 @@ import {
 
 import type { TSESTree } from '@typescript-eslint/utils';
 
-export const RULE_NAME = 'render-result-naming-convention';
+const RULE_NAME = 'render-result-naming-convention';
 export type MessageIds = 'renderResultNamingConvention';
 
 type Options = [];

@@ -1,4 +1,4 @@
-import rule, { RULE_NAME } from '../../src/rules/no-dom-import';
+import rule from '../../src/rules/no-dom-import';
 import { createRuleTester } from '../test-utils';
 
 const ruleTester = createRuleTester();
@@ -26,7 +26,7 @@ const SUPPORTED_TESTING_FRAMEWORKS = [
 	},
 ];
 
-ruleTester.run(RULE_NAME, rule, {
+ruleTester.run(rule.name, rule, {
 	valid: [
 		'import { foo } from "foo"',
 		'import "foo"',

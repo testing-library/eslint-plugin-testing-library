@@ -1,4 +1,4 @@
-import rule, { RULE_NAME } from '../../src/rules/no-await-sync-events';
+import rule from '../../src/rules/no-await-sync-events';
 import { createRuleTester } from '../test-utils';
 
 const ruleTester = createRuleTester();
@@ -110,7 +110,7 @@ const USER_EVENT_SYNC_FUNCTIONS = [
 	'unhover',
 ];
 
-ruleTester.run(RULE_NAME, rule, {
+ruleTester.run(rule.name, rule, {
 	valid: [
 		// sync fireEvents methods without await are valid
 		...FIRE_EVENT_FUNCTIONS.map((func) => ({

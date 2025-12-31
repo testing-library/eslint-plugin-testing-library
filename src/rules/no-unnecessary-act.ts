@@ -14,7 +14,7 @@ import { resolveToTestingLibraryFn } from '../utils';
 
 import type { TSESTree } from '@typescript-eslint/utils';
 
-export const RULE_NAME = 'no-unnecessary-act';
+const RULE_NAME = 'no-unnecessary-act';
 export type MessageIds =
 	| 'noUnnecessaryActEmptyFunction'
 	| 'noUnnecessaryActTestingLibraryUtil';

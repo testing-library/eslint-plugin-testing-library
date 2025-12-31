@@ -8,7 +8,7 @@ import {
 } from '../node-utils';
 import { PRESENCE_MATCHERS, ABSENCE_MATCHERS } from '../utils';
 
-export const RULE_NAME = 'prefer-explicit-assert';
+const RULE_NAME = 'prefer-explicit-assert';
 export type MessageIds =
 	| 'preferExplicitAssert'
 	| 'preferExplicitAssertAssertion';

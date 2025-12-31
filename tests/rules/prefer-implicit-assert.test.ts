@@ -1,4 +1,4 @@
-import rule, { RULE_NAME } from '../../src/rules/prefer-implicit-assert';
+import rule from '../../src/rules/prefer-implicit-assert';
 import { ALL_QUERIES_METHODS } from '../../src/utils';
 import { createRuleTester } from '../test-utils';
 
@@ -6,7 +6,7 @@ const ruleTester = createRuleTester();
 
 const COMBINED_QUERIES_METHODS = [...ALL_QUERIES_METHODS, 'ByIcon'];
 
-ruleTester.run(RULE_NAME, rule, {
+ruleTester.run(rule.name, rule, {
 	valid: [
 		...COMBINED_QUERIES_METHODS.map((queryMethod) => ({
 			code: `await find${queryMethod}('qux');`,

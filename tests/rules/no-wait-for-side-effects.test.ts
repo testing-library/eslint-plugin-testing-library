@@ -1,5 +1,4 @@
 import rule, {
-	RULE_NAME,
 	type MessageIds,
 } from '../../src/rules/no-wait-for-side-effects';
 import { createRuleTester } from '../test-utils';
@@ -22,7 +21,7 @@ const SUPPORTED_TESTING_FRAMEWORKS = [
 	'@marko/testing-library',
 ];
 
-ruleTester.run(RULE_NAME, rule, {
+ruleTester.run(rule.name, rule, {
 	valid: [
 		...SUPPORTED_TESTING_FRAMEWORKS.flatMap<RuleValidTestCase>(
 			(testingFramework) => [

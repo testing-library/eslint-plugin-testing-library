@@ -1,4 +1,4 @@
-import rule, { RULE_NAME } from '../../src/rules/consistent-data-testid';
+import rule from '../../src/rules/consistent-data-testid';
 import { createRuleTester } from '../test-utils';
 
 import type {
@@ -454,7 +454,7 @@ const invalidTestCases: RuleInvalidTestCase[] = [
 	},
 ];
 
-ruleTester.run(RULE_NAME, rule, {
+ruleTester.run(rule.name, rule, {
 	valid: [...validTestCases, ...disableAggressiveReporting(validTestCases)],
 	invalid: [
 		...invalidTestCases,

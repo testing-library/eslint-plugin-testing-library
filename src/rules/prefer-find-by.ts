@@ -17,7 +17,7 @@ import { getScope, getSourceCode } from '../utils';
 
 import type { TSESTree, TSESLint } from '@typescript-eslint/utils';
 
-export const RULE_NAME = 'prefer-find-by';
+const RULE_NAME = 'prefer-find-by';
 export type MessageIds = 'preferFindBy';
 type Options = [];
 

@@ -12,7 +12,7 @@ import {
 
 import type { TSESTree } from '@typescript-eslint/utils';
 
-export const RULE_NAME = 'no-global-regexp-flag-in-query';
+const RULE_NAME = 'no-global-regexp-flag-in-query';
 export type MessageIds = 'noGlobalRegExpFlagInQuery';
 type Options = [];
 

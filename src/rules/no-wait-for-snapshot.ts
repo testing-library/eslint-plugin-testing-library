@@ -8,7 +8,7 @@ import {
 
 import type { TSESTree } from '@typescript-eslint/utils';
 
-export const RULE_NAME = 'no-wait-for-snapshot';
+const RULE_NAME = 'no-wait-for-snapshot';
 export type MessageIds = 'noWaitForSnapshot';
 type Options = [];
 

@@ -1,4 +1,4 @@
-import rule, { RULE_NAME } from '../../src/rules/await-async-events';
+import rule from '../../src/rules/await-async-events';
 import { USER_EVENT_METHODS } from '../../src/utils';
 import { createRuleTester } from '../test-utils';
 
@@ -20,7 +20,7 @@ const FIRE_EVENT_ASYNC_FRAMEWORKS = [
 ] as const;
 const USER_EVENT_ASYNC_FRAMEWORKS = ['@testing-library/user-event'] as const;
 
-ruleTester.run(RULE_NAME, rule, {
+ruleTester.run(rule.name, rule, {
 	valid: [
 		...FIRE_EVENT_ASYNC_FRAMEWORKS.flatMap((testingFramework) => [
 			...FIRE_EVENT_ASYNC_FUNCTIONS.map((eventMethod) => ({

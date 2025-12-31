@@ -15,7 +15,7 @@ import { addAsyncToFunctionFix } from '../utils/add-async-to-function-fix';
 
 import type { TSESTree } from '@typescript-eslint/utils';
 
-export const RULE_NAME = 'await-async-queries';
+const RULE_NAME = 'await-async-queries';
 export type MessageIds = 'asyncQueryWrapper' | 'awaitAsyncQuery';
 type Options = [];
 

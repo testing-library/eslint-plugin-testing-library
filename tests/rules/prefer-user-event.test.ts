@@ -1,6 +1,5 @@
 import rule, {
 	MAPPING_TO_USER_EVENT,
-	RULE_NAME,
 	UserEventMethods,
 } from '../../src/rules/prefer-user-event';
 import { LIBRARY_MODULES } from '../../src/utils';
@@ -50,7 +49,7 @@ function formatUserEventMethodsMessage(fireEventMethod: string): string {
 	return joinedList;
 }
 
-ruleTester.run(RULE_NAME, rule, {
+ruleTester.run(rule.name, rule, {
 	valid: [
 		{
 			code: `

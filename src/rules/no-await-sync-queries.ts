@@ -4,7 +4,7 @@ import { getSourceCode } from '../utils';
 
 import type { TSESTree } from '@typescript-eslint/utils';
 
-export const RULE_NAME = 'no-await-sync-queries';
+const RULE_NAME = 'no-await-sync-queries';
 export type MessageIds = 'noAwaitSyncQuery';
 type Options = [];
 

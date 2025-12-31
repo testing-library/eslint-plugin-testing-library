@@ -15,7 +15,7 @@ import { resolveToTestingLibraryFn } from '../utils';
 
 import type { TSESTree } from '@typescript-eslint/utils';
 
-export const RULE_NAME = 'prefer-screen-queries';
+const RULE_NAME = 'prefer-screen-queries';
 export type MessageIds = 'preferScreenQueries';
 type Options = [];
 

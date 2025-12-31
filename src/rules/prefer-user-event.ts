@@ -9,7 +9,7 @@ import {
 
 import type { TSESTree } from '@typescript-eslint/utils';
 
-export const RULE_NAME = 'prefer-user-event';
+const RULE_NAME = 'prefer-user-event';
 
 export type MessageIds = 'preferUserEvent';
 export type Options = [{ allowedMethods: string[] }];

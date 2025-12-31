@@ -3,7 +3,7 @@ import { findClosestCallNode, isMemberExpression } from '../node-utils';
 
 import type { TSESTree } from '@typescript-eslint/utils';
 
-export const RULE_NAME = 'prefer-presence-queries';
+const RULE_NAME = 'prefer-presence-queries';
 export type MessageIds = 'wrongAbsenceQuery' | 'wrongPresenceQuery';
 export type Options = [
 	{

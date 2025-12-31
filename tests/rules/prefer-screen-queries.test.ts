@@ -1,4 +1,4 @@
-import rule, { RULE_NAME } from '../../src/rules/prefer-screen-queries';
+import rule from '../../src/rules/prefer-screen-queries';
 import {
 	ALL_QUERIES_COMBINATIONS,
 	ALL_QUERIES_VARIANTS,
@@ -20,7 +20,7 @@ const CUSTOM_QUERY_COMBINATIONS = combineQueries(ALL_QUERIES_VARIANTS, [
 	'ByIcon',
 ]);
 
-ruleTester.run(RULE_NAME, rule, {
+ruleTester.run(rule.name, rule, {
 	valid: [
 		{
 			code: `const baz = () => 'foo'`,

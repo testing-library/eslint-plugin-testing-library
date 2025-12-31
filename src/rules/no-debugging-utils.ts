@@ -18,7 +18,7 @@ import type { TSESTree, JSONSchema } from '@typescript-eslint/utils';
 type DebugUtilsToCheckForConfig = Record<(typeof DEBUG_UTILS)[number], boolean>;
 type DebugUtilsToCheckFor = Partial<DebugUtilsToCheckForConfig>;
 
-export const RULE_NAME = 'no-debugging-utils';
+const RULE_NAME = 'no-debugging-utils';
 export type MessageIds = 'noDebug';
 type Options = [{ utilsToCheckFor?: DebugUtilsToCheckFor }];
 

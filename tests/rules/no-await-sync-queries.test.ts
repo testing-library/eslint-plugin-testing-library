@@ -1,4 +1,4 @@
-import rule, { RULE_NAME } from '../../src/rules/no-await-sync-queries';
+import rule from '../../src/rules/no-await-sync-queries';
 import {
 	SYNC_QUERIES_COMBINATIONS,
 	ASYNC_QUERIES_COMBINATIONS,
@@ -24,7 +24,7 @@ const SUPPORTED_TESTING_FRAMEWORKS = [
 	'@marko/testing-library',
 ];
 
-ruleTester.run(RULE_NAME, rule, {
+ruleTester.run(rule.name, rule, {
 	valid: [
 		// sync queries without await are valid
 		...SYNC_QUERIES_COMBINATIONS.map<RuleValidTestCase>((query) => ({

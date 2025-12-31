@@ -1,11 +1,9 @@
-import rule, {
-	RULE_NAME,
-} from '../../src/rules/no-global-regexp-flag-in-query';
+import rule from '../../src/rules/no-global-regexp-flag-in-query';
 import { createRuleTester } from '../test-utils';
 
 const ruleTester = createRuleTester();
 
-ruleTester.run(RULE_NAME, rule, {
+ruleTester.run(rule.name, rule, {
 	valid: [
 		`
         import { screen } from '@testing-library/dom'
