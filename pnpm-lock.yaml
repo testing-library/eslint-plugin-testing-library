@@ -64,8 +64,8 @@ importers:
         specifier: 7.2.1
         version: 7.2.1(eslint@9.35.0(jiti@2.6.1))
       eslint-remote-tester:
-        specifier: 4.0.3
-        version: 4.0.3(eslint@9.35.0(jiti@2.6.1))(jiti@2.6.1)
+        specifier: 4.0.4
+        version: 4.0.4(eslint@9.35.0(jiti@2.6.1))(jiti@2.6.1)
       eslint-remote-tester-repositories:
         specifier: 2.0.2
         version: 2.0.2
@@ -1563,8 +1563,8 @@ packages:
     resolution: {integrity: sha512-Oxp8SE5nsnrJvIdzjr35L8KmepmHgXyD/4Kjb3vhGgfukrI7FgsQM68o+05yxYSffmEDLoq3xBG+FfueXuxpdw==}
     engines: {node: ^18.0.0 || >=20.0.0}
 
-  eslint-remote-tester@4.0.3:
-    resolution: {integrity: sha512-kNPnimtZVBOWsnhpU38gsK+t26vg8fHoMd7jnVKr1WsnkhVyBRsXcEMk34scKSR+AV4+Xn6PjuELsJ9lqy7bZQ==}
+  eslint-remote-tester@4.0.4:
+    resolution: {integrity: sha512-F9ufBGtPNXSsGqlUYrQpmNfRpUBXtfhsmK7YbNSJdRnLFoTvgT3Zji1AjJT6k/HFcpgQz7/a92mLcID+iOJJXQ==}
     engines: {node: ^18.0.0 || >=20.0.0}
     hasBin: true
     peerDependencies:
@@ -4725,7 +4725,7 @@ snapshots:
 
   eslint-remote-tester-repositories@2.0.2: {}
 
-  eslint-remote-tester@4.0.3(eslint@9.35.0(jiti@2.6.1))(jiti@2.6.1):
+  eslint-remote-tester@4.0.4(eslint@9.35.0(jiti@2.6.1))(jiti@2.6.1):
     dependencies:
       '@babel/code-frame': 7.27.1
       JSONStream: 1.3.5
