@@ -69,7 +69,7 @@
 		"@vitest/ui": "3.2.4",
 		"eslint": "9.35.0",
 		"eslint-config-prettier": "10.1.8",
-		"eslint-doc-generator": "2.4.0",
+		"eslint-doc-generator": "3.0.0",
 		"eslint-import-resolver-typescript": "4.4.4",
 		"eslint-plugin-import-x": "4.16.1",
 		"eslint-plugin-n": "17.23.1",
