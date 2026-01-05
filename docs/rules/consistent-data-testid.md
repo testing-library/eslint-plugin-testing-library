@@ -1,4 +1,6 @@
-# Ensures consistent usage of `data-testid` (`testing-library/consistent-data-testid`)
+# testing-library/consistent-data-testid
+
+📝 Ensures consistent usage of `data-testid`.
 
 <!-- end auto-generated rule header -->
 

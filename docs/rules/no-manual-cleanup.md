@@ -1,6 +1,8 @@
-# Disallow the use of `cleanup` (`testing-library/no-manual-cleanup`)
+# testing-library/no-manual-cleanup
 
-💼 This rule is enabled in the following configs: `react`, `svelte`, `vue`.
+📝 Disallow the use of `cleanup`.
+
+💼 This rule is enabled in the following configs: ![badge-react](https://img.shields.io/badge/-React-black?style=flat-square&logo=react&logoColor=white&labelColor=61DAFB&color=black) `react`, ![badge-svelte](https://img.shields.io/badge/-Svelte-black?style=flat-square&logo=svelte&logoColor=white&labelColor=FF3E00&color=black) `svelte`, ![badge-vue](https://img.shields.io/badge/-Vue-black?style=flat-square&logo=vue.js&logoColor=white&labelColor=4FC08D&color=black) `vue`.
 
 <!-- end auto-generated rule header -->
 

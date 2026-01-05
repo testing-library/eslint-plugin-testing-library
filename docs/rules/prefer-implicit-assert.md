@@ -1,4 +1,6 @@
-# Suggest using implicit assertions for getBy* & findBy* queries (`testing-library/prefer-implicit-assert`)
+# testing-library/prefer-implicit-assert
+
+📝 Suggest using implicit assertions for getBy* & findBy* queries.
 
 <!-- end auto-generated rule header -->
 

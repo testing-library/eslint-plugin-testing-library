@@ -1,6 +1,8 @@
-# Disallow the use of debugging utilities like `debug` (`testing-library/no-debugging-utils`)
+# testing-library/no-debugging-utils
 
-⚠️ This rule _warns_ in the following configs: `angular`, `marko`, `react`, `svelte`, `vue`.
+📝 Disallow the use of debugging utilities like `debug`.
+
+⚠️ This rule _warns_ in the following configs: ![badge-angular](https://img.shields.io/badge/-Angular-black?style=flat-square&logo=angular&logoColor=white&labelColor=DD0031&color=black) `angular`, ![badge-marko](https://img.shields.io/badge/-Marko-black?style=flat-square&logo=marko&logoColor=white&labelColor=2596BE&color=black) `marko`, ![badge-react](https://img.shields.io/badge/-React-black?style=flat-square&logo=react&logoColor=white&labelColor=61DAFB&color=black) `react`, ![badge-svelte](https://img.shields.io/badge/-Svelte-black?style=flat-square&logo=svelte&logoColor=white&labelColor=FF3E00&color=black) `svelte`, ![badge-vue](https://img.shields.io/badge/-Vue-black?style=flat-square&logo=vue.js&logoColor=white&labelColor=4FC08D&color=black) `vue`.
 
 <!-- end auto-generated rule header -->
 

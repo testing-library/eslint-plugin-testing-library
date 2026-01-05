@@ -1,4 +1,6 @@
-# Ensure no `data-testid` queries are used (`testing-library/no-test-id-queries`)
+# testing-library/no-test-id-queries
+
+📝 Ensure no `data-testid` queries are used.
 
 <!-- end auto-generated rule header -->
 
