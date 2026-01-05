@@ -32,10 +32,10 @@
 	"scripts": {
 		"build": "tsdown --format esm --format cjs",
 		"bundle-check": "pnpm run build && publint",
-		"generate-all": "pnpm run --parallel \"/^generate:.*/\"",
+		"generate-all": "run-p \"generate:*\"",
 		"generate:configs": "jiti tools/generate-configs",
 		"generate:docs": "pnpm run build && pnpm run eslint-doc-generator",
-		"validate-gen-all": "pnpm run --parallel \"/^validate-gen:.*/\"",
+		"validate-gen-all": "run-p \"validate-gen:*\"",
 		"validate-gen:configs": "pnpm run generate:configs && git diff --exit-code src/configs",
 		"validate-gen:docs": "pnpm run build && pnpm run eslint-doc-generator --check",
 		"format": "pnpm run prettier-base --write",
@@ -59,6 +59,7 @@
 	},
 	"devDependencies": {
 		"@commitlint/cli": "20.3.0",
+		"npm-run-all2": "^6.2.3",
 		"@commitlint/config-conventional": "20.3.0",
 		"@eslint/eslintrc": "3.3.3",
 		"@eslint/js": "9.35.0",
