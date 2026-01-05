@@ -49,8 +49,8 @@ importers:
         specifier: 10.1.8
         version: 10.1.8(eslint@9.35.0(jiti@2.6.1))
       eslint-doc-generator:
-        specifier: 3.0.0
-        version: 3.0.0(eslint@9.35.0(jiti@2.6.1))(prettier@3.7.4)(typescript@5.9.3)
+        specifier: 3.0.2
+        version: 3.0.2(eslint@9.35.0(jiti@2.6.1))(prettier@3.7.4)(typescript@5.9.3)
       eslint-import-resolver-typescript:
         specifier: 4.4.4
         version: 4.4.4(eslint-plugin-import-x@4.16.1(@typescript-eslint/utils@8.51.0(eslint@9.35.0(jiti@2.6.1))(typescript@5.9.3))(eslint@9.35.0(jiti@2.6.1)))(eslint@9.35.0(jiti@2.6.1))
@@ -1499,8 +1499,8 @@ packages:
     peerDependencies:
       eslint: '>=7.0.0'
 
-  eslint-doc-generator@3.0.0:
-    resolution: {integrity: sha512-Rh6jwzSd4B8L3kJT/IE1O4POueaUumz/u8lco9HFjNQuT5orQXlT8ovzLxLkpFJi85x/ztO57KMD/LvSbYDKlg==}
+  eslint-doc-generator@3.0.2:
+    resolution: {integrity: sha512-Aw59yMkVJi2lflLc992bs64DR9OKBjxDBwdkp2HBOY7c4HaMARSRlRMQ53pF8c2BxXwKti9vc5m/8BGbHo9H/w==}
     engines: {node: ^20.19.0 || ^22.13.1 || >=24.0.0}
     hasBin: true
     peerDependencies:
@@ -4637,7 +4637,7 @@ snapshots:
     dependencies:
       eslint: 9.35.0(jiti@2.6.1)
 
-  eslint-doc-generator@3.0.0(eslint@9.35.0(jiti@2.6.1))(prettier@3.7.4)(typescript@5.9.3):
+  eslint-doc-generator@3.0.2(eslint@9.35.0(jiti@2.6.1))(prettier@3.7.4)(typescript@5.9.3):
     dependencies:
       '@typescript-eslint/utils': 8.51.0(eslint@9.35.0(jiti@2.6.1))(typescript@5.9.3)
       ajv: 8.17.1
