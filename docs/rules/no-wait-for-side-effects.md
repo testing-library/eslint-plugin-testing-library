@@ -1,6 +1,8 @@
-# Disallow the use of side effects in `waitFor` (`testing-library/no-wait-for-side-effects`)
+# testing-library/no-wait-for-side-effects
 
-💼 This rule is enabled in the following configs: `angular`, `dom`, `marko`, `react`, `svelte`, `vue`.
+📝 Disallow the use of side effects in `waitFor`.
+
+💼 This rule is enabled in the following configs: ![badge-angular][] `angular`, ![badge-dom][] `dom`, ![badge-marko][] `marko`, ![badge-react][] `react`, ![badge-svelte][] `svelte`, ![badge-vue][] `vue`.
 
 🔧 This rule is automatically fixable by the [`--fix` CLI option](https://eslint.org/docs/latest/user-guide/command-line-interface#--fix).
 

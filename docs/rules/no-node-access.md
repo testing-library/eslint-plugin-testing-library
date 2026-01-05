@@ -1,6 +1,8 @@
-# Disallow direct Node access (`testing-library/no-node-access`)
+# testing-library/no-node-access
 
-💼 This rule is enabled in the following configs: `angular`, `dom`, `marko`, `react`, `svelte`, `vue`.
+📝 Disallow direct Node access.
+
+💼 This rule is enabled in the following configs: ![badge-angular][] `angular`, ![badge-dom][] `dom`, ![badge-marko][] `marko`, ![badge-react][] `react`, ![badge-svelte][] `svelte`, ![badge-vue][] `vue`.
 
 <!-- end auto-generated rule header -->
 

@@ -1,6 +1,8 @@
-# Disallow the use of `cleanup` (`testing-library/no-manual-cleanup`)
+# testing-library/no-manual-cleanup
 
-💼 This rule is enabled in the following configs: `react`, `svelte`, `vue`.
+📝 Disallow the use of `cleanup`.
+
+💼 This rule is enabled in the following configs: ![badge-react][] `react`, ![badge-svelte][] `svelte`, ![badge-vue][] `vue`.
 
 <!-- end auto-generated rule header -->
 

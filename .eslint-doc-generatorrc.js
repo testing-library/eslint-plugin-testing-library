@@ -2,6 +2,14 @@ import * as prettier from 'prettier';
 
 /** @type {import('eslint-doc-generator').GenerateOptions} */
 export default {
+	configEmoji: [
+		['angular', '![badge-angular][]'],
+		['dom', '![badge-dom][]'],
+		['marko', '![badge-marko][]'],
+		['react', '![badge-react][]'],
+		['svelte', '![badge-svelte][]'],
+		['vue', '![badge-vue][]'],
+	],
 	ignoreConfig: [
 		'flat/angular',
 		'flat/dom',

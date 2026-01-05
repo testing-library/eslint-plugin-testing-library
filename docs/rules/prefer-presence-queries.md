@@ -1,6 +1,8 @@
-# Ensure appropriate `get*`/`query*` queries are used with their respective matchers (`testing-library/prefer-presence-queries`)
+# testing-library/prefer-presence-queries
 
-💼 This rule is enabled in the following configs: `angular`, `dom`, `marko`, `react`, `svelte`, `vue`.
+📝 Ensure appropriate `get*`/`query*` queries are used with their respective matchers.
+
+💼 This rule is enabled in the following configs: ![badge-angular][] `angular`, ![badge-dom][] `dom`, ![badge-marko][] `marko`, ![badge-react][] `react`, ![badge-svelte][] `svelte`, ![badge-vue][] `vue`.
 
 🔧 This rule is automatically fixable by the [`--fix` CLI option](https://eslint.org/docs/latest/user-guide/command-line-interface#--fix).
 

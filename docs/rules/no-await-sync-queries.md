@@ -1,6 +1,8 @@
-# Disallow unnecessary `await` for sync queries (`testing-library/no-await-sync-queries`)
+# testing-library/no-await-sync-queries
 
-💼 This rule is enabled in the following configs: `angular`, `dom`, `marko`, `react`, `svelte`, `vue`.
+📝 Disallow unnecessary `await` for sync queries.
+
+💼 This rule is enabled in the following configs: ![badge-angular][] `angular`, ![badge-dom][] `dom`, ![badge-marko][] `marko`, ![badge-react][] `react`, ![badge-svelte][] `svelte`, ![badge-vue][] `vue`.
 
 🔧 This rule is automatically fixable by the [`--fix` CLI option](https://eslint.org/docs/latest/user-guide/command-line-interface#--fix).
 

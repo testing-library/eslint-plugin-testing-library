@@ -1,6 +1,8 @@
-# Disallow the use of multiple `expect` calls inside `waitFor` (`testing-library/no-wait-for-multiple-assertions`)
+# testing-library/no-wait-for-multiple-assertions
 
-💼 This rule is enabled in the following configs: `angular`, `dom`, `marko`, `react`, `svelte`, `vue`.
+📝 Disallow the use of multiple `expect` calls inside `waitFor`.
+
+💼 This rule is enabled in the following configs: ![badge-angular][] `angular`, ![badge-dom][] `dom`, ![badge-marko][] `marko`, ![badge-react][] `react`, ![badge-svelte][] `svelte`, ![badge-vue][] `vue`.
 
 🔧 This rule is automatically fixable by the [`--fix` CLI option](https://eslint.org/docs/latest/user-guide/command-line-interface#--fix).
 

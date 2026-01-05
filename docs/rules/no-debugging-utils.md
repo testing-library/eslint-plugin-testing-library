@@ -1,6 +1,8 @@
-# Disallow the use of debugging utilities like `debug` (`testing-library/no-debugging-utils`)
+# testing-library/no-debugging-utils
 
-⚠️ This rule _warns_ in the following configs: `angular`, `marko`, `react`, `svelte`, `vue`.
+📝 Disallow the use of debugging utilities like `debug`.
+
+⚠️ This rule _warns_ in the following configs: ![badge-angular][] `angular`, ![badge-marko][] `marko`, ![badge-react][] `react`, ![badge-svelte][] `svelte`, ![badge-vue][] `vue`.
 
 <!-- end auto-generated rule header -->
 

@@ -1,4 +1,6 @@
-# Suggest using userEvent with setup() instead of direct methods (`testing-library/prefer-user-event-setup`)
+# testing-library/prefer-user-event-setup
+
+📝 Suggest using userEvent with setup() instead of direct methods.
 
 <!-- end auto-generated rule header -->
 

@@ -1,6 +1,8 @@
-# Disallow the use of `container` methods (`testing-library/no-container`)
+# testing-library/no-container
 
-💼 This rule is enabled in the following configs: `angular`, `marko`, `react`, `svelte`, `vue`.
+📝 Disallow the use of `container` methods.
+
+💼 This rule is enabled in the following configs: ![badge-angular][] `angular`, ![badge-marko][] `marko`, ![badge-react][] `react`, ![badge-svelte][] `svelte`, ![badge-vue][] `vue`.
 
 <!-- end auto-generated rule header -->
 

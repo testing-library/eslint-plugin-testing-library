@@ -1,6 +1,8 @@
-# Suggest using `screen` while querying (`testing-library/prefer-screen-queries`)
+# testing-library/prefer-screen-queries
 
-💼 This rule is enabled in the following configs: `angular`, `dom`, `marko`, `react`, `svelte`, `vue`.
+📝 Suggest using `screen` while querying.
+
+💼 This rule is enabled in the following configs: ![badge-angular][] `angular`, ![badge-dom][] `dom`, ![badge-marko][] `marko`, ![badge-react][] `react`, ![badge-svelte][] `svelte`, ![badge-vue][] `vue`.
 
 <!-- end auto-generated rule header -->
 

@@ -1,6 +1,8 @@
-# Disallow unnecessary `await` for sync events (`testing-library/no-await-sync-events`)
+# testing-library/no-await-sync-events
 
-💼 This rule is enabled in the following configs: `angular`, `dom`, `react`.
+📝 Disallow unnecessary `await` for sync events.
+
+💼 This rule is enabled in the following configs: ![badge-angular][] `angular`, ![badge-dom][] `dom`, ![badge-react][] `react`.
 
 <!-- end auto-generated rule header -->
 

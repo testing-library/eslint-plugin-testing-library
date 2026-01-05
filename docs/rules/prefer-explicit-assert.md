@@ -1,4 +1,6 @@
-# Suggest using explicit assertions rather than standalone queries (`testing-library/prefer-explicit-assert`)
+# testing-library/prefer-explicit-assert
+
+📝 Suggest using explicit assertions rather than standalone queries.
 
 <!-- end auto-generated rule header -->
 

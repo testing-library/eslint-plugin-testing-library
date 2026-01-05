@@ -1,4 +1,6 @@
-# Suggest using `userEvent` over `fireEvent` for simulating user interactions (`testing-library/prefer-user-event`)
+# testing-library/prefer-user-event
+
+📝 Suggest using `userEvent` over `fireEvent` for simulating user interactions.
 
 <!-- end auto-generated rule header -->
 

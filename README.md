@@ -320,6 +320,12 @@ module.exports = [
 
 💼 Configurations enabled in.\
 ⚠️ Configurations set to warn in.\
+![badge-angular][] Set in the `angular` configuration.\
+![badge-dom][] Set in the `dom` configuration.\
+![badge-marko][] Set in the `marko` configuration.\
+![badge-react][] Set in the `react` configuration.\
+![badge-svelte][] Set in the `svelte` configuration.\
+![badge-vue][] Set in the `vue` configuration.\
 🔧 Automatically fixable by the [`--fix` CLI option](https://eslint.org/docs/user-guide/command-line-interface#--fix).
 
 | Name                                                                             | Description                                                                                  | 💼                                                                                                   | ⚠️                                                                                    | 🔧  |

@@ -1,4 +1,6 @@
-# Ensure the configured `get*`/`query*` query is used with the corresponding matchers (`testing-library/prefer-query-matchers`)
+# testing-library/prefer-query-matchers
+
+📝 Ensure the configured `get*`/`query*` query is used with the corresponding matchers.
 
 <!-- end auto-generated rule header -->
 

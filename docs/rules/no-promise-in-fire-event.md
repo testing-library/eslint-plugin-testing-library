@@ -1,6 +1,8 @@
-# Disallow the use of promises passed to a `fireEvent` method (`testing-library/no-promise-in-fire-event`)
+# testing-library/no-promise-in-fire-event
 
-💼 This rule is enabled in the following configs: `angular`, `dom`, `marko`, `react`, `svelte`, `vue`.
+📝 Disallow the use of promises passed to a `fireEvent` method.
+
+💼 This rule is enabled in the following configs: ![badge-angular][] `angular`, ![badge-dom][] `dom`, ![badge-marko][] `marko`, ![badge-react][] `react`, ![badge-svelte][] `svelte`, ![badge-vue][] `vue`.
 
 <!-- end auto-generated rule header -->
 

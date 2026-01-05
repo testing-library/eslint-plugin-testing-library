@@ -1,6 +1,8 @@
-# Enforce a valid naming for return value from `render` (`testing-library/render-result-naming-convention`)
+# testing-library/render-result-naming-convention
 
-💼 This rule is enabled in the following configs: `angular`, `marko`, `react`, `svelte`, `vue`.
+📝 Enforce a valid naming for return value from `render`.
+
+💼 This rule is enabled in the following configs: ![badge-angular][] `angular`, ![badge-marko][] `marko`, ![badge-react][] `react`, ![badge-svelte][] `svelte`, ![badge-vue][] `vue`.
 
 <!-- end auto-generated rule header -->
 
