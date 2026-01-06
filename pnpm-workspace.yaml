@@ -1,4 +1,9 @@
+autoInstallPeers: true
+enablePrePostScripts: true
 verifyDepsBeforeRun: 'warn'
+publicHoistPattern:
+  - '@commitlint*'
+  - 'commitlint'
 allowBuilds:
   esbuild: true
   unrs-resolver: true
