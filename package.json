@@ -81,7 +81,7 @@
 		"jiti": "2.6.1",
 		"lint-staged": "16.2.7",
 		"prettier": "3.8.1",
-		"publint": "0.3.16",
+		"publint": "0.3.17",
 		"semantic-release": "25.0.2",
 		"tsdown": "0.19.0",
 		"typescript": "5.9.3",
