@@ -50,7 +50,7 @@ importers:
         version: 10.1.8(eslint@9.35.0(jiti@2.6.1))
       eslint-doc-generator:
         specifier: 3.0.2
-        version: 3.0.2(eslint@9.35.0(jiti@2.6.1))(prettier@3.8.0)(typescript@5.9.3)
+        version: 3.0.2(eslint@9.35.0(jiti@2.6.1))(prettier@3.8.1)(typescript@5.9.3)
       eslint-import-resolver-typescript:
         specifier: 4.4.4
         version: 4.4.4(eslint-plugin-import-x@4.16.1(@typescript-eslint/utils@8.51.0(eslint@9.35.0(jiti@2.6.1))(typescript@5.9.3))(eslint@9.35.0(jiti@2.6.1)))(eslint@9.35.0(jiti@2.6.1))
@@ -82,8 +82,8 @@ importers:
         specifier: 16.2.7
         version: 16.2.7
       prettier:
-        specifier: 3.8.0
-        version: 3.8.0
+        specifier: 3.8.1
+        version: 3.8.1
       publint:
         specifier: 0.3.16
         version: 0.3.16
@@ -2557,8 +2557,8 @@ packages:
     resolution: {integrity: sha512-vkcDPrRZo1QZLbn5RLGPpg/WmIQ65qoWWhcGKf/b5eplkkarX0m9z8ppCat4mlOqUsWpyNuYgO3VRyrYHSzX5g==}
     engines: {node: '>= 0.8.0'}
 
-  prettier@3.8.0:
-    resolution: {integrity: sha512-yEPsovQfpxYfgWNhCfECjG5AQaO+K3dp6XERmOepyPDVqcJm+bjyCVO3pmU+nAPe0N5dDvekfGezt/EIiRe1TA==}
+  prettier@3.8.1:
+    resolution: {integrity: sha512-UOnG6LftzbdaHZcKoPFtOcCKztrQ57WkHDeRD9t/PTQtmT0NHSeWWepj6pS0z/N7+08BHFDQVUrfmfMRcZwbMg==}
     engines: {node: '>=14'}
     hasBin: true
 
@@ -4637,7 +4637,7 @@ snapshots:
     dependencies:
       eslint: 9.35.0(jiti@2.6.1)
 
-  eslint-doc-generator@3.0.2(eslint@9.35.0(jiti@2.6.1))(prettier@3.8.0)(typescript@5.9.3):
+  eslint-doc-generator@3.0.2(eslint@9.35.0(jiti@2.6.1))(prettier@3.8.1)(typescript@5.9.3):
     dependencies:
       '@typescript-eslint/utils': 8.51.0(eslint@9.35.0(jiti@2.6.1))(typescript@5.9.3)
       ajv: 8.17.1
@@ -4654,7 +4654,7 @@ snapshots:
       markdown-table: 3.0.4
       type-fest: 5.3.1
     optionalDependencies:
-      prettier: 3.8.0
+      prettier: 3.8.1
     transitivePeerDependencies:
       - supports-color
       - typescript
@@ -5613,7 +5613,7 @@ snapshots:
 
   prelude-ls@1.2.1: {}
 
-  prettier@3.8.0: {}
+  prettier@3.8.1: {}
 
   pretty-format@30.2.0:
     dependencies:
