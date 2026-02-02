@@ -82,7 +82,7 @@
 		"lint-staged": "16.2.7",
 		"prettier": "3.8.1",
 		"publint": "0.3.17",
-		"semantic-release": "25.0.2",
+		"semantic-release": "25.0.3",
 		"tsdown": "0.20.1",
 		"typescript": "5.9.3",
 		"typescript-eslint": "^8.51.0",
