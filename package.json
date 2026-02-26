@@ -60,7 +60,7 @@
 	"devDependencies": {
 		"@commitlint/cli": "20.4.2",
 		"@commitlint/config-conventional": "20.4.2",
-		"@eslint/eslintrc": "3.3.3",
+		"@eslint/eslintrc": "3.3.4",
 		"@eslint/js": "9.35.0",
 		"@types/node": "22.19.11",
 		"@typescript-eslint/rule-tester": "^8.56.0",
