@@ -67,7 +67,11 @@ function createPluginLegacyConfigs() {
 	};
 }
 
-const testingLibraryPlugin = {
+const testingLibraryPlugin: {
+	meta: { name: string; version: string };
+	rules: Record<string, Rule.RuleModule>;
+	configs: PluginConfigs;
+} = {
 	meta: {
 		name: packageName,
 		version: packageVersion,
@@ -77,6 +81,6 @@ const testingLibraryPlugin = {
 		...createPluginFlatConfigs(),
 		...createPluginLegacyConfigs(),
 	} satisfies PluginConfigs,
-} as const satisfies ESLint.Plugin;
+} satisfies ESLint.Plugin;
 
 export default testingLibraryPlugin;
