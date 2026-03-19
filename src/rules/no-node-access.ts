@@ -65,6 +65,12 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				return;
 			}
 
+			// Skip if this MemberExpression is the object of another MemberExpression
+			// to avoid duplicate reports for chained property access
+			if (isMemberExpression(node.parent) && node.parent.object === node) {
+				return;
+			}
+
 			const propertyName = ASTUtils.isIdentifier(node.property)
 				? node.property.name
 				: null;
