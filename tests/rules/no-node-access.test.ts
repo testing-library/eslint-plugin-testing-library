@@ -527,6 +527,33 @@ ruleTester.run(rule.name, rule, {
 		},
 		{
 			code: `
+        import { screen } from '${testingFramework}';
+
+        const rowHeader = screen.getByRole('rowheader');
+        const radioContainer =
+            (rowHeader.parentElement && rowHeader.parentElement.nextElementSibling) ||
+            rowHeader.parentElement;
+      `,
+			errors: [
+				{
+					line: 6,
+					column: 24,
+					messageId: 'noNodeAccess',
+				},
+				{
+					line: 6,
+					column: 65,
+					messageId: 'noNodeAccess',
+				},
+				{
+					line: 7,
+					column: 23,
+					messageId: 'noNodeAccess',
+				},
+			],
+		},
+		{
+			code: `
         import { render } from '${testingFramework}';
 
         const { getByText } = render(<Example />)
