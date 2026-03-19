@@ -14,7 +14,7 @@
 	"bugs": "testing-library/eslint-plugin-testing-library/issues",
 	"repository": "testing-library/eslint-plugin-testing-library",
 	"license": "MIT",
-	"author": "Mario Beltrán (https://mario.dev)",
+	"author": "Mario Beltrán (https://belco.dev)",
 	"files": [
 		"dist"
 	],
