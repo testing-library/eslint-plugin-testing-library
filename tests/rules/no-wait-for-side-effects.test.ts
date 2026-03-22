@@ -223,13 +223,6 @@ ruleTester.run(rule.name, rule, {
 			})
 		),
 		{
-			settings: { 'testing-library/utils-module': '~/test-utils' },
-			code: `
-        import { waitFor, userEvent } from '~/test-utils';
-        await waitFor(() => userEvent.click(button))
-      `,
-		},
-		{
 			settings: { 'testing-library/utils-module': 'test-utils' },
 			code: `
         import { waitFor } from 'somewhere-else';
@@ -924,6 +917,60 @@ ruleTester.run(rule.name, rule, {
         import { waitFor } from '~/test-utils';
         import userEvent from '@testing-library/user-event'
         userEvent.click();
+      `,
+		},
+		{
+			settings: { 'testing-library/utils-module': '~/test-utils' },
+			code: `
+        import { waitFor, userEvent } from '~/test-utils';
+        await waitFor(() => userEvent.click(button))
+      `,
+			errors: [{ line: 3, column: 29, messageId: 'noSideEffectsWaitFor' }],
+			output: `
+        import { waitFor, userEvent } from '~/test-utils';
+        userEvent.click(button)
+      `,
+		},
+		{
+			settings: { 'testing-library/utils-module': '~/test-utils' },
+			code: `
+        import { userEvent, waitFor } from '~/test-utils';
+        async function test() {
+          await waitFor(() => {
+            userEvent.click(element);
+          });
+        }
+      `,
+			errors: [{ line: 5, column: 13, messageId: 'noSideEffectsWaitFor' }],
+			output: `
+        import { userEvent, waitFor } from '~/test-utils';
+        async function test() {
+          userEvent.click(element);
+        }
+      `,
+		},
+		{
+			settings: { 'testing-library/utils-module': '~/test-utils' },
+			code: `
+        const { waitFor, userEvent } = require('~/test-utils');
+        await waitFor(() => userEvent.click(button))
+      `,
+			errors: [{ line: 3, column: 29, messageId: 'noSideEffectsWaitFor' }],
+			output: `
+        const { waitFor, userEvent } = require('~/test-utils');
+        userEvent.click(button)
+      `,
+		},
+		{
+			settings: { 'testing-library/utils-module': '~/test-utils' },
+			code: `
+        import { waitFor, userEvent as ue } from '~/test-utils';
+        await waitFor(() => ue.click(button))
+      `,
+			errors: [{ line: 3, column: 29, messageId: 'noSideEffectsWaitFor' }],
+			output: `
+        import { waitFor, userEvent as ue } from '~/test-utils';
+        ue.click(button)
       `,
 		},
 		...SUPPORTED_TESTING_FRAMEWORKS.flatMap<RuleInvalidTestCase>(

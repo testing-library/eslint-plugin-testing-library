@@ -242,6 +242,18 @@ ruleTester.run(rule.name, rule, {
         });
       `,
 		})),
+		// userEvent from non-custom module should not be reported when custom module is set
+		{
+			settings: { 'testing-library/utils-module': 'test-utils' },
+			code: `
+        import { userEvent } from 'somewhere-else';
+
+        test('should not report userEvent from non-custom module', async() => {
+          await userEvent.type('foo', 'bar', { delay: 0 });
+        });
+      `,
+			options: [{ eventModules: ['user-event'] }],
+		},
 	],
 
 	invalid: [
@@ -384,6 +396,63 @@ ruleTester.run(rule.name, rule, {
 					column: 17,
 					messageId: 'noAwaitSyncEvents',
 					data: { name: 'userEvent.type' },
+				},
+			],
+		},
+		{
+			settings: { 'testing-library/utils-module': 'test-utils' },
+			code: `
+        import { userEvent } from 'test-utils';
+
+        test('should report userEvent from custom module', async() => {
+          await userEvent.type('foo', 'bar', { delay: 0 });
+        });
+      `,
+			options: [{ eventModules: ['user-event'] }],
+			errors: [
+				{
+					line: 5,
+					column: 17,
+					messageId: 'noAwaitSyncEvents',
+					data: { name: 'userEvent.type' },
+				},
+			],
+		},
+		{
+			settings: { 'testing-library/utils-module': 'test-utils' },
+			code: `
+        const { userEvent } = require('test-utils');
+
+        test('should report userEvent required from custom module', async() => {
+          await userEvent.type('foo', 'bar', { delay: 0 });
+        });
+      `,
+			options: [{ eventModules: ['user-event'] }],
+			errors: [
+				{
+					line: 5,
+					column: 17,
+					messageId: 'noAwaitSyncEvents',
+					data: { name: 'userEvent.type' },
+				},
+			],
+		},
+		{
+			settings: { 'testing-library/utils-module': 'test-utils' },
+			code: `
+        import { userEvent as ue } from 'test-utils';
+
+        test('should report aliased userEvent from custom module', async() => {
+          await ue.type('foo', 'bar', { delay: 0 });
+        });
+      `,
+			options: [{ eventModules: ['user-event'] }],
+			errors: [
+				{
+					line: 5,
+					column: 17,
+					messageId: 'noAwaitSyncEvents',
+					data: { name: 'ue.type' },
 				},
 			],
 		},

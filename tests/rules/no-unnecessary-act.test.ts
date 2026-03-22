@@ -76,6 +76,21 @@ const validNonStrictTestCases: RuleValidTestCase[] = [
       `,
 	},
 	{
+		settings: {
+			'testing-library/utils-module': 'test-utils',
+		},
+		code: `// case: act wrapping both userEvent from custom module and non-RTL calls
+      import { act, userEvent } from 'test-utils'
+
+      test('valid case', async () => {
+        await act(async () => {
+          await userEvent.click(element);
+          stuffThatDoesNotUseRTL()
+        });
+      })
+      `,
+	},
+	{
 		code: `// case: RTL act wrapping optional chaining call without RTL usage
       import { act, render } from '@testing-library/react'
 
@@ -83,6 +98,21 @@ const validNonStrictTestCases: RuleValidTestCase[] = [
         act(() => {
           render(element);
           callback?.();
+        });
+      });
+      `,
+	},
+	{
+		settings: {
+			'testing-library/utils-module': 'test-utils',
+		},
+		code: `// case: act wrapping userEvent from non-custom module should not be reported
+      import { act } from 'test-utils'
+      import { userEvent } from 'somewhere-else'
+
+      test('valid case', async () => {
+        act(() => {
+          userEvent.click(el)
         });
       });
       `,
@@ -475,6 +505,87 @@ const invalidTestCases: RuleInvalidTestCase[] = [
 				line: 34,
 				column: 9,
 			},
+		],
+	},
+	{
+		settings: {
+			'testing-library/utils-module': 'test-utils',
+		},
+		code: `// case: act wrapping userEvent imported from custom module - block statement
+      import { act, userEvent } from 'test-utils'
+
+      test('invalid case', async () => {
+        act(() => {
+          userEvent.click(el)
+        });
+
+        await act(async () => {
+          userEvent.type(el, 'hi')
+        });
+      });
+      `,
+		errors: [
+			{ messageId: 'noUnnecessaryActTestingLibraryUtil', line: 5, column: 9 },
+			{
+				messageId: 'noUnnecessaryActTestingLibraryUtil',
+				line: 9,
+				column: 15,
+			},
+		],
+	},
+	{
+		settings: {
+			'testing-library/utils-module': 'test-utils',
+		},
+		code: `// case: act wrapping userEvent imported from custom module - implicit return
+      import { act, userEvent } from 'test-utils'
+
+      test('invalid case', async () => {
+        act(() => userEvent.click(el))
+        await act(async () => userEvent.type(el, 'hi'))
+      });
+      `,
+		errors: [
+			{ messageId: 'noUnnecessaryActTestingLibraryUtil', line: 5, column: 9 },
+			{
+				messageId: 'noUnnecessaryActTestingLibraryUtil',
+				line: 6,
+				column: 15,
+			},
+		],
+	},
+	{
+		settings: {
+			'testing-library/utils-module': 'test-utils',
+		},
+		code: `// case: act wrapping userEvent required from custom module
+      const { act, userEvent } = require('test-utils')
+
+      test('invalid case', async () => {
+        act(() => {
+          userEvent.click(el)
+        });
+      });
+      `,
+		errors: [
+			{ messageId: 'noUnnecessaryActTestingLibraryUtil', line: 5, column: 9 },
+		],
+	},
+	{
+		settings: {
+			'testing-library/utils-module': 'test-utils',
+		},
+		code: `// case: act wrapping aliased userEvent from custom module
+      import { act, userEvent as ue } from 'test-utils'
+
+      test('invalid case', async () => {
+        act(() => {
+          ue.click(el)
+        });
+      });
+      `,
+		errors: [
+			{ messageId: 'noUnnecessaryActTestingLibraryUtil', line: 5, column: 9 },
 		],
 	},
 	{
