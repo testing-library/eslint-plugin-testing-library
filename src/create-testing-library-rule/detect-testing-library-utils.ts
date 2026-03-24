@@ -480,7 +480,9 @@ export function detectTestingLibraryUtils<
 			let userEventName: string | undefined;
 
 			if (userEvent) {
-				userEventName = userEvent.name;
+				userEventName = ASTUtils.isIdentifier(userEvent)
+					? userEvent.name
+					: userEvent.local.name;
 			} else if (isAggressiveModuleReportingEnabled()) {
 				userEventName = USER_EVENT_NAME;
 			}
@@ -574,7 +576,9 @@ export function detectTestingLibraryUtils<
 			let userEventName: string | undefined;
 
 			if (userEvent) {
-				userEventName = userEvent.name;
+				userEventName = ASTUtils.isIdentifier(userEvent)
+					? userEvent.name
+					: userEvent.local.name;
 			} else if (isAggressiveModuleReportingEnabled()) {
 				userEventName = USER_EVENT_NAME;
 			}
@@ -876,38 +880,44 @@ export function detectTestingLibraryUtils<
 				return findImportSpecifier(specifierName, node);
 			};
 
-		const findImportedUserEventSpecifier: () => TSESTree.Identifier | null =
-			() => {
-				if (!importedUserEventLibraryNode) {
+		const findImportedUserEventSpecifier: () =>
+			| TSESTree.Identifier
+			| TSESTree.ImportClause
+			| null = () => {
+			if (!importedUserEventLibraryNode) {
+				const customModuleNode = getCustomModuleImportNode();
+				if (customModuleNode) {
+					return findImportSpecifier(USER_EVENT_NAME, customModuleNode) ?? null;
+				}
+				return null;
+			}
+
+			if (isImportDeclaration(importedUserEventLibraryNode)) {
+				const userEventIdentifier =
+					importedUserEventLibraryNode.specifiers.find((specifier) =>
+						isImportDefaultSpecifier(specifier)
+					);
+
+				if (userEventIdentifier) {
+					return userEventIdentifier.local;
+				}
+			} else {
+				if (
+					!ASTUtils.isVariableDeclarator(importedUserEventLibraryNode.parent)
+				) {
 					return null;
 				}
 
-				if (isImportDeclaration(importedUserEventLibraryNode)) {
-					const userEventIdentifier =
-						importedUserEventLibraryNode.specifiers.find((specifier) =>
-							isImportDefaultSpecifier(specifier)
-						);
-
-					if (userEventIdentifier) {
-						return userEventIdentifier.local;
-					}
-				} else {
-					if (
-						!ASTUtils.isVariableDeclarator(importedUserEventLibraryNode.parent)
-					) {
-						return null;
-					}
-
-					const requireNode = importedUserEventLibraryNode.parent;
-					if (!ASTUtils.isIdentifier(requireNode.id)) {
-						return null;
-					}
-
-					return requireNode.id;
+				const requireNode = importedUserEventLibraryNode.parent;
+				if (!ASTUtils.isIdentifier(requireNode.id)) {
+					return null;
 				}
 
-				return null;
-			};
+				return requireNode.id;
+			}
+
+			return null;
+		};
 
 		const getTestingLibraryImportedUtilSpecifier = (
 			node: TSESTree.Identifier | TSESTree.MemberExpression

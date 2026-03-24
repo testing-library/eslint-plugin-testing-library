@@ -887,6 +887,96 @@ ruleTester.run(rule.name, rule, {
 					}) as const
 			),
 		]),
+		...USER_EVENT_ASYNC_FUNCTIONS.map(
+			(eventMethod) =>
+				({
+					settings: {
+						'testing-library/utils-module': 'test-utils',
+					},
+					code: `
+      import { userEvent } from 'test-utils'
+      test('unhandled promise from userEvent imported from custom module is invalid', () => {
+        userEvent.${eventMethod}(getByLabelText('username'))
+      })
+      `,
+					errors: [
+						{
+							line: 4,
+							column: 9,
+							endColumn: 19 + eventMethod.length,
+							messageId: 'awaitAsyncEvent',
+							data: { name: eventMethod },
+						},
+					],
+					options: [{ eventModule: 'userEvent' }],
+					output: `
+      import { userEvent } from 'test-utils'
+      test('unhandled promise from userEvent imported from custom module is invalid', async () => {
+        await userEvent.${eventMethod}(getByLabelText('username'))
+      })
+      `,
+				}) as const
+		),
+		...USER_EVENT_ASYNC_FUNCTIONS.map(
+			(eventMethod) =>
+				({
+					settings: {
+						'testing-library/utils-module': 'test-utils',
+					},
+					code: `
+      const { userEvent } = require('test-utils')
+      test('unhandled promise from userEvent required from custom module is invalid', () => {
+        userEvent.${eventMethod}(getByLabelText('username'))
+      })
+      `,
+					errors: [
+						{
+							line: 4,
+							column: 9,
+							endColumn: 19 + eventMethod.length,
+							messageId: 'awaitAsyncEvent',
+							data: { name: eventMethod },
+						},
+					],
+					options: [{ eventModule: 'userEvent' }],
+					output: `
+      const { userEvent } = require('test-utils')
+      test('unhandled promise from userEvent required from custom module is invalid', async () => {
+        await userEvent.${eventMethod}(getByLabelText('username'))
+      })
+      `,
+				}) as const
+		),
+		...USER_EVENT_ASYNC_FUNCTIONS.map(
+			(eventMethod) =>
+				({
+					settings: {
+						'testing-library/utils-module': 'test-utils',
+					},
+					code: `
+      import { userEvent as ue } from 'test-utils'
+      test('unhandled promise from aliased userEvent imported from custom module is invalid', () => {
+        ue.${eventMethod}(getByLabelText('username'))
+      })
+      `,
+					errors: [
+						{
+							line: 4,
+							column: 9,
+							endColumn: 12 + eventMethod.length,
+							messageId: 'awaitAsyncEvent',
+							data: { name: eventMethod },
+						},
+					],
+					options: [{ eventModule: 'userEvent' }],
+					output: `
+      import { userEvent as ue } from 'test-utils'
+      test('unhandled promise from aliased userEvent imported from custom module is invalid', async () => {
+        await ue.${eventMethod}(getByLabelText('username'))
+      })
+      `,
+				}) as const
+		),
 		...USER_EVENT_ASYNC_FRAMEWORKS.flatMap((testingFramework) => [
 			...USER_EVENT_ASYNC_FUNCTIONS.map(
 				(eventMethod) =>
