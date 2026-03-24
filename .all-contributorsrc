@@ -769,6 +769,16 @@
         "test",
         "doc"
       ]
+    },
+    {
+      "login": "snvfyy",
+      "name": "Andrea",
+      "avatar_url": "https://avatars.githubusercontent.com/u/43605121?v=4",
+      "profile": "https://github.com/snvfyy",
+      "contributions": [
+        "code",
+        "test"
+      ]
     }
   ],
   "contributorsPerLine": 7,
