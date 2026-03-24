@@ -110,6 +110,13 @@ ruleTester.run(rule.name, rule, {
       userEvent.click()
       `,
 		},
+		{
+			settings: { 'testing-library/utils-module': 'test-utils' },
+			code: `
+      import { userEvent } from 'somewhere-else'
+      userEvent.click(element)
+      `,
+		},
 
 		// Test Cases for renders
 		{
@@ -614,6 +621,22 @@ ruleTester.run(rule.name, rule, {
 			settings: { 'testing-library/utils-module': 'test-utils' },
 			code: `
       const renamed = require('@testing-library/user-event')
+      renamed.click(element)
+      `,
+			errors: [{ line: 3, column: 15, messageId: 'userEventError' }],
+		},
+		{
+			settings: { 'testing-library/utils-module': 'test-utils' },
+			code: `
+      import { userEvent } from 'test-utils'
+      userEvent.click(element)
+      `,
+			errors: [{ line: 3, column: 17, messageId: 'userEventError' }],
+		},
+		{
+			settings: { 'testing-library/utils-module': 'test-utils' },
+			code: `
+      import { userEvent as renamed } from 'test-utils'
       renamed.click(element)
       `,
 			errors: [{ line: 3, column: 15, messageId: 'userEventError' }],
