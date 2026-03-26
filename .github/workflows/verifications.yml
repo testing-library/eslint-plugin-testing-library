@@ -79,14 +79,14 @@ jobs:
         run: pnpm run test:ci
 
       - name: Upload tests coverage report
-        uses: codecov/codecov-action@1af58845a975a7985b0beb0cbe6fbbb71a41dbad # v5.5.3
+        uses: codecov/codecov-action@75cd11691c0faa626561e295848008c8a7dddffe # v5.5.4
         if: ${{ !cancelled() && github.event.action != 'closed' }}
         with:
           use_oidc: true
           report_type: 'coverage'
 
       - name: Upload tests result report
-        uses: codecov/codecov-action@1af58845a975a7985b0beb0cbe6fbbb71a41dbad # v5.5.3
+        uses: codecov/codecov-action@75cd11691c0faa626561e295848008c8a7dddffe # v5.5.4
         if: ${{ !cancelled() && github.event.action != 'closed' }}
         with:
           use_oidc: true
