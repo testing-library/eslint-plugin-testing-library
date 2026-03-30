@@ -9,6 +9,7 @@ const SUPPORTED_TESTING_FRAMEWORKS = [
 	'@testing-library/react',
 	'@testing-library/vue',
 	'@marko/testing-library',
+	'shadow-dom-testing-library',
 ];
 
 const QUERIES = [
@@ -19,6 +20,47 @@ const QUERIES = [
 	'findByTestId',
 	'findAllByTestId',
 ];
+
+const createInvalidTestCase = (framework: string, query: string) => {
+	return [
+		{
+			code: `
+					import { render } from '${framework}';
+
+					test('test', async () => {
+						const { ${query} } = render(<MyComponent />);
+
+						expect(${query}('my-test-id')).toBeInTheDocument();
+					});
+				`,
+			errors: [
+				{
+					messageId: 'noTestIdQueries',
+					line: 7,
+					column: 14,
+				},
+			],
+		},
+		{
+			code: `
+					import { render, screen } from '${framework}';
+
+					test('test', async () => {
+						render(<MyComponent />);
+
+						expect(screen.${query}('my-test-id')).toBeInTheDocument();
+					});
+				`,
+			errors: [
+				{
+					messageId: 'noTestIdQueries',
+					line: 7,
+					column: 14,
+				},
+			],
+		},
+	] as const;
+};
 
 ruleTester.run(rule.name, rule, {
 	valid: [
@@ -43,44 +85,22 @@ ruleTester.run(rule.name, rule, {
 		`,
 	],
 
-	invalid: SUPPORTED_TESTING_FRAMEWORKS.flatMap((framework) =>
-		QUERIES.flatMap((query) => [
-			{
-				code: `
-					import { render } from '${framework}';
-
-					test('test', async () => {
-						const { ${query} } = render(<MyComponent />);
-
-						expect(${query}('my-test-id')).toBeInTheDocument();
-					});
-				`,
-				errors: [
-					{
-						messageId: 'noTestIdQueries',
-						line: 7,
-						column: 14,
-					},
-				],
-			},
-			{
-				code: `
-					import { render, screen } from '${framework}';
-
-					test('test', async () => {
-						render(<MyComponent />);
-
-						expect(screen.${query}('my-test-id')).toBeInTheDocument();
-					});
-				`,
-				errors: [
-					{
-						messageId: 'noTestIdQueries',
-						line: 7,
-						column: 14,
-					},
-				],
-			},
-		])
-	),
+	invalid: [
+		...SUPPORTED_TESTING_FRAMEWORKS.flatMap((framework) =>
+			QUERIES.flatMap((query) => createInvalidTestCase(framework, query))
+		),
+		// special cases for shadow-dom-testing-library
+		...[
+			'ByShadowLabelText',
+			'ByShadowPlaceholderText',
+			'ByShadowText',
+			'ByShadowAltText',
+			'ByShadowTitle',
+			'ByShadowDisplayValue',
+			'ByShadowRole',
+			'ByShadowTestId',
+		].flatMap((query) =>
+			createInvalidTestCase('shadow-dom-testing-library', query)
+		),
+	],
 });
