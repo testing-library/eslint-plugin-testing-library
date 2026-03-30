@@ -19,7 +19,7 @@ const SUPPORTED_TESTING_FRAMEWORKS = [
 	'@testing-library/react',
 	'@testing-library/vue',
 	'@marko/testing-library',
-	'shadow-dom-testing-library',
+	// 'shadow-dom-testing-library', does not export waitFor and waitForElementToBeRemoved utils, so not relevant to this rule
 ];
 
 ruleTester.run(rule.name, rule, {
