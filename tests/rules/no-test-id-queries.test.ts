@@ -91,14 +91,12 @@ ruleTester.run(rule.name, rule, {
 		),
 		// special cases for shadow-dom-testing-library
 		...[
-			'ByShadowLabelText',
-			'ByShadowPlaceholderText',
-			'ByShadowText',
-			'ByShadowAltText',
-			'ByShadowTitle',
-			'ByShadowDisplayValue',
-			'ByShadowRole',
-			'ByShadowTestId',
+			'getByShadowTestId',
+			'queryByShadowTestId',
+			'getAllByShadowTestId',
+			'queryAllByShadowTestId',
+			'findByShadowTestId',
+			'findAllByShadowTestId',
 		].flatMap((query) =>
 			createInvalidTestCase('shadow-dom-testing-library', query)
 		),
