@@ -211,7 +211,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				}
 
 				// Absence assertions inside async util callbacks (e.g. waitFor) are
-				// always flagged — they pass on the first invocation before the
+				// always flagged - they pass on the first invocation before the
 				// component has settled.
 				if (isInsideAsyncUtilCallback(node)) {
 					context.report({

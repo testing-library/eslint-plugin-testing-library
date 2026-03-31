@@ -2,7 +2,7 @@
 
 📝 Disallow absence assertions on `queryBy*` before the component has settled.
 
-<!-- end auto-generated rule header -->
+<!-- end auto-generated rule header ->
 
 Asserting absence with `queryBy*` + `.not.toBeInTheDocument()` (or `.not.toBeVisible()`) immediately after `render()`, before the component has settled, can produce a false positive. The element isn't there _yet_, not because it _won't_ be there. This is commonly referred to as **Testing Ghosts**.
 
@@ -12,10 +12,10 @@ This rule fires when an absence assertion on a `queryBy*` / `queryAllBy*` query 
 
 **What counts as "settled":**
 
-1. Any `await` expression on a preceding statement — covers `findBy*`, `waitFor`, `act`, or custom async helpers.
-2. A `getBy*` / `getAllBy*` call on a preceding statement — proves the synchronous render produced expected output.
+1. Any `await` expression on a preceding statement - covers `findBy*`, `waitFor`, `act`, or custom async helpers.
+2. A `getBy*` / `getAllBy*` call on a preceding statement - proves the synchronous render produced expected output.
 
-**Additionally**, absence assertions inside a `waitFor` callback are always flagged, because `waitFor` retries until the assertion passes — an absence check passes on the first invocation before the component has settled.
+**Additionally**, absence assertions inside a `waitFor` callback are always flagged, because `waitFor` retries until the assertion passes - an absence check passes on the first invocation before the component has settled.
 
 Examples of **incorrect** code for this rule:
 
@@ -26,7 +26,7 @@ test('shows no error', () => {
 	expect(screen.queryByText('error')).not.toBeInTheDocument();
 });
 
-// Absence assertion BEFORE the await — order matters
+// Absence assertion BEFORE the await - order matters
 test('shows no error', async () => {
 	render(<AsyncComponent />);
 	expect(screen.queryByText('error')).not.toBeInTheDocument();
@@ -39,7 +39,7 @@ test('shows no alerts', () => {
 	expect(screen.queryAllByRole('alert')).not.toBeInTheDocument();
 });
 
-// Absence assertion inside waitFor — passes on first retry, still a ghost
+// Absence assertion inside waitFor - passes on first retry, still a ghost
 test('shows no error', async () => {
 	render(<AsyncComponent />);
 	await waitFor(() => {
