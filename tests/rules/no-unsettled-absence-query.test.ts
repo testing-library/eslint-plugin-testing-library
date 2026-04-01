@@ -16,20 +16,21 @@ type RuleValidTestCase = ValidTestCase<Options>;
 type RuleInvalidTestCase = InvalidTestCase<MessageIds, Options>;
 
 const SUPPORTED_TESTING_FRAMEWORKS = [
+	['@testing-library/dom', 'DOM TL'],
 	['@testing-library/react', 'React TL'],
 	['@testing-library/vue', 'Vue TL'],
 	['@testing-library/angular', 'Angular TL'],
+	['@marko/testing-library', 'Marko TL'],
 ] as const;
 
 ruleTester.run('no-unsettled-absence-query', rule, {
 	valid: [
-		// -- Settled by findBy* --
 		...SUPPORTED_TESTING_FRAMEWORKS.map<RuleValidTestCase>(
 			([testingFramework, label]) => ({
-				code: `// case: ${label} - settled by findBy
+				code: `
 				import { render, screen } from '${testingFramework}'
 
-				test('shows no error', async () => {
+				test('${label} - settled by findBy', async () => {
 					render(<Component />)
 					await screen.findByText('loaded')
 					expect(screen.queryByText('error')).not.toBeInTheDocument()
@@ -38,12 +39,11 @@ ruleTester.run('no-unsettled-absence-query', rule, {
 			})
 		),
 
-		// -- Settled by waitFor --
 		{
-			code: `// case: settled by waitFor
+			code: `
 			import { render, screen, waitFor } from '@testing-library/react'
 
-			test('shows no error', async () => {
+			test('settled by waitFor', async () => {
 				render(<Component />)
 				await waitFor(() => expect(something).toBe(true))
 				expect(screen.queryByRole('alert')).not.toBeInTheDocument()
@@ -51,24 +51,22 @@ ruleTester.run('no-unsettled-absence-query', rule, {
 			`,
 		},
 
-		// -- Settled by act --
 		{
-			code: `// case: settled by act wrapping render
+			code: `
 			import { render, screen, act } from '@testing-library/react'
 
-			test('shows no error', async () => {
+			test('settled by act wrapping render', async () => {
 				await act(() => render(<Component />))
 				expect(screen.queryByText('error')).not.toBeInTheDocument()
 			})
 			`,
 		},
 
-		// -- Settled by getBy* --
 		{
-			code: `// case: settled by getByText
+			code: `
 			import { render, screen } from '@testing-library/react'
 
-			test('shows no error', () => {
+			test('settled by getByText', () => {
 				render(<Component />)
 				screen.getByText('visible heading')
 				expect(screen.queryByText('error')).not.toBeInTheDocument()
@@ -76,12 +74,11 @@ ruleTester.run('no-unsettled-absence-query', rule, {
 			`,
 		},
 
-		// -- Settled by getBy* inside expect --
 		{
-			code: `// case: settled by getByRole inside expect assertion
+			code: `
 			import { render, screen } from '@testing-library/react'
 
-			test('shows no error', () => {
+			test('settled by getByRole inside expect', () => {
 				render(<Component />)
 				expect(screen.getByRole('heading')).toBeVisible()
 				expect(screen.queryByText('error')).not.toBeInTheDocument()
@@ -89,12 +86,11 @@ ruleTester.run('no-unsettled-absence-query', rule, {
 			`,
 		},
 
-		// -- Settled by getAllBy* --
 		{
-			code: `// case: settled by getAllByText
+			code: `
 			import { render, screen } from '@testing-library/react'
 
-			test('shows no alerts', () => {
+			test('settled by getAllByText', () => {
 				render(<Component />)
 				screen.getAllByText('item')
 				expect(screen.queryByRole('alert')).not.toBeVisible()
@@ -102,12 +98,11 @@ ruleTester.run('no-unsettled-absence-query', rule, {
 			`,
 		},
 
-		// -- .not.toBeVisible after settling --
 		{
-			code: `// case: .not.toBeVisible after findBy
+			code: `
 			import { render, screen } from '@testing-library/react'
 
-			test('dialog is hidden', async () => {
+			test('.not.toBeVisible after findBy', async () => {
 				render(<Component />)
 				await screen.findByText('loaded')
 				expect(screen.queryByRole('dialog')).not.toBeVisible()
@@ -115,50 +110,46 @@ ruleTester.run('no-unsettled-absence-query', rule, {
 			`,
 		},
 
-		// -- Presence assertion is not flagged --
 		{
-			code: `// case: presence assertion - not an absence check
+			code: `
 			import { render, screen } from '@testing-library/react'
 
-			test('shows content', () => {
+			test('presence assertion is not flagged', () => {
 				render(<Component />)
 				expect(screen.queryByText('exists')).toBeInTheDocument()
 			})
 			`,
 		},
 
-		// -- Non-absence matcher is not flagged --
 		{
-			code: `// case: .not with unrelated matcher
+			code: `
 			import { render, screen } from '@testing-library/react'
 
-			test('no active class', () => {
+			test('.not with unrelated matcher is not flagged', () => {
 				render(<Component />)
 				expect(screen.queryByText('item')).not.toHaveClass('active')
 			})
 			`,
 		},
 
-		// -- Non-Testing-Library import not reported --
 		{
 			settings: { 'testing-library/utils-module': 'test-utils' },
-			code: `// case: non-TL import - should not report
+			code: `
 			import { render, screen } from 'other-library'
 
-			test('not TL', () => {
+			test('non-TL import is not reported', () => {
 				render(<Component />)
 				expect(screen.queryByText('gone')).not.toBeInTheDocument()
 			})
 			`,
 		},
 
-		// -- Custom module import --
 		{
 			settings: { 'testing-library/utils-module': 'test-utils' },
-			code: `// case: custom module, settled
+			code: `
 			import { render, screen } from 'test-utils'
 
-			test('settled via custom module', async () => {
+			test('custom module settled', async () => {
 				render(<Component />)
 				await screen.findByText('loaded')
 				expect(screen.queryByText('error')).not.toBeInTheDocument()
@@ -166,12 +157,11 @@ ruleTester.run('no-unsettled-absence-query', rule, {
 			`,
 		},
 
-		// -- Destructured query after settling --
 		{
-			code: `// case: destructured queryByText after settling
+			code: `
 			import { render } from '@testing-library/react'
 
-			test('settled destructured', async () => {
+			test('destructured queryByText after settling', async () => {
 				const { queryByText, findByText } = render(<Component />)
 				await findByText('loaded')
 				expect(queryByText('error')).not.toBeInTheDocument()
@@ -179,33 +169,30 @@ ruleTester.run('no-unsettled-absence-query', rule, {
 			`,
 		},
 
-		// -- Standalone queryBy (no expect wrapper) --
 		{
-			code: `// case: queryBy used standalone - no expect wrapper
+			code: `
 			import { render, screen } from '@testing-library/react'
 
-			test('standalone query', () => {
+			test('standalone queryBy without expect', () => {
 				render(<Component />)
 				const el = screen.queryByText('error')
 			})
 			`,
 		},
 
-		// -- Top-level assertion (no enclosing function body) --
 		{
-			code: `// case: top-level assertion - no enclosing function body
+			code: `
 			import { screen } from '@testing-library/react'
 
 			expect(screen.queryByText('error')).not.toBeInTheDocument()
 			`,
 		},
 
-		// -- Settled assertion inside function expression callback --
 		{
-			code: `// case: settled assertion inside function expression
+			code: `
 			import { render, screen } from '@testing-library/react'
 
-			test('settled in function expression', async function() {
+			test('settled inside function expression', async function() {
 				render(<Component />)
 				await screen.findByText('loaded')
 				expect(screen.queryByText('error')).not.toBeInTheDocument()
@@ -213,12 +200,11 @@ ruleTester.run('no-unsettled-absence-query', rule, {
 			`,
 		},
 
-		// -- Settled by await nested in preceding expect arguments --
 		{
-			code: `// case: settled by await nested inside expect arguments
+			code: `
 			import { render, screen } from '@testing-library/react'
 
-			test('await inside expect args', async () => {
+			test('settled by await nested inside expect arguments', async () => {
 				render(<Component />)
 				expect(await screen.findByText('loaded')).toBeInTheDocument()
 				expect(screen.queryByText('error')).not.toBeInTheDocument()
@@ -228,13 +214,12 @@ ruleTester.run('no-unsettled-absence-query', rule, {
 	],
 
 	invalid: [
-		// -- Basic: absence before any settling --
 		...SUPPORTED_TESTING_FRAMEWORKS.map<RuleInvalidTestCase>(
 			([testingFramework, label]) => ({
-				code: `// case: ${label} - absence before settling
+				code: `
 				import { render, screen } from '${testingFramework}'
 
-				test('shows no error', () => {
+				test('${label} - absence before settling', () => {
 					render(<Component />)
 					expect(screen.queryByText('error')).not.toBeInTheDocument()
 				})
@@ -250,12 +235,11 @@ ruleTester.run('no-unsettled-absence-query', rule, {
 			})
 		),
 
-		// -- .not.toBeVisible before settling --
 		{
-			code: `// case: .not.toBeVisible before settling
+			code: `
 			import { render, screen } from '@testing-library/react'
 
-			test('dialog hidden', () => {
+			test('.not.toBeVisible before settling', () => {
 				render(<Component />)
 				expect(screen.queryByRole('dialog')).not.toBeVisible()
 			})
@@ -270,12 +254,11 @@ ruleTester.run('no-unsettled-absence-query', rule, {
 			],
 		},
 
-		// -- queryAllBy variant --
 		{
-			code: `// case: queryAllByText before settling
+			code: `
 			import { render, screen } from '@testing-library/react'
 
-			test('no alerts', () => {
+			test('queryAllByText before settling', () => {
 				render(<Component />)
 				expect(screen.queryAllByText('gone')).not.toBeInTheDocument()
 			})
@@ -290,12 +273,11 @@ ruleTester.run('no-unsettled-absence-query', rule, {
 			],
 		},
 
-		// -- Absence BEFORE the await (order matters) --
 		{
-			code: `// case: absence before await - order matters
+			code: `
 			import { render, screen } from '@testing-library/react'
 
-			test('shows no error', async () => {
+			test('absence before await - order matters', async () => {
 				render(<Component />)
 				expect(screen.queryByText('error')).not.toBeInTheDocument()
 				await screen.findByText('loaded')
@@ -311,12 +293,11 @@ ruleTester.run('no-unsettled-absence-query', rule, {
 			],
 		},
 
-		// -- Multiple unsettled absence assertions --
 		{
-			code: `// case: multiple absence assertions before settling
+			code: `
 			import { render, screen } from '@testing-library/react'
 
-			test('shows nothing', () => {
+			test('multiple absence assertions before settling', () => {
 				render(<Component />)
 				expect(screen.queryByText('a')).not.toBeInTheDocument()
 				expect(screen.queryByText('b')).not.toBeInTheDocument()
@@ -338,12 +319,11 @@ ruleTester.run('no-unsettled-absence-query', rule, {
 			],
 		},
 
-		// -- Absence inside awaited waitFor - still a ghost --
 		{
-			code: `// case: absence inside awaited waitFor
+			code: `
 			import { render, screen, waitFor } from '@testing-library/react'
 
-			test('shows no error', async () => {
+			test('absence inside awaited waitFor', async () => {
 				render(<Component />)
 				await waitFor(() => {
 					expect(screen.queryByText('error')).not.toBeInTheDocument()
@@ -360,12 +340,11 @@ ruleTester.run('no-unsettled-absence-query', rule, {
 			],
 		},
 
-		// -- Absence inside unawaited waitFor - still a ghost --
 		{
-			code: `// case: absence inside unawaited waitFor
+			code: `
 			import { render, screen, waitFor } from '@testing-library/react'
 
-			test('shows no error', () => {
+			test('absence inside unawaited waitFor', () => {
 				render(<Component />)
 				waitFor(() => {
 					expect(screen.queryByText('error')).not.toBeInTheDocument()
@@ -382,13 +361,12 @@ ruleTester.run('no-unsettled-absence-query', rule, {
 			],
 		},
 
-		// -- Custom module unsettled --
 		{
 			settings: { 'testing-library/utils-module': 'test-utils' },
-			code: `// case: custom module, unsettled
+			code: `
 			import { render, screen } from 'test-utils'
 
-			test('unsettled', () => {
+			test('custom module unsettled', () => {
 				render(<Component />)
 				expect(screen.queryByText('gone')).not.toBeInTheDocument()
 			})
@@ -403,12 +381,11 @@ ruleTester.run('no-unsettled-absence-query', rule, {
 			],
 		},
 
-		// -- .toBeNull (non-negated absence) before settling --
 		{
-			code: `// case: .toBeNull before settling
+			code: `
 			import { render, screen } from '@testing-library/react'
 
-			test('is null', () => {
+			test('.toBeNull before settling', () => {
 				render(<Component />)
 				expect(screen.queryByText('error')).toBeNull()
 			})
@@ -423,12 +400,11 @@ ruleTester.run('no-unsettled-absence-query', rule, {
 			],
 		},
 
-		// -- .toBeFalsy (non-negated absence) before settling --
 		{
-			code: `// case: .toBeFalsy before settling
+			code: `
 			import { render, screen } from '@testing-library/react'
 
-			test('is falsy', () => {
+			test('.toBeFalsy before settling', () => {
 				render(<Component />)
 				expect(screen.queryByText('error')).toBeFalsy()
 			})
@@ -443,12 +419,11 @@ ruleTester.run('no-unsettled-absence-query', rule, {
 			],
 		},
 
-		// -- Absence inside waitFor with function expression callback --
 		{
-			code: `// case: absence inside waitFor with function expression callback
+			code: `
 			import { render, screen, waitFor } from '@testing-library/react'
 
-			test('waitFor function expression', async () => {
+			test('absence inside waitFor with function expression callback', async () => {
 				render(<Component />)
 				await waitFor(function() {
 					expect(screen.queryByText('error')).not.toBeInTheDocument()
@@ -465,9 +440,8 @@ ruleTester.run('no-unsettled-absence-query', rule, {
 			],
 		},
 
-		// -- Unsettled in function expression test callback --
 		{
-			code: `// case: unsettled in function expression
+			code: `
 			import { render, screen } from '@testing-library/react'
 
 			test('unsettled in function expression', function() {
@@ -480,6 +454,26 @@ ruleTester.run('no-unsettled-absence-query', rule, {
 					messageId: 'noUnsettledAbsenceQuery',
 					data: { queryMethod: 'queryByText' },
 					line: 6,
+					column: 19,
+				},
+			],
+		},
+
+		{
+			code: `
+			import { render, screen } from '@testing-library/react'
+
+			test('await inside nested function does not settle outer scope', () => {
+				render(<Component />)
+				const helper = async () => { await screen.findByText('loaded') }
+				expect(screen.queryByText('error')).not.toBeInTheDocument()
+			})
+			`,
+			errors: [
+				{
+					messageId: 'noUnsettledAbsenceQuery',
+					data: { queryMethod: 'queryByText' },
+					line: 7,
 					column: 19,
 				},
 			],
