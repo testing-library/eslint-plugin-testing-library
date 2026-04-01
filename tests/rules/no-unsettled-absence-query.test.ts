@@ -243,6 +243,8 @@ ruleTester.run('no-unsettled-absence-query', rule, {
 					{
 						messageId: 'noUnsettledAbsenceQuery',
 						data: { queryMethod: 'queryByText' },
+						line: 6,
+						column: 20,
 					},
 				],
 			})
@@ -262,6 +264,8 @@ ruleTester.run('no-unsettled-absence-query', rule, {
 				{
 					messageId: 'noUnsettledAbsenceQuery',
 					data: { queryMethod: 'queryByRole' },
+					line: 6,
+					column: 19,
 				},
 			],
 		},
@@ -280,6 +284,8 @@ ruleTester.run('no-unsettled-absence-query', rule, {
 				{
 					messageId: 'noUnsettledAbsenceQuery',
 					data: { queryMethod: 'queryAllByText' },
+					line: 6,
+					column: 19,
 				},
 			],
 		},
@@ -299,6 +305,8 @@ ruleTester.run('no-unsettled-absence-query', rule, {
 				{
 					messageId: 'noUnsettledAbsenceQuery',
 					data: { queryMethod: 'queryByText' },
+					line: 6,
+					column: 19,
 				},
 			],
 		},
@@ -318,10 +326,14 @@ ruleTester.run('no-unsettled-absence-query', rule, {
 				{
 					messageId: 'noUnsettledAbsenceQuery',
 					data: { queryMethod: 'queryByText' },
+					line: 6,
+					column: 19,
 				},
 				{
 					messageId: 'noUnsettledAbsenceQuery',
 					data: { queryMethod: 'queryByText' },
+					line: 7,
+					column: 19,
 				},
 			],
 		},
@@ -342,6 +354,8 @@ ruleTester.run('no-unsettled-absence-query', rule, {
 				{
 					messageId: 'noUnsettledAbsenceQuery',
 					data: { queryMethod: 'queryByText' },
+					line: 7,
+					column: 20,
 				},
 			],
 		},
@@ -362,6 +376,8 @@ ruleTester.run('no-unsettled-absence-query', rule, {
 				{
 					messageId: 'noUnsettledAbsenceQuery',
 					data: { queryMethod: 'queryByText' },
+					line: 7,
+					column: 20,
 				},
 			],
 		},
@@ -381,6 +397,8 @@ ruleTester.run('no-unsettled-absence-query', rule, {
 				{
 					messageId: 'noUnsettledAbsenceQuery',
 					data: { queryMethod: 'queryByText' },
+					line: 6,
+					column: 19,
 				},
 			],
 		},
@@ -399,6 +417,8 @@ ruleTester.run('no-unsettled-absence-query', rule, {
 				{
 					messageId: 'noUnsettledAbsenceQuery',
 					data: { queryMethod: 'queryByText' },
+					line: 6,
+					column: 19,
 				},
 			],
 		},
@@ -417,6 +437,8 @@ ruleTester.run('no-unsettled-absence-query', rule, {
 				{
 					messageId: 'noUnsettledAbsenceQuery',
 					data: { queryMethod: 'queryByText' },
+					line: 6,
+					column: 19,
 				},
 			],
 		},
@@ -437,6 +459,8 @@ ruleTester.run('no-unsettled-absence-query', rule, {
 				{
 					messageId: 'noUnsettledAbsenceQuery',
 					data: { queryMethod: 'queryByText' },
+					line: 7,
+					column: 20,
 				},
 			],
 		},
@@ -455,6 +479,8 @@ ruleTester.run('no-unsettled-absence-query', rule, {
 				{
 					messageId: 'noUnsettledAbsenceQuery',
 					data: { queryMethod: 'queryByText' },
+					line: 6,
+					column: 19,
 				},
 			],
 		},
