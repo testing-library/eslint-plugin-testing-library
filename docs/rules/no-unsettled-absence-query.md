@@ -2,7 +2,7 @@
 
 📝 Disallow absence assertions on `queryBy*` before the component has settled.
 
-<!-- end auto-generated rule header ->
+<!-- end auto-generated rule header -->
 
 Asserting absence with `queryBy*` + `.not.toBeInTheDocument()` (or `.not.toBeVisible()`) immediately after `render()`, before the component has settled, can produce a false positive. The element isn't there _yet_, not because it _won't_ be there. This is commonly referred to as **Testing Ghosts**.
 
