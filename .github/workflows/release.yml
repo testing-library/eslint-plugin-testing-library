@@ -47,7 +47,8 @@ jobs:
 
       # Ensure npm 11.5.1 or later is installed for correct OIDC publishing
       - name: Update npm
-        run: npm install -g npm@latest
+        # (using v11.10.0 to avoid Node.js bug causing an installation failure) https://github.com/npm/cli/issues/9151
+        run: npm install -g npm@~11.10.0
 
       - name: Install dependencies
         run: pnpm install
