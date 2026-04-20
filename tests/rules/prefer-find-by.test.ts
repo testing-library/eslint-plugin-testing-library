@@ -19,6 +19,10 @@ const SUPPORTED_TESTING_FRAMEWORKS = [
 	'@testing-library/react',
 	'@testing-library/vue',
 	'@marko/testing-library',
+	// list of supported frameworks, but not tested
+	// this test suite has too much test cases already,
+	// so we are skipping some of them to avoid making it even bigger
+	// 'shadow-dom-testing-library'
 ];
 
 function buildFindByMethod(queryMethod: string) {

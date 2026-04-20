@@ -48,7 +48,7 @@
 		"eslint-remote-tester": "eslint-remote-tester --config eslint-remote-tester.config.ts",
 		"semantic-release": "semantic-release",
 		"test": "vitest run",
-		"test:ci": "vitest run --coverage",
+		"test:ci": "vitest run --coverage --maxWorkers=2",
 		"test:ui": "vitest --ui",
 		"test:watch": "vitest",
 		"type-check": "tsc --noEmit"
