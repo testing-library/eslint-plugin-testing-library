@@ -61,8 +61,8 @@ importers:
         specifier: 17.24.0
         version: 17.24.0(eslint@9.35.0(jiti@2.6.1))(typescript@5.9.3)
       eslint-plugin-promise:
-        specifier: 7.2.1
-        version: 7.2.1(eslint@9.35.0(jiti@2.6.1))
+        specifier: 7.3.0
+        version: 7.3.0(eslint@9.35.0(jiti@2.6.1))
       eslint-remote-tester:
         specifier: 4.0.4
         version: 4.0.4(eslint@9.35.0(jiti@2.6.1))(jiti@2.6.1)
@@ -1714,11 +1714,11 @@ packages:
     peerDependencies:
       eslint: '>=8.23.0'
 
-  eslint-plugin-promise@7.2.1:
-    resolution: {integrity: sha512-SWKjd+EuvWkYaS+uN2csvj0KoP43YTu7+phKQ5v+xw6+A0gutVX2yqCeCkC3uLCJFiPfR2dD8Es5L7yUsmvEaA==}
+  eslint-plugin-promise@7.3.0:
+    resolution: {integrity: sha512-6uGiOR0INuujr6PEQmeSSP7GbIMJ/ebEXXiEzb/nOj68LknH5Pxzb/AbZivmr6VE6TkTE8rTjRK9zhKpK6HsRA==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
     peerDependencies:
-      eslint: ^7.0.0 || ^8.0.0 || ^9.0.0
+      eslint: ^7.0.0 || ^8.0.0 || ^9.0.0 || ^10.0.0
 
   eslint-remote-tester-repositories@2.0.2:
     resolution: {integrity: sha512-Oxp8SE5nsnrJvIdzjr35L8KmepmHgXyD/4Kjb3vhGgfukrI7FgsQM68o+05yxYSffmEDLoq3xBG+FfueXuxpdw==}
@@ -4996,9 +4996,9 @@ snapshots:
     transitivePeerDependencies:
       - typescript
 
-  eslint-plugin-promise@7.2.1(eslint@9.35.0(jiti@2.6.1)):
+  eslint-plugin-promise@7.3.0(eslint@9.35.0(jiti@2.6.1)):
     dependencies:
-      '@eslint-community/eslint-utils': 4.9.0(eslint@9.35.0(jiti@2.6.1))
+      '@eslint-community/eslint-utils': 4.9.1(eslint@9.35.0(jiti@2.6.1))
       eslint: 9.35.0(jiti@2.6.1)
 
   eslint-remote-tester-repositories@2.0.2: {}
