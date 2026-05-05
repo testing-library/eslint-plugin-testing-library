@@ -86,6 +86,17 @@ test('shows no error', async () => {
 });
 ```
 
+## Limitations
+
+This rule uses static analysis and only inspects the immediate test function body. Some patterns may produce false positives:
+
+- **Custom helpers**: the rule does not look inside helper functions called from the test body. An async helper called with `await` is recognized (the `await` itself counts as settling), but a synchronous helper that performs settling internally is not.
+- **Fake timers**: manually flushing time with `jest.advanceTimersByTime` / `vi.advanceTimersByTime` is not recognized as a settling expression.
+- **Lifecycle hooks**: settling performed in `beforeEach` / `beforeAll` is not visible from inside the test body.
+- **Synchronous `act()`**: only `await act(...)` counts as a settling expression; a non-awaited `act(() => ...)` is not detected.
+
+When the rule misfires on a valid pattern, prefer disabling it inline with `// eslint-disable-next-line testing-library/no-unsettled-absence-query` over silencing it globally.
+
 ## Further Reading
 
 - [Testing Library: Appearance and Disappearance guide](https://testing-library.com/docs/guide-disappearance/)
