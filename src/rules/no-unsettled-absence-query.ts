@@ -106,7 +106,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 			);
 		}
 
-		function isInsideAsyncUtilCallback(node: TSESTree.Node): boolean {
+		function isInsideWaitForCallback(node: TSESTree.Node): boolean {
 			let current: TSESTree.Node | undefined = node.parent;
 
 			while (current) {
@@ -118,7 +118,10 @@ export default createTestingLibraryRule<Options, MessageIds>({
 					const calleeIdentifier = getDeepestIdentifierNode(
 						current.parent.callee
 					);
-					if (calleeIdentifier && helpers.isAsyncUtil(calleeIdentifier)) {
+					if (
+						calleeIdentifier &&
+						helpers.isAsyncUtil(calleeIdentifier, ['waitFor'])
+					) {
 						return true;
 					}
 				}
@@ -188,7 +191,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 					return;
 				}
 
-				if (isInsideAsyncUtilCallback(node)) {
+				if (isInsideWaitForCallback(node)) {
 					context.report({
 						node,
 						messageId: 'noUnsettledAbsenceQuery',

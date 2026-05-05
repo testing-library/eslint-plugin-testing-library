@@ -64,6 +64,18 @@ ruleTester.run('no-unsettled-absence-query', rule, {
 
 		{
 			code: `
+			import { render, screen, waitForElementToBeRemoved } from '@testing-library/react'
+
+			test('waitForElementToBeRemoved is itself a settling expression', async () => {
+				render(<Component />)
+				await waitForElementToBeRemoved(() => screen.queryByText('loading'))
+				expect(screen.queryByText('error')).not.toBeInTheDocument()
+			})
+			`,
+		},
+
+		{
+			code: `
 			import { render, screen } from '@testing-library/react'
 
 			test('settled by getByText', () => {

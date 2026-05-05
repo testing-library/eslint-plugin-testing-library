@@ -12,7 +12,7 @@ This rule fires when an absence assertion on a `queryBy*` / `queryAllBy*` query 
 
 **What counts as "settled":**
 
-1. Any `await` expression on a preceding statement - covers `findBy*`, `waitFor`, `act`, or custom async helpers.
+1. Any `await` expression on a preceding statement - covers `findBy*`, `waitFor`, `waitForElementToBeRemoved`, `act`, or custom async helpers.
 2. A `getBy*` / `getAllBy*` call on a preceding statement - proves the synchronous render produced expected output.
 
 **Additionally**, absence assertions inside a `waitFor` callback are always flagged, because `waitFor` retries until the assertion passes - an absence check passes on the first invocation before the component has settled.
@@ -75,6 +75,13 @@ test('shows no error', async () => {
 test('shows no error', () => {
 	render(<Component />);
 	screen.getByText('visible heading');
+	expect(screen.queryByText('error')).not.toBeInTheDocument();
+});
+
+// waitForElementToBeRemoved is a settling expression on its own
+test('shows no error', async () => {
+	render(<Component />);
+	await waitForElementToBeRemoved(() => screen.queryByText('loading'));
 	expect(screen.queryByText('error')).not.toBeInTheDocument();
 });
 ```
