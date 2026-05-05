@@ -86,7 +86,6 @@ export default createTestingLibraryRule<Options, MessageIds>({
 		messages: {
 			noUnsettledAbsenceQuery:
 				'Absence assertion on `{{queryMethod}}` appears before the component has settled. ' +
-				'The element may not have rendered yet, resulting in a false positive. ' +
 				'Add an `await` expression (e.g. `findBy*`, `waitFor`, `act`) or a `getBy*` call before this assertion.',
 		},
 		schema: [],
