@@ -1,5 +1,3 @@
-import { ASTUtils } from '@typescript-eslint/utils';
-
 import { createTestingLibraryRule } from '../create-testing-library-rule';
 import {
 	findClosestCallNode,
@@ -20,52 +18,6 @@ export type MessageIds = 'noUnsettledAbsenceQuery';
 export type Options = [];
 
 const NEGATED_ABSENCE_MATCHERS = ['toBeVisible'];
-
-function isNestedFunction(node: TSESTree.Node): boolean {
-	return (
-		isArrowFunctionExpression(node) ||
-		isFunctionExpression(node) ||
-		isFunctionDeclaration(node)
-	);
-}
-
-function containsNode(
-	node: TSESTree.Node,
-	predicate: (n: TSESTree.Node) => boolean
-): boolean {
-	if (predicate(node)) {
-		return true;
-	}
-
-	if (isNestedFunction(node)) {
-		return false;
-	}
-
-	for (const key of Object.keys(node)) {
-		if (key === 'parent') continue;
-		const child = (node as unknown as Record<string, unknown>)[key];
-		if (child && typeof child === 'object') {
-			if (Array.isArray(child)) {
-				for (const item of child) {
-					if (
-						item &&
-						typeof item === 'object' &&
-						'type' in item &&
-						containsNode(item as TSESTree.Node, predicate)
-					) {
-						return true;
-					}
-				}
-			} else if (
-				'type' in child &&
-				containsNode(child as TSESTree.Node, predicate)
-			) {
-				return true;
-			}
-		}
-	}
-	return false;
-}
 
 export default createTestingLibraryRule<Options, MessageIds>({
 	name: RULE_NAME,
@@ -93,6 +45,13 @@ export default createTestingLibraryRule<Options, MessageIds>({
 	defaultOptions: [],
 
 	create(context, _, helpers) {
+		const earliestSettlingIndex = new WeakMap<TSESTree.Statement[], number>();
+		const candidates: Array<{
+			identifier: TSESTree.Identifier;
+			body: TSESTree.Statement[];
+			stmtIndex: number;
+		}> = [];
+
 		function isAbsenceAssertion(node: TSESTree.MemberExpression): boolean {
 			if (helpers.isAbsenceAssert(node)) {
 				return true;
@@ -148,6 +107,24 @@ export default createTestingLibraryRule<Options, MessageIds>({
 			return null;
 		}
 
+		function findImmediateFunctionBody(
+			node: TSESTree.Node
+		): TSESTree.Statement[] | null {
+			let current: TSESTree.Node | undefined = node.parent;
+
+			while (current) {
+				if (
+					isArrowFunctionExpression(current) ||
+					isFunctionExpression(current) ||
+					isFunctionDeclaration(current)
+				) {
+					return isBlockStatement(current.body) ? current.body.body : null;
+				}
+				current = current.parent;
+			}
+			return null;
+		}
+
 		function findAncestorStatement(
 			node: TSESTree.Node,
 			statements: TSESTree.Statement[]
@@ -162,19 +139,28 @@ export default createTestingLibraryRule<Options, MessageIds>({
 			return null;
 		}
 
-		function hasSettlingExpression(statement: TSESTree.Statement): boolean {
-			const hasAwait = containsNode(statement, (n) =>
-				ASTUtils.isAwaitExpression(n)
-			);
-			const hasGetQuery = containsNode(
-				statement,
-				(n) => ASTUtils.isIdentifier(n) && helpers.isGetQueryVariant(n)
-			);
-			return hasAwait || hasGetQuery;
+		function recordSettling(node: TSESTree.Node): void {
+			const body = findImmediateFunctionBody(node);
+			if (!body) return;
+			const stmt = findAncestorStatement(node, body);
+			if (!stmt) return;
+			const stmtIndex = body.indexOf(stmt);
+			const prev = earliestSettlingIndex.get(body);
+			if (prev === undefined || stmtIndex < prev) {
+				earliestSettlingIndex.set(body, stmtIndex);
+			}
 		}
 
 		return {
+			AwaitExpression(node: TSESTree.AwaitExpression) {
+				recordSettling(node);
+			},
 			'CallExpression Identifier'(node: TSESTree.Identifier) {
+				if (helpers.isGetQueryVariant(node)) {
+					recordSettling(node);
+					return;
+				}
+
 				if (!helpers.isQueryQueryVariant(node)) {
 					return;
 				}
@@ -200,26 +186,34 @@ export default createTestingLibraryRule<Options, MessageIds>({
 					return;
 				}
 
-				const functionBody = findEnclosingFunctionBody(node);
-				if (!functionBody) {
+				const body = findEnclosingFunctionBody(node);
+				if (!body) {
 					return;
 				}
 
-				const containingStatement = findAncestorStatement(node, functionBody);
-				if (!containingStatement) {
+				const stmt = findAncestorStatement(node, body);
+				if (!stmt) {
 					return;
 				}
 
-				const stmtIndex = functionBody.indexOf(containingStatement);
-				const precedingStatements = functionBody.slice(0, stmtIndex);
-				const hasSettled = precedingStatements.some(hasSettlingExpression);
-
-				if (!hasSettled) {
-					context.report({
-						node,
-						messageId: 'noUnsettledAbsenceQuery',
-						data: { queryMethod: node.name },
-					});
+				candidates.push({
+					identifier: node,
+					body,
+					stmtIndex: body.indexOf(stmt),
+				});
+			},
+			'Program:exit'() {
+				for (const candidate of candidates) {
+					const earliest = earliestSettlingIndex.get(candidate.body);
+					const settled =
+						earliest !== undefined && earliest < candidate.stmtIndex;
+					if (!settled) {
+						context.report({
+							node: candidate.identifier,
+							messageId: 'noUnsettledAbsenceQuery',
+							data: { queryMethod: candidate.identifier.name },
+						});
+					}
 				}
 			},
 		};
