@@ -58,8 +58,8 @@ importers:
         specifier: 4.16.2
         version: 4.16.2(@typescript-eslint/utils@8.56.0(eslint@9.35.0(jiti@2.6.1))(typescript@5.9.3))(eslint@9.35.0(jiti@2.6.1))
       eslint-plugin-n:
-        specifier: 18.0.0
-        version: 18.0.0(eslint@9.35.0(jiti@2.6.1))(ts-declaration-location@1.0.7(typescript@5.9.3))(typescript@5.9.3)
+        specifier: 18.0.1
+        version: 18.0.1(eslint@9.35.0(jiti@2.6.1))(ts-declaration-location@1.0.7(typescript@5.9.3))(typescript@5.9.3)
       eslint-plugin-promise:
         specifier: 7.3.0
         version: 7.3.0(eslint@9.35.0(jiti@2.6.1))
@@ -1708,13 +1708,13 @@ packages:
       eslint-import-resolver-node:
         optional: true
 
-  eslint-plugin-n@18.0.0:
-    resolution: {integrity: sha512-a1S1CiOrfOyZbH69f/n5JQoKToGvALRk7Vt2yjCNFhipy7RDhjnLNLzigOb7YxDuHpUp/IOQsz10CKAjoU/0aA==}
+  eslint-plugin-n@18.0.1:
+    resolution: {integrity: sha512-q3ARhk+eZRc7myR0KHx+R3/GJeOHF+Ir6PK95Pu2tEX8Sl/4BIpmmVLva2kPrjC2gCmn6WHlHm+3yeo6Rxhycw==}
     engines: {node: ^20.19.0 || ^22.13.0 || >=24}
     peerDependencies:
       eslint: '>=8.57.1'
       ts-declaration-location: ^1.0.6
-      typescript: ^5.0.0
+      typescript: '>=5.0.0'
     peerDependenciesMeta:
       ts-declaration-location:
         optional: true
@@ -4985,7 +4985,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint-plugin-n@18.0.0(eslint@9.35.0(jiti@2.6.1))(ts-declaration-location@1.0.7(typescript@5.9.3))(typescript@5.9.3):
+  eslint-plugin-n@18.0.1(eslint@9.35.0(jiti@2.6.1))(ts-declaration-location@1.0.7(typescript@5.9.3))(typescript@5.9.3):
     dependencies:
       '@eslint-community/eslint-utils': 4.9.1(eslint@9.35.0(jiti@2.6.1))
       enhanced-resolve: 5.18.4
