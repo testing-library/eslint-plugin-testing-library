@@ -78,7 +78,7 @@
 		"eslint-remote-tester-repositories": "2.0.2",
 		"globals": "17.5.0",
 		"husky": "9.1.7",
-		"jiti": "2.6.1",
+		"jiti": "2.7.0",
 		"lint-staged": "16.4.0",
 		"prettier": "3.8.3",
 		"publint": "0.3.18",
