@@ -1,7 +1,7 @@
 import { existsSync, readdirSync } from 'node:fs';
 import { resolve } from 'node:path';
 
-import { it, expect } from 'vitest';
+import { expect, it } from 'vitest';
 
 import plugin from '../src';
 
@@ -51,12 +51,14 @@ it('should export configs that refer to actual rules', () => {
 		'flat/vue',
 		'flat/svelte',
 		'flat/marko',
+		'flat/shadow-dom',
 		'dom',
 		'angular',
 		'react',
 		'vue',
 		'svelte',
 		'marko',
+		'shadow-dom',
 	]);
 
 	const allConfigRules = Object.values(allConfigs)

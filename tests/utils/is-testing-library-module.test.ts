@@ -1,4 +1,4 @@
-import { it, expect, describe } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 import {
 	isCustomTestingLibraryModule,
@@ -20,6 +20,7 @@ const LIBRARY_MODULES = [
 	'@testing-library/vue',
 	'@testing-library/svelte',
 	'@marko/testing-library',
+	'shadow-dom-testing-library',
 ] as const;
 
 const USER_EVENT_MODULE = '@testing-library/user-event';
