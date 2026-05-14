@@ -58,32 +58,32 @@
 		"@typescript-eslint/utils": "^8.56.0"
 	},
 	"devDependencies": {
-		"@commitlint/cli": "20.5.0",
-		"@commitlint/config-conventional": "20.5.0",
+		"@commitlint/cli": "20.5.3",
+		"@commitlint/config-conventional": "20.5.3",
 		"@eslint/eslintrc": "3.3.5",
 		"@eslint/js": "9.35.0",
-		"@types/node": "22.19.17",
+		"@types/node": "22.19.18",
 		"@typescript-eslint/rule-tester": "^8.56.0",
 		"@vitest/coverage-v8": "3.2.4",
-		"@vitest/eslint-plugin": "1.6.16",
+		"@vitest/eslint-plugin": "1.6.17",
 		"@vitest/ui": "3.2.4",
 		"eslint": "9.35.0",
 		"eslint-config-prettier": "10.1.8",
 		"eslint-doc-generator": "3.3.2",
 		"eslint-import-resolver-typescript": "4.4.4",
 		"eslint-plugin-import-x": "4.16.2",
-		"eslint-plugin-n": "18.0.0",
+		"eslint-plugin-n": "18.0.1",
 		"eslint-plugin-promise": "7.3.0",
 		"eslint-remote-tester": "4.0.4",
 		"eslint-remote-tester-repositories": "2.0.2",
-		"globals": "17.5.0",
+		"globals": "17.6.0",
 		"husky": "9.1.7",
-		"jiti": "2.6.1",
-		"lint-staged": "16.4.0",
+		"jiti": "2.7.0",
+		"lint-staged": "17.0.4",
 		"prettier": "3.8.3",
-		"publint": "0.3.18",
+		"publint": "0.3.20",
 		"semantic-release": "25.0.3",
-		"tsdown": "0.21.9",
+		"tsdown": "0.22.0",
 		"typescript": "5.9.3",
 		"typescript-eslint": "^8.56.0",
 		"vitest": "3.2.4"
@@ -94,5 +94,5 @@
 	"engines": {
 		"node": "^18.18.0 || ^20.9.0 || >=21.1.0"
 	},
-	"packageManager": "pnpm@10.33.0"
+	"packageManager": "pnpm@10.33.4"
 }
