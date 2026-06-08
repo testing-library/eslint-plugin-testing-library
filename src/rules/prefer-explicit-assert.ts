@@ -1,4 +1,4 @@
-import { TSESTree, ASTUtils } from '@typescript-eslint/utils';
+import { ASTUtils, TSESTree } from '@typescript-eslint/utils';
 
 import { createTestingLibraryRule } from '../create-testing-library-rule';
 import {
@@ -6,7 +6,7 @@ import {
 	isCallExpression,
 	isMemberExpression,
 } from '../node-utils';
-import { PRESENCE_MATCHERS, ABSENCE_MATCHERS } from '../utils';
+import { ABSENCE_MATCHERS, PRESENCE_MATCHERS } from '../utils';
 
 const RULE_NAME = 'prefer-explicit-assert';
 export type MessageIds =
@@ -77,6 +77,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				vue: false,
 				svelte: false,
 				marko: false,
+				'shadow-dom': false,
 			},
 		},
 		messages: {
