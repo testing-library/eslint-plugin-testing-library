@@ -11,7 +11,9 @@
 		"testing"
 	],
 	"homepage": "https://github.com/testing-library/eslint-plugin-testing-library",
-	"bugs": "testing-library/eslint-plugin-testing-library/issues",
+	"bugs": {
+		"url": "https://github.com/testing-library/eslint-plugin-testing-library/issues"
+	},
 	"repository": "testing-library/eslint-plugin-testing-library",
 	"license": "MIT",
 	"author": "Mario Beltrán (https://belco.dev)",
