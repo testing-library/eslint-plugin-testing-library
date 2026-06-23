@@ -35,7 +35,13 @@ render(<Component />).getByText('foo');
 // calling a query from a custom `render` method that returns an array
 const [getByText] = myCustomRender(<Component />);
 getByText('foo');
+
+// calling a top-level query with a specific container
+const popup = screen.getByTestId('modal-dialog');
+getByText(popup, 'label');
 ```
+
+When you need to query inside a specific subtree, prefer `within(subtree)` over importing or destructuring a top-level query and passing the subtree as the first argument. That keeps the query scoped while preserving the readability this rule encourages.
 
 Examples of **correct** code for this rule:
 
@@ -48,6 +54,10 @@ screen.getByText('foo');
 
 // using after within clause
 within(screen.getByTestId('section')).getByText('foo');
+
+// querying inside a specific subtree
+const popup = screen.getByTestId('modal-dialog');
+within(popup).getByText('label');
 
 // calling a query method returned from a within call
 const { getByText } = within(screen.getByText('foo'));
