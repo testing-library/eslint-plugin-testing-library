@@ -74,7 +74,7 @@
 		"eslint-doc-generator": "3.6.0",
 		"eslint-import-resolver-typescript": "4.4.5",
 		"eslint-plugin-import-x": "4.17.0",
-		"eslint-plugin-n": "18.1.0",
+		"eslint-plugin-n": "18.2.1",
 		"eslint-plugin-promise": "7.3.0",
 		"eslint-remote-tester": "4.0.4",
 		"eslint-remote-tester-repositories": "2.0.2",
