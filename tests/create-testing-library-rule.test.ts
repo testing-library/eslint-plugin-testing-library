@@ -5,6 +5,15 @@ const ruleTester = createRuleTester();
 
 ruleTester.run(rule.name, rule, {
 	valid: [
+		{
+			settings: { 'testing-library/utils-module': 'test-utils' },
+			code: `
+      import { render } from 'test-utils'
+      import { configure } from 'another-module'
+
+      configure()
+    `,
+		},
 		// Test Cases for Imports
 		{
 			code: `
@@ -424,6 +433,42 @@ ruleTester.run(rule.name, rule, {
     `,
 	],
 	invalid: [
+		{
+			code: `
+      import { configure } from '@testing-library/react'
+      configure()
+    `,
+			errors: [{ messageId: 'configureError' }],
+		},
+		{
+			code: `
+      import { configure as setupTestingLibrary } from '@testing-library/react'
+      setupTestingLibrary()
+    `,
+			errors: [{ messageId: 'configureError' }],
+		},
+		{
+			code: `
+      import * as testingLibrary from '@testing-library/react'
+      testingLibrary.configure()
+    `,
+			errors: [{ messageId: 'configureError' }],
+		},
+		{
+			code: `
+      const { configure } = require('@testing-library/react')
+      configure()
+    `,
+			errors: [{ messageId: 'configureError' }],
+		},
+		{
+			settings: { 'testing-library/utils-module': 'test-utils' },
+			code: `
+      import { configure } from 'test-utils'
+      configure()
+    `,
+			errors: [{ messageId: 'configureError' }],
+		},
 		// Test Cases for Imports
 		{
 			code: `

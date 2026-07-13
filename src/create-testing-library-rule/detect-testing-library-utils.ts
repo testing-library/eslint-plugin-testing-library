@@ -86,6 +86,7 @@ type IsUserEventMethodFn = (
 	userEventSetupVars?: Set<string>
 ) => boolean;
 type IsRenderUtilFn = (node: TSESTree.Identifier) => boolean;
+type IsConfigureUtilFn = (node: TSESTree.Identifier) => boolean;
 type IsCreateEventUtil = (
 	node: TSESTree.CallExpression | TSESTree.Identifier
 ) => boolean;
@@ -132,6 +133,7 @@ export interface DetectionHelpers {
 	isFireEventMethod: IsFireEventMethodFn;
 	isUserEventMethod: IsUserEventMethodFn;
 	isRenderUtil: IsRenderUtilFn;
+	isConfigureUtil: IsConfigureUtilFn;
 	isCreateEventUtil: IsCreateEventUtil;
 	isRenderVariableDeclarator: IsRenderVariableDeclaratorFn;
 	isDebugUtil: IsDebugUtilFn;
@@ -149,6 +151,7 @@ const FIRE_EVENT_NAME = 'fireEvent';
 const CREATE_EVENT_NAME = 'createEvent';
 const USER_EVENT_NAME = 'userEvent';
 const RENDER_NAME = 'render';
+const CONFIGURE_NAME = 'configure';
 
 export type DetectionOptions = {
 	/**
@@ -657,6 +660,14 @@ export function detectTestingLibraryUtils<
 				}
 			);
 
+		const isConfigureUtil: IsConfigureUtilFn = (node) =>
+			isPotentialTestingLibraryFunction(
+				node,
+				(identifierNodeName, originalNodeName) =>
+					identifierNodeName === CONFIGURE_NAME ||
+					originalNodeName === CONFIGURE_NAME
+			);
+
 		const isCreateEventUtil: IsCreateEventUtil = (node) => {
 			const isCreateEventCallback = (
 				identifierNodeName: string,
@@ -1021,6 +1032,7 @@ export function detectTestingLibraryUtils<
 			isFireEventMethod,
 			isUserEventMethod,
 			isRenderUtil,
+			isConfigureUtil,
 			isCreateEventUtil,
 			isRenderVariableDeclarator,
 			isDebugUtil,
