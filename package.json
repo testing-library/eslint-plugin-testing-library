@@ -64,16 +64,16 @@
 		"@commitlint/config-conventional": "21.0.2",
 		"@eslint/eslintrc": "3.3.5",
 		"@eslint/js": "9.35.0",
-		"@types/node": "22.20.0",
+		"@types/node": "22.20.1",
 		"@typescript-eslint/rule-tester": "^8.56.0",
-		"@vitest/coverage-v8": "3.2.6",
-		"@vitest/eslint-plugin": "1.6.20",
-		"@vitest/ui": "3.2.6",
+		"@vitest/coverage-v8": "3.2.7",
+		"@vitest/eslint-plugin": "1.6.21",
+		"@vitest/ui": "3.2.7",
 		"eslint": "9.35.0",
 		"eslint-config-prettier": "10.1.8",
 		"eslint-doc-generator": "3.6.0",
 		"eslint-import-resolver-typescript": "4.4.5",
-		"eslint-plugin-import-x": "4.17.0",
+		"eslint-plugin-import-x": "4.17.1",
 		"eslint-plugin-n": "18.2.1",
 		"eslint-plugin-promise": "7.3.0",
 		"eslint-remote-tester": "4.0.4",
@@ -88,7 +88,7 @@
 		"tsdown": "0.22.3",
 		"typescript": "5.9.3",
 		"typescript-eslint": "^8.56.0",
-		"vitest": "3.2.6"
+		"vitest": "3.2.7"
 	},
 	"peerDependencies": {
 		"eslint": "^8.57.0 || ^9.0.0 || ^10.0.0"
