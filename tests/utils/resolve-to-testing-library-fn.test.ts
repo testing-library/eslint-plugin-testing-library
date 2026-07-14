@@ -68,6 +68,25 @@ ruleTester.run('esm', rule, {
 		},
 		{
 			code: `
+			import * as testingLibrary from '@testing-library/dom';
+
+			function configureLocalClient() {
+				const testingLibrary = { configure() {} };
+				testingLibrary.configure();
+			}
+			configureLocalClient();
+		`,
+		},
+		{
+			code: `
+			import * as testingLibrary from '@testing-library/dom';
+
+			const configure = 'render';
+			testingLibrary[configure]();
+		`,
+		},
+		{
+			code: `
 			import { userEvent } from './test-utils';
 
 			function userClick() {
@@ -255,6 +274,24 @@ ruleTester.run('esm', rule, {
 				},
 			],
 		},
+		{
+			code: `
+			import * as testingLibrary from '@testing-library/dom';
+
+			testingLibrary.configure()
+		`,
+			errors: [
+				{
+					messageId: 'details',
+					data: {
+						data: {
+							original: 'configure',
+							local: 'testingLibrary',
+						},
+					},
+				},
+			],
+		},
 		...LIBRARY_MODULES.flatMap<InvalidTestCase<MessageIds, []>>((module) => [
 			{
 				code: `
@@ -342,6 +379,24 @@ ruleTester.run('cjs', rule, {
 						data: {
 							original: 'default',
 							local: 'userEvent',
+						},
+					},
+				},
+			],
+		},
+		{
+			code: `
+			const testingLibrary = require('@testing-library/dom');
+
+			testingLibrary.configure()
+		`,
+			errors: [
+				{
+					messageId: 'details',
+					data: {
+						data: {
+							original: 'configure',
+							local: 'testingLibrary',
 						},
 					},
 				},

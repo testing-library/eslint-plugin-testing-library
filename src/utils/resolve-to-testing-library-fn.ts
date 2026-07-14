@@ -4,6 +4,8 @@ import { AST_NODE_TYPES, ASTUtils } from '@typescript-eslint/utils';
 import {
 	isImportDefaultSpecifier,
 	isImportExpression,
+	isImportNamespaceSpecifier,
+	isMemberExpression,
 	isProperty,
 	isImportSpecifier,
 	isTSImportEqualsDeclaration,
@@ -26,6 +28,7 @@ interface ImportDetails {
 	source: string;
 	local: string;
 	imported: string | null;
+	isNamespace: boolean;
 }
 
 const describeImportDefAsImport = (
@@ -40,6 +43,16 @@ const describeImportDefAsImport = (
 			source: def.parent.source.value,
 			imported: null,
 			local: def.node.local.name,
+			isNamespace: false,
+		};
+	}
+
+	if (isImportNamespaceSpecifier(def.node)) {
+		return {
+			source: def.parent.source.value,
+			imported: null,
+			local: def.node.local.name,
+			isNamespace: true,
 		};
 	}
 
@@ -59,6 +72,7 @@ const describeImportDefAsImport = (
 				? def.node.imported.name
 				: def.node.imported.value,
 		local: def.node.local.name,
+		isNamespace: false,
 	};
 };
 
@@ -77,6 +91,16 @@ const describeVariableDefAsImport = (
 				: null;
 
 	if (!sourceNode || !isStringNode(sourceNode)) return null;
+
+	if (ASTUtils.isIdentifier(def.node.id)) {
+		return {
+			source: getStringValue(sourceNode),
+			imported: null,
+			local: def.node.id.name,
+			isNamespace: true,
+		};
+	}
+
 	if (!isProperty(def.name.parent)) return null;
 	if (!isSupportedAccessor(def.name.parent.key)) return null;
 
@@ -84,6 +108,7 @@ const describeVariableDefAsImport = (
 		source: getStringValue(sourceNode),
 		imported: getAccessorValue(def.name.parent.key),
 		local: def.name.name,
+		isNamespace: false,
 	};
 };
 
@@ -172,6 +197,23 @@ export const resolveToTestingLibraryFn = <
 	const customModuleSetting = context.settings['testing-library/utils-module'];
 
 	if (isTestingLibraryModule(maybeImport.source, customModuleSetting)) {
+		if (maybeImport.isNamespace) {
+			const namespaceMember = chain[1];
+			if (!namespaceMember || !isMemberExpression(namespaceMember.parent)) {
+				return null;
+			}
+
+			const original = ASTUtils.getPropertyName(namespaceMember.parent);
+			if (!original || original === 'default') {
+				return null;
+			}
+
+			return {
+				original,
+				local: maybeImport.local,
+			};
+		}
+
 		return {
 			original: maybeImport.imported,
 			local: maybeImport.local,

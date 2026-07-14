@@ -72,6 +72,78 @@ ruleTester.run(rule.name, rule, {
         });
       `,
 		},
+		{
+			code: `
+        function configure() {}
+        test('local configure is ignored', () => {
+          configure();
+        });
+      `,
+		},
+		{
+			code: `
+        import { configure } from 'another-module';
+        test('unrelated configure import is ignored', () => {
+          configure({});
+        });
+      `,
+		},
+		{
+			code: `
+        const client = { configure() {} };
+        test('unrelated configure method is ignored', () => {
+          client.configure();
+        });
+      `,
+		},
+		{
+			settings: { 'testing-library/utils-module': 'off' },
+			code: `
+        import { configure } from '@testing-library/react';
+        test('shadowed configure import is ignored', () => {
+          const configure = () => {};
+          configure();
+        });
+      `,
+		},
+		{
+			settings: { 'testing-library/utils-module': 'off' },
+			code: `
+        import { configure as setConfig } from '@testing-library/react';
+        test('shadowed configure alias is ignored', () => {
+          const setConfig = () => {};
+          setConfig();
+        });
+      `,
+		},
+		{
+			settings: { 'testing-library/utils-module': 'off' },
+			code: `
+        import * as testingLibrary from '@testing-library/dom';
+        test('shadowed namespace import is ignored', () => {
+          const testingLibrary = { configure() {} };
+          testingLibrary.configure();
+        });
+      `,
+		},
+		{
+			settings: { 'testing-library/utils-module': 'off' },
+			code: `
+        import { configure } from '@testing-library/react';
+        test('shadowed configure parameter is ignored', (configure) => {
+          configure();
+        });
+      `,
+		},
+		{
+			code: `
+        import * as testingLibrary from '@testing-library/dom';
+        const configure = 'render';
+        test('dynamic namespace member is ignored', () => {
+          testingLibrary[configure]({});
+        });
+      `,
+		},
 	],
 	invalid: [
 		invalidConfigure(
@@ -134,6 +206,57 @@ test('configures once', () => {
 if (process.env.CI) {
   configure({});
 }`,
+			3,
+			3
+		),
+		invalidConfigure(
+			`const testingLibrary = require('@testing-library/dom');
+test('configures once', () => {
+  testingLibrary.configure({});
+});`,
+			3,
+			18
+		),
+		{
+			settings: { 'testing-library/utils-module': 'test-utils' },
+			...invalidConfigure(
+				`import * as testingLibrary from 'test-utils';
+test('configures once', () => {
+  testingLibrary.configure({});
+});`,
+				3,
+				18
+			),
+		},
+		{
+			settings: { 'testing-library/utils-module': 'off' },
+			...invalidConfigure(
+				`import { render } from '@testing-library/react';
+import * as testingLibrary from '@testing-library/dom';
+test('configures once', () => {
+  testingLibrary.configure({});
+});`,
+				4,
+				18
+			),
+		},
+		{
+			settings: { 'testing-library/utils-module': 'test-utils' },
+			...invalidConfigure(
+				`import { render } from 'test-utils';
+import * as testingLibrary from '@testing-library/dom';
+test('configures once', () => {
+  testingLibrary.configure({});
+});`,
+				4,
+				18
+			),
+		},
+		invalidConfigure(
+			`import * as testingLibrary from '@testing-library/dom';
+test('configures once', () => {
+  testingLibrary['configure']({});
+});`,
 			3,
 			3
 		),

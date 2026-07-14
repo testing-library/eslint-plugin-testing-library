@@ -7,6 +7,7 @@ import { resolveToTestingLibraryFn } from '../utils';
 import type { TSESTree } from '@typescript-eslint/utils';
 
 const RULE_NAME = 'prefer-top-level-configure';
+const CONFIGURE_NAME = 'configure';
 export type MessageIds = 'preferTopLevelConfigure';
 type Options = [];
 
@@ -34,22 +35,11 @@ export default createTestingLibraryRule<Options, MessageIds>({
 	},
 	defaultOptions: [],
 
-	create(context, _, helpers) {
+	create(context) {
 		return {
 			CallExpression(node: TSESTree.CallExpression) {
-				const configureIdentifier = getDeepestIdentifierNode(node);
-
-				if (!configureIdentifier) {
-					return;
-				}
-
-				const isResolvedConfigure =
-					resolveToTestingLibraryFn(node, context)?.original === 'configure';
-
-				if (
-					!helpers.isConfigureUtil(configureIdentifier) &&
-					!isResolvedConfigure
-				) {
+				const resolvedConfigure = resolveToTestingLibraryFn(node, context);
+				if (resolvedConfigure?.original !== CONFIGURE_NAME) {
 					return;
 				}
 
@@ -61,8 +51,10 @@ export default createTestingLibraryRule<Options, MessageIds>({
 					return;
 				}
 
+				const configureNode = getDeepestIdentifierNode(node) ?? node.callee;
+
 				context.report({
-					node: configureIdentifier,
+					node: configureNode,
 					messageId: 'preferTopLevelConfigure',
 				});
 			},

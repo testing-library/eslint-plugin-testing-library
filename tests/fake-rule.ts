@@ -11,7 +11,6 @@ type Options = [];
 type MessageIds =
 	| 'absenceAssertError'
 	| 'asyncUtilError'
-	| 'configureError'
 	| 'customQueryError'
 	| 'fakeError'
 	| 'findByError'
@@ -38,7 +37,6 @@ export default createTestingLibraryRule<Options, MessageIds>({
 		},
 		messages: {
 			fakeError: 'fake error reported',
-			configureError: 'some error related to configure reported',
 			renderError: 'some error related to render util reported',
 			asyncUtilError:
 				'some error related to {{ utilName }} async util reported',
@@ -55,10 +53,6 @@ export default createTestingLibraryRule<Options, MessageIds>({
 	defaultOptions: [],
 	create(context, _, helpers) {
 		const reportCallExpressionIdentifier = (node: TSESTree.Identifier) => {
-			if (helpers.isConfigureUtil(node)) {
-				return context.report({ node, messageId: 'configureError' });
-			}
-
 			// force "render" to be reported
 			if (helpers.isRenderUtil(node)) {
 				return context.report({ node, messageId: 'renderError' });
