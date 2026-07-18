@@ -3,12 +3,12 @@ import { isAwaitExpression } from '@typescript-eslint/utils/ast-utils';
 import { createTestingLibraryRule } from '../create-testing-library-rule';
 import {
 	getPropertyIdentifierNode,
-	isExpressionStatement,
-	isVariableDeclaration,
+	hasThenProperty,
 	isAssignmentExpression,
 	isCallExpression,
+	isExpressionStatement,
 	isSequenceExpression,
-	hasThenProperty,
+	isVariableDeclaration,
 } from '../node-utils';
 import { getSourceCode } from '../utils';
 
@@ -31,6 +31,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				vue: 'error',
 				svelte: 'error',
 				marko: 'error',
+				'shadow-dom': 'error',
 			},
 		},
 		messages: {
