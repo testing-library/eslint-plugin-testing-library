@@ -22,6 +22,7 @@ type RuleInvalidTestCase = InvalidTestCase<MessageIds, []>;
 const SUPPORTED_TESTING_FRAMEWORKS = [
 	'@testing-library/dom',
 	'@testing-library/angular',
+	'@testing-library/angular/zoneless',
 	'@testing-library/react',
 	'@testing-library/vue',
 	'@marko/testing-library',
