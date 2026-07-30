@@ -50,7 +50,7 @@ importers:
         version: 10.1.8(eslint@9.35.0(jiti@2.7.0))
       eslint-doc-generator:
         specifier: 3.6.0
-        version: 3.6.0(eslint@9.35.0(jiti@2.7.0))(prettier@3.8.4)(typescript@5.9.3)
+        version: 3.6.0(eslint@9.35.0(jiti@2.7.0))(prettier@3.9.6)(typescript@5.9.3)
       eslint-import-resolver-typescript:
         specifier: 4.4.5
         version: 4.4.5(eslint-plugin-import-x@4.17.1(@typescript-eslint/utils@8.56.0(eslint@9.35.0(jiti@2.7.0))(typescript@5.9.3))(eslint@9.35.0(jiti@2.7.0)))(eslint@9.35.0(jiti@2.7.0))
@@ -82,8 +82,8 @@ importers:
         specifier: 17.2.0
         version: 17.2.0
       prettier:
-        specifier: 3.8.4
-        version: 3.8.4
+        specifier: 3.9.6
+        version: 3.9.6
       publint:
         specifier: 0.3.21
         version: 0.3.21
@@ -2726,8 +2726,8 @@ packages:
     resolution: {integrity: sha512-vkcDPrRZo1QZLbn5RLGPpg/WmIQ65qoWWhcGKf/b5eplkkarX0m9z8ppCat4mlOqUsWpyNuYgO3VRyrYHSzX5g==}
     engines: {node: '>= 0.8.0'}
 
-  prettier@3.8.4:
-    resolution: {integrity: sha512-N2MylSdi48+5N/6S5j+maeHbUSIzzZ5uOcX5Hm4QpV8Dkb1HFjfAKTKX6yNPJQD9AhcT3ifHNB66tWTTJDi11Q==}
+  prettier@3.9.6:
+    resolution: {integrity: sha512-OpN0zzVdiaiAhxpuuj5efpIS4sY9j7bY6uR5mnj5yPzGkdkjNKSJeUThPb60Jw29QuAZgA4o+/iB49kFiaBX6g==}
     engines: {node: '>=14'}
     hasBin: true
 
@@ -4954,7 +4954,7 @@ snapshots:
     dependencies:
       eslint: 9.35.0(jiti@2.7.0)
 
-  eslint-doc-generator@3.6.0(eslint@9.35.0(jiti@2.7.0))(prettier@3.8.4)(typescript@5.9.3):
+  eslint-doc-generator@3.6.0(eslint@9.35.0(jiti@2.7.0))(prettier@3.9.6)(typescript@5.9.3):
     dependencies:
       '@typescript-eslint/utils': 8.58.0(eslint@9.35.0(jiti@2.7.0))(typescript@5.9.3)
       ajv: 8.18.0
@@ -4973,7 +4973,7 @@ snapshots:
       table: 6.9.0
       type-fest: 5.3.1
     optionalDependencies:
-      prettier: 3.8.4
+      prettier: 3.9.6
     transitivePeerDependencies:
       - supports-color
       - typescript
@@ -5869,7 +5869,7 @@ snapshots:
 
   prelude-ls@1.2.1: {}
 
-  prettier@3.8.4: {}
+  prettier@3.9.6: {}
 
   pretty-format@30.2.0:
     dependencies:
@@ -6365,7 +6365,7 @@ snapshots:
 
   ts-declaration-location@1.0.7(typescript@5.9.3):
     dependencies:
-      picomatch: 4.0.4
+      picomatch: 4.0.5
       typescript: 5.9.3
     optional: true
 
