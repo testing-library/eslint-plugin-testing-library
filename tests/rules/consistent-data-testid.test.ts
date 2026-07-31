@@ -79,6 +79,25 @@ const validTestCases: RuleValidTestCase[] = [
 
             const TestComponent = props => {
               return (
+                <div data-testid="Link__Button">
+                  Hello
+                </div>
+              )
+            };
+          `,
+		options: [
+			{
+				testIdPattern: '^{fileName}__([A-Z]+[a-z]*?)+$',
+			},
+		],
+		filename: 'C:\\workspace\\projectX\\src\\components\\Link\\Link.tsx',
+	},
+	{
+		code: `
+            import React from 'react';
+
+            const TestComponent = props => {
+              return (
                 <div data-testid="Awesome">
                   Hello
                 </div>
