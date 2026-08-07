@@ -7,6 +7,7 @@ const SUPPORTED_TESTING_FRAMEWORKS = [
 	'@testing-library/dom',
 	'@testing-library/angular',
 	'@testing-library/react',
+	'@testing-library/svelte',
 	'@testing-library/vue',
 	'@marko/testing-library',
 ];
@@ -158,6 +159,16 @@ ruleTester.run(rule.name, rule, {
 			code: `
         import { configure } from '@testing-library/react';
         xit('fails', () => {
+          configure({ asyncUtilTimeout: 5000 });
+        });
+      `,
+			errors: [{ messageId: 'preferTopLevelConfigure' as const }],
+		},
+		// test.only.each — chained MemberExpression
+		{
+			code: `
+        import { configure } from '@testing-library/react';
+        test.only.each([1, 2])('fails %i', () => {
           configure({ asyncUtilTimeout: 5000 });
         });
       `,

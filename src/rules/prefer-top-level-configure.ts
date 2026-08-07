@@ -17,10 +17,33 @@ type Options = [];
 const TEST_FUNCTION_NAMES = new Set(['it', 'test', 'xit', 'xtest']);
 
 /**
+ * Walks a (possibly chained) MemberExpression or CallExpression leftward to
+ * find the root Identifier name. Handles all of:
+ *   test                → 'test'
+ *   test.only           → 'test'
+ *   test.only.each      → 'test'
+ *   test.each([…])      → 'test'  (CallExpression whose callee is a chain)
+ */
+function getRootIdentifierName(
+	node: TSESTree.Expression | TSESTree.PrivateIdentifier
+): string | undefined {
+	if (ASTUtils.isIdentifier(node)) {
+		return node.name;
+	}
+	if (isMemberExpression(node)) {
+		return getRootIdentifierName(node.object);
+	}
+	if (isCallExpression(node)) {
+		return getRootIdentifierName(node.callee);
+	}
+	return undefined;
+}
+
+/**
  * Returns true when the given node is nested inside a test body:
  *   test('...', fn)  /  it('...', fn)  /  xit(...)  /  xtest(...)
  *   test.only(...)   /  test.skip(...)
- *   test.each([...])(...)  —  curried form where callee is a CallExpression
+ *   test.each([...])(...)  /  test.only.each([...])(...)  — curried forms
  */
 function isInsideTestBody(node: TSESTree.Node | undefined): boolean {
 	if (!node) {
@@ -28,32 +51,8 @@ function isInsideTestBody(node: TSESTree.Node | undefined): boolean {
 	}
 
 	if (isCallExpression(node)) {
-		const { callee } = node;
-
-		// test('title', fn) / it('title', fn) / xit(...) / xtest(...)
-		if (ASTUtils.isIdentifier(callee) && TEST_FUNCTION_NAMES.has(callee.name)) {
-			return true;
-		}
-
-		// test.only('title', fn) / test.skip('title', fn) / it.each([1])(...)
-		// — callee is a MemberExpression whose object is test / it
-		if (
-			isMemberExpression(callee) &&
-			ASTUtils.isIdentifier(callee.object) &&
-			TEST_FUNCTION_NAMES.has(callee.object.name)
-		) {
-			return true;
-		}
-
-		// test.each([1, 2])('title', fn)  — curried form
-		// callee is the result of test.each([...]), i.e. a CallExpression whose
-		// own callee is the MemberExpression test.each / it.each
-		if (
-			isCallExpression(callee) &&
-			isMemberExpression(callee.callee) &&
-			ASTUtils.isIdentifier(callee.callee.object) &&
-			TEST_FUNCTION_NAMES.has(callee.callee.object.name)
-		) {
+		const rootName = getRootIdentifierName(node.callee);
+		if (rootName !== undefined && TEST_FUNCTION_NAMES.has(rootName)) {
 			return true;
 		}
 	}
