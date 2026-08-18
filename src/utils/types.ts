@@ -33,6 +33,7 @@ export const SUPPORTED_TESTING_FRAMEWORKS = [
 	'vue',
 	'svelte',
 	'marko',
+	'shadow-dom',
 ] as const;
 
 export type SupportedTestingFramework =

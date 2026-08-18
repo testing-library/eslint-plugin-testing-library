@@ -25,6 +25,7 @@ const SUPPORTED_TESTING_FRAMEWORKS = [
 	'@testing-library/react',
 	'@testing-library/vue',
 	'@marko/testing-library',
+	'shadow-dom-testing-library',
 ];
 
 interface TestCode {
@@ -119,6 +120,11 @@ ruleTester.run(rule.name, rule, {
 		// async @marko/testing-library screen queries declaration are valid
 		...createTestCase((query) => `await screen.${query}('foo')`, {
 			testingFramework: '@marko/testing-library',
+		}),
+
+		// async shadow-dom-testing-library screen queries declaration are valid
+		...createTestCase((query) => `await screen.${query}('foo')`, {
+			testingFramework: 'shadow-dom-testing-library',
 		}),
 
 		// async queries not called are valid

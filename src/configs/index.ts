@@ -2,6 +2,7 @@ import angular from './angular';
 import dom from './dom';
 import marko from './marko';
 import react from './react';
+import shadowDom from './shadow-dom';
 import svelte from './svelte';
 import vue from './vue';
 
@@ -19,6 +20,7 @@ export const baseConfigs = {
 	vue,
 	svelte,
 	marko,
+	'shadow-dom': shadowDom,
 } as const satisfies {
 	[TKey in SupportedTestingFramework]: BaseConfig;
 };

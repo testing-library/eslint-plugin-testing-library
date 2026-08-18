@@ -2,12 +2,12 @@ import { createTestingLibraryRule } from '../create-testing-library-rule';
 import {
 	getPropertyIdentifierNode,
 	isArrowFunctionExpression,
-	isCallExpression,
-	isMemberExpression,
-	isFunctionExpression,
-	isExpressionStatement,
-	isReturnStatement,
 	isBlockStatement,
+	isCallExpression,
+	isExpressionStatement,
+	isFunctionExpression,
+	isMemberExpression,
+	isReturnStatement,
 } from '../node-utils';
 
 import type { TSESTree } from '@typescript-eslint/utils';
@@ -30,6 +30,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				vue: 'error',
 				svelte: 'error',
 				marko: 'error',
+				'shadow-dom': 'error',
 			},
 		},
 		messages: {

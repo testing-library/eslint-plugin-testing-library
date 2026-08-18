@@ -8,6 +8,7 @@ const SUPPORTED_TESTING_FRAMEWORKS = [
 	'@testing-library/react',
 	'@testing-library/vue',
 	'@marko/testing-library',
+	'shadow-dom-testing-library',
 ];
 
 ruleTester.run(rule.name, rule, {
