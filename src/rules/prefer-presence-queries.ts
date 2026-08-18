@@ -1,7 +1,14 @@
-import { createTestingLibraryRule } from '../create-testing-library-rule';
-import { findClosestCallNode, isMemberExpression } from '../node-utils';
+import { ASTUtils } from '@typescript-eslint/utils';
 
-import type { TSESTree } from '@typescript-eslint/utils';
+import { createTestingLibraryRule } from '../create-testing-library-rule';
+import {
+	findClosestCallNode,
+	isMemberExpression,
+	isProperty,
+} from '../node-utils';
+import { getScope } from '../utils';
+
+import type { TSESLint, TSESTree } from '@typescript-eslint/utils';
 
 const RULE_NAME = 'prefer-presence-queries';
 export type MessageIds = 'wrongAbsenceQuery' | 'wrongPresenceQuery';
@@ -58,6 +65,60 @@ export default createTestingLibraryRule<Options, MessageIds>({
 	],
 
 	create(context, [{ absence = true, presence = true }], helpers) {
+		function getDestructuredQueryIdentifier(
+			node: TSESTree.Identifier
+		): TSESTree.Identifier | 'unsafe' | null {
+			const variable = ASTUtils.findVariable(
+				getScope(context, node),
+				node.name
+			);
+			const variableDefinition = variable?.defs[0];
+			const identifier = variableDefinition?.name;
+
+			if (!variable || !identifier || !ASTUtils.isIdentifier(identifier)) {
+				return null;
+			}
+
+			const property = identifier.parent;
+
+			if (
+				!isProperty(property) ||
+				!ASTUtils.isIdentifier(property.key) ||
+				!ASTUtils.isIdentifier(property.value) ||
+				property.key.name !== node.name ||
+				property.value.name !== node.name
+			) {
+				return null;
+			}
+
+			const references = variable.references.filter(
+				(reference) => reference.identifier !== identifier
+			);
+
+			return references.length === 1 ? identifier : 'unsafe';
+		}
+
+		function fixQueryName(
+			fixer: TSESLint.RuleFixer,
+			node: TSESTree.Identifier,
+			newQueryName: string
+		): TSESLint.RuleFix[] | null {
+			const fixes = [fixer.replaceText(node, newQueryName)];
+			const destructuredQueryIdentifier = getDestructuredQueryIdentifier(node);
+
+			if (destructuredQueryIdentifier === 'unsafe') {
+				return null;
+			}
+
+			if (destructuredQueryIdentifier) {
+				fixes.push(
+					fixer.replaceText(destructuredQueryIdentifier, newQueryName)
+				);
+			}
+
+			return fixes;
+		}
+
 		return {
 			'CallExpression Identifier'(node: TSESTree.Identifier) {
 				const expectCallNode = findClosestCallNode(node, 'expect');
@@ -92,7 +153,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 					context.report({
 						node,
 						messageId: 'wrongPresenceQuery',
-						fix: (fixer) => fixer.replaceText(node, newQueryName),
+						fix: (fixer) => fixQueryName(fixer, node, newQueryName),
 					});
 				} else if (
 					!withinCallNode &&
@@ -104,7 +165,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 					context.report({
 						node,
 						messageId: 'wrongAbsenceQuery',
-						fix: (fixer) => fixer.replaceText(node, newQueryName),
+						fix: (fixer) => fixQueryName(fixer, node, newQueryName),
 					});
 				}
 			},
