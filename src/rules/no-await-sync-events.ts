@@ -8,9 +8,11 @@ import {
 	isObjectExpression,
 	isProperty,
 } from '../node-utils';
+import { getScope } from '../utils';
 
-import type { TSESTree } from '@typescript-eslint/utils';
+import type { TSESLint, TSESTree } from '@typescript-eslint/utils';
 
+const DELAY_PROPERTY_NAME = 'delay';
 const USER_EVENT_ASYNC_EXCEPTIONS = ['type', 'keyboard'];
 const FIRE_EVENT_OPTION = 'fire-event';
 const USER_EVENT_OPTION = 'user-event';
@@ -62,7 +64,66 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
 	create(context, [options], helpers) {
 		const { eventModules = DEFAULT_EVENT_MODULES } = options;
-		let hasDelayDeclarationOrAssignmentGTZero: boolean;
+
+		// Tracks, per resolved variable (not by name), whether the last known
+		// value assigned to it was a positive integer literal. Using the
+		// scope-resolved `Variable` as key (instead of matching the identifier
+		// name `delay` across the whole file) prevents unrelated variables that
+		// happen to also be called `delay` in a different scope from leaking
+		// into this decision.
+		const positiveDelayVariables = new WeakSet<TSESLint.Scope.Variable>();
+
+		function isPositiveIntegerLiteral(
+			node: TSESTree.Node | null | undefined
+		): boolean {
+			return (
+				isLiteral(node) &&
+				node.value !== null &&
+				Number.isInteger(node.value) &&
+				Number(node.value) > 0
+			);
+		}
+
+		function resolveVariable(
+			identifier: TSESTree.Identifier
+		): TSESLint.Scope.Variable | null {
+			return ASTUtils.findVariable(
+				getScope(context, identifier),
+				identifier.name
+			);
+		}
+
+		function isKnownPositiveDelayVariable(
+			node: TSESTree.Node | null | undefined
+		): boolean {
+			if (!ASTUtils.isIdentifier(node)) {
+				return false;
+			}
+
+			const variable = resolveVariable(node);
+			return variable !== null && positiveDelayVariables.has(variable);
+		}
+
+		function trackDelayAssignment(
+			leftIdentifier: TSESTree.Identifier,
+			rightValue: TSESTree.Expression | null
+		): void {
+			if (leftIdentifier.name !== DELAY_PROPERTY_NAME) {
+				return;
+			}
+
+			const variable = resolveVariable(leftIdentifier);
+
+			if (!variable) {
+				return;
+			}
+
+			if (isPositiveIntegerLiteral(rightValue)) {
+				positiveDelayVariables.add(variable);
+			} else {
+				positiveDelayVariables.delete(variable);
+			}
+		}
 
 		// userEvent.type() and userEvent.keyboard() are exceptions, which returns a
 		// Promise. But it is only necessary to wait when delay option other than 0
@@ -73,27 +134,17 @@ export default createTestingLibraryRule<Options, MessageIds>({
 			VariableDeclaration(node: TSESTree.VariableDeclaration) {
 				// Case delay has been declared outside of call expression's arguments
 				// Let's save the info if it is greater than zero
-				hasDelayDeclarationOrAssignmentGTZero = node.declarations.some(
-					(property) =>
-						ASTUtils.isIdentifier(property.id) &&
-						property.id.name === 'delay' &&
-						isLiteral(property.init) &&
-						property.init.value &&
-						Number.isInteger(property.init.value) &&
-						Number(property.init.value) > 0
-				);
+				for (const declarator of node.declarations) {
+					if (ASTUtils.isIdentifier(declarator.id)) {
+						trackDelayAssignment(declarator.id, declarator.init);
+					}
+				}
 			},
 			AssignmentExpression(node: TSESTree.AssignmentExpression) {
 				// Case delay has been assigned or re-assigned outside of call expression's arguments
 				// Let's save the info if it is greater than zero
-				if (
-					ASTUtils.isIdentifier(node.left) &&
-					node.left.name === 'delay' &&
-					isLiteral(node.right) &&
-					node.right.value !== null
-				) {
-					hasDelayDeclarationOrAssignmentGTZero =
-						Number.isInteger(node.right.value) && Number(node.right.value) > 0;
+				if (ASTUtils.isIdentifier(node.left)) {
+					trackDelayAssignment(node.left, node.right);
 				}
 			},
 			'AwaitExpression > CallExpression'(node: TSESTree.CallExpression) {
@@ -127,35 +178,33 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				// Checking if there's a delay property
 				// Note: delay's value may have declared or assigned somewhere else (as a variable declaration or as an assignment expression)
 				// or right after this (as a literal)
-				const hasDelayProperty =
-					isObjectExpression(lastArg) &&
-					lastArg.properties.some(
-						(property) =>
-							isProperty(property) &&
-							ASTUtils.isIdentifier(property.key) &&
-							property.key.name === 'delay'
-					);
+				const delayProperty = isObjectExpression(lastArg)
+					? lastArg.properties.find(
+							(property) =>
+								isProperty(property) &&
+								ASTUtils.isIdentifier(property.key) &&
+								property.key.name === DELAY_PROPERTY_NAME
+						)
+					: undefined;
+				const hasDelayProperty = delayProperty !== undefined;
 
 				// In case delay's value has been declared as a literal
 				const hasDelayLiteralGTZero =
-					isObjectExpression(lastArg) &&
-					lastArg.properties.some(
-						(property) =>
-							isProperty(property) &&
-							ASTUtils.isIdentifier(property.key) &&
-							property.key.name === 'delay' &&
-							isLiteral(property.value) &&
-							!!property.value.value &&
-							Number.isInteger(property.value.value) &&
-							Number(property.value.value) > 0
-					);
+					isProperty(delayProperty) &&
+					isPositiveIntegerLiteral(delayProperty.value);
+
+				// In case delay's value is a reference to a variable resolved to a
+				// positive integer literal (declared or (re-)assigned elsewhere)
+				const hasDelayVariableGTZero =
+					isProperty(delayProperty) &&
+					isKnownPositiveDelayVariable(delayProperty.value);
 
 				const simulateEventFunctionName = simulateEventFunctionIdentifier.name;
 
 				if (
 					USER_EVENT_ASYNC_EXCEPTIONS.includes(simulateEventFunctionName) &&
 					hasDelayProperty &&
-					(hasDelayDeclarationOrAssignmentGTZero || hasDelayLiteralGTZero)
+					(hasDelayVariableGTZero || hasDelayLiteralGTZero)
 				) {
 					return;
 				}
