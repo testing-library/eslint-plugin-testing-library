@@ -14,6 +14,7 @@ const SUPPORTED_TESTING_FRAMEWORKS = [
 	'@testing-library/react',
 	'@testing-library/vue',
 	'@marko/testing-library',
+	'shadow-dom-testing-library',
 ];
 
 const CUSTOM_QUERY_COMBINATIONS = combineQueries(ALL_QUERIES_VARIANTS, [

@@ -40,6 +40,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				vue: ['error', { eventModule: ['fireEvent', 'userEvent'] }],
 				svelte: ['error', { eventModule: ['fireEvent', 'userEvent'] }],
 				marko: ['error', { eventModule: ['fireEvent', 'userEvent'] }],
+				'shadow-dom': ['error', { eventModule: ['userEvent'] }],
 			},
 		},
 		messages: {

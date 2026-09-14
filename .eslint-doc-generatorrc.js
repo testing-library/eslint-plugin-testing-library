@@ -27,6 +27,10 @@ export default {
 			'vue',
 			'![badge-vue](https://img.shields.io/badge/-Vue-black?style=flat-square&logo=vue.js&logoColor=white&labelColor=4FC08D&color=black)',
 		],
+		[
+			'shadow-dom',
+			'![badge-shadow-dom](https://img.shields.io/badge/%F0%9F%90%99-Shadow_DOM-black?style=flat-square)',
+		],
 	],
 	ignoreConfig: [
 		'flat/angular',
@@ -35,6 +39,7 @@ export default {
 		'flat/react',
 		'flat/svelte',
 		'flat/vue',
+		'flat/shadow-dom',
 	],
 	postprocess: async (content, path) => {
 		const prettierConfig = await prettier.resolveConfig(path);
