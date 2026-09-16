@@ -83,6 +83,14 @@ export default createTestingLibraryRule<Options, MessageIds>({
 					) {
 						userEventIdentifier = namedImport.local.name;
 					}
+
+					// Namespace import: import * as userEvent from '@testing-library/user-event'
+					const namespaceImport = node.specifiers.find(
+						(spec) => spec.type === AST_NODE_TYPES.ImportNamespaceSpecifier
+					);
+					if (namespaceImport) {
+						userEventIdentifier = namespaceImport.local.name;
+					}
 				}
 			},
 
