@@ -119,6 +119,34 @@ ruleTester.run(rule.name, rule, {
 				`,
 				},
 				{
+					code: `// issue #683 examples, plain object properties should not be reported
+				import { render } from '${testingFramework}';
+
+				const navItemWithChildren = {
+					title: 'Cars',
+					children: [
+						{ title: 'Add car' },
+						{ title: 'All cars' },
+					],
+				};
+
+				render(<NavComponent itemWithChildren={navItemWithChildren} />);
+				expect(navItemWithChildren.children).toHaveLength(2);
+				`,
+				},
+				{
+					code: `// issue #683 examples, plain object properties should not be reported
+				import { render } from '${testingFramework}';
+
+				const applicationState = {
+					activeElement: 'settings-tab',
+				};
+
+				render(<NavComponent state={applicationState} />);
+				expect(applicationState.activeElement).toBe('settings-tab');
+				`,
+				},
+				{
 					settings: {
 						'testing-library/utils-module': 'test-utils',
 					},
