@@ -1,4 +1,4 @@
-import { ASTUtils } from '@typescript-eslint/utils';
+import { AST_NODE_TYPES, ASTUtils } from '@typescript-eslint/utils';
 
 import { createTestingLibraryRule } from '../create-testing-library-rule';
 import {
@@ -10,6 +10,7 @@ import {
 	ALL_QUERIES_COMBINATIONS,
 	ALL_RETURNING_NODES,
 	EVENT_HANDLER_METHODS,
+	getScope,
 	resolveToTestingLibraryFn,
 } from '../utils';
 
@@ -57,6 +58,55 @@ export default createTestingLibraryRule<Options, MessageIds>({
 	],
 
 	create(context, [{ allowContainerFirstChild = false }], helpers) {
+		function getObjectPropertyName(node: TSESTree.Property['key']) {
+			if (ASTUtils.isIdentifier(node)) {
+				return node.name;
+			}
+
+			if (isLiteral(node) && typeof node.value === 'string') {
+				return node.value;
+			}
+
+			return null;
+		}
+
+		function objectExpressionHasProperty(
+			node: TSESTree.ObjectExpression,
+			propertyName: string
+		) {
+			return node.properties.some(
+				(property) =>
+					property.type === AST_NODE_TYPES.Property &&
+					getObjectPropertyName(property.key) === propertyName
+			);
+		}
+
+		function isDeclaredObjectProperty(
+			node: TSESTree.MemberExpression,
+			propertyName: string
+		) {
+			if (!ASTUtils.isIdentifier(node.object)) {
+				return false;
+			}
+
+			const variable = ASTUtils.findVariable(
+				getScope(context, node),
+				node.object.name
+			);
+
+			return (
+				variable?.defs.some((definition) => {
+					const { node: definitionNode } = definition;
+
+					return (
+						ASTUtils.isVariableDeclarator(definitionNode) &&
+						definitionNode.init?.type === AST_NODE_TYPES.ObjectExpression &&
+						objectExpressionHasProperty(definitionNode.init, propertyName)
+					);
+				}) ?? false
+			);
+		}
+
 		function showErrorForNodeAccess(node: TSESTree.MemberExpression) {
 			// This rule is so aggressive that can cause tons of false positives outside test files when Aggressive Reporting
 			// is enabled. Because of that, this rule will skip this mechanism and report only if some Testing Library package
@@ -87,7 +137,8 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
 				if (
 					ASTUtils.isIdentifier(node.object) &&
-					node.object.name === 'props'
+					(node.object.name === 'props' ||
+						isDeclaredObjectProperty(node, propertyName))
 				) {
 					return;
 				}
