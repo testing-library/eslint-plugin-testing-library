@@ -24,6 +24,7 @@ import preferPresenceQueries from './prefer-presence-queries';
 import preferQueryByDisappearance from './prefer-query-by-disappearance';
 import preferQueryMatchers from './prefer-query-matchers';
 import preferScreenQueries from './prefer-screen-queries';
+import preferTopLevelConfigure from './prefer-top-level-configure';
 import preferUserEvent from './prefer-user-event';
 import preferUserEventSetup from './prefer-user-event-setup';
 import renderResultNamingConvention from './render-result-naming-convention';
@@ -55,6 +56,7 @@ export const rules = {
 	'prefer-query-by-disappearance': preferQueryByDisappearance,
 	'prefer-query-matchers': preferQueryMatchers,
 	'prefer-screen-queries': preferScreenQueries,
+	'prefer-top-level-configure': preferTopLevelConfigure,
 	'prefer-user-event': preferUserEvent,
 	'prefer-user-event-setup': preferUserEventSetup,
 	'render-result-naming-convention': renderResultNamingConvention,

@@ -27,5 +27,6 @@ export default {
 		'testing-library/prefer-presence-queries': 'error',
 		'testing-library/prefer-query-by-disappearance': 'error',
 		'testing-library/prefer-screen-queries': 'error',
+		'testing-library/prefer-top-level-configure': 'warn',
 	},
 } satisfies { rules: Linter.RulesRecord };
