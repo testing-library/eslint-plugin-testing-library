@@ -15,6 +15,7 @@ const OLD_LIBRARY_MODULES = [
 const LIBRARY_MODULES = [
 	'@testing-library/dom',
 	'@testing-library/angular',
+	'@testing-library/angular/zoneless',
 	'@testing-library/react',
 	'@testing-library/preact',
 	'@testing-library/vue',
