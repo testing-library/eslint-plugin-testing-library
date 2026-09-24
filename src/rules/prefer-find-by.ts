@@ -15,7 +15,7 @@ import {
 } from '../node-utils';
 import { getScope, getSourceCode } from '../utils';
 
-import type { TSESTree, TSESLint } from '@typescript-eslint/utils';
+import type { TSESLint, TSESTree } from '@typescript-eslint/utils';
 
 const RULE_NAME = 'prefer-find-by';
 export type MessageIds = 'preferFindBy';
@@ -65,6 +65,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				vue: 'error',
 				svelte: 'error',
 				marko: 'error',
+				'shadow-dom': 'error',
 			},
 		},
 		messages: {
