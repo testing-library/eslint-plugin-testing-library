@@ -15,6 +15,7 @@ export type Options = [
 ];
 
 const FILENAME_PLACEHOLDER = '{fileName}';
+const PATH_SEPARATOR_PATTERN = /[/\\]/u;
 
 export default createTestingLibraryRule<Options, MessageIds>({
 	name: RULE_NAME,
@@ -82,7 +83,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 		const { testIdPattern, testIdAttribute: attr, customMessage } = options;
 
 		function getFileNameData() {
-			const splitPath = getFilename(context).split('/');
+			const splitPath = getFilename(context).split(PATH_SEPARATOR_PATTERN);
 			const fileNameWithExtension = splitPath.pop() ?? '';
 			if (
 				fileNameWithExtension.includes('[') ||
