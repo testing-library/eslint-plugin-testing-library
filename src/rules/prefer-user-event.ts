@@ -91,7 +91,10 @@ export default createTestingLibraryRule<Options, MessageIds>({
 			{
 				type: 'object',
 				properties: {
-					allowedMethods: { type: 'array' },
+					allowedMethods: {
+						type: 'array',
+						items: { type: 'string' },
+					},
 				},
 				additionalProperties: false,
 			},
