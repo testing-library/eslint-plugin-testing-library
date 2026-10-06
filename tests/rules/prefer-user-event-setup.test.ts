@@ -114,7 +114,18 @@ ruleTester.run(rule.name, rule, {
 		{
 			code: `
 				import { userEvent } from '@testing-library/user-event';
-				
+
+				test('example', async () => {
+					const user = userEvent.setup();
+					await user.click(element);
+				});
+			`,
+		},
+		// Namespace import
+		{
+			code: `
+				import * as userEvent from '@testing-library/user-event';
+
 				test('example', async () => {
 					const user = userEvent.setup();
 					await user.click(element);
@@ -246,6 +257,24 @@ ruleTester.run(rule.name, rule, {
 		{
 			code: `
 				import { userEvent } from '@testing-library/user-event';
+
+				test('example', async () => {
+					await userEvent.click(element);
+				});
+			`,
+			errors: [
+				{
+					line: 5,
+					column: 12,
+					messageId: 'preferUserEventSetup',
+					data: { method: 'click' },
+				},
+			],
+		},
+		// Namespace import with direct call
+		{
+			code: `
+				import * as userEvent from '@testing-library/user-event';
 
 				test('example', async () => {
 					await userEvent.click(element);
