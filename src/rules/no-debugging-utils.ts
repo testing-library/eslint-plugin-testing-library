@@ -13,7 +13,7 @@ import {
 } from '../node-utils';
 import { DEBUG_UTILS, getDeclaredVariables } from '../utils';
 
-import type { TSESTree, JSONSchema } from '@typescript-eslint/utils';
+import type { JSONSchema, TSESTree } from '@typescript-eslint/utils';
 
 type DebugUtilsToCheckForConfig = Record<(typeof DEBUG_UTILS)[number], boolean>;
 type DebugUtilsToCheckFor = Partial<DebugUtilsToCheckForConfig>;
@@ -44,6 +44,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				vue: 'warn',
 				svelte: 'warn',
 				marko: 'warn',
+				'shadow-dom': false,
 			},
 		},
 		messages: {

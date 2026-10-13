@@ -4,7 +4,7 @@ import { createTestingLibraryRule } from '../create-testing-library-rule';
 import { isCallExpression, isMemberExpression } from '../node-utils';
 
 import type { TestingLibrarySettings } from '../create-testing-library-rule/detect-testing-library-utils';
-import type { TSESTree, TSESLint } from '@typescript-eslint/utils';
+import type { TSESLint, TSESTree } from '@typescript-eslint/utils';
 
 const RULE_NAME = 'prefer-implicit-assert';
 export type MessageIds = 'preferImplicitAssert';
@@ -69,6 +69,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				vue: false,
 				svelte: false,
 				marko: false,
+				'shadow-dom': false,
 			},
 		},
 		messages: {

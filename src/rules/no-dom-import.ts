@@ -1,5 +1,5 @@
 import { createTestingLibraryRule } from '../create-testing-library-rule';
-import { isCallExpression, getImportModuleName } from '../node-utils';
+import { getImportModuleName, isCallExpression } from '../node-utils';
 
 import type { TSESTree } from '@typescript-eslint/utils';
 
@@ -42,6 +42,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				vue: ['error', 'vue'],
 				svelte: ['error', 'svelte'],
 				marko: ['error', 'marko'],
+				'shadow-dom': false,
 			},
 		},
 		messages: {
