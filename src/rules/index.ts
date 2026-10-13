@@ -19,6 +19,7 @@ import noWaitForSideEffects from './no-wait-for-side-effects';
 import noWaitForSnapshot from './no-wait-for-snapshot';
 import preferExplicitAssert from './prefer-explicit-assert';
 import preferFindBy from './prefer-find-by';
+import preferFormSubmission from './prefer-form-submission';
 import preferImplicitAssert from './prefer-implicit-assert';
 import preferPresenceQueries from './prefer-presence-queries';
 import preferQueryByDisappearance from './prefer-query-by-disappearance';
@@ -50,6 +51,7 @@ export const rules = {
 	'no-wait-for-snapshot': noWaitForSnapshot,
 	'prefer-explicit-assert': preferExplicitAssert,
 	'prefer-find-by': preferFindBy,
+	'prefer-form-submission': preferFormSubmission,
 	'prefer-implicit-assert': preferImplicitAssert,
 	'prefer-presence-queries': preferPresenceQueries,
 	'prefer-query-by-disappearance': preferQueryByDisappearance,
