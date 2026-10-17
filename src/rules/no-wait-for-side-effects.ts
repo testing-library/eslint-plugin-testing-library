@@ -1,3 +1,4 @@
+import { AST_NODE_TYPES, ASTUtils } from '@typescript-eslint/utils';
 import { isAwaitExpression } from '@typescript-eslint/utils/ast-utils';
 
 import { createTestingLibraryRule } from '../create-testing-library-rule';
@@ -7,6 +8,7 @@ import {
 	isVariableDeclaration,
 	isAssignmentExpression,
 	isCallExpression,
+	isMemberExpression,
 	isSequenceExpression,
 	hasThenProperty,
 } from '../node-utils';
@@ -43,6 +45,32 @@ export default createTestingLibraryRule<Options, MessageIds>({
 	defaultOptions: [],
 	create(context, _, helpers) {
 		const sourceCode = getSourceCode(context);
+
+		// Variables holding a `userEvent.setup()` instance, e.g. `const user = userEvent.setup()`
+		const userEventSetupVars = new Set<string>();
+
+		function isSideEffectUtil(identifier: TSESTree.Identifier): boolean {
+			return (
+				helpers.isFireEventUtil(identifier) ||
+				helpers.isUserEventUtil(identifier) ||
+				userEventSetupVars.has(identifier.name) ||
+				helpers.isRenderUtil(identifier)
+			);
+		}
+
+		function trackUserEventSetupVar(node: TSESTree.VariableDeclarator) {
+			if (
+				ASTUtils.isIdentifier(node.id) &&
+				isCallExpression(node.init) &&
+				isMemberExpression(node.init.callee) &&
+				ASTUtils.isIdentifier(node.init.callee.object) &&
+				ASTUtils.isIdentifier(node.init.callee.property) &&
+				node.init.callee.property.name === 'setup' &&
+				helpers.isUserEventUtil(node.init.callee.object)
+			) {
+				userEventSetupVars.add(node.id.name);
+			}
+		}
 
 		function isCallerWaitFor(
 			node:
@@ -149,11 +177,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 						return false;
 					}
 
-					return (
-						helpers.isFireEventUtil(test) ||
-						helpers.isUserEventUtil(test) ||
-						helpers.isRenderUtil(test)
-					);
+					return isSideEffectUtil(test);
 				}
 				return false;
 			});
@@ -181,17 +205,20 @@ export default createTestingLibraryRule<Options, MessageIds>({
 					return true;
 				}
 
-				const expressionIdentifier = getPropertyIdentifierNode(node);
+				// unwrap `void userEvent.click(el)`
+				const expressionIdentifier = getPropertyIdentifierNode(
+					isExpressionStatement(node) &&
+						node.expression.type === AST_NODE_TYPES.UnaryExpression &&
+						node.expression.operator === 'void'
+						? node.expression.argument
+						: node
+				);
 
 				if (!expressionIdentifier) {
 					return false;
 				}
 
-				return (
-					helpers.isFireEventUtil(expressionIdentifier) ||
-					helpers.isUserEventUtil(expressionIdentifier) ||
-					helpers.isRenderUtil(expressionIdentifier)
-				);
+				return isSideEffectUtil(expressionIdentifier);
 			}) as TSESTree.ExpressionStatement[];
 		}
 
@@ -301,12 +328,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				return;
 			}
 
-			if (
-				expressionIdentifier &&
-				!helpers.isFireEventUtil(expressionIdentifier) &&
-				!helpers.isUserEventUtil(expressionIdentifier) &&
-				!helpers.isRenderUtil(expressionIdentifier)
-			) {
+			if (expressionIdentifier && !isSideEffectUtil(expressionIdentifier)) {
 				return;
 			}
 
@@ -325,6 +347,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 		}
 
 		return {
+			VariableDeclarator: trackUserEventSetupVar,
 			'CallExpression > ArrowFunctionExpression > BlockStatement':
 				reportSideEffects,
 			'CallExpression > ArrowFunctionExpression > CallExpression':
