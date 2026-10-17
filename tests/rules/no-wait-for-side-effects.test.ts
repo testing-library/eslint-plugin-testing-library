@@ -341,6 +341,23 @@ ruleTester.run(rule.name, rule, {
         await waitFor(() => result = render(<App />))
       `,
 		},
+		...SUPPORTED_TESTING_FRAMEWORKS.flatMap<RuleValidTestCase>(
+			(testingFramework) => [
+				{
+					code: `
+        import { waitFor } from '${testingFramework}';
+        import userEvent from '@testing-library/user-event'
+
+        it("some test", async () => {
+          const user = createUser();
+          await waitFor(() => {
+            user.click(button);
+          });
+        });
+        `,
+				},
+			]
+		),
 	],
 	invalid: [
 		// render
@@ -1295,6 +1312,75 @@ ruleTester.run(rule.name, rule, {
 
         it("some test", async () => {
           await fireEvent.click(screen.getByTestId("something"));
+        });
+        `,
+				},
+			]
+		),
+		...SUPPORTED_TESTING_FRAMEWORKS.flatMap<InvalidTestCase<MessageIds, []>>(
+			(testingFramework) => [
+				{
+					code: `
+        import { waitFor } from '${testingFramework}';
+        import userEvent from '@testing-library/user-event'
+
+        it("some test", async () => {
+          const user = userEvent.setup();
+          await waitFor(async () => {
+            await user.click(screen.getByTestId("something"));
+          });
+        });
+        `,
+					errors: [{ line: 8, column: 13, messageId: 'noSideEffectsWaitFor' }],
+					output: `
+        import { waitFor } from '${testingFramework}';
+        import userEvent from '@testing-library/user-event'
+
+        it("some test", async () => {
+          const user = userEvent.setup();
+          await user.click(screen.getByTestId("something"));
+        });
+        `,
+				},
+				{
+					code: `
+        import { waitFor } from '${testingFramework}';
+        import userEvent from '@testing-library/user-event'
+
+        it("some test", async () => {
+          const user = userEvent.setup();
+          await waitFor(() => user.click(button));
+        });
+        `,
+					errors: [{ line: 7, column: 31, messageId: 'noSideEffectsWaitFor' }],
+					output: `
+        import { waitFor } from '${testingFramework}';
+        import userEvent from '@testing-library/user-event'
+
+        it("some test", async () => {
+          const user = userEvent.setup();
+          user.click(button);
+        });
+        `,
+				},
+				{
+					code: `
+        import { waitFor } from '${testingFramework}';
+        import userEvent from '@testing-library/user-event'
+
+        it("some test", async () => {
+          await waitFor(() => {
+            void userEvent.click(button);
+          });
+        });
+        `,
+					errors: [{ line: 7, column: 13, messageId: 'noSideEffectsWaitFor' }],
+					output: `
+        import { waitFor } from '${testingFramework}';
+        import userEvent from '@testing-library/user-event'
+
+        it("some test", async () => {
+          void userEvent.click(button);
         });
         `,
 				},
