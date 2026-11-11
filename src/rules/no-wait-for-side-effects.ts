@@ -12,7 +12,7 @@ import {
 } from '../node-utils';
 import { getSourceCode } from '../utils';
 
-import type { TSESTree } from '@typescript-eslint/utils';
+import type { TSESLint, TSESTree } from '@typescript-eslint/utils';
 
 const RULE_NAME = 'no-wait-for-side-effects';
 export type MessageIds = 'noSideEffectsWaitFor';
@@ -195,6 +195,87 @@ export default createTestingLibraryRule<Options, MessageIds>({
 			}) as TSESTree.ExpressionStatement[];
 		}
 
+		/**
+		 * Checks if the given node is the start of the expression statement
+		 * it is in, so nothing in that statement runs before it.
+		 */
+		function startsStatement(node: TSESTree.Node): boolean {
+			let current: TSESTree.Node | undefined = node.parent;
+			while (current && !isExpressionStatement(current)) {
+				current = current.parent;
+			}
+			return current?.range[0] === node.range[0];
+		}
+
+		/**
+		 * Checks if no other code shares the lines of the given node,
+		 * so the fix can safely move whole lines.
+		 */
+		function isAloneOnItsLines(node: TSESTree.Node): boolean {
+			const tokenBefore = sourceCode.getTokenBefore(node);
+			const tokenAfter = sourceCode.getTokenAfter(node);
+
+			return (
+				(!tokenBefore || tokenBefore.loc.end.line < node.loc.start.line) &&
+				(!tokenAfter || tokenAfter.loc.start.line > node.loc.end.line)
+			);
+		}
+
+		/**
+		 * Moves a side effect that shares its line with other code
+		 * (e.g. `await waitFor(() => { fireEvent.click(button); });`)
+		 * by using its own range instead of whole lines.
+		 */
+		function fixSideEffectSharingLine(
+			fixer: TSESLint.RuleFixer,
+			sideEffectNode: TSESTree.Node,
+			targetNode: TSESTree.Node,
+			isOnlyStatement: boolean
+		): TSESLint.RuleFix[] {
+			const sideEffectText = sourceCode.getText(sideEffectNode);
+
+			if (isOnlyStatement) {
+				// the side effect is the only statement: replace the whole `waitFor`
+				const tokenAfter = sourceCode.getTokenAfter(targetNode);
+				return [
+					fixer.replaceTextRange(
+						[
+							targetNode.range[0],
+							tokenAfter?.value === ';'
+								? tokenAfter.range[1]
+								: targetNode.range[1],
+						],
+						sideEffectText
+					),
+				];
+			}
+
+			const tokenBeforeTarget = sourceCode.getTokenBefore(targetNode);
+			const targetStartsLine =
+				!tokenBeforeTarget ||
+				tokenBeforeTarget.loc.end.line < targetNode.loc.start.line;
+			const targetLine = sourceCode.lines[targetNode.loc.start.line - 1];
+			const indent = targetLine?.match(/^\s*/)?.[0] ?? '';
+			const separator = targetStartsLine ? `\n${indent}` : ' ';
+
+			// remove the side effect along with the spaces that follow it on the
+			// same line or, when it ends its line, the spaces before it
+			const tokenAfter = sourceCode.getTokenAfter(sideEffectNode);
+			const removeRange: TSESTree.Range =
+				tokenAfter && tokenAfter.loc.start.line === sideEffectNode.loc.end.line
+					? [sideEffectNode.range[0], tokenAfter.range[0]]
+					: [
+							sourceCode.getTokenBefore(sideEffectNode)?.range[1] ??
+								sideEffectNode.range[0],
+							sideEffectNode.range[1],
+						];
+
+			return [
+				fixer.insertTextBefore(targetNode, sideEffectText + separator),
+				fixer.removeRange(removeRange),
+			];
+		}
+
 		function reportSideEffects(
 			node: TSESTree.BlockStatement & {
 				parent: (
@@ -225,6 +306,27 @@ export default createTestingLibraryRule<Options, MessageIds>({
 							? callExpressionNode.parent
 							: callExpressionNode;
 
+						// side effects are moved right before `waitFor`, so it must start
+						// its statement (`await waitFor(...)`, `waitFor(...).then(...)`);
+						// in `foo(await waitFor(...))` that would break the code or change
+						// what it does
+						if (!startsStatement(targetNode)) {
+							return null;
+						}
+						// with no other statements left, the whole `waitFor` is replaced
+						const isOnlyStatement =
+							node.body.length === 1 &&
+							isExpressionStatement(targetNode.parent);
+
+						if (!isAloneOnItsLines(sideEffectNode)) {
+							return fixSideEffectSharingLine(
+								fixer,
+								sideEffectNode,
+								targetNode,
+								isOnlyStatement
+							);
+						}
+
 						const lines = sourceCode.getText().split('\n');
 						const line = lines[targetNode.loc.start.line - 1];
 						const indent = line?.match(/^\s*/)?.[0] ?? '';
@@ -233,10 +335,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 							sideEffectNode.loc.end.line
 						);
 						const sideEffectNodeText = sideEffectLines.join('\n').trimStart();
-						if (
-							sideEffects.length === node.body.length &&
-							sideEffects.length === 1
-						) {
+						if (isOnlyStatement) {
 							const tokenAfter = sourceCode.getTokenAfter(targetNode);
 							return [
 								fixer.insertTextBefore(targetNode, sideEffectNodeText),
