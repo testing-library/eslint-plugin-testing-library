@@ -13,7 +13,7 @@
 ## Rule details
 
 This rule aims to use `findBy*` or `findAllBy*` queries to wait for elements, rather than using `waitFor`.
-This rule analyzes those cases where `waitFor` is used with just one query method, in the form of an arrow function with only one statement (that is, without a block of statements). Given the callback could be more complex, this rule does not consider function callbacks or arrow functions with blocks of code.
+This rule analyzes those cases where `waitFor` is used with just one query method, in the form of an arrow function with only one statement (that is, without a block of statements, or with a block that only contains a single expression statement). Given the callback could be more complex, this rule does not consider function callbacks or arrow functions with other blocks of code.
 
 Examples of **incorrect** code for this rule
 
@@ -43,6 +43,13 @@ const submitButton = await waitFor(() =>
 const submitButton = await waitFor(() =>
 	expect(queryByLabel('button', { name: /submit/i })).not.toBeFalsy()
 );
+
+// arrow functions with a block that only contains a single expression statement
+await waitFor(() => {
+	expect(
+		screen.queryByLabelText('button', { name: /submit/i })
+	).toBeInTheDocument();
+});
 
 // unnecessary usage of waitFor with findBy*, which already includes waiting logic
 await waitFor(async () => {
