@@ -297,6 +297,28 @@ export default createTestingLibraryRule<Options, MessageIds>({
 			return node.body;
 		}
 
+		/**
+		 * Checks if unwrapping a block body into its single expression
+		 * would drop comments placed outside that expression
+		 * (e.g. `{ // reason \n expect(getByText('foo')).toBeInTheDocument() }`).
+		 */
+		function hasCommentsOutsideExpression(
+			node: TSESTree.ArrowFunctionExpression,
+			expression: TSESTree.Node
+		) {
+			if (!isBlockStatement(node.body)) {
+				return false;
+			}
+
+			const [expressionStart, expressionEnd] = expression.range;
+			return sourceCode
+				.getCommentsInside(node.body)
+				.some(
+					({ range: [commentStart, commentEnd] }) =>
+						commentStart < expressionStart || commentEnd > expressionEnd
+				);
+		}
+
 		function getQueryArguments(node: TSESTree.CallExpression) {
 			if (
 				isMemberExpression(node.callee) &&
@@ -441,6 +463,10 @@ export default createTestingLibraryRule<Options, MessageIds>({
 						queryVariant,
 						prevQuery: fullQueryMethod,
 						fix(fixer) {
+							if (hasCommentsOutsideExpression(argument, argumentBody)) {
+								return null;
+							}
+
 							const findByCallText = `${caller}.${queryVariant}${queryMethod}(${callArguments
 								.map((callArgNode) => sourceCode.getText(callArgNode))
 								.join(', ')}${waitOptionsSourceCode})`;
@@ -500,7 +526,10 @@ export default createTestingLibraryRule<Options, MessageIds>({
 					fix(fixer) {
 						// we know from above callee is an Identifier
 						if (
-							helpers.isCustomQuery(argumentBody.callee as TSESTree.Identifier)
+							helpers.isCustomQuery(
+								argumentBody.callee as TSESTree.Identifier
+							) ||
+							hasCommentsOutsideExpression(argument, argumentBody)
 						) {
 							return null;
 						}

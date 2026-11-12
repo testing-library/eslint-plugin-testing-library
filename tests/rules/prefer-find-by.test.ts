@@ -869,6 +869,55 @@ ruleTester.run(rule.name, rule, {
 			})
 			`,
 		})),
+		// block body with comments outside the expression is reported but not fixed,
+		// since unwrapping the block would drop the comments
+		...createScenario((waitMethod, queryMethod) => ({
+			code: `
+			import { screen } from '${testingFramework}';
+
+			it('tests', async () => {
+				await ${waitMethod}(() => {
+					// wait until the count is rendered
+					expect(screen.${queryMethod}('button', { name: 'Count is: 0' })).toBeInTheDocument()
+				})
+			})
+			`,
+			errors: [
+				{
+					messageId: 'preferFindBy',
+					data: {
+						queryVariant: getFindByQueryVariant(queryMethod),
+						queryMethod: queryMethod.split('By')[1],
+						prevQuery: queryMethod,
+						waitForMethodName: waitMethod,
+					},
+				},
+			],
+			output: null,
+		})),
+		...createScenario((waitMethod, queryMethod) => ({
+			code: `
+        import {${waitMethod}} from '${testingFramework}';
+        it('tests', async () => {
+          const { ${queryMethod} } = render()
+          const submitButton = await ${waitMethod}(() => {
+            expect(${queryMethod}('foo', { name: 'baz' })).toBeInTheDocument() /* wait for the button */
+          })
+        })
+      `,
+			errors: [
+				{
+					messageId: 'preferFindBy',
+					data: {
+						queryVariant: getFindByQueryVariant(queryMethod),
+						queryMethod: queryMethod.split('By')[1],
+						prevQuery: queryMethod,
+						waitForMethodName: waitMethod,
+					},
+				},
+			],
+			output: null,
+		})),
 		...ASYNC_QUERIES_COMBINATIONS.map<InvalidTestCase<MessageIds, []>>(
 			(queryMethod) => ({
 				code: `
