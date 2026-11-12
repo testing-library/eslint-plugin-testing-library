@@ -186,6 +186,16 @@ ruleTester.run(rule.name, rule, {
 				})
       `,
 		},
+		...SYNC_QUERIES_COMBINATIONS.map((queryMethod) => ({
+			code: `
+        import {waitFor} from '${testingFramework}';
+        it('tests', async () => {
+          await waitFor(() => {
+            expect(screen.${queryMethod}('foo')).toBeDisabled()
+          })
+        })
+      `,
+		})),
 	]),
 	invalid: SUPPORTED_TESTING_FRAMEWORKS.flatMap((testingFramework) => [
 		...createScenario((waitMethod, queryMethod) => ({
@@ -768,6 +778,96 @@ ruleTester.run(rule.name, rule, {
 				queryMethod
 			)}('Count is: 0', { timeout: 100, interval: 200 })
         `,
+		})),
+		// block body with a single expression statement is treated as an expression body
+		...createScenario((waitMethod, queryMethod) => ({
+			code: `
+        import {${waitMethod}} from '${testingFramework}';
+        it('tests', async () => {
+          const { ${queryMethod} } = render()
+          const submitButton = await ${waitMethod}(() => {
+            expect(${queryMethod}('foo', { name: 'baz' })).toBeInTheDocument()
+          })
+        })
+      `,
+			errors: [
+				{
+					messageId: 'preferFindBy',
+					data: {
+						queryVariant: getFindByQueryVariant(queryMethod),
+						queryMethod: queryMethod.split('By')[1],
+						prevQuery: queryMethod,
+						waitForMethodName: waitMethod,
+					},
+				},
+			],
+			output: `
+        import {${waitMethod}} from '${testingFramework}';
+        it('tests', async () => {
+          const { ${queryMethod}, ${buildFindByMethod(queryMethod)} } = render()
+          const submitButton = await ${buildFindByMethod(
+						queryMethod
+					)}('foo', { name: 'baz' })
+        })
+      `,
+		})),
+		...createScenario((waitMethod, queryMethod) => ({
+			code: `
+			import { screen } from '${testingFramework}';
+
+			it('tests', async () => {
+				await ${waitMethod}(() => {
+					expect(screen.${queryMethod}('button', { name: 'Count is: 0' })).toBeInTheDocument()
+				})
+			})
+			`,
+			errors: [
+				{
+					messageId: 'preferFindBy',
+					data: {
+						queryVariant: getFindByQueryVariant(queryMethod),
+						queryMethod: queryMethod.split('By')[1],
+						prevQuery: queryMethod,
+						waitForMethodName: waitMethod,
+					},
+				},
+			],
+			output: `
+			import { screen } from '${testingFramework}';
+
+			it('tests', async () => {
+				expect(await screen.${buildFindByMethod(queryMethod)}('button', { name: 'Count is: 0' })).toBeInTheDocument()
+			})
+			`,
+		})),
+		...createScenario((waitMethod, queryMethod) => ({
+			code: `
+			import { screen } from '${testingFramework}';
+
+			it('tests', async () => {
+				await ${waitMethod}(async () => {
+					expect(screen.${queryMethod}('button', { name: 'Count is: 0' })).toBeInTheDocument()
+				})
+			})
+			`,
+			errors: [
+				{
+					messageId: 'preferFindBy',
+					data: {
+						queryVariant: getFindByQueryVariant(queryMethod),
+						queryMethod: queryMethod.split('By')[1],
+						prevQuery: queryMethod,
+						waitForMethodName: waitMethod,
+					},
+				},
+			],
+			output: `
+			import { screen } from '${testingFramework}';
+
+			it('tests', async () => {
+				expect(await screen.${buildFindByMethod(queryMethod)}('button', { name: 'Count is: 0' })).toBeInTheDocument()
+			})
+			`,
 		})),
 		...ASYNC_QUERIES_COMBINATIONS.map<InvalidTestCase<MessageIds, []>>(
 			(queryMethod) => ({
