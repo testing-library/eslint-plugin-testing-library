@@ -1300,5 +1300,83 @@ ruleTester.run(rule.name, rule, {
 				},
 			]
 		),
+
+		// side effects sharing a line with other code (#1401)
+		...SUPPORTED_TESTING_FRAMEWORKS.flatMap<RuleInvalidTestCase>(
+			(testingFramework) => [
+				{
+					code: `
+        import { waitFor, fireEvent } from '${testingFramework}';
+        test('submits', async () => { await waitFor(() => { fireEvent.click(button); }); });
+      `,
+					errors: [{ line: 3, column: 61, messageId: 'noSideEffectsWaitFor' }],
+					output: `
+        import { waitFor, fireEvent } from '${testingFramework}';
+        test('submits', async () => { fireEvent.click(button); });
+      `,
+				},
+				{
+					code: `
+        import { waitFor, fireEvent } from '${testingFramework}';
+        test('submits', async () => { await waitFor(() => { fireEvent.click(button); expect(spy).toHaveBeenCalled(); }); });
+      `,
+					errors: [{ line: 3, column: 61, messageId: 'noSideEffectsWaitFor' }],
+					output: `
+        import { waitFor, fireEvent } from '${testingFramework}';
+        test('submits', async () => { fireEvent.click(button); await waitFor(() => { expect(spy).toHaveBeenCalled(); }); });
+      `,
+				},
+				{
+					code: `
+        import { waitFor, fireEvent } from '${testingFramework}';
+        await waitFor(() => {
+          expect(b).toEqual('b'); fireEvent.keyDown(input, {key: 'ArrowDown'});
+        })
+      `,
+					errors: [{ line: 4, column: 35, messageId: 'noSideEffectsWaitFor' }],
+					output: `
+        import { waitFor, fireEvent } from '${testingFramework}';
+        fireEvent.keyDown(input, {key: 'ArrowDown'});
+        await waitFor(() => {
+          expect(b).toEqual('b');
+        })
+      `,
+				},
+				{
+					code: `
+        import { waitFor, fireEvent } from '${testingFramework}';
+        await waitFor(() => {
+          fireEvent.keyDown(input, {key: 'ArrowDown'}); expect(b).toEqual('b');
+        })
+      `,
+					errors: [{ line: 4, column: 11, messageId: 'noSideEffectsWaitFor' }],
+					output: `
+        import { waitFor, fireEvent } from '${testingFramework}';
+        fireEvent.keyDown(input, {key: 'ArrowDown'});
+        await waitFor(() => {
+          expect(b).toEqual('b');
+        })
+      `,
+				},
+				// no autofix when \`waitFor\` is part of a bigger expression:
+				// moving the side effect out would break the code or change it
+				...[
+					`const result = await waitFor(() => { fireEvent.click(button); expect(spy).toHaveBeenCalled(); });`,
+					`foo(await waitFor(() => { fireEvent.click(button); expect(spy).toHaveBeenCalled(); }));`,
+					`foo(await waitFor(() => { fireEvent.click(button); }));`,
+					`foo(await waitFor(() => {
+          fireEvent.click(button);
+          expect(spy).toHaveBeenCalled();
+        }));`,
+				].map<RuleInvalidTestCase>((statement) => ({
+					code: `
+        import { waitFor, fireEvent } from '${testingFramework}';
+        ${statement}
+      `,
+					errors: [{ messageId: 'noSideEffectsWaitFor' }],
+					output: null,
+				})),
+			]
+		),
 	],
 });
