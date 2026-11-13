@@ -83,6 +83,8 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
 	create(context, [options], helpers) {
 		const functionWrappersNames: string[] = [];
+		// Keep one async insertion per function without mutating the shared AST.
+		const functionsWithAsyncFix = new WeakSet<TSESTree.Node>();
 
 		// Track variables assigned from userEvent.setup() (directly or via destructuring)
 		const userEventSetupVars = new Set<string>();
@@ -263,18 +265,17 @@ export default createTestingLibraryRule<Options, MessageIds>({
 											'await '
 										);
 
-										if (functionExpression.async) {
+										if (
+											functionExpression.async ||
+											functionsWithAsyncFix.has(functionExpression)
+										) {
 											return memberExpressionFixer;
-										} else {
-											// Mutate the actual node so if other nodes exist in this
-											// function expression body they don't also try to fix it.
-											functionExpression.async = true;
-
-											return [
-												memberExpressionFixer,
-												fixer.insertTextBefore(functionExpression, 'async '),
-											];
 										}
+										functionsWithAsyncFix.add(functionExpression);
+										return [
+											memberExpressionFixer,
+											fixer.insertTextBefore(functionExpression, 'async '),
+										];
 									}
 								}
 
@@ -314,18 +315,17 @@ export default createTestingLibraryRule<Options, MessageIds>({
 							if (functionExpression) {
 								const nodeFixer = fixer.insertTextBefore(node, 'await ');
 
-								if (functionExpression.async) {
+								if (
+									functionExpression.async ||
+									functionsWithAsyncFix.has(functionExpression)
+								) {
 									return nodeFixer;
-								} else {
-									// Mutate the actual node so if other nodes exist in this
-									// function expression body they don't also try to fix it.
-									functionExpression.async = true;
-
-									return [
-										nodeFixer,
-										fixer.insertTextBefore(functionExpression, 'async '),
-									];
 								}
+								functionsWithAsyncFix.add(functionExpression);
+								return [
+									nodeFixer,
+									fixer.insertTextBefore(functionExpression, 'async '),
+								];
 							}
 
 							return null;
