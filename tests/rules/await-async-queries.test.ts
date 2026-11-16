@@ -670,8 +670,285 @@ ruleTester.run(rule.name, rule, {
       `,
 			errors: [{ messageId: 'awaitAsyncQuery', line: 3, column: 25 }],
 			output: `
-      test('An invalid example test', () => {
+      test('An invalid example test', async () => {
         const element = await findByIcon('search')
+      })
+      `,
+		},
+
+		// autofix inserts await and makes the enclosing arrow function async
+		{
+			code: `
+      import { screen } from '@testing-library/react'
+
+      test('loads greeting', () => {
+        screen.findByText('hello')
+      })
+      `,
+			errors: [{ messageId: 'awaitAsyncQuery', line: 5, column: 16 }],
+			output: `
+      import { screen } from '@testing-library/react'
+
+      test('loads greeting', async () => {
+        await screen.findByText('hello')
+      })
+      `,
+		},
+		// autofix inserts await and makes the enclosing function expression async
+		{
+			code: `
+      import { screen } from '@testing-library/react'
+
+      const loadGreeting = function () {
+        screen.findByText('hello')
+      }
+      `,
+			errors: [{ messageId: 'awaitAsyncQuery', line: 5, column: 16 }],
+			output: `
+      import { screen } from '@testing-library/react'
+
+      const loadGreeting = async function () {
+        await screen.findByText('hello')
+      }
+      `,
+		},
+		// autofix inserts await and makes the enclosing function declaration async
+		{
+			code: `
+      import { screen } from '@testing-library/react'
+
+      function loadGreeting() {
+        screen.findByText('hello')
+      }
+      `,
+			errors: [{ messageId: 'awaitAsyncQuery', line: 5, column: 16 }],
+			output: `
+      import { screen } from '@testing-library/react'
+
+      async function loadGreeting() {
+        await screen.findByText('hello')
+      }
+      `,
+		},
+		// autofix inserts await and makes the enclosing method async
+		{
+			code: `
+      import { screen } from '@testing-library/react'
+
+      class Page {
+        load() {
+          screen.findByText('hello')
+        }
+      }
+      `,
+			errors: [{ messageId: 'awaitAsyncQuery', line: 6, column: 18 }],
+			output: `
+      import { screen } from '@testing-library/react'
+
+      class Page {
+        async load() {
+          await screen.findByText('hello')
+        }
+      }
+      `,
+		},
+		{
+			code: `
+      import { screen } from '@testing-library/react'
+
+      class Page {
+        static load() {
+          screen.findByText('hello')
+        }
+      }
+      `,
+			errors: [{ messageId: 'awaitAsyncQuery', line: 6, column: 18 }],
+			output: `
+      import { screen } from '@testing-library/react'
+
+      class Page {
+        static async load() {
+          await screen.findByText('hello')
+        }
+      }
+      `,
+		},
+		{
+			code: `
+      import { screen } from '@testing-library/react'
+
+      class Page {
+        *load() {
+          screen.findByText('hello')
+        }
+      }
+      `,
+			errors: [{ messageId: 'awaitAsyncQuery', line: 6, column: 18 }],
+			output: `
+      import { screen } from '@testing-library/react'
+
+      class Page {
+        async *load() {
+          await screen.findByText('hello')
+        }
+      }
+      `,
+		},
+		{
+			code: `
+      import { screen } from '@testing-library/react'
+
+      const page = {
+        load() {
+          screen.findByText('hello')
+        },
+      }
+      `,
+			errors: [{ messageId: 'awaitAsyncQuery', line: 6, column: 18 }],
+			output: `
+      import { screen } from '@testing-library/react'
+
+      const page = {
+        async load() {
+          await screen.findByText('hello')
+        },
+      }
+      `,
+		},
+		// already async enclosing functions only get await inserted
+		{
+			code: `
+      import { screen } from '@testing-library/react'
+
+      test('loads greeting', async () => {
+        screen.findByText('hello')
+      })
+      `,
+			errors: [{ messageId: 'awaitAsyncQuery', line: 5, column: 16 }],
+			output: `
+      import { screen } from '@testing-library/react'
+
+      test('loads greeting', async () => {
+        await screen.findByText('hello')
+      })
+      `,
+		},
+		{
+			code: `
+      import { screen } from '@testing-library/react'
+
+      const loadGreeting = async function () {
+        screen.findByText('hello')
+      }
+      `,
+			errors: [{ messageId: 'awaitAsyncQuery', line: 5, column: 16 }],
+			output: `
+      import { screen } from '@testing-library/react'
+
+      const loadGreeting = async function () {
+        await screen.findByText('hello')
+      }
+      `,
+		},
+		{
+			code: `
+      import { screen } from '@testing-library/react'
+
+      async function loadGreeting() {
+        screen.findByText('hello')
+      }
+      `,
+			errors: [{ messageId: 'awaitAsyncQuery', line: 5, column: 16 }],
+			output: `
+      import { screen } from '@testing-library/react'
+
+      async function loadGreeting() {
+        await screen.findByText('hello')
+      }
+      `,
+		},
+		{
+			code: `
+      import { screen } from '@testing-library/react'
+
+      class Page {
+        async load() {
+          screen.findByText('hello')
+        }
+      }
+      `,
+			errors: [{ messageId: 'awaitAsyncQuery', line: 6, column: 18 }],
+			output: `
+      import { screen } from '@testing-library/react'
+
+      class Page {
+        async load() {
+          await screen.findByText('hello')
+        }
+      }
+      `,
+		},
+		// variable reference to an async query also makes the enclosing function async
+		{
+			code: `
+      import { screen } from '@testing-library/react'
+
+      test('loads greeting', () => {
+        const promise = screen.findByText('hello')
+        expect(promise).toBeInTheDocument()
+      })
+      `,
+			errors: [{ messageId: 'awaitAsyncQuery', line: 5, column: 32 }],
+			output: `
+      import { screen } from '@testing-library/react'
+
+      test('loads greeting', async () => {
+        const promise = screen.findByText('hello')
+        expect(await promise).toBeInTheDocument()
+      })
+      `,
+		},
+		{
+			code: `
+      import { screen } from '@testing-library/react'
+
+      function loadGreeting() {
+        const promise = screen.findByText('hello')
+        expect(promise).toBeInTheDocument()
+        expect(promise).toHaveAttribute('src', 'bar')
+      }
+      `,
+			errors: [{ messageId: 'awaitAsyncQuery', line: 5, column: 32 }],
+			output: `
+      import { screen } from '@testing-library/react'
+
+      async function loadGreeting() {
+        const promise = screen.findByText('hello')
+        expect(await promise).toBeInTheDocument()
+        expect(await promise).toHaveAttribute('src', 'bar')
+      }
+      `,
+		},
+		// several queries in one function only add async once
+		{
+			code: `
+      import { screen } from '@testing-library/react'
+
+      test('loads greeting', () => {
+        screen.findByText('hello')
+        screen.findByRole('button')
+      })
+      `,
+			errors: [
+				{ messageId: 'awaitAsyncQuery', line: 5, column: 16 },
+				{ messageId: 'awaitAsyncQuery', line: 6, column: 16 },
+			],
+			output: `
+      import { screen } from '@testing-library/react'
+
+      test('loads greeting', async () => {
+        await screen.findByText('hello')
+        await screen.findByRole('button')
       })
       `,
 		},

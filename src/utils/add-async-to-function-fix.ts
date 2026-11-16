@@ -7,7 +7,13 @@ export const addAsyncToFunctionFix = (
 		| TSESTree.ArrowFunctionExpression
 		| TSESTree.FunctionDeclaration
 		| TSESTree.FunctionExpression
-		| null
+		| null,
+	/**
+	 * Node or token to place `async` before. Defaults to the function.
+	 * Method function nodes start at `(`, so callers pass the method name
+	 * (or the generator `*` token) instead.
+	 */
+	nodeToInsertAsyncBefore?: TSESTree.Node | TSESTree.Token | null
 ) => {
 	if (functionExpression && !functionExpression.async) {
 		/**
@@ -16,7 +22,13 @@ export const addAsyncToFunctionFix = (
 		 */
 		functionExpression.async = true;
 
-		return [ruleFix, fixer.insertTextBefore(functionExpression, 'async ')];
+		return [
+			ruleFix,
+			fixer.insertTextBefore(
+				nodeToInsertAsyncBefore ?? functionExpression,
+				'async '
+			),
+		];
 	}
 	return ruleFix;
 };

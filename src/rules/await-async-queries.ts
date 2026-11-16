@@ -1,4 +1,4 @@
-import { ASTUtils } from '@typescript-eslint/utils';
+import { AST_NODE_TYPES, ASTUtils } from '@typescript-eslint/utils';
 
 import { createTestingLibraryRule } from '../create-testing-library-rule';
 import {
@@ -11,9 +11,10 @@ import {
 	isMemberExpression,
 	isPromiseHandled,
 } from '../node-utils';
+import { getSourceCode } from '../utils';
 import { addAsyncToFunctionFix } from '../utils/add-async-to-function-fix';
 
-import type { TSESTree } from '@typescript-eslint/utils';
+import type { TSESLint, TSESTree } from '@typescript-eslint/utils';
 
 const RULE_NAME = 'await-async-queries';
 export type MessageIds = 'asyncQueryWrapper' | 'awaitAsyncQuery';
@@ -55,6 +56,82 @@ export default createTestingLibraryRule<Options, MessageIds>({
 			}
 		}
 
+		/**
+		 * Method function nodes start at the parameter list. `async` belongs
+		 * before the method name, or before `*` on a generator method.
+		 */
+		function getNodeToInsertAsyncBefore(
+			functionNode:
+				| TSESTree.ArrowFunctionExpression
+				| TSESTree.FunctionDeclaration
+				| TSESTree.FunctionExpression
+				| null
+		): TSESTree.Node | TSESTree.Token | null {
+			if (!functionNode?.parent) {
+				return null;
+			}
+
+			const parent = functionNode.parent;
+			const isClassMethod =
+				parent.type === AST_NODE_TYPES.MethodDefinition &&
+				parent.kind === 'method' &&
+				parent.value === functionNode;
+			const isObjectMethod =
+				parent.type === AST_NODE_TYPES.Property &&
+				parent.method &&
+				parent.value === functionNode;
+
+			if (!isClassMethod && !isObjectMethod) {
+				return null;
+			}
+
+			const methodKey = parent.key;
+
+			if (
+				functionNode.type === AST_NODE_TYPES.FunctionExpression &&
+				functionNode.generator
+			) {
+				const tokenBeforeKey = getSourceCode(context).getTokenBefore(methodKey);
+				if (tokenBeforeKey?.value === '*') {
+					return tokenBeforeKey;
+				}
+			}
+
+			return methodKey;
+		}
+
+		function fixAwaitAndMakeFunctionAsync(
+			fixer: TSESLint.RuleFixer,
+			awaitFixes: TSESLint.RuleFix[],
+			functionExpression:
+				| TSESTree.ArrowFunctionExpression
+				| TSESTree.FunctionDeclaration
+				| TSESTree.FunctionExpression
+				| null
+		) {
+			const firstAwaitFix = awaitFixes[0];
+
+			if (!firstAwaitFix) {
+				return null;
+			}
+
+			const fixes = addAsyncToFunctionFix(
+				fixer,
+				firstAwaitFix,
+				functionExpression,
+				getNodeToInsertAsyncBefore(functionExpression)
+			);
+
+			if (awaitFixes.length === 1) {
+				return fixes;
+			}
+
+			return [
+				...(Array.isArray(fixes) ? fixes : [fixes]),
+				...awaitFixes.slice(1),
+			];
+		}
+
 		return {
 			CallExpression(node) {
 				const identifierNode = getDeepestIdentifierNode(node);
@@ -80,6 +157,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 						context,
 						closestCallExpressionNode.parent
 					);
+					const functionExpression = findClosestFunctionExpressionNode(node);
 
 					// check direct usage of async query:
 					// const element = await findByRole('button')
@@ -90,16 +168,17 @@ export default createTestingLibraryRule<Options, MessageIds>({
 								messageId: 'awaitAsyncQuery',
 								data: { name: identifierNode.name },
 								fix: (fixer) => {
-									if (
+									const awaitTarget =
 										isMemberExpression(identifierNode.parent) &&
 										ASTUtils.isIdentifier(identifierNode.parent.object)
-									) {
-										return fixer.insertTextBefore(
-											identifierNode.parent,
-											'await '
-										);
-									}
-									return fixer.insertTextBefore(identifierNode, 'await ');
+											? identifierNode.parent
+											: identifierNode;
+
+									return fixAwaitAndMakeFunctionAsync(
+										fixer,
+										[fixer.insertTextBefore(awaitTarget, 'await ')],
+										functionExpression
+									);
 								},
 							});
 							return;
@@ -119,8 +198,12 @@ export default createTestingLibraryRule<Options, MessageIds>({
 								messageId: 'awaitAsyncQuery',
 								data: { name: identifierNode.name },
 								fix: (fixer) =>
-									references.map((ref) =>
-										fixer.insertTextBefore(ref.identifier, 'await ')
+									fixAwaitAndMakeFunctionAsync(
+										fixer,
+										references.map((ref) =>
+											fixer.insertTextBefore(ref.identifier, 'await ')
+										),
+										functionExpression
 									),
 							});
 							return;
@@ -168,7 +251,8 @@ export default createTestingLibraryRule<Options, MessageIds>({
 							return addAsyncToFunctionFix(
 								fixer,
 								IdentifierNodeFixer,
-								functionExpression
+								functionExpression,
+								getNodeToInsertAsyncBefore(functionExpression)
 							);
 						},
 					});
