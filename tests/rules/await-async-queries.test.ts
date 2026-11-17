@@ -815,6 +815,173 @@ ruleTester.run(rule.name, rule, {
       }
       `,
 		},
+		// getters, setters and constructors cannot be async, so there is no autofix
+		{
+			code: `
+      import { screen } from '@testing-library/react'
+
+      class Page {
+        get btn() {
+          screen.findByText('a')
+          return 1
+        }
+      }
+      `,
+			errors: [{ messageId: 'awaitAsyncQuery', line: 6, column: 18 }],
+			output: null,
+		},
+		{
+			code: `
+      import { screen } from '@testing-library/react'
+
+      class Page {
+        set btn(value) {
+          screen.findByText('a')
+        }
+      }
+      `,
+			errors: [{ messageId: 'awaitAsyncQuery', line: 6, column: 18 }],
+			output: null,
+		},
+		{
+			code: `
+      import { screen } from '@testing-library/react'
+
+      class Page {
+        constructor() {
+          screen.findByText('a')
+        }
+      }
+      `,
+			errors: [{ messageId: 'awaitAsyncQuery', line: 6, column: 18 }],
+			output: null,
+		},
+		{
+			code: `
+      import { screen } from '@testing-library/react'
+
+      const page = {
+        get x() {
+          screen.findByText('a')
+          return 1
+        },
+      }
+      `,
+			errors: [{ messageId: 'awaitAsyncQuery', line: 6, column: 18 }],
+			output: null,
+		},
+		{
+			code: `
+      import { screen } from '@testing-library/react'
+
+      const page = {
+        set x(value) {
+          screen.findByText('a')
+        },
+      }
+      `,
+			errors: [{ messageId: 'awaitAsyncQuery', line: 6, column: 18 }],
+			output: null,
+		},
+		// computed keys get async before `[`, and generators before `*`
+		{
+			code: `
+      import { screen } from '@testing-library/react'
+
+      class Page {
+        [key]() {
+          screen.findByText('a')
+        }
+      }
+      `,
+			errors: [{ messageId: 'awaitAsyncQuery', line: 6, column: 18 }],
+			output: `
+      import { screen } from '@testing-library/react'
+
+      class Page {
+        async [key]() {
+          await screen.findByText('a')
+        }
+      }
+      `,
+		},
+		{
+			code: `
+      import { screen } from '@testing-library/react'
+
+      const page = {
+        [key]() {
+          screen.findByText('a')
+        },
+      }
+      `,
+			errors: [{ messageId: 'awaitAsyncQuery', line: 6, column: 18 }],
+			output: `
+      import { screen } from '@testing-library/react'
+
+      const page = {
+        async [key]() {
+          await screen.findByText('a')
+        },
+      }
+      `,
+		},
+		{
+			code: `
+      import { screen } from '@testing-library/react'
+
+      class Page {
+        *[key]() {
+          screen.findByText('a')
+        }
+      }
+      `,
+			errors: [{ messageId: 'awaitAsyncQuery', line: 6, column: 18 }],
+			output: `
+      import { screen } from '@testing-library/react'
+
+      class Page {
+        async *[key]() {
+          await screen.findByText('a')
+        }
+      }
+      `,
+		},
+		{
+			code: `
+      import { screen } from '@testing-library/react'
+
+      const page = {
+        *[key]() {
+          screen.findByText('a')
+        },
+      }
+      `,
+			errors: [{ messageId: 'awaitAsyncQuery', line: 6, column: 18 }],
+			output: `
+      import { screen } from '@testing-library/react'
+
+      const page = {
+        async *[key]() {
+          await screen.findByText('a')
+        },
+      }
+      `,
+		},
+		// a query with no enclosing function only gets await
+		{
+			code: `
+      import { screen } from '@testing-library/react'
+
+      screen.findByText('hello')
+      `,
+			errors: [{ messageId: 'awaitAsyncQuery', line: 4, column: 14 }],
+			output: `
+      import { screen } from '@testing-library/react'
+
+      await screen.findByText('hello')
+      `,
+		},
 		// already async enclosing functions only get await inserted
 		{
 			code: `

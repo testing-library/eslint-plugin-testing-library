@@ -56,80 +56,103 @@ export default createTestingLibraryRule<Options, MessageIds>({
 			}
 		}
 
+		type EnclosingFunction =
+			| TSESTree.ArrowFunctionExpression
+			| TSESTree.FunctionDeclaration
+			| TSESTree.FunctionExpression;
+
 		/**
-		 * Method function nodes start at the parameter list. `async` belongs
-		 * before the method name, or before `*` on a generator method.
+		 * `skip` when the enclosing function cannot be async (getter, setter,
+		 * constructor). Otherwise the node or token `async` should precede.
+		 * `null` means the function node itself, which is correct for arrows,
+		 * function expressions and declarations.
+		 * Method function nodes start at `(`, so `async` goes before the name,
+		 * before `[` for a computed key, or before `*` for a generator.
 		 */
-		function getNodeToInsertAsyncBefore(
-			functionNode:
-				| TSESTree.ArrowFunctionExpression
-				| TSESTree.FunctionDeclaration
-				| TSESTree.FunctionExpression
-				| null
-		): TSESTree.Node | TSESTree.Token | null {
-			if (!functionNode?.parent) {
+		function resolveAsyncAnchor(
+			functionNode: EnclosingFunction | null
+		): 'skip' | TSESTree.Node | TSESTree.Token | null {
+			if (!functionNode) {
 				return null;
 			}
 
 			const parent = functionNode.parent;
-			const isClassMethod =
-				parent.type === AST_NODE_TYPES.MethodDefinition &&
-				parent.kind === 'method' &&
-				parent.value === functionNode;
-			const isObjectMethod =
-				parent.type === AST_NODE_TYPES.Property &&
-				parent.method &&
-				parent.value === functionNode;
 
-			if (!isClassMethod && !isObjectMethod) {
-				return null;
+			if (
+				parent?.type === AST_NODE_TYPES.MethodDefinition &&
+				parent.value === functionNode
+			) {
+				if (parent.kind !== 'method') {
+					return 'skip';
+				}
+
+				return methodAsyncAnchor(parent, functionNode);
 			}
 
-			const methodKey = parent.key;
+			if (
+				parent?.type === AST_NODE_TYPES.Property &&
+				parent.value === functionNode
+			) {
+				if (parent.kind === 'get' || parent.kind === 'set') {
+					return 'skip';
+				}
+
+				if (parent.method) {
+					return methodAsyncAnchor(parent, functionNode);
+				}
+			}
+
+			return null;
+		}
+
+		function methodAsyncAnchor(
+			parent: TSESTree.MethodDefinition | TSESTree.Property,
+			functionNode: EnclosingFunction
+		): TSESTree.Node | TSESTree.Token {
+			const sourceCode = getSourceCode(context);
+			// A computed method key is the expression inside `[]`. `async` goes
+			// before that `[` token, which is always present for a computed key.
+			const anchor = parent.computed
+				? sourceCode.getTokenBefore(parent.key)!
+				: parent.key;
 
 			if (
 				functionNode.type === AST_NODE_TYPES.FunctionExpression &&
 				functionNode.generator
 			) {
-				const tokenBeforeKey = getSourceCode(context).getTokenBefore(methodKey);
-				if (tokenBeforeKey?.value === '*') {
-					return tokenBeforeKey;
+				const previousToken = sourceCode.getTokenBefore(anchor);
+				if (previousToken?.value === '*') {
+					return previousToken;
 				}
 			}
 
-			return methodKey;
+			return anchor;
 		}
 
 		function fixAwaitAndMakeFunctionAsync(
 			fixer: TSESLint.RuleFixer,
-			awaitFixes: TSESLint.RuleFix[],
-			functionExpression:
-				| TSESTree.ArrowFunctionExpression
-				| TSESTree.FunctionDeclaration
-				| TSESTree.FunctionExpression
-				| null
+			awaitFix: TSESLint.RuleFix,
+			functionExpression: EnclosingFunction | null,
+			extraAwaitFixes: readonly TSESLint.RuleFix[] = []
 		) {
-			const firstAwaitFix = awaitFixes[0];
+			const asyncAnchor = resolveAsyncAnchor(functionExpression);
 
-			if (!firstAwaitFix) {
+			if (asyncAnchor === 'skip') {
 				return null;
 			}
 
 			const fixes = addAsyncToFunctionFix(
 				fixer,
-				firstAwaitFix,
+				awaitFix,
 				functionExpression,
-				getNodeToInsertAsyncBefore(functionExpression)
+				asyncAnchor
 			);
 
-			if (awaitFixes.length === 1) {
+			if (extraAwaitFixes.length === 0) {
 				return fixes;
 			}
 
-			return [
-				...(Array.isArray(fixes) ? fixes : [fixes]),
-				...awaitFixes.slice(1),
-			];
+			return [...(Array.isArray(fixes) ? fixes : [fixes]), ...extraAwaitFixes];
 		}
 
 		return {
@@ -176,7 +199,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 
 									return fixAwaitAndMakeFunctionAsync(
 										fixer,
-										[fixer.insertTextBefore(awaitTarget, 'await ')],
+										fixer.insertTextBefore(awaitTarget, 'await '),
 										functionExpression
 									);
 								},
@@ -197,14 +220,20 @@ export default createTestingLibraryRule<Options, MessageIds>({
 								node: identifierNode,
 								messageId: 'awaitAsyncQuery',
 								data: { name: identifierNode.name },
-								fix: (fixer) =>
-									fixAwaitAndMakeFunctionAsync(
+								fix: (fixer) => {
+									const extraReferences = references.filter(
+										(ref) => ref !== reference
+									);
+
+									return fixAwaitAndMakeFunctionAsync(
 										fixer,
-										references.map((ref) =>
+										fixer.insertTextBefore(reference.identifier, 'await '),
+										functionExpression,
+										extraReferences.map((ref) =>
 											fixer.insertTextBefore(ref.identifier, 'await ')
-										),
-										functionExpression
-									),
+										)
+									);
+								},
 							});
 							return;
 						}
@@ -248,11 +277,10 @@ export default createTestingLibraryRule<Options, MessageIds>({
 								);
 							}
 
-							return addAsyncToFunctionFix(
+							return fixAwaitAndMakeFunctionAsync(
 								fixer,
 								IdentifierNodeFixer,
-								functionExpression,
-								getNodeToInsertAsyncBefore(functionExpression)
+								functionExpression
 							);
 						},
 					});
