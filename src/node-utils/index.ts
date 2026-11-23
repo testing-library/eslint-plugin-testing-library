@@ -439,9 +439,7 @@ export function getDeepestIdentifierNode(
  */
 export function getReferenceNode(
 	node:
-		| TSESTree.CallExpression
-		| TSESTree.Identifier
-		| TSESTree.MemberExpression
+		TSESTree.CallExpression | TSESTree.Identifier | TSESTree.MemberExpression
 ): TSESTree.CallExpression | TSESTree.Identifier | TSESTree.MemberExpression {
 	if (
 		node.parent &&
@@ -468,8 +466,7 @@ export function getFunctionName(
 
 // TODO: extract into types file?
 export type ImportModuleNode =
-	| TSESTree.CallExpression
-	| TSESTree.ImportDeclaration;
+	TSESTree.CallExpression | TSESTree.ImportDeclaration;
 
 export function getImportModuleName(
 	node: ImportModuleNode | null | undefined

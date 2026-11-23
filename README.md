@@ -159,9 +159,7 @@ const testingLibrary = require('eslint-plugin-testing-library');
 
 module.exports = [
 	{
-		files: [
-			/* glob matching your test files */
-		],
+		files: [/* glob matching your test files */],
 		...testingLibrary.configs['flat/dom'],
 	},
 ];
@@ -188,9 +186,7 @@ const testingLibrary = require('eslint-plugin-testing-library');
 
 module.exports = [
 	{
-		files: [
-			/* glob matching your test files */
-		],
+		files: [/* glob matching your test files */],
 		...testingLibrary.configs['flat/angular'],
 	},
 ];
@@ -217,9 +213,7 @@ const testingLibrary = require('eslint-plugin-testing-library');
 
 module.exports = [
 	{
-		files: [
-			/* glob matching your test files */
-		],
+		files: [/* glob matching your test files */],
 		...testingLibrary.configs['flat/react'],
 	},
 ];
@@ -246,9 +240,7 @@ const testingLibrary = require('eslint-plugin-testing-library');
 
 module.exports = [
 	{
-		files: [
-			/* glob matching your test files */
-		],
+		files: [/* glob matching your test files */],
 		...testingLibrary.configs['flat/vue'],
 	},
 ];
@@ -275,9 +267,7 @@ const testingLibrary = require('eslint-plugin-testing-library');
 
 module.exports = [
 	{
-		files: [
-			/* glob matching your test files */
-		],
+		files: [/* glob matching your test files */],
 		...testingLibrary.configs['flat/svelte'],
 	},
 ];
@@ -304,9 +294,7 @@ const testingLibrary = require('eslint-plugin-testing-library');
 
 module.exports = [
 	{
-		files: [
-			/* glob matching your test files */
-		],
+		files: [/* glob matching your test files */],
 		...testingLibrary.configs['flat/marko'],
 	},
 ];

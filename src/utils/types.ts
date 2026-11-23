@@ -2,8 +2,7 @@ import type { TSESLint } from '@typescript-eslint/utils';
 
 type Recommended = 'error' | 'warn' | false;
 type RecommendedConfig<TOptions extends readonly unknown[]> =
-	| Recommended
-	| [Recommended, ...TOptions];
+	Recommended | [Recommended, ...TOptions];
 
 export type TestingLibraryPluginDocs<TOptions extends readonly unknown[]> = {
 	/**

@@ -46,7 +46,9 @@ function createPluginFlatConfigs() {
 		},
 		{}
 	) as {
-		[TKey in SupportedTestingFramework as `flat/${SupportedTestingFramework}`]: Linter.Config;
+		[
+			TKey in SupportedTestingFramework as `flat/${SupportedTestingFramework}`
+		]: Linter.Config;
 	};
 }
 

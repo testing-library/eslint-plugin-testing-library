@@ -50,8 +50,7 @@ const isSimpleTemplateLiteral = <V extends string>(
 	(value === undefined || node.quasis[0]?.value.raw === value);
 
 export type StringNode<S extends string = string> =
-	| StringLiteral<S>
-	| TemplateLiteral<S>;
+	StringLiteral<S> | TemplateLiteral<S>;
 
 /**
  * Checks if the given `node` is a {@link StringNode}.
@@ -123,5 +122,4 @@ export const getAccessorValue = <S extends string = string>(
 		: getStringValue(accessor);
 
 export type AccessorNode<Specifics extends string = string> =
-	| StringNode<Specifics>
-	| KnownIdentifier<Specifics>;
+	StringNode<Specifics> | KnownIdentifier<Specifics>;
