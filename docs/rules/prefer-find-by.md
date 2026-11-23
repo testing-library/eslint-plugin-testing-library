@@ -88,6 +88,12 @@ await waitFor(() => myCustomFunction());
 // using expects inside waitFor
 await waitFor(() => expect(screen.getByText('bar')).toBeDisabled());
 await waitFor(() => expect(getAllByText('bar')).toBeDisabled());
+
+// chaining a query to `within` inside waitFor: waitFor retries both queries
+// together, while `findBy*` would wait for each of them on its own
+await waitFor(() =>
+	within(screen.getByRole('dialog')).getByRole('button', { name: 'Proceed' })
+);
 ```
 
 ## When Not To Use It

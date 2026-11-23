@@ -186,6 +186,25 @@ ruleTester.run(rule.name, rule, {
 				})
       `,
 		},
+		// query chained to `within`: a single findBy* can't wait for both queries (#536)
+		...createScenario((waitMethod, queryMethod) => ({
+			code: `
+        import {${waitMethod}, screen, within} from '${testingFramework}';
+        it('tests', async () => {
+          const button = await ${waitMethod}(() =>
+            within(screen.getByRole('dialog', { name: 'Confirmation' })).${queryMethod}('button', { name: 'Proceed' })
+          )
+        })
+      `,
+		})),
+		...createScenario((waitMethod, queryMethod) => ({
+			code: `
+        import {${waitMethod}, screen, within} from '${testingFramework}';
+        it('tests', async () => {
+          await ${waitMethod}(() => within(screen.getByRole('dialog')).${queryMethod}('button'))
+        })
+      `,
+		})),
 	]),
 	invalid: SUPPORTED_TESTING_FRAMEWORKS.flatMap((testingFramework) => [
 		...createScenario((waitMethod, queryMethod) => ({

@@ -290,6 +290,16 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				return false;
 			}
 
+			// within(screen.getByRole('dialog')).getByText('foo') shape: the outer
+			// query runs on what the inner one finds, so a single findBy* can't
+			// replace both of them
+			if (
+				isCallExpression(node.body.callee.object) &&
+				helpers.isSyncQuery(node.body.callee.property)
+			) {
+				return false;
+			}
+
 			const isWrappedInPresenceAssert =
 				helpers.isPresenceAssert(node.body.callee) &&
 				isCallExpression(node.body.callee.object) &&
