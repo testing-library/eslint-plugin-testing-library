@@ -181,9 +181,7 @@ Validates commit messages follow [Conventional Commits](https://www.conventional
 
    export default createTestingLibraryRule({
    	name: 'rule-name',
-   	meta: {
-   		/* ... */
-   	},
+   	meta: {/* ... */},
    	defaultOptions: [],
    	create(context, _, helpers) {
    		// Use helpers.isQuery(), helpers.isAsyncUtil(), etc.

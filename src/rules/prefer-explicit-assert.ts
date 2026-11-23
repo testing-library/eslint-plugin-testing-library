@@ -10,8 +10,7 @@ import { PRESENCE_MATCHERS, ABSENCE_MATCHERS } from '../utils';
 
 const RULE_NAME = 'prefer-explicit-assert';
 export type MessageIds =
-	| 'preferExplicitAssert'
-	| 'preferExplicitAssertAssertion';
+	'preferExplicitAssert' | 'preferExplicitAssertAssertion';
 type Options = [
 	{
 		assertion?: string;
