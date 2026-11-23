@@ -14,6 +14,7 @@ import noPromiseInFireEvent from './no-promise-in-fire-event';
 import noRenderInLifecycle from './no-render-in-lifecycle';
 import noTestIdQueries from './no-test-id-queries';
 import noUnnecessaryAct from './no-unnecessary-act';
+import noUnsettledAbsenceQuery from './no-unsettled-absence-query';
 import noWaitForMultipleAssertions from './no-wait-for-multiple-assertions';
 import noWaitForSideEffects from './no-wait-for-side-effects';
 import noWaitForSnapshot from './no-wait-for-snapshot';
@@ -45,6 +46,7 @@ export const rules = {
 	'no-render-in-lifecycle': noRenderInLifecycle,
 	'no-test-id-queries': noTestIdQueries,
 	'no-unnecessary-act': noUnnecessaryAct,
+	'no-unsettled-absence-query': noUnsettledAbsenceQuery,
 	'no-wait-for-multiple-assertions': noWaitForMultipleAssertions,
 	'no-wait-for-side-effects': noWaitForSideEffects,
 	'no-wait-for-snapshot': noWaitForSnapshot,
