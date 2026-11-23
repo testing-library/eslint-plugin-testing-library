@@ -46,7 +46,9 @@ function createPluginFlatConfigs() {
 		},
 		{}
 	) as {
-		[TKey in SupportedTestingFramework as `flat/${SupportedTestingFramework}`]: Linter.Config;
+		[
+			TKey in SupportedTestingFramework as `flat/${SupportedTestingFramework}`
+		]: Linter.Config;
 	};
 }
 
@@ -67,16 +69,18 @@ function createPluginLegacyConfigs() {
 	};
 }
 
+const configs: PluginConfigs = {
+	...createPluginFlatConfigs(),
+	...createPluginLegacyConfigs(),
+};
+
 const testingLibraryPlugin = {
 	meta: {
 		name: packageName,
 		version: packageVersion,
 	},
 	rules: rules as unknown as Record<string, Rule.RuleModule>,
-	configs: {
-		...createPluginFlatConfigs(),
-		...createPluginLegacyConfigs(),
-	} satisfies PluginConfigs,
+	configs,
 } as const satisfies ESLint.Plugin;
 
 export default testingLibraryPlugin;

@@ -16,8 +16,7 @@ import type { TSESTree } from '@typescript-eslint/utils';
 
 const RULE_NAME = 'no-unnecessary-act';
 export type MessageIds =
-	| 'noUnnecessaryActEmptyFunction'
-	| 'noUnnecessaryActTestingLibraryUtil';
+	'noUnnecessaryActEmptyFunction' | 'noUnnecessaryActTestingLibraryUtil';
 export type Options = [{ isStrict: boolean }];
 
 export default createTestingLibraryRule<Options, MessageIds>({
@@ -146,8 +145,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				| TSESTree.FunctionExpression
 				| undefined;
 			const callExpressionNode = functionNode?.parent as
-				| TSESTree.CallExpression
-				| undefined;
+				TSESTree.CallExpression | undefined;
 
 			if (!callExpressionNode || !functionNode) {
 				return;
@@ -192,8 +190,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 			}
 
 			const parentCallExpression = node.parent?.parent as
-				| TSESTree.CallExpression
-				| undefined;
+				TSESTree.CallExpression | undefined;
 
 			if (!parentCallExpression) {
 				return;

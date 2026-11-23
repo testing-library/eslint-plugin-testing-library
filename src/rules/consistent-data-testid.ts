@@ -4,8 +4,7 @@ import { getFilename } from '../utils';
 
 const RULE_NAME = 'consistent-data-testid';
 export type MessageIds =
-	| 'consistentDataTestId'
-	| 'consistentDataTestIdCustomMessage';
+	'consistentDataTestId' | 'consistentDataTestIdCustomMessage';
 export type Options = [
 	{
 		testIdAttribute?: string[] | string;

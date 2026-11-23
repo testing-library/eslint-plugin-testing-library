@@ -37,8 +37,7 @@ const SETTING_OPTION_OFF = 'off';
 
 export type TestingLibrarySettings = {
 	'testing-library/utils-module'?:
-		| typeof SETTING_OPTION_OFF
-		| (string & NonNullable<unknown>);
+		typeof SETTING_OPTION_OFF | (string & NonNullable<unknown>);
 	'testing-library/custom-renders'?: string[] | typeof SETTING_OPTION_OFF;
 	'testing-library/custom-queries'?: string[] | typeof SETTING_OPTION_OFF;
 };
@@ -881,9 +880,7 @@ export function detectTestingLibraryUtils<
 			};
 
 		const findImportedUserEventSpecifier: () =>
-			| TSESTree.Identifier
-			| TSESTree.ImportClause
-			| null = () => {
+			TSESTree.Identifier | TSESTree.ImportClause | null = () => {
 			if (!importedUserEventLibraryNode) {
 				const customModuleNode = getCustomModuleImportNode();
 				if (customModuleNode) {
