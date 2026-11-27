@@ -953,6 +953,17 @@ ruleTester.run(rule.name, rule, {
 	],
 	invalid: [
 		// cases: asserting absence incorrectly with `getBy*` queries
+		{
+			code: `
+				const { getByRole } = render(<Component />);
+				expect(getByRole('alert')).not.toBeInTheDocument();
+			`,
+			output: `
+				const { queryByRole } = render(<Component />);
+				expect(queryByRole('alert')).not.toBeInTheDocument();
+			`,
+			errors: [{ line: 3, column: 12, messageId: 'wrongAbsenceQuery' }],
+		},
 		...getByQueries.reduce<RuleInvalidTestCase[]>(
 			(invalidRules, queryName) => [
 				...invalidRules,
@@ -1137,6 +1148,26 @@ ruleTester.run(rule.name, rule, {
 			[]
 		),
 		// cases: asserting presence incorrectly with `queryBy*` queries
+		{
+			code: `
+				const { queryByRole } = render(<Component />);
+				expect(queryByRole('alert')).toBeInTheDocument();
+			`,
+			output: `
+				const { getByRole } = render(<Component />);
+				expect(getByRole('alert')).toBeInTheDocument();
+			`,
+			errors: [{ line: 3, column: 12, messageId: 'wrongPresenceQuery' }],
+		},
+		{
+			code: `
+				const { queryByRole } = render(<Component />);
+				expect(queryByRole('alert')).toBeInTheDocument();
+				expect(queryByRole('dialog')).not.toBeInTheDocument();
+			`,
+			output: null,
+			errors: [{ line: 3, column: 12, messageId: 'wrongPresenceQuery' }],
+		},
 		...queryByQueries.reduce<RuleInvalidTestCase[]>(
 			(validRules, queryName) => [
 				...validRules,
