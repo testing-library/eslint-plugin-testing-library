@@ -494,5 +494,26 @@ ruleTester.run(rule.name, rule, {
 				},
 			],
 		},
+		{
+			code: `
+	        test('unrelated', () => {
+	          const delay = 1000
+	        })
+
+	        test('actual case', async() => {
+	          let delay = 0
+	          await userEvent.type(input, 'abc', { delay });
+	        })
+	      `,
+			options: [{ eventModules: ['user-event'] }],
+			errors: [
+				{
+					line: 8,
+					column: 18,
+					messageId: 'noAwaitSyncEvents',
+					data: { name: 'userEvent.type' },
+				},
+			],
+		},
 	],
 });
