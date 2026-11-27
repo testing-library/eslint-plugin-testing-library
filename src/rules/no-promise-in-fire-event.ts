@@ -30,6 +30,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				vue: 'error',
 				svelte: 'error',
 				marko: 'error',
+				'shadow-dom': 'error',
 			},
 		},
 		messages: {

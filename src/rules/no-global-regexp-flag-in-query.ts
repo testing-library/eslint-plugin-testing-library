@@ -2,12 +2,12 @@ import { ASTUtils } from '@typescript-eslint/utils';
 
 import { createTestingLibraryRule } from '../create-testing-library-rule';
 import {
-	isMemberExpression,
-	isCallExpression,
-	isProperty,
-	isObjectExpression,
 	getDeepestIdentifierNode,
+	isCallExpression,
 	isLiteral,
+	isMemberExpression,
+	isObjectExpression,
+	isProperty,
 } from '../node-utils';
 
 import type { TSESTree } from '@typescript-eslint/utils';
@@ -29,6 +29,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				vue: 'error',
 				svelte: 'error',
 				marko: 'error',
+				'shadow-dom': 'error',
 			},
 		},
 		messages: {

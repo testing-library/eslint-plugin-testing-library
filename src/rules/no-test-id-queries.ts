@@ -7,7 +7,12 @@ const RULE_NAME = 'no-test-id-queries';
 export type MessageIds = 'noTestIdQueries';
 type Options = [];
 
-const QUERIES_REGEX = `/^(${ALL_QUERIES_VARIANTS.join('|')})TestId$/`;
+const QUERY_VARIANTS = [
+	...ALL_QUERIES_VARIANTS,
+	...ALL_QUERIES_VARIANTS.map((query) => `${query}Shadow` as const),
+];
+
+const QUERIES_REGEX = `/^(${QUERY_VARIANTS.join('|')})TestId$/`;
 
 export default createTestingLibraryRule<Options, MessageIds>({
 	name: RULE_NAME,
@@ -22,6 +27,7 @@ export default createTestingLibraryRule<Options, MessageIds>({
 				vue: false,
 				svelte: false,
 				marko: false,
+				'shadow-dom': false,
 			},
 		},
 		messages: {
